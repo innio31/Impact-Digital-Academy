@@ -1,1130 +1,544 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Emmanuel Ademuyiwa">
-    <title>Mighty School For Valours</title>
+    <title>We've Moved! | Impact Digital</title>
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://impactdigitalacademy.com.ng">
+    
+    <!-- Auto-redirect after 5 seconds -->
+    <meta http-equiv="refresh" content="5; url=https://impactdigitalacademy.com.ng">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://impactdigitalacademy.com.ng/images/favicon.ico">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root {
-            --color-primary: #1c3877;
-            --color-primary-dark: #152a5f;
-            --color-primary-light: #d1e0ff;
-            --color-secondary: #e23639;
-            --color-secondary-dark: #c21f22;
-            --color-dark: #0f1f3d;
-            --color-text: #333333;
-            --color-background: #f8f9fa;
-            --color-light-gray: #e9ecef;
-            --color-white: #ffffff;
-            --color-success: #22bb33;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--color-text);
-            background-color: var(--color-white);
-            overflow-x: hidden;
         }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header & Navigation */
-        .header {
-            background-color: var(--color-white);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-wrapper {
+        
+        body {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
+            justify-content: center;
+            padding: 20px;
         }
-
+        
+        .redirect-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header:before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -150px;
+            right: -100px;
+        }
+        
+        .header:after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -100px;
+            left: -50px;
+        }
+        
         .logo {
             display: flex;
             align-items: center;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .nav-list {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: var(--color-text);
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--color-primary);
-        }
-
-        .mobile-nav-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--color-primary);
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            height: 80vh;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            text-align: center;
-            color: var(--color-white);
-            overflow: hidden;
-        }
-
-        .hero-slider {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .slide {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .slide.active {
-            opacity: 1;
-        }
-
-        .slide-1 {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-        }
-
-        .slide-2 {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-        }
-
-        .slide-3 {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1560785496-3c9d27877182?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-        }
-
-        .hero-content {
-            max-width: 800px;
-            padding: 2rem;
-            z-index: 1;
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: var(--color-white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--color-primary-dark);
-        }
-
-        .btn-secondary {
-            background-color: var(--color-secondary);
-            color: var(--color-white);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--color-secondary-dark);
-        }
-
-        .btn-outline {
-            background-color: red;
-            color: var(--color-white);
-            border: 2px solid var(--color-blue);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--color-white);
-            color: var(--color-primary);
-        }
-
-        /* Section Styles */
-        .section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--color-dark);
-            position: relative;
-        }
-
-        .section-title:after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: var(--color-primary);
-            margin: 0.5rem auto;
-        }
-
-        /* Quick Facts */
-        .quick-facts {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            text-align: center;
-        }
-
-        .fact {
-            padding: 2rem;
-            border-radius: 8px;
-            background-color: var(--color-white);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .fact:hover {
-            transform: translateY(-5px);
-        }
-
-        .fact-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Welcome Message */
-        .welcome-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .director-image {
-            width: 100%;
-            height: auto;
-            background-color: var(--color-light-gray);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .director-image i {
-            font-size: 5rem;
-            color: var(--color-primary);
-        }
-
-        /* Quotes Section */
-        .quotes-section {
-            background-color: var(--color-background);
-        }
-
-        .quotes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .quote-card {
-            background-color: var(--color-white);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--color-primary);
-        }
-
-        .quote-text {
-            font-style: italic;
-            margin-bottom: 1rem;
-        }
-
-        .quote-author {
-            font-weight: 600;
-            color: var(--color-primary);
-        }
-
-        /* Why Choose Us Section */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background-color: var(--color-white);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--color-primary);
-            margin-bottom: 1rem;
-        }
-
-        .feature-title {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: var(--color-dark);
-        }
-
-        /* Strategic Focus Section */
-        .focus-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .focus-item {
-            background-color: var(--color-white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--color-secondary);
-        }
-
-        /* Achievement Section */
-        .achievement-section {
-            background-color: var(--color-primary);
-            color: var(--color-white);
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .achievement-title {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .achievement-content {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 1.8;
-        }
-
-        .achievement-highlight {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-        }
-
-        /* Curriculum Section */
-        .curriculum-section {
-            background-color: var(--color-background);
-        }
-
-        .curriculum-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .curriculum-image {
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .curriculum-points {
-            list-style-type: none;
-        }
-
-        .curriculum-points li {
-            margin-bottom: 1rem;
-            padding-left: 2rem;
-            position: relative;
-        }
-
-        .curriculum-points li:before {
-            content: '✓';
-            color: var(--color-success);
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-        }
-
-        /* Educators Section */
-        .educators-section {
-            background-color: var(--color-white);
-        }
-
-        .educators-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .educator-role {
-            background-color: var(--color-background);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .educator-icon {
-            font-size: 3rem;
-            color: var(--color-primary);
-            margin-bottom: 1rem;
-        }
-
-        /* Value Added Programs */
-        .programs-section {
-            background-color: var(--color-background);
-        }
-
-        .programs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .program-card {
-            background-color: var(--color-white);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .program-title {
-            font-size: 1.3rem;
-            color: var(--color-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .program-title i {
-            margin-right: 0.5rem;
-            color: var(--color-secondary);
-        }
-
-        /* Footer */
-        .footer {
-            background-color: var(--color-dark);
-            color: var(--color-white);
-            padding: 3rem 0 1rem;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-heading {
-            font-size: 1.2rem;
+            gap: 15px;
             margin-bottom: 1.5rem;
-            position: relative;
         }
-
-        .footer-heading:after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 3px;
-            background: var(--color-primary);
-            margin-top: 0.5rem;
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            background: white;
+            color: #2563eb;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .footer-links {
-            list-style: none;
+        
+        .logo-text {
+            text-align: left;
         }
-
-        .footer-link {
-            margin-bottom: 0.8rem;
+        
+        .logo-text h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
         }
-
-        .footer-link a {
-            color: var(--color-light-gray);
-            text-decoration: none;
-            transition: var(--transition);
+        
+        .logo-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
-
-        .footer-link a:hover {
-            color: var(--color-primary);
-            padding-left: 5px;
+        
+        .content {
+            padding: 3rem 2rem;
+            color: #333;
         }
-
-        .social-icons {
+        
+        .message-box {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-left: 5px solid #f59e0b;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-icon {
+            font-size: 3.5rem;
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .message-title {
+            font-size: 2.2rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .message-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .redirect-timer {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #f59e0b;
+            margin: 1.5rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .domain-info {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .domain-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .domain-card.old {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px dashed #dc2626;
+        }
+        
+        .domain-card.new {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #2563eb;
+        }
+        
+        .domain-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .domain-card.old .domain-icon {
+            color: #dc2626;
+        }
+        
+        .domain-card.new .domain-icon {
+            color: #2563eb;
+        }
+        
+        .domain-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+        
+        .domain-card.old .domain-name {
+            color: #dc2626;
+            text-decoration: line-through;
+        }
+        
+        .domain-card.new .domain-name {
+            color: #2563eb;
+        }
+        
+        .domain-status {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .domain-card.old .domain-status {
+            color: #991b1b;
+        }
+        
+        .domain-card.new .domain-status {
+            color: #1e40af;
+        }
+        
+        .action-buttons {
             display: flex;
             gap: 1rem;
-            margin-top: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
         }
-
-        .social-icon {
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: var(--color-white);
-            text-decoration: none;
-            transition: var(--transition);
+            gap: 0.7rem;
+            min-width: 200px;
+            border: none;
         }
-
-        .social-icon:hover {
-            background-color: var(--color-primary);
-            transform: translateY(-3px);
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
         }
-
-        .footer-bottom {
+        
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f59e0b;
+            color: #1e293b;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .btn-outline:hover {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .contact-info {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero-title {
+        
+        .contact-info h3 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .contact-details {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            color: #64748b;
+        }
+        
+        .contact-item i {
+            color: #2563eb;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes countdown {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 2rem 1rem;
+            }
+            
+            .content {
+                padding: 2rem 1rem;
+            }
+            
+            .message-box {
+                padding: 1.5rem;
+            }
+            
+            .message-title {
+                font-size: 1.8rem;
+            }
+            
+            .redirect-timer {
                 font-size: 2.5rem;
             }
-
-            .welcome-container {
+            
+            .domain-info {
                 grid-template-columns: 1fr;
             }
-
-            .curriculum-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .mobile-nav-toggle {
-                display: block;
-            }
-
-            .nav {
-                position: fixed;
-                top: 70px;
-                right: -100%;
-                width: 80%;
-                height: calc(100vh - 70px);
-                background-color: var(--color-white);
-                flex-direction: column;
-                padding: 2rem;
-                transition: var(--transition);
-                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .nav.active {
-                right: 0;
-            }
-
-            .nav-list {
+            
+            .action-buttons {
                 flex-direction: column;
             }
-
-            .nav-link {
-                display: block;
-                padding: 1rem 0;
-                border-bottom: 1px solid var(--color-light-gray);
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .hero-cta {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
+            
             .btn {
                 width: 100%;
-            }
-
-            .achievement-title {
-                font-size: 2rem;
-            }
-        }
-
-        /* Gallery Preview Styles */
-        .gallery-preview {
-            margin-bottom: 2rem;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            aspect-ratio: 1;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .gallery-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
-            display: flex;
-            align-items: flex-end;
-            padding: 1.5rem;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-item:hover .gallery-image {
-            transform: scale(1.05);
-        }
-
-        .gallery-text {
-            color: var(--color-white);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .gallery-overlay {
-                opacity: 1;
             }
         }
     </style>
 </head>
-
 <body>
-    <!-- Header & Navigation -->
-    <header class="header">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="index.html" class="logo">
-                    <div class="logo-img">
-                        <img src="images/logo.png" alt="school-logo" width="50" height="auto">
+    <div class="redirect-container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Impact Digital</h1>
+                    <p>Digital Solutions & Professional Training</p>
+                </div>
+            </div>
+            <h2 style="font-size: 1.8rem; margin-top: 1rem; opacity: 0.95;">Important Domain Update</h2>
+        </div>
+        
+        <div class="content">
+            <div class="message-box">
+                <div class="message-icon">
+                    <i class="fas fa-map-signs"></i>
+                </div>
+                <h1 class="message-title">We've Moved to a New Home!</h1>
+                <p class="message-subtitle">
+                    We're excited to announce that Impact Digital has moved to our permanent domain. 
+                    You're being automatically redirected to our new website in:
+                </p>
+                
+                <div class="redirect-timer" id="countdown">5</div>
+                
+                <p style="color: #64748b; font-size: 0.95rem;">
+                    If you're not redirected automatically, please use the buttons below.
+                </p>
+            </div>
+            
+            <div class="domain-info">
+                <div class="domain-card old">
+                    <div class="domain-icon">
+                        <i class="fas fa-external-link-alt"></i>
                     </div>
-                    <div class="logo-text">Mighty School For Valours</div>
+                    <div class="domain-name">digskills.netlify.app</div>
+                    <div class="domain-status">Old Domain (Temporary)</div>
+                </div>
+                
+                <div class="domain-card new">
+                    <div class="domain-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="domain-name">impactdigitalacademy.com.ng</div>
+                    <div class="domain-status">New Domain (Permanent)</div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="https://impactdigitalacademy.com.ng" class="btn btn-primary" id="redirectNow">
+                    <i class="fas fa-external-link-alt"></i> Go to New Site Now
                 </a>
-                <button class="mobile-nav-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <nav class="nav">
-                    <ul class="nav-list">
-                        <li><a href="index.html" class="nav-link active">Home</a></li>
-                        <li><a href="about.html" class="nav-link">About Us</a></li>
-                        <li><a href="academics.html" class="nav-link">Academics</a></li>
-                        <li><a href="admissions.html" class="nav-link">Admissions</a></li>
-                        <li><a href="http://mightyschoolforvalours.xo.je" class="nav-link">CBT Portal</a></li>
-                    </ul>
-                </nav>
+                <a href="https://portal.impactdigitalacademy.com.ng" class="btn btn-secondary" target="_blank">
+                    <i class="fas fa-graduation-cap"></i> Visit Student Portal
+                </a>
             </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-slider">
-            <img src="images/slide1.jpg" alt="Slide 1">
-            <img src="images/slide2.jpg" alt="Slide 2">
-        </div>
-        <div class="hero-content">
-            <h1 class="hero-title">Mighty School For Valours</h1>
-            <p class="hero-subtitle">Building Strong Foundations for Lifelong Success</p>
-            <div class="hero-cta">
-                <a href="admissions.html#apply" class="btn btn-primary">Apply Now</a>
-                <a href="http://mightyschoolforvalours.xo.je" class="btn btn-outline">CBT Portal</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quick Facts Section -->
-    <section class="section" style="background-color: var(--color-background);">
-        <div class="container">
-            <h2 class="section-title">Why Choose Us?</h2>
-            <div class="quick-facts">
-                <div class="fact">
-                    <div class="fact-number">Since 2013</div>
-                    <p>Years of Educational Excellence</p>
-                </div>
-                <div class="fact">
-                    <div class="fact-number">100%</div>
-                    <p>SSCE Pass Rate (Last 4 Years)</p>
-                </div>
-                <div class="fact">
-                    <div class="fact-number">Award</div>
-                    <p>Ogun State Governor's Essay Competition 2018</p>
-                </div>
-                <div class="fact">
-                    <div class="fact-number">21st</div>
-                    <p>Century Curriculum & Facilities</p>
+            
+            <div class="contact-info">
+                <h3>Need Immediate Assistance?</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>admin@impactdigitalacademy.com.ng</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+234 903 544 8295</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>+234 905 158 6024</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Welcome Message Section -->
-    <section class="section">
-        <div class="container">
-            <div class="welcome-container">
-                <div class="director-image">
-                    <img src="images/director1.png" alt="Director of Schools" width="100%" height="auto">
-                </div>
-                <div>
-                    <h2 class="section-title">From the Desk of the Director of Schools</h2>
-                    <p><strong>THE STRENGTH OF EVERY HIGH-RISE BUILDING IS IN ITS FOUNDATION</strong></p>
-                    <p>No one half-baked ever gets to the pinnacle of success in life. We live in an increasingly
-                        competitive world where the best choices are reserved for the brightest and best.</p>
-                    <p>Furthermore, as the saying goes, a journey of a thousand miles begins with the first right step.
-                        That right step for today's child is being given the best possible education and training as a
-                        springboard to a future of distinction. Commitment to the best standards in education has been
-                        our watchword at MIGHTY SCHOOL FOR VALOURS since we registered our first pupil in 2013.</p>
-                    <p>For close to a decade now, MIGHTY SCHOOL FOR VALOURS has remained focused on the pursuit of its
-                        vision -- that of producing good citizens who will be literate, disciplined, hardworking, and
-                        God-fearing through the help of the divine creator/counselor.</p>
-                    <a href="directors-page.html" class="btn btn-primary" style="margin-top: 1.5rem;">Read More...</a>
-                </div>
-            </div>
+        
+        <div class="footer">
+            <p>&copy; 2026 Impact Digital (Solutions & Academy). All rights reserved.</p>
+            <p style="margin-top: 0.5rem;">CAC Registered Business | Ota, Nigeria</p>
         </div>
-    </section>
-
-    <!-- Achievement Section -->
-    <section class="achievement-section">
-        <div class="container">
-            <h2 class="achievement-title">Outstanding Student Achievements</h2>
-            <div class="achievement-content">
-                <p>The achievements of MIGHTY SCHOOL FOR VALOURS College cannot be over-emphasized. Academically, our
-                    students have recorded a 100% pass rate in the last four years in SSCE Examinations.</p>
-
-                <div class="achievement-highlight">
-                    <p><strong>MIGHTY SCHOOL FOR VALOURS Nursery and Primary School City won the Ogun State Governor's
-                            Essay Competition in 2018</strong> and was awarded the Merit Award presented by the
-                        Commissioner for Education at the 2018 Children Day Event at M.K.O Abiola Stadium, Abeokuta,
-                        Ogun State.</p>
-                </div>
-
-                <p>Awards have also been won in co-curricular activities within and outside Lagos, and the college is
-                    well known to have won awards in sporting activities.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Why Choose Us Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title">Why Choose Mighty School For Valours</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <h3 class="feature-title">Full Accreditations</h3>
-                    <p>Our school maintains full accreditation with all relevant educational bodies, ensuring the
-                        highest standards of education.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <h3 class="feature-title">Regularly Updated Curriculum</h3>
-                    <p>We continuously update our curriculum to meet 21st-century educational standards and prepare
-                        students for future challenges.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-futbol"></i>
-                    </div>
-                    <h3 class="feature-title">Strength in Co-curricular Activities</h3>
-                    <p>We offer a wide range of co-curricular activities to develop well-rounded individuals with
-                        diverse interests and talents.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3 class="feature-title">Vocational & Technological Training</h3>
-                    <p>Our programs include vocational, technological, and construction training to equip students with
-                        practical skills.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Curriculum Section -->
-    <section class="section curriculum-section">
-        <div class="container">
-            <h2 class="section-title">Our Progressive Curriculum</h2>
-            <div class="curriculum-container">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="Students Learning" class="curriculum-image">
-                </div>
-                <div>
-                    <p>The curriculum for MIGHTY SCHOOL FOR VALOURS Secondary Schools is modern and challenges and
-                        inspires learners to be adaptable and flexible. The Curriculum is coherent with the needs of
-                        learners, Nigeria and the broader international society.</p>
-
-                    <p>The curriculum is not static and prepares learners to create their own future and to adapt to the
-                        needs of the society. It promotes an all-round education, focusing on the total well-being of
-                        the learners (cognitive, emotional and psycho-motor). In short: It prepares learners for the
-                        opportunities and experiences of a highly competitive environment and society.</p>
-
-                    <ul class="curriculum-points">
-                        <li>Encourages broad, in-depth and balanced learning</li>
-                        <li>Fosters creativity and innovation</li>
-                        <li>Based on higher cognitive domains of learning</li>
-                        <li>Outcomes last a lifetime and encourage lifelong learning</li>
-                        <li>Integrates Experiential Learning (learning by experience)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Strategic Focus Section -->
-    <section class="section" style="background-color: var(--color-background);">
-        <div class="container">
-            <h2 class="section-title">Our Strategic Focus</h2>
-            <div class="focus-grid">
-                <div class="focus-item">Developing and improving the creative and innovative abilities of students and
-                    teachers.</div>
-                <div class="focus-item">Expanding the level of science and mathematics teaching and learning.</div>
-                <div class="focus-item">Implementing an information science and technology culture.</div>
-                <div class="focus-item">Emphasizing scientific sport development.</div>
-                <div class="focus-item">Fostering an entrepreneurship culture.</div>
-                <div class="focus-item">Instilling positive cultural life values and discipline in the teaching and
-                    learning programme.</div>
-                <div class="focus-item">Raising the academic excellence and performance of students.</div>
-                <div class="focus-item">Developing the level of human capital (via knowledge, skills and attitude
-                    training) of students and teachers.</div>
-                <div class="focus-item">Managing the quality of the teaching and learning programmes in the schools.
-                </div>
-                <div class="focus-item">Contributing to a culture of life-long learning amongst students and teachers.
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Educators Section -->
-    <section class="section educators-section">
-        <div class="container">
-            <h2 class="section-title">Our 21st Century Educators</h2>
-            <p
-                style="text-align: center; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-                In the execution of a progressive 21st century curriculum in MIGHTY SCHOOL FOR VALOURS Secondary
-                Schools, we have educators that are:
-            </p>
-            <div class="educators-grid">
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <h3>Facilitators of Learning</h3>
-                    <p>Guiding students to discover knowledge rather than just delivering content</p>
-                </div>
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3>Providers of Learning Opportunities</h3>
-                    <p>Creating diverse and engaging learning experiences for all students</p>
-                </div>
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Evaluators of Learning</h3>
-                    <p>Assessing student progress with multiple methods and providing meaningful feedback</p>
-                </div>
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3>Assessors of Progress</h3>
-                    <p>Monitoring and supporting each student's academic journey</p>
-                </div>
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <h3>Reflexive Educational Professionals</h3>
-                    <p>Continuously improving their practice through reflection and professional development</p>
-                </div>
-                <div class="educator-role">
-                    <div class="educator-icon">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <h3>Inspirational Leaders</h3>
-                    <p>Motivating students to achieve their full potential and become lifelong learners</p>
-                </div>
-            </div>
-            <p style="text-align: center; margin-top: 2rem; font-style: italic;">
-                Curriculum Development in MIGHTY SCHOOL FOR VALOURS is a dynamic process that is always based on the
-                results, findings, outcomes and suggestions of action research projects.
-            </p>
-        </div>
-    </section>
-
-    <!-- Value Added Programs Section -->
-    <section class="section programs-section">
-        <div class="container">
-            <h2 class="section-title">Value Added Programs</h2>
-            <p
-                style="text-align: center; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-                Programs being presented by approved service providers include:
-            </p>
-            <div class="programs-grid">
-                <div class="program-card">
-                    <h3 class="program-title"><i class="fas fa-book-reader"></i> Reading and Creative Writing Programme
-                    </h3>
-                    <p>The focus of this programme is to improve the reading skills and comprehension of a learner in
-                        English and French. The creative writing component develops the writing style and proficiency of
-                        a learner in grammar and the use of language in these subjects.</p>
-                </div>
-                <div class="program-card">
-                    <h3 class="program-title"><i class="fas fa-calculator"></i> Mathematics Development Programme</h3>
-                    <p>This programme addresses remedial aspects in mathematics and support learners to apply
-                        mathematical knowledge and skills in today's technically oriented work environment.</p>
-                </div>
-                <div class="program-card">
-                    <h3 class="program-title"><i class="fas fa-comments"></i> Speech Improvement Programme</h3>
-                    <p>This highly popular programme, conducted in modern language studios, assists learners to become
-                        confident conversants in English and French.</p>
-                </div>
-                <div class="program-card">
-                    <h3 class="program-title"><i class="fas fa-laptop-code"></i> Computer Skills Programme</h3>
-                    <p>This programme provides a learner the opportunity to keep abreast with the latest international
-                        developments in information technology and to qualify for an international certificate in
-                        computer science.</p>
-                </div>
-            </div>
-            <p style="text-align: center; margin-top: 2rem;">
-                <strong>The relevance and quality of the programmes are being assured and controlled by the Quality
-                    Control Unit of MIGHTY SCHOOL FOR VALOURS Limited. The aims of these programmes are aligned with the
-                    outcome of the Nigerian/British Curriculum.</strong>
-            </p>
-        </div>
-    </section>
-
-    <section class="section" style="background-color: var(--color-background);">
-        <div class="container">
-            <h2 class="section-title">Explore Our Pictures</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem auto;">
-                Take a visual journey through our vibrant campus life, academic activities, and memorable events at
-                Mighty School For Valours.
-            </p>
-
-            <div class="gallery-preview">
-                <div class="gallery-grid">
-                    <div class="gallery-item">
-                        <img src="images/graduating_student.jpeg" alt="School Campus" class="gallery-image">
-                        <div class="gallery-overlay">
-                            <div class="gallery-text">Campus Life</div>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="images/director_with_students.jpeg" alt="Classroom Activities" class="gallery-image">
-                        <div class="gallery-overlay">
-                            <div class="gallery-text">Director with students</div>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="images/director_and_directormrs.jpeg" alt="Sports Events" class="gallery-image">
-                        <div class="gallery-overlay">
-                            <div class="gallery-text">Director & Director Mrs</div>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="images/graduating_student.jpeg" alt="Cultural Events" class="gallery-image">
-                        <div class="gallery-overlay">
-                            <div class="gallery-text">Cultural Events</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 3rem;">
-                <a href="gallery.html" class="btn btn-primary btn-large">View Full Gallery</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <h3 class="footer-heading">Mighty School For Valours</h3>
-                    <p>Excellence in Education Since 2013</p>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="footer-heading">Quick Links</h3>
-                    <ul class="footer-links">
-                        <li class="footer-link"><a href="index.html">Home</a></li>
-                        <li class="footer-link"><a href="about.html">About Us</a></li>
-                        <li class="footer-link"><a href="academics.html">Academics</a></li>
-                        <li class="footer-link"><a href="admissions.html">Admissions</a></li>
-                        <li class="footer-link"><a href="cbt.html">CBT Portal</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="footer-heading">Contact Info</h3>
-                    <ul class="footer-links">
-                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Plot 1-4, School Avenue, Favour
-                            Land Estate, Iyesi-Osuke Road, Ota, Ogun State.</li>
-                        <li class="footer-link"><i class="fas fa-phone"></i> 08125088948; 08120493299; 08143399779</li>
-                        <li class="footer-link"><i class="fas fa-envelope"></i> mforvalour@gmail.com</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Mighty School For Valours. All Rights Reserved.</p>
-                <p>Powered by <a href="https://digskills.netlify.app" target="_blank"
-                        rel="noopener noreferrer">DigSkills</a></p>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Mobile Navigation Toggle
-        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
-        const nav = document.querySelector('.nav');
-
-        mobileNavToggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-            const icon = mobileNavToggle.querySelector('i');
-            if (nav.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+        // Countdown timer
+        let seconds = 5;
+        const countdownElement = document.getElementById('countdown');
+        const redirectNowBtn = document.getElementById('redirectNow');
+        
+        function updateCountdown() {
+            countdownElement.textContent = seconds;
+            countdownElement.style.animation = 'countdown 1s ease-in-out';
+            
+            setTimeout(() => {
+                countdownElement.style.animation = '';
+            }, 1000);
+            
+            if (seconds === 0) {
+                // If countdown reaches 0, force immediate redirect
+                window.location.replace("https://impactdigitalacademy.com.ng");
+                return;
+            }
+            
+            seconds--;
+            setTimeout(updateCountdown, 1000);
+        }
+        
+        // Start countdown immediately
+        updateCountdown();
+        
+        // Manual redirect button
+        redirectNowBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.replace("https://impactdigitalacademy.com.ng");
+        });
+        
+        // Check if we're on the old domain
+        if (window.location.hostname === 'digskills.netlify.app') {
+            // Add Google Analytics tracking for the redirect
+            // You can add your GA tracking code here if needed
+            
+            // Create canonical link for SEO
+            const link = document.createElement('link');
+            link.rel = 'canonical';
+            link.href = 'https://impactdigitalacademy.com.ng';
+            document.head.appendChild(link);
+            
+            // Create structured data for search engines
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "url": "https://impactdigitalacademy.com.ng",
+                "potentialAction": {
+                    "@type": "ReadAction",
+                    "target": "https://impactdigitalacademy.com.ng"
+                },
+                "name": "Impact Digital",
+                "description": "Digital Solutions and Professional IT Training",
+                "sameAs": [
+                    "https://www.facebook.com/share/16exnb9VsU/",
+                    "https://x.com/DigSkills",
+                    "https://linkedin.com/company/dig-skills"
+                ]
+            });
+            document.head.appendChild(script);
+        }
+        
+        // Immediate redirect for search engine bots and impatient users
+        document.addEventListener('keydown', function(e) {
+            // If user presses ESC or Space, redirect immediately
+            if (e.key === 'Escape' || e.key === ' ') {
+                window.location.replace("https://impactdigitalacademy.com.ng");
             }
         });
-
-        // Hero Slider
-        const slides = document.querySelectorAll('.slide');
-        let currentSlide = 0;
-
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
-
-        // Change slide every 5 seconds
-        setInterval(nextSlide, 5000);
+        
+        // Double-click anywhere to redirect immediately
+        document.addEventListener('dblclick', function() {
+            window.location.replace("https://impactdigitalacademy.com.ng");
+        });
     </script>
 </body>
-
 </html>
