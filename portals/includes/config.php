@@ -6,47 +6,52 @@ if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
     $host = str_replace('www.', '', $host);
-    
-    // Use the document root instead of script path
-    $script_name = dirname($_SERVER['SCRIPT_NAME']);
-    
-    // For InfinityFree, try without the script path
-    define('BASE_URL', $protocol . $host . '/');
+
+    // For HostAfrica with /portals subdirectory
+    // This will generate: https://impactdigitalacademy.com.ng/portals/
+    define('BASE_URL', $protocol . $host . '/portals/');
 }
+
 if (!defined('BASE_PATH')) {
+    // Points to the root directory of your portal files
+    // This should point to where your portal files are located on the server
     define('BASE_PATH', __DIR__ . '/../');
 }
 
 if (!defined('PUBLIC_PATH')) {
+    // Path to public folder within your portal directory
     define('PUBLIC_PATH', BASE_PATH . 'public/');
 }
 
 if (!defined('UPLOADS_PATH')) {
+    // Path to uploads folder
     define('UPLOADS_PATH', PUBLIC_PATH . 'uploads/');
 }
 
 if (!defined('ASSETS_URL')) {
+    // URL to assets folder (CSS, JS, images)
     define('ASSETS_URL', BASE_URL . 'public/assets/');
 }
 
-// Database Configuration - InfinityFree settings
+// Database Configuration - HostAfrica settings
 if (!defined('DB_HOST')) {
-    // InfinityFree database configuration
-    define('DB_HOST', 'sql113.infinityfree.com'); // Your InfinityFree MySQL host
-    define('DB_NAME', 'if0_40714435_impact_digital_academy'); // Your database name
-    define('DB_USER', 'if0_40714435'); // Your database username
-    define('DB_PASS', 'Impact2026'); // Your database password
+    // HostAfrica database configuration
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'impactdi_portal');
+    define('DB_USER', 'impactdi_portal');
+    define('DB_PASS', 'yCuhEpaX3rRVxRrWMWGJ');
 }
 
-// SMTP Email Configuration - For Google Workspace/Email
+// SMTP Email Configuration - HostAfrica Professional Email
 if (!defined('SMTP_HOST')) {
-    define('SMTP_HOST', 'smtp.gmail.com'); // or your email host
-    define('SMTP_PORT', 587);
-    define('SMTP_USERNAME', 'admin@impactdigitalacademy.com.ng'); // Your Google Workspace email
-    define('SMTP_PASSWORD', 'fnth kudu rdys uodn'); // Use App Password, not regular password
-    define('SMTP_FROM_EMAIL', 'noreply@impactdigitalacademy.com.ng');
+    // HostAfrica's email servers
+    define('SMTP_HOST', 'mail.impactdigitalacademy.com.ng'); // or 'localhost' if using local mail server
+    define('SMTP_PORT', 587); // Common port for TLS
+    define('SMTP_USERNAME', 'admin@impactdigitalacademy.com.ng'); // Your full email address
+    define('SMTP_PASSWORD', 'Innioluwa@1995'); // The password you set for this email account
+    define('SMTP_FROM_EMAIL', 'admin@impactdigitalacademy.com.ng'); // Must match the authenticated user
     define('SMTP_FROM_NAME', 'Impact Digital Academy');
-    define('SMTP_SECURE', 'tls'); // 'tls' or 'ssl'
+    define('SMTP_SECURE', 'tls'); // 'tls' or 'ssl' - HostAfrica supports both
     define('SMTP_DEBUG', 0); // 0 = off, 1 = client messages, 2 = client and server messages
 }
 
@@ -145,7 +150,7 @@ if (!SKIP_HOST_VALIDATION && !DEBUG_MODE) {
     if (!in_array($_SERVER['HTTP_HOST'], ALLOWED_HOSTS)) {
         // For debugging, show what host we're getting
         if (DEBUG_MODE) {
-            die('Invalid host access. Your host is: ' . $_SERVER['HTTP_HOST'] . 
+            die('Invalid host access. Your host is: ' . $_SERVER['HTTP_HOST'] .
                 '<br>Allowed hosts are: ' . implode(', ', ALLOWED_HOSTS));
         } else {
             die('Invalid host access.');
@@ -164,16 +169,16 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth.php';
 
 // Optional: Add a function to check and update allowed hosts dynamically
-function validateCurrentHost() {
+function validateCurrentHost()
+{
     $currentHost = $_SERVER['HTTP_HOST'];
     $allowedHosts = defined('ALLOWED_HOSTS') ? ALLOWED_HOSTS : [];
-    
+
     // Remove www. prefix for comparison
     $cleanHost = str_replace('www.', '', $currentHost);
-    $cleanAllowedHosts = array_map(function($host) {
+    $cleanAllowedHosts = array_map(function ($host) {
         return str_replace('www.', '', $host);
     }, $allowedHosts);
-    
+
     return in_array($cleanHost, $cleanAllowedHosts);
 }
-?>
