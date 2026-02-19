@@ -2730,75 +2730,48 @@ function getFileTypeLabel($file_type)
 // ===== EMAIL FUNCTIONS =====
 
 /**
- * Send email using PHPMailer with HostAfrica SMTP
+ * Send email using PHP's mail() function with HostAfrica
  */
 function sendEmail($to, $subject, $body, $isHTML = true, $attachments = [])
 {
     try {
-        // Load PHPMailer if not already loaded
-        require_once __DIR__ . '/../vendor/autoload.php'; // Adjust path if needed
+        // Prepare headers
+        $headers = "From: Impact Digital Academy <admin@impactdigitalacademy.com.ng>\r\n";
+        $headers .= "Reply-To: admin@impactdigitalacademy.com.ng\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
-        // Create a new PHPMailer instance
-        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-
-        // Server settings
-        $mail->isSMTP();
-        $mail->Host       = 'mail.impactdigitalacademy.com.ng'; // Your HostAfrica mail server
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'admin@impactdigitalacademy.com.ng'; // Your email
-        $mail->Password   = 'your-email-password-here'; // Your email password
-        $mail->SMTPSecure = 'tls'; // Enable TLS encryption
-        $mail->Port       = 587; // TCP port to connect to
-
-        // Optional: Enable debugging for troubleshooting
-        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
-
-        // Sender info
-        $mail->setFrom('admin@impactdigitalacademy.com.ng', 'Impact Digital Academy');
-        $mail->addReplyTo('admin@impactdigitalacademy.com.ng', 'Impact Digital Academy');
-
-        // Recipients
-        if (is_array($to)) {
-            foreach ($to as $email => $name) {
-                if (is_numeric($email)) {
-                    $mail->addAddress($name);
-                } else {
-                    $mail->addAddress($email, $name);
-                }
-            }
+        // Set content type based on HTML or plain text
+        if ($isHTML) {
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         } else {
-            $mail->addAddress($to);
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
         }
 
-        // Attachments
-        if (!empty($attachments)) {
-            foreach ($attachments as $attachment) {
-                if (file_exists($attachment['path'])) {
-                    $mail->addAttachment($attachment['path'], $attachment['name'] ?? '');
-                }
-            }
-        }
-
-        // Content
-        $mail->isHTML($isHTML);
-        $mail->Subject = $subject;
-        $mail->Body    = $body;
-
-        if (!$isHTML) {
-            $mail->AltBody = strip_tags($body);
+        // Prepare recipients
+        if (is_array($to)) {
+            $toEmail = implode(', ', $to);
+        } else {
+            $toEmail = $to;
         }
 
         // Log the attempt
-        error_log("Attempting to send email via PHPMailer to: " . ($to ?? 'unknown'));
+        error_log("Attempting to send email via PHP mail() to: $toEmail");
 
         // Send email
-        $mail->send();
+        $result = mail($toEmail, $subject, $body, $headers);
 
-        logActivity('email_sent', "Email sent via PHPMailer to: " . json_encode($to));
-        return true;
+        if ($result) {
+            logActivity('email_sent', "Email sent via PHP mail() to: " . $toEmail);
+            return true;
+        } else {
+            error_log("PHP mail() failed to send to: $toEmail");
+            logActivity('email_failed', "Failed to send email via PHP mail() to: " . $toEmail);
+            return false;
+        }
     } catch (Exception $e) {
-        error_log("Email send failed: " . $mail->ErrorInfo ?? $e->getMessage());
-        logActivity('email_failed', "Exception sending email: " . ($mail->ErrorInfo ?? $e->getMessage()));
+        error_log("Email send failed: " . $e->getMessage());
+        logActivity('email_failed', "Exception sending email: " . $e->getMessage());
         return false;
     }
 }
