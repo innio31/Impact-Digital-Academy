@@ -966,9 +966,10 @@ function sendAssignmentNotification($assignment_id, $conn)
         $email_count = sendAssignmentNotificationEmail($assignment_id, $conn, $assignment);
     }
 
-    logActivity('assignment_notified', 
+    logActivity(
+        'assignment_notified',
         "Sent assignment notification #{$assignment_id} to {$notification_count} students. " .
-        "Emails sent: {$email_count}"
+            "Emails sent: {$email_count}"
     );
 
     return $notification_count > 0;
@@ -1015,10 +1016,10 @@ function sendGradeNotification($student_id, $assignment_id, $grade, $conn)
     if ($result) {
         // Log the activity
         logActivity('grade_notified', "Sent grade notification to student #{$student_id} for assignment #{$assignment_id}", 'notifications', $notification_id);
-        
+
         // Send email notification (both will run, even if one fails)
         $email_result = sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn);
-        
+
         // Log email result if sent
         if ($email_result) {
             logActivity('grade_email_sent', "Grade email sent to student #{$student_id} for assignment #{$assignment_id}", 'notifications', $notification_id);
@@ -2729,97 +2730,75 @@ function getFileTypeLabel($file_type)
 // ===== EMAIL FUNCTIONS =====
 
 /**
- * Send email via Google Apps Script (Simplified version)
- */
-/**
- * Send email via Google Apps Script (Updated version)
+ * Send email using PHPMailer with HostAfrica SMTP
  */
 function sendEmail($to, $subject, $body, $isHTML = true, $attachments = [])
 {
     try {
-        // Your Google Apps Script Web App URL - GET NEW ONE AFTER REDEPLOYMENT
-        $webAppUrl = 'https://script.google.com/macros/s/AKfycbwLTup-Vd3Vdj5VVIzGYiuELZEusAhSbd6Zp3DU9l4ko44Gx_ze_ML6gOxDGmyuS_7j/exec';
-        
-        // Simple secret key - MUST MATCH THE ONE IN GOOGLE APPS SCRIPT
-        $secret = 'Innioluwa1995';
-        
-        // Prepare recipients
+        // Load PHPMailer if not already loaded
+        require_once __DIR__ . '/../vendor/autoload.php'; // Adjust path if needed
+
+        // Create a new PHPMailer instance
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = 'mail.impactdigitalacademy.com.ng'; // Your HostAfrica mail server
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'admin@impactdigitalacademy.com.ng'; // Your email
+        $mail->Password   = 'your-email-password-here'; // Your email password
+        $mail->SMTPSecure = 'tls'; // Enable TLS encryption
+        $mail->Port       = 587; // TCP port to connect to
+
+        // Optional: Enable debugging for troubleshooting
+        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+
+        // Sender info
+        $mail->setFrom('admin@impactdigitalacademy.com.ng', 'Impact Digital Academy');
+        $mail->addReplyTo('admin@impactdigitalacademy.com.ng', 'Impact Digital Academy');
+
+        // Recipients
         if (is_array($to)) {
-            $recipients = [];
             foreach ($to as $email => $name) {
                 if (is_numeric($email)) {
-                    $recipients[] = $name;
+                    $mail->addAddress($name);
                 } else {
-                    $recipients[] = $email;
+                    $mail->addAddress($email, $name);
                 }
             }
-            $toEmail = implode(',', $recipients);
         } else {
-            $toEmail = $to;
+            $mail->addAddress($to);
         }
-        
-        // Prepare data for Google Apps Script
-        $data = [
-            'secret' => $secret,
-            'to' => $toEmail,
-            'subject' => $subject,
-            'body' => $body,
-            'isHTML' => $isHTML ? 'yes' : 'no'
-        ];
-        
-        // Log the attempt
-        error_log("Attempting to send email via GAS to: $toEmail");
-        
-        // Send request to Google Apps Script
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $webAppUrl,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($data),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true, // Important!
-            CURLOPT_SSL_VERIFYPEER => false, // For testing
-            CURLOPT_SSL_VERIFYHOST => false, // For testing
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        ]);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-        
-        // Log detailed response
-        error_log("GAS Response - HTTP: $httpCode, Response: " . substr($response, 0, 200));
-        
-        if ($error) {
-            error_log("CURL Error: $error");
-        }
-        
-        // Check response - Google Apps Script might return HTML even on success
-        if ($httpCode == 200) {
-            // Check if response contains success indicators
-            if (strpos($response, 'Email sent') !== false || 
-                strpos($response, 'successfully') !== false ||
-                strpos($response, 'Email API is running') !== false) {
-                
-                logActivity('email_sent', "Email sent via GAS to: " . $toEmail);
-                return true;
+
+        // Attachments
+        if (!empty($attachments)) {
+            foreach ($attachments as $attachment) {
+                if (file_exists($attachment['path'])) {
+                    $mail->addAttachment($attachment['path'], $attachment['name'] ?? '');
+                }
             }
-            
-            // Also accept if we got any 200 response
-            logActivity('email_sent', "Email likely sent (HTTP 200) to: " . $toEmail);
-            return true;
         }
-        
-        // Log error
-        error_log("GAS Email failed. HTTP Code: $httpCode. Response: " . $response);
-        logActivity('email_failed', "Failed to send email via GAS to: " . $toEmail);
-        return false;
-        
+
+        // Content
+        $mail->isHTML($isHTML);
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+
+        if (!$isHTML) {
+            $mail->AltBody = strip_tags($body);
+        }
+
+        // Log the attempt
+        error_log("Attempting to send email via PHPMailer to: " . ($to ?? 'unknown'));
+
+        // Send email
+        $mail->send();
+
+        logActivity('email_sent', "Email sent via PHPMailer to: " . json_encode($to));
+        return true;
     } catch (Exception $e) {
-        error_log("Email send failed: " . $e->getMessage());
-        logActivity('email_failed', "Exception sending email: " . $e->getMessage());
+        error_log("Email send failed: " . $mail->ErrorInfo ?? $e->getMessage());
+        logActivity('email_failed', "Exception sending email: " . ($mail->ErrorInfo ?? $e->getMessage()));
         return false;
     }
 }
@@ -2831,10 +2810,10 @@ function sendWelcomeEmail($user_id, $password = null)
 {
     $user = getUserById($user_id);
     if (!$user) return false;
-    
+
     $subject = "Welcome to " . getSetting('school_name', 'Our School');
     $login_url = BASE_URL . 'modules/auth/login.php';
-    
+
     $body = "<!DOCTYPE html>
     <html>
     <head>
@@ -2859,8 +2838,8 @@ function sendWelcomeEmail($user_id, $password = null)
                 <ul>
                     <li>Email: " . htmlspecialchars($user['email']) . "</li>
                     <li>Role: " . ucfirst($user['role']) . "</li>" .
-                    ($password ? "<li>Temporary Password: " . htmlspecialchars($password) . "</li>" : "") .
-                "</ul>
+        ($password ? "<li>Temporary Password: " . htmlspecialchars($password) . "</li>" : "") .
+        "</ul>
                 <p>Please login to get started:</p>
                 <p style='text-align: center;'>
                     <a href='{$login_url}' class='button'>Login to Your Account</a>
@@ -2880,7 +2859,7 @@ function sendWelcomeEmail($user_id, $password = null)
         </div>
     </body>
     </html>";
-    
+
     return sendEmail($user['email'], $subject, $body);
 }
 
@@ -2893,7 +2872,7 @@ function sendWelcomeEmail($user_id, $password = null)
 function sendPasswordResetEmail($email, $token)
 {
     $conn = getDBConnection();
-    
+
     try {
         // Check if email exists in users table
         $sql = "SELECT id, first_name, email FROM users WHERE email = ? AND status = 'active'";
@@ -2902,15 +2881,15 @@ function sendPasswordResetEmail($email, $token)
         $stmt->execute();
         $result = $stmt->get_result();
         $user = $result->fetch_assoc();
-        
+
         if (!$user) {
             error_log("Password reset: User not found or inactive: $email");
             return false;
         }
-        
+
         // Calculate expiry (2 hours from now)
         $expires_at = date('Y-m-d H:i:s', strtotime('+2 hours'));
-        
+
         // Save reset token to database
         $sql = "INSERT INTO password_resets (email, token, expires_at, created_at) 
                 VALUES (?, ?, ?, NOW()) 
@@ -2919,21 +2898,21 @@ function sendPasswordResetEmail($email, $token)
                 expires_at = VALUES(expires_at),
                 used = 0,
                 created_at = NOW()";
-        
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sss", $email, $token, $expires_at);
-        
+
         if (!$stmt->execute()) {
             error_log("Password reset: Failed to save token: " . $stmt->error);
             return false;
         }
-        
+
         // Create reset URL
         $reset_url = BASE_URL . "modules/auth/reset-password.php?token=" . urlencode($token);
         $expiry_hours = 2;
-        
+
         $subject = "Password Reset Request - Impact Digital Academy";
-        
+
         // Simple email template
         $body = "
         <!DOCTYPE html>
@@ -2976,10 +2955,10 @@ function sendPasswordResetEmail($email, $token)
             </div>
         </body>
         </html>";
-        
+
         // Send the email
         $email_result = sendEmail($email, $subject, $body);
-        
+
         if ($email_result) {
             error_log("Password reset email sent to: $email");
             logActivity('password_reset_requested', "Password reset requested for: $email", 'users', $user['id']);
@@ -2988,7 +2967,6 @@ function sendPasswordResetEmail($email, $token)
             error_log("Failed to send password reset email to: $email");
             return false;
         }
-        
     } catch (Exception $e) {
         error_log("Error in sendPasswordResetEmail: " . $e->getMessage());
         return false;
@@ -3001,7 +2979,7 @@ function sendPasswordResetEmail($email, $token)
 function sendAssignmentNotificationEmail($assignment_id, $conn = null)
 {
     if (!$conn) $conn = getDBConnection();
-    
+
     // Get assignment details
     $sql = "SELECT a.*, cb.batch_code, c.title as course_title, 
                    c.course_code, u.email as instructor_email
@@ -3010,34 +2988,34 @@ function sendAssignmentNotificationEmail($assignment_id, $conn = null)
             JOIN courses c ON cb.course_id = c.id 
             JOIN users u ON cb.instructor_id = u.id 
             WHERE a.id = ?";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $assignment_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $assignment = $result->fetch_assoc();
-    
+
     if (!$assignment) return false;
-    
+
     // Get enrolled students
     $sql = "SELECT u.id, u.email, u.first_name, u.last_name 
             FROM enrollments e 
             JOIN users u ON e.student_id = u.id 
             WHERE e.class_id = ? AND e.status = 'active' 
             AND u.email IS NOT NULL AND u.email != ''";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $assignment['class_id']);
     $stmt->execute();
     $students = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    
+
     $notification_count = 0;
     $due_date = formatDate($assignment['due_date'], 'F j, Y g:i A');
     $course_link = BASE_URL . "modules/student/course.php?id=" . $assignment['class_id'];
-    
+
     foreach ($students as $student) {
         $subject = "New Assignment: " . $assignment['title'] . " - " . $assignment['course_title'];
-        
+
         $body = "<!DOCTYPE html>
         <html>
         <head>
@@ -3079,12 +3057,12 @@ function sendAssignmentNotificationEmail($assignment_id, $conn = null)
             </div>
         </body>
         </html>";
-        
+
         if (sendEmail($student['email'], $subject, $body)) {
             $notification_count++;
         }
     }
-    
+
     logActivity('assignment_email_sent', "Assignment notification emails sent for assignment #{$assignment_id} to {$notification_count} students");
     return $notification_count;
 }
@@ -3095,30 +3073,30 @@ function sendAssignmentNotificationEmail($assignment_id, $conn = null)
 function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn = null)
 {
     if (!$conn) $conn = getDBConnection();
-    
+
     // Get student details
     $student = getUserById($student_id);
     if (!$student || empty($student['email'])) return false;
-    
+
     // Get assignment details
     $sql = "SELECT a.*, c.title as course_title, c.course_code 
             FROM assignments a 
             JOIN courses c ON a.course_id = c.id 
             WHERE a.id = ?";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $assignment_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $assignment = $result->fetch_assoc();
-    
+
     if (!$assignment) return false;
-    
+
     $percentage = ($grade / $assignment['total_points']) * 100;
     $grade_letter = calculateGradeLetter($percentage);
     $subject = "Grade Posted: " . $assignment['title'] . " - " . $assignment['course_title'];
     $course_link = BASE_URL . "modules/student/course.php?id=" . $assignment['class_id'];
-    
+
     $body = "<!DOCTYPE html>
     <html>
     <head>
@@ -3163,13 +3141,13 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn =
         </div>
     </body>
     </html>";
-    
+
     $result = sendEmail($student['email'], $subject, $body);
-    
+
     if ($result) {
         logActivity('grade_email_sent', "Grade notification email sent to student #{$student_id} for assignment #{$assignment_id}");
     }
-    
+
     return $result;
 }
 
@@ -3179,7 +3157,7 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn =
 function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
 {
     if (!$conn) $conn = getDBConnection();
-    
+
     // Get invoice details
     $sql = "SELECT i.*, u.email, u.first_name, u.last_name,
                    c.title as course_title, cb.batch_code
@@ -3188,19 +3166,19 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
             LEFT JOIN class_batches cb ON i.class_id = cb.id
             LEFT JOIN courses c ON cb.course_id = c.id
             WHERE i.id = ?";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $invoice_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $invoice = $result->fetch_assoc();
-    
+
     if (!$invoice || empty($invoice['email'])) return false;
-    
+
     $due_date = formatDate($invoice['due_date'], 'F j, Y');
     $amount = formatCurrency($invoice['amount']);
     $payment_url = BASE_URL . "modules/student/payment.php?invoice=" . $invoice['invoice_number'];
-    
+
     switch ($type) {
         case 'new':
             $subject = "New Invoice: " . $invoice['invoice_number'] . " - " . getSetting('school_name', 'Our School');
@@ -3222,7 +3200,7 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
             $title = "Invoice";
             $message = "Invoice details";
     }
-    
+
     $body = "<!DOCTYPE html>
     <html>
     <head>
@@ -3258,14 +3236,14 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
                         <span class='invoice-label'>Description:</span>
                         <span class='invoice-value'>" . htmlspecialchars($invoice['description']) . "</span>
                     </div>";
-    
+
     if ($invoice['course_title']) {
         $body .= "<div class='invoice-row'>
                     <span class='invoice-label'>Course:</span>
                     <span class='invoice-value'>" . htmlspecialchars($invoice['course_title']) . " (" . htmlspecialchars($invoice['batch_code']) . ")</span>
                   </div>";
     }
-    
+
     $body .= "<div class='invoice-row'>
                 <span class='invoice-label'>Amount Due:</span>
                 <span class='invoice-value'>{$amount}</span>
@@ -3294,13 +3272,13 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
     </div>
 </body>
 </html>";
-    
+
     $result = sendEmail($invoice['email'], $subject, $body);
-    
+
     if ($result) {
         logActivity('invoice_email_sent', "Invoice email ({$type}) sent for invoice #{$invoice_id}");
     }
-    
+
     return $result;
 }
 
@@ -3314,7 +3292,7 @@ function sendBulkEmail($recipients, $subject, $body, $isHTML = true)
         'failed' => 0,
         'failed_emails' => []
     ];
-    
+
     foreach ($recipients as $email => $name) {
         if (sendEmail($email, $subject, $body, $isHTML)) {
             $results['success']++;
@@ -3323,7 +3301,7 @@ function sendBulkEmail($recipients, $subject, $body, $isHTML = true)
             $results['failed_emails'][] = $email;
         }
     }
-    
+
     return $results;
 }
 
@@ -3333,7 +3311,7 @@ function sendBulkEmail($recipients, $subject, $body, $isHTML = true)
 function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn = null)
 {
     if (!$conn) $conn = getDBConnection();
-    
+
     // Get announcement details
     $sql = "SELECT a.*, 
                    CONCAT(u.first_name, ' ', u.last_name) as author_name,
@@ -3344,34 +3322,34 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
             LEFT JOIN class_batches cb ON a.class_id = cb.id
             LEFT JOIN courses c ON cb.course_id = c.id
             WHERE a.id = ?";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $announcement_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $announcement = $result->fetch_assoc();
-    
+
     if (!$announcement) return false;
-    
+
     // Determine recipients
     $recipients = [];
-    
+
     switch ($recipient_type) {
         case 'all':
             $sql = "SELECT email, first_name FROM users WHERE status = 'active' AND email IS NOT NULL";
             $result = $conn->query($sql);
             break;
-            
+
         case 'students':
             $sql = "SELECT email, first_name FROM users WHERE role = 'student' AND status = 'active' AND email IS NOT NULL";
             $result = $conn->query($sql);
             break;
-            
+
         case 'instructors':
             $sql = "SELECT email, first_name FROM users WHERE role = 'instructor' AND status = 'active' AND email IS NOT NULL";
             $result = $conn->query($sql);
             break;
-            
+
         case 'class':
             if (!$announcement['class_id']) return false;
             $sql = "SELECT u.email, u.first_name 
@@ -3384,19 +3362,19 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
             $stmt->execute();
             $result = $stmt->get_result();
             break;
-            
+
         default:
             return false;
     }
-    
+
     while ($row = $result->fetch_assoc()) {
         $recipients[$row['email']] = $row['first_name'];
     }
-    
+
     // Send emails
     $subject = "Announcement: " . $announcement['title'];
     $announcement_link = BASE_URL . "modules/student/announcements.php";
-    
+
     $body = "<!DOCTYPE html>
     <html>
     <head>
@@ -3422,11 +3400,11 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
                 <div class='announcement-box'>
                     <h3>" . htmlspecialchars($announcement['title']) . "</h3>
                     <p><strong>From:</strong> " . htmlspecialchars($announcement['author_name']) . "</p>";
-    
+
     if ($announcement['course_title']) {
         $body .= "<p><strong>Course:</strong> " . htmlspecialchars($announcement['course_title']) . " (" . htmlspecialchars($announcement['batch_code']) . ")</p>";
     }
-    
+
     $body .= "<p>" . nl2br(htmlspecialchars($announcement['content'])) . "</p>
                 </div>
                 
@@ -3443,10 +3421,10 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
         </div>
     </body>
     </html>";
-    
+
     $results = sendBulkEmail($recipients, $subject, $body);
-    
+
     logActivity('announcement_email_sent', "Announcement email sent to " . count($recipients) . " recipients");
-    
+
     return $results;
 }
