@@ -1,0 +1,317 @@
+{
+  "quiz_title": "Microsoft Word Week 1 Comprehensive Assessment",
+  "quiz_description": "Covers all topics from Introduction to Word & Document Management Basics",
+  "total_points": 20,
+  "passing_score": 14,
+  "time_limit_minutes": 20,
+  "questions": [
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which component of the Word interface is described as 'customizable toolbar for your most-used commands'?",
+      "points": 2,
+      "options": [
+        "Ribbon",
+        "Quick Access Toolbar",
+        "Status Bar",
+        "Navigation Pane"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The Quick Access Toolbar is a customizable toolbar located above the Ribbon where you can add your most frequently used commands.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "Ctrl + Shift + S is the keyboard shortcut for Save As in Microsoft Word.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "True. Ctrl + Shift + S opens the Save As dialog box, allowing you to save a document with a new name, location, or format.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which view in Word shows page count, word count, zoom, and view options at the bottom of the window?",
+      "points": 2,
+      "options": [
+        "Backstage View",
+        "Status Bar",
+        "Navigation Pane",
+        "Document Area"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The Status Bar at the bottom of the Word window displays information like page count, word count, zoom slider, and view buttons.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the default keyboard shortcut to create a new blank document in Word?",
+      "points": 2,
+      "options": [
+        "Ctrl + B",
+        "Ctrl + N",
+        "Ctrl + T",
+        "Ctrl + D"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Ctrl + N creates a new blank document instantly, while Ctrl + B is for bold text, Ctrl + T hanging indent, and Ctrl + D font dialog.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of these file formats is described as having 'wide compatibility' with many word processors?",
+      "points": 2,
+      "options": [
+        ".docx",
+        ".pdf",
+        ".rtf",
+        ".xlsx"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "RTF (Rich Text Format) maintains basic formatting and is compatible with many word processors, not just Microsoft Word.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The Navigation Pane can only show search results; it cannot display document headings or pages.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "False. The Navigation Pane has three tabs: Headings, Pages, and Results, allowing you to browse by headings, page thumbnails, or search results.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which keyboard shortcut opens the 'Find and Replace' dialog box in Word?",
+      "points": 2,
+      "options": [
+        "Ctrl + F",
+        "Ctrl + R",
+        "Ctrl + H",
+        "Ctrl + E"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Ctrl + H opens the Find and Replace dialog box. Ctrl + F opens the Navigation Pane for searching, Ctrl + R right-aligns text, and Ctrl + E centers text.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the primary purpose of showing formatting symbols (¶) in a Word document?",
+      "points": 2,
+      "options": [
+        "To make the document look more professional",
+        "To see hidden formatting and troubleshoot layout issues",
+        "To increase the document's file size",
+        "To prepare the document for printing"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Showing formatting symbols reveals hidden characters like spaces, tabs, paragraph marks, and line breaks, helping identify and fix formatting problems.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Where would you go in Word to access document properties, recent files, and account information?",
+      "points": 2,
+      "options": [
+        "Home tab",
+        "Review tab",
+        "File tab (Backstage View)",
+        "View tab"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "The File tab opens the Backstage View, which contains Info (document properties), Recent, New, Print, Share, Export, Account, and Options.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which feature allows you to mark a specific location in a long document for quick navigation later?",
+      "points": 2,
+      "options": [
+        "Header",
+        "Bookmark",
+        "Comment",
+        "Hyperlink"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "A Bookmark marks a specific location or selected text in a document. You can jump to bookmarks using Ctrl + G (Go To).",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The F12 key opens the Save As dialog box in Microsoft Word.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "True. F12 is a dedicated function key that opens the Save As dialog box, providing a quick alternative to File → Save As.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of the following is NOT a way to share a Word document according to the Week 1 material?",
+      "points": 2,
+      "options": [
+        "Email as attachment",
+        "Share via OneDrive link",
+        "Export as PDF",
+        "Convert to Excel spreadsheet"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Converting to Excel is not a sharing method mentioned. The handout discusses email attachment, OneDrive/SharePoint links, and PDF export.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What information does the handout recommend including in practice document filenames?",
+      "points": 2,
+      "options": [
+        "Only the date",
+        "Your name and week number",
+        "Random numbers",
+        "Only the document type"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The handout recommends using descriptive filenames like 'YourName_Week1.docx' for better organization and identification.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "In Word, you can only print the entire document; you cannot print specific pages or sections.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "False. Word's print settings allow printing specific pages (e.g., '1-3' or '1,3,5'), selected text, or specific sections.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which keyboard shortcut hides or shows the Ribbon in Word?",
+      "points": 2,
+      "options": [
+        "Ctrl + F1",
+        "Alt + F1",
+        "Shift + F1",
+        "Ctrl + Alt + R"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "Ctrl + F1 toggles the Ribbon display, allowing you to maximize document workspace by hiding the Ribbon when not needed.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the main advantage of saving a document to OneDrive according to the Week 1 handout?",
+      "points": 2,
+      "options": [
+        "Faster printing",
+        "Automatic versioning and cloud backup",
+        "Better formatting options",
+        "Free Microsoft certification"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "OneDrive provides automatic versioning, cloud backup, and access from multiple devices, preventing data loss and enabling collaboration.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The Go To function (Ctrl + G) can only navigate to pages, not to bookmarks, sections, or lines.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "False. Ctrl + G (Go To) can navigate to pages, sections, lines, bookmarks, comments, footnotes, and other document elements.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which tab on the Ribbon would you use to insert a bookmark in a Word document?",
+      "points": 2,
+      "options": [
+        "Home tab",
+        "Insert tab",
+        "Design tab",
+        "Review tab"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Bookmarks are found on the Insert tab → Links group → Bookmark. This is consistent with the handout's instruction: 'Insert → Links → Bookmark'.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "According to the Week 1 'Tips for Success', how much daily practice is recommended to build muscle memory?",
+      "points": 2,
+      "options": [
+        "At least 2 hours",
+        "Even 15 minutes a day",
+        "Only during class time",
+        "30 minutes weekly"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The handout recommends 'Even 15 minutes a day helps build muscle memory', emphasizing consistent, daily practice over long, infrequent sessions.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The .docx format is the standard Word document format and has been the default since Word 2007.",
+      "points": 2,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "True. .docx became the default Word format starting with Word 2007, replacing the older .doc format. It uses XML-based compression.",
+      "required": true
+    }
+  ]
+}

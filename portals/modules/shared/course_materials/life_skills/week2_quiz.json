@@ -1,0 +1,284 @@
+{
+  "questions": [
+    {
+      "question_type": "multiple_choice",
+      "question_text": "According to Elder David A. Bednar, what is a central purpose of our mortal journey?",
+      "points": 1,
+      "options": [
+        "To accumulate wealth and knowledge",
+        "To learn how to learn and to learn to love learning",
+        "To achieve professional success",
+        "To master academic subjects"
+      ],
+      "correct_options": [1],
+      "explanation": "Elder Bednar taught that a central purpose of our mortal journey is 'to learn how to learn... and to learn to love learning.' This moves us beyond passive consumption to conscious learning stewardship.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the definition of 'Educational Stewardship'?",
+      "points": 1,
+      "options": [
+        "Managing school finances and resources",
+        "The responsible and consecrated management of one's own learning process",
+        "Teaching others effectively",
+        "Following a strict study schedule"
+      ],
+      "correct_options": [1],
+      "explanation": "Educational Stewardship is defined as the responsible and consecrated management of one's own learning process, viewed as a divine mandate and gift.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What does 'metacognition' mean?",
+      "points": 1,
+      "options": [
+        "Learning advanced mathematics",
+        "Memory techniques for studying",
+        "Awareness of one's own learning processes; 'thinking about your thinking'",
+        "Group study strategies"
+      ],
+      "correct_options": [2],
+      "explanation": "Metacognition is the awareness of one's own learning processes; essentially 'thinking about your thinking.' It helps us understand how we learn best.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of the following best describes a Growth Mindset?",
+      "points": 1,
+      "options": [
+        "Believing intelligence is fixed and unchangeable",
+        "Avoiding challenges to prevent failure",
+        "Believing abilities can be developed through effort and strategies",
+        "Focusing only on natural talents"
+      ],
+      "correct_options": [2],
+      "explanation": "A Growth Mindset, as defined by Carol Dweck, believes abilities can be developed through dedication, effort, and effective strategies.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the 'False Growth Mindset'?",
+      "points": 1,
+      "options": [
+        "Trying new things without a plan",
+        "Mere effort without analysis or strategic adjustment",
+        "Having too much confidence",
+        "Learning only from successes"
+      ],
+      "correct_options": [1],
+      "explanation": "The 'False Growth Mindset' involves praising effort without analysis. True growth requires meaningful work, honest feedback, effective strategies, and revision.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What are the three steps of the Learning Model?",
+      "points": 1,
+      "options": [
+        "Read, Write, Test",
+        "Prepare, Teach One Another, Ponder & Prove",
+        "Study, Practice, Review",
+        "Listen, Memorize, Recite"
+      ],
+      "correct_options": [1],
+      "explanation": "The Learning Model is a three-step spiritual framework: Prepare, Teach One Another, Ponder & Prove. This sanctifies the learning process.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What happens in our brains when we struggle with learning, according to the 'Neural Pathway of Faith' concept?",
+      "points": 1,
+      "options": [
+        "Brain activity decreases",
+        "We build new neural pathways",
+        "We revert to old habits",
+        "Only the emotional centers activate"
+      ],
+      "correct_options": [1],
+      "explanation": "When we struggle, our brains actively build new neural pathways. A growth mindset uses this activity to analyze mistakes and try new approaches.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of these is an example of active learning?",
+      "points": 1,
+      "options": [
+        "Passively re-reading a textbook",
+        "Highlighting without thinking",
+        "Strategic note-taking like Cornell Notes",
+        "Listening to lectures without taking notes"
+      ],
+      "correct_options": [2],
+      "explanation": "Active learning involves engagement like strategic note-taking, self-quizzing, and concept mapping, as opposed to passive methods like re-reading.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the purpose of the 'Prepare' phase in the Learning Model?",
+      "points": 1,
+      "options": [
+        "To activate your mind and consecrate your study",
+        "To take final exams",
+        "To grade others' work",
+        "To plan your career path"
+      ],
+      "correct_options": [0],
+      "explanation": "The Prepare phase involves activating your mind, consecrating your study, completing assignments early, and engaging with materials actively.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How does the 'Teach One Another' phase transform learning?",
+      "points": 1,
+      "options": [
+        "It makes you responsible for others' grades",
+        "It turns education from personal acquisition into a divine offering",
+        "It reduces your study time",
+        "It focuses only on teaching skills"
+      ],
+      "correct_options": [1],
+      "explanation": "Teaching deepens learning and invites the Spirit of revelation. It transforms education from personal acquisition into a divine offering through sharing.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the 'Ponder & Prove' phase designed to do?",
+      "points": 1,
+      "options": [
+        "Create study schedules",
+        "Internalize and apply knowledge",
+        "Prepare teaching materials",
+        "Take breaks from studying"
+      ],
+      "correct_options": [1],
+      "explanation": "The Ponder & Prove phase focuses on reflection to turn information into integrated understanding and testimony, applying learning in real life.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is a 'Learning Protocol'?",
+      "points": 1,
+      "options": [
+        "A school's administrative rules",
+        "A personalized plan combining mindset, model, and practical strategies",
+        "A teacher's lesson plan",
+        "A standardized test format"
+      ],
+      "correct_options": [1],
+      "explanation": "A Learning Protocol is a personalized, proactive plan that combines mindset, the Learning Model, and practical strategies for effective learning.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which technique involves 25-minute focused work intervals followed by short breaks?",
+      "points": 1,
+      "options": [
+        "SQ3R Method",
+        "Pomodoro Technique",
+        "Feynman Technique",
+        "Cornell Method"
+      ],
+      "correct_options": [1],
+      "explanation": "The Pomodoro Technique uses 25-minute focused work intervals followed by 5-minute breaks to steward time and attention as sacred resources.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What should you do at the beginning of each study session according to the Tips for Success?",
+      "points": 1,
+      "options": [
+        "Check social media",
+        "Consecrate your study space with prayerful intent",
+        "Plan your entire week",
+        "Review previous exams"
+      ],
+      "correct_options": [1],
+      "explanation": "Beginning each study session with prayerful intent to focus and learn sanctifies your efforts and consecrates your study space.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How should you treat your Learning Protocol?",
+      "points": 1,
+      "options": [
+        "As a fixed document never to be changed",
+        "As a revelation log to update weekly",
+        "As something to share with everyone",
+        "As a theoretical exercise"
+      ],
+      "correct_options": [1],
+      "explanation": "Your Learning Protocol should be treated as a revelation log - update it weekly, note what strategies work and which don't, as this is how you 'learn how to learn.'",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What type of feedback should you seek for true growth?",
+      "points": 1,
+      "options": [
+        "Only positive validation",
+        "Feedback on gaps in your understanding",
+        "Comparisons to others' performance",
+        "General compliments"
+      ],
+      "correct_options": [1],
+      "explanation": "For true growth, seek feedback on gaps in understanding rather than just validation. Asking 'What's one gap in my understanding?' demonstrates true growth mindset.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What does the 'Teach It' Test involve?",
+      "points": 1,
+      "options": [
+        "Teaching professionally",
+        "Imagining explaining a concept to someone else",
+        "Creating lesson plans",
+        "Grading other students"
+      ],
+      "correct_options": [1],
+      "explanation": "The 'Teach It' Test involves imagining explaining a concept to a family member to see if your understanding holds up - this is the heart of 'Teach One Another.'",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the main focus of Week 3 according to the Next Week Preview?",
+      "points": 1,
+      "options": [
+        "Advanced learning techniques",
+        "Professional Fundamentals and digital presence",
+        "Spiritual development only",
+        "Career counseling"
+      ],
+      "correct_options": [1],
+      "explanation": "Week 3 focuses on Professional Fundamentals, including crafting a virtuous digital presence, communicating with clarity, and building foundational professional habits.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "According to Plutarch, 'The mind is not a vessel to be filled, but...'",
+      "points": 1,
+      "options": [
+        "A computer to be programmed",
+        "A tool to be sharpened",
+        "A fire to be kindled",
+        "A garden to be planted"
+      ],
+      "correct_options": [2],
+      "explanation": "Plutarch said, 'The mind is not a vessel to be filled, but a fire to be kindled.' This emphasizes active, engaged learning over passive consumption.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is 'Stewarding Your Resources' in the context of learning?",
+      "points": 1,
+      "options": [
+        "Saving money on textbooks",
+        "Identifying and using your learning ecosystem (instructors, peers, tools)",
+        "Using only free online resources",
+        "Minimizing resource usage"
+      ],
+      "correct_options": [1],
+      "explanation": "Stewarding Your Resources involves proactively identifying and using your learning ecosystem: instructors, peer study groups, and digital tools. Asking for help is part of wise stewardship.",
+      "required": true
+    }
+  ]
+}

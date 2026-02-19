@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Week 1 Assignment: Professional Document Creation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Microsoft Word Theme Colors */
+        :root {
+            --word-blue: #2b579a;
+            --word-blue-dark: #1e3c6e;
+            --word-blue-light: #4a7bc9;
+            --word-gray: #f2f2f2;
+            --word-gray-dark: #d9d9d9;
+            --word-text: #333333;
+            --word-text-light: #666666;
+            --word-accent: #ff6b6b;
+            --word-success: #4caf50;
+            --word-warning: #ff9800;
+            --word-border: #e0e0e0;
+            --word-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--word-text);
+            background-color: #f8f9fa;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header - Word Style */
+        .main-header {
+            background: linear-gradient(135deg, var(--word-blue-dark), var(--word-blue));
+            color: white;
+            padding: 1.5rem 0;
+            border-bottom: 4px solid var(--word-blue-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .word-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .word-logo i {
+            background: white;
+            color: var(--word-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assignment-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Navigation - Word Ribbon Style */
+        .nav-ribbon {
+            background: white;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--word-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .ribbon-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .ribbon-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ribbon-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--word-blue);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .ribbon-tab:hover,
+        .ribbon-tab.active {
+            background: var(--word-gray);
+            border-color: var(--word-border);
+        }
+
+        .ribbon-tab i {
+            font-size: 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--word-blue);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--word-gray);
+        }
+
+        /* Main Content - Document Style */
+        .main-content {
+            padding: 2rem 0;
+            background: linear-gradient(to bottom, #ffffff, #fafafa);
+        }
+
+        /* Document Container - Looks like Word Window */
+        .document-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--word-shadow);
+            border: 1px solid var(--word-border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .document-toolbar {
+            background: var(--word-gray);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--word-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            background: white;
+            border: 1px solid var(--word-border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--word-blue-light);
+            color: white;
+            border-color: var(--word-blue-light);
+        }
+
+        .document-content {
+            padding: 2rem;
+            min-height: 500px;
+        }
+
+        /* Assignment Sections */
+        .assignment-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--word-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            background: var(--word-blue);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--word-blue);
+            margin: 0;
+        }
+
+        /* Instructions */
+        .instructions-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--word-blue);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .step-list {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .step-list li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .step-list li strong {
+            color: var(--word-blue-dark);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .hint-box {
+            background: #fff3e0;
+            border-left: 4px solid var(--word-warning);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+        }
+
+        .hint-box i {
+            color: var(--word-warning);
+            margin-right: 0.5rem;
+        }
+
+        /* File Submission */
+        .submission-box {
+            background: #e8f5e9;
+            border-left: 4px solid var(--word-success);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .submission-title {
+            color: var(--word-success);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .file-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--word-border);
+        }
+
+        .file-list i {
+            color: var(--word-blue);
+            font-size: 1.2rem;
+        }
+
+        /* Grading Checklist */
+        .grading-section {
+            background: #f3e5f5;
+            border-left: 4px solid #7b1fa2;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .checklist {
+            margin: 1rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--word-border);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-top: 0.25rem;
+            transform: scale(1.2);
+        }
+
+        /* Word Demo Document */
+        .word-demo {
+            background: white;
+            border: 1px solid var(--word-border);
+            border-radius: 4px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Calibri', 'Segoe UI', sans-serif;
+            line-height: 1.8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-title {
+            color: var(--word-blue);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--word-blue);
+            padding-bottom: 0.5rem;
+        }
+
+        .demo-date {
+            text-align: center;
+            color: var(--word-text-light);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .demo-goals {
+            margin-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--word-border);
+            color: var(--word-text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Resources */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .resource-card {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--word-border);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-card h4 {
+            color: var(--word-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .resource-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resource-card li {
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .resource-card a {
+            color: var(--word-blue);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .resource-card a:hover {
+            color: var(--word-blue-dark);
+            text-decoration: underline;
+        }
+
+        /* Buttons - Word Style */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--word-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--word-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--word-blue);
+            border: 2px solid var(--word-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--word-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        /* Footer */
+        .main-footer {
+            background: var(--word-blue-dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-content .subtitle {
+                font-size: 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .ribbon-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .ribbon-tabs {
+                flex-direction: column;
+                display: none;
+                width: 100%;
+            }
+
+            .ribbon-tabs.active {
+                display: flex;
+            }
+
+            .ribbon-tab {
+                justify-content: center;
+            }
+
+            .document-content {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .word-demo {
+                padding: 1.5rem;
+                font-size: 0.95rem;
+            }
+
+            .demo-title {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-group {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .main-header {
+                padding: 1rem 0;
+            }
+
+            .main-content {
+                padding: 1.5rem 0;
+            }
+
+            .document-content {
+                padding: 1rem;
+            }
+
+            .assignment-tag {
+                font-size: 0.85rem;
+                padding: 0.4rem 1.2rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-ribbon,
+            .btn,
+            .mobile-menu-btn,
+            .toolbar-btn,
+            .footer-links {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .document-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .assignment-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="word-logo">
+                    <i class="fas fa-file-word"></i>
+                    <span>Microsoft Word 2019</span>
+                </div>
+                <h1>Week 1 Assignment: Professional Document Creation</h1>
+                <div class="subtitle">
+                    Practice creating, formatting, navigating, saving, and preparing a document for sharing
+                </div>
+                <div class="assignment-tag">
+                    <i class="fas fa-tasks"></i>
+                    <span>Due: End of Week 1 • 100 Points</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Ribbon -->
+    <nav class="nav-ribbon">
+        <div class="container">
+            <div class="ribbon-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ribbon-tabs" id="ribbonTabs">
+                    <a href="#" class="ribbon-tab active">
+                        <i class="fas fa-home"></i>
+                        <span>Assignment</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-download"></i>
+                        <span>Resources</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-print"></i>
+                        <span>Print</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-share"></i>
+                        <span>Submit</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Document Container -->
+            <div class="document-container">
+                <div class="document-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            <span>Print</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            <span>Template</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="showWordDemo()">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <div style="font-weight: 600; color: var(--word-blue);">
+                            <i class="fas fa-clock"></i>
+                            Time Estimate: 20-30 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-content">
+                    <!-- Objective -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h2 class="section-title">Objective</h2>
+                        </div>
+                        <p style="font-size: 1.1rem; line-height: 1.8;">
+                            Practice creating, formatting, navigating, saving, and preparing a document for sharing—using the core skills covered in Week 1.
+                        </p>
+                    </section>
+
+                    <!-- Instructions -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                            <h2 class="section-title">Instructions</h2>
+                        </div>
+                        
+                        <p>Follow the steps below to create a one-page professional document. Complete all tasks in <strong>Microsoft Word 2019</strong> (or later).</p>
+
+                        <!-- Part 1 -->
+                        <div class="instructions-box">
+                            <h3 style="color: var(--word-blue); margin-bottom: 1rem;">
+                                <i class="fas fa-file-word"></i> Part 1: Create & Save a New Document
+                            </h3>
+                            <ol class="step-list">
+                                <li>
+                                    <strong>Open Microsoft Word</strong> and create a new blank document.
+                                </li>
+                                <li>
+                                    <strong>Type the following title</strong> at the top:<br>
+                                    <div style="background: #f0f0f0; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; font-weight: bold; color: var(--word-blue);">
+                                        "Personal Learning Goals for This Course"
+                                    </div>
+                                </li>
+                                <li>
+                                    <strong>Below the title,</strong> add today's date.
+                                </li>
+                                <li>
+                                    <strong>Save the document</strong> to your computer with the filename:<br>
+                                    <div style="background: #f0f0f0; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; font-family: monospace;">
+                                        LastName_FirstInitial_W1_Assignment
+                                    </div>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">
+                                        Example: <code>Smith_J_W1_Assignment</code>
+                                    </span>
+                                </li>
+                                <li>
+                                    <strong>Save it first</strong> in the default <strong>.docx</strong> format.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Part 2 -->
+                        <div class="instructions-box">
+                            <h3 style="color: var(--word-blue); margin-bottom: 1rem;">
+                                <i class="fas fa-search"></i> Part 2: Use Navigation & Editing Tools
+                            </h3>
+                            <ol class="step-list">
+                                <li>
+                                    <strong>Type at least three learning goals</strong> you have for this Word course.<br>
+                                    <span style="font-size: 0.95rem; color: var(--word-text-light);">
+                                        Example: "I want to learn how to create professional reports."
+                                    </span>
+                                </li>
+                                <li>
+                                    <strong>Use the Navigation Pane</strong> (under the <em>View</em> tab) to find the word "learn" in your document.
+                                </li>
+                                <li>
+                                    <strong>Use Go To</strong> (Ctrl+G) to jump to <strong>Page 1</strong> (though you only have one page).
+                                </li>
+                                <li>
+                                    <strong>Turn ON formatting symbols</strong> (Show/Hide ¶) to see spaces and paragraph marks.
+                                    <div class="hint-box">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <strong>Hint:</strong> The button is in the Home tab, Paragraph group.
+                                    </div>
+                                    Take a screenshot of this view.
+                                </li>
+                                <li>
+                                    <strong>Turn formatting symbols OFF</strong> before moving on.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Part 3 -->
+                        <div class="instructions-box">
+                            <h3 style="color: var(--word-blue); margin-bottom: 1rem;">
+                                <i class="fas fa-save"></i> Part 3: Save in Another Format & Set Print Options
+                            </h3>
+                            <ol class="step-list">
+                                <li>
+                                    <strong>Save a copy</strong> of your document <strong>as a PDF</strong> using <strong>Save As</strong>.<br>
+                                    Name it: <code>LastName_FirstInitial_W1_Assignment.pdf</code>
+                                </li>
+                                <li>
+                                    <strong>Open the Print Preview</strong> (File > Print).<br>
+                                    Set the following:
+                                    <ul style="margin: 0.5rem 0 0.5rem 2rem;">
+                                        <li>Orientation: Portrait</li>
+                                        <li>Margins: Normal</li>
+                                        <li>1 page per sheet</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>Do not actually print</strong>, just review the preview.
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Part 4 -->
+                        <div class="instructions-box">
+                            <h3 style="color: var(--word-blue); margin-bottom: 1rem;">
+                                <i class="fas fa-share-alt"></i> Part 4: Prepare for Sharing
+                            </h3>
+                            <ol class="step-list">
+                                <li>
+                                    <strong>At the bottom</strong> of your Word document, add this note:<br>
+                                    <div style="background: #f0f0f0; padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; font-style: italic;">
+                                        "Document prepared by [Your Name] for submission in Week 1."
+                                    </div>
+                                </li>
+                                <li>
+                                    <strong>Use Share > Email as Attachment</strong> simulation:
+                                    <ul style="margin: 0.5rem 0 0.5rem 2rem;">
+                                        <li>Go to File > Share > Email</li>
+                                        <li>Choose "Send as Attachment" (but do not actually send an email)</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>Close Word</strong> properly.
+                                </li>
+                            </ol>
+                        </div>
+                    </section>
+
+                    <!-- Sample Document Preview -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h2 class="section-title">Sample Document Preview</h2>
+                        </div>
+                        
+                        <div class="word-demo">
+                            <div class="demo-title">Personal Learning Goals for This Course</div>
+                            <div class="demo-date">January 15, 2024</div>
+                            
+                            <p>This document outlines my learning objectives for the Microsoft Word certification course. I aim to develop practical skills that will enhance my document creation and management abilities.</p>
+                            
+                            <h3 style="color: var(--word-blue); margin: 1.5rem 0 1rem 0;">My Learning Goals:</h3>
+                            <ol class="demo-goals">
+                                <li>I want to learn how to create professional reports with proper formatting and styles.</li>
+                                <li>I aim to master document navigation tools like the Navigation Pane and Go To features.</li>
+                                <li>I need to understand how to properly save and share documents in different formats.</li>
+                            </ol>
+                            
+                            <p>By achieving these goals, I will be able to work more efficiently with Word documents in both academic and professional settings.</p>
+                            
+                            <div class="demo-footer">
+                                <em>Document prepared by Jane Smith for submission in Week 1.</em>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Submission Requirements -->
+                    <section class="submission-box">
+                        <div class="submission-title">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>What to Submit</span>
+                        </div>
+                        <p>Please submit the following files in the Week 1 Assignment dropbox:</p>
+                        
+                        <ul class="file-list">
+                            <li>
+                                <i class="fas fa-file-word"></i>
+                                <div>
+                                    <strong>The Word document (.docx)</strong><br>
+                                    <code>LastName_FirstInitial_W1_Assignment.docx</code>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-file-pdf"></i>
+                                <div>
+                                    <strong>The PDF version</strong><br>
+                                    <code>LastName_FirstInitial_W1_Assignment.pdf</code>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-camera"></i>
+                                <div>
+                                    <strong>Screenshot</strong><br>
+                                    Showing formatting symbols turned ON
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Grading Checklist -->
+                    <section class="grading-section">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: #7b1fa2;">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <h2 class="section-title" style="color: #7b1fa2;">Grading Checklist</h2>
+                        </div>
+                        
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check1">
+                                <label for="check1">
+                                    <strong>Document created with title, date, and three learning goals</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">All content elements present and properly formatted</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check2">
+                                <label for="check2">
+                                    <strong>Saved correctly in .docx and .pdf formats</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Both files follow naming convention</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check3">
+                                <label for="check3">
+                                    <strong>Evidence of using Navigation Pane or Go To</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Mention in document if needed</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check4">
+                                <label for="check4">
+                                    <strong>Print settings reviewed</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Proper orientation and margins set</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check5">
+                                <label for="check5">
+                                    <strong>Professional appearance and filename as instructed</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Clean layout and proper naming</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <strong style="color: #7b1fa2;">Due by the end of this week.</strong>
+                            <span style="display: block; margin-top: 0.5rem; color: var(--word-text-light);">
+                                Total Points: 100
+                            </span>
+                        </div>
+                    </section>
+
+                    <!-- Action Buttons -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="simulateSubmission()">
+                            <i class="fas fa-upload"></i>
+                            Submit Assignment
+                        </button>
+                        <button class="btn btn-secondary" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            Print Instructions
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            Download Template
+                        </button>
+                    </div>
+
+                    <!-- Resources -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-life-ring"></i>
+                            </div>
+                            <h2 class="section-title">Resources & Help</h2>
+                        </div>
+                        
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-video"></i>
+                                    Video Tutorials
+                                </h4>
+                                <ul>
+                                    <li><a href="#" onclick="showVideo('word-interface')">Word 2019 Interface Overview</a></li>
+                                    <li><a href="#" onclick="showVideo('navigation-pane')">Using Navigation Pane</a></li>
+                                    <li><a href="#" onclick="showVideo('save-pdf')">Saving as PDF</a></li>
+                                    <li><a href="#" onclick="showVideo('print-settings')">Print Settings & Preview</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-book"></i>
+                                    Learning Materials
+                                </h4>
+                                <ul>
+                                    <li><a href="#" onclick="openGuide('week1-guide')">Week 1 Course Guide</a></li>
+                                    <li><a href="#" onclick="openGuide('keyboard-shortcuts')">Word Keyboard Shortcuts</a></li>
+                                    <li><a href="#" onclick="openGuide('file-formats')">Understanding File Formats</a></li>
+                                    <li><a href="https://support.microsoft.com/word" target="_blank">Microsoft Word Help</a></li>
+                                </ul>
+                            </div>
+                            
+                            <!--<div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-users"></i>
+                                    Support
+                                </h4>
+                                <ul>
+                                    <li><strong>Instructor:</strong> Dr. Emily Rodriguez</li>
+                                    <li><strong>Email:</strong> erodriguez@impactdigital.edu</li>
+                                    <li><strong>Office Hours:</strong> Mon/Wed 3-5 PM</li>
+                                    <li><a href="#" onclick="openForum()">Week 1 Discussion Forum</a></li>
+                                    <li><a href="#" onclick="openFAQ()">Frequently Asked Questions</a></li>
+                                </ul>
+                            </div> -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Microsoft Word 2019 Certification Prep • Week 1 Assignment</p>
+                <p>Impact Digital Academy • © 2026 • Assignment ID: WORD-W1-001</p>
+                
+                <div class="footer-links">
+                    <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                    <a href="#" onclick="showTerms()">Terms of Service</a>
+                    <a href="#" onclick="showAcademicIntegrity()">Academic Integrity</a>
+                    <a href="#" onclick="showAccessibility()">Accessibility</a>
+                    <a href="#" onclick="showContact()">Contact Us</a>
+                </div>
+                
+                <div class="footer-info">
+                    <p>
+                        <i class="fas fa-clock"></i> 
+                        Page loaded: <span id="currentDateTime"></span>
+                    </p>
+                    <p style="margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        This assignment must be completed using Microsoft Word 2019 or later.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const ribbonTabs = document.getElementById('ribbonTabs');
+            ribbonTabs.classList.toggle('active');
+            this.innerHTML = ribbonTabs.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Ribbon tab functionality
+        const ribbonTabs = document.querySelectorAll('.ribbon-tab');
+        ribbonTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                ribbonTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Handle tab actions
+                const tabText = this.textContent.trim();
+                switch(tabText) {
+                    case 'Assignment':
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        break;
+                    case 'Resources':
+                        document.querySelector('.resources-grid').scrollIntoView({ behavior: 'smooth' });
+                        break;
+                    case 'Help':
+                        alert('Help resources would open in a real implementation.');
+                        break;
+                    case 'Print':
+                        printInstructions();
+                        break;
+                    case 'Submit':
+                        simulateSubmission();
+                        break;
+                }
+            });
+        });
+
+        // Simulate assignment submission
+        function simulateSubmission() {
+            // Check if checklist is complete
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount < 3) {
+                alert('Please complete at least 3 items on the checklist before submitting.\n\nCurrent completion: ' + checkedCount + '/5');
+                return;
+            }
+            
+            // Get current time for submission
+            const now = new Date();
+            const submissionTime = now.toLocaleString();
+            
+            // Show submission confirmation
+            const confirmed = confirm(`Submit Week 1 Assignment?\n\n• Word document (.docx)\n• PDF version\n• Optional screenshot\n\nSubmission time: ${submissionTime}`);
+            
+            if (confirmed) {
+                // Show loading state
+                const submitBtn = document.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                submitBtn.disabled = true;
+                
+                // Simulate submission process
+                setTimeout(() => {
+                    alert('✅ Assignment submitted successfully!\n\nFiles uploaded:\n• YourName_W1_Assignment.docx\n• YourName_W1_Assignment.pdf\n\nSubmission recorded: ' + submissionTime + '\n\nYou will receive grading feedback within 3 business days.');
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Update checklist items as submitted
+                    checkboxes.forEach(cb => {
+                        if (!cb.checked) {
+                            cb.checked = true;
+                            cb.dispatchEvent(new Event('change'));
+                        }
+                    });
+                    
+                    // Add success indicator
+                    const submissionBox = document.querySelector('.submission-box');
+                    submissionBox.innerHTML = `
+                        <div class="submission-title">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Submission Complete!</span>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 6px; margin: 1rem 0;">
+                            <p><strong>Submitted:</strong> ${submissionTime}</p>
+                            <p><strong>Files:</strong> 2 files uploaded (.docx, .pdf)</p>
+                            <p><strong>Status:</strong> <span style="color: var(--word-success);">Awaiting Grading</span></p>
+                            <p><strong>Estimated Feedback:</strong> Within 3 business days</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 1rem;">
+                            <i class="fas fa-print"></i> Print Confirmation
+                        </button>
+                    `;
+                    
+                    // Scroll to submission confirmation
+                    submissionBox.scrollIntoView({ behavior: 'smooth' });
+                }, 1500);
+            }
+        }
+
+        // Print assignment instructions
+        function printInstructions() {
+            // Create print-friendly version
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Word Week 1 Assignment Instructions</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; color: #333; }
+                        h1 { color: #2b579a; border-bottom: 2px solid #2b579a; padding-bottom: 10px; }
+                        h2 { color: #2b579a; margin-top: 25px; }
+                        .instructions-box { background: #f8f9fa; padding: 15px; border-left: 4px solid #2b579a; margin: 15px 0; }
+                        .checklist-item { margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; }
+                        .print-date { text-align: right; font-size: 0.9em; color: #666; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-date">Printed: ${new Date().toLocaleString()}</div>
+                    <h1>Microsoft Word Week 1 Assignment</h1>
+                    <h2>Professional Document Creation</h2>
+                    
+                    ${document.querySelector('.document-content').innerHTML}
+                    
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+                        <p>Impact Digital Academy • Microsoft Word Certification Prep • Week 1</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Download template
+        function downloadTemplate() {
+            // In a real implementation, this would download a Word template file
+            alert('📝 Word template would download.\n\nIn a real implementation, this would download a starter document with placeholders for your assignment.');
+            
+            // Simulate download progress
+            const downloadBtn = document.querySelector('.btn-secondary:nth-child(3)');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                alert('✅ Template downloaded successfully!\n\nOpen the file in Microsoft Word to begin your assignment.');
+            }, 1000);
+        }
+
+        // Show Word demo in modal
+        function showWordDemo() {
+            const demoContent = document.querySelector('.word-demo').innerHTML;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 8px; padding: 2rem; position: relative;">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 style="color: var(--word-blue); margin-bottom: 1.5rem;">Sample Document Preview</h2>
+                    <div style="font-family: 'Calibri', 'Segoe UI', sans-serif; line-height: 1.8;">
+                        ${demoContent}
+                    </div>
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button onclick="window.print()" style="background: var(--word-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer;">
+                            <i class="fas fa-print"></i> Print Preview
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Update current date/time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Checkbox interaction
+        const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checklistItem = this.closest('.checklist-item');
+                if (this.checked) {
+                    checklistItem.style.background = '#e8f5e9';
+                    checklistItem.style.borderLeft = '3px solid #4caf50';
+                } else {
+                    checklistItem.style.background = 'white';
+                    checklistItem.style.borderLeft = 'none';
+                }
+                
+                // Update completion percentage
+                const checkedCount = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked').length;
+                const totalCount = checkboxes.length;
+                const percentage = Math.round((checkedCount / totalCount) * 100);
+                
+                // Update progress indicator
+                const progressIndicator = document.querySelector('.assignment-tag span');
+                if (progressIndicator && checkedCount > 0) {
+                    progressIndicator.innerHTML = `${percentage}% Complete • Due: End of Week 1`;
+                }
+            });
+        });
+
+        // Auto-check some items after a delay (for demo)
+        setTimeout(() => {
+            checkboxes[0].checked = true;
+            checkboxes[0].dispatchEvent(new Event('change'));
+            checkboxes[1].checked = true;
+            checkboxes[1].dispatchEvent(new Event('change'));
+        }, 2000);
+
+        // Toolbar button functionality
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Resource links functionality
+        function showVideo(videoId) {
+            alert('🎬 Video tutorial would play: ' + videoId.replace('-', ' ') + '\n\nIn a real implementation, this would open a video player.');
+        }
+
+        function openGuide(guideId) {
+            alert('📚 Learning guide would open: ' + guideId.replace('-', ' ') + '\n\nIn a real implementation, this would open a PDF or web page.');
+        }
+
+        function openForum() {
+            alert('💬 Discussion forum would open.\n\nIn a real implementation, this would navigate to the course discussion board.');
+        }
+
+        function openFAQ() {
+            alert('❓ FAQ page would open.\n\nIn a real implementation, this would show frequently asked questions about the assignment.');
+        }
+
+        // Footer link functions
+        function showPrivacy() { alert('Privacy policy information would display.'); }
+        function showTerms() { alert('Terms of service would display.'); }
+        function showAcademicIntegrity() { alert('Academic integrity policy would display.'); }
+        function showAccessibility() { alert('Accessibility information would display.'); }
+        function showContact() { alert('Contact information would display.'); }
+
+        // Word keyboard shortcuts simulation
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+S shows save reminder
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                alert('💾 Word Shortcut: Ctrl+S saves your document.\n\nRemember to save your assignment frequently!');
+            }
+            
+            // Ctrl+G shows Go To reminder
+            if (e.ctrlKey && e.key === 'g') {
+                e.preventDefault();
+                alert('🔍 Word Shortcut: Ctrl+G opens the Go To dialog.\n\nUse this in Part 2 of your assignment to jump to Page 1.');
+            }
+            
+            // Ctrl+P shows print reminder
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                alert('🖨️ Word Shortcut: Ctrl+P opens the Print menu.\n\nUse this in Part 3 to review your print settings.');
+            }
+        });
+
+        // Drag and drop simulation for file upload
+        const submissionBox = document.querySelector('.submission-box');
+        submissionBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(1.02)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        submissionBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(1)';
+        });
+        
+        submissionBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(1)';
+            alert('📁 Files dropped! In a real implementation, this would upload your assignment files.');
+        });
+    </script>
+</body>
+</html>

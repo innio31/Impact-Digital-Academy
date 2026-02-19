@@ -1,0 +1,234 @@
+{
+  "questions": [
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which keyboard shortcut opens a new blank document in Word?",
+      "points": 1,
+      "options": [
+        "Ctrl + O",
+        "Ctrl + N",
+        "Ctrl + S",
+        "Ctrl + P"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Ctrl + N is the keyboard shortcut for creating a new blank document.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The Ribbon in Word 2019 contains tabs such as Home, Insert, and Design.",
+      "points": 1,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "The Ribbon is organized into tabs like Home, Insert, Design, Layout, etc.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which feature allows you to browse by headings, pages, or search results in a document?",
+      "points": 1,
+      "options": [
+        "Quick Access Toolbar",
+        "Navigation Pane",
+        "Status Bar",
+        "Backstage View"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The Navigation Pane lets you browse by headings, pages, or search results.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the purpose of pressing Ctrl + Shift + * in Word?",
+      "points": 1,
+      "options": [
+        "Save the document",
+        "Show or hide formatting symbols",
+        "Open the Print menu",
+        "Insert a bookmark"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Ctrl + Shift + * toggles the display of formatting symbols such as paragraph marks and spaces.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "You can only save Word documents in .docx format.",
+      "points": 1,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Word supports multiple formats, including .pdf, .rtf, .txt, and more.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which option is part of the Backstage View?",
+      "points": 1,
+      "options": [
+        "Find and Replace",
+        "Save As",
+        "Change Font Size",
+        "Insert Table"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Backstage View is accessed via the File tab and includes Save, Open, Print, Share, and Export.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What does Ctrl + G allow you to do in Word?",
+      "points": 1,
+      "options": [
+        "Go to a specific page, section, or bookmark",
+        "Group selected objects",
+        "Toggle grammar check",
+        "Insert a graphic"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "Ctrl + G opens the Go To dialog, allowing you to jump to a page, section, line, or bookmark.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The Quick Access Toolbar cannot be customized.",
+      "points": 1,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The Quick Access Toolbar is customizable and can be set to show your most-used commands.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which file format is recommended for sharing a document while preserving its layout and formatting?",
+      "points": 1,
+      "options": [
+        ".txt",
+        ".rtf",
+        ".pdf",
+        ".xlsx"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "PDF (Portable Document Format) preserves fonts, images, and layout across devices.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Where can you see the word count and page number in Word?",
+      "points": 1,
+      "options": [
+        "Ribbon",
+        "Quick Access Toolbar",
+        "Status Bar",
+        "Navigation Pane"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "The Status Bar at the bottom displays page count, word count, zoom, and view options.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "Bookmarks in Word can only be used in documents longer than 10 pages.",
+      "points": 1,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Bookmarks can be used in documents of any length to mark important locations.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which keyboard shortcut opens the Print menu?",
+      "points": 1,
+      "options": [
+        "Ctrl + P",
+        "Ctrl + S",
+        "Ctrl + F",
+        "Ctrl + N"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "Ctrl + P opens the Print menu in Backstage View.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the main benefit of saving a document to OneDrive?",
+      "points": 1,
+      "options": [
+        "Faster printing",
+        "Automatic versioning and cloud access",
+        "Larger file size support",
+        "Free templates"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "OneDrive enables AutoSave, version history, and access from any device.",
+      "required": true
+    },
+    {
+      "question_type": "true_false",
+      "question_text": "The Navigation Pane can only be opened from the View tab.",
+      "points": 1,
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The Navigation Pane can also be opened using Ctrl + F or by checking the box in the View tab.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of the following is NOT a way to share a Word document?",
+      "points": 1,
+      "options": [
+        "Attach as an email file",
+        "Export as PDF and send a link",
+        "Share via OneDrive with permissions",
+        "Print and mail a hard copy only"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Word supports multiple sharing methods electronically; printing and mailing is not the only way.",
+      "required": true
+    }
+  ]
+}

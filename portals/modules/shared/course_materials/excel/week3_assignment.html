@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Excel Formatting Exercise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #107c10 0%, #1ba01b 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .content-area {
+            display: flex;
+            min-height: 800px;
+        }
+        
+        .sidebar {
+            width: 320px;
+            background-color: #f0f4f9;
+            padding: 25px 20px;
+            border-right: 1px solid #e0e6ed;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .step-container {
+            margin-bottom: 40px;
+            border-left: 4px solid #107c10;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px 0;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #107c10;
+            color: white;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #107c10;
+            margin: 0;
+        }
+        
+        .step-content {
+            padding: 0 0 20px 50px;
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .instructions {
+            background-color: #e8f4e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #107c10;
+        }
+        
+        .excel-demo-area {
+            background-color: #f9f9f9;
+            border: 1px solid #c9c9c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 25px;
+            min-height: 320px;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .excel-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 120px);
+            grid-auto-rows: 40px;
+            gap: 0;
+            border: 1px solid #ddd;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        .excel-cell {
+            border: 1px solid #ddd;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            overflow: hidden;
+        }
+        
+        .excel-header {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .excel-merged {
+            grid-column: span 5;
+            text-align: center;
+            font-weight: bold;
+            background-color: #e3f2fd;
+        }
+        
+        .excel-currency {
+            color: #107c10;
+        }
+        
+        .data-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .format-painter-sample {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+        
+        .demo-area h3 {
+            color: #107c10;
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            margin-top: auto;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-next {
+            background-color: #107c10;
+            color: white;
+        }
+        
+        .btn-prev {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-complete {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-homework {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e6ed;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #107c10;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #107c10;
+            margin-bottom: 10px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .step-indicator-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .step-indicator-item:hover {
+            background-color: rgba(16, 124, 16, 0.08);
+        }
+        
+        .step-indicator-item.active {
+            background-color: rgba(16, 124, 16, 0.15);
+            border-left: 4px solid #107c10;
+        }
+        
+        .step-indicator-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: #107c10;
+            color: white;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .step-indicator-item.active .step-indicator-number {
+            background-color: #1ba01b;
+        }
+        
+        .step-indicator-text {
+            font-size: 0.95rem;
+        }
+        
+        .completed-step {
+            color: #28a745;
+            margin-left: auto;
+        }
+        
+        .excel-ribbon {
+            display: flex;
+            background-color: #f3f3f3;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .ribbon-group {
+            display: flex;
+            margin-right: 25px;
+        }
+        
+        .ribbon-button {
+            padding: 6px 12px;
+            margin-right: 5px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ribbon-button:hover {
+            background-color: #e6f3ff;
+            border-color: #107c10;
+        }
+        
+        .ribbon-button.active {
+            background-color: #107c10;
+            color: white;
+            border-color: #107c10;
+        }
+        
+        .download-area {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .download-area.active {
+            display: block;
+        }
+        
+        .file-name {
+            font-family: monospace;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        .homework-section {
+            background-color: #fff9e6;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #ff9800;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .homework-section.active {
+            display: block;
+        }
+        
+        .keyboard-shortcut {
+            display: inline-block;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 0 3px;
+        }
+        
+        @media (max-width: 992px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e6ed;
+            }
+            
+            .excel-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .excel-grid {
+                grid-template-columns: repeat(5, 80px);
+                font-size: 11px;
+            }
+            
+            .excel-cell {
+                padding: 4px;
+            }
+        }
+        
+        .sparkline {
+            display: inline-block;
+            height: 20px;
+            width: 80px;
+            background: linear-gradient(to right, #4CAF50 0%, #4CAF50 30%, #8BC34A 30%, #8BC34A 60%, #CDDC39 60%, #CDDC39 80%, #FFC107 80%, #FFC107 100%);
+            border-radius: 3px;
+            margin-left: 10px;
+            position: relative;
+        }
+        
+        .sparkline::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 1px,
+                rgba(255,255,255,0.3) 1px,
+                rgba(255,255,255,0.3) 2px
+            );
+        }
+        
+        .quiz-question {
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .quiz-answer {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .quiz-answer.show {
+            display: block;
+        }
+        
+        .reveal-answer {
+            background-color: #e3f2fd;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-file-excel"></i>
+            </div>
+            <div>
+                <h1>Hands-On Exercise: Format a Product Inventory Sheet</h1>
+                <p>Apply Week 3 skills to create a well-formatted, easy-to-read inventory list</p>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="sidebar">
+                <div class="progress-text">Progress: <span id="progress-percent">0%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                
+                <h3>Exercise Steps</h3>
+                <div class="step-indicator" id="step-indicator">
+                    <!-- Steps will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="excel-ribbon" id="excel-ribbon">
+                    <div class="ribbon-group">
+                        <div class="ribbon-button" data-action="bold"><i class="fas fa-bold"></i></div>
+                        <div class="ribbon-button" data-action="center"><i class="fas fa-align-center"></i></div>
+                        <div class="ribbon-button" data-action="currency"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <div class="ribbon-group">
+                        <div class="ribbon-button" data-action="merge"><i class="fas fa-object-group"></i> Merge</div>
+                        <div class="ribbon-button" data-action="format-painter"><i class="fas fa-paint-brush"></i> Format Painter</div>
+                    </div>
+                    <div class="ribbon-group">
+                        <div class="ribbon-button" data-action="conditional"><i class="fas fa-chart-bar"></i> Conditional Formatting</div>
+                        <div class="ribbon-button" data-action="cell-style"><i class="fas fa-palette"></i> Cell Styles</div>
+                    </div>
+                </div>
+                
+                <div id="step-content-container">
+                    <!-- Step content will be loaded here by JavaScript -->
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-prev" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous Step
+                    </button>
+                    <button class="btn btn-next" id="next-btn">
+                        Next Step <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-complete" id="complete-btn" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Complete Exercise
+                    </button>
+                    <button class="btn btn-homework" id="homework-btn" style="display: none;">
+                        <i class="fas fa-graduation-cap"></i> View Homework
+                    </button>
+                </div>
+                
+                <div class="download-area" id="download-area">
+                    <h3><i class="fas fa-download"></i> Exercise Completed Successfully!</h3>
+                    <p>Your formatted inventory sheet has been created. Save your workbook with the following filename:</p>
+                    <div class="file-name">Inventory_Formatted.xlsx</div>
+                    <p>Congratulations! You've completed all steps of this exercise.</p>
+                    <button class="btn btn-complete" id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Exercise
+                    </button>
+                </div>
+                
+                <div class="homework-section" id="homework-section">
+                    <h3 style="color: #e65100; margin-top: 0;"><i class="fas fa-graduation-cap"></i> Weekly Homework Assignment</h3>
+                    
+                    <div class="quiz-question">
+                        <h4>1. Personal Budget Formatter</h4>
+                        <p>Create a simple monthly budget with Income and Expenses:</p>
+                        <ul>
+                            <li>Use Special Paste to copy values only</li>
+                            <li>Apply Currency formatting</li>
+                            <li>Use Cell Styles for totals</li>
+                            <li>Apply Conditional formatting to highlight overspending</li>
+                            <li>Name the total income and expense ranges</li>
+                        </ul>
+                        <button class="reveal-answer" data-answer="budget-tip">Tips for Success</button>
+                        <div class="quiz-answer" id="budget-tip">
+                            <p><strong>Tip:</strong> Start by listing income sources (Salary, Freelance, etc.) and expense categories (Rent, Groceries, Utilities, etc.). Use the SUM function for totals and apply red fill color with Conditional Formatting for expenses that exceed your budget.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <h4>2. Sparkline Practice</h4>
+                        <p>Create a small dataset of monthly sales (6 months):</p>
+                        <ul>
+                            <li>Insert Sparklines next to the data to show trend</li>
+                            <li>Apply Data Bars to another column</li>
+                        </ul>
+                        <div style="display: flex; align-items: center; margin-top: 10px;">
+                            <span>Sample Sales Trend: </span>
+                            <div class="sparkline"></div>
+                        </div>
+                        <button class="reveal-answer" data-answer="sparkline-tip">How to Insert Sparklines</button>
+                        <div class="quiz-answer" id="sparkline-tip">
+                            <p><strong>Instructions:</strong> Select your data range > Go to Insert tab > Click Sparklines > Choose Line, Column, or Win/Loss > Select where you want the sparklines to appear > Click OK.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <h4>3. Self-Quiz</h4>
+                        <p>Test your knowledge:</p>
+                        <ul>
+                            <li>What is the shortcut for Format Cells dialog? 
+                                <button class="reveal-answer" data-answer="shortcut-answer">Reveal Answer</button>
+                                <div class="quiz-answer" id="shortcut-answer">
+                                    <span class="keyboard-shortcut">Ctrl + 1</span> (Windows) or <span class="keyboard-shortcut">Cmd + 1</span> (Mac)
+                                </div>
+                            </li>
+                            <li>How do you apply Format Painter to multiple cells?
+                                <button class="reveal-answer" data-answer="painter-answer">Reveal Answer</button>
+                                <div class="quiz-answer" id="painter-answer">
+                                    Double-click the Format Painter button instead of single-clicking. This keeps it active until you press ESC or click the button again.
+                                </div>
+                            </li>
+                            <li>What are the rules for naming a range?
+                                <button class="reveal-answer" data-answer="range-answer">Reveal Answer</button>
+                                <div class="quiz-answer" id="range-answer">
+                                    <ul>
+                                        <li>Maximum 255 characters</li>
+                                        <li>Must begin with a letter or underscore</li>
+                                        <li>Cannot contain spaces (use underscores instead)</li>
+                                        <li>Cannot be a cell reference (like A1 or R1C1)</li>
+                                        <li>Not case-sensitive</li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p style="margin-top: 15px; font-weight: bold;">Due Date: Submit your completed exercises via the class portal by <span id="due-date"></span>.</p>
+                    
+                    <button class="btn btn-homework" id="back-to-exercise-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Main Exercise
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Exercise steps data
+        const exerciseSteps = [
+            {
+                id: 1,
+                title: "Create New Workbook & Enter Data",
+                instructions: `Create a new Excel workbook and enter the product inventory data as shown in the table below.`,
+                demoContent: `<h3><i class="fas fa-table"></i> Initial Data Entry</h3>
+                <p>Open Microsoft Excel and create a new workbook. Enter the following data starting from cell A1:</p>
+                
+                <div class="excel-grid" id="step1-grid">
+                    <div class="excel-cell excel-header">Product ID</div>
+                    <div class="excel-cell excel-header">Product Name</div>
+                    <div class="excel-cell excel-header">Category</div>
+                    <div class="excel-cell excel-header">Price</div>
+                    <div class="excel-cell excel-header">Stock</div>
+                    
+                    <div class="excel-cell">P001</div>
+                    <div class="excel-cell">Wireless Mouse</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell">29.99</div>
+                    <div class="excel-cell">45</div>
+                    
+                    <div class="excel-cell">P002</div>
+                    <div class="excel-cell">Mechanical Keyboard</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell">89.99</div>
+                    <div class="excel-cell">22</div>
+                    
+                    <div class="excel-cell">P003</div>
+                    <div class="excel-cell">Laptop Stand</div>
+                    <div class="excel-cell">Accessories</div>
+                    <div class="excel-cell">34.50</div>
+                    <div class="excel-cell">100</div>
+                    
+                    <div class="excel-cell">P004</div>
+                    <div class="excel-cell">USB-C Cable</div>
+                    <div class="excel-cell">Accessories</div>
+                    <div class="excel-cell">15.99</div>
+                    <div class="excel-cell">200</div>
+                    
+                    <div class="excel-cell">P005</div>
+                    <div class="excel-cell">Monitor 24"</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell">199.99</div>
+                    <div class="excel-cell">15</div>
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>Excel Tip:</strong> You can quickly select a range by clicking the first cell and Shift+Clicking the last cell, or by clicking and dragging.</p>`
+            },
+            {
+                id: 2,
+                title: "Format the Header Row",
+                instructions: `Merge and center cells A1:E1 to create a title, then format the header row (A2:E2) with appropriate styles.`,
+                demoContent: `<h3><i class="fas fa-heading"></i> Header Formatting</h3>
+                <p>Follow these steps to format your header row:</p>
+                <ol>
+                    <li><strong>Merge & Center A1:E1:</strong>
+                        <ul>
+                            <li>Select cells A1 through E1</li>
+                            <li>Click the "Merge & Center" button on the Home tab</li>
+                            <li>Type "Product Inventory Q1" in the merged cell</li>
+                        </ul>
+                    </li>
+                    <li><strong>Apply Cell Style: Title</strong>
+                        <ul>
+                            <li>With the merged cell selected, go to Home tab > Cell Styles</li>
+                            <li>Choose "Title" from the gallery</li>
+                        </ul>
+                    </li>
+                    <li><strong>Format column headers (A2:E2):</strong>
+                        <ul>
+                            <li>Select cells A2 through E2</li>
+                            <li>Click the <strong>Bold (B)</strong> button</li>
+                            <li>Click the <strong>Center Align</strong> button</li>
+                            <li>Apply Cell Style: "Heading 1"</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h4>Your formatted header should look like this:</h4>
+                <div class="excel-grid" id="step2-grid">
+                    <div class="excel-cell excel-merged">Product Inventory Q1</div>
+                    
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product ID</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product Name</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Category</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Price</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Stock</div>
+                    
+                    <div class="excel-cell">P001</div>
+                    <div class="excel-cell">Wireless Mouse</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell">29.99</div>
+                    <div class="excel-cell">45</div>
+                </div>`
+            },
+            {
+                id: 3,
+                title: "Format Data Columns",
+                instructions: `Apply appropriate formatting to the data columns: currency for Price, center alignment for Product ID and Stock, and wrap text for Product Name if needed.`,
+                demoContent: `<h3><i class="fas fa-edit"></i> Data Formatting</h3>
+                <p>Apply these formatting options to your data:</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4>1. Currency Format for Price:</h4>
+                        <ul>
+                            <li>Select cells D3:D7 (Price column data)</li>
+                            <li>Right-click and choose "Format Cells"</li>
+                            <li>Go to the Number tab</li>
+                            <li>Select "Currency"</li>
+                            <li>Set Decimal places to 2</li>
+                            <li>Choose $ symbol</li>
+                            <li>Click OK</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>2. Center Alignment:</h4>
+                        <ul>
+                            <li>Select Product ID column (A3:A7)</li>
+                            <li>Hold Ctrl and select Stock column (E3:E7)</li>
+                            <li>Click the Center Align button on Home tab</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4>3. Wrap Text for Product Name:</h4>
+                    <ul>
+                        <li>Select cells B3:B7 (Product Name column)</li>
+                        <li>Go to Home tab > Alignment group</li>
+                        <li>Click the "Wrap Text" button</li>
+                        <li>Adjust column width if needed by double-clicking the right border of column B header</li>
+                    </ul>
+                </div>
+                
+                <h4>Your formatted data should look like this:</h4>
+                <div class="excel-grid" id="step3-grid">
+                    <div class="excel-cell excel-merged">Product Inventory Q1</div>
+                    
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product ID</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product Name</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Category</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Price</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Stock</div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P001</div>
+                    <div class="excel-cell">Wireless Mouse</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$29.99</div>
+                    <div class="excel-cell" style="text-align: center;">45</div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P002</div>
+                    <div class="excel-cell">Mechanical Keyboard</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$89.99</div>
+                    <div class="excel-cell" style="text-align: center;">22</div>
+                </div>`
+            },
+            {
+                id: 4,
+                title: "Apply Data Bars to Stock Column",
+                instructions: `Use Conditional Formatting to apply Data Bars to the Stock column for visual representation of inventory levels.`,
+                demoContent: `<h3><i class="fas fa-chart-bar"></i> Data Bars (Conditional Formatting)</h3>
+                <p>Data bars provide a visual indicator of values in a range. Follow these steps:</p>
+                
+                <ol>
+                    <li><strong>Select the Stock data:</strong> Click and drag to select cells E3:E7</li>
+                    <li><strong>Open Conditional Formatting:</strong> Go to Home tab > Conditional Formatting</li>
+                    <li><strong>Choose Data Bars:</strong> Hover over "Data Bars" in the menu</li>
+                    <li><strong>Select a color:</strong> Choose either Gradient Fill or Solid Fill (green is commonly used for stock/inventory)</li>
+                    <li><strong>Customize if needed:</strong> For more options, click "More Rules" at the bottom of the Data Bars menu</li>
+                </ol>
+                
+                <div style="background-color: #e8f4e8; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                    <h4><i class="fas fa-lightbulb"></i> Pro Tip:</h4>
+                    <p>Data bars are dynamic - they automatically adjust when values change. They're great for quickly identifying high and low values in a range.</p>
+                </div>
+                
+                <h4>Your Stock column with Data Bars should look similar to this:</h4>
+                <div class="excel-grid" id="step4-grid">
+                    <div class="excel-cell excel-merged">Product Inventory Q1</div>
+                    
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product ID</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product Name</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Category</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Price</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Stock</div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P001</div>
+                    <div class="excel-cell">Wireless Mouse</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$29.99</div>
+                    <div class="excel-cell" style="text-align: center; display: flex; align-items: center;">
+                        45
+                        <div class="data-bar" style="width: 22.5%;"></div>
+                    </div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P002</div>
+                    <div class="excel-cell">Mechanical Keyboard</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$89.99</div>
+                    <div class="excel-cell" style="text-align: center; display: flex; align-items: center;">
+                        22
+                        <div class="data-bar" style="width: 11%;"></div>
+                    </div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P003</div>
+                    <div class="excel-cell">Laptop Stand</div>
+                    <div class="excel-cell">Accessories</div>
+                    <div class="excel-cell excel-currency">$34.50</div>
+                    <div class="excel-cell" style="text-align: center; display: flex; align-items: center;">
+                        100
+                        <div class="data-bar" style="width: 50%;"></div>
+                    </div>
+                </div>`
+            },
+            {
+                id: 5,
+                title: "Create a Named Range",
+                instructions: `Create a named range called "PriceList" for the Price column data (D3:D7).`,
+                demoContent: `<h3><i class="fas fa-tag"></i> Create Named Range "PriceList"</h3>
+                <p>Named ranges make formulas easier to read and maintain. Here's how to create one:</p>
+                
+                <ol>
+                    <li><strong>Select the Price data:</strong> Click and drag to select cells D3:D7</li>
+                    <li><strong>Locate the Name Box:</strong> Look at the top-left corner of Excel, just above column A</li>
+                    <li><strong>Type the name:</strong> Click in the Name Box, delete the current cell reference, and type <strong>PriceList</strong></li>
+                    <li><strong>Press Enter:</strong> Hit Enter to apply the name to the selected range</li>
+                </ol>
+                
+                <div style="display: flex; align-items: center; background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                    <div style="font-weight: bold; margin-right: 10px;">Name Box:</div>
+                    <div style="background-color: white; border: 1px solid #ccc; padding: 5px 10px; font-family: monospace; min-width: 150px;">PriceList</div>
+                    <div style="margin-left: 20px; color: #666; font-size: 0.9em;">(After typing, press Enter)</div>
+                </div>
+                
+                <div style="background-color: #e3f2fd; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                    <h4><i class="fas fa-check-circle"></i> Verify Your Named Range:</h4>
+                    <p>To verify the named range was created successfully:</p>
+                    <ol>
+                        <li>Click the drop-down arrow in the Name Box</li>
+                        <li>Look for "PriceList" in the list</li>
+                        <li>Select it - Excel should highlight cells D3:D7</li>
+                    </ol>
+                    <p>You can also go to Formulas tab > Name Manager to see all named ranges in your workbook.</p>
+                </div>
+                
+                <h4>Why Use Named Ranges?</h4>
+                <ul>
+                    <li>Makes formulas easier to understand (e.g., =SUM(PriceList) instead of =SUM(D3:D7))</li>
+                    <li>If you add more data, you can expand the named range without updating formulas</li>
+                    <li>Useful for creating dynamic charts and data validation lists</li>
+                </ul>`
+            },
+            {
+                id: 6,
+                title: "Use Format Painter",
+                instructions: `Format one cell with fill color and bold, then use Format Painter to apply the same formatting to low stock items (Stock < 30).`,
+                demoContent: `<h3><i class="fas fa-paint-brush"></i> Format Painter for Low Stock Items</h3>
+                <p>Format Painter copies formatting from one cell to another. Follow these steps:</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <h4>1. Create Source Formatting:</h4>
+                        <ol>
+                            <li>Select any empty cell (e.g., G2)</li>
+                            <li>Apply these formats:
+                                <ul>
+                                    <li>Fill Color: Light yellow or orange</li>
+                                    <li>Font Style: Bold</li>
+                                    <li>Text Color: Dark red (optional)</li>
+                                </ul>
+                            </li>
+                            <li>This cell is now your "format sample"</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>2. Use Format Painter:</h4>
+                        <ol>
+                            <li>With your formatted cell selected, click the <strong>Format Painter</strong> button on the Home tab (paintbrush icon)</li>
+                            <li>Your cursor will change to a paintbrush</li>
+                            <li>Click on each cell in the Stock column where value is less than 30 (P002 and P005 in our example)</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div style="background-color: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #ffecb5;">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Pro Tip: Double-Click Format Painter</h4>
+                    <p>To apply formatting to multiple non-adjacent cells:</p>
+                    <ol>
+                        <li>Select your formatted sample cell</li>
+                        <li><strong>Double-click</strong> the Format Painter button (not single-click)</li>
+                        <li>Click on all cells you want to format</li>
+                        <li>Press <strong>ESC</strong> when done to turn off Format Painter</li>
+                    </ol>
+                </div>
+                
+                <h4>Your formatted inventory with low stock highlighted:</h4>
+                <div class="excel-grid" id="step6-grid">
+                    <div class="excel-cell excel-merged">Product Inventory Q1</div>
+                    
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product ID</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Product Name</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Category</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Price</div>
+                    <div class="excel-cell excel-header" style="background-color: #4f81bd; color: white;">Stock</div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P001</div>
+                    <div class="excel-cell">Wireless Mouse</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$29.99</div>
+                    <div class="excel-cell" style="text-align: center; display: flex; align-items: center;">
+                        45
+                        <div class="data-bar" style="width: 22.5%;"></div>
+                    </div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P002</div>
+                    <div class="excel-cell">Mechanical Keyboard</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$89.99</div>
+                    <div class="excel-cell format-painter-sample" style="text-align: center; display: flex; align-items: center;">
+                        22
+                        <div class="data-bar" style="width: 11%; background-color: #ff9800;"></div>
+                    </div>
+                    
+                    <div class="excel-cell" style="text-align: center;">P005</div>
+                    <div class="excel-cell">Monitor 24"</div>
+                    <div class="excel-cell">Electronics</div>
+                    <div class="excel-cell excel-currency">$199.99</div>
+                    <div class="excel-cell format-painter-sample" style="text-align: center; display: flex; align-items: center;">
+                        15
+                        <div class="data-bar" style="width: 7.5%; background-color: #ff9800;"></div>
+                    </div>
+                </div>`
+            },
+            {
+                id: 7,
+                title: "Save Your Workbook",
+                instructions: `Save your completed, formatted inventory sheet with the filename "Inventory_Formatted.xlsx".`,
+                demoContent: `<h3><i class="fas fa-save"></i> Save Your Workbook</h3>
+                <p>Now that your inventory sheet is beautifully formatted, it's time to save it:</p>
+                
+                <ol>
+                    <li><strong>Click File > Save As</strong> (or press <span class="keyboard-shortcut">F12</span>)</li>
+                    <li><strong>Choose a location</strong> on your computer (Desktop or Documents folder recommended)</li>
+                    <li><strong>Enter the filename:</strong> <code>Inventory_Formatted.xlsx</code></li>
+                    <li><strong>Verify file type:</strong> Make sure "Excel Workbook (*.xlsx)" is selected</li>
+                    <li><strong>Click Save</strong></li>
+                </ol>
+                
+                <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h4><i class="fas fa-check-circle" style="color: #28a745;"></i> Save Options Explained</h4>
+                    <ul>
+                        <li><strong>.xlsx:</strong> Standard Excel format (recommended)</li>
+                        <li><strong>.xls:</strong> Older Excel format (compatible with Excel 97-2003)</li>
+                        <li><strong>.pdf:</strong> Saves as PDF (preserves formatting but not editable)</li>
+                        <li><strong>.csv:</strong> Comma-separated values (loses formatting and multiple sheets)</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-top: 25px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #107c10;">
+                    <h4><i class="fas fa-star"></i> Congratulations!</h4>
+                    <p>You've successfully completed the Product Inventory formatting exercise. You've learned:</p>
+                    <ul>
+                        <li>How to merge cells and apply cell styles</li>
+                        <li>Data formatting techniques (currency, alignment, wrap text)</li>
+                        <li>Applying Conditional Formatting with Data Bars</li>
+                        <li>Creating and using Named Ranges</li>
+                        <li>Using Format Painter efficiently</li>
+                    </ul>
+                    <p>These skills will help you create professional, easy-to-read spreadsheets for any purpose!</p>
+                </div>`
+            }
+        ];
+
+        // Current step tracker
+        let currentStep = 1;
+        const totalSteps = exerciseSteps.length;
+
+        // DOM elements
+        const stepIndicator = document.getElementById('step-indicator');
+        const stepContentContainer = document.getElementById('step-content-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const completeBtn = document.getElementById('complete-btn');
+        const homeworkBtn = document.getElementById('homework-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        const downloadArea = document.getElementById('download-area');
+        const homeworkSection = document.getElementById('homework-section');
+        const backToExerciseBtn = document.getElementById('back-to-exercise-btn');
+        const excelRibbon = document.getElementById('excel-ribbon');
+        const dueDate = document.getElementById('due-date');
+
+        // Initialize the application
+        function init() {
+            // Set due date (7 days from now)
+            const today = new Date();
+            const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dueDate.textContent = nextWeek.toLocaleDateString('en-US', options);
+            
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+            setupRibbonButtons();
+            setupQuizButtons();
+            
+            // Set up event listeners
+            prevBtn.addEventListener('click', goToPrevStep);
+            nextBtn.addEventListener('click', goToNextStep);
+            completeBtn.addEventListener('click', completeExercise);
+            homeworkBtn.addEventListener('click', showHomework);
+            restartBtn.addEventListener('click', restartExercise);
+            backToExerciseBtn.addEventListener('click', backToExercise);
+        }
+
+        // Render the step indicator in the sidebar
+        function renderStepIndicator() {
+            stepIndicator.innerHTML = '';
+            
+            exerciseSteps.forEach(step => {
+                const stepItem = document.createElement('div');
+                stepItem.className = `step-indicator-item ${step.id === currentStep ? 'active' : ''}`;
+                stepItem.dataset.stepId = step.id;
+                
+                stepItem.innerHTML = `
+                    <div class="step-indicator-number">${step.id}</div>
+                    <div class="step-indicator-text">${step.title}</div>
+                    ${step.id < currentStep ? '<div class="completed-step"><i class="fas fa-check"></i></div>' : ''}
+                `;
+                
+                stepItem.addEventListener('click', () => {
+                    if (step.id <= currentStep) {
+                        goToStep(step.id);
+                    }
+                });
+                
+                stepIndicator.appendChild(stepItem);
+            });
+        }
+
+        // Render the content for a specific step
+        function renderStepContent(stepId) {
+            const step = exerciseSteps.find(s => s.id === stepId);
+            if (!step) return;
+            
+            stepContentContainer.innerHTML = `
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStepContent(${stepId})">
+                        <div class="step-number">${step.id}</div>
+                        <h2 class="step-title">${step.title}</h2>
+                    </div>
+                    <div class="step-content active">
+                        <div class="instructions">
+                            <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+                            <p>${step.instructions}</p>
+                        </div>
+                        
+                        <div class="excel-demo-area">
+                            ${step.demoContent}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Setup Excel ribbon button interactions
+        function setupRibbonButtons() {
+            const ribbonButtons = excelRibbon.querySelectorAll('.ribbon-button');
+            ribbonButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    
+                    // Remove active class from all buttons
+                    ribbonButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show tooltip/explanation based on action
+                    let message = '';
+                    switch(action) {
+                        case 'bold':
+                            message = 'Bold: Makes selected text thicker. Shortcut: Ctrl+B';
+                            break;
+                        case 'center':
+                            message = 'Center Align: Centers text horizontally in cells.';
+                            break;
+                        case 'currency':
+                            message = 'Currency Format: Applies $ and two decimal places. Shortcut: Ctrl+Shift+$';
+                            break;
+                        case 'merge':
+                            message = 'Merge & Center: Combines selected cells into one larger cell.';
+                            break;
+                        case 'format-painter':
+                            message = 'Format Painter: Copies formatting from one cell to another. Double-click to apply to multiple cells.';
+                            break;
+                        case 'conditional':
+                            message = 'Conditional Formatting: Applies formatting based on cell values (like Data Bars).';
+                            break;
+                        case 'cell-style':
+                            message = 'Cell Styles: Predefined formatting combinations for quick styling.';
+                            break;
+                    }
+                    
+                    // Show a temporary message
+                    if (message) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.style.cssText = `
+                            position: absolute;
+                            top: 60px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background-color: #333;
+                            color: white;
+                            padding: 8px 12px;
+                            border-radius: 4px;
+                            font-size: 14px;
+                            z-index: 100;
+                            max-width: 300px;
+                        `;
+                        messageDiv.textContent = message;
+                        document.querySelector('.main-content').appendChild(messageDiv);
+                        
+                        setTimeout(() => {
+                            messageDiv.remove();
+                        }, 3000);
+                    }
+                    
+                    // Remove active class after a moment
+                    setTimeout(() => {
+                        this.classList.remove('active');
+                    }, 1000);
+                });
+            });
+        }
+
+        // Setup quiz answer reveal buttons
+        function setupQuizButtons() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('reveal-answer')) {
+                    const answerId = e.target.getAttribute('data-answer');
+                    const answerDiv = document.getElementById(answerId);
+                    answerDiv.classList.toggle('show');
+                    
+                    // Change button text
+                    if (answerDiv.classList.contains('show')) {
+                        e.target.textContent = 'Hide Answer';
+                    } else {
+                        e.target.textContent = 'Reveal Answer';
+                    }
+                }
+            });
+        }
+
+        // Toggle step content visibility (for mobile)
+        function toggleStepContent(stepId) {
+            // This function can be expanded for mobile view
+            console.log(`Toggling step ${stepId}`);
+        }
+
+        // Go to a specific step
+        function goToStep(stepId) {
+            if (stepId < 1 || stepId > totalSteps) return;
+            
+            currentStep = stepId;
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+        }
+
+        // Go to the previous step
+        function goToPrevStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        // Go to the next step
+        function goToNextStep() {
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            }
+        }
+
+        // Complete the exercise
+        function completeExercise() {
+            downloadArea.classList.add('active');
+            stepContentContainer.style.display = 'none';
+            excelRibbon.style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'none';
+        }
+
+        // Show homework section
+        function showHomework() {
+            homeworkSection.classList.add('active');
+            stepContentContainer.style.display = 'none';
+            excelRibbon.style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'none';
+            downloadArea.classList.remove('active');
+        }
+
+        // Back to main exercise from homework
+        function backToExercise() {
+            homeworkSection.classList.remove('active');
+            stepContentContainer.style.display = 'block';
+            excelRibbon.style.display = 'flex';
+            document.querySelector('.action-buttons').style.display = 'flex';
+        }
+
+        // Restart the exercise
+        function restartExercise() {
+            currentStep = 1;
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+            
+            downloadArea.classList.remove('active');
+            homeworkSection.classList.remove('active');
+            stepContentContainer.style.display = 'block';
+            excelRibbon.style.display = 'flex';
+            document.querySelector('.action-buttons').style.display = 'flex';
+        }
+
+        // Update the progress bar
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+
+        // Update button states
+        function updateButtons() {
+            prevBtn.disabled = currentStep === 1;
+            
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                completeBtn.style.display = 'flex';
+                homeworkBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                completeBtn.style.display = 'none';
+                homeworkBtn.style.display = 'none';
+            }
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

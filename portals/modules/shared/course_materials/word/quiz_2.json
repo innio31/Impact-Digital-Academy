@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which Word feature allows you to create different column layouts within the same document?",
+      "points": 1,
+      "options": [
+        "Page Breaks",
+        "Section Breaks",
+        "Paragraph Breaks",
+        "Line Breaks"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Section breaks allow you to divide a document into sections with different formatting, such as varying column layouts on the same page.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the keyboard shortcut to insert a column break in Word?",
+      "points": 1,
+      "options": [
+        "Ctrl + Enter",
+        "Ctrl + Shift + Enter",
+        "Alt + Enter",
+        "Ctrl + B"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Ctrl + Shift + Enter inserts a column break, forcing text to move to the next column in a multi-column layout.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which tab in the Word ribbon contains the Columns option?",
+      "points": 1,
+      "options": [
+        "Home tab",
+        "Insert tab",
+        "Layout tab",
+        "Design tab"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "The Columns option is located in the Layout tab under the Page Setup group.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What type of section break allows you to change column formatting on the same page?",
+      "points": 1,
+      "options": [
+        "Next Page Section Break",
+        "Continuous Section Break",
+        "Even Page Section Break",
+        "Odd Page Section Break"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "A Continuous section break allows different formatting (like column layouts) within the same page.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which tool allows you to quickly copy formatting from one piece of text to another?",
+      "points": 1,
+      "options": [
+        "Format Painter",
+        "Copy Style",
+        "Format Copier",
+        "Style Transfer"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "The Format Painter tool (paintbrush icon) copies formatting from selected text and applies it to other text.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How can you apply a shadow text effect to a title in Word?",
+      "points": 1,
+      "options": [
+        "Home tab → Font group → Text Effects and Typography → Shadow",
+        "Design tab → Document Formatting → Text Effects",
+        "Layout tab → Page Setup → Text Effects",
+        "Insert tab → Text → Shadow"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "Text effects including shadows are found in the Home tab, Font group, under Text Effects and Typography.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the maximum number of columns you can create in a Word document using the standard Columns dialog box?",
+      "points": 1,
+      "options": [
+        "4 columns",
+        "8 columns",
+        "12 columns",
+        "13 columns"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Word allows up to 13 columns in a document through the Columns dialog box (Layout → Columns → More Columns).",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which option in the Columns dialog box adds a vertical line between columns?",
+      "points": 1,
+      "options": [
+        "Equal column width",
+        "Line between",
+        "Apply to: Whole document",
+        "Presets"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "The 'Line between' checkbox in the Columns dialog box adds vertical lines separating columns.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What happens when you double-click the Format Painter button?",
+      "points": 1,
+      "options": [
+        "It applies formatting to multiple selections until turned off",
+        "It copies formatting twice as fast",
+        "It opens the Format Painter options dialog",
+        "It resets all formatting"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "Double-clicking the Format Painter locks it on, allowing you to apply the same formatting to multiple text selections. Press Esc to turn it off.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which view is most useful for working with multi-column layouts in Word?",
+      "points": 1,
+      "options": [
+        "Draft view",
+        "Outline view",
+        "Print Layout view",
+        "Web Layout view"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Print Layout view shows the document as it will appear when printed, including column layouts, making it ideal for working with columns.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the purpose of applying the 'Title' style to a newsletter heading?",
+      "points": 1,
+      "options": [
+        "It automatically centers the text",
+        "It applies consistent, predefined formatting",
+        "It adds the document to the Navigation Pane",
+        "Both A and B"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "The Title style applies consistent formatting (font, size, spacing) and can be centered. It also automatically adds the title to the Navigation Pane if headings are shown.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which keyboard shortcut activates the Format Painter after selecting text with desired formatting?",
+      "points": 1,
+      "options": [
+        "Ctrl + Shift + C",
+        "Alt + H, F, P",
+        "Ctrl + F",
+        "Both A and B"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Both Ctrl + Shift + C (copy formatting) and Alt + H, F, P (ribbon shortcut) activate the Format Painter.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the main advantage of using section breaks instead of multiple documents for a newsletter?",
+      "points": 1,
+      "options": [
+        "Smaller file size",
+        "Consistent page numbering and headers/footers",
+        "Ability to have different column layouts within one document",
+        "Both B and C"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Section breaks allow different formatting (like columns) within one document while maintaining consistent page numbering and headers/footers across sections.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How can you ensure text starts at the top of the next column without filling the current column?",
+      "points": 1,
+      "options": [
+        "Insert a page break",
+        "Insert a column break",
+        "Press Enter multiple times",
+        "Adjust column spacing"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "A column break (Ctrl + Shift + Enter) forces text to move to the next column, regardless of how much space remains in the current column.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of these is NOT a type of section break available in Word?",
+      "points": 1,
+      "options": [
+        "Continuous",
+        "Next Page",
+        "Column Break",
+        "Even Page"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Column Break is a page break type, not a section break type. Section breaks include: Next Page, Continuous, Even Page, and Odd Page.",
+      "required": true
+    }
+  ]
+}

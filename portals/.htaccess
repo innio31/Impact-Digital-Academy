@@ -1,0 +1,29 @@
+# .htaccess
+RewriteEngine On
+RewriteBase /
+
+# Remove trailing slash
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "\.(env|log|ini|sql|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# API routes
+RewriteRule ^api/(.*)$ api/v1/$1 [L,QSA]
+
+# Error pages
+ErrorDocument 404 /errors/404.php
+ErrorDocument 403 /errors/403.php
+ErrorDocument 500 /errors/500.php

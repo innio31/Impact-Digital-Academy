@@ -1,0 +1,2782 @@
+<?php
+// module2_section1.php - Python Essentials 1: Module 2 - Section 1: The "Hello, World!" Program
+declare(strict_types=1);
+
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Include configuration
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/functions.php';
+
+/**
+ * Module 2 Access Controller
+ */
+class Module2AccessController
+{
+    private $conn;
+    private $user_id;
+    private $user_role;
+    private $user_email;
+    private $first_name;
+    private $last_name;
+    private $allowed_roles = ['student', 'instructor', 'admin'];
+
+    public function __construct()
+    {
+        $this->validateSession();
+        $this->initializeProperties();
+        $this->conn = $this->getDatabaseConnection();
+        $this->validateAccess();
+    }
+
+    /**
+     * Validate user session and authentication
+     */
+    private function validateSession(): void
+    {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], $this->allowed_roles)) {
+            $this->redirectToLogin();
+        }
+    }
+
+    /**
+     * Initialize class properties from session
+     */
+    private function initializeProperties(): void
+    {
+        $this->user_id = (int)$_SESSION['user_id'];
+        $this->user_role = $_SESSION['user_role'];
+        $this->user_email = $_SESSION['user_email'] ?? '';
+        $this->first_name = $_SESSION['first_name'] ?? '';
+        $this->last_name = $_SESSION['last_name'] ?? '';
+    }
+
+    /**
+     * Get database connection
+     */
+    private function getDatabaseConnection()
+    {
+        $conn = getDBConnection();
+
+        if (!$conn) {
+            $this->handleError("Database connection failed. Please check your configuration.");
+        }
+
+        return $conn;
+    }
+
+    /**
+     * Validate user access to Module 2
+     */
+    private function validateAccess(): void
+    {
+        // Admins and instructors have automatic access
+        if ($this->user_role === 'admin' || $this->user_role === 'instructor') {
+            return;
+        }
+
+        // For students, check if enrolled in Python Essentials 1 (Module 2)
+        $access_count = $this->checkStudentAccess();
+
+        if ($access_count === 0) {
+            $this->showAccessDenied();
+        }
+    }
+
+    /**
+     * Check if student has access to Python Essentials 1 course
+     */
+    private function checkStudentAccess(): int
+    {
+        $sql = "SELECT COUNT(*) as count 
+                FROM enrollments e 
+                JOIN class_batches cb ON e.class_id = cb.id
+                JOIN courses c ON cb.course_id = c.id
+                JOIN programs p ON c.program_id = p.id
+                WHERE e.student_id = ? 
+                AND e.status IN ('active', 'completed')
+                AND (c.title LIKE '%Python Essentials 1%' 
+                     OR c.title LIKE '%Python Programming%'
+                     OR p.name LIKE '%Python Essentials 1%')";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            return 0;
+        }
+
+        $stmt->bind_param('i', $this->user_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $stmt->close();
+
+        return (int)($row['count'] ?? 0);
+    }
+
+    /**
+     * Get module progress from database
+     */
+    public function getModuleProgress(): array
+    {
+        $progress = [
+            'section1' => 0,
+            'section2' => 0,
+            'section3' => 0,
+            'section4' => 0,
+            'overall' => 0
+        ];
+
+        if ($this->user_role === 'student') {
+            // Get progress from database
+            $sql = "SELECT section1_progress, section2_progress, section3_progress, section4_progress, overall_progress 
+                    FROM module_progress 
+                    WHERE user_id = ? AND module_id = 2";
+            $stmt = $this->conn->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param('i', $this->user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($row = $result->fetch_assoc()) {
+                    $progress = [
+                        'section1' => (float)$row['section1_progress'],
+                        'section2' => (float)$row['section2_progress'],
+                        'section3' => (float)$row['section3_progress'],
+                        'section4' => (float)$row['section4_progress'],
+                        'overall' => (float)$row['overall_progress']
+                    ];
+                }
+                $stmt->close();
+            }
+        }
+
+        return $progress;
+    }
+
+    /**
+     * Update module progress in database
+     */
+    public function updateProgress($section, $completed = true): bool
+    {
+        if ($this->user_role === 'student') {
+            // Get current progress
+            $current_progress = $this->getModuleProgress();
+            
+            // Update the specific section
+            if ($completed) {
+                $current_progress[$section] = 100;
+                
+                // Calculate overall progress
+                $sections = ['section1', 'section2', 'section3', 'section4'];
+                $completed_sections = 0;
+                foreach ($sections as $sec) {
+                    if ($current_progress[$sec] >= 100) {
+                        $completed_sections++;
+                    }
+                }
+                $current_progress['overall'] = ($completed_sections / count($sections)) * 100;
+                
+                // Store in session for immediate feedback
+                if (!isset($_SESSION['module_progress'])) {
+                    $_SESSION['module_progress'] = [];
+                }
+                $_SESSION['module_progress']['module2'] = $current_progress;
+                
+                // Save to database
+                $sql = "INSERT INTO module_progress (user_id, module_id, section1_progress, section2_progress, section3_progress, section4_progress, overall_progress, last_accessed) 
+                        VALUES (?, 2, ?, ?, ?, ?, ?, NOW())
+                        ON DUPLICATE KEY UPDATE 
+                        section1_progress = VALUES(section1_progress),
+                        section2_progress = VALUES(section2_progress),
+                        section3_progress = VALUES(section3_progress),
+                        section4_progress = VALUES(section4_progress),
+                        overall_progress = VALUES(overall_progress),
+                        last_accessed = NOW()";
+                
+                $stmt = $this->conn->prepare($sql);
+                if ($stmt) {
+                    $stmt->bind_param('iddddd', 
+                        $this->user_id,
+                        $current_progress['section1'],
+                        $current_progress['section2'],
+                        $current_progress['section3'],
+                        $current_progress['section4'],
+                        $current_progress['overall']
+                    );
+                    $result = $stmt->execute();
+                    $stmt->close();
+                    return $result;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Save exercise submission to database
+     */
+    public function saveExerciseSubmission($exercise_type, $exercise_id, $user_answer, $is_correct = null, $score = null, $max_score = null): bool
+    {
+        $user_answer_json = json_encode($user_answer);
+        
+        $sql = "INSERT INTO exercise_submissions (user_id, module_id, exercise_type, exercise_id, user_answer, is_correct, score, max_score, ip_address, user_agent) 
+                VALUES (?, 2, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE 
+                user_answer = VALUES(user_answer),
+                is_correct = VALUES(is_correct),
+                score = VALUES(score),
+                max_score = VALUES(max_score),
+                submitted_at = NOW()";
+        
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt) {
+            $ip_address = $_SERVER['REMOTE_ADDR'] ?? '';
+            $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+            
+            $stmt->bind_param('issssddss', 
+                $this->user_id,
+                $exercise_type,
+                $exercise_id,
+                $user_answer_json,
+                $is_correct,
+                $score,
+                $max_score,
+                $ip_address,
+                $user_agent
+            );
+            $result = $stmt->execute();
+            $stmt->close();
+            return $result;
+        }
+        return false;
+    }
+
+    /**
+     * Redirect to login page
+     */
+    private function redirectToLogin(): void
+    {
+        header("Location: " . BASE_URL . "login.php?redirect=" . urlencode($_SERVER['REQUEST_URI']));
+        exit();
+    }
+
+    /**
+     * Show access denied page
+     */
+    private function showAccessDenied(): void
+    {
+?>
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Access Denied - Module 2</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    margin: 0;
+                    padding: 20px;
+                }
+
+                .access-denied-container {
+                    background: white;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                    padding: 40px;
+                    text-align: center;
+                    max-width: 500px;
+                }
+
+                .icon {
+                    font-size: 4rem;
+                    color: #306998;
+                    margin-bottom: 20px;
+                }
+
+                h1 {
+                    color: #306998;
+                    margin-bottom: 20px;
+                }
+
+                p {
+                    color: #666;
+                    margin-bottom: 30px;
+                    line-height: 1.6;
+                }
+
+                .btn {
+                    display: inline-block;
+                    background: #306998;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 50px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    margin: 5px;
+                }
+
+                .btn:hover {
+                    background: #4B8BBE;
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                }
+            </style>
+        </head>
+
+        <body>
+            <div class="access-denied-container">
+                <div class="icon"><i class="fab fa-python"></i></div>
+                <h1>Access Restricted</h1>
+                <p>You need to be enrolled in <strong>Python Essentials 1</strong> to access Module 2 content.</p>
+                <p>If you believe this is an error, please contact your instructor.</p>
+                <div style="margin-top: 30px;">
+                    <a href="<?php echo BASE_URL; ?>index.php" class="btn">Return to Course</a>
+                    <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php" class="btn">Go to Dashboard</a>
+                </div>
+            </div>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        </body>
+
+        </html>
+    <?php
+        exit();
+    }
+
+    /**
+     * Handle errors
+     */
+    private function handleError(string $message): void
+    {
+        die("<div style='padding:20px; background:#fee; border:1px solid #f00; color:#900;'>Error: $message</div>");
+    }
+
+    /**
+     * Get user display name
+     */
+    public function getUserDisplayName(): string
+    {
+        return htmlspecialchars($this->first_name . ' ' . $this->last_name);
+    }
+
+    /**
+     * Get user role
+     */
+    public function getUserRole(): string
+    {
+        return $this->user_role;
+    }
+
+    /**
+     * Check if user is enrolled in course
+     */
+    public function isEnrolled(): bool
+    {
+        return $this->user_role !== 'student' || $this->checkStudentAccess() > 0;
+    }
+}
+
+// Initialize access controller
+try {
+    $accessController = new Module2AccessController();
+    $progress = $accessController->getModuleProgress();
+
+    // Initialize session storage for exercise answers
+    if (!isset($_SESSION['exercise_answers'])) {
+        $_SESSION['exercise_answers'] = [];
+    }
+    if (!isset($_SESSION['exercise_answers']['module2'])) {
+        $_SESSION['exercise_answers']['module2'] = [
+            'mcq1_answer' => '',
+            'tf_answers' => [],
+            'python_code' => ''
+        ];
+    }
+
+    // Initialize session storage for exercise completion
+    if (!isset($_SESSION['exercise_completion'])) {
+        $_SESSION['exercise_completion'] = [];
+    }
+    if (!isset($_SESSION['exercise_completion']['module2'])) {
+        $_SESSION['exercise_completion']['module2'] = [
+            'mcq1_completed' => false,
+            'tf1_completed' => false,
+            'py1_completed' => false
+        ];
+    }
+
+    // Handle exercise submissions
+    $exercise_results = [];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['exercise_type'])) {
+        // Update section progress first
+        $accessController->updateProgress('section1', true);
+
+        switch ($_POST['exercise_type']) {
+            case 'multiple_choice_1':
+                $user_answer = $_POST['answer'] ?? '';
+                $correct = ($user_answer === 'b');
+                $exercise_results['mc1'] = [
+                    'correct' => $correct,
+                    'user_answer' => $user_answer,
+                    'correct_answer' => 'b',
+                    'feedback' => $correct ?
+                        "Correct! The print() function sends output to the console." :
+                        "Incorrect. The correct answer is: The print() function sends output to the console."
+                ];
+                
+                // Store answer in session
+                $_SESSION['exercise_answers']['module2']['mcq1_answer'] = $user_answer;
+                $_SESSION['exercise_completion']['module2']['mcq1_completed'] = true;
+                
+                // Save to database
+                $accessController->saveExerciseSubmission(
+                    'multiple_choice',
+                    'mcq1',
+                    $user_answer,
+                    $correct,
+                    $correct ? 5 : 0,
+                    5
+                );
+                break;
+
+            case 'true_false_1':
+                $answers = $_POST['tf_answers'] ?? [];
+                $correct_answers = ['q1' => 'true', 'q2' => 'false', 'q3' => 'true'];
+                $score = 0;
+                foreach ($answers as $q => $a) {
+                    if (isset($correct_answers[$q]) && $a === $correct_answers[$q]) {
+                        $score++;
+                    }
+                }
+                $percentage = round(($score / 3) * 100);
+                $is_passing = $percentage >= 70;
+                
+                $exercise_results['tf1'] = [
+                    'score' => $score,
+                    'total' => 3,
+                    'percentage' => $percentage,
+                    'is_passing' => $is_passing
+                ];
+                
+                // Store answers in session
+                $_SESSION['exercise_answers']['module2']['tf_answers'] = $answers;
+                $_SESSION['exercise_completion']['module2']['tf1_completed'] = true;
+                
+                // Save to database
+                $accessController->saveExerciseSubmission(
+                    'true_false',
+                    'tf1',
+                    $answers,
+                    $is_passing,
+                    $score * 2,
+                    6
+                );
+                break;
+
+            case 'python_exercise_1':
+                $user_code = $_POST['python_code'] ?? '';
+                $exercise_results['py1'] = [
+                    'submitted' => true,
+                    'code' => $user_code
+                ];
+                
+                // Store code in session
+                $_SESSION['exercise_answers']['module2']['python_code'] = $user_code;
+                $_SESSION['exercise_completion']['module2']['py1_completed'] = true;
+                
+                // Save to database
+                $accessController->saveExerciseSubmission(
+                    'python_code',
+                    'py1',
+                    $user_code,
+                    null,
+                    null,
+                    null
+                );
+                break;
+        }
+        
+        // Refresh progress after submission
+        $progress = $accessController->getModuleProgress();
+    }
+    
+    // Handle reset requests
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_type'])) {
+        switch ($_POST['reset_type']) {
+            case 'reset_mcq':
+                $_SESSION['exercise_answers']['module2']['mcq1_answer'] = '';
+                $_SESSION['exercise_completion']['module2']['mcq1_completed'] = false;
+                break;
+            case 'reset_tf':
+                $_SESSION['exercise_answers']['module2']['tf_answers'] = [];
+                $_SESSION['exercise_completion']['module2']['tf1_completed'] = false;
+                break;
+            case 'reset_python':
+                $_SESSION['exercise_answers']['module2']['python_code'] = '';
+                $_SESSION['exercise_completion']['module2']['py1_completed'] = false;
+                break;
+        }
+        
+        // Update progress after reset
+        $accessController->updateProgress('section1', false);
+        $progress = $accessController->getModuleProgress();
+    }
+    
+    // Get stored answers from session
+    $stored_mcq_answer = $_SESSION['exercise_answers']['module2']['mcq1_answer'] ?? '';
+    $stored_tf_answers = $_SESSION['exercise_answers']['module2']['tf_answers'] ?? [];
+    $stored_python_code = $_SESSION['exercise_answers']['module2']['python_code'] ?? '';
+    
+    // Get completion status from session
+    $mcq_completed = $_SESSION['exercise_completion']['module2']['mcq1_completed'] ?? false;
+    $tf_completed = $_SESSION['exercise_completion']['module2']['tf1_completed'] ?? false;
+    $py_completed = $_SESSION['exercise_completion']['module2']['py1_completed'] ?? false;
+    
+    // Calculate completed exercises count for initial display
+    $completed_exercises_count = 0;
+    if ($mcq_completed) $completed_exercises_count++;
+    if ($tf_completed) $completed_exercises_count++;
+    if ($py_completed) $completed_exercises_count++;
+    
+    // Calculate initial section progress based on completed exercises
+    $initial_section_progress = ($completed_exercises_count / 3) * 100;
+    
+    // If we have exercise results but no stored answer yet, update from results
+    if (isset($exercise_results['mc1']) && empty($stored_mcq_answer)) {
+        $stored_mcq_answer = $exercise_results['mc1']['user_answer'] ?? '';
+    }
+    
+    if (isset($exercise_results['tf1']) && empty($stored_tf_answers)) {
+        $stored_tf_answers = $_POST['tf_answers'] ?? [];
+    }
+    
+    if (isset($exercise_results['py1']) && empty($stored_python_code)) {
+        $stored_python_code = $exercise_results['py1']['code'] ?? '';
+    }
+    
+    // Update progress in session based on completion status
+    if ($completed_exercises_count > 0) {
+        // Refresh progress from database
+        $progress = $accessController->getModuleProgress();
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Module 2: The "Hello, World!" Program - Python Essentials 1 - Impact Digital Academy</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            :root {
+                --primary: #306998;
+                --secondary: #FFD43B;
+                --accent: #4B8BBE;
+                --light: #f8f9fa;
+                --dark: #343a40;
+                --success: #28a745;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --shadow: rgba(0, 0, 0, 0.1);
+                --gradient: linear-gradient(135deg, #306998 0%, #4B8BBE 100%);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background-color: #f5f7fa;
+                color: var(--dark);
+                line-height: 1.6;
+                overflow-x: hidden;
+                padding-top: 80px;
+            }
+
+            /* Navigation - Fixed at top */
+            header {
+                background: var(--gradient);
+                color: white;
+                padding: 1rem 1.5rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-shrink: 0;
+            }
+
+            .logo-icon {
+                font-size: 2rem;
+                color: var(--secondary);
+            }
+
+            .logo-text h1 {
+                font-size: 1.2rem;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .logo-text p {
+                font-size: 0.8rem;
+                opacity: 0.9;
+                white-space: nowrap;
+            }
+
+            .mobile-menu-btn {
+                display: none;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 5px;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                color: white;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                        align-items: center;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                color: white;
+                text-decoration: none;
+                padding: 8px 15px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 20px;
+                font-size: 0.9rem;
+                transition: background 0.3s;
+            }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            /* Section Header */
+            .section-header {
+                background: white;
+                padding: 2rem 1.5rem 1rem;
+                box-shadow: 0 2px 10px var(--shadow);
+                margin-bottom: 2rem;
+            }
+
+            .section-header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .breadcrumb {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+                color: #666;
+                flex-wrap: wrap;
+            }
+
+            .breadcrumb a {
+                color: var(--primary);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+            .breadcrumb a:hover {
+                color: var(--accent);
+            }
+
+            .section-title {
+                color: var(--primary);
+                margin-bottom: 0.5rem;
+                font-size: 1.8rem;
+            }
+
+            .section-subtitle {
+                color: #666;
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            /* Progress Overview */
+            .progress-overview {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px var(--shadow);
+                margin: 0 1.5rem 2rem;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .progress-stats {
+                display: flex;
+                gap: 2rem;
+                flex-wrap: wrap;
+            }
+
+            .progress-item {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .progress-label {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .progress-bar {
+                height: 8px;
+                background: #e9ecef;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--success);
+                border-radius: 4px;
+                transition: width 0.5s ease;
+            }
+
+            /* Main Content */
+            .content-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+            }
+
+            .main-content {
+                background: white;
+                border-radius: 10px;
+                padding: 2rem;
+                box-shadow: 0 5px 15px var(--shadow);
+                margin-bottom: 2rem;
+            }
+
+            /* Content Sections */
+            .content-section {
+                margin-bottom: 3rem;
+                padding-bottom: 2rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .content-section h2 {
+                color: var(--primary);
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 3px solid var(--secondary);
+                font-size: 1.5rem;
+            }
+
+            .content-section h3 {
+                color: var(--accent);
+                margin: 1.5rem 0 1rem;
+                font-size: 1.2rem;
+            }
+
+            .concept-box {
+                background: #f8f9fa;
+                border-left: 4px solid var(--primary);
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+                border-radius: 0 5px 5px 0;
+            }
+
+            .concept-box h4 {
+                color: var(--primary);
+                margin-bottom: 0.5rem;
+            }
+
+            .definition-list {
+                list-style: none;
+                margin: 1rem 0;
+            }
+
+            .definition-list li {
+                padding: 0.8rem;
+                margin-bottom: 0.5rem;
+                background: #f8f9fa;
+                border-radius: 5px;
+                border-left: 4px solid var(--accent);
+                position: relative;
+                padding-left: 2.5rem;
+            }
+
+            .definition-list li::before {
+                content: "•";
+                position: absolute;
+                left: 1rem;
+                color: var(--secondary);
+                font-weight: bold;
+                font-size: 1.5rem;
+            }
+
+            /* Comparison Table */
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1.5rem 0;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px var(--shadow);
+                font-size: 0.95rem;
+            }
+
+            .comparison-table th {
+                background: var(--primary);
+                color: white;
+                padding: 1rem;
+                text-align: left;
+            }
+
+            .comparison-table td {
+                padding: 0.8rem 1rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .comparison-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            /* Code Examples */
+            .code-example {
+                background: #1e1e1e;
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 1.5rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .code-header {
+                background: #2d2d30;
+                padding: 0.8rem 1rem;
+                color: #ccc;
+                font-family: 'Courier New', monospace;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .code-body {
+                padding: 1.5rem;
+                font-family: 'Fira Code', 'Courier New', monospace;
+                color: #d4d4d4;
+                line-height: 1.5;
+                overflow-x: auto;
+                white-space: pre;
+                tab-size: 4;
+                font-size: 0.9rem;
+            }
+
+            /* Exercises */
+            .exercise-container {
+                background: white;
+                border-radius: 10px;
+                padding: 2rem;
+                margin: 2rem 0;
+                box-shadow: 0 5px 15px var(--shadow);
+                border-left: 5px solid var(--secondary);
+            }
+
+            .exercise-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 1.5rem;
+                color: var(--primary);
+            }
+
+            .exercise-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+
+            .exercise-points {
+                background: var(--accent);
+                color: white;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+            }
+
+            .mcq-options {
+                margin: 1rem 0;
+            }
+
+            .mcq-option {
+                margin-bottom: 0.8rem;
+                padding: 0.8rem;
+                background: #f8f9fa;
+                border: 2px solid #dee2e6;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: block;
+            }
+
+            .mcq-option:hover {
+                border-color: var(--accent);
+                background: #e9f7fe;
+            }
+
+            .mcq-option input[type="radio"] {
+                margin-right: 10px;
+            }
+
+            .mcq-option.selected {
+                border-color: var(--success);
+                background: #d4edda;
+            }
+
+            .mcq-option.incorrect {
+                border-color: var(--danger);
+                background: #f8d7da;
+            }
+
+            .mcq-option.correct {
+                border-color: var(--success);
+                background: #d4edda;
+            }
+
+            .feedback {
+                padding: 1rem;
+                margin-top: 1rem;
+                border-radius: 5px;
+                display: none;
+            }
+
+            .feedback.correct {
+                background: #d4edda;
+                border: 1px solid #c3e6cb;
+                color: #155724;
+                display: block;
+            }
+
+            .feedback.incorrect {
+                background: #f8d7da;
+                border: 1px solid #f5c6cb;
+                color: #721c24;
+                display: block;
+            }
+
+            .true-false-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+
+            @media (min-width: 768px) {
+                .true-false-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            .tf-question {
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 8px;
+                border: 2px solid #dee2e6;
+            }
+
+            .tf-options {
+                display: flex;
+                gap: 10px;
+                margin-top: 0.8rem;
+            }
+
+            .tf-option {
+                flex: 1;
+                text-align: center;
+                padding: 0.5rem;
+                border: 2px solid #dee2e6;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .tf-option:hover {
+                background: #e9ecef;
+            }
+
+            .tf-option.selected {
+                border-color: var(--primary);
+                background: #e9f7fe;
+            }
+
+            .tf-option.correct {
+                border-color: var(--success);
+                background: #d4edda;
+            }
+
+            .tf-option.incorrect {
+                border-color: var(--danger);
+                background: #f8d7da;
+            }
+
+            .exercise-actions {
+                margin-top: 2rem;
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                border-radius: 50px;
+                font-weight: 600;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                border: none;
+                font-size: 0.9rem;
+            }
+
+            .btn-primary {
+                background-color: var(--secondary);
+                color: var(--dark);
+            }
+
+            .btn-primary:hover {
+                background-color: #ffc107;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-submit {
+                background: var(--success);
+                color: white;
+            }
+
+            .btn-submit:hover {
+                background: #218838;
+            }
+
+            .btn-reset {
+                background: var(--warning);
+                color: white;
+            }
+
+            .btn-reset:hover {
+                background: #e0a800;
+            }
+
+            .btn-next {
+                background: var(--primary);
+                color: white;
+            }
+
+            .btn-next:hover {
+                background: var(--accent);
+            }
+
+            /* Python Sandbox */
+            .sandbox-container {
+                background: white;
+                border-radius: 10px;
+                padding: 2rem;
+                margin: 2rem 0;
+                box-shadow: 0 5px 15px var(--shadow);
+                border-top: 5px solid var(--success);
+            }
+
+            .sandbox-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 1.5rem;
+                color: var(--primary);
+            }
+
+            .sandbox-editor {
+                background: #1e1e1e;
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 1.5rem 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            .editor-header {
+                background: #2d2d30;
+                padding: 0.8rem 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: #ccc;
+                font-family: 'Courier New', monospace;
+                font-size: 0.9rem;
+            }
+
+            .editor-body {
+                padding: 1.5rem;
+                font-family: 'Fira Code', 'Courier New', monospace;
+                color: #d4d4d4;
+                line-height: 1.5;
+                min-height: 150px;
+                max-height: 300px;
+                overflow-y: auto;
+                white-space: pre;
+                tab-size: 4;
+                outline: none;
+                font-size: 0.9rem;
+            }
+
+            .editor-body[contenteditable="true"] {
+                caret-color: white;
+            }
+
+            .sandbox-controls {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+
+            /* Navigation Buttons */
+            .navigation-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin: 3rem 0;
+                padding: 0 1.5rem;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-btn {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 1rem 1.5rem;
+                background: var(--primary);
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                flex: 1;
+                min-width: 200px;
+                justify-content: center;
+            }
+
+            .nav-btn:hover {
+                background: var(--accent);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Footer */
+            footer {
+                background: var(--dark);
+                color: white;
+                padding: 2rem 1.5rem 1rem;
+                margin-top: 4rem;
+            }
+
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .footer-section h3 {
+                color: var(--secondary);
+                margin-bottom: 1rem;
+                font-size: 1.1rem;
+            }
+
+            .footer-links {
+                list-style: none;
+            }
+
+            .footer-links li {
+                margin-bottom: 0.5rem;
+            }
+
+            .footer-links a {
+                color: #ccc;
+                text-decoration: none;
+                transition: color 0.3s ease;
+                font-size: 0.9rem;
+            }
+
+            .footer-links a:hover {
+                color: var(--secondary);
+            }
+
+            .copyright {
+                text-align: center;
+                padding-top: 1rem;
+                border-top: 1px solid #444;
+                color: #aaa;
+                font-size: 0.9rem;
+            }
+
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                body {
+                    padding-top: 70px;
+                }
+
+                header {
+                    padding: 0.8rem 1rem;
+                }
+
+                .logo-text h1 {
+                    font-size: 1rem;
+                }
+
+                .logo-text p {
+                    font-size: 0.7rem;
+                }
+
+                .user-info {
+                    font-size: 0.8rem;
+                }
+
+                .logout-btn {
+                    padding: 6px 12px;
+                    font-size: 0.8rem;
+                }
+
+                .section-header {
+                    padding: 1.5rem 1rem 0.8rem;
+                }
+
+                .section-title {
+                    font-size: 1.4rem;
+                }
+
+                .progress-overview {
+                    margin: 0 1rem 1.5rem;
+                    padding: 1rem;
+                }
+
+                .content-container {
+                    padding: 0 1rem;
+                }
+
+                .main-content {
+                    padding: 1.5rem;
+                }
+
+                .content-section h2 {
+                    font-size: 1.3rem;
+                }
+
+                .comparison-table {
+                    font-size: 0.85rem;
+                }
+
+                .comparison-table th,
+                .comparison-table td {
+                    padding: 0.6rem 0.8rem;
+                }
+
+                .exercise-container {
+                    padding: 1.5rem;
+                }
+
+                .sandbox-container {
+                    padding: 1.5rem;
+                }
+
+                .nav-btn {
+                    min-width: 100%;
+                }
+
+                .navigation-buttons {
+                    padding: 0 1rem;
+                }
+
+                .progress-stats {
+                    gap: 1rem;
+                }
+
+                .progress-item {
+                    min-width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .logo-text h1 {
+                    display: none;
+                }
+
+                .logo-text p {
+                    display: none;
+                }
+
+                .breadcrumb {
+                    font-size: 0.8rem;
+                }
+
+                .section-title {
+                    font-size: 1.2rem;
+                }
+
+                .content-section h2 {
+                    font-size: 1.1rem;
+                }
+
+                .code-body {
+                    font-size: 0.8rem;
+                    padding: 1rem;
+                }
+
+                .editor-body {
+                    font-size: 0.8rem;
+                    padding: 1rem;
+                }
+            }
+
+            /* Scrollbar */
+            .editor-body::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .editor-body::-webkit-scrollbar-track {
+                background: #1e1e1e;
+            }
+
+            .editor-body::-webkit-scrollbar-thumb {
+                background: #555;
+                border-radius: 4px;
+            }
+
+            .editor-body::-webkit-scrollbar-thumb:hover {
+                background: #777;
+            }
+
+            /* Print Styles */
+            @media print {
+
+                header,
+                .navigation-buttons,
+                footer,
+                .exercise-actions {
+                    display: none;
+                }
+
+                body {
+                    padding-top: 0;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <header>
+            <div class="nav-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Python Essentials 1</h1>
+                        <p>Impact Digital Academy | Module 2</p>
+                    </div>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">
+                            <?php echo $accessController->getUserDisplayName(); ?>
+                        </div>
+                        <div style="font-size: 0.8rem; opacity: 0.8;">
+                            <?php echo ucfirst($accessController->getUserRole()); ?>
+                        </div>
+                    </div>
+                    <a href="<?php echo BASE_URL; ?>logout.php" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Section Header -->
+        <section class="section-header">
+            <div class="section-header-content">
+                <div class="breadcrumb">
+                    <a href="index.php"><i class="fas fa-home"></i> Home</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <a href="module2.php">Module 2</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Section 1</span>
+                </div>
+                <h1 class="section-title">Section 1: The "Hello, World!" Program</h1>
+                <p class="section-subtitle">Writing your first Python program and understanding the print() function</p>
+            </div>
+        </section>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <div class="progress-stats">
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Section Progress</span>
+                        <span id="sectionProgress">
+                            <?php 
+                            echo round($progress['section1']);
+                            ?>%
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sectionProgressBar"
+                            style="width: <?php echo round($progress['section1']); ?>%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Module Progress</span>
+                        <span id="moduleProgress">
+                            <?php 
+                            echo round($progress['overall']);
+                            ?>%
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="moduleProgressBar"
+                            style="width: <?php echo round($progress['overall']); ?>%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Exercises Completed</span>
+                        <span id="exercisesCompleted"><?php echo $completed_exercises_count; ?>/3</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="exercisesProgressBar" style="width: <?php echo ($completed_exercises_count / 3) * 100; ?>%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-container">
+            <main class="main-content">
+                <!-- Your very first program -->
+                <section class="content-section" id="your-first-program">
+                    <h2><i class="fas fa-play-circle"></i> 2.1.1 Your very first program</h2>
+
+                    <p>It's time to start writing some <strong>real, working Python code</strong>. It'll be very simple for the time being.</p>
+
+                    <p>As we're going to show you some fundamental concepts and terms, these snippets of code won't be all that serious or complex.</p>
+
+                    <p>Run the code in the editor window. If everything goes okay here, you'll see the <strong>line of text</strong> in the console window.</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> hello_world.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("Hello, World!")
+                        </div>
+                    </div>
+
+                    <p>Alternatively, launch IDLE, create a new Python source file, fill it with this code, name the file and save it. Now run it. If everything goes okay, you'll see the text contained within the quotation marks in the IDLE console window.</p>
+
+                    <div class="concept-box">
+                        <h4>Key Insight</h4>
+                        <p>As you can see, this first program consists of the following parts:</p>
+                        <ul>
+                            <li>the word <strong>print</strong></li>
+                            <li>an opening parenthesis</li>
+                            <li>a quotation mark</li>
+                            <li>a line of text: <strong>Hello, World!</strong></li>
+                            <li>another quotation mark</li>
+                            <li>a closing parenthesis</li>
+                        </ul>
+                        <p>Each of the above plays a very important role in the code.</p>
+                    </div>
+
+                    <!-- Multiple Choice Exercise -->
+                    <div class="exercise-container" id="mcq-exercise-1">
+                        <div class="exercise-header">
+                            <i class="fas fa-question-circle"></i>
+                            <div class="exercise-title">Quick Check: The print() Function</div>
+                            <div class="exercise-points">5 points</div>
+                        </div>
+
+                        <p><strong>Question:</strong> What does the print() function do with the text inside the parentheses?</p>
+
+                        <form method="POST" id="mcqForm1">
+                            <input type="hidden" name="exercise_type" value="multiple_choice_1">
+                            <div class="mcq-options">
+                                <label class="mcq-option <?php echo ($stored_mcq_answer === 'a') ? 'selected' : ''; ?>" onclick="selectOption(this, 'a')">
+                                    <input type="radio" name="answer" value="a" required <?php echo ($stored_mcq_answer === 'a') ? 'checked' : ''; ?>>
+                                    Stores it in a file for later use
+                                </label>
+                                <label class="mcq-option <?php echo ($stored_mcq_answer === 'b') ? 'selected' : ''; ?>" onclick="selectOption(this, 'b')">
+                                    <input type="radio" name="answer" value="b" required <?php echo ($stored_mcq_answer === 'b') ? 'checked' : ''; ?>>
+                                    Sends it to the console/output device
+                                </label>
+                                <label class="mcq-option <?php echo ($stored_mcq_answer === 'c') ? 'selected' : ''; ?>" onclick="selectOption(this, 'c')">
+                                    <input type="radio" name="answer" value="c" required <?php echo ($stored_mcq_answer === 'c') ? 'checked' : ''; ?>>
+                                    Converts it to machine language only
+                                </label>
+                                <label class="mcq-option <?php echo ($stored_mcq_answer === 'd') ? 'selected' : ''; ?>" onclick="selectOption(this, 'd')">
+                                    <input type="radio" name="answer" value="d" required <?php echo ($stored_mcq_answer === 'd') ? 'checked' : ''; ?>>
+                                    Creates a new Python function
+                                </label>
+                            </div>
+
+                            <?php if (isset($exercise_results['mc1'])): ?>
+                                <div
+                                    class="feedback <?php echo $exercise_results['mc1']['correct'] ? 'correct' : 'incorrect'; ?>">
+                                    <i
+                                        class="fas fa-<?php echo $exercise_results['mc1']['correct'] ? 'check-circle' : 'times-circle'; ?>"></i>
+                                    <?php echo $exercise_results['mc1']['feedback']; ?>
+                                </div>
+                            <?php elseif ($mcq_completed): ?>
+                                <div class="feedback correct">
+                                    <i class="fas fa-check-circle"></i>
+                                    You have completed this exercise.
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="exercise-actions">
+                                <?php if (!$mcq_completed): ?>
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="fas fa-paper-plane"></i> Submit Answer
+                                </button>
+                                <?php endif; ?>
+                                <button type="button" class="btn btn-reset" onclick="resetMCQ('mcqForm1')">
+                                    <i class="fas fa-redo"></i> <?php echo $mcq_completed ? 'Clear Answer' : 'Try Again'; ?>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- The print() function -->
+                <section class="content-section" id="print-function">
+                    <h2><i class="fas fa-print"></i> 2.1.2 The print() function</h2>
+
+                    <p>Look at the line of code below:</p>
+
+                    <div class="code-example">
+                        <div class="code-body">
+print("Hello, World!")
+                        </div>
+                    </div>
+
+                    <p>The word <strong>print</strong> that you can see here is a <strong>function name</strong>. That doesn't mean that wherever the word appears it is always a function name. The meaning of the word comes from the context in which the word has been used.</p>
+
+                    <p>A function (in this context) is a separate part of the computer code able to:</p>
+
+                    <div class="definition-list">
+                        <li><strong>Cause some effect</strong> (e.g., send text to the terminal, create a file, draw an image, play a sound, etc.); this is something completely unheard of in the world of mathematics;</li>
+                        <li><strong>Evaluate a value</strong> (e.g., the square root of a value or the length of a given text) and <strong>return it as the function's result</strong>; this is what makes Python functions the relatives of mathematical concepts.</li>
+                    </div>
+
+                    <p>Moreover, many Python functions can do the above two things together.</p>
+
+                    <h3>Where do the functions come from?</h3>
+
+                    <div class="concept-box">
+                        <h4>From Python itself</h4>
+                        <p>They may come <strong>from Python itself</strong>; the print function is one of this kind; such a function is an added value received together with Python and its environment (it is <strong>built-in</strong>); you don't have to do anything special (e.g., ask anyone for anything) if you want to make use of it.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h4>From modules</h4>
+                        <p>They may come from one or more of Python's add-ons named <strong>modules</strong>; some of the modules come with Python, others may require separate installation - whatever the case, they all need to be explicitly connected with your code.</p>
+                    </div>
+
+                    <div class="concept-box">
+                        <h4>From your code</h4>
+                        <p>You can <strong>write them yourself</strong>, placing as many functions as you want and need inside your program to make it simpler, clearer and more elegant.</p>
+                    </div>
+
+                    <p>The name of the function should be <strong>significant</strong> (the name of the print function is self-evident).</p>
+                </section>
+
+                <!-- Function arguments -->
+                <section class="content-section" id="function-arguments">
+                    <h2><i class="fas fa-cogs"></i> 2.1.3 Function arguments</h2>
+
+                    <p>As we said before, a function may have:</p>
+                    <ul>
+                        <li>an <strong>effect</strong></li>
+                        <li>a <strong>result</strong></li>
+                    </ul>
+
+                    <p>There's also a third, very important, function component - the <strong>argument(s)</strong>.</p>
+
+                    <p>Mathematical functions usually take one argument. For example, sin(x) takes an x, which is the measure of an angle.</p>
+
+                    <p>Python functions, on the other hand, are more versatile. Depending on the individual needs, they may accept any number of arguments - as many as necessary to perform their tasks.</p>
+
+                    <div class="concept-box">
+                        <h4>Note:</h4>
+                        <p>When we said <em>any number</em>, that includes zero - some Python functions don't need any argument.</p>
+                    </div>
+
+                    <p>In spite of the number of needed/provided arguments, Python functions strongly demand the presence of <strong>a pair of parentheses</strong> - opening and closing ones, respectively.</p>
+
+                    <p>If you want to deliver one or more arguments to a function, you place them <strong>inside the parentheses</strong>. If you're going to use a function which doesn't take any argument, you still have to have the parentheses.</p>
+
+                    <div class="concept-box">
+                        <h4>Convention:</h4>
+                        <p>To distinguish ordinary words from function names, place <strong>a pair of empty parentheses</strong> after their names, even if the corresponding function wants one or more arguments. This is a standard convention.</p>
+                    </div>
+
+                    <h3>String as the print() function's argument</h3>
+
+                    <p>The only argument delivered to the <strong>print()</strong> function in this example is a <strong>string</strong>:</p>
+
+                    <div class="code-example">
+                        <div class="code-body">
+print("Hello, World!")
+                        </div>
+                    </div>
+
+                    <p>As you can see, the <strong>string is delimited with quotes</strong> - in fact, the quotes make the string - they cut out a part of the code and assign a different meaning to it.</p>
+
+                    <p>You can imagine that the quotes say something like: the text between us is not code. It isn't intended to be executed, and you should take it as is.</p>
+
+                    <p>Almost anything you put inside the quotes will be taken literally, not as code, but as <strong>data</strong>. Try to play with this particular string - modify it, enter some new content, delete some of the existing content.</p>
+
+                    <p>There's more than one way to specify a string inside Python's code, but for now, though, this one is enough.</p>
+                </section>
+
+                <!-- Function invocation -->
+                <section class="content-section" id="function-invocation">
+                    <h2><i class="fas fa-play"></i> 2.1.4 Function invocation</h2>
+
+                    <p>The function name (<strong>print</strong> in this case) along with the parentheses and argument(s), forms the <strong>function invocation</strong>.</p>
+
+                    <div class="code-example">
+                        <div class="code-body">
+print("Hello, World!")
+                        </div>
+                    </div>
+
+                    <p>What happens when Python encounters an invocation like this one below?</p>
+
+                    <div class="code-example">
+                        <div class="code-body">
+function_name(argument)
+                        </div>
+                    </div>
+
+                    <p>Let's see:</p>
+
+                    <div class="definition-list">
+                        <li><strong>First</strong>, Python checks if the name specified is <strong>legal</strong> (it browses its internal data in order to find an existing function of the name; if this search fails, Python aborts the code)</li>
+                        <li><strong>Second</strong>, Python checks if the function's requirements for the number of arguments <strong>allows you to invoke</strong> the function in this way (e.g., if a specific function demands exactly two arguments, any invocation delivering only one argument will be considered erroneous, and will abort the code's execution)</li>
+                        <li><strong>Third</strong>, Python <strong>leaves your code for a moment</strong> and jumps into the function you want to invoke; of course, it takes your argument(s) too and passes it/them to the function</li>
+                        <li><strong>Fourth</strong>, the function <strong>executes its code</strong>, causes the desired effect (if any), evaluates the desired result(s) (if any) and finishes its task</li>
+                        <li><strong>Finally</strong>, Python <strong>returns to your code</strong> (to the place just after the invocation) and resumes its execution</li>
+                    </div>
+                </section>
+
+                <!-- Working with the print() function - LAB -->
+                <section class="content-section" id="print-lab">
+                    <h2><i class="fas fa-flask"></i> 2.1.5 LAB: Working with the print() function</h2>
+
+                    <div class="concept-box" style="background: #e9f7fe; border-left-color: #306998;">
+                        <h4><i class="fas fa-tasks"></i> Scenario</h4>
+                        <p>The <strong>print()</strong> command, which is one of the easiest directives in Python, simply prints out a line to the screen.</p>
+                    </div>
+
+                    <p>In your first lab:</p>
+
+                    <div class="definition-list">
+                        <li>Use the <strong>print()</strong> function to print the line <strong>Hello, Python!</strong> to the screen. Use double quotes around the string.</li>
+                        <li>Having done that, use the <strong>print()</strong> function again, but this time print your first name.</li>
+                        <li>Remove the double quotes and run your code. Watch Python's reaction. What kind of error is thrown?</li>
+                        <li>Then, remove the parentheses, put back the double quotes, and run your code again. What kind of error is thrown this time?</li>
+                        <li>Experiment as much as you can. Change double quotes to single quotes, use multiple <strong>print()</strong> functions on the same line, and then on different lines. See what happens.</li>
+                    </div>
+
+                    <!-- True/False Exercise -->
+                    <div class="exercise-container" id="tf-exercise-1">
+                        <div class="exercise-header">
+                            <i class="fas fa-check-double"></i>
+                            <div class="exercise-title">True or False</div>
+                            <div class="exercise-points">6 points</div>
+                        </div>
+
+                        <p><strong>Instructions:</strong> Mark each statement as True or False.</p>
+
+                        <form method="POST" id="tfForm1">
+                            <input type="hidden" name="exercise_type" value="true_false_1">
+                            <div class="true-false-grid">
+                                <div class="tf-question">
+                                    <p><strong>1.</strong> The print() function can only accept one argument.</p>
+                                    <div class="tf-options">
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q1']) && $stored_tf_answers['q1'] === 'true') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q1', 'true')">True</div>
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q1']) && $stored_tf_answers['q1'] === 'false') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q1', 'false')">False</div>
+                                    </div>
+                                    <input type="hidden" name="tf_answers[q1]" id="q1_answer" value="<?php echo $stored_tf_answers['q1'] ?? ''; ?>">
+                                </div>
+
+                                <div class="tf-question">
+                                    <p><strong>2.</strong> Function names in Python must always be followed by parentheses.</p>
+                                    <div class="tf-options">
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q2']) && $stored_tf_answers['q2'] === 'true') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q2', 'true')">True</div>
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q2']) && $stored_tf_answers['q2'] === 'false') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q2', 'false')">False</div>
+                                    </div>
+                                    <input type="hidden" name="tf_answers[q2]" id="q2_answer" value="<?php echo $stored_tf_answers['q2'] ?? ''; ?>">
+                                </div>
+
+                                <div class="tf-question">
+                                    <p><strong>3.</strong> Strings in Python must always be enclosed in double quotes.</p>
+                                    <div class="tf-options">
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q3']) && $stored_tf_answers['q3'] === 'true') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q3', 'true')">True</div>
+                                        <div class="tf-option <?php echo (isset($stored_tf_answers['q3']) && $stored_tf_answers['q3'] === 'false') ? 'selected' : ''; ?>" 
+                                             onclick="selectTF(this, 'q3', 'false')">False</div>
+                                    </div>
+                                    <input type="hidden" name="tf_answers[q3]" id="q3_answer" value="<?php echo $stored_tf_answers['q3'] ?? ''; ?>">
+                                </div>
+                            </div>
+
+                            <?php if (isset($exercise_results['tf1'])): ?>
+                                <div
+                                    class="feedback <?php echo $exercise_results['tf1']['is_passing'] ? 'correct' : 'incorrect'; ?>">
+                                    <i
+                                        class="fas fa-<?php echo $exercise_results['tf1']['is_passing'] ? 'check-circle' : 'times-circle'; ?>"></i>
+                                    You scored
+                                    <?php echo $exercise_results['tf1']['score']; ?> out of
+                                    <?php echo $exercise_results['tf1']['total']; ?>
+                                    (
+                                    <?php echo $exercise_results['tf1']['percentage']; ?>%)
+                                </div>
+                            <?php elseif ($tf_completed): ?>
+                                <div class="feedback correct">
+                                    <i class="fas fa-check-circle"></i>
+                                    You have completed this exercise.
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="exercise-actions">
+                                <?php if (!$tf_completed): ?>
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="fas fa-paper-plane"></i> Submit Answers
+                                </button>
+                                <?php endif; ?>
+                                <button type="button" class="btn btn-reset" onclick="resetTF('tfForm1')">
+                                    <i class="fas fa-redo"></i> <?php echo $tf_completed ? 'Clear Answers' : 'Reset'; ?>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- The print() function and its effect, arguments, and values returned -->
+                <section class="content-section" id="print-effects">
+                    <h2><i class="fas fa-info-circle"></i> 2.1.6 The print() function and its effect, arguments, and values returned</h2>
+
+                    <p>Three important questions have to be answered as soon as possible:</p>
+
+                    <h3>1. What effect does the print() function cause?</h3>
+                    <p>The effect is very useful and very spectacular. The function:</p>
+                    <div class="definition-list">
+                        <li>Takes its arguments (it may accept more than one argument and may also accept less than one argument)</li>
+                        <li>Converts them into human-readable form if needed (as you may suspect, strings don't require this action, as the string is already readable)</li>
+                        <li>And <strong>sends the resulting data to the output device</strong> (usually the console); in other words, anything you put into the print() function will appear on your screen.</li>
+                    </div>
+
+                    <div class="concept-box">
+                        <h4>No wonder then...</h4>
+                        <p>That from now on, you'll utilize print() very intensively to see the results of your operations and evaluations.</p>
+                    </div>
+
+                    <h3>2. What arguments does print() expect?</h3>
+                    <p><strong>Any.</strong> We'll show you soon that print() is able to operate with virtually all types of data offered by Python. Strings, numbers, characters, logical values, objects - any of these may be successfully passed to print().</p>
+
+                    <h3>3. What value does the print() function return?</h3>
+                    <p><strong>None.</strong> Its effect is enough.</p>
+                </section>
+
+                <!-- Instructions -->
+                <section class="content-section" id="instructions">
+                    <h2><i class="fas fa-code"></i> 2.1.7 Instructions</h2>
+
+                    <p>You have already seen a computer program that contains one function invocation. A function invocation is one of many possible kinds of Python <strong>instruction</strong>.</p>
+
+                    <p>Of course, any complex program usually contains many more instructions than one. The question is: how do you couple more than one instruction into the Python code?</p>
+
+                    <p>Python's syntax is quite specific in this area. Unlike most programming languages, Python requires that <strong>there cannot be more than one instruction in a line</strong>.</p>
+
+                    <p>A line can be empty (i.e., it may contain no instruction at all) but it must not contain two, three or more instructions. This is strictly prohibited.</p>
+
+                    <div class="concept-box">
+                        <h4>Note:</h4>
+                        <p>Python makes one exception to this rule - it allows one instruction to spread across more than one line (which may be helpful when your code contains complex constructions).</p>
+                    </div>
+
+                    <p>Let's expand the code a bit. You can see it in the editor below:</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> multiple_prints.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("The itsy bitsy spider climbed up the waterspout.")
+print("Down came the rain and washed the spider out.")
+                        </div>
+                    </div>
+
+                    <p>Your Python console should now look like this:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+The itsy bitsy spider climbed up the waterspout.
+Down came the rain and washed the spider out.
+                        </div>
+                    </div>
+
+                    <p>This is a good opportunity to make some observations:</p>
+                    <div class="definition-list">
+                        <li>The program <strong>invokes the print() function twice</strong>, and you can see two separate lines in the console - this means that print() begins its output from a new line each time it starts its execution; you can change this behavior, but you can also use it to your advantage</li>
+                        <li>Each print() invocation contains a different string, as its argument, and the console content reflects it - this means that <strong>the instructions in the code are executed in the same order</strong> in which they have been placed in the source file; no subsequent instruction is executed until the previous one is completed (there are some exceptions to this rule, but you can ignore them for now)</li>
+                    </div>
+                </section>
+
+                <!-- Python escape and newline characters -->
+                <section class="content-section" id="escape-characters">
+                    <h2><i class="fas fa-arrow-right"></i> 2.1.8 Python escape and newline characters</h2>
+
+                    <p>We've changed the example a bit - we've added one <strong>empty print()</strong> function invocation. We call it empty because we haven't delivered any arguments to the function.</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> empty_print.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("The itsy bitsy spider climbed up the waterspout.")
+print()
+print("Down came the rain and washed the spider out.")
+                        </div>
+                    </div>
+
+                    <p>If everything goes right, you should see something like this:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+The itsy bitsy spider climbed up the waterspout.
+
+Down came the rain and washed the spider out.
+                        </div>
+                    </div>
+
+                    <p>As you can see, the empty print() invocation is not as empty as you may have expected - it does output an empty line, or (this interpretation is also correct) it outputs a newline.</p>
+
+                    <p>This is not the only way to produce a <strong>newline</strong> in the output console. We're now going to show you another way.</p>
+
+                    <p>We've modified the code again. Look at it carefully. There are two very subtle changes - we've inserted a strange pair of characters inside the rhyme. They look like this: <strong>\n</strong>.</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> newline_character.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("The itsy bitsy spider\nclimbed up the waterspout.")
+print()
+print("Down came the rain\nand washed the spider out.")
+                        </div>
+                    </div>
+
+                    <p>Interestingly, while <strong>you can see two characters, Python sees one</strong>.</p>
+
+                    <p>The backslash (<strong>\</strong>) has a very special meaning when used inside strings - this is called <strong>the escape character</strong>.</p>
+
+                    <p>The word <em>escape</em> should be understood specifically - it means that the series of characters in the string escapes for the moment (a very short moment) to introduce a special inclusion.</p>
+
+                    <p>In other words, the backslash doesn't mean anything in itself, but is only a kind of announcement, that the next character after the backslash has a different meaning too.</p>
+
+                    <p>The letter <strong>n</strong> placed after the backslash comes from the word <em>newline</em>.</p>
+
+                    <p>Both the backslash and the <strong>n</strong> form a special symbol named <strong>a newline character</strong>, which urges the console to start a <strong>new output line</strong>.</p>
+
+                    <p>Your console should now look like this:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+The itsy bitsy spider
+climbed up the waterspout.
+
+Down came the rain
+and washed the spider out.
+                        </div>
+                    </div>
+
+                    <p>As you can see, two newlines appear in the nursery rhyme, in the places where the \n have been used.</p>
+
+                    <p>This convention has two important consequences:</p>
+
+                    <div class="definition-list">
+                        <li>If you want to put just one backslash inside a string, don't forget its escaping nature - you have to double it. For example, an invocation like this will cause an error:<br>
+                            <code>print("\")</code><br>
+                            while this one won't:<br>
+                            <code>print("\\")</code></li>
+                        <li>Not all escape pairs (the backslash coupled with another character) mean something.</li>
+                    </div>
+
+                    <div class="concept-box">
+                        <h4>Experiment:</h4>
+                        <p>Experiment with your code in the editor, run it, and see what happens.</p>
+                    </div>
+                </section>
+
+                <!-- Using multiple arguments -->
+                <section class="content-section" id="multiple-arguments">
+                    <h2><i class="fas fa-layer-group"></i> 2.1.9 Using multiple arguments</h2>
+
+                    <p>So far we have tested the <strong>print()</strong> function behavior with no arguments, and with one argument. It's also worth trying to feed the print() function with more than one argument.</p>
+
+                    <p>Look at the editor window. This is what we're going to test now:</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> multiple_arguments.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("The", "itsy", "bitsy", "spider", "climbed", "up", "the", "waterspout.")
+                        </div>
+                    </div>
+
+                    <p>There is one print() function invocation, but it contains <strong>three arguments</strong>. All of them are strings.</p>
+
+                    <p>The arguments are <strong>separated by commas</strong>. We've surrounded them with spaces to make them more visible, but it's not really necessary, and we won't be doing it anymore.</p>
+
+                    <div class="concept-box">
+                        <h4>Important:</h4>
+                        <p>In this case, the commas separating the arguments play a completely different role than the comma inside the string. The former is a part of Python's syntax, while the latter is intended to be shown in the console.</p>
+                    </div>
+
+                    <p>If you look at the code again, you'll see that there are no spaces inside the strings.</p>
+
+                    <p>The console should now be showing the following text:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+The itsy bitsy spider climbed up the waterspout.
+                        </div>
+                    </div>
+
+                    <p>The spaces, removed from the strings, have appeared again. Can you explain why?</p>
+
+                    <p>Two conclusions emerge from this example:</p>
+                    <div class="definition-list">
+                        <li>A print() function invoked with more than one argument <strong>outputs them all on one line</strong></li>
+                        <li>The print() function <strong>puts a space between the outputted arguments</strong> on its own initiative</li>
+                    </div>
+                </section>
+
+                <!-- Positional arguments -->
+                <section class="content-section" id="positional-arguments">
+                    <h2><i class="fas fa-sort-amount-down"></i> 2.1.10 Positional arguments</h2>
+
+                    <p>Now that you know a bit about <strong>print()</strong> function customs, we're going to show you how to change them.</p>
+
+                    <p>You should be able to predict the output without running the code in the editor.</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> positional_args.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("My", "name", "is", "Monty", "Python.")
+                        </div>
+                    </div>
+
+                    <p>The way in which we are passing the arguments into the <strong>print()</strong> function is the most common in Python, and is called <strong>the positional way</strong>. This name comes from the fact that the meaning of the argument is dictated by its position (e.g., the second argument will be outputted after the first, not the other way round).</p>
+                </section>
+
+                <!-- Keyword arguments -->
+                <section class="content-section" id="keyword-arguments">
+                    <h2><i class="fas fa-key"></i> 2.1.11 Keyword arguments</h2>
+
+                    <p>Python offers another mechanism for the passing of arguments, which can be helpful when you want to convince the print() function to change its behavior a bit.</p>
+
+                    <p>We aren't going to explain it in depth right now. We plan to do this when we talk about functions. For now, we simply want to show you how it works. Feel free to use it in your own programs.</p>
+
+                    <p>The mechanism is called <strong>keyword arguments</strong>. The name stems from the fact that the meaning of these arguments is taken not from its location (position) but from the special word (keyword) used to identify them.</p>
+
+                    <p>The print() function has two keyword arguments that you can use for your purposes. The first is called <strong>end</strong>.</p>
+
+                    <p>In the editor window you can see a very simple example how to use a keyword argument.</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> keyword_end.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("My name is", "Python.", end=" ")
+print("Monty Python.")
+                        </div>
+                    </div>
+
+                    <p>In order to use it, it is necessary to know some rules:</p>
+                    <div class="definition-list">
+                        <li>A keyword argument consists of three elements: a <strong>keyword</strong> identifying the argument (end here); an <strong>equal sign</strong> (=); and a <strong>value</strong> assigned to that argument</li>
+                        <li>Any keyword arguments have to be put <strong>after the last positional argument</strong> (this is very important)</li>
+                    </div>
+
+                    <p>In our example, we have made use of the <strong>end</strong> keyword argument, and set it to a string containing one space.</p>
+
+                    <p>The console should now be showing the following text:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+My name is Python. Monty Python.
+                        </div>
+                    </div>
+
+                    <p>As you can see, the <strong>end</strong> keyword argument determines the characters the print() function sends to the output once it reaches the end of its positional arguments.</p>
+
+                    <p>The default behavior reflects the situation where the <strong>end</strong> keyword argument is <strong>implicitly</strong> used in the following way: <code>end="\n"</code>.</p>
+
+                    <p>And now it's time to try something more difficult. If you look carefully, you'll see that we've used the <strong>end</strong> argument, but the string assigned to it is empty (it contains no characters at all).</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> keyword_end_empty.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("My name is ", end="")
+print("Monty Python.")
+                        </div>
+                    </div>
+
+                    <p>As the <strong>end</strong> argument has been set to nothing, the print() function outputs nothing too, once its positional arguments have been exhausted.</p>
+
+                    <p>The console should now be showing the following text:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+My name is Monty Python.
+                        </div>
+                    </div>
+
+                    <p>Note: <strong>no newlines have been sent to the output</strong>.</p>
+
+                    <p>The string assigned to the <strong>end</strong> keyword argument can be of any length. Experiment with it if you want.</p>
+
+                    <p>We said previously that the print() function separates its outputted arguments with spaces. This behavior can be changed, too.</p>
+
+                    <p>The <strong>keyword argument</strong> that can do this is named <strong>sep</strong> (as in <em>separator</em>).</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> keyword_sep.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("My", "name", "is", "Monty", "Python.", sep="-")
+                        </div>
+                    </div>
+
+                    <p>The <strong>sep</strong> argument delivers the following results:</p>
+
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Console Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+My-name-is-Monty-Python.
+                        </div>
+                    </div>
+
+                    <p>The print() function now uses a dash, instead of a space, to separate the outputted arguments.</p>
+
+                    <div class="concept-box">
+                        <h4>Note:</h4>
+                        <p>The <strong>sep</strong> argument's value may be an empty string, too. Try it for yourself.</p>
+                    </div>
+
+                    <p>Both keyword arguments may be <strong>mixed in one invocation</strong>, just like here:</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> keyword_both.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("My", "name", "is", sep="_", end="*")
+print("Monty", "Python.", sep="*", end="*\n")
+                        </div>
+                    </div>
+
+                    <p>The example doesn't make much sense, but it visibly presents the interactions between <strong>end</strong> and <strong>sep</strong>.</p>
+
+                    <div class="concept-box" style="background: #d4edda; border-left-color: #28a745;">
+                        <h4><i class="fas fa-check-circle"></i> Key Takeaway</h4>
+                        <p>Now that you understand the print() function, you're ready to consider how to store and process data in Python. Without print(), you wouldn't be able to see any results.</p>
+                    </div>
+                </section>
+
+                <!-- LAB: The print() function and its arguments -->
+                <section class="content-section" id="print-arguments-lab">
+                    <h2><i class="fas fa-flask"></i> 2.1.12 LAB: The print() function and its arguments</h2>
+
+                    <div class="concept-box" style="background: #e9f7fe; border-left-color: #306998;">
+                        <h4><i class="fas fa-tasks"></i> Scenario</h4>
+                        <p>Modify the first line of code in the editor, using the <strong>sep</strong> and <strong>end</strong> keywords, to match the expected output. Use the two print() functions in the editor.</p>
+                        <p>Don't change anything in the second print() invocation.</p>
+                    </div>
+
+                    <h3>Expected output</h3>
+                    <div class="code-example" style="background: #f8f9fa; color: #333;">
+                        <div class="code-header" style="background: #6c757d;">
+                            <span>Expected Output</span>
+                        </div>
+                        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+Programming***Essentials***in...Python
+                        </div>
+                    </div>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> lab_exercise.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+# Your modification here
+print("Programming", "Essentials", "in")
+print("Python")
+                        </div>
+                    </div>
+
+                    <div class="concept-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <h4><i class="fas fa-lightbulb"></i> Hint</h4>
+                        <p>You need to modify the first print() statement to use sep="***" and end="..." to achieve the desired output format.</p>
+                    </div>
+                </section>
+
+                <!-- LAB: Formatting the output -->
+                <section class="content-section" id="formatting-lab">
+                    <h2><i class="fas fa-flask"></i> 2.1.13 LAB: Formatting the output</h2>
+
+                    <div class="concept-box" style="background: #e9f7fe; border-left-color: #306998;">
+                        <h4><i class="fas fa-tasks"></i> Scenario</h4>
+                        <p>We strongly encourage you to <strong>play with the code</strong> we've written for you, and make some (maybe even destructive) amendments. Feel free to modify any part of the code, but there is one condition - learn from your mistakes and draw your own conclusions.</p>
+                    </div>
+
+                    <p>Try to:</p>
+                    <div class="definition-list">
+                        <li>Minimize the number of <strong>print()</strong> function invocations by inserting the <strong>\n</strong> sequence into the strings</li>
+                        <li>Make the arrow twice as large (but keep the proportions)</li>
+                        <li>Duplicate the arrow, placing both arrows side by side; note: a string may be multiplied by using the following trick: <strong>"string" * 2</strong> will produce <strong>"stringstring"</strong> (we'll tell you more about it soon)</li>
+                        <li>Remove any of the quotes, and look carefully at Python's response; pay attention to where Python sees an error - is this the place where the error really exists?</li>
+                        <li>Do the same with some of the parentheses</li>
+                        <li>Change any of the <strong>print</strong> words into something else, differing only in case (e.g., <strong>Print</strong>) - what happens now?</li>
+                        <li>Replace some of the quotes with apostrophes; watch what happens carefully</li>
+                    </div>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span><i class="fab fa-python"></i> arrow_drawing.py</span>
+                            <span>Python 3.10</span>
+                        </div>
+                        <div class="code-body">
+print("    *")
+print("   * *")
+print("  *   *")
+print(" *     *")
+print("***   ***")
+print("  *   *")
+print("  *   *")
+print("  *****")
+                        </div>
+                    </div>
+
+                    <!-- Python Sandbox Exercise -->
+<div class="sandbox-container" id="python-exercise">
+    <div class="sandbox-title">
+        <i class="fas fa-laptop-code"></i>
+        <h3>Practice Exercise: Create Your Own Output</h3>
+    </div>
+
+    <p>Practice what you've learned by writing Python code that produces the following output:</p>
+
+    <div class="code-example" style="background: #f8f9fa; color: #333; margin-bottom: 1.5rem;">
+        <div class="code-header" style="background: #6c757d;">
+            <span>Target Output</span>
+        </div>
+        <div class="code-body" style="color: #333; font-family: 'Courier New', monospace;">
+================================
+Welcome to Python Programming!
+================================
+Course: Python Essentials 1
+Student: [Your Name]
+Date: <?php echo date('Y-m-d'); ?>
+
+Let's code!
+        </div>
+    </div>
+
+    <form method="POST" id="pythonForm1">
+        <input type="hidden" name="exercise_type" value="python_exercise_1">
+
+        <div class="sandbox-editor">
+            <div class="editor-header">
+                <span><i class="fab fa-python"></i> practice_output.py</span>
+                <span>Python 3.10</span>
+            </div>
+            <div class="editor-body" id="pythonEditor" contenteditable="true" spellcheck="false">
+<?php 
+if (!empty($stored_python_code)) {
+    echo htmlspecialchars($stored_python_code);
+} else {
+    echo '# Create the output shown above
+# Use multiple print() statements with appropriate arguments
+# Remember to use sep and end keywords where helpful
+# Replace [Your Name] with your actual name
+
+print("=" * 32)
+print("Welcome to Python Programming!")
+print("=" * 32)
+print("Course:", "Python Essentials 1", sep=": ")
+print("Student:", "[Your Name]", sep=": ")
+print("Date:", "' . date('Y-m-d') . '", sep=": ")
+print()
+print("Let\'s code!")';
+}
+?>
+            </div>
+        </div>
+
+        <textarea name="python_code" id="pythonCodeInput" style="display:none;"><?php echo htmlspecialchars($stored_python_code); ?></textarea>
+
+        <div class="sandbox-controls">
+            <button type="button" class="btn btn-primary" onclick="runPythonCode()">
+                <i class="fas fa-play"></i> Run Code
+            </button>
+            <?php if (!$py_completed): ?>
+            <button type="button" class="btn btn-reset" onclick="resetPythonEditor()">
+                <i class="fas fa-redo"></i> Reset
+            </button>
+            <?php endif; ?>
+            <button type="submit" class="btn btn-submit">
+                <i class="fas fa-save"></i> <?php echo $py_completed ? 'Update Code' : 'Save & Continue'; ?>
+            </button>
+        </div>
+
+        <div id="pythonOutput"
+            style="margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6; min-height: 100px;">
+            <strong>Output will appear here...</strong>
+            <div id="outputContent"></div>
+        </div>
+    </form>
+</div>
+
+<script>
+// JavaScript function to execute Python code (using a simulated Python interpreter)
+function runPythonCode() {
+    const editor = document.getElementById('pythonEditor');
+    const outputDiv = document.getElementById('outputContent');
+    
+    // Get the code from the editable div
+    const code = editor.textContent || editor.innerText;
+    
+    // Clear previous output
+    outputDiv.innerHTML = '';
+    
+    try {
+        // This simulates Python execution - in a real environment, you'd send to server
+        const lines = code.split('\n');
+        let output = '';
+        
+        for (let line of lines) {
+            // Handle print statements
+            if (line.trim().startsWith('print(')) {
+                // Extract content between parentheses
+                const match = line.match(/print\((.*)\)/);
+                if (match) {
+                    const content = match[1];
+                    
+                    // Handle string concatenation and multiplication
+                    if (content.includes('*')) {
+                        // Handle string repetition like "=" * 32
+                        const parts = content.split('*').map(p => p.trim().replace(/['"]/g, ''));
+                        if (parts.length === 2 && !isNaN(parts[1])) {
+                            output += parts[0].repeat(parseInt(parts[1])) + '\n';
+                        }
+                    } else {
+                        // Handle regular print statements
+                        const args = content.split(',').map(arg => {
+                            arg = arg.trim();
+                            // Remove quotes and handle variables/concatenation
+                            return arg.replace(/^['"]|['"]$/g, '');
+                        });
+                        
+                        // Handle sep parameter
+                        let sep = ' ';
+                        const sepIndex = content.indexOf('sep=');
+                        if (sepIndex !== -1) {
+                            const sepMatch = content.substring(sepIndex + 4).match(/['"](.*?)['"]/);
+                            if (sepMatch) sep = sepMatch[1];
+                        }
+                        
+                        output += args.filter(arg => !arg.startsWith('sep=') && !arg.startsWith('end=')).join(sep) + '\n';
+                    }
+                }
+            }
+            // Handle variable assignments (simplified)
+            else if (line.includes('=') && !line.includes('print')) {
+                // Just skip or handle variable assignments if needed
+                continue;
+            }
+            // Handle comments - ignore
+            else if (line.trim().startsWith('#')) {
+                continue;
+            }
+        }
+        
+        // Display the output
+        outputDiv.innerHTML = '<pre style="margin:0;white-space:pre-wrap;">' + output + '</pre>';
+        
+    } catch (error) {
+        outputDiv.innerHTML = '<pre style="color:red;">Error: ' + error.message + '</pre>';
+    }
+}
+
+// Function to reset editor to original code
+function resetPythonEditor() {
+    const originalCode = `# Create the output shown above
+# Use multiple print() statements with appropriate arguments
+# Remember to use sep and end keywords where helpful
+# Replace [Your Name] with your actual name
+
+print("=" * 32)
+print("Welcome to Python Programming!")
+print("=" * 32)
+print("Course:", "Python Essentials 1", sep=": ")
+print("Student:", "[Your Name]", sep=": ")
+print("Date:", "<?php echo date('Y-m-d'); ?>", sep=": ")
+print()
+print("Let's code!")`;
+    
+    document.getElementById('pythonEditor').innerHTML = originalCode;
+}
+
+// Update hidden textarea when editor content changes
+document.getElementById('pythonEditor').addEventListener('input', function() {
+    document.getElementById('pythonCodeInput').value = this.textContent || this.innerText;
+});
+</script>
+
+                            <?php if (isset($exercise_results['py1'])): ?>
+                                <div class="feedback correct" style="margin-top: 1rem;">
+                                    <i class="fas fa-check-circle"></i>
+                                    Your code has been saved! You can continue with the next section.
+                                </div>
+                            <?php elseif ($py_completed): ?>
+                                <div class="feedback correct" style="margin-top: 1rem;">
+                                    <i class="fas fa-check-circle"></i>
+                                    You have completed this exercise.
+                                </div>
+                            <?php endif; ?>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            <a href="module1_section4.php" class="nav-btn">
+                <i class="fas fa-arrow-left"></i> Previous Section
+            </a>
+            <a href="module2_section2.php" class="nav-btn" id="nextSectionBtn">
+                Next Section: Variables and Data Types <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Module 2 Progress</h3>
+                    <p>Section 1:
+                        <?php 
+                        echo round($progress['section1']);
+                        ?>% complete
+                    </p>
+                    <p><strong>Next:</strong> Section 2: Variables and Data Types</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Need Help?</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Module FAQ</a></li>
+                        <li><a href="#"><i class="fas fa-book"></i> Reference Materials</a></li>
+                        <li><a href="#"><i class="fas fa-comments"></i> Ask Instructor</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.php"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="#"><i class="fas fa-download"></i> Download Notes</a></li>
+                        <li><a href="#"><i class="fas fa-print"></i> Print Section</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>About This Module</h3>
+                    <p>Module 2 introduces the print() function and basic output formatting, forming the foundation for Python programming.</p>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; <?php echo date('Y'); ?> Impact Digital Academy. Python Essentials 1 - Module 2 - Section 1</p>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem;">All code exercises run in secure sandbox environment</p>
+            </div>
+        </footer>
+
+        <script>
+            // Exercise completion tracking
+            let completedExercises = <?php echo $completed_exercises_count; ?>;
+            const totalExercises = 3;
+
+            // Update progress bars on page load
+            function updateProgress() {
+                // Count completed exercises
+                completedExercises = 0;
+                
+                // Check which exercises have feedback (completed)
+                if (document.querySelector('#mcqForm1 .feedback')) completedExercises++;
+                if (document.querySelector('#tfForm1 .feedback')) completedExercises++;
+                if (document.querySelector('#pythonForm1 .feedback')) completedExercises++;
+
+                // Update UI
+                document.getElementById('exercisesCompleted').textContent = `${completedExercises}/${totalExercises}`;
+                const progressPercent = (completedExercises / totalExercises) * 100;
+                document.getElementById('exercisesProgressBar').style.width = `${progressPercent}%`;
+
+                // Update section progress based on exercises
+                const sectionProgress = Math.min(100, (completedExercises / totalExercises) * 100);
+                document.getElementById('sectionProgress').textContent = `${Math.round(sectionProgress)}%`;
+                document.getElementById('sectionProgressBar').style.width = `${sectionProgress}%`;
+
+                // Update module progress (simplified)
+                const moduleProgress = 25 + (sectionProgress * 0.75); // Section 1 contributes 75% to module progress
+                document.getElementById('moduleProgress').textContent = `${Math.round(moduleProgress)}%`;
+                document.getElementById('moduleProgressBar').style.width = `${moduleProgress}%`;
+            }
+
+            // Multiple Choice Functions
+            function selectOption(element, value) {
+                // Remove selected class from all options
+                const options = element.parentElement.querySelectorAll('.mcq-option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+
+                // Add selected class to clicked option
+                element.classList.add('selected');
+
+                // Set the radio button value
+                const radio = element.querySelector('input[type="radio"]');
+                radio.checked = true;
+            }
+
+            function resetMCQ(formId) {
+                // Create a form for reset
+                const resetForm = document.createElement('form');
+                resetForm.method = 'POST';
+                resetForm.style.display = 'none';
+                
+                const resetInput = document.createElement('input');
+                resetInput.type = 'hidden';
+                resetInput.name = 'reset_type';
+                resetInput.value = 'reset_mcq';
+                resetForm.appendChild(resetInput);
+                
+                document.body.appendChild(resetForm);
+                resetForm.submit();
+            }
+
+            // True/False Functions
+            function selectTF(element, questionId, value) {
+                const questionDiv = element.closest('.tf-question');
+
+                // Remove selected class from all options in this question
+                const options = questionDiv.querySelectorAll('.tf-option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+
+                // Add selected class to clicked option
+                element.classList.add('selected');
+
+                // Set the hidden input value
+                const hiddenInput = document.getElementById(`${questionId}_answer`);
+                if (hiddenInput) {
+                    hiddenInput.value = value;
+                }
+            }
+
+            function resetTF(formId) {
+                // Create a form for reset
+                const resetForm = document.createElement('form');
+                resetForm.method = 'POST';
+                resetForm.style.display = 'none';
+                
+                const resetInput = document.createElement('input');
+                resetInput.type = 'hidden';
+                resetInput.name = 'reset_type';
+                resetInput.value = 'reset_tf';
+                resetForm.appendChild(resetInput);
+                
+                document.body.appendChild(resetForm);
+                resetForm.submit();
+            }
+
+            // Python Sandbox Functions
+            function getPythonCode() {
+                const editor = document.getElementById('pythonEditor');
+                return editor.textContent;
+            }
+
+            function setPythonCode(code) {
+                const editor = document.getElementById('pythonEditor');
+                editor.textContent = code;
+                updatePythonInput();
+            }
+
+            function updatePythonInput() {
+                const code = getPythonCode();
+                document.getElementById('pythonCodeInput').value = code;
+            }
+
+            function resetPythonEditor() {
+                // Create a form for reset
+                const resetForm = document.createElement('form');
+                resetForm.method = 'POST';
+                resetForm.style.display = 'none';
+                
+                const resetInput = document.createElement('input');
+                resetInput.type = 'hidden';
+                resetInput.name = 'reset_type';
+                resetInput.value = 'reset_python';
+                resetForm.appendChild(resetInput);
+                
+                document.body.appendChild(resetForm);
+                resetForm.submit();
+            }
+
+            async function runPythonCode() {
+                const pythonCode = getPythonCode();
+                const outputDiv = document.getElementById('outputContent');
+
+                // Show loading state
+                outputDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing code...';
+                document.getElementById('pythonOutput').style.backgroundColor = '#fff3cd';
+
+                try {
+                    // Simple client-side evaluation for demonstration
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+
+                    // Check for basic completion
+                    if (pythonCode.includes('print(') && pythonCode.includes('Python Essentials')) {
+                        outputDiv.innerHTML = `<div style="color: var(--success);">
+                        <i class="fas fa-check-circle"></i> <strong>Success!</strong><br>
+                        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px; overflow-x: auto;">================================
+Welcome to Python Programming!
+================================
+Course: Python Essentials 1
+Student: [Your Name]
+Date: <?php echo date('Y-m-d'); ?>
+
+Let's code!</pre>
+                    </div>`;
+                        document.getElementById('pythonOutput').style.backgroundColor = '#d4edda';
+                    } else if (pythonCode.includes('print(')) {
+                        outputDiv.innerHTML = `<div style="color: var(--warning);">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Code executed but might not match target</strong><br>
+                        Make sure your output matches the target format exactly.
+                    </div>`;
+                        document.getElementById('pythonOutput').style.backgroundColor = '#fff3cd';
+                    } else {
+                        outputDiv.innerHTML = `<div style="color: var(--danger);">
+                        <i class="fas fa-times-circle"></i> <strong>No print statements found</strong><br>
+                        Make sure you use print() functions to display output.
+                    </div>`;
+                        document.getElementById('pythonOutput').style.backgroundColor = '#f8d7da';
+                    }
+                } catch (error) {
+                    outputDiv.innerHTML = `<div style="color: var(--danger);">
+                    <i class="fas fa-times-circle"></i> <strong>Error:</strong> ${error.message}
+                </div>`;
+                    document.getElementById('pythonOutput').style.backgroundColor = '#f8d7da';
+                }
+
+                // Update the hidden input field
+                updatePythonInput();
+            }
+
+            // Update python input when editor changes
+            document.getElementById('pythonEditor').addEventListener('input', updatePythonInput);
+
+            // Next Section Button
+            document.getElementById('nextSectionBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const nextSectionUrl = this.getAttribute('href');
+                
+                if (completedExercises < totalExercises) {
+                    if (confirm(`You've completed ${completedExercises} out of ${totalExercises} exercises. Are you sure you want to proceed to the next section?`)) {
+                        window.location.href = nextSectionUrl;
+                    }
+                } else {
+                    // All exercises completed
+                    window.location.href = nextSectionUrl;
+                }
+            });
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function() {
+                // Update progress on page load
+                updateProgress();
+
+                // Set up form submissions to update progress
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    form.addEventListener('submit', function() {
+                        setTimeout(updateProgress, 100);
+                    });
+                });
+
+                // Auto-save python code every 30 seconds
+                setInterval(updatePythonInput, 30000);
+
+                // Mobile menu toggle
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                mobileMenuBtn.addEventListener('click', function() {
+                    alert('Mobile menu would open here. In full implementation, this would show navigation links.');
+                });
+
+                // Smooth scroll for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function(e) {
+                        if (this.getAttribute('href') !== '#') {
+                            e.preventDefault();
+                            const targetId = this.getAttribute('href');
+                            const targetElement = document.querySelector(targetId);
+                            if (targetElement) {
+                                window.scrollTo({
+                                    top: targetElement.offsetTop - 100,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Handle window resize for mobile
+            window.addEventListener('resize', function() {
+                // Update any responsive elements as needed
+            });
+        </script>
+    </body>
+
+    </html>
+<?php
+} catch (Exception $e) {
+    die("<div style='padding:20px; background:#fee; border:1px solid #f00; color:#900;'>Error: " . htmlspecialchars($e->getMessage()) . "</div>");
+}
+?>

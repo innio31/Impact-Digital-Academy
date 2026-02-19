@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Project Plan Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0d3d8c 0%, #1a5bb8 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .content-area {
+            display: flex;
+            min-height: 700px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: #f0f4f9;
+            padding: 25px 20px;
+            border-right: 1px solid #e0e6ed;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .step-container {
+            margin-bottom: 40px;
+            border-left: 4px solid #0d3d8c;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px 0;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #0d3d8c;
+            color: white;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0d3d8c;
+            margin: 0;
+        }
+        
+        .step-content {
+            padding: 0 0 20px 50px;
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .instructions {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .demo-area {
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 25px;
+            min-height: 300px;
+        }
+        
+        .demo-area h3 {
+            color: #0d3d8c;
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-next {
+            background-color: #0d3d8c;
+            color: white;
+        }
+        
+        .btn-prev {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-complete {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e6ed;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #0d3d8c;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #0d3d8c;
+            margin-bottom: 10px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .step-indicator-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .step-indicator-item:hover {
+            background-color: rgba(13, 61, 140, 0.08);
+        }
+        
+        .step-indicator-item.active {
+            background-color: rgba(13, 61, 140, 0.15);
+            border-left: 4px solid #0d3d8c;
+        }
+        
+        .step-indicator-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: #0d3d8c;
+            color: white;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .step-indicator-item.active .step-indicator-number {
+            background-color: #1a5bb8;
+        }
+        
+        .step-indicator-text {
+            font-size: 0.95rem;
+        }
+        
+        .completed-step {
+            color: #28a745;
+            margin-left: auto;
+        }
+        
+        /* Table styling for demo area */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #0d3d8c;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .merged-cell {
+            background-color: #e3f2fd;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        ol, ul {
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .checkmark {
+            color: #28a745;
+            margin-right: 5px;
+        }
+        
+        .download-area {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .download-area.active {
+            display: block;
+        }
+        
+        .file-name {
+            font-family: monospace;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e6ed;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+            <div>
+                <h1>Step-by-Step Practice Exercise</h1>
+                <p>Create a Project Plan with Tables and Lists</p>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="sidebar">
+                <div class="progress-text">Progress: <span id="progress-percent">0%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                
+                <h3>Exercise Steps</h3>
+                <div class="step-indicator" id="step-indicator">
+                    <!-- Steps will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div id="step-content-container">
+                    <!-- Step content will be loaded here by JavaScript -->
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-prev" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous Step
+                    </button>
+                    <button class="btn btn-next" id="next-btn">
+                        Next Step <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-complete" id="complete-btn" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Complete Exercise
+                    </button>
+                </div>
+                
+                <div class="download-area" id="download-area">
+                    <h3><i class="fas fa-download"></i> Exercise Completed Successfully!</h3>
+                    <p>Your project plan has been created. Save your document with the following filename:</p>
+                    <div class="file-name" id="file-name">StudentName_Week3_ProjectPlan.docx</div>
+                    <p>Congratulations! You've completed all steps of this exercise.</p>
+                    <button class="btn btn-complete" id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Exercise
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Exercise steps data
+        const exerciseSteps = [
+            {
+                id: 1,
+                title: "Create New Document",
+                instructions: `Create a new document in your word processing software (like Microsoft Word or Google Docs) and title it <strong>"Project Kickoff Plan"</strong>.`,
+                demoContent: `<h3>Document Creation</h3>
+                <p>Open your word processing software and:</p>
+                <ol>
+                    <li>Click on <strong>File > New</strong> to create a new document</li>
+                    <li>At the top of the document, type <strong>"Project Kickoff Plan"</strong> as the title</li>
+                    <li>Center align the title and make it bold with font size 16-18pt</li>
+                </ol>
+                <div style="text-align: center; padding: 20px; background-color: white; border: 1px solid #ddd; margin-top: 15px;">
+                    <h2 style="margin: 0; color: #0d3d8c;">Project Kickoff Plan</h2>
+                </div>`
+            },
+            {
+                id: 2,
+                title: "Insert Task Tracker Table",
+                instructions: `Insert a table with <strong>4 columns</strong> and <strong>5 rows</strong> to create a task tracker.`,
+                demoContent: `<h3>Task Tracker Table</h3>
+                <p>To insert the table:</p>
+                <ol>
+                    <li>Place your cursor where you want the table to appear</li>
+                    <li>Go to the <strong>Insert</strong> tab and click on <strong>Table</strong></li>
+                    <li>Select a 4x5 table (4 columns across, 5 rows down)</li>
+                    <li>Enter the following column headers in the first row: <strong>Task Name, Owner, Due Date, Status</strong></li>
+                </ol>
+                
+                <h4>Sample Table Structure:</h4>
+                <table>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Owner</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Define project scope</td>
+                        <td>Project Manager</td>
+                        <td>Oct 15, 2023</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>Create budget estimate</td>
+                        <td>Finance Lead</td>
+                        <td>Oct 20, 2023</td>
+                        <td>Not Started</td>
+                    </tr>
+                    <tr>
+                        <td>Identify stakeholders</td>
+                        <td>Project Manager</td>
+                        <td>Oct 12, 2023</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>Schedule kickoff meeting</td>
+                        <td>Administrator</td>
+                        <td>Oct 10, 2023</td>
+                        <td>Completed</td>
+                    </tr>
+                </table>
+                
+                <p>Fill in your table with similar sample data.</p>`
+            },
+            {
+                id: 3,
+                title: "Format the Table",
+                instructions: `Format your table by merging cells, applying a style, setting header row to repeat, and sorting tasks.`,
+                demoContent: `<h3>Table Formatting Steps</h3>
+                
+                <h4>1. Merge cells in the first row for a title:</h4>
+                <ol>
+                    <li>Add a new row at the top of your table</li>
+                    <li>Select all cells in this new row</li>
+                    <li>Right-click and choose <strong>Merge Cells</strong></li>
+                    <li>Type "Project Task Tracker" as the table title</li>
+                </ol>
+                
+                <h4>2. Apply a table style:</h4>
+                <ol>
+                    <li>Click anywhere inside your table</li>
+                    <li>Go to the <strong>Table Design</strong> tab (or Table Tools > Design)</li>
+                    <li>Choose a style from the gallery (e.g., Medium Shading 1)</li>
+                </ol>
+                
+                <h4>3. Set header row to repeat:</h4>
+                <ol>
+                    <li>Select the header row (row with Task Name, Owner, Due Date, Status)</li>
+                    <li>Right-click and select <strong>Table Properties</strong></li>
+                    <li>In the Row tab, check "Repeat as header row at the top of each page"</li>
+                </ol>
+                
+                <h4>4. Sort tasks alphabetically:</h4>
+                <ol>
+                    <li>Select the entire table (excluding the title row)</li>
+                    <li>Go to the <strong>Table Layout</strong> tab</li>
+                    <li>Click <strong>Sort</strong></li>
+                    <li>Choose "Sort by: Task Name" and click OK</li>
+                </ol>
+                
+                <h4>Your formatted table should look similar to this:</h4>
+                <table>
+                    <tr>
+                        <td colspan="4" class="merged-cell">Project Task Tracker</td>
+                    </tr>
+                    <tr>
+                        <th>Task Name</th>
+                        <th>Owner</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Create budget estimate</td>
+                        <td>Finance Lead</td>
+                        <td>Oct 20, 2023</td>
+                        <td>Not Started</td>
+                    </tr>
+                    <tr>
+                        <td>Define project scope</td>
+                        <td>Project Manager</td>
+                        <td>Oct 15, 2023</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>Identify stakeholders</td>
+                        <td>Project Manager</td>
+                        <td>Oct 12, 2023</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>Schedule kickoff meeting</td>
+                        <td>Administrator</td>
+                        <td>Oct 10, 2023</td>
+                        <td>Completed</td>
+                    </tr>
+                </table>`
+            },
+            {
+                id: 4,
+                title: "Create Numbered List for Project Phases",
+                instructions: `Below the table, create a numbered list for the four main project phases.`,
+                demoContent: `<h3>Project Phases List</h3>
+                <p>After your table, press Enter twice to create some space, then:</p>
+                <ol>
+                    <li>Type <strong>"Project Phases:"</strong> as a heading</li>
+                    <li>Go to the <strong>Home</strong> tab and click the Numbering button</li>
+                    <li>Type each phase on a new line:
+                        <ol type="1">
+                            <li>Discovery</li>
+                            <li>Planning</li>
+                            <li>Execution</li>
+                            <li>Review</li>
+                        </ol>
+                    </li>
+                </ol>
+                
+                <h4>Your list should look like this:</h4>
+                <div style="background-color: white; padding: 20px; border: 1px solid #ddd;">
+                    <h4>Project Phases:</h4>
+                    <ol>
+                        <li>Discovery</li>
+                        <li>Planning</li>
+                        <li>Execution</li>
+                        <li>Review</li>
+                    </ol>
+                </div>`
+            },
+            {
+                id: 5,
+                title: "Create Nested Bulleted List",
+                instructions: `Create a nested bulleted list under the "Planning" phase with three sub-items.`,
+                demoContent: `<h3>Nested Bulleted List</h3>
+                <p>Under the "Planning" phase item in your numbered list:</p>
+                <ol>
+                    <li>Place your cursor at the end of "Planning" and press Enter</li>
+                    <li>Press Tab to indent (this creates a sub-item)</li>
+                    <li>Go to the <strong>Home</strong> tab and click the Bullets button</li>
+                    <li>Type the three sub-items:
+                        <ul>
+                            <li>Budget</li>
+                            <li>Timeline</li>
+                            <li>Resources</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h4>Your nested list should look like this:</h4>
+                <div style="background-color: white; padding: 20px; border: 1px solid #ddd;">
+                    <h4>Project Phases:</h4>
+                    <ol>
+                        <li>Discovery</li>
+                        <li>Planning
+                            <ul>
+                                <li>Budget</li>
+                                <li>Timeline</li>
+                                <li>Resources</li>
+                            </ul>
+                        </li>
+                        <li>Execution</li>
+                        <li>Review</li>
+                    </ol>
+                </div>`
+            },
+            {
+                id: 6,
+                title: "Customize Bullet Symbol",
+                instructions: `Change the bullet for "Resources" to a checkmark symbol.`,
+                demoContent: `<h3>Custom Bullet Symbol</h3>
+                <p>To change the bullet for "Resources" to a checkmark:</p>
+                <ol>
+                    <li>Select the "Resources" list item</li>
+                    <li>Right-click and choose <strong>Bullets</strong> > <strong>Define New Bullet</strong></li>
+                    <li>Click on <strong>Symbol</strong></li>
+                    <li>Choose a font like <strong>Wingdings</strong> or <strong>Segoe UI Symbol</strong></li>
+                    <li>Select a checkmark symbol (✓ or ✔)</li>
+                    <li>Click OK to apply</li>
+                </ol>
+                
+                <h4>Your customized list should look like this:</h4>
+                <div style="background-color: white; padding: 20px; border: 1px solid #ddd;">
+                    <h4>Project Phases:</h4>
+                    <ol>
+                        <li>Discovery</li>
+                        <li>Planning
+                            <ul>
+                                <li>Budget</li>
+                                <li>Timeline</li>
+                                <li><span class="checkmark">✓</span> Resources</li>
+                            </ul>
+                        </li>
+                        <li>Execution</li>
+                        <li>Review</li>
+                    </ol>
+                </div>`
+            },
+            {
+                id: 7,
+                title: "Convert List to Table",
+                instructions: `Convert the "Project Phases" numbered list to a table.`,
+                demoContent: `<h3>Convert List to Table</h3>
+                <p>To convert your numbered list into a table:</p>
+                <ol>
+                    <li>Select the entire numbered list (from "1. Discovery" to "4. Review")</li>
+                    <li>Go to the <strong>Insert</strong> tab and click <strong>Table</strong></li>
+                    <li>Select <strong>Convert Text to Table</strong></li>
+                    <li>In the dialog box, set:
+                        <ul>
+                            <li>Number of columns: 1</li>
+                            <li>Separate text at: Paragraphs</li>
+                        </ul>
+                    </li>
+                    <li>Click OK</li>
+                    <li>Apply a table style to match your task tracker table</li>
+                </ol>
+                
+                <h4>Your converted table should look similar to this:</h4>
+                <table>
+                    <tr>
+                        <th>Project Phases</th>
+                    </tr>
+                    <tr>
+                        <td>1. Discovery</td>
+                    </tr>
+                    <tr>
+                        <td>2. Planning
+                            <ul style="margin: 5px 0; padding-left: 20px;">
+                                <li>Budget</li>
+                                <li>Timeline</li>
+                                <li><span class="checkmark">✓</span> Resources</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3. Execution</td>
+                    </tr>
+                    <tr>
+                        <td>4. Review</td>
+                    </tr>
+                </table>`
+            },
+            {
+                id: 8,
+                title: "Save Your Document",
+                instructions: `Save your completed project plan with the required filename.`,
+                demoContent: `<h3>Save Your Document</h3>
+                <p>To save your completed project plan:</p>
+                <ol>
+                    <li>Click <strong>File</strong> > <strong>Save As</strong></li>
+                    <li>Choose the location where you want to save the file</li>
+                    <li>In the File name field, enter: <code>YourName_Week3_ProjectPlan.docx</code></li>
+                    <li>Make sure "Word Document (*.docx)" is selected as the file type</li>
+                    <li>Click <strong>Save</strong></li>
+                </ol>
+                
+                <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h4><i class="fas fa-check-circle" style="color: #28a745;"></i> Document Saved Successfully!</h4>
+                    <p>Your file should be saved as:</p>
+                    <div style="font-family: monospace; background-color: #333; color: #fff; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                        <span id="dynamic-filename">StudentName_Week3_ProjectPlan.docx</span>
+                    </div>
+                    <p>Congratulations on completing the exercise!</p>
+                </div>`
+            }
+        ];
+
+        // Current step tracker
+        let currentStep = 1;
+        const totalSteps = exerciseSteps.length;
+
+        // DOM elements
+        const stepIndicator = document.getElementById('step-indicator');
+        const stepContentContainer = document.getElementById('step-content-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const completeBtn = document.getElementById('complete-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        const downloadArea = document.getElementById('download-area');
+        const fileName = document.getElementById('file-name');
+
+        // Initialize the application
+        function init() {
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+            
+            // Set up event listeners
+            prevBtn.addEventListener('click', goToPrevStep);
+            nextBtn.addEventListener('click', goToNextStep);
+            completeBtn.addEventListener('click', completeExercise);
+            restartBtn.addEventListener('click', restartExercise);
+            
+            // Prompt for student name
+            setTimeout(() => {
+                const studentName = prompt("Please enter your name for the exercise:", "Student Name");
+                if (studentName && studentName.trim() !== "") {
+                    document.getElementById('dynamic-filename').textContent = `${studentName}_Week3_ProjectPlan.docx`;
+                    fileName.textContent = `${studentName}_Week3_ProjectPlan.docx`;
+                }
+            }, 500);
+        }
+
+        // Render the step indicator in the sidebar
+        function renderStepIndicator() {
+            stepIndicator.innerHTML = '';
+            
+            exerciseSteps.forEach(step => {
+                const stepItem = document.createElement('div');
+                stepItem.className = `step-indicator-item ${step.id === currentStep ? 'active' : ''}`;
+                stepItem.dataset.stepId = step.id;
+                
+                stepItem.innerHTML = `
+                    <div class="step-indicator-number">${step.id}</div>
+                    <div class="step-indicator-text">${step.title}</div>
+                    ${step.id < currentStep ? '<div class="completed-step"><i class="fas fa-check"></i></div>' : ''}
+                `;
+                
+                stepItem.addEventListener('click', () => {
+                    if (step.id <= currentStep) {
+                        goToStep(step.id);
+                    }
+                });
+                
+                stepIndicator.appendChild(stepItem);
+            });
+        }
+
+        // Render the content for a specific step
+        function renderStepContent(stepId) {
+            const step = exerciseSteps.find(s => s.id === stepId);
+            if (!step) return;
+            
+            stepContentContainer.innerHTML = `
+                <div class="step-container">
+                    <div class="step-header" onclick="toggleStepContent(${stepId})">
+                        <div class="step-number">${step.id}</div>
+                        <h2 class="step-title">${step.title}</h2>
+                    </div>
+                    <div class="step-content active">
+                        <div class="instructions">
+                            <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+                            <p>${step.instructions}</p>
+                        </div>
+                        
+                        <div class="demo-area">
+                            ${step.demoContent}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle step content visibility (for mobile)
+        function toggleStepContent(stepId) {
+            // This function can be expanded for mobile view
+            console.log(`Toggling step ${stepId}`);
+        }
+
+        // Go to a specific step
+        function goToStep(stepId) {
+            if (stepId < 1 || stepId > totalSteps) return;
+            
+            currentStep = stepId;
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+        }
+
+        // Go to the previous step
+        function goToPrevStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        // Go to the next step
+        function goToNextStep() {
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            }
+        }
+
+        // Complete the exercise
+        function completeExercise() {
+            downloadArea.classList.add('active');
+            stepContentContainer.style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'none';
+        }
+
+        // Restart the exercise
+        function restartExercise() {
+            currentStep = 1;
+            renderStepIndicator();
+            renderStepContent(currentStep);
+            updateProgress();
+            updateButtons();
+            
+            downloadArea.classList.remove('active');
+            stepContentContainer.style.display = 'block';
+            document.querySelector('.action-buttons').style.display = 'flex';
+        }
+
+        // Update the progress bar
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+
+        // Update button states
+        function updateButtons() {
+            prevBtn.disabled = currentStep === 1;
+            
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                completeBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                completeBtn.style.display = 'none';
+            }
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

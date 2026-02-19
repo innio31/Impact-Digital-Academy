@@ -1,0 +1,324 @@
+{
+    "questions": [
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which keyboard shortcut creates a new blank workbook in Excel?",
+            "points": 1,
+            "options": [
+                "Ctrl + O",
+                "Ctrl + N",
+                "Ctrl + S",
+                "Ctrl + P"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Ctrl + N is the keyboard shortcut for creating a new blank workbook in Excel.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the intersection of a row and column called in Excel?",
+            "points": 1,
+            "options": [
+                "Worksheet",
+                "Cell",
+                "Range",
+                "Grid"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "A cell is the intersection point of a row and column where data is entered.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which area of the Excel interface shows the content of the active cell?",
+            "points": 1,
+            "options": [
+                "Status Bar",
+                "Quick Access Toolbar",
+                "Formula Bar",
+                "Name Box"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "The Formula Bar displays the content (text, numbers, or formulas) of the currently selected cell.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "How do you rename a worksheet in Excel?",
+            "points": 1,
+            "options": [
+                "Right-click the sheet tab and select Rename",
+                "Double-click the sheet tab",
+                "Both A and B",
+                "Use the Format menu on the Home tab"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "You can rename a worksheet by either double-clicking the sheet tab or right-clicking and selecting Rename.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which keyboard shortcut saves the current workbook?",
+            "points": 1,
+            "options": [
+                "Ctrl + O",
+                "Ctrl + N",
+                "Ctrl + S",
+                "Ctrl + P"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Ctrl + S saves the current workbook. It's recommended to use this shortcut frequently.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What does the small square at the bottom-right corner of a selected cell allow you to do?",
+            "points": 1,
+            "options": [
+                "Delete the cell",
+                "Format the cell",
+                "AutoFill data or formulas",
+                "Insert a comment"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "This is called the fill handle, which allows you to AutoFill data, formulas, or series.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which keyboard shortcut inserts a hyperlink in Excel?",
+            "points": 1,
+            "options": [
+                "Ctrl + H",
+                "Ctrl + K",
+                "Ctrl + L",
+                "Ctrl + I"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Ctrl + K opens the Insert Hyperlink dialog box in Excel.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the default file extension for Excel workbooks (2019)?",
+            "points": 1,
+            "options": [
+                ".xls",
+                ".xlsx",
+                ".csv",
+                ".exl"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": ".xlsx is the default file format for Excel workbooks since Excel 2007.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which feature allows you to jump to a specific cell in Excel?",
+            "points": 1,
+            "options": [
+                "Press F5",
+                "Use Ctrl + G",
+                "Type the cell address in the Name Box",
+                "All of the above"
+            ],
+            "correct_options": [
+                3
+            ],
+            "explanation": "All these methods allow you to navigate to a specific cell in Excel.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Where would you find the sum, average, or count of selected cells in Excel?",
+            "points": 1,
+            "options": [
+                "Formula Bar",
+                "Quick Access Toolbar",
+                "Status Bar",
+                "Ribbon"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "The Status Bar at the bottom of the Excel window shows calculations like sum, average, and count of selected cells.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which of the following is NOT a valid data type in Excel?",
+            "points": 1,
+            "options": [
+                "Text",
+                "Numbers",
+                "Dates/Times",
+                "Pictures"
+            ],
+            "correct_options": [
+                3
+            ],
+            "explanation": "While you can insert pictures in Excel, they are not considered a data type. Text, numbers, and dates/times are the primary data types.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What happens when you press F2 while a cell is selected?",
+            "points": 1,
+            "options": [
+                "Saves the workbook",
+                "Opens the Format Cells dialog",
+                "Edits the cell contents",
+                "Inserts a function"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Pressing F2 allows you to edit the contents of the active cell directly.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which tab on the Ribbon would you use to insert a hyperlink?",
+            "points": 1,
+            "options": [
+                "Home",
+                "Insert",
+                "Page Layout",
+                "Formulas"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "The Insert tab contains the Link button for inserting hyperlinks.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is a named range in Excel?",
+            "points": 1,
+            "options": [
+                "A range with a specific color",
+                "A descriptive name for a cell or group of cells",
+                "A locked range that cannot be edited",
+                "A range that contains only numbers"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "A named range is a descriptive name given to a cell or range of cells for easier reference in formulas and navigation.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "How do you select an entire worksheet in Excel?",
+            "points": 1,
+            "options": [
+                "Click the Select All button (triangle at top-left corner)",
+                "Press Ctrl + A twice",
+                "Both A and B",
+                "Right-click and select Select All"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "You can select the entire worksheet by clicking the Select All button or pressing Ctrl + A twice.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which file format is best for importing/exporting plain text data without formatting?",
+            "points": 1,
+            "options": [
+                ".xlsx",
+                ".xls",
+                ".csv",
+                ".pdf"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "CSV (Comma Separated Values) format stores plain text data without formatting, making it ideal for data exchange.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Where is the Quick Access Toolbar located in Excel?",
+            "points": 1,
+            "options": [
+                "Bottom of the window",
+                "Top-left corner of the window",
+                "Right side of the Ribbon",
+                "Above the Formula Bar"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "The Quick Access Toolbar is located at the top-left corner of the Excel window, above the Ribbon.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the purpose of the Text Import Wizard in Excel?",
+            "points": 1,
+            "options": [
+                "To create formatted text in cells",
+                "To import data from .txt or .csv files",
+                "To check spelling in the workbook",
+                "To convert text to numbers"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "The Text Import Wizard helps you properly import and structure data from text files (.txt) or CSV files.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which keyboard shortcut opens an existing workbook?",
+            "points": 1,
+            "options": [
+                "Ctrl + O",
+                "Ctrl + N",
+                "Ctrl + W",
+                "Ctrl + E"
+            ],
+            "correct_options": [
+                0
+            ],
+            "explanation": "Ctrl + O opens the Open dialog box to browse and open existing workbooks.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "How are numbers typically aligned in Excel cells by default?",
+            "points": 1,
+            "options": [
+                "Left-aligned",
+                "Center-aligned",
+                "Right-aligned",
+                "Justified"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Numbers are right-aligned by default in Excel, while text is left-aligned.",
+            "required": true
+        }
+    ]
+}

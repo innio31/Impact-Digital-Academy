@@ -1,0 +1,324 @@
+{
+    "questions": [
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the primary focus of 'life stewardship' in the Pathway Framework?",
+            "points": 1,
+            "options": [
+                "Managing financial investments wisely",
+                "Taking responsibility for your talents, resources, and personal growth",
+                "Following a predetermined career path",
+                "Delegating tasks to others effectively"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Life stewardship involves taking active responsibility for developing your talents, managing your resources (time, energy, relationships), and directing your personal growth journey.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "In the Pathway Framework, what are the three core components?",
+            "points": 1,
+            "options": [
+                "Goals, Plans, Actions",
+                "Past, Present, Future",
+                "Stewardships, Aspirations, Constraints",
+                "Strengths, Weaknesses, Opportunities"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "The Pathway Framework is built on three interconnected components: Stewardships (responsibilities and roles), Aspirations (hopes and dreams), and Constraints (limitations and realities).",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which of the following best defines a 'Pathway Statement'?",
+            "points": 1,
+            "options": [
+                "A detailed 10-year career plan with specific job titles",
+                "A living document that outlines your core aspirations and values",
+                "A list of short-term tasks to complete each week",
+                "A financial budget for personal expenses"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "A Pathway Statement is a living document that articulates your core aspirations, values, and sense of purpose. It serves as a guiding compass rather than a rigid plan.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the purpose of creating a 'stewardship map'?",
+            "points": 1,
+            "options": [
+                "To track your daily expenses",
+                "To visualize all the roles and responsibilities you currently manage",
+                "To plan your vacation destinations",
+                "To organize your digital files"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "A stewardship map helps you visually identify all the areas of your life where you have responsibility—such as student, family member, employee, friend—to understand your current commitments.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which term refers to the internal drives that motivate you without external rewards?",
+            "points": 1,
+            "options": [
+                "Extrinsic motivations",
+                "Peer pressures",
+                "Intrinsic motivations",
+                "Social expectations"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Intrinsic motivations come from within—personal satisfaction, curiosity, passion, or sense of purpose—rather than external rewards like money or recognition.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is a key characteristic of core personal values?",
+            "points": 1,
+            "options": [
+                "They change frequently based on trends",
+                "They are deeply held principles that guide behavior and decisions",
+                "They are determined by your parents or teachers",
+                "They focus only on financial success"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Core values are deeply held, enduring principles that guide your behavior, choices, and sense of what's important in life. They remain relatively stable over time.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "In the context of the Pathway Document, what does 'living portfolio' mean?",
+            "points": 1,
+            "options": [
+                "A collection of stock investments",
+                "A static document printed once and filed away",
+                "An evolving collection that grows and changes with you",
+                "A digital photo album of life events"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "A 'living portfolio' is an evolving document that you regularly update as you grow, learn, and your aspirations develop—it's not a one-time creation.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "When identifying personal aspirations, what should you consider FIRST?",
+            "points": 1,
+            "options": [
+                "What careers pay the most money",
+                "What your friends and family expect of you",
+                "What truly inspires and excites you personally",
+                "What jobs are currently in high demand"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Authentic aspirations come from your own interests, passions, and sense of purpose rather than external pressures or market trends.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which of these is an example of an 'educational aspiration'?",
+            "points": 1,
+            "options": [
+                "Buying a new car",
+                "Completing a certification in digital marketing",
+                "Taking a vacation to Europe",
+                "Saving $10,000"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Educational aspirations relate to learning goals, such as completing degrees, gaining certifications, developing specific skills, or mastering knowledge areas.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the relationship between stewardship and aspiration?",
+            "points": 1,
+            "options": [
+                "They are completely separate and unrelated concepts",
+                "Stewardship is about managing current responsibilities, while aspiration looks toward future possibilities",
+                "Aspiration must always come before stewardship",
+                "Stewardship prevents you from having aspirations"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Stewardship involves responsibly managing your current roles and resources, while aspiration involves envisioning and working toward future possibilities. They work together in balance.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Why is it important to acknowledge constraints in the Pathway Framework?",
+            "points": 1,
+            "options": [
+                "To create excuses for not pursuing goals",
+                "To identify realistic boundaries and limitations you must work within",
+                "To compare yourself negatively to others",
+                "To avoid taking any risks"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Acknowledging constraints (like time, resources, or current responsibilities) helps create realistic, achievable aspirations rather than unrealistic fantasies.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which question is MOST helpful when beginning a self-inventory for values?",
+            "points": 1,
+            "options": [
+                "What do my parents value most?",
+                "What principles do I consistently act upon, even when inconvenient?",
+                "What values are currently trending on social media?",
+                "What did my favorite teacher tell me was important?"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Your true values are revealed by what you consistently choose and act upon, especially when it requires sacrifice or going against social pressure.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the benefit of writing down your Pathway Statement?",
+            "points": 1,
+            "options": [
+                "It becomes a legally binding contract",
+                "It clarifies your thinking and provides a reference point for future decisions",
+                "It guarantees you will achieve everything listed",
+                "It impresses potential employers"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Writing crystallizes thinking, creates clarity, and provides a tangible reference you can revisit and revise as you make life decisions.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "How often should you review and update your Pathway Document?",
+            "points": 1,
+            "options": [
+                "Never—it should remain as originally written",
+                "Weekly",
+                "Regularly, as you grow and your circumstances change",
+                "Only when you achieve all your current goals"
+            ],
+            "correct_options": [
+                2
+            ],
+            "explanation": "Since it's a 'living' document, regular review and updates (e.g., quarterly or annually) keep it relevant as you gain new experiences and insights.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Which element is NOT typically part of a stewardship map?",
+            "points": 1,
+            "options": [
+                "Family responsibilities",
+                "Work or academic roles",
+                "Community involvement",
+                "Detailed financial investments"
+            ],
+            "correct_options": [
+                3
+            ],
+            "explanation": "A stewardship map focuses on roles, relationships, and responsibilities rather than specific financial details. It's about how you steward your time, energy, and relationships.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What distinguishes a 'personal aspiration' from a 'goal'?",
+            "points": 1,
+            "options": [
+                "Aspirations are vague dreams, goals are specific targets",
+                "Aspirations are about who you want to become, goals are what you want to achieve",
+                "There is no difference—they are the same thing",
+                "Aspirations are short-term, goals are long-term"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Aspirations often relate to identity, character, or being (e.g., 'become a lifelong learner'), while goals are specific, measurable achievements (e.g., 'complete this course').",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "Why is Week 1 focused on both stewardship AND aspiration?",
+            "points": 1,
+            "options": [
+                "Because they are opposing concepts that must be balanced",
+                "To ground future dreams in present realities and responsibilities",
+                "Because the course couldn't decide which was more important",
+                "To create confusion for students"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Starting with both ensures aspirations are grounded in reality. Effective life planning considers both where you are (stewardship) and where you want to go (aspiration).",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What should a first-version Pathway Statement primarily capture?",
+            "points": 1,
+            "options": [
+                "Every detail of your 20-year plan",
+                "Your core values and highest aspirations",
+                "Only your educational goals",
+                "A comparison to others' achievements"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "The first version should capture the essence of what matters most to you—core values and key aspirations—knowing it will evolve with time and reflection.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "How do intrinsic motivations affect long-term commitment to aspirations?",
+            "points": 1,
+            "options": [
+                "They make commitment weaker because they lack external rewards",
+                "They create stronger, more sustainable commitment because they come from within",
+                "They have no effect on commitment levels",
+                "They only work for short-term goals"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "Intrinsic motivations (passion, curiosity, personal meaning) typically sustain effort longer because they're not dependent on external validation or rewards.",
+            "required": true
+        },
+        {
+            "question_type": "multiple_choice",
+            "question_text": "What is the ultimate purpose of the Pathway Framework?",
+            "points": 1,
+            "options": [
+                "To create a rigid life plan you must follow exactly",
+                "To provide a flexible structure for intentional living and growth",
+                "To help you compare your progress to classmates",
+                "To fulfill a course requirement"
+            ],
+            "correct_options": [
+                1
+            ],
+            "explanation": "The framework provides structure for living intentionally—being thoughtful about your responsibilities, dreams, and how you navigate limitations—while remaining adaptable to life's changes.",
+            "required": true
+        }
+    ]
+}

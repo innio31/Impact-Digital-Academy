@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which Excel view shows blue dashed lines indicating where pages will break when printed?",
+      "points": 1,
+      "options": [
+        "Normal View",
+        "Page Layout View",
+        "Page Break Preview",
+        "Custom View"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Page Break Preview displays blue dashed lines showing automatic page breaks and allows you to manually adjust them.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the keyboard shortcut to show formulas instead of values in Excel?",
+      "points": 1,
+      "options": [
+        "Ctrl + F",
+        "Ctrl + `",
+        "Ctrl + Shift + F",
+        "Alt + ="
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Ctrl + ` (backtick) toggles between displaying formulas and their calculated values.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How do you automatically adjust column width to fit the longest entry in Excel?",
+      "points": 1,
+      "options": [
+        "Right-click column header → AutoFit",
+        "Double-click the right border of the column header",
+        "Home tab → Format → AutoFit Column Width",
+        "All of the above"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "All three methods will AutoFit a column to its contents. The keyboard shortcut is Alt + H, O, I.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which feature allows you to keep specific rows or columns visible while scrolling through a large worksheet?",
+      "points": 1,
+      "options": [
+        "Split Windows",
+        "Freeze Panes",
+        "Zoom to Selection",
+        "Custom Views"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Freeze Panes (View tab → Freeze Panes) keeps selected rows/columns visible while scrolling.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Where do you set up headers and footers for printing in Excel?",
+      "points": 1,
+      "options": [
+        "Home tab → Header & Footer",
+        "Page Layout tab → Page Setup dialog → Header/Footer tab",
+        "Insert tab → Header & Footer",
+        "Both B and C"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Headers and footers can be accessed from both Page Layout tab (Page Setup dialog) and Insert tab (Header & Footer command).",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which number format should you use for monetary values in a sales report?",
+      "points": 1,
+      "options": [
+        "General",
+        "Currency",
+        "Accounting",
+        "Both B and C"
+      ],
+      "correct_options": [
+        3
+      ],
+      "explanation": "Both Currency and Accounting formats display monetary values. Accounting aligns currency symbols and decimal points in columns.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How do you repeat specific rows at the top of every printed page?",
+      "points": 1,
+      "options": [
+        "Freeze the top row",
+        "Page Setup → Sheet tab → 'Rows to repeat at top'",
+        "Copy the header row to each page",
+        "Use Print Titles feature"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "In Page Setup (Sheet tab), 'Rows to repeat at top' lets you specify header rows to print on every page. This is also called Print Titles.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What does the 'Split' feature in Excel allow you to do?",
+      "points": 1,
+      "options": [
+        "Divide a cell into multiple cells",
+        "Separate data into different worksheets",
+        "Divide the window into separate panes that scroll independently",
+        "Split text across multiple columns"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Split (View tab → Split) divides the Excel window into separate panes that can scroll independently.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which of these is NOT a standard page orientation option in Excel?",
+      "points": 1,
+      "options": [
+        "Portrait",
+        "Landscape",
+        "Square",
+        "Both are standard (A and B only)"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Excel offers Portrait (vertical) and Landscape (horizontal) orientations. 'Square' is not a standard page orientation.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How do you set a specific range of cells as the area to be printed?",
+      "points": 1,
+      "options": [
+        "Select the range → File → Print → Print Selection",
+        "Select the range → Page Layout → Print Area → Set Print Area",
+        "Both A and B",
+        "Use the Print Preview dialog only"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Both methods work: setting Print Area or using Print Selection. Print Area is more permanent for the worksheet.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which margin option in Excel provides the smallest margins for maximum content on a page?",
+      "points": 1,
+      "options": [
+        "Normal",
+        "Wide",
+        "Narrow",
+        "Custom"
+      ],
+      "correct_options": [
+        2
+      ],
+      "explanation": "Narrow margins (0.25 inches) provide the smallest margins, allowing more content on each printed page.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What is the purpose of the 'Scale to Fit' options in Page Setup?",
+      "points": 1,
+      "options": [
+        "To increase font size automatically",
+        "To adjust printout to fit a specific number of pages",
+        "To change worksheet zoom level",
+        "To convert measurements between units"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "'Scale to Fit' (Page Layout tab) adjusts printouts to fit on a specified number of pages wide/tall.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "Which feature allows you to save specific display settings (zoom, frozen panes, etc.) for quick switching?",
+      "points": 1,
+      "options": [
+        "Freeze Panes",
+        "Custom Views",
+        "Window Split",
+        "Zoom Settings"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "Custom Views (View tab → Custom Views) saves specific display/print settings for quick recall.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "How can you add a pre-filled date that updates automatically in a worksheet header?",
+      "points": 1,
+      "options": [
+        "Type today's date manually",
+        "Use the &[Date] code in header/footer",
+        "Insert a formula in a cell and reference it in header",
+        "Both B and C"
+      ],
+      "correct_options": [
+        1
+      ],
+      "explanation": "&[Date] in a header/footer inserts the current date that updates each time the file is opened or printed.",
+      "required": true
+    },
+    {
+      "question_type": "multiple_choice",
+      "question_text": "What does the 'Different first page' option in header/footer setup allow you to do?",
+      "points": 1,
+      "options": [
+        "Use a different header/footer only on page 1",
+        "Print the first page in color and others in black/white",
+        "Change margins for the first page only",
+        "Use different page orientation for the first page"
+      ],
+      "correct_options": [
+        0
+      ],
+      "explanation": "'Different first page' allows unique headers/footers on the first page versus subsequent pages.",
+      "required": true
+    }
+  ]
+}

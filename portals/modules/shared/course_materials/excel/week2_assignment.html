@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Week 2: Formatting & Printing Reports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Excel Theme Colors */
+        :root {
+            --excel-green: #1d6f42;
+            --excel-green-dark: #0e5c0e;
+            --excel-green-light: #2e8b57;
+            --excel-gray: #f2f2f2;
+            --excel-gray-dark: #d9d9d9;
+            --excel-text: #333333;
+            --excel-text-light: #666666;
+            --excel-accent: #ff6b6b;
+            --excel-success: #4caf50;
+            --excel-warning: #e65100;
+            --excel-border: #e0e0e0;
+            --excel-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--excel-text);
+            background: linear-gradient(to bottom, #f8fff9, #f0f7f0);
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header - Excel Style */
+        .main-header {
+            background: linear-gradient(135deg, var(--excel-green-dark), var(--excel-green));
+            color: white;
+            padding: 1.5rem 0;
+            border-bottom: 4px solid var(--excel-green-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .excel-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .excel-logo i {
+            background: white;
+            color: var(--excel-green);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assignment-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Navigation - Excel Ribbon Style */
+        .nav-ribbon {
+            background: white;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--excel-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .ribbon-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .ribbon-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ribbon-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--excel-green);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .ribbon-tab:hover,
+        .ribbon-tab.active {
+            background: var(--excel-gray);
+            border-color: var(--excel-border);
+        }
+
+        .ribbon-tab i {
+            font-size: 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--excel-green);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--excel-gray);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        /* Workbook Container */
+        .workbook-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--excel-shadow);
+            border: 1px solid var(--excel-border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .workbook-toolbar {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--excel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            background: white;
+            border: 1px solid var(--excel-border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--excel-green-light);
+            color: white;
+            border-color: var(--excel-green-light);
+        }
+
+        .workbook-content {
+            padding: 2rem;
+            min-height: 500px;
+        }
+
+        /* Assignment Sections */
+        .assignment-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--excel-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            background: var(--excel-green);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--excel-green);
+            margin: 0;
+        }
+
+        /* Learning Goals */
+        .learning-goals {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 4px solid var(--excel-green);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .goals-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .goal-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 6px;
+            border: 1px solid var(--excel-border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .goal-card h4 {
+            color: var(--excel-green);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Exercise Boxes */
+        .exercise-box {
+            background: linear-gradient(to right, #f0f7ff, #e8f0ff);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 5px solid #0e5c0e;
+            box-shadow: 0 4px 8px rgba(14, 92, 14, 0.1);
+        }
+
+        .exercise-title {
+            color: var(--excel-green-dark);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .homework-box {
+            background: linear-gradient(to right, #fff3e0, #ffecb3);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 5px solid var(--excel-warning);
+            box-shadow: 0 4px 8px rgba(230, 81, 0, 0.1);
+        }
+
+        .homework-title {
+            color: var(--excel-warning);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Step Containers */
+        .step-container {
+            margin-top: 1.5rem;
+        }
+
+        .step {
+            background: white;
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--excel-border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--excel-green);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--excel-green);
+        }
+
+        .sub-steps {
+            padding-left: 2.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .sub-steps li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        /* Excel Tables */
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .demo-table th {
+            background: var(--excel-green);
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--excel-green-dark);
+        }
+
+        .demo-table td {
+            padding: 0.75rem;
+            border: 1px solid var(--excel-border);
+            text-align: center;
+        }
+
+        .demo-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .demo-table tr:hover {
+            background: #e8f5e9;
+        }
+
+        /* Excel Cell Styling */
+        .cell-format {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            border: 1px solid var(--excel-border);
+            display: inline-block;
+        }
+
+        .formula-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Invoice Preview */
+        .invoice-preview {
+            background: white;
+            border: 2px solid var(--excel-green);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--excel-border);
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .invoice-title {
+            color: var(--excel-green);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .invoice-table th {
+            background: #e8f5e9;
+            color: var(--excel-green-dark);
+            padding: 0.75rem;
+            border: 1px solid var(--excel-border);
+            text-align: center;
+        }
+
+        .invoice-table td {
+            padding: 0.75rem;
+            border: 1px solid var(--excel-border);
+            text-align: center;
+        }
+
+        .invoice-total {
+            background: #f8f9fa;
+            padding: 1rem;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            margin-top: 1.5rem;
+        }
+
+        /* Interactive Preview */
+        .interactive-preview {
+            background: white;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-toolbar {
+            background: var(--excel-gray);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-btn {
+            background: white;
+            border: 1px solid var(--excel-border);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .preview-btn:hover {
+            background: var(--excel-green-light);
+            color: white;
+        }
+
+        .preview-btn.active {
+            background: var(--excel-green);
+            color: white;
+            border-color: var(--excel-green);
+        }
+
+        .preview-content {
+            min-height: 300px;
+            padding: 1.5rem;
+            background: #fafafa;
+            border: 1px solid var(--excel-border);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        /* Submission Requirements */
+        .submission-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 4px solid var(--excel-success);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .submission-title {
+            color: var(--excel-success);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .file-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--excel-border);
+        }
+
+        .file-list i {
+            color: var(--excel-green);
+            font-size: 1.2rem;
+        }
+
+        /* Buttons - Excel Style */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--excel-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--excel-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--excel-green);
+            border: 2px solid var(--excel-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--excel-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        /* Tip Boxes */
+        .tip-box {
+            background: #fff8e1;
+            border-left: 4px solid var(--excel-warning);
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .tip-icon {
+            color: var(--excel-warning);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .shortcut-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Self-Quiz */
+        .quiz-section {
+            background: #f3e5f5;
+            border-left: 4px solid #7b1fa2;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .quiz-question {
+            background: white;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            border: 1px solid var(--excel-border);
+        }
+
+        /* Footer */
+        .main-footer {
+            background: var(--excel-green-dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-content .subtitle {
+                font-size: 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .ribbon-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .ribbon-tabs {
+                flex-direction: column;
+                display: none;
+                width: 100%;
+            }
+
+            .ribbon-tabs.active {
+                display: flex;
+            }
+
+            .ribbon-tab {
+                justify-content: center;
+            }
+
+            .workbook-content {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .goals-list {
+                grid-template-columns: 1fr;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .toolbar-group {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .main-header {
+                padding: 1rem 0;
+            }
+
+            .main-content {
+                padding: 1.5rem 0;
+            }
+
+            .workbook-content {
+                padding: 1rem;
+            }
+
+            .assignment-tag {
+                font-size: 0.85rem;
+                padding: 0.4rem 1.2rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .exercise-box,
+            .homework-box {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-ribbon,
+            .btn,
+            .mobile-menu-btn,
+            .toolbar-btn,
+            .footer-links,
+            .preview-toolbar {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .workbook-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .assignment-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="excel-logo">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Microsoft Excel 2019</span>
+                </div>
+                <h1>Week 2 Assignment: Professional Reports & Printing</h1>
+                <div class="subtitle">
+                    Master formatting, page setup, printing, and creating professional business documents
+                </div>
+                <div class="assignment-tag">
+                    <i class="fas fa-tasks"></i>
+                    <span id="progressText">Due: <?php echo date('F j, Y', strtotime('+7 days')); ?> • 150 Points</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Ribbon -->
+    <nav class="nav-ribbon">
+        <div class="container">
+            <div class="ribbon-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ribbon-tabs" id="ribbonTabs">
+                    <a href="#" class="ribbon-tab active">
+                        <i class="fas fa-home"></i>
+                        <span>Assignment</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-calculator"></i>
+                        <span>Practice Data</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-print"></i>
+                        <span>Print Preview</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-share"></i>
+                        <span>Submit</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Workbook Container -->
+            <div class="workbook-container">
+                <div class="workbook-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            <span>Print</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            <span>Template</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="showExcelDemo()">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <div style="font-weight: 600; color: var(--excel-green);">
+                            <i class="fas fa-clock"></i>
+                            Time Estimate: 45-60 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workbook-content">
+                    <!-- Objective -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h2 class="section-title">Objective</h2>
+                        </div>
+                        <p style="font-size: 1.1rem; line-height: 1.8;">
+                            Practice creating professional, print-ready Excel documents by applying formatting, formulas, 
+                            page setup options, and view management techniques covered in Week 2.
+                        </p>
+                    </section>
+
+                    <!-- Learning Goals -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h2 class="section-title">Week 2 Learning Goals</h2>
+                        </div>
+                        
+                        <div class="learning-goals">
+                            <p>By completing this assignment, you will demonstrate proficiency in:</p>
+                            
+                            <div class="goals-list">
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-paint-brush"></i> Professional Formatting</h4>
+                                    <p>Applying borders, alignment, number formats, and styles</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-print"></i> Page Setup & Printing</h4>
+                                    <p>Configuring headers, footers, margins, and print areas</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-eye"></i> View Management</h4>
+                                    <p>Using Freeze Panes, Split Windows, and different view modes</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-file-invoice-dollar"></i> Business Documents</h4>
+                                    <p>Creating professional invoices and reports</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 1: Sales Report Exercise -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h2 class="section-title">Part 1: Format a Monthly Sales Report</h2>
+                        </div>
+                        
+                        <div class="exercise-box">
+                            <div class="exercise-title">
+                                <i class="fas fa-hands-helping"></i> Hands-On Exercise: Professional Sales Report
+                            </div>
+                            
+                            <p><strong>Objective:</strong> Apply Week 2 skills to create a professional, printable sales report.</p>
+                            
+                            <div class="step-container">
+                                <!-- Step 1 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">1</span>
+                                        <span>Open Excel and create a new workbook</span>
+                                    </div>
+                                    <p>Start Microsoft Excel 2019 and create a new blank workbook.</p>
+                                    <div class="shortcut-box">
+                                        <strong>Keyboard Shortcut:</strong> Ctrl + N creates a new workbook
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">2</span>
+                                        <span>Enter the sales data in the following structure:</span>
+                                    </div>
+                                    
+                                    <table class="demo-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Month</th>
+                                                <th>Sales</th>
+                                                <th>Expenses</th>
+                                                <th>Profit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>January</td>
+                                                <td>15000</td>
+                                                <td>9000</td>
+                                                <td>6000</td>
+                                            </tr>
+                                            <tr>
+                                                <td>February</td>
+                                                <td>18000</td>
+                                                <td>9500</td>
+                                                <td>8500</td>
+                                            </tr>
+                                            <tr>
+                                                <td>March</td>
+                                                <td>22000</td>
+                                                <td>11000</td>
+                                                <td>11000</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total</strong></td>
+                                                <td>=SUM(B2:B4)</td>
+                                                <td>=SUM(C2:C4)</td>
+                                                <td>=SUM(D2:D4)</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Average</strong></td>
+                                                <td>=AVERAGE(B2:B4)</td>
+                                                <td>=AVERAGE(C2:C4)</td>
+                                                <td>=AVERAGE(D2:D4)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Tip:</strong> Enter the data exactly as shown. The formulas in the Total and Average rows will calculate automatically.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 3 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">3</span>
+                                        <span>Apply professional formatting</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Bold the header row:</strong> Select row 1 (A1:D1) and press <span class="cell-format">Ctrl + B</span></li>
+                                        <li><strong>AutoFit all columns:</strong> Double-click between column headers OR select all columns (Ctrl + A) then double-click any column border</li>
+                                        <li><strong>Center align headers:</strong> Select A1:D1, then Home tab → Alignment group → Center</li>
+                                        <li><strong>Apply Currency format:</strong> Select B2:D6, then Home tab → Number group → click "$" Currency symbol</li>
+                                        <li><strong>Add borders:</strong> Select A1:D6, then Home tab → Font group → Borders → All Borders</li>
+                                    </ol>
+                                    
+                                    <div class="shortcut-box">
+                                        <strong>AutoFit Shortcut:</strong> Select columns, then press Alt + H, O, I
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 4 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">4</span>
+                                        <span>Configure Page Setup for printing</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Set orientation to Landscape:</strong> Page Layout tab → Page Setup group → Orientation → Landscape</li>
+                                        <li><strong>Set margins to Narrow:</strong> Page Layout tab → Page Setup group → Margins → Narrow</li>
+                                        <li><strong>Add a Custom Header:</strong> 
+                                            <ul style="margin-left: 1.5rem;">
+                                                <li>Page Layout tab → Page Setup group → click Dialog Box Launcher (small arrow)</li>
+                                                <li>Go to Header/Footer tab → Custom Header</li>
+                                                <li>In the Center section, type: <strong>"Sales Report 2024 - Q1 Results"</strong></li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>Add a Footer:</strong> In same dialog, Custom Footer → Right section → Insert Page Number (click # icon)</li>
+                                    </ol>
+                                </div>
+                                
+                                <!-- Step 5 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">5</span>
+                                        <span>View & Print Setup</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Freeze the top row:</strong> View tab → Window group → Freeze Panes → Freeze Top Row</li>
+                                        <li><strong>Set print area:</strong> Select A1:D6 → Page Layout tab → Page Setup group → Print Area → Set Print Area</li>
+                                        <li><strong>Preview in Page Layout View:</strong> View tab → Workbook Views group → Page Layout</li>
+                                        <li><strong>Show formulas:</strong> Press <span class="cell-format">Ctrl + `</span> (backtick) to toggle formula display</li>
+                                        <li><strong>Use Print Preview:</strong> File tab → Print (or Ctrl + P) to see how it will print</li>
+                                    </ol>
+                                    
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Print Preview Tip:</strong> In Print Preview, check that all data fits on one page and headers/footers are correct.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 6 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">6</span>
+                                        <span>Save your work</span>
+                                    </div>
+                                    <p>Save your completed sales report with the filename:</p>
+                                    <div class="formula-box">
+                                        <strong>Sales_Report_Formatted.xlsx</strong>
+                                    </div>
+                                    <div class="shortcut-box">
+                                        <strong>Save Shortcut:</strong> Ctrl + S saves your workbook. Use Save As (F12) to save with a new name.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 2: Invoice Template -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <h2 class="section-title">Part 2: Create a Print-Ready Invoice Template</h2>
+                        </div>
+                        
+                        <div class="homework-box">
+                            <div class="homework-title">
+                                <i class="fas fa-question-circle"></i> Professional Business Document
+                            </div>
+                            
+                            <div class="step-container">
+                                <!-- Step 1 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">1</span>
+                                        <span>Set up invoice header and company information</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li>Create a new worksheet in your workbook (click the + icon next to sheet tabs)</li>
+                                        <li>In cell A1, type your company name: <strong>"Excel Solutions Inc."</strong></li>
+                                        <li>In A2:A4, add company address (use your own or fictional address)</li>
+                                        <li>Format company name as bold, size 16, color: <span style="color: var(--excel-green);">Green</span></li>
+                                        <li>Add "INVOICE" in cell F1, formatted as bold, size 18, centered</li>
+                                    </ol>
+                                </div>
+                                
+                                <!-- Step 2 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">2</span>
+                                        <span>Create customer information section</span>
+                                    </div>
+                                    <p>Set up the following structure starting at row 7:</p>
+                                    <table class="demo-table" style="max-width: 600px;">
+                                        <tr>
+                                            <th colspan="2">Bill To:</th>
+                                            <th colspan="2">Invoice Details:</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Customer Name:</td>
+                                            <td>[Enter Name]</td>
+                                            <td>Invoice #:</td>
+                                            <td>INV-2024-001</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Address:</td>
+                                            <td>[Enter Address]</td>
+                                            <td>Date:</td>
+                                            <td>=TODAY()</td>
+                                        </tr>
+                                        <tr>
+                                            <td>City, State, ZIP:</td>
+                                            <td>[Enter City]</td>
+                                            <td>Due Date:</td>
+                                            <td>=TODAY()+30</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                
+                                <!-- Step 3 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">3</span>
+                                        <span>Create the invoice items table</span>
+                                    </div>
+                                    <p>Starting at row 15, create this table structure:</p>
+                                    <table class="invoice-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Item #</th>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Excel Training Session</td>
+                                                <td>2</td>
+                                                <td>250.00</td>
+                                                <td>=C16*D16</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Report Template Design</td>
+                                                <td>1</td>
+                                                <td>450.00</td>
+                                                <td>=C17*D17</td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Data Analysis Service</td>
+                                                <td>3</td>
+                                                <td>180.00</td>
+                                                <td>=C18*D18</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="text-align: right; font-weight: bold;">Subtotal:</td>
+                                                <td>=SUM(E16:E18)</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="text-align: right; font-weight: bold;">Tax (8%):</td>
+                                                <td>=E19*0.08</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="text-align: right; font-weight: bold;">Grand Total:</td>
+                                                <td>=E19+E20</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Formula Tip:</strong> The formulas in the Total column and summary rows will calculate automatically when you enter quantities and prices.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 4 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">4</span>
+                                        <span>Apply professional formatting</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Add borders:</strong> Apply All Borders to the entire invoice table</li>
+                                        <li><strong>Format numbers:</strong> Apply Currency format to Unit Price and all total columns</li>
+                                        <li><strong>Align text:</strong> Center align Item #, Quantity, Unit Price, Total columns</li>
+                                        <li><strong>Shade headers:</strong> Apply light green fill to all header rows</li>
+                                        <li><strong>Bold totals:</strong> Make Subtotal, Tax, and Grand Total rows bold</li>
+                                    </ol>
+                                </div>
+                                
+                                <!-- Step 5 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">5</span>
+                                        <span>Configure for printing</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Set print area:</strong> Select all invoice content (A1:G25) and set as print area</li>
+                                        <li><strong>Add header:</strong> Custom header with company name and "INVOICE"</li>
+                                        <li><strong>Add footer:</strong> Page number, date, and "Confidential" text</li>
+                                        <li><strong>Adjust margins:</strong> Use Normal margins, center horizontally on page</li>
+                                        <li><strong>Preview:</strong> Check in Page Layout view and Print Preview</li>
+                                    </ol>
+                                </div>
+                                
+                                <!-- Step 6 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">6</span>
+                                        <span>Save the invoice template</span>
+                                    </div>
+                                    <p>Save your completed invoice with the filename:</p>
+                                    <div class="formula-box">
+                                        <strong>Invoice_Template.xlsx</strong>
+                                    </div>
+                                    <p style="margin-top: 1rem;"><strong>Bonus Challenge:</strong> Add your company logo (Insert → Pictures) and format it to fit the invoice header.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Invoice Preview -->
+                        <div class="invoice-preview">
+                            <div class="invoice-header">
+                                <div class="company-info">
+                                    <div class="invoice-title">Excel Solutions Inc.</div>
+                                    <div>123 Business Avenue</div>
+                                    <div>Suite 456</div>
+                                    <div>City, State 12345</div>
+                                    <div>Phone: (555) 123-4567</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--excel-green);">INVOICE</div>
+                                    <div style="margin-top: 1rem;">
+                                        <div><strong>Invoice #:</strong> INV-2024-001</div>
+                                        <div><strong>Date:</strong> <?php echo date('m/d/Y'); ?></div>
+                                        <div><strong>Due Date:</strong> <?php echo date('m/d/Y', strtotime('+30 days')); ?></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 3rem; margin: 1.5rem 0;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: bold; margin-bottom: 0.5rem;">Bill To:</div>
+                                    <div>Acme Corporation</div>
+                                    <div>Attn: John Smith</div>
+                                    <div>789 Corporate Blvd</div>
+                                    <div>City, State 67890</div>
+                                </div>
+                            </div>
+                            
+                            <table class="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item #</th>
+                                        <th>Description</th>
+                                        <th>Qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Excel Training Session</td>
+                                        <td>2</td>
+                                        <td>$250.00</td>
+                                        <td>$500.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Report Template Design</td>
+                                        <td>1</td>
+                                        <td>$450.00</td>
+                                        <td>$450.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Data Analysis Service</td>
+                                        <td>3</td>
+                                        <td>$180.00</td>
+                                        <td>$540.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" rowspan="3" style="vertical-align: top;">
+                                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Payment Terms:</div>
+                                            <div>Net 30 Days</div>
+                                            <div>Please make check payable to:</div>
+                                            <div>Excel Solutions Inc.</div>
+                                        </td>
+                                        <td style="text-align: right; font-weight: bold;">Subtotal:</td>
+                                        <td style="font-weight: bold;">$1,490.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right; font-weight: bold;">Tax (8%):</td>
+                                        <td style="font-weight: bold;">$119.20</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right; font-weight: bold; color: var(--excel-green);">Grand Total:</td>
+                                        <td style="font-weight: bold; color: var(--excel-green);">$1,609.20</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div style="margin-top: 1.5rem; font-style: italic; color: var(--excel-text-light);">
+                                Thank you for your business! Please contact us with any questions.
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Part 3: View Management Practice -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <h2 class="section-title">Part 3: View Management Practice</h2>
+                        </div>
+                        
+                        <div class="exercise-box">
+                            <div class="exercise-title">
+                                <i class="fas fa-eye"></i> Mastering Excel Views
+                            </div>
+                            
+                            <div class="step-container">
+                                <!-- Step 1 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">1</span>
+                                        <span>Open any dataset with many rows/columns</span>
+                                    </div>
+                                    <p>Open your Sales Report or create a new dataset with at least 20 rows and 5 columns of data.</p>
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Dataset Suggestion:</strong> Create a monthly expense tracker with categories and amounts for 12 months.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">2</span>
+                                        <span>Practice view management features</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Freeze the first column:</strong> View tab → Freeze Panes → Freeze First Column</li>
+                                        <li><strong>Split the window horizontally:</strong> View tab → Split (click Split button)</li>
+                                        <li><strong>Remove split:</strong> Click Split button again to remove</li>
+                                        <li><strong>Switch between views:</strong> Try Normal, Page Layout, and Page Break Preview views</li>
+                                        <li><strong>Zoom controls:</strong> Practice using Zoom In (Ctrl + +) and Zoom Out (Ctrl + -)</li>
+                                    </ol>
+                                    
+                                    <div class="shortcut-box">
+                                        <strong>View Shortcuts:</strong><br>
+                                        • Normal View: Alt + W, L<br>
+                                        • Page Layout View: Alt + W, P<br>
+                                        • Page Break Preview: Alt + W, I
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 3 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">3</span>
+                                        <span>Save custom views and take screenshot</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Create Custom Views:</strong>
+                                            <ul style="margin-left: 1.5rem;">
+                                                <li>Set up your worksheet with specific zoom, frozen panes, etc.</li>
+                                                <li>View tab → Workbook Views → Custom Views → Add</li>
+                                                <li>Name it "Data Entry View" and save</li>
+                                                <li>Change settings and save another as "Print Preview View"</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>Take a screenshot</strong> showing frozen panes and split window</li>
+                                        <li><strong>Save screenshot</strong> as <span class="cell-format">View_Management.jpg</span></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Interactive View Preview -->
+                        <div class="interactive-preview">
+                            <p>Try these view simulations to understand how each Excel view affects your worksheet:</p>
+                            
+                            <div class="preview-toolbar">
+                                <button class="preview-btn active" onclick="changeExcelView('normal')">
+                                    <i class="fas fa-table"></i> Normal View
+                                </button>
+                                <button class="preview-btn" onclick="changeExcelView('pageLayout')">
+                                    <i class="fas fa-file"></i> Page Layout
+                                </button>
+                                <button class="preview-btn" onclick="changeExcelView('pageBreak')">
+                                    <i class="fas fa-project-diagram"></i> Page Break Preview
+                                </button>
+                                <button class="preview-btn" onclick="toggleFreezePanes()">
+                                    <i class="fas fa-snowflake"></i> Toggle Freeze Panes
+                                </button>
+                                <button class="preview-btn" onclick="toggleSplit()">
+                                    <i class="fas fa-columns"></i> Toggle Split
+                                </button>
+                            </div>
+                            
+                            <div class="preview-content" id="excelPreview">
+                                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--excel-border);">
+                                    <!-- Header Row -->
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Month</div>
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Sales</div>
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Expenses</div>
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Profit</div>
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Margin %</div>
+                                    <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Target</div>
+                                    
+                                    <!-- Data Rows -->
+                                    <div style="background: white; padding: 0.5rem;">January</div>
+                                    <div style="background: white; padding: 0.5rem;">$15,000</div>
+                                    <div style="background: white; padding: 0.5rem;">$9,000</div>
+                                    <div style="background: white; padding: 0.5rem;">$6,000</div>
+                                    <div style="background: white; padding: 0.5rem;">40.0%</div>
+                                    <div style="background: white; padding: 0.5rem;">$5,500</div>
+                                    
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">February</div>
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">$18,000</div>
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">$9,500</div>
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">$8,500</div>
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">47.2%</div>
+                                    <div style="background: #f9f9f9; padding: 0.5rem;">$8,000</div>
+                                    
+                                    <!-- More rows would continue in actual Excel -->
+                                </div>
+                                <div id="freezeIndicator" style="display: none; margin-top: 1rem; padding: 0.5rem; background: #fff8e1; border-left: 3px solid var(--excel-warning);">
+                                    <i class="fas fa-snowflake"></i> <strong>Freeze Panes Active:</strong> First row is frozen (scroll would keep it visible)
+                                </div>
+                                <div id="splitIndicator" style="display: none; margin-top: 1rem; padding: 0.5rem; background: #e8f5e9; border-left: 3px solid var(--excel-green);">
+                                    <i class="fas fa-columns"></i> <strong>Split Window Active:</strong> Window is divided into panes (each scrolls independently)
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Self-Quiz Section -->
+                    <section class="quiz-section">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: #7b1fa2;">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h2 class="section-title" style="color: #7b1fa2;">Self-Quiz: Test Your Knowledge</h2>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <strong>1. How do you AutoFit a column in Excel?</strong>
+                            <div style="margin-top: 0.5rem;">
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q1"> A) Right-click column header → Column Width → AutoFit
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q1"> B) Double-click the right border of the column header
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q1"> C) Select column → Format → AutoFit Column Width
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q1" class="correct"> D) All of the above
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <strong>2. What is the keyboard shortcut to show formulas in Excel?</strong>
+                            <div style="margin-top: 0.5rem;">
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q2" class="correct"> A) Ctrl + ` (backtick)
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q2"> B) Ctrl + F
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q2"> C) Alt + =
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q2"> D) Ctrl + Shift + $
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <strong>3. How do you set a different header for the first page in Excel?</strong>
+                            <div style="margin-top: 0.5rem;">
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q3"> A) Page Layout → First Page Header
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q3"> B) Insert → Special Header → First Page
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q3" class="correct"> C) Page Setup → Header/Footer → Different First Page
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q3"> D) Design → Page Setup → First Page Options
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <strong>4. What does the Page Break Preview show in Excel?</strong>
+                            <div style="margin-top: 0.5rem;">
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q4"> A) Only formulas and no values
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q4" class="correct"> B) Where pages will break when printed, with blue lines
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q4"> C) A simplified view without gridlines
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q4"> D) Only cells that contain data
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <strong>5. How do you repeat row 1 on every printed page?</strong>
+                            <div style="margin-top: 0.5rem;">
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q5"> A) Format → Repeat Header Rows
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q5"> B) View → Freeze Top Row
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q5" class="correct"> C) Page Setup → Sheet → Rows to repeat at top
+                                </label>
+                                <label style="display: block; margin: 0.25rem 0;">
+                                    <input type="radio" name="q5"> D) Print → Settings → Repeat Header
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary" onclick="checkQuiz()" style="margin-top: 1rem;">
+                            <i class="fas fa-check-circle"></i> Check Quiz Answers
+                        </button>
+                    </section>
+
+                    <!-- Submission Requirements -->
+                    <section class="submission-box">
+                        <div class="submission-title">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>What to Submit</span>
+                        </div>
+                        <p>Please submit the following files in the Week 2 Assignment dropbox:</p>
+                        
+                        <ul class="file-list">
+                            <li>
+                                <i class="fas fa-file-excel"></i>
+                                <div>
+                                    <strong>Sales Report Workbook</strong><br>
+                                    <code>Sales_Report_Formatted.xlsx</code>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <div>
+                                    <strong>Invoice Template</strong><br>
+                                    <code>Invoice_Template.xlsx</code>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-camera"></i>
+                                <div>
+                                    <strong>Screenshot (Optional but recommended)</strong><br>
+                                    Showing frozen panes and split window (<code>View_Management.jpg</code>)
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div class="tip-box" style="margin-top: 1rem;">
+                            <div class="tip-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <strong>Due Date:</strong> <?php echo date('l, F j, Y', strtotime('+7 days')); ?><br>
+                                <strong>Total Points:</strong> 150 (50 points per completed document)
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Action Buttons -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="simulateSubmission()">
+                            <i class="fas fa-upload"></i>
+                            Submit Assignment
+                        </button>
+                        <button class="btn btn-secondary" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            Print Instructions
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            Download Practice Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Microsoft Excel 2019 Certification Prep • Week 2: Formatting & Printing</p>
+                <p>Impact Digital Academy • © 2026 • Assignment ID: EXCEL-W2-002</p>
+                
+                <div class="footer-links">
+                    <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                    <a href="#" onclick="showTerms()">Terms of Service</a>
+                    <a href="#" onclick="showAcademicIntegrity()">Academic Integrity</a>
+                    <a href="#" onclick="showAccessibility()">Accessibility</a>
+                    <a href="#" onclick="showContact()">Contact Instructor</a>
+                </div>
+                
+                <div class="footer-info">
+                    <p>
+                        <i class="fas fa-clock"></i> 
+                        Page loaded: <span id="currentDateTime"></span>
+                    </p>
+                    <p style="margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        This assignment builds on Week 1 Excel skills and introduces professional formatting and printing.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const ribbonTabs = document.getElementById('ribbonTabs');
+            ribbonTabs.classList.toggle('active');
+            this.innerHTML = ribbonTabs.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Ribbon tab functionality
+        const ribbonTabs = document.querySelectorAll('.ribbon-tab');
+        ribbonTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                ribbonTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Handle tab actions
+                const tabText = this.textContent.trim();
+                switch(tabText) {
+                    case 'Assignment':
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        break;
+                    case 'Practice Data':
+                        document.querySelector('.exercise-box').scrollIntoView({ behavior: 'smooth' });
+                        break;
+                    case 'Help':
+                        showHelpResources();
+                        break;
+                    case 'Print Preview':
+                        showPrintPreview();
+                        break;
+                    case 'Submit':
+                        simulateSubmission();
+                        break;
+                }
+            });
+        });
+
+        // Excel View Simulation Functions
+        function changeExcelView(viewType) {
+            const previewContent = document.getElementById('excelPreview');
+            const buttons = document.querySelectorAll('.preview-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Reset styles
+            previewContent.style.border = '1px solid var(--excel-border)';
+            previewContent.style.background = '#fafafa';
+            
+            // Apply view-specific styles
+            if (viewType === 'normal') {
+                previewContent.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--excel-border);">
+                        <!-- Header Row -->
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Month</div>
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Sales</div>
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Expenses</div>
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Profit</div>
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Margin %</div>
+                        <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Target</div>
+                        
+                        <!-- Data Rows (12 months) -->
+                        ${generateDataRows()}
+                    </div>
+                    ${document.getElementById('freezeIndicator') ? document.getElementById('freezeIndicator').outerHTML : ''}
+                    ${document.getElementById('splitIndicator') ? document.getElementById('splitIndicator').outerHTML : ''}
+                `;
+            } else if (viewType === 'pageLayout') {
+                previewContent.innerHTML = `
+                    <div style="border: 1px solid #999; padding: 20px; background: white; position: relative;">
+                        <!-- Page Margin Simulation -->
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 50px; background: #f0f0f0; border-bottom: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: #666; font-size: 0.9rem;">Header: Sales Report 2024 - Q1 Results</span>
+                        </div>
+                        
+                        <div style="margin-top: 60px;">
+                            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--excel-border); margin-bottom: 20px;">
+                                <!-- Header Row -->
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Month</div>
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Sales</div>
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Expenses</div>
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Profit</div>
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Margin %</div>
+                                <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Target</div>
+                                
+                                <!-- First 3 data rows -->
+                                ${generateDataRows().split('</div></div><div').slice(0, 3).join('</div></div><div')}
+                            </div>
+                            
+                            <div style="text-align: center; color: #666; font-size: 0.9rem; margin-top: 10px;">
+                                [More rows continue on the page...]
+                            </div>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: #f0f0f0; border-top: 1px dashed #ccc; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px;">
+                            <span style="color: #666; font-size: 0.9rem;">Page 1 of 1</span>
+                        </div>
+                    </div>
+                `;
+            } else if (viewType === 'pageBreak') {
+                previewContent.innerHTML = `
+                    <div style="position: relative; padding: 10px;">
+                        <!-- Page break lines -->
+                        <div style="position: absolute; top: 0; bottom: 0; left: 33%; border-left: 2px dashed blue;"></div>
+                        <div style="position: absolute; top: 0; bottom: 0; left: 66%; border-left: 2px dashed blue;"></div>
+                        <div style="position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed blue;"></div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--excel-border);">
+                            <!-- Header Row -->
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Month</div>
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Sales</div>
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Expenses</div>
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Profit</div>
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Margin %</div>
+                            <div style="background: var(--excel-green); color: white; padding: 0.5rem; text-align: center; font-weight: bold;">Target</div>
+                            
+                            <!-- First 4 data rows -->
+                            ${generateDataRows().split('</div></div><div').slice(0, 4).join('</div></div><div')}
+                        </div>
+                        
+                        <div style="margin-top: 10px; padding: 5px; background: #e3f2fd; border-radius: 4px; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i> <strong>Page Break Preview:</strong> Blue dashed lines show where pages will break. Drag lines to adjust.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Re-attach freeze and split indicators if they exist
+            const freezeActive = document.getElementById('freezeIndicator') && document.getElementById('freezeIndicator').style.display !== 'none';
+            const splitActive = document.getElementById('splitIndicator') && document.getElementById('splitIndicator').style.display !== 'none';
+            
+            if (freezeActive) {
+                const indicator = document.createElement('div');
+                indicator.id = 'freezeIndicator';
+                indicator.style.cssText = 'display: block; margin-top: 1rem; padding: 0.5rem; background: #fff8e1; border-left: 3px solid var(--excel-warning);';
+                indicator.innerHTML = '<i class="fas fa-snowflake"></i> <strong>Freeze Panes Active:</strong> First row is frozen (scroll would keep it visible)';
+                previewContent.appendChild(indicator);
+            }
+            
+            if (splitActive) {
+                const indicator = document.createElement('div');
+                indicator.id = 'splitIndicator';
+                indicator.style.cssText = 'display: block; margin-top: 1rem; padding: 0.5rem; background: #e8f5e9; border-left: 3px solid var(--excel-green);';
+                indicator.innerHTML = '<i class="fas fa-columns"></i> <strong>Split Window Active:</strong> Window is divided into panes (each scrolls independently)';
+                previewContent.appendChild(indicator);
+            }
+        }
+
+        function generateDataRows() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+            let rows = '';
+            
+            for (let i = 0; i < 12; i++) {
+                const bgColor = i % 2 === 0 ? 'white' : '#f9f9f9';
+                const sales = 15000 + (i * 3000);
+                const expenses = 9000 + (i * 500);
+                const profit = sales - expenses;
+                const margin = ((profit / sales) * 100).toFixed(1);
+                const target = 5500 + (i * 500);
+                
+                rows += `
+                    <div style="background: ${bgColor}; padding: 0.5rem;">${months[i]}</div>
+                    <div style="background: ${bgColor}; padding: 0.5rem;">$${sales.toLocaleString()}</div>
+                    <div style="background: ${bgColor}; padding: 0.5rem;">$${expenses.toLocaleString()}</div>
+                    <div style="background: ${bgColor}; padding: 0.5rem;">$${profit.toLocaleString()}</div>
+                    <div style="background: ${bgColor}; padding: 0.5rem;">${margin}%</div>
+                    <div style="background: ${bgColor}; padding: 0.5rem;">$${target.toLocaleString()}</div>
+                `;
+            }
+            
+            return rows;
+        }
+
+        function toggleFreezePanes() {
+            const indicator = document.getElementById('freezeIndicator');
+            if (!indicator) {
+                const newIndicator = document.createElement('div');
+                newIndicator.id = 'freezeIndicator';
+                newIndicator.style.cssText = 'display: block; margin-top: 1rem; padding: 0.5rem; background: #fff8e1; border-left: 3px solid var(--excel-warning);';
+                newIndicator.innerHTML = '<i class="fas fa-snowflake"></i> <strong>Freeze Panes Active:</strong> First row is frozen (scroll would keep it visible)';
+                document.getElementById('excelPreview').appendChild(newIndicator);
+                
+                // Update button text
+                event.target.innerHTML = '<i class="fas fa-snowflake"></i> Remove Freeze';
+            } else {
+                if (indicator.style.display === 'none') {
+                    indicator.style.display = 'block';
+                    event.target.innerHTML = '<i class="fas fa-snowflake"></i> Remove Freeze';
+                } else {
+                    indicator.style.display = 'none';
+                    event.target.innerHTML = '<i class="fas fa-snowflake"></i> Toggle Freeze Panes';
+                }
+            }
+        }
+
+        function toggleSplit() {
+            const indicator = document.getElementById('splitIndicator');
+            if (!indicator) {
+                const newIndicator = document.createElement('div');
+                newIndicator.id = 'splitIndicator';
+                newIndicator.style.cssText = 'display: block; margin-top: 1rem; padding: 0.5rem; background: #e8f5e9; border-left: 3px solid var(--excel-green);';
+                newIndicator.innerHTML = '<i class="fas fa-columns"></i> <strong>Split Window Active:</strong> Window is divided into panes (each scrolls independently)';
+                document.getElementById('excelPreview').appendChild(newIndicator);
+                
+                // Add visual split to preview
+                const preview = document.getElementById('excelPreview');
+                preview.style.borderTop = '3px solid var(--excel-green)';
+                
+                // Update button text
+                event.target.innerHTML = '<i class="fas fa-times"></i> Remove Split';
+            } else {
+                if (indicator.style.display === 'none') {
+                    indicator.style.display = 'block';
+                    document.getElementById('excelPreview').style.borderTop = '3px solid var(--excel-green)';
+                    event.target.innerHTML = '<i class="fas fa-times"></i> Remove Split';
+                } else {
+                    indicator.style.display = 'none';
+                    document.getElementById('excelPreview').style.borderTop = '1px solid var(--excel-border)';
+                    event.target.innerHTML = '<i class="fas fa-columns"></i> Toggle Split';
+                }
+            }
+        }
+
+        // Check Quiz Answers
+        function checkQuiz() {
+            const correctAnswers = document.querySelectorAll('.correct');
+            let score = 0;
+            
+            correctAnswers.forEach(correct => {
+                if (correct.checked) score++;
+            });
+            
+            alert(`Quiz Results: ${score}/5 correct\n\n${score === 5 ? 'Excellent! You mastered the concepts!' : 'Review the material and try again.'}`);
+        }
+
+        // Simulate assignment submission
+        function simulateSubmission() {
+            const confirmed = confirm(`Submit Week 2 Excel Assignment?\n\nFiles to submit:\n• Sales_Report_Formatted.xlsx\n• Invoice_Template.xlsx\n• View_Management.jpg (optional)\n\nDue: <?php echo date('F j, Y', strtotime('+7 days')); ?>\n\nConfirm submission?`);
+            
+            if (confirmed) {
+                // Show loading state
+                const submitBtn = document.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                submitBtn.disabled = true;
+                
+                // Simulate submission process
+                setTimeout(() => {
+                    alert('✅ Week 2 Excel Assignment submitted successfully!\n\nFiles uploaded:\n• Sales_Report_Formatted.xlsx\n• Invoice_Template.xlsx\n\nSubmission recorded: ' + new Date().toLocaleString() + '\n\nYou will receive grading feedback within 3 business days.');
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Update submission box
+                    const submissionBox = document.querySelector('.submission-box');
+                    submissionBox.innerHTML = `
+                        <div class="submission-title">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Submission Complete!</span>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 6px; margin: 1rem 0;">
+                            <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
+                            <p><strong>Files:</strong> 2 Excel workbooks uploaded</p>
+                            <p><strong>Status:</strong> <span style="color: var(--excel-success);">Awaiting Grading</span></p>
+                            <p><strong>Estimated Feedback:</strong> Within 3 business days</p>
+                            <p><strong>Points Possible:</strong> 150</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 1rem;">
+                            <i class="fas fa-print"></i> Print Confirmation
+                        </button>
+                    `;
+                    
+                    // Update progress indicator
+                    document.getElementById('progressText').innerHTML = 'Submitted • Awaiting Grading';
+                    
+                    // Scroll to submission confirmation
+                    submissionBox.scrollIntoView({ behavior: 'smooth' });
+                }, 1500);
+            }
+        }
+
+        // Print assignment instructions
+        function printInstructions() {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Excel Week 2 Assignment Instructions</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; color: #333; }
+                        h1 { color: #1d6f42; border-bottom: 2px solid #1d6f42; padding-bottom: 10px; }
+                        h2 { color: #1d6f42; margin-top: 25px; }
+                        h3 { color: #0e5c0e; margin-top: 20px; }
+                        .step { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+                        .step-number { background: #1d6f42; color: white; padding: 5px 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+                        .demo-table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+                        .demo-table th { background: #1d6f42; color: white; padding: 8px; border: 1px solid #0e5c0e; }
+                        .demo-table td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+                        .print-date { text-align: right; font-size: 0.9em; color: #666; margin-bottom: 20px; }
+                        @media print {
+                            .step { break-inside: avoid; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-date">Printed: ${new Date().toLocaleString()}</div>
+                    <h1>Microsoft Excel Week 2 Assignment</h1>
+                    <h2>Professional Reports & Printing</h2>
+                    
+                    <h3>Part 1: Format a Monthly Sales Report</h3>
+                    <p>Create a professional sales report with formatting, formulas, and proper page setup.</p>
+                    
+                    <h3>Part 2: Create a Print-Ready Invoice Template</h3>
+                    <p>Design a professional invoice with formulas, formatting, and print configuration.</p>
+                    
+                    <h3>Part 3: View Management Practice</h3>
+                    <p>Practice Freeze Panes, Split Windows, and different Excel views.</p>
+                    
+                    <h3>Submission Requirements</h3>
+                    <p>Submit: <strong>Sales_Report_Formatted.xlsx</strong>, <strong>Invoice_Template.xlsx</strong>, and optional screenshot</p>
+                    
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+                        <p>Impact Digital Academy • Microsoft Excel Certification Prep • Week 2: Formatting & Printing</p>
+                        <p>Assignment ID: EXCEL-W2-002 • Due: <?php echo date('F j, Y', strtotime('+7 days')); ?> • Points: 150</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Download template
+        function downloadTemplate() {
+            alert('📊 Excel practice data would download.\n\nIn a real implementation, this would download a starter Excel file with the sales data and invoice structure.');
+            
+            // Simulate download progress
+            const downloadBtn = document.querySelector('.btn-secondary:nth-child(3)');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                alert('✅ Practice data downloaded successfully!\n\nThe file includes:\n• Sales Report data table\n• Invoice template structure\n• Practice dataset for view management\n\nOpen in Excel to begin your assignment.');
+            }, 1000);
+        }
+
+        // Show Excel demo
+        function showExcelDemo() {
+            const demoContent = document.querySelector('.invoice-preview').innerHTML;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.85);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 8px; padding: 2rem; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="position: absolute; top: 1rem; right: 1rem; background: #1d6f42; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 style="color: var(--excel-green); margin-bottom: 1.5rem; text-align: center;">Complete Invoice Example</h2>
+                    <div style="font-family: 'Segoe UI', sans-serif;">
+                        ${demoContent}
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 6px; border-left: 4px solid var(--excel-green);">
+                        <h4 style="color: var(--excel-green); margin-top: 0;">Excel Skills Demonstrated:</h4>
+                        <ul style="columns: 2;">
+                            <li>Professional formatting</li>
+                            <li>Currency number formatting</li>
+                            <li>Formulas for calculations</li>
+                            <li>Cell borders and alignment</li>
+                            <li>Header/Footer setup</li>
+                            <li>Print area configuration</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Show print preview
+        function showPrintPreview() {
+            alert('🖨️ Print Preview simulation\n\nIn Excel, use Ctrl + P or File → Print to see how your document will look when printed.\n\nCheck:\n• Page breaks\n• Headers and footers\n• Margins\n• Print area\n• Orientation (Portrait/Landscape)');
+        }
+
+        // Show help resources
+        function showHelpResources() {
+            alert('📚 Excel Help Resources\n\nAvailable resources:\n• Video tutorials on formatting and printing\n• Step-by-step guides with screenshots\n• Practice datasets\n• Instructor office hours\n• Class discussion forum');
+        }
+
+        // Update current date/time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Toolbar button functionality
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Footer link functions
+        function showPrivacy() { alert('Privacy policy information would display.'); }
+        function showTerms() { alert('Terms of service would display.'); }
+        function showAcademicIntegrity() { alert('Academic integrity policy would display.'); }
+        function showAccessibility() { alert('Accessibility information would display.'); }
+        function showContact() { alert('Instructor contact: Prof. Johnson\nEmail: johnson@impactdigital.edu\nOffice Hours: Tue/Thu 2-4 PM'); }
+
+        // Excel keyboard shortcuts simulation
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + P for print
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                alert('🖨️ Excel Shortcut: Ctrl + P opens Print Preview.\n\nUse this to check how your sales report and invoice will print.');
+            }
+            
+            // Ctrl + ` for formulas
+            if (e.ctrlKey && e.key === '`') {
+                e.preventDefault();
+                alert('🔢 Excel Shortcut: Ctrl + ` toggles formula display.\n\nUse this to check your invoice formulas are working correctly.');
+            }
+            
+            // Ctrl + B for bold
+            if (e.ctrlKey && e.key === 'b') {
+                e.preventDefault();
+                alert('✒️ Excel Shortcut: Ctrl + B applies bold formatting.\n\nUse this on your report headers for emphasis.');
+            }
+            
+            // F12 for Save As
+            if (e.key === 'F12') {
+                e.preventDefault();
+                alert('💾 Excel Shortcut: F12 opens Save As dialog.\n\nUse this to save your files with proper names.');
+            }
+        });
+
+        // Highlight current step on scroll
+        window.addEventListener('scroll', function() {
+            const steps = document.querySelectorAll('.step');
+            const scrollPosition = window.scrollY + 100;
+            
+            steps.forEach(step => {
+                const stepTop = step.offsetTop;
+                const stepHeight = step.offsetHeight;
+                
+                if (scrollPosition >= stepTop && scrollPosition < stepTop + stepHeight) {
+                    step.style.boxShadow = '0 4px 12px rgba(29, 111, 66, 0.15)';
+                    step.style.borderColor = 'var(--excel-green)';
+                } else {
+                    step.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                    step.style.borderColor = 'var(--excel-border)';
+                }
+            });
+        });
+
+        // Initialize interactive preview
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default view
+            changeExcelView('normal');
+        });
+    </script>
+</body>
+</html>

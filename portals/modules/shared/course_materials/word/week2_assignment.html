@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Week 2 Assignment: Newsletter Formatting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Microsoft Word Theme Colors */
+        :root {
+            --word-blue: #2b579a;
+            --word-blue-dark: #1e3c6e;
+            --word-blue-light: #4a7bc9;
+            --word-gray: #f2f2f2;
+            --word-gray-dark: #d9d9d9;
+            --word-text: #333333;
+            --word-text-light: #666666;
+            --word-accent: #ff6b6b;
+            --word-success: #4caf50;
+            --word-warning: #ff9800;
+            --word-info: #0d3d8c;
+            --word-border: #e0e0e0;
+            --word-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--word-text);
+            background-color: #f8f9fa;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header - Word Style */
+        .main-header {
+            background: linear-gradient(135deg, #0d3d8c, #185abd);
+            color: white;
+            padding: 1.5rem 0;
+            border-bottom: 4px solid var(--word-blue-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .word-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .word-logo i {
+            background: white;
+            color: #0d3d8c;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assignment-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Navigation - Word Ribbon Style */
+        .nav-ribbon {
+            background: white;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--word-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .ribbon-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .ribbon-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ribbon-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--word-blue);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .ribbon-tab:hover,
+        .ribbon-tab.active {
+            background: var(--word-gray);
+            border-color: var(--word-border);
+        }
+
+        .ribbon-tab i {
+            font-size: 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--word-blue);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--word-gray);
+        }
+
+        /* Main Content - Document Style */
+        .main-content {
+            padding: 2rem 0;
+            background: linear-gradient(to bottom, #ffffff, #fafafa);
+        }
+
+        /* Document Container - Looks like Word Window */
+        .document-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--word-shadow);
+            border: 1px solid var(--word-border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .document-toolbar {
+            background: var(--word-gray);
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--word-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            background: white;
+            border: 1px solid var(--word-border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--word-blue-light);
+            color: white;
+            border-color: var(--word-blue-light);
+        }
+
+        .document-content {
+            padding: 2rem;
+            min-height: 500px;
+        }
+
+        /* Assignment Sections */
+        .assignment-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--word-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            background: var(--word-info);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--word-info);
+            margin: 0;
+        }
+
+        /* Learning Goals */
+        .learning-goals {
+            background: linear-gradient(to right, #e8f0ff, #f0f7ff);
+            border-left: 4px solid var(--word-info);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .goals-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .goal-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 6px;
+            border: 1px solid var(--word-border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .goal-card h4 {
+            color: var(--word-info);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Practice Exercise */
+        .practice-exercise {
+            background: linear-gradient(to right, #e8f0ff, #f5f9ff);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 5px solid #185abd;
+            box-shadow: 0 4px 8px rgba(13, 61, 140, 0.1);
+        }
+
+        .exercise-header {
+            color: var(--word-info);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .exercise-header i {
+            font-size: 1.8rem;
+        }
+
+        .step-container {
+            margin-top: 1.5rem;
+        }
+
+        .step {
+            background: white;
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--word-border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--word-info);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--word-info);
+        }
+
+        .sub-steps {
+            padding-left: 2.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .sub-steps li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid var(--word-border);
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: var(--word-info);
+        }
+
+        .visual-guide {
+            background: white;
+            border: 1px solid var(--word-border);
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .columns-visual {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            justify-content: center;
+        }
+
+        .column-box {
+            background: #e8f0ff;
+            border: 2px solid var(--word-info);
+            padding: 1.5rem;
+            border-radius: 4px;
+            min-width: 120px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .column-box.two-cols {
+            width: 45%;
+        }
+
+        .column-box.three-cols {
+            width: 30%;
+        }
+
+        .break-indicator {
+            background: #fff8e1;
+            border: 2px dashed var(--word-warning);
+            padding: 0.75rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 600;
+            color: var(--word-warning);
+        }
+
+        /* Interactive Demo */
+        .interactive-demo {
+            background: white;
+            border: 1px solid var(--word-border);
+            border-radius: 4px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-toolbar {
+            background: var(--word-gray);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            background: white;
+            border: 1px solid var(--word-border);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .demo-btn:hover {
+            background: var(--word-info);
+            color: white;
+        }
+
+        .demo-btn.active {
+            background: var(--word-info);
+            color: white;
+            border-color: var(--word-info);
+        }
+
+        .demo-content {
+            min-height: 300px;
+            padding: 1.5rem;
+            background: #fafafa;
+            border: 1px solid var(--word-border);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .demo-content.one-column {
+            column-count: 1;
+        }
+
+        .demo-content.two-columns {
+            column-count: 2;
+            column-gap: 2rem;
+        }
+
+        .demo-content.three-columns {
+            column-count: 3;
+            column-gap: 1.5rem;
+            column-rule: 1px solid var(--word-border);
+        }
+
+        .demo-break {
+            border-top: 2px dashed var(--word-warning);
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+        }
+
+        /* Newsletter Preview */
+        .newsletter-preview {
+            background: white;
+            border: 2px solid var(--word-info);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Calibri', 'Segoe UI', sans-serif;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsletter-title {
+            color: var(--word-info);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .newsletter-subtitle {
+            text-align: center;
+            color: var(--word-text-light);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            border-bottom: 2px solid var(--word-border);
+            padding-bottom: 1rem;
+        }
+
+        .newsletter-columns {
+            column-count: 2;
+            column-gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .newsletter-section {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter-section h3 {
+            color: var(--word-info);
+            border-bottom: 1px solid var(--word-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--word-info);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--word-text-light);
+        }
+
+        /* Submission Requirements */
+        .submission-box {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 4px solid var(--word-success);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .submission-title {
+            color: var(--word-success);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .file-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--word-border);
+        }
+
+        .file-list i {
+            color: var(--word-info);
+            font-size: 1.2rem;
+        }
+
+        /* Grading Checklist */
+        .grading-section {
+            background: linear-gradient(to right, #f3e5f5, #f8f0fa);
+            border-left: 4px solid #7b1fa2;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .checklist {
+            margin: 1rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--word-border);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-top: 0.25rem;
+            transform: scale(1.2);
+        }
+
+        /* Buttons - Word Style */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--word-info);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d3d8c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--word-info);
+            border: 2px solid var(--word-info);
+        }
+
+        .btn-secondary:hover {
+            background: var(--word-info);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        /* Resources */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .resource-card {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--word-border);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-card h4 {
+            color: var(--word-info);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .resource-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resource-card li {
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .resource-card a {
+            color: var(--word-info);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .resource-card a:hover {
+            color: #0d3d8c;
+            text-decoration: underline;
+        }
+
+        /* Tip Boxes */
+        .tip-box {
+            background: #fff8e1;
+            border-left: 4px solid var(--word-warning);
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .tip-icon {
+            color: var(--word-warning);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .shortcut-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--word-blue);
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Footer */
+        .main-footer {
+            background: #0d3d8c;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-content .subtitle {
+                font-size: 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .ribbon-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .ribbon-tabs {
+                flex-direction: column;
+                display: none;
+                width: 100%;
+            }
+
+            .ribbon-tabs.active {
+                display: flex;
+            }
+
+            .ribbon-tab {
+                justify-content: center;
+            }
+
+            .document-content {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .practice-exercise {
+                padding: 1.5rem;
+            }
+
+            .goals-list {
+                grid-template-columns: 1fr;
+            }
+
+            .columns-visual {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .column-box {
+                width: 80% !important;
+                margin-bottom: 1rem;
+            }
+
+            .newsletter-columns {
+                column-count: 1;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-group {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .main-header {
+                padding: 1rem 0;
+            }
+
+            .main-content {
+                padding: 1.5rem 0;
+            }
+
+            .document-content {
+                padding: 1rem;
+            }
+
+            .assignment-tag {
+                font-size: 0.85rem;
+                padding: 0.4rem 1.2rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-ribbon,
+            .btn,
+            .mobile-menu-btn,
+            .toolbar-btn,
+            .footer-links,
+            .demo-toolbar,
+            .interactive-demo {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .document-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .assignment-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="word-logo">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Microsoft Word 2019</span>
+                </div>
+                <h1>Week 2 Assignment: Newsletter Formatting</h1>
+                <div class="subtitle">
+                    Master section breaks, column layouts, and advanced formatting techniques
+                </div>
+                <div class="assignment-tag">
+                    <i class="fas fa-tasks"></i>
+                    <span id="progressText">Due: End of Week 2 • 100 Points</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Ribbon -->
+    <nav class="nav-ribbon">
+        <div class="container">
+            <div class="ribbon-content">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ribbon-tabs" id="ribbonTabs">
+                    <a href="#" class="ribbon-tab active">
+                        <i class="fas fa-home"></i>
+                        <span>Assignment</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-columns"></i>
+                        <span>Columns Demo</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-print"></i>
+                        <span>Print</span>
+                    </a>
+                    <a href="#" class="ribbon-tab">
+                        <i class="fas fa-share"></i>
+                        <span>Submit</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Document Container -->
+            <div class="document-container">
+                <div class="document-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            <span>Print</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            <span>Template</span>
+                        </button>
+                        <button class="toolbar-btn" onclick="showNewsletterDemo()">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <div style="font-weight: 600; color: var(--word-info);">
+                            <i class="fas fa-clock"></i>
+                            Time Estimate: 25-35 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-content">
+                    <!-- Objective -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h2 class="section-title">Objective</h2>
+                        </div>
+                        <p style="font-size: 1.1rem; line-height: 1.8;">
+                            Practice advanced document formatting techniques including section breaks, column layouts, and professional styling to create a newsletter-style document.
+                        </p>
+                    </section>
+
+                    <!-- Learning Goals -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h2 class="section-title">Week 2 Learning Goals</h2>
+                        </div>
+                        
+                        <div class="learning-goals">
+                            <p>By completing this assignment, you will demonstrate proficiency in:</p>
+                            
+                            <div class="goals-list">
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-columns"></i> Column Formatting</h4>
+                                    <p>Creating and modifying multi-column layouts in Word documents</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-code-branch"></i> Section Breaks</h4>
+                                    <p>Using different types of section breaks to control formatting</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-paint-brush"></i> Advanced Formatting</h4>
+                                    <p>Applying text effects, styles, and professional formatting</p>
+                                </div>
+                                
+                                <div class="goal-card">
+                                    <h4><i class="fas fa-copy"></i> Format Painter</h4>
+                                    <p>Efficiently copying formatting between text elements</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Practice Exercise -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-hands"></i>
+                            </div>
+                            <h2 class="section-title">Practice Exercise</h2>
+                        </div>
+                        
+                        <div class="practice-exercise">
+                            <div class="exercise-header">
+                                <i class="fas fa-newspaper"></i>
+                                <h3 style="margin: 0; font-size: 1.4rem;">Create a Newsletter with Sections and Columns</h3>
+                            </div>
+                            
+                            <p><strong>Activity:</strong> Follow these step-by-step instructions to build a professional-looking newsletter that demonstrates your mastery of section breaks, column layouts, and advanced formatting.</p>
+                            
+                            <div class="step-container">
+                                <!-- Step 1 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">1</span>
+                                        <span>Open a new document and type a title: "Community News"</span>
+                                    </div>
+                                    <p>Start Microsoft Word 2019 and create a new blank document. Type the title at the top of the page.</p>
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Tip:</strong> Make sure you're using a standard font like Calibri or Times New Roman for professional appearance.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">2</span>
+                                        <span>Format the title with advanced styling</span>
+                                    </div>
+                                    <ol class="sub-steps">
+                                        <li><strong>Apply Title style:</strong> Select the title text, then go to Home tab → Styles group → Title</li>
+                                        <li><strong>Add a Shadow text effect:</strong> With title selected, go to Home tab → Font group → Text Effects and Typography → Shadow → Outer: Offset Bottom</li>
+                                        <li><strong>Center align:</strong> Click the Center alignment button in the Home tab</li>
+                                    </ol>
+                                    <div class="visual-guide">
+                                        <p>Your title should look similar to this:</p>
+                                        <div style="font-size: 1.8rem; font-weight: bold; text-align: center; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); color: var(--word-info); padding: 1rem; border-bottom: 2px solid var(--word-border);">
+                                            Community News
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 3 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">3</span>
+                                        <span>Type an introduction paragraph</span>
+                                    </div>
+                                    <p>Press Enter twice after the title, then type a brief introduction to your newsletter (3-4 sentences).</p>
+                                    <div class="code-block">
+                                        Welcome to the Community News newsletter! In this edition, we highlight recent events, community initiatives, and upcoming opportunities. Our goal is to keep residents informed and connected. Thank you for being part of our vibrant community.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 4 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">4</span>
+                                        <span>Apply a two-column layout</span>
+                                    </div>
+                                    <p>Place your cursor in the introduction paragraph, then:</p>
+                                    <ol class="sub-steps">
+                                        <li>Go to Layout tab → Page Setup group → Columns</li>
+                                        <li>Select "Two" from the dropdown menu</li>
+                                    </ol>
+                                    <div class="shortcut-box">
+                                        <strong>Alternative method:</strong> You can also select "More Columns" for additional options like column width and spacing adjustments.
+                                    </div>
+                                    <div class="columns-visual">
+                                        <div class="column-box two-cols">Column 1</div>
+                                        <div class="column-box two-cols">Column 2</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 5 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">5</span>
+                                        <span>Add a section break</span>
+                                    </div>
+                                    <p>After the introduction paragraph:</p>
+                                    <ol class="sub-steps">
+                                        <li>Place cursor at the end of the introduction</li>
+                                        <li>Go to Layout tab → Page Setup group → Breaks</li>
+                                        <li>Select "Continuous" under Section Breaks</li>
+                                    </ol>
+                                    <div class="break-indicator">
+                                        ← Section Break (Continuous) →
+                                    </div>
+                                    <p>The section break allows you to have different column formatting in different parts of your document.</p>
+                                </div>
+                                
+                                <!-- Step 6 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">6</span>
+                                        <span>Change column formatting in the new section</span>
+                                    </div>
+                                    <p>With your cursor in the new section (after the section break):</p>
+                                    <ol class="sub-steps">
+                                        <li>Go to Layout tab → Page Setup group → Columns → More Columns</li>
+                                        <li>In the Columns dialog box, select "Three"</li>
+                                        <li>Check the box for "Line between"</li>
+                                        <li>Click OK</li>
+                                    </ol>
+                                    <div class="columns-visual">
+                                        <div class="column-box three-cols">Column 1</div>
+                                        <div class="column-box three-cols">Column 2</div>
+                                        <div class="column-box three-cols">Column 3</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 7 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">7</span>
+                                        <span>Add sample text in each column</span>
+                                    </div>
+                                    <p>Type at least two paragraphs of text in each of the three columns. You can use placeholder text or write about community topics.</p>
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Content suggestion:</strong> Write about different topics in each column: Column 1 - Local Events, Column 2 - Community Projects, Column 3 - Volunteer Opportunities.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 8 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">8</span>
+                                        <span>Insert a column break</span>
+                                    </div>
+                                    <p>To control where text flows between columns:</p>
+                                    <ol class="sub-steps">
+                                        <li>Place cursor in the middle of the text in the second column</li>
+                                        <li>Go to Layout tab → Page Setup group → Breaks</li>
+                                        <li>Select "Column" under Page Breaks</li>
+                                    </ol>
+                                    <p>This will force the text after the cursor to move to the next column.</p>
+                                    <div class="shortcut-box">
+                                        <strong>Keyboard shortcut:</strong> Ctrl+Shift+Enter also inserts a column break.
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 9 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">9</span>
+                                        <span>Use Format Painter</span>
+                                    </div>
+                                    <p>Copy formatting from one paragraph to another:</p>
+                                    <ol class="sub-steps">
+                                        <li>Select the introduction paragraph with your desired formatting</li>
+                                        <li>Click the Format Painter button in the Home tab (Clipboard group)</li>
+                                        <li>Click on another paragraph to apply the same formatting</li>
+                                    </ol>
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Double-click trick:</strong> Double-click the Format Painter button to apply formatting to multiple paragraphs. Click it again or press Esc to turn it off.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 10 -->
+                                <div class="step">
+                                    <div class="step-header">
+                                        <span class="step-number">10</span>
+                                        <span>Save your document</span>
+                                    </div>
+                                    <p>Save your completed newsletter with the filename:</p>
+                                    <div class="code-block">
+                                        YourName_Week2_Newsletter.docx
+                                    </div>
+                                    <p>Example: <code>JaneSmith_Week2_Newsletter.docx</code></p>
+                                    <div class="tip-box">
+                                        <div class="tip-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Best practice:</strong> Save your work frequently as you progress through the steps to avoid losing any changes.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Interactive Columns Demo -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <h2 class="section-title">Interactive Columns Demo</h2>
+                        </div>
+                        
+                        <div class="interactive-demo">
+                            <p>Try different column layouts to see how they affect text flow:</p>
+                            
+                            <div class="demo-toolbar">
+                                <button class="demo-btn active" onclick="changeColumnLayout(1)">One Column</button>
+                                <button class="demo-btn" onclick="changeColumnLayout(2)">Two Columns</button>
+                                <button class="demo-btn" onclick="changeColumnLayout(3)">Three Columns</button>
+                                <button class="demo-btn" onclick="toggleColumnLines()">
+                                    <i class="fas fa-grip-lines"></i> Toggle Lines
+                                </button>
+                                <button class="demo-btn" onclick="insertDemoBreak()">
+                                    <i class="fas fa-code-branch"></i> Add Section Break
+                                </button>
+                            </div>
+                            
+                            <div class="demo-content one-column" id="demoContent">
+                                <h3 style="color: var(--word-info); margin-top: 0;">Community Newsletter Sample</h3>
+                                <p>This is a sample paragraph demonstrating how text flows in different column layouts. When you switch between one, two, and three columns, observe how the text automatically reflows to fit the new layout.</p>
+                                
+                                <p>Section breaks allow you to change column formatting within the same document. For example, you might have a single-column title and introduction, followed by a two-column main content area, and a three-column footer with contact information.</p>
+                                
+                                <p>Column breaks force text to move to the next column, which is useful for controlling where content appears. This is particularly helpful when you want to ensure a heading appears at the top of a new column.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Newsletter Preview -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h2 class="section-title">Final Newsletter Preview</h2>
+                        </div>
+                        
+                        <div class="newsletter-preview">
+                            <div class="newsletter-title">Community News</div>
+                            <div class="newsletter-subtitle">January 2024 Edition • Volume 12, Issue 1</div>
+                            
+                            <p style="text-align: center; font-style: italic; margin-bottom: 1.5rem;">
+                                Welcome to our monthly community newsletter! Stay informed about local events, initiatives, and opportunities to get involved.
+                            </p>
+                            
+                            <div class="newsletter-columns">
+                                <div class="newsletter-section">
+                                    <h3>Upcoming Events</h3>
+                                    <p><strong>Community Clean-Up Day:</strong> Join us on January 20th at Central Park. Gloves and bags provided.</p>
+                                    <p><strong>Winter Farmers Market:</strong> Every Saturday 9 AM - 1 PM at the Community Center parking lot.</p>
+                                    <p><strong>Book Club Meeting:</strong> January 25th at 7 PM discussing "The Great Gatsby."</p>
+                                </div>
+                                
+                                <div class="newsletter-section">
+                                    <h3>Community Projects</h3>
+                                    <p>The new playground equipment at Maple Park has been installed thanks to community donations.</p>
+                                    <p>Volunteers are needed for the Senior Meal Delivery program. Contact the community center to sign up.</p>
+                                    <p>The neighborhood watch program has reduced incidents by 30% this quarter.</p>
+                                </div>
+                                
+                                <div class="newsletter-section">
+                                    <h3>Local Business Spotlight</h3>
+                                    <p><strong>Green Thumb Nursery:</strong> Offering 15% off winter plants this month.</p>
+                                    <p><strong>Main Street Cafe:</strong> Now serving weekend brunch from 8 AM - 2 PM.</p>
+                                    <p><strong>Community Bookstore:</strong> Hosting author readings every Thursday evening.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="newsletter-footer">
+                                <p><strong>Newsletter prepared using Microsoft Word 2019</strong><br>
+                                Formatting includes: Title style with shadow effect, two-column layout with section break, three-column section with line between columns</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Submission Requirements -->
+                    <section class="submission-box">
+                        <div class="submission-title">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>What to Submit</span>
+                        </div>
+                        <p>Please submit the following file in the Week 2 Assignment dropbox:</p>
+                        
+                        <ul class="file-list">
+                            <li>
+                                <i class="fas fa-file-word"></i>
+                                <div>
+                                    <strong>The completed newsletter document</strong><br>
+                                    <code>YourName_Week2_Newsletter.docx</code>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-camera"></i>
+                                <div>
+                                    <strong>Screenshot (optional but recommended)</strong><br>
+                                    Showing your document with formatting symbols turned on
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div class="tip-box" style="margin-top: 1rem;">
+                            <div class="tip-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <strong>Before submitting:</strong> Review your document to ensure it includes all required elements: formatted title, introduction in two columns, section break, three-column section with lines between, and proper formatting throughout.
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Grading Checklist -->
+                    <section class="grading-section">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: #7b1fa2;">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <h2 class="section-title" style="color: #7b1fa2;">Grading Checklist</h2>
+                        </div>
+                        
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check1">
+                                <label for="check1">
+                                    <strong>Title properly formatted with Title style, shadow effect, and center alignment</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">All three formatting elements applied correctly</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check2">
+                                <label for="check2">
+                                    <strong>Two-column layout applied to introduction section</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Columns clearly visible and text flows properly</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check3">
+                                <label for="check3">
+                                    <strong>Continuous section break inserted after introduction</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Break placed in correct location</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check4">
+                                <label for="check4">
+                                    <strong>Three-column layout with line between in new section</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Columns properly formatted with visible lines</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check5">
+                                <label for="check5">
+                                    <strong>Column break inserted in second column</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Text properly forced to next column</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check6">
+                                <label for="check6">
+                                    <strong>Format Painter used to copy formatting</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">Evidence of consistent formatting applied</span>
+                                </label>
+                            </div>
+                            
+                            <div class="checklist-item">
+                                <input type="checkbox" id="check7">
+                                <label for="check7">
+                                    <strong>Document saved with correct filename</strong><br>
+                                    <span style="font-size: 0.9rem; color: var(--word-text-light);">YourName_Week2_Newsletter.docx format</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <strong style="color: #7b1fa2;">Due by the end of this week.</strong>
+                            <span style="display: block; margin-top: 0.5rem; color: var(--word-text-light);">
+                                Total Points: 100 (14 points per checklist item, 2 points for timely submission)
+                            </span>
+                        </div>
+                    </section>
+
+                    <!-- Action Buttons -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="simulateSubmission()">
+                            <i class="fas fa-upload"></i>
+                            Submit Assignment
+                        </button>
+                        <button class="btn btn-secondary" onclick="printInstructions()">
+                            <i class="fas fa-print"></i>
+                            Print Instructions
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i>
+                            Download Starter Template
+                        </button>
+                    </div>
+
+                    <!-- Resources -->
+                    <section class="assignment-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-life-ring"></i>
+                            </div>
+                            <h2 class="section-title">Week 2 Resources & Help</h2>
+                        </div>
+                        
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-video"></i>
+                                    Video Tutorials
+                                </h4>
+                                <ul>
+                                    <li><a href="#" onclick="showVideo('columns-tutorial')">Working with Columns in Word</a></li>
+                                    <li><a href="#" onclick="showVideo('section-breaks')">Mastering Section Breaks</a></li>
+                                    <li><a href="#" onclick="showVideo('format-painter')">Using Format Painter Efficiently</a></li>
+                                    <li><a href="#" onclick="showVideo('newsletter-design')">Designing Professional Newsletters</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-book"></i>
+                                    Learning Materials
+                                </h4>
+                                <ul>
+                                    <li><a href="#" onclick="openGuide('columns-guide')">Complete Guide to Columns</a></li>
+                                    <li><a href="#" onclick="openGuide('breaks-reference')">Section Break Reference Sheet</a></li>
+                                    <li><a href="#" onclick="openGuide('newsletter-templates')">Newsletter Design Templates</a></li>
+                                    <li><a href="https://support.microsoft.com/word" target="_blank">Microsoft Word Help Center</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="resource-card">
+                                <h4>
+                                    <i class="fas fa-keyboard"></i>
+                                    Keyboard Shortcuts
+                                </h4>
+                                <ul>
+                                    <li><strong>Column Break:</strong> Ctrl+Shift+Enter</li>
+                                    <li><strong>Format Painter:</strong> Alt+H, F, P</li>
+                                    <li><strong>Columns Dialog:</strong> Alt+P, J, C</li>
+                                    <li><strong>Section Break:</strong> Alt+P, B, S</li>
+                                    <li><strong>Center Align:</strong> Ctrl+E</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Microsoft Word 2019 Certification Prep • Week 2: Advanced Formatting</p>
+                <p>Impact Digital Academy • © 2026 • Assignment ID: WORD-W2-002</p>
+                
+                <div class="footer-links">
+                    <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                    <a href="#" onclick="showTerms()">Terms of Service</a>
+                    <a href="#" onclick="showAcademicIntegrity()">Academic Integrity</a>
+                    <a href="#" onclick="showAccessibility()">Accessibility</a>
+                    <a href="#" onclick="showContact()">Contact Instructor</a>
+                </div>
+                
+                <div class="footer-info">
+                    <p>
+                        <i class="fas fa-clock"></i> 
+                        Page loaded: <span id="currentDateTime"></span>
+                    </p>
+                    <p style="margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        This assignment builds on Week 1 skills and introduces advanced formatting techniques.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const ribbonTabs = document.getElementById('ribbonTabs');
+            ribbonTabs.classList.toggle('active');
+            this.innerHTML = ribbonTabs.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Ribbon tab functionality
+        const ribbonTabs = document.querySelectorAll('.ribbon-tab');
+        ribbonTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                ribbonTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Handle tab actions
+                const tabText = this.textContent.trim();
+                switch(tabText) {
+                    case 'Assignment':
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        break;
+                    case 'Columns Demo':
+                        document.querySelector('.interactive-demo').scrollIntoView({ behavior: 'smooth' });
+                        break;
+                    case 'Help':
+                        alert('Help resources would open in a real implementation.');
+                        break;
+                    case 'Print':
+                        printInstructions();
+                        break;
+                    case 'Submit':
+                        simulateSubmission();
+                        break;
+                }
+            });
+        });
+
+        // Interactive Columns Demo Functions
+        function changeColumnLayout(columns) {
+            const demoContent = document.getElementById('demoContent');
+            const buttons = document.querySelectorAll('.demo-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Remove all column classes
+            demoContent.classList.remove('one-column', 'two-columns', 'three-columns');
+            
+            // Add appropriate class
+            if (columns === 1) {
+                demoContent.classList.add('one-column');
+            } else if (columns === 2) {
+                demoContent.classList.add('two-columns');
+                demoContent.style.columnRule = 'none';
+            } else if (columns === 3) {
+                demoContent.classList.add('three-columns');
+                demoContent.style.columnRule = '1px solid var(--word-border)';
+            }
+        }
+
+        function toggleColumnLines() {
+            const demoContent = document.getElementById('demoContent');
+            if (demoContent.style.columnRule === 'none') {
+                demoContent.style.columnRule = '1px solid var(--word-border)';
+                event.target.innerHTML = '<i class="fas fa-grip-lines"></i> Hide Lines';
+            } else {
+                demoContent.style.columnRule = 'none';
+                event.target.innerHTML = '<i class="fas fa-grip-lines"></i> Show Lines';
+            }
+        }
+
+        function insertDemoBreak() {
+            const demoContent = document.getElementById('demoContent');
+            const breakElement = document.createElement('div');
+            breakElement.className = 'demo-break';
+            breakElement.innerHTML = '<strong>Section Break (Continuous)</strong><br>This simulates a section break. Text below this point would be in a new section with different column formatting.';
+            
+            demoContent.appendChild(breakElement);
+            event.target.disabled = true;
+            event.target.innerHTML = '<i class="fas fa-check"></i> Break Added';
+            
+            // Scroll to the new break
+            breakElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Simulate assignment submission
+        function simulateSubmission() {
+            // Check if checklist is complete
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (checkedCount < 5) {
+                alert(`Please complete at least 5 items on the checklist before submitting.\n\nCurrent completion: ${checkedCount}/7 items checked`);
+                return;
+            }
+            
+            // Get current time for submission
+            const now = new Date();
+            const submissionTime = now.toLocaleString();
+            
+            // Show submission confirmation
+            const confirmed = confirm(`Submit Week 2 Newsletter Assignment?\n\n• Newsletter document (.docx)\n• Optional screenshot\n\nSubmission time: ${submissionTime}\n\nYour work will be graded on formatting accuracy and completeness.`);
+            
+            if (confirmed) {
+                // Show loading state
+                const submitBtn = document.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                submitBtn.disabled = true;
+                
+                // Simulate submission process
+                setTimeout(() => {
+                    alert('✅ Week 2 Assignment submitted successfully!\n\nFile uploaded:\n• YourName_Week2_Newsletter.docx\n\nSubmission recorded: ' + submissionTime + '\n\nYou will receive grading feedback within 3 business days.');
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Update all checklist items as submitted
+                    checkboxes.forEach(cb => {
+                        if (!cb.checked) {
+                            cb.checked = true;
+                            cb.dispatchEvent(new Event('change'));
+                        }
+                    });
+                    
+                    // Add success indicator
+                    const submissionBox = document.querySelector('.submission-box');
+                    submissionBox.innerHTML = `
+                        <div class="submission-title">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Submission Complete!</span>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 6px; margin: 1rem 0;">
+                            <p><strong>Submitted:</strong> ${submissionTime}</p>
+                            <p><strong>File:</strong> Newsletter document uploaded</p>
+                            <p><strong>Formatting Check:</strong> <span style="color: var(--word-success);">All elements detected</span></p>
+                            <p><strong>Status:</strong> <span style="color: var(--word-success);">Awaiting Grading</span></p>
+                            <p><strong>Estimated Feedback:</strong> Within 3 business days</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 1rem;">
+                            <i class="fas fa-print"></i> Print Confirmation
+                        </button>
+                    `;
+                    
+                    // Update progress indicator
+                    document.getElementById('progressText').innerHTML = 'Submitted • Awaiting Grading';
+                    
+                    // Scroll to submission confirmation
+                    submissionBox.scrollIntoView({ behavior: 'smooth' });
+                }, 1500);
+            }
+        }
+
+        // Print assignment instructions
+        function printInstructions() {
+            // Create print-friendly version
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Word Week 2 Assignment Instructions</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; color: #333; }
+                        h1 { color: #0d3d8c; border-bottom: 2px solid #0d3d8c; padding-bottom: 10px; }
+                        h2 { color: #0d3d8c; margin-top: 25px; }
+                        h3 { color: #185abd; margin-top: 20px; }
+                        .step { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                        .step-number { background: #0d3d8c; color: white; padding: 5px 10px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+                        .checklist-item { margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; }
+                        .print-date { text-align: right; font-size: 0.9em; color: #666; margin-bottom: 20px; }
+                        .newsletter-preview { border: 1px solid #0d3d8c; padding: 20px; margin: 20px 0; }
+                        @media print {
+                            .newsletter-preview { break-inside: avoid; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-date">Printed: ${new Date().toLocaleString()}</div>
+                    <h1>Microsoft Word Week 2 Assignment</h1>
+                    <h2>Newsletter Formatting with Sections and Columns</h2>
+                    
+                    <h3>Learning Goals</h3>
+                    <ul>
+                        <li>Column Formatting: Creating and modifying multi-column layouts</li>
+                        <li>Section Breaks: Using different types of section breaks</li>
+                        <li>Advanced Formatting: Applying text effects, styles, and professional formatting</li>
+                        <li>Format Painter: Efficiently copying formatting between text elements</li>
+                    </ul>
+                    
+                    <h3>Practice Exercise: Create a Newsletter</h3>
+                    <p>Follow the 10 steps to build a professional-looking newsletter that demonstrates your mastery of section breaks, column layouts, and advanced formatting.</p>
+                    
+                    ${document.querySelector('.step-container').innerHTML}
+                    
+                    <h3>Grading Checklist</h3>
+                    ${document.querySelector('.checklist').innerHTML}
+                    
+                    <h3>Submission Requirements</h3>
+                    <p>Submit: <strong>YourName_Week2_Newsletter.docx</strong></p>
+                    
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.9em; color: #666;">
+                        <p>Impact Digital Academy • Microsoft Word Certification Prep • Week 2: Advanced Formatting</p>
+                        <p>Assignment ID: WORD-W2-002 • Due: End of Week 2</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Download template
+        function downloadTemplate() {
+            // In a real implementation, this would download a Word template file
+            alert('📝 Newsletter template would download.\n\nIn a real implementation, this would download a starter document with placeholders for your newsletter content.');
+            
+            // Simulate download progress
+            const downloadBtn = document.querySelector('.btn-secondary:nth-child(3)');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                alert('✅ Newsletter template downloaded successfully!\n\nThe template includes:\n• Pre-formatted title with placeholder text\n• Section break indicators\n• Column layout guides\n• Content placeholders\n\nOpen the file in Microsoft Word and replace placeholder text with your content.');
+            }, 1000);
+        }
+
+        // Show newsletter demo in modal
+        function showNewsletterDemo() {
+            const demoContent = document.querySelector('.newsletter-preview').innerHTML;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.85);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 8px; padding: 2rem; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="position: absolute; top: 1rem; right: 1rem; background: #0d3d8c; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 style="color: var(--word-info); margin-bottom: 1.5rem; text-align: center;">Complete Newsletter Example</h2>
+                    <div style="font-family: 'Calibri', 'Segoe UI', sans-serif;">
+                        ${demoContent}
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 6px; border-left: 4px solid var(--word-info);">
+                        <h4 style="color: var(--word-info); margin-top: 0;">Formatting Features Demonstrated:</h4>
+                        <ul style="columns: 2;">
+                            <li>Title style with shadow effect</li>
+                            <li>Two-column layout for introduction</li>
+                            <li>Continuous section break</li>
+                            <li>Three-column layout with lines between</li>
+                            <li>Proper column breaks</li>
+                            <li>Consistent formatting throughout</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Update current date/time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Checkbox interaction
+        const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checklistItem = this.closest('.checklist-item');
+                if (this.checked) {
+                    checklistItem.style.background = '#e8f5e9';
+                    checklistItem.style.borderLeft = '3px solid #4caf50';
+                } else {
+                    checklistItem.style.background = 'white';
+                    checklistItem.style.borderLeft = 'none';
+                }
+                
+                // Update completion percentage
+                const checkedCount = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked').length;
+                const totalCount = checkboxes.length;
+                const percentage = Math.round((checkedCount / totalCount) * 100);
+                
+                // Update progress indicator
+                const progressIndicator = document.getElementById('progressText');
+                if (progressIndicator && checkedCount > 0) {
+                    progressIndicator.innerHTML = `${percentage}% Complete • Due: End of Week 2`;
+                }
+            });
+        });
+
+        // Auto-check some items after a delay (for demo)
+        setTimeout(() => {
+            checkboxes[0].checked = true;
+            checkboxes[0].dispatchEvent(new Event('change'));
+            checkboxes[1].checked = true;
+            checkboxes[1].dispatchEvent(new Event('change'));
+            checkboxes[6].checked = true;
+            checkboxes[6].dispatchEvent(new Event('change'));
+        }, 2000);
+
+        // Toolbar button functionality
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Resource links functionality
+        function showVideo(videoId) {
+            const videoTitles = {
+                'columns-tutorial': 'Working with Columns in Word',
+                'section-breaks': 'Mastering Section Breaks',
+                'format-painter': 'Using Format Painter Efficiently',
+                'newsletter-design': 'Designing Professional Newsletters'
+            };
+            alert(`🎬 Video tutorial would play: ${videoTitles[videoId]}\n\nIn a real implementation, this would open a video player with step-by-step instructions.`);
+        }
+
+        function openGuide(guideId) {
+            const guideTitles = {
+                'columns-guide': 'Complete Guide to Columns',
+                'breaks-reference': 'Section Break Reference Sheet',
+                'newsletter-templates': 'Newsletter Design Templates'
+            };
+            alert(`📚 Learning guide would open: ${guideTitles[guideId]}\n\nIn a real implementation, this would open a PDF or web page with detailed instructions and examples.`);
+        }
+
+        // Footer link functions
+        function showPrivacy() { alert('Privacy policy information would display.'); }
+        function showTerms() { alert('Terms of service would display.'); }
+        function showAcademicIntegrity() { alert('Academic integrity policy would display.'); }
+        function showAccessibility() { alert('Accessibility information would display.'); }
+        function showContact() { alert('Instructor contact: Dr. Emily Rodriguez\nerodriguez@impactdigital.edu\nOffice Hours: Mon/Wed 3-5 PM'); }
+
+        // Word keyboard shortcuts simulation
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Shift+Enter for column break
+            if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+                e.preventDefault();
+                alert('⎆ Word Shortcut: Ctrl+Shift+Enter inserts a column break.\n\nUse this in Step 8 to control text flow between columns.');
+            }
+            
+            // Alt+H, F, P for Format Painter
+            if (e.altKey && e.key === 'h') {
+                // This is a simplified check for the Format Painter sequence
+                setTimeout(() => {
+                    alert('🎨 Format Painter Shortcut: Alt+H, F, P activates Format Painter.\n\nUse this in Step 9 to copy formatting between paragraphs.');
+                }, 100);
+            }
+            
+            // Ctrl+E for center align
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                alert('☰ Word Shortcut: Ctrl+E centers text alignment.\n\nUse this in Step 2 to center your newsletter title.');
+            }
+        });
+
+        // Highlight current step on scroll
+        window.addEventListener('scroll', function() {
+            const steps = document.querySelectorAll('.step');
+            const scrollPosition = window.scrollY + 100;
+            
+            steps.forEach(step => {
+                const stepTop = step.offsetTop;
+                const stepHeight = step.offsetHeight;
+                
+                if (scrollPosition >= stepTop && scrollPosition < stepTop + stepHeight) {
+                    step.style.boxShadow = '0 4px 12px rgba(13, 61, 140, 0.15)';
+                    step.style.borderColor = 'var(--word-info)';
+                } else {
+                    step.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                    step.style.borderColor = 'var(--word-border)';
+                }
+            });
+        });
+
+        // Initialize interactive demo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some sample content to the demo
+            const demoContent = document.getElementById('demoContent');
+            const extraContent = `
+                <div class="demo-break" style="display: none;" id="demoBreak">
+                    <strong>Section Break (Continuous)</strong><br>This simulates a section break. Text below this point would be in a new section with different column formatting.
+                </div>
+                <p>Notice how the text automatically reflows when you change column layouts. This is exactly what happens in Microsoft Word when you modify column settings.</p>
+                <p>Professional documents often use multiple column layouts within the same document. Newsletters, brochures, and reports frequently combine single-column titles with multi-column body text.</p>
+            `;
+            demoContent.innerHTML += extraContent;
+        });
+    </script>
+</body>
+</html>
