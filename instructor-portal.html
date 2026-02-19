@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Dashboard - Impact Digital Academy</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #2ecc71;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+            --sidebar: #1a252f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-area {
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Section Styles */
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-upcoming {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Question Options */
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .option-label {
+            width: 30px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .correct-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--secondary);
+        }
+
+        .file-upload i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .file-upload.active {
+            border-color: var(--success);
+            background: #f8fff9;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-error {
+            color: var(--danger);
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:nth-child(2) {
+            border-left-color: var(--secondary);
+        }
+
+        .stat-card:nth-child(3) {
+            border-left-color: var(--success);
+        }
+
+        .stat-card:nth-child(4) {
+            border-left-color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add to your existing CSS */
+        #togglePassword {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        #togglePassword:hover {
+            background: none !important;
+            color: var(--primary) !important;
+        }
+
+        #togglePassword:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Academy branding */
+        .academy-brand {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--secondary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Notification system */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        .notification.info {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Instructor Login</h2>
+                <p>Enter your Instructor ID and password</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginStaffId">Instructor ID</label>
+                    <input type="text" id="loginStaffId" class="form-control" placeholder="Enter your Instructor ID"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter password"
+                            required>
+                        <button type="button" id="togglePassword"
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #666; cursor: pointer;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <div id="loginError" class="login-error">
+                    Invalid Instructor ID or password
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>IDA Instructor</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" data-section="students">
+                    <i class="fas fa-users"></i>
+                    <span>Student Management</span>
+                </li>
+                <li class="menu-item" data-section="questions">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Questions Bank</span>
+                </li>
+                <li class="menu-item" data-section="exams">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Exams</span>
+                </li>
+                <li class="menu-item" data-section="results">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Results & Analytics</span>
+                </li>
+                <li class="menu-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h3>Instructor Dashboard - <span class="academy-brand">Impact Digital Academy</span></h3>
+                <div class="user-info">
+                    <span id="staffName">Instructor</span>
+                    <button class="btn btn-outline" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section active">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-tachometer-alt"></i> My Dashboard
+                        </h2>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px;"
+                                id="totalQuestions">0</h3>
+                            <p style="color: #666;">My Questions</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px;"
+                                id="totalExams">0</h3>
+                            <p style="color: #666;">My Exams</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 style="font-size: 2.5rem; color: var(--success); margin-bottom: 10px;" id="activeExams">
+                                0</h3>
+                            <p style="color: #666;">Active Exams</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px;"
+                                id="totalStudents">0</h3>
+                            <p style="color: #666;">My Students</p>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity"
+                        style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);">Recent Activity</h3>
+                        <div id="recentActivity">
+                            <p style="text-align: center; color: #666; padding: 20px;">Loading recent activity...</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">My Assigned Courses & Cohorts</h3>
+                        <div id="assignedInfo" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <p style="color: #666;">Loading assigned information...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Management Section -->
+                <div id="students" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i> Student Management
+                        </h2>
+                        <button class="btn btn-primary" id="addStudentBtn">
+                            <i class="fas fa-plus"></i> Add Student
+                        </button>
+                    </div>
+
+                    <div class="filters" style="margin-bottom: 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentFilterClass">Filter by Cohort</label>
+                                <select id="studentFilterClass" class="form-control">
+                                    <option value="">All Cohorts</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="studentFilterSubject">Filter by Course</label>
+                                <select id="studentFilterSubject" class="form-control">
+                                    <option value="">All Courses</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Cohort</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 20px;">Loading students data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Questions Bank Section -->
+                <div id="questions" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-question-circle"></i> Questions Bank
+                        </h2>
+                        <div>
+                            <button class="btn btn-danger" id="deleteSelectedBtn" style="margin-right: 10px;">
+                                <i class="fas fa-trash"></i> Delete Selected
+                            </button>
+                            <button class="btn btn-primary" id="addQuestionBtn">
+                                <i class="fas fa-plus"></i> Add Question
+                            </button>
+                            <button class="btn btn-success" id="bulkUploadBtn" style="margin-left: 10px;">
+                                <i class="fas fa-upload"></i> Bulk Upload
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filters" style="margin-bottom: 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="filterSubject">Filter by Course</label>
+                                <select id="filterSubject" class="form-control">
+                                    <option value="">All Courses</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filterClass">Filter by Cohort</label>
+                                <select id="filterClass" class="form-control">
+                                    <option value="">All Cohorts</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filterDifficulty">Filter by Difficulty</label>
+                                <select id="filterDifficulty" class="form-control">
+                                    <option value="">All Difficulties</option>
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" id="selectAllQuestions" style="margin: 0;">
+                                    </th>
+                                    <th>Question</th>
+                                    <th>Course</th>
+                                    <th>Cohort</th>
+                                    <th>Difficulty</th>
+                                    <th>Marks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="questionsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 20px;">Loading questions data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Exams Section -->
+                <div id="exams" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-file-alt"></i> My Exams
+                        </h2>
+                        <button class="btn btn-primary" id="createExamBtn">
+                            <i class="fas fa-plus"></i> Create Exam
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Exam Title</th>
+                                    <th>Course</th>
+                                    <th>Cohort</th>
+                                    <th>Duration</th>
+                                    <th>Questions</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 20px;">Loading exams data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Results & Analytics Section -->
+                <div id="results" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-bar"></i> Results & Analytics
+                        </h2>
+                    </div>
+
+                    <div class="filters" style="margin-bottom: 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="resultsExam">Select Exam</label>
+                                <select id="resultsExam" class="form-control">
+                                    <option value="">Select Exam</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="resultsClass">Select Cohort</label>
+                                <select id="resultsClass" class="form-control">
+                                    <option value="">All Cohorts</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary" style="margin-top: 25px;" id="generateReportBtn">
+                                    <i class="fas fa-chart-bar"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="resultsContent">
+                        <div class="chart-container">
+                            <h3 class="chart-title">Performance Overview</h3>
+                            <div id="performanceChart"
+                                style="height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #666;">
+                                Select an exam to view performance chart
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Student ID</th>
+                                        <th>Score</th>
+                                        <th>Percentage</th>
+                                        <th>Grade</th>
+                                        <th>Time Spent</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTableBody">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 20px;">Select an exam to
+                                            view results</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-user"></i> My Profile
+                        </h2>
+                    </div>
+
+                    <div class="form-row">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">Personal Information</h3>
+                            <form id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="profileFirstName">First Name</label>
+                                        <input type="text" id="profileFirstName" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileLastName">Last Name</label>
+                                        <input type="text" id="profileLastName" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileEmail">Email</label>
+                                    <input type="email" id="profileEmail" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 20px; color: var(--primary);">Change Password</h3>
+                            <form id="passwordForm">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">Assigned Courses & Cohorts</h3>
+                        <div id="profileAssignedInfo" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <p style="color: #666;">Loading assigned information...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Modals -->
+    <!-- Add Question Modal -->
+    <div id="addQuestionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Question</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addQuestionForm">
+                    <div class="form-group">
+                        <label for="questionText">Question Text</label>
+                        <textarea id="questionText" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="questionSubject">Course</label>
+                            <select id="questionSubject" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="questionClass">Cohort</label>
+                            <select id="questionClass" class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="questionMarks">Marks</label>
+                            <input type="number" id="questionMarks" class="form-control" value="1" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="questionDifficulty">Difficulty</label>
+                            <select id="questionDifficulty" class="form-control" required>
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Options</label>
+                        <div class="option-row">
+                            <span class="option-label">A:</span>
+                            <input type="text" id="optionA" class="form-control" required>
+                        </div>
+                        <div class="option-row">
+                            <span class="option-label">B:</span>
+                            <input type="text" id="optionB" class="form-control" required>
+                        </div>
+                        <div class="option-row">
+                            <span class="option-label">C:</span>
+                            <input type="text" id="optionC" class="form-control" required>
+                        </div>
+                        <div class="option-row">
+                            <span class="option-label">D:</span>
+                            <input type="text" id="optionD" class="form-control" required>
+                        </div>
+                        <div class="correct-option">
+                            <label for="correctOption">Correct Answer:</label>
+                            <select id="correctOption" class="form-control" required>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelQuestionBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveQuestionBtn">Save Question</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div id="bulkUploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Bulk Upload Questions</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-upload" id="fileUploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h4>Upload Excel File</h4>
+                    <p>Drag & drop your Excel file here or click to browse</p>
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
+                    <button class="btn btn-outline" onclick="document.getElementById('excelFile').click()">
+                        <i class="fas fa-folder-open"></i> Browse Files
+                    </button>
+                </div>
+                <div id="filePreview" style="display: none; margin-top: 20px;">
+                    <h4>File Preview</h4>
+                    <div class="table-container">
+                        <table class="data-table" id="previewTable">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Option A</th>
+                                    <th>Option B</th>
+                                    <th>Option C</th>
+                                    <th>Option D</th>
+                                    <th>Correct</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label for="uploadSubject">Course</label>
+                        <select id="uploadSubject" class="form-control" required>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="uploadClass">Cohort</label>
+                        <select id="uploadClass" class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelUploadBtn">Cancel</button>
+                <button class="btn btn-primary" id="processUploadBtn" disabled>Process Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Student Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="studentModalTitle">Add Student</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentFirstName">First Name</label>
+                            <input type="text" id="studentFirstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentLastName">Last Name</label>
+                            <input type="text" id="studentLastName" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentEmail">Email</label>
+                        <input type="email" id="studentEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentPhone">Phone</label>
+                        <input type="tel" id="studentPhone" class="form-control">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentClass">Cohort</label>
+                            <select id="studentClass" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentSubject">Course</label>
+                            <select id="studentSubject" class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelStudentBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveStudentBtn">Save Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Exam Modal -->
+    <div id="createExamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Exam</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createExamForm">
+                    <div class="form-group">
+                        <label for="examTitle">Exam Title</label>
+                        <input type="text" id="examTitle" class="form-control" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="examSubject">Course</label>
+                            <select id="examSubject" class="form-control" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="examClass">Cohort</label>
+                            <select id="examClass" class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="examDuration">Duration (minutes)</label>
+                            <input type="number" id="examDuration" class="form-control" min="5" value="60" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="examQuestions">Number of Questions</label>
+                            <input type="number" id="examQuestions" class="form-control" min="1" max="100" value="20"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="examInstructions">Instructions</label>
+                        <textarea id="examInstructions" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelExamBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveExamBtn">Create Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration - Replace with your actual Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU1ouyoXpOP0Gz_IFARGGAK0OAu0GZHlI",
+            authDomain: "digskills-student-portal.firebaseapp.com",
+            projectId: "digskills-student-portal",
+            storageBucket: "digskills-student-portal.firebasestorage.app",
+            messagingSenderId: "992494289117",
+            appId: "1:992494289117:web:de1c682fb12ae9fae69b34",
+            measurementId: "G-PKF5FPQN38"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Global variables
+        let currentInstructor = null;
+        let courses = [];
+        let cohorts = [];
+        let questions = [];
+        let exams = [];
+        let students = [];
+        let results = [];
+        let selectedQuestionIds = new Set();
+        let currentEditingId = null;
+        let uploadedQuestions = [];
+
+        // DOM Elements
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const staffName = document.getElementById('staffName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('instructorUser');
+            if (savedUser) {
+                currentInstructor = JSON.parse(savedUser);
+                showInstructorInterface();
+                setupEventListeners();
+                loadInitialData();
+            } else {
+                loginModal.style.display = 'flex';
+                setupPasswordToggle();
+            }
+        });
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Login form
+            loginForm.addEventListener('submit', handleLogin);
+
+            // Logout button
+            logoutBtn.addEventListener('click', handleLogout);
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const sectionId = this.getAttribute('data-section');
+
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show corresponding section
+                    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+                    document.getElementById(sectionId).classList.add('active');
+
+                    // Load section data
+                    loadSectionData(sectionId);
+                });
+            });
+
+            // Modal open buttons
+            document.getElementById('addQuestionBtn').addEventListener('click', () => {
+                loadCoursesAndCohorts().then(() => {
+                    populateQuestionForm();
+                    showModal('addQuestionModal');
+                });
+            });
+
+            document.getElementById('bulkUploadBtn').addEventListener('click', () => {
+                loadCoursesAndCohorts().then(() => {
+                    populateUploadForm();
+                    showModal('bulkUploadModal');
+                });
+            });
+
+            document.getElementById('addStudentBtn').addEventListener('click', () => {
+                loadCoursesAndCohorts().then(() => {
+                    populateStudentForm();
+                    showModal('studentModal');
+                });
+            });
+
+            document.getElementById('createExamBtn').addEventListener('click', () => {
+                loadCoursesAndCohorts().then(() => {
+                    populateExamForm();
+                    showModal('createExamModal');
+                });
+            });
+
+            // Modal close buttons
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function () {
+                    const modal = this.closest('.modal');
+                    hideModal(modal.id);
+                });
+            });
+
+            document.getElementById('cancelQuestionBtn').addEventListener('click', () => hideModal('addQuestionModal'));
+            document.getElementById('cancelUploadBtn').addEventListener('click', () => hideModal('bulkUploadModal'));
+            document.getElementById('cancelStudentBtn').addEventListener('click', () => hideModal('studentModal'));
+            document.getElementById('cancelExamBtn').addEventListener('click', () => hideModal('createExamModal'));
+
+            // Save buttons
+            document.getElementById('saveQuestionBtn').addEventListener('click', saveQuestion);
+            document.getElementById('saveStudentBtn').addEventListener('click', saveStudent);
+            document.getElementById('saveExamBtn').addEventListener('click', saveExam);
+            document.getElementById('processUploadBtn').addEventListener('click', processBulkUpload);
+
+            // Other buttons
+            document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelectedQuestions);
+            document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+
+            // Form submissions
+            document.getElementById('profileForm').addEventListener('submit', updateProfile);
+            document.getElementById('passwordForm').addEventListener('submit', changePassword);
+
+            // File upload
+            document.getElementById('excelFile').addEventListener('change', handleFileUpload);
+            document.getElementById('fileUploadArea').addEventListener('dragover', handleDragOver);
+            document.getElementById('fileUploadArea').addEventListener('drop', handleFileDrop);
+
+            // Question selection
+            document.getElementById('selectAllQuestions').addEventListener('change', toggleSelectAllQuestions);
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        hideModal(this.id);
+                    }
+                });
+            });
+        }
+
+        // Setup password toggle
+        function setupPasswordToggle() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('loginPassword');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function () {
+                    const type = passwordInput.type === 'password' ? 'text' : 'password';
+                    passwordInput.type = type;
+
+                    // Toggle eye icon
+                    const icon = this.querySelector('i');
+                    if (type === 'text') {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+        }
+
+        // Authentication Functions
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const instructorId = document.getElementById('loginStaffId').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                // Check if user exists in Firestore using instructorId
+                const usersSnapshot = await db.collection('users')
+                    .where('instructorId', '==', instructorId)
+                    .where('password', '==', password)
+                    .where('role', '==', 'instructor')
+                    .get();
+
+                if (!usersSnapshot.empty) {
+                    const userDoc = usersSnapshot.docs[0];
+                    currentInstructor = userDoc.data();
+                    currentInstructor.userId = userDoc.id;
+
+                    localStorage.setItem('instructorUser', JSON.stringify(currentInstructor));
+                    showInstructorInterface();
+                    loginModal.style.display = 'none';
+                    loginError.style.display = 'none';
+
+                    setupEventListeners();
+                    loadInitialData();
+                } else {
+                    loginError.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            currentInstructor = null;
+            localStorage.removeItem('instructorUser');
+            loginModal.style.display = 'flex';
+            document.getElementById('loginForm').reset();
+
+            // Reset password visibility
+            const passwordInput = document.getElementById('loginPassword');
+            const toggleIcon = document.getElementById('togglePassword').querySelector('i');
+            if (passwordInput && toggleIcon) {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function showInstructorInterface() {
+            staffName.textContent = `${currentInstructor.firstName} ${currentInstructor.lastName}`;
+        }
+
+        // Data Loading Functions
+        async function loadInitialData() {
+            try {
+                await loadCoursesAndCohorts();
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Error in loadInitialData:', error);
+                showNotification('Error loading initial data', 'error');
+            }
+        }
+
+        async function loadCoursesAndCohorts() {
+            try {
+                const [coursesSnapshot, cohortsSnapshot] = await Promise.all([
+                    db.collection('courses').get(),
+                    db.collection('cohorts').get()
+                ]);
+
+                courses = coursesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                cohorts = cohortsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Update filter dropdowns
+                updateFilterDropdowns();
+            } catch (error) {
+                console.error('Error loading courses and cohorts:', error);
+                courses = [];
+                cohorts = [];
+            }
+        }
+
+        function loadSectionData(sectionId) {
+            switch (sectionId) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'students':
+                    loadStudentsData();
+                    break;
+                case 'questions':
+                    loadQuestionsData();
+                    break;
+                case 'exams':
+                    loadExamsData();
+                    break;
+                case 'results':
+                    loadResultsData();
+                    break;
+                case 'profile':
+                    loadProfileData();
+                    break;
+            }
+        }
+
+        // Dashboard Functions
+        async function loadDashboardData() {
+            try {
+                // Get questions and exams
+                const [questionsSnapshot, examsSnapshot] = await Promise.all([
+                    db.collection('questions')
+                        .where('createdBy', '==', currentInstructor.userId)
+                        .get(),
+                    db.collection('exams')
+                        .where('createdBy', '==', currentInstructor.userId)
+                        .get()
+                ]);
+
+                // Get student count
+                let studentsCount = 0;
+                if (currentInstructor.cohorts && currentInstructor.cohorts.length > 0) {
+                    for (const cohortId of currentInstructor.cohorts) {
+                        try {
+                            const studentsSnapshot = await db.collection('users')
+                                .where('role', '==', 'student')
+                                .where('cohort', '==', cohortId)
+                                .get();
+                            studentsCount += studentsSnapshot.size;
+                        } catch (error) {
+                            console.error(`Error fetching students for cohort ${cohortId}:`, error);
+                        }
+                    }
+                }
+
+                // Calculate active exams
+                const now = new Date();
+                let activeExamsCount = 0;
+
+                examsSnapshot.forEach(doc => {
+                    const exam = doc.data();
+                    let availableUntil = null;
+
+                    // Safely convert timestamp
+                    if (exam.availableUntil) {
+                        if (exam.availableUntil.toDate) {
+                            availableUntil = exam.availableUntil.toDate();
+                        } else if (exam.availableUntil.seconds) {
+                            availableUntil = new Date(exam.availableUntil.seconds * 1000);
+                        }
+                    }
+
+                    if (availableUntil && now <= availableUntil) {
+                        activeExamsCount++;
+                    }
+                });
+
+                // Update UI
+                document.getElementById('totalQuestions').textContent = questionsSnapshot.size;
+                document.getElementById('totalExams').textContent = examsSnapshot.size;
+                document.getElementById('activeExams').textContent = activeExamsCount;
+                document.getElementById('totalStudents').textContent = studentsCount;
+
+                // Load recent activity and assigned info
+                loadRecentActivity();
+                loadAssignedInformation();
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showNotification('Error loading dashboard data', 'error');
+            }
+        }
+
+        function loadRecentActivity() {
+            const activityContainer = document.getElementById('recentActivity');
+
+            // In a real implementation, this would fetch actual activity data
+            activityContainer.innerHTML = `
+                <div style="padding: 10px; border-left: 4px solid var(--secondary); background: #f8f9fa; margin-bottom: 10px;">
+                    <strong>Exam Created</strong>
+                    <p style="margin: 5px 0 0 0; color: #666;">
+                        Created "Digital Marketing Mid-Term" exam
+                    </p>
+                    <small style="color: #999;">2 hours ago</small>
+                </div>
+                <div style="padding: 10px; border-left: 4px solid var(--accent); background: #f8f9fa; margin-bottom: 10px;">
+                    <strong>Questions Added</strong>
+                    <p style="margin: 5px 0 0 0; color: #666;">
+                        Added 5 new questions to Digital Marketing course
+                    </p>
+                    <small style="color: #999;">1 day ago</small>
+                </div>
+                <div style="padding: 10px; border-left: 4px solid var(--success); background: #f8f9fa; margin-bottom: 10px;">
+                    <strong>Student Enrolled</strong>
+                    <p style="margin: 5px 0 0 0; color: #666;">
+                        New student "John Smith" enrolled in Cohort A
+                    </p>
+                    <small style="color: #999;">2 days ago</small>
+                </div>
+            `;
+        }
+
+        function loadAssignedInformation() {
+            const assignedInfo = document.getElementById('assignedInfo');
+            const profileAssignedInfo = document.getElementById('profileAssignedInfo');
+
+            let assignedHTML = '';
+
+            if (currentInstructor.courses && currentInstructor.courses.length > 0) {
+                assignedHTML += '<h4 style="margin-bottom: 10px; color: var(--primary);">Assigned Courses:</h4>';
+                assignedHTML += '<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">';
+
+                currentInstructor.courses.forEach(courseId => {
+                    const course = courses.find(c => c.id === courseId);
+                    if (course) {
+                        assignedHTML += `<span style="background: var(--secondary); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">${course.courseName}</span>`;
+                    }
+                });
+                assignedHTML += '</div>';
+            }
+
+            if (currentInstructor.cohorts && currentInstructor.cohorts.length > 0) {
+                assignedHTML += '<h4 style="margin-bottom: 10px; color: var(--primary);">Assigned Cohorts:</h4>';
+                assignedHTML += '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+
+                currentInstructor.cohorts.forEach(cohortId => {
+                    const cohort = cohorts.find(c => c.id === cohortId);
+                    if (cohort) {
+                        assignedHTML += `<span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem;">${cohort.cohortName}</span>`;
+                    }
+                });
+                assignedHTML += '</div>';
+            }
+
+            if (!assignedHTML) {
+                assignedHTML = '<p style="color: #666;">No courses or cohorts assigned yet.</p>';
+            }
+
+            if (assignedInfo) assignedInfo.innerHTML = assignedHTML;
+            if (profileAssignedInfo) profileAssignedInfo.innerHTML = assignedHTML;
+        }
+
+        // Student Management Functions
+        async function loadStudentsData() {
+            try {
+                if (!currentInstructor.cohorts || currentInstructor.cohorts.length === 0) {
+                    document.getElementById('studentsTableBody').innerHTML =
+                        '<tr><td colspan="6" style="text-align: center; padding: 20px;">No cohorts assigned</td></tr>';
+                    updateStudentFilters();
+                    return;
+                }
+
+                // Get students from all assigned cohorts
+                const studentPromises = currentInstructor.cohorts.map(cohortId =>
+                    db.collection('users')
+                        .where('role', '==', 'student')
+                        .where('cohort', '==', cohortId)
+                        .get()
+                );
+
+                const studentSnapshots = await Promise.all(studentPromises);
+                students = studentSnapshots.flatMap(snapshot =>
+                    snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                );
+
+                populateStudentsTable(students);
+                updateStudentFilters();
+            } catch (error) {
+                console.error('Error loading students data:', error);
+                showNotification('Error loading students data', 'error');
+            }
+        }
+
+        function updateStudentFilters() {
+            const cohortFilter = document.getElementById('studentFilterClass');
+            const courseFilter = document.getElementById('studentFilterSubject');
+
+            if (cohortFilter) {
+                cohortFilter.innerHTML = '<option value="">All Cohorts</option>';
+                cohorts.forEach(cohort => {
+                    if (currentInstructor.cohorts.includes(cohort.id)) {
+                        const option = document.createElement('option');
+                        option.value = cohort.id;
+                        option.textContent = cohort.cohortName;
+                        cohortFilter.appendChild(option);
+                    }
+                });
+            }
+
+            if (courseFilter) {
+                courseFilter.innerHTML = '<option value="">All Courses</option>';
+                courses.forEach(course => {
+                    if (currentInstructor.courses.includes(course.id)) {
+                        const option = document.createElement('option');
+                        option.value = course.id;
+                        option.textContent = course.courseName;
+                        courseFilter.appendChild(option);
+                    }
+                });
+            }
+        }
+
+        function populateStudentsTable(students) {
+            const studentsTableBody = document.getElementById('studentsTableBody');
+
+            if (!students || students.length === 0) {
+                studentsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No students found</td></tr>';
+                return;
+            }
+
+            studentsTableBody.innerHTML = '';
+            students.forEach(student => {
+                const cohort = cohorts.find(c => c.id === student.cohort);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.studentId}</td>
+                    <td>${student.firstName} ${student.lastName}</td>
+                    <td>${cohort?.cohortName || student.cohort}</td>
+                    <td>${student.phone || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge ${student.isActive ? 'status-active' : 'status-inactive'}">
+                            ${student.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="editStudent('${student.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn btn-danger" onclick="deleteStudent('${student.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                studentsTableBody.appendChild(row);
+            });
+        }
+
+        function populateStudentForm() {
+            const cohortSelect = document.getElementById('studentClass');
+            const courseSelect = document.getElementById('studentSubject');
+
+            cohortSelect.innerHTML = '<option value="">Select Cohort</option>';
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+
+            cohorts.forEach(cohort => {
+                if (currentInstructor.cohorts.includes(cohort.id)) {
+                    const option = document.createElement('option');
+                    option.value = cohort.id;
+                    option.textContent = cohort.cohortName;
+                    cohortSelect.appendChild(option);
+                }
+            });
+
+            courses.forEach(course => {
+                if (currentInstructor.courses.includes(course.id)) {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.courseName;
+                    courseSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function saveStudent() {
+            const studentData = {
+                firstName: document.getElementById('studentFirstName').value,
+                lastName: document.getElementById('studentLastName').value,
+                email: document.getElementById('studentEmail').value,
+                phone: document.getElementById('studentPhone').value,
+                cohort: document.getElementById('studentClass').value,
+                course: document.getElementById('studentSubject').value,
+                role: 'student',
+                isActive: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('users').add(studentData);
+                hideModal('studentModal');
+                document.getElementById('studentForm').reset();
+                loadStudentsData();
+                showNotification('Student added successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving student:', error);
+                showNotification('Error saving student. Please try again.', 'error');
+            }
+        }
+
+        // Questions Bank Functions
+        async function loadQuestionsData() {
+            try {
+                const questionsSnapshot = await db.collection('questions')
+                    .where('createdBy', '==', currentInstructor.userId)
+                    .get();
+
+                questions = questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                populateQuestionsTable(questions);
+            } catch (error) {
+                console.error('Error loading questions data:', error);
+            }
+        }
+
+        function populateQuestionsTable(questions) {
+            const questionsTableBody = document.getElementById('questionsTableBody');
+
+            if (questions.length === 0) {
+                questionsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No questions found</td></tr>';
+                return;
+            }
+
+            questionsTableBody.innerHTML = '';
+            questions.forEach(question => {
+                const course = courses.find(c => c.id === question.courseId);
+                const cohort = cohorts.find(c => c.id === question.cohortId);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="question-checkbox" value="${question.id}" style="margin: 0;">
+                    </td>
+                    <td>${question.questionText.substring(0, 100)}${question.questionText.length > 100 ? '...' : ''}</td>
+                    <td>${course?.courseName || question.courseId}</td>
+                    <td>${cohort?.cohortName || question.cohortId}</td>
+                    <td>
+                        <span class="status-badge ${question.difficulty === 'easy' ? 'status-active' : question.difficulty === 'medium' ? 'status-warning' : 'status-inactive'}">
+                            ${question.difficulty}
+                        </span>
+                    </td>
+                    <td>${question.marks}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="editQuestion('${question.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn btn-danger" onclick="deleteQuestion('${question.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                questionsTableBody.appendChild(row);
+            });
+
+            // Setup batch selection
+            setupBatchSelection();
+        }
+
+        function setupBatchSelection() {
+            const selectAll = document.getElementById('selectAllQuestions');
+            const checkboxes = document.querySelectorAll('.question-checkbox');
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function () {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                        if (this.checked) {
+                            selectedQuestionIds.add(checkbox.value);
+                        } else {
+                            selectedQuestionIds.delete(checkbox.value);
+                        }
+                    });
+                });
+            }
+
+            // Update individual checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        selectedQuestionIds.add(this.value);
+                    } else {
+                        selectedQuestionIds.delete(this.value);
+                        // Uncheck select all if any checkbox is unchecked
+                        if (selectAll) selectAll.checked = false;
+                    }
+                });
+            });
+        }
+
+        function populateQuestionForm() {
+            const courseSelect = document.getElementById('questionSubject');
+            const cohortSelect = document.getElementById('questionClass');
+
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            cohortSelect.innerHTML = '<option value="">Select Cohort</option>';
+
+            courses.forEach(course => {
+                if (currentInstructor.courses.includes(course.id)) {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.courseName;
+                    courseSelect.appendChild(option);
+                }
+            });
+
+            cohorts.forEach(cohort => {
+                if (currentInstructor.cohorts.includes(cohort.id)) {
+                    const option = document.createElement('option');
+                    option.value = cohort.id;
+                    option.textContent = cohort.cohortName;
+                    cohortSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function saveQuestion() {
+            const questionData = {
+                questionText: document.getElementById('questionText').value,
+                questionType: 'multiple_choice',
+                options: {
+                    A: document.getElementById('optionA').value,
+                    B: document.getElementById('optionB').value,
+                    C: document.getElementById('optionC').value,
+                    D: document.getElementById('optionD').value
+                },
+                correctAnswer: document.getElementById('correctOption').value,
+                courseId: document.getElementById('questionSubject').value,
+                cohortId: document.getElementById('questionClass').value,
+                marks: parseInt(document.getElementById('questionMarks').value),
+                difficulty: document.getElementById('questionDifficulty').value,
+                createdBy: currentInstructor.userId,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                isActive: true
+            };
+
+            try {
+                await db.collection('questions').add(questionData);
+                hideModal('addQuestionModal');
+                document.getElementById('addQuestionForm').reset();
+                loadQuestionsData();
+                showNotification('Question created successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving question:', error);
+                showNotification('Error creating question. Please try again.', 'error');
+            }
+        }
+
+        function updateFilterDropdowns() {
+            const courseFilter = document.getElementById('filterSubject');
+            const cohortFilter = document.getElementById('filterClass');
+
+            if (courseFilter) {
+                courseFilter.innerHTML = '<option value="">All Courses</option>';
+                courses.forEach(course => {
+                    if (currentInstructor.courses.includes(course.id)) {
+                        const option = document.createElement('option');
+                        option.value = course.id;
+                        option.textContent = course.courseName;
+                        courseFilter.appendChild(option);
+                    }
+                });
+            }
+
+            if (cohortFilter) {
+                cohortFilter.innerHTML = '<option value="">All Cohorts</option>';
+                cohorts.forEach(cohort => {
+                    if (currentInstructor.cohorts.includes(cohort.id)) {
+                        const option = document.createElement('option');
+                        option.value = cohort.id;
+                        option.textContent = cohort.cohortName;
+                        cohortFilter.appendChild(option);
+                    }
+                });
+            }
+        }
+
+        // Batch Delete Functions
+        function deleteSelectedQuestions() {
+            const selectedQuestions = Array.from(selectedQuestionIds);
+
+            if (selectedQuestions.length === 0) {
+                showNotification('Please select questions to delete.', 'warning');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${selectedQuestions.length} question(s)?`)) {
+                const deletePromises = selectedQuestions.map(questionId =>
+                    db.collection('questions').doc(questionId).delete()
+                );
+
+                Promise.all(deletePromises)
+                    .then(() => {
+                        selectedQuestionIds.clear();
+                        loadQuestionsData();
+                        showNotification(`Successfully deleted ${selectedQuestions.length} question(s)!`, 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error deleting questions:', error);
+                        showNotification('Error deleting questions.', 'error');
+                    });
+            }
+        }
+
+        // Bulk Upload Functions
+        function populateUploadForm() {
+            const uploadCourse = document.getElementById('uploadSubject');
+            const uploadCohort = document.getElementById('uploadClass');
+
+            uploadCourse.innerHTML = '<option value="">Select Course</option>';
+            uploadCohort.innerHTML = '<option value="">Select Cohort</option>';
+
+            courses.forEach(course => {
+                if (currentInstructor.courses.includes(course.id)) {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.courseName;
+                    uploadCourse.appendChild(option);
+                }
+            });
+
+            cohorts.forEach(cohort => {
+                if (currentInstructor.cohorts.includes(cohort.id)) {
+                    const option = document.createElement('option');
+                    option.value = cohort.id;
+                    option.textContent = cohort.cohortName;
+                    uploadCohort.appendChild(option);
+                }
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('fileUploadArea').classList.add('active');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('fileUploadArea').classList.remove('active');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleExcelFile(files[0]);
+            }
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleExcelFile(file);
+            }
+        }
+
+        function handleExcelFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Assuming first sheet
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                processExcelData(jsonData);
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processExcelData(data) {
+            uploadedQuestions = data.map((row, index) => {
+                return {
+                    questionText: row.Question || row.question || '',
+                    options: {
+                        A: row['Option A'] || row.optionA || '',
+                        B: row['Option B'] || row.optionB || '',
+                        C: row['Option C'] || row.optionC || '',
+                        D: row['Option D'] || row.optionD || ''
+                    },
+                    correctAnswer: row['Correct Answer'] || row.correctAnswer || 'A'
+                };
+            }).filter(q => q.questionText && q.options.A && q.options.B && q.options.C && q.options.D);
+
+            // Show preview
+            showUploadPreview();
+        }
+
+        function showUploadPreview() {
+            const previewTableBody = document.getElementById('previewTableBody');
+            const filePreview = document.getElementById('filePreview');
+            const processBtn = document.getElementById('processUploadBtn');
+
+            if (uploadedQuestions.length === 0) {
+                previewTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">No valid questions found in the file</td></tr>';
+                processBtn.disabled = true;
+                return;
+            }
+
+            previewTableBody.innerHTML = '';
+            uploadedQuestions.slice(0, 5).forEach((question, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${question.questionText.substring(0, 50)}...</td>
+                    <td>${question.options.A.substring(0, 20)}...</td>
+                    <td>${question.options.B.substring(0, 20)}...</td>
+                    <td>${question.options.C.substring(0, 20)}...</td>
+                    <td>${question.options.D.substring(0, 20)}...</td>
+                    <td>${question.correctAnswer}</td>
+                `;
+                previewTableBody.appendChild(row);
+            });
+
+            if (uploadedQuestions.length > 5) {
+                const moreRow = document.createElement('tr');
+                moreRow.innerHTML = `<td colspan="6" style="text-align: center; color: #666;">... and ${uploadedQuestions.length - 5} more questions</td>`;
+                previewTableBody.appendChild(moreRow);
+            }
+
+            filePreview.style.display = 'block';
+            processBtn.disabled = false;
+        }
+
+        async function processBulkUpload() {
+            const courseId = document.getElementById('uploadSubject').value;
+            const cohortId = document.getElementById('uploadClass').value;
+
+            if (!courseId || !cohortId) {
+                showNotification('Please select both course and cohort.', 'error');
+                return;
+            }
+
+            const processBtn = document.getElementById('processUploadBtn');
+            processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            processBtn.disabled = true;
+
+            try {
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (const questionData of uploadedQuestions) {
+                    try {
+                        const fullQuestionData = {
+                            ...questionData,
+                            questionType: 'multiple_choice',
+                            courseId: courseId,
+                            cohortId: cohortId,
+                            marks: 1,
+                            difficulty: 'medium',
+                            createdBy: currentInstructor.userId,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            isActive: true
+                        };
+
+                        await db.collection('questions').add(fullQuestionData);
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error saving question:', error);
+                        errorCount++;
+                    }
+                }
+
+                hideModal('bulkUploadModal');
+                showNotification(`Successfully uploaded ${successCount} questions. ${errorCount} failed.`, 'success');
+                loadQuestionsData();
+            } catch (error) {
+                console.error('Error in bulk upload:', error);
+                showNotification('Error processing bulk upload.', 'error');
+            } finally {
+                processBtn.innerHTML = 'Process Upload';
+                processBtn.disabled = false;
+            }
+        }
+
+        // Exams Functions
+        async function loadExamsData() {
+            try {
+                const examsSnapshot = await db.collection('exams')
+                    .where('createdBy', '==', currentInstructor.userId)
+                    .get();
+
+                exams = examsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                populateExamsTable(exams);
+            } catch (error) {
+                console.error('Error loading exams data:', error);
+            }
+        }
+
+        function populateExamsTable(exams) {
+            const examsTableBody = document.getElementById('examsTableBody');
+
+            if (exams.length === 0) {
+                examsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No exams found</td></tr>';
+                return;
+            }
+
+            examsTableBody.innerHTML = '';
+            exams.forEach(exam => {
+                const course = courses.find(c => c.id === exam.courseId);
+                const cohort = cohorts.find(c => c.id === exam.cohortId);
+                const now = new Date();
+                const availableFrom = exam.availableFrom?.toDate();
+                const availableUntil = exam.availableUntil?.toDate();
+
+                let status = 'Upcoming';
+                let statusClass = 'status-upcoming';
+
+                if (now > availableUntil) {
+                    status = 'Expired';
+                    statusClass = 'status-inactive';
+                } else if (now >= availableFrom && now <= availableUntil) {
+                    status = 'Active';
+                    statusClass = 'status-active';
+                } else if (now < availableFrom) {
+                    status = 'Scheduled';
+                    statusClass = 'status-upcoming';
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${exam.examTitle}</td>
+                    <td>${course?.courseName || exam.courseId}</td>
+                    <td>${cohort?.cohortName || exam.cohortId}</td>
+                    <td>${exam.duration} mins</td>
+                    <td>${exam.totalQuestions}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${status}</span>
+                    </td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="editExam('${exam.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn btn-danger" onclick="deleteExam('${exam.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="action-btn btn-success" onclick="viewExamResults('${exam.id}')">
+                            <i class="fas fa-chart-bar"></i>
+                        </button>
+                    </td>
+                `;
+                examsTableBody.appendChild(row);
+            });
+        }
+
+        function populateExamForm() {
+            const courseSelect = document.getElementById('examSubject');
+            const cohortSelect = document.getElementById('examClass');
+
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            cohortSelect.innerHTML = '<option value="">Select Cohort</option>';
+
+            courses.forEach(course => {
+                if (currentInstructor.courses.includes(course.id)) {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.courseName;
+                    courseSelect.appendChild(option);
+                }
+            });
+
+            cohorts.forEach(cohort => {
+                if (currentInstructor.cohorts.includes(cohort.id)) {
+                    const option = document.createElement('option');
+                    option.value = cohort.id;
+                    option.textContent = cohort.cohortName;
+                    cohortSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function saveExam() {
+            const examData = {
+                examTitle: document.getElementById('examTitle').value,
+                description: document.getElementById('examInstructions').value,
+                courseId: document.getElementById('examSubject').value,
+                cohortId: document.getElementById('examClass').value,
+                duration: parseInt(document.getElementById('examDuration').value),
+                totalQuestions: parseInt(document.getElementById('examQuestions').value),
+                totalMarks: parseInt(document.getElementById('examQuestions').value),
+                isActive: true,
+                createdBy: currentInstructor.userId,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('exams').add(examData);
+                hideModal('createExamModal');
+                document.getElementById('createExamForm').reset();
+                loadExamsData();
+                showNotification('Exam created successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving exam:', error);
+                showNotification('Error creating exam. Please try again.', 'error');
+            }
+        }
+
+        // Results & Analytics Functions
+        async function loadResultsData() {
+            try {
+                const examsSnapshot = await db.collection('exams')
+                    .where('createdBy', '==', currentInstructor.userId)
+                    .get();
+
+                populateResultsDropdowns(examsSnapshot);
+            } catch (error) {
+                console.error('Error loading results data:', error);
+            }
+        }
+
+        function populateResultsDropdowns(examsSnapshot) {
+            const examSelect = document.getElementById('resultsExam');
+            const cohortSelect = document.getElementById('resultsClass');
+
+            examSelect.innerHTML = '<option value="">Select Exam</option>';
+            cohortSelect.innerHTML = '<option value="">All Cohorts</option>';
+
+            examsSnapshot.forEach(doc => {
+                const exam = doc.data();
+                const option = document.createElement('option');
+                option.value = doc.id;
+                option.textContent = exam.examTitle;
+                examSelect.appendChild(option);
+            });
+
+            cohorts.forEach(cohort => {
+                if (currentInstructor.cohorts.includes(cohort.id)) {
+                    const option = document.createElement('option');
+                    option.value = cohort.id;
+                    option.textContent = cohort.cohortName;
+                    cohortSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function generateReport() {
+            const examId = document.getElementById('resultsExam').value;
+            const cohortId = document.getElementById('resultsClass').value;
+
+            if (!examId) {
+                showNotification('Please select an exam to generate report.', 'error');
+                return;
+            }
+
+            try {
+                let query = db.collection('results').where('examId', '==', examId);
+
+                if (cohortId) {
+                    // Get students in the selected cohort
+                    const studentsSnapshot = await db.collection('users')
+                        .where('role', '==', 'student')
+                        .where('cohort', '==', cohortId)
+                        .get();
+
+                    const studentIds = studentsSnapshot.docs.map(doc => doc.id);
+                    query = query.where('studentId', 'in', studentIds);
+                }
+
+                const resultsSnapshot = await query.get();
+                results = resultsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                displayResultsReport(results);
+                generatePerformanceChart(results);
+            } catch (error) {
+                console.error('Error generating report:', error);
+                showNotification('Error generating report. Please try again.', 'error');
+            }
+        }
+
+        function displayResultsReport(results) {
+            const resultsTableBody = document.getElementById('resultsTableBody');
+
+            if (results.length === 0) {
+                resultsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No results found for the selected criteria</td></tr>';
+                return;
+            }
+
+            resultsTableBody.innerHTML = '';
+
+            // Sort by percentage (descending)
+            results.sort((a, b) => b.percentage - a.percentage);
+
+            results.forEach(async (result, index) => {
+                // Get student details
+                const studentSnapshot = await db.collection('users').doc(result.studentId).get();
+                const student = studentSnapshot.data();
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student?.firstName} ${student?.lastName}</td>
+                    <td>${student?.studentId}</td>
+                    <td>${result.score}/${result.totalQuestions}</td>
+                    <td>${result.percentage}%</td>
+                    <td>${calculateGrade(result.percentage)}</td>
+                    <td>${Math.floor(result.timeSpent / 60)}:${(result.timeSpent % 60).toString().padStart(2, '0')}</td>
+                    <td>${result.submittedAt?.toDate().toLocaleDateString()}</td>
+                `;
+                resultsTableBody.appendChild(row);
+            });
+        }
+
+        function generatePerformanceChart(results) {
+            const chartContainer = document.getElementById('performanceChart');
+
+            if (results.length === 0) {
+                chartContainer.innerHTML = '<p>No data available for chart</p>';
+                return;
+            }
+
+            // Simple chart using HTML/CSS
+            const gradeCounts = {
+                A: 0, B: 0, C: 0, D: 0, F: 0
+            };
+
+            results.forEach(result => {
+                const grade = calculateGrade(result.percentage);
+                gradeCounts[grade]++;
+            });
+
+            const total = results.length;
+            const chartHTML = `
+                <div style="display: flex; height: 100%; align-items: end; gap: 10px; padding: 20px;">
+                    ${Object.entries(gradeCounts).map(([grade, count]) => `
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div style="background: var(--${getGradeColor(grade)}); width: 80%; height: ${(count / total) * 200}px; border-radius: 5px 5px 0 0;"></div>
+                            <div style="margin-top: 10px; font-weight: bold;">${grade}</div>
+                            <div style="font-size: 0.8em; color: #666;">${count}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            chartContainer.innerHTML = chartHTML;
+        }
+
+        function calculateGrade(percentage) {
+            if (percentage >= 90) return 'A';
+            if (percentage >= 80) return 'B';
+            if (percentage >= 70) return 'C';
+            if (percentage >= 60) return 'D';
+            return 'F';
+        }
+
+        function getGradeColor(grade) {
+            const colors = {
+                A: 'success',
+                B: 'accent',
+                C: 'warning',
+                D: 'secondary',
+                F: 'danger'
+            };
+            return colors[grade] || 'danger';
+        }
+
+        // Profile Functions
+        function loadProfileData() {
+            // Populate profile form
+            document.getElementById('profileFirstName').value = currentInstructor.firstName;
+            document.getElementById('profileLastName').value = currentInstructor.lastName;
+            document.getElementById('profileEmail').value = currentInstructor.email;
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+
+            const profileData = {
+                firstName: document.getElementById('profileFirstName').value,
+                lastName: document.getElementById('profileLastName').value,
+                email: document.getElementById('profileEmail').value
+            };
+
+            try {
+                await db.collection('users').doc(currentInstructor.userId).update(profileData);
+
+                // Update current instructor data
+                currentInstructor = { ...currentInstructor, ...profileData };
+                localStorage.setItem('instructorUser', JSON.stringify(currentInstructor));
+
+                showInstructorInterface(); // Refresh the name in top bar
+                showNotification('Profile updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showNotification('Error updating profile. Please try again.', 'error');
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                showNotification('New passwords do not match.', 'error');
+                return;
+            }
+
+            if (currentPassword !== currentInstructor.password) {
+                showNotification('Current password is incorrect.', 'error');
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(currentInstructor.userId).update({
+                    password: newPassword,
+                    mustChangePassword: false
+                });
+
+                // Update current instructor data
+                currentInstructor.password = newPassword;
+                currentInstructor.mustChangePassword = false;
+                localStorage.setItem('instructorUser', JSON.stringify(currentInstructor));
+
+                document.getElementById('passwordForm').reset();
+                showNotification('Password changed successfully!', 'success');
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showNotification('Error changing password. Please try again.', 'error');
+            }
+        }
+
+        // Utility Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        function toggleSelectAllQuestions() {
+            const checkboxes = document.querySelectorAll('.question-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+                const id = checkbox.value;
+                if (checkbox.checked) {
+                    selectedQuestionIds.add(id);
+                } else {
+                    selectedQuestionIds.delete(id);
+                }
+            });
+        }
+
+        // Placeholder functions for edit/delete operations
+        function editQuestion(questionId) {
+            showNotification('Edit question functionality would be implemented here', 'info');
+        }
+
+        function deleteQuestion(questionId) {
+            if (confirm('Are you sure you want to delete this question?')) {
+                db.collection('questions').doc(questionId).delete()
+                    .then(() => {
+                        loadQuestionsData();
+                        showNotification('Question deleted successfully!', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error deleting question:', error);
+                        showNotification('Error deleting question.', 'error');
+                    });
+            }
+        }
+
+        function editStudent(studentId) {
+            showNotification('Edit student functionality would be implemented here', 'info');
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                db.collection('users').doc(studentId).delete()
+                    .then(() => {
+                        loadStudentsData();
+                        showNotification('Student deleted successfully!', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error deleting student:', error);
+                        showNotification('Error deleting student.', 'error');
+                    });
+            }
+        }
+
+        function editExam(examId) {
+            showNotification('Edit exam functionality would be implemented here', 'info');
+        }
+
+        function deleteExam(examId) {
+            if (confirm('Are you sure you want to delete this exam?')) {
+                db.collection('exams').doc(examId).delete()
+                    .then(() => {
+                        loadExamsData();
+                        showNotification('Exam deleted successfully!', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error deleting exam:', error);
+                        showNotification('Error deleting exam.', 'error');
+                    });
+            }
+        }
+
+        function viewExamResults(examId) {
+            document.getElementById('resultsExam').value = examId;
+            document.querySelector('.menu-item[data-section="results"]').click();
+            setTimeout(() => {
+                generateReport();
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

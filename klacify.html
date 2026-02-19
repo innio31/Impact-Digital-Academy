@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klacify - School Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #003366;
+            --accent: #ff6b00;
+            --light: #f8f9fa;
+            --dark: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .cta-button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 86, 179, 0.9), rgba(0, 51, 102, 0.9));
+            color: white;
+            padding: 10rem 5% 5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .hero-logo {
+            width: 200px;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Features Grid */
+        .features-container {
+            padding: 0 5% 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-name {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .feature-description {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            background-color: #f1f5ff;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+        
+        .steps {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        
+        .step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            align-items: center;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 5%;
+            text-align: center;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #475569;
+            line-height: 1.8;
+            position: relative;
+        }
+        
+        .testimonial-text:before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--accent);
+            opacity: 0.2;
+            position: absolute;
+            top: -30px;
+            left: -20px;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section p {
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -8px;
+            left: 0;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .footer-social {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Floating Social */
+        .floating-social {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 99;
+        }
+        
+        .floating-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .floating-social a:hover {
+            transform: translateY(-5px);
+        }
+        
+        .whatsapp {
+            background-color: #25D366;
+        }
+        
+        .facebook {
+            background-color: #1877F2;
+        }
+        
+        .linkedin {
+            background-color: #0077B5;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 8rem 5% 4rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 1rem 5%;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .floating-social {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .floating-social a {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="images/logo.png" alt="DigSkills Logo">
+                <span>DigSkills</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html" class="active">Services</a></li>
+                <li><a href="academy.html">Academy</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <a href="#contact" class="cta-button">Get Started</a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <img src="images/klacify.png" alt="Klacify Logo" class="hero-logo">
+        <h1>Revolutionary School Management System</h1>
+        <p>Klacify automates your school operations, eliminates teacher lateness, and ensures seamless class management - all from your smartphone.</p>
+        <a href="#contact" class="cta-button">Register My School</a>
+    </section>
+
+    <section class="features-container" id="features">
+        <h2 class="section-title">Key Features of Klacify</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-user-clock"></i></div>
+                <h3 class="feature-name">Zero Teacher Lateness</h3>
+                <p class="feature-description">Our digital attendance system ensures your staff report on time with automated tracking and notifications.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3 class="feature-name">No Skipped Classes</h3>
+                <p class="feature-description">Klacify sends auto task-reminders to all your staff to ensure all scheduled classes are held.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3 class="feature-name">Live Classroom Updates</h3>
+                <p class="feature-description">Monitor everything happening in all classes from your phone in real-time.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-flag"></i></div>
+                <h3 class="feature-name">Idle Class Detection</h3>
+                <p class="feature-description">All idle classes are automatically flagged so you can take instant corrective action.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-microphone"></i></div>
+                <h3 class="feature-name">Auto Class Recording</h3>
+                <p class="feature-description">No need to walk around - listen to class recordings from your phone anytime.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-star"></i></div>
+                <h3 class="feature-name">Performance Tracking</h3>
+                <p class="feature-description">Automated staff rating system that drives productivity and accountability.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-table"></i></div>
+                <h3 class="feature-name">Timetable Implementation</h3>
+                <p class="feature-description">Ensures teachers stick to their plan of work with automated reminders.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <h3 class="feature-name">Salary Automation</h3>
+                <p class="feature-description">Automated HR services including attendance tracking and salary adjustments.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">How Klacify Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>We install Klacify for all your teachers</h3>
+                    <p>Similar to how Uber manages drivers, Klacify manages all your staff ensuring they meet daily targets, report on time, and complete all scheduled classes.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Teachers scan QR codes</h3>
+                    <p>The school timetable is uploaded to Klacify which organizes the daily plan of work. Teachers must complete tasks before clocking out.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>You get instant updates</h3>
+                    <p>Receive minute-by-minute updates of classroom activities, giving you freedom to focus on other school matters while Klacify handles monitoring.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="qr-section">
+    <img src="images/whatsapp.jpg" alt="Scan to contact on WhatsApp" width="50%" height"50%">
+    <h3>SCAN TO REGISTER</h3>
+    <h2>GET DIGITAL ID CARDS FOR YOUR SCHOOL</h2>
+    <p>Scan the QR code to message us on WhatsApp</p>
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <h2 class="section-title">What Schools Say About Klacify</h2>
+        <div class="testimonial-card">
+            <p class="testimonial-text">"With the introduction of auto class-recording, we have seen a 25% improvement in lesson delivery across our schools using Klacify. The system has completely transformed how we monitor teacher performance."</p>
+            <p class="testimonial-author">— Dr. Odum, Head of IT at Leading Educational Group</p>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <h2>Ready to Transform Your School Management?</h2>
+        <p>Register now and get digital ID cards for all your students. Pay small over 3 months.</p>
+        
+<a href="https://wa.me/2349051586024?text=I'm%20interested%20in%20Klacify" 
+   class="cta-button" 
+   target="_blank">
+   Register My School
+</a>
+    </section>
+
+    <footer>
+
+        <div class="footer-content">
+
+            <div class="footer-column">
+
+                <h3>DigSkills</h3>
+
+                <p>Empowering institutions and individuals through digital transformation and education.</p>
+
+            </div>
+
+            
+
+            <div class="footer-column">
+
+                <h3>Quick Links</h3>
+
+                <ul class="footer-links">
+
+                    <li><a href="index.html">Home</a></li>
+
+                    <li><a href="services.html">Services</a></li>
+
+                    <li><a href="academy.html">Academy</a></li>
+
+                    <li><a href="about.html">About Us</a></li>
+
+                </ul>
+
+            </div>
+
+            
+
+            <div class="footer-column">
+
+                <h3>Contact</h3>
+
+                <ul class="footer-links">
+
+                    <li><a href="mailto:dig2skills@gmail.com">dig2skills@gmail.com</a></li>
+
+                    <li><a href="tel:+2349051586024">+234 903 544 8295</a></li>
+
+                    <li>Ota, Nigeria</li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        
+
+        <div class="footer-social">
+
+            <h3>Connect With Us</h3>
+
+            <div class="social-icons">
+
+                <a href="https://www.facebook.com/share/16exnb9VsU/" target="_blank" aria-label="Facebook">
+
+                    <i class="fab fa-facebook-f"></i>
+
+                </a>
+
+                <a href="https://x.com/DigSkills?t=-sO0HSAREApy6Igw39JbVA&s=09" target="_blank" aria-label="Twitter">
+
+                    <i class="fab fa-twitter"></i>
+
+                </a>
+
+                <a href="https://linkedin.com/company/yourcompany" target="_blank" aria-label="LinkedIn">
+
+                    <i class="fab fa-linkedin-in"></i>
+
+                </a>
+
+                <a href="https://instagram.com/yourhandle" target="_blank" aria-label="Instagram">
+
+                    <i class="fab fa-instagram"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+        <div class="footer-bottom">
+
+            <p>&copy; 2025 DigSkills. All rights reserved.</p>
+
+        </div>
+    </footer>
+    <div class="floating-social">
+
+        <a href="https://wa.me/+2349051586024" class="whatsapp" target="_blank" aria-label="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+
+        </a>
+
+        <a href="https://www.facebook.com/share/16exnb9VsU/" class="facebook" target="_blank" aria-label="Facebook">
+
+            <i class="fab fa-facebook-f"></i>
+
+        </a>
+
+        <a href="https://linkedin.com/company/yourcompany" class="linkedin" target="_blank" aria-label="LinkedIn">
+
+            <i class="fab fa-linkedin-in"></i>
+
+        </a>
+
+    </div>
+
+
+
+    <script>
+
+        // Mobile menu toggle
+
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+
+        const navLinks = document.querySelector('.nav-links');
+
+        
+
+        mobileMenuBtn.addEventListener('click', function() {
+
+            navLinks.classList.toggle('active');
+
+        });
+
+        
+
+        // Close mobile menu when clicking a link
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+
+            link.addEventListener('click', function() {
+
+                navLinks.classList.remove('active');
+
+            });
+
+        });
+
+        
+
+        // Header scroll effect
+
+        window.addEventListener('scroll', function() {
+
+            const header = document.querySelector('header');
+
+            if (window.scrollY > 50) {
+
+                header.classList.add('scrolled');
+
+            } else {
+
+                header.classList.remove('scrolled');
+
+            }
+
+        });
+
+        
+
+        // Smooth scrolling for navigation links
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+            anchor.addEventListener('click', function(e) {
+
+                e.preventDefault();
+
+                
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

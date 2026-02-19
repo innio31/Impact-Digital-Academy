@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Impact Digital - Solutions & Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+    
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZ2NR7MKM8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JZ2NR7MKM8');
+</script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --services-bg: #f0f9ff;
+            --academy-bg: #fef7e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            color: var(--dark);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.7rem 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Navigation Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active:after {
+            width: 100%;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* CTA Buttons */
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .cta-button.accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .cta-button.accent:hover {
+            background-color: var(--accent-dark);
+        }
+
+        .cta-button.outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .cta-button.outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem 5%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .nav-links a:after {
+                display: none;
+            }
+        }
+
+        /* Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contact Hero */
+        .contact-hero {
+            padding: 140px 5% 80px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f2ff 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hero-title span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Contact Content */
+        .contact-content {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        .contact-info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .contact-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .info-card-header h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .contact-details {
+            list-style: none;
+        }
+
+        .contact-details li {
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .contact-details li i {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+            min-width: 24px;
+        }
+
+        .contact-details a {
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-details a:hover {
+            color: var(--primary);
+        }
+
+        .contact-details .label {
+            font-weight: 600;
+            color: var(--gray);
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Contact Form */
+        .contact-form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            text-align: center;
+        }
+
+        .form-title:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        input, select, textarea {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .submit-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .form-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .form-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        /* Contact Options */
+        .contact-options {
+            padding: 3rem 5%;
+            background: var(--light);
+            border-radius: 20px;
+            margin-top: 3rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .option-card.whatsapp i {
+            color: #25D366;
+        }
+
+        .option-card.email i {
+            color: var(--primary);
+        }
+
+        .option-card.call i {
+            color: var(--accent);
+        }
+
+        .option-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .option-card p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 1.5rem auto 3rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .faq-question:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .faq-question i {
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .contact-info {
+            color: #cbd5e0;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .contact-info i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Social Media */
+        .social-media {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        /* Floating WhatsApp */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .contact-hero {
+                padding: 120px 5% 60px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .contact-form-container {
+                padding: 2rem;
+            }
+
+            .contact-info-card {
+                padding: 2rem;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .info-card-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="Impact Digital Logo" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="academy.html">Academy</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+                <li>
+                    <a href="https://portal.impactdigitalacademy.com.ng" class="cta-button accent" target="_blank">
+                        <i class="fas fa-graduation-cap"></i> Student Portal
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contact Hero -->
+    <section class="contact-hero">
+        <span class="hero-badge">Get In Touch</span>
+        <h1 class="hero-title">Connect with <span>Impact Digital</span></h1>
+        <p class="hero-subtitle">Have questions about our services or academy programs? We're here to help! Reach out through any channel that works best for you.</p>
+        <div class="hero-buttons">
+            <a href="#contact-form" class="cta-button">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </a>
+            <a href="tel:+2349035448295" class="cta-button outline">
+                <i class="fas fa-phone"></i> Call Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <div class="contact-content">
+        <div class="contact-grid">
+            <!-- General Inquiries -->
+            <div class="contact-info-card">
+                <div class="info-card-header">
+                    <div class="info-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3>General Inquiries</h3>
+                </div>
+                <ul class="contact-details">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <span class="label">Email Addresses</span>
+                            <a href="mailto:services@impactdigitalacademy.com.ng">services@impactdigitalacademy.com.ng</a>
+                            <a href="mailto:admin@impactdigitalacademy.com.ng">admin@impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <span class="label">Phone Number</span>
+                            <a href="tel:+2349035448295">+234 903 544 8295</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="label">Business Hours</span>
+                            <span>Mon - Fri: 8:00 AM - 6:00 PM</span>
+                            <br>
+                            <span>Sat: 9:00 AM - 4:00 PM</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <span class="label">Office Location</span>
+                            <span>Wema Bank Estate, Promise Avenue, Ijaba, Iyesi, Ota, Ogun State, Nigeria</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Services Department -->
+            <div class="contact-info-card">
+                <div class="info-card-header">
+                    <div class="info-icon" style="background: var(--primary);">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Digital Solutions</h3>
+                </div>
+                <p style="margin-bottom: 1.5rem; color: var(--gray);">For inquiries about our services:</p>
+                <ul class="contact-details">
+                    <li>
+                        <i class="fas fa-laptop-medical"></i>
+                        <div>
+                            <span class="label">CBT Setup & IT Procurement</span>
+                            <a href="tel:+2349035448295">+234 903 544 8295</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-code"></i>
+                        <div>
+                            <span class="label">Software Development</span>
+                            <a href="mailto:services@impactdigitalacademy.com.ng">services@impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-building"></i>
+                        <div>
+                            <span class="label">Company Registration</span>
+                            <a href="mailto:services@impactdigitalacademy.com.ng">services@impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-headset"></i>
+                        <div>
+                            <span class="label">IT Consultancy</span>
+                            <a href="tel:+2349035448295">+234 903 544 8295</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Academy Department -->
+            <div class="contact-info-card">
+                <div class="info-card-header">
+                    <div class="info-icon" style="background: var(--accent);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Academy & Training</h3>
+                </div>
+                <p style="margin-bottom: 1.5rem; color: var(--gray);">For course inquiries and student support:</p>
+                <ul class="contact-details">
+                    <li>
+                        <i class="fas fa-user-graduate"></i>
+                        <div>
+                            <span class="label">Admissions & Courses</span>
+                            <a href="mailto:admin@impactdigitalacademy.com.ng">admin@impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <div>
+                            <span class="label">Technical Support</span>
+                            <a href="mailto:admin@impactdigitalacademy.com.ng">admin@impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-external-link-alt"></i>
+                        <div>
+                            <span class="label">Student Portal</span>
+                            <a href="https://portal.impactdigitalacademy.com.ng" target="_blank">portal.impactdigitalacademy.com.ng</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <span class="label">Training Schedule</span>
+                            <a href="tel:+2349035448295">Call for next batch dates</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-container" id="contact-form">
+            <h2 class="form-title">Send Us a Message</h2>
+            <form class="contact-form" id="messageForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+234 800 000 0000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department <span class="required">*</span></label>
+                    <select id="department" name="department" required>
+                        <option value="">Select department...</option>
+                        <option value="services">Digital Solutions</option>
+                        <option value="academy">Training Academy</option>
+                        <option value="cbt">CBT Setup & Management</option>
+                        <option value="procurement">IT Procurement</option>
+                        <option value="registration">Company Registration</option>
+                        <option value="consultancy">IT Consultancy</option>
+                        <option value="general">General Inquiry</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject <span class="required">*</span></label>
+                    <input type="text" id="subject" name="subject" required placeholder="Brief subject of your message">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message <span class="required">*</span></label>
+                    <textarea id="message" name="message" required placeholder="Please provide details about your inquiry..."></textarea>
+                </div>
+
+                <div class="form-message" id="formMessage"></div>
+                
+                <!-- Anti-spam honeypot -->
+<div style="position: absolute; left: -5000px;" aria-hidden="true">
+    <label for="website">Website</label>
+    <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+</div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Send Message</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Quick Contact Options -->
+        <div class="contact-options">
+            <h2 class="section-title">Quick Contact Options</h2>
+            <p class="section-subtitle">Choose your preferred way to get in touch with us</p>
+            
+            <div class="options-grid">
+                <div class="option-card whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    <h3>WhatsApp Chat</h3>
+                    <p>Get instant responses via WhatsApp. Perfect for quick questions and support.</p>
+                    <a href="https://wa.me/+2349051586024" class="cta-button" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Chat Now
+                    </a>
+                </div>
+
+                <div class="option-card email">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Us</h3>
+                    <p>Send detailed inquiries and documents. We respond within 24 hours.</p>
+                    <a href="mailto:dig2skills@gmail.com" class="cta-button">
+                        <i class="fas fa-envelope"></i> Send Email
+                    </a>
+                </div>
+
+                <div class="option-card call">
+                    <i class="fas fa-phone"></i>
+                    <h3>Call Directly</h3>
+                    <p>Speak directly with our team for immediate assistance and consultations.</p>
+                    <a href="tel:+2349035448295" class="cta-button accent">
+                        <i class="fas fa-phone"></i> Call Now
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Find quick answers to common questions about our services and academy</p>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What services does Impact Digital offer?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer comprehensive digital solutions including CBT setup (online/offline), IT procurement, custom software development, company registration (CAC), IT consultancy, and system integration services.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do I enroll in training programs?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can enroll through our student portal (portal.impactdigitalacademy.com.ng), call our admissions line (+234 903 544 8295), or visit our office in Ota. We offer both online and in-person training options.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is the response time for inquiries?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We respond to WhatsApp messages within minutes, phone calls are answered during business hours, and emails are responded to within 24 hours. Urgent matters receive priority attention.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you offer corporate training packages?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We provide customized corporate training packages for organizations. Contact our academy department for tailored programs, group discounts, and on-site training options.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How long does company registration take?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Company registration typically takes less than a week depending on CAC processing times. We handle the entire process from name reservation to certificate collection and post-registration compliance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Impact Digital</h3>
+                <p>Your trusted partner for digital solutions and professional IT training. Empowering businesses and individuals through technology.</p>
+                <div class="social-media">
+                    <a href="https://www.facebook.com/share/16exnb9VsU/" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/DigSkills" class="social-link" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/dig-skills" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com/impactdigital" class="social-link" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="services.html"><i class="fas fa-briefcase"></i> Services</a></li>
+                    <li><a href="academy.html"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                    <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> dig2skills@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +234 903 544 8295</p>
+                    <p><i class="fas fa-whatsapp"></i> +234 905 158 6024</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ota, Ogun State, Nigeria</p>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Business Hours</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-clock"></i> Mon - Fri: 8:00 AM - 6:00 PM</p>
+                    <p><i class="fas fa-clock"></i> Saturday: 9:00 AM - 4:00 PM</p>
+                    <p><i class="fas fa-clock"></i> Sunday: Closed</p>
+                    <p><i class="fas fa-external-link-alt"></i> Portal: portal.impactdigitalacademy.com.ng</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> Impact Digital (Solutions & Academy). All rights reserved. | CAC Registered Business</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Website: impactdigitalacademy.com.ng | Portal: portal.impactdigitalacademy.com.ng</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <div class="floating-whatsapp">
+        <a href="https://wa.me/+2349051586024" class="whatsapp-button" target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script>
+        // Set current year in footer
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearSpan = document.getElementById('currentYear');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+
+        // Form Submission using Google Apps Script
+const contactForm = document.getElementById('messageForm');
+const submitBtn = document.getElementById('submitBtn');
+const formMessage = document.getElementById('formMessage');
+
+// Your Google Apps Script URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySk85XL5rCcyNP5CsWibVicpidIeloO9Ur48SF9AWuiJj4IE8i1O7GfvyDiqqGY87rFg/exec";
+
+contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    submitBtn.classList.add('loading');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Sending...</span>';
+    formMessage.style.display = 'none';
+    
+    // Get form data
+    const formData = new FormData(contactForm);
+    const data = Object.fromEntries(formData);
+    
+    // Add timestamp
+    data.timestamp = new Date().toISOString();
+    data.page = window.location.href;
+    
+    try {
+        // Send to Google Apps Script
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            mode: 'no-cors' // Important for Google Apps Script
+        });
+        
+        // Since we use no-cors, we can't read the response
+        // But we assume it's successful
+        
+        // Show success message
+        formMessage.textContent = 'Thank you! Your message has been sent successfully. We will respond within 24 hours.';
+        formMessage.className = 'form-message success';
+        formMessage.style.display = 'block';
+        
+        // Clear form
+        contactForm.reset();
+        
+        // Optional: Also save locally as backup
+        try {
+            await fetch('process_form.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+        } catch (backupError) {
+            console.log('Backup save failed:', backupError);
+        }
+        
+    } catch (error) {
+        console.error('Form error:', error);
+        
+        // Fallback: Try the PHP file (which logs locally)
+        try {
+            const fallbackResponse = await fetch('process_form.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            const result = await fallbackResponse.json();
+            
+            formMessage.textContent = result.message || 'Message received! (Saved locally)';
+            formMessage.className = result.success ? 'form-message success' : 'form-message error';
+            
+        } catch (fallbackError) {
+            formMessage.textContent = 'Message saved offline. We will contact you soon.';
+            formMessage.className = 'form-message success';
+            
+            // Save to localStorage as last resort
+            const submissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
+            submissions.push(data);
+            localStorage.setItem('pendingSubmissions', JSON.stringify(submissions));
+        }
+        
+        formMessage.style.display = 'block';
+        
+    } finally {
+        // Reset button
+        submitBtn.classList.remove('loading');
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Message</span>';
+        
+        // Hide message after 8 seconds
+        setTimeout(() => {
+            if (formMessage.style.display === 'block') {
+                formMessage.style.display = 'none';
+            }
+        }, 8000);
+    }
+});
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href') === '#') return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

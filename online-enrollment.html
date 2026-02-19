@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigSkills Academy | Online Programs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Header Styles (same as academy page) */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: auto;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .nav-links a.active:after {
+            width: 100%;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* Online Programs Hero */
+        .online-hero {
+            background: linear-gradient(rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.9)),
+                url('https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 8rem 5% 4rem;
+            text-align: center;
+        }
+
+        .online-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .online-hero p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        /* Current Block Section */
+        .current-block {
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 1.5rem 5%;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .current-block h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .current-block h2 i {
+            font-size: 1.8rem;
+        }
+
+        .block-dates {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .date-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            min-width: 200px;
+        }
+
+        .date-item strong {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        /* Academic Calendar */
+        .calendar-section {
+            padding: 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .calendar-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .calendar-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .calendar-card p {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Career Paths Section */
+        .career-paths {
+            padding: 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .career-accordion {
+            margin-top: 2rem;
+        }
+
+        .career-item {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .career-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+        }
+
+        .career-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .career-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .career-item.active .career-header i {
+            transform: rotate(180deg);
+        }
+
+        .career-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .career-item.active .career-content {
+            padding: 1.5rem;
+            max-height: 2000px;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .program-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .program-image {
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .program-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .program-card:hover .program-image img {
+            transform: scale(1.05);
+        }
+
+        .program-content {
+            padding: 1.5rem;
+        }
+
+        .program-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .program-description {
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .program-duration {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--light);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .program-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .apply-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .apply-btn:hover {
+            background: var(--secondary);
+        }
+
+        .syllabus-link {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .syllabus-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background: var(--accent);
+            bottom: -8px;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 1rem 5%;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.8rem 0;
+            }
+
+            .online-hero {
+                padding: 6rem 5% 3rem;
+            }
+
+            .online-hero h1 {
+                font-size: 2rem;
+            }
+
+            .block-dates {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .date-item {
+                width: 100%;
+            }
+        }
+
+        /* Unavailable Course Modal Styles */
+        .unavailable-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .unavailable-modal .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            position: relative;
+            text-align: center;
+        }
+
+        .unavailable-modal .modal-message i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .unavailable-modal .modal-message h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .unavailable-modal .modal-message p {
+            margin-bottom: 1.5rem;
+            color: #64748b;
+        }
+
+        /* Enrollment Modal Styles */
+        .enroll-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .enroll-modal .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            position: relative;
+            height: 90vh;
+        }
+
+        .modal-iframe-container {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .modal-iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: none;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalopen 0.3s;
+        }
+
+        @keyframes modalopen {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Responsive iframe */
+        .form-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 80vh;
+            /* Taller aspect ratio for forms */
+            height: 0;
+        }
+
+        .responsive-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <nav>
+            <div class="logo">
+                <img src="images/logo.png" alt="DigSkills Logo" class="logo-icon" />
+                <span>DigSkills</span>
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="academy.html">Academy</a></li>
+                <li><a href="online-program.html" class="active">Online Programs</a></li>
+                <li><a href="school-program.html">School Programs</a></li>
+                <li><a href="onsite-program.html">Onsite Programs</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="online-hero">
+        <h1>Online Learning Programs</h1>
+        <p>Flexible, industry-relevant training you can complete from anywhere. Start your tech career on your schedule.
+        </p>
+    </section>
+
+    <div class="current-block">
+        <h2><i class="fas fa-calendar-alt"></i> Current Block: 2026 Block 1</h2>
+        <p> Application is open for 2026 Block 1.
+        </p>
+        <!-- <p>We're currently accepting applications for the next block starting soon, click <a href="#" id="enrollLink">here</a> to apply.</p> -->
+        <div class="block-dates">
+            <div class="date-item">
+                <strong>Registration Opens</strong>
+                <span>Dec 20, 2025</span>
+            </div>
+            <div class="date-item">
+                <strong>Registration Deadline</strong>
+                <span>Jan 10, 2026</span>
+            </div>
+            <div class="date-item">
+                <strong>Block Duration</strong>
+                <span>Jan 11 - Mar 7, 2026</span>
+            </div>
+            <div class="date-item">
+                <strong>Next Break</strong>
+                <span>Mar 8 - Mar 21, 2025</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="calendar-section">
+        <h2 class="section-title">Academic Calendar 2026</h2>
+        <p class="section-subtitle">Our year is divided into 5 blocks of 8 weeks each, with 2-week breaks between
+            blocks</p>
+
+        <div class="calendar-grid">
+            <div class="calendar-card">
+                <h3>2026 Block 1</h3>
+                <p><strong>Duration:</strong> Jan 11 - Mar 7, 2026</p>
+                <p><strong>Registration:</strong> Dec 28, 2025 - Jan 10, 2026</p>
+                <p><strong>Break:</strong> Mar 8 - 21, 2026</p>
+            </div>
+            <div class="calendar-card">
+                <h3>2026 Block 2</h3>
+                <p><strong>Duration:</strong> Mar 22 - May 16, 2026</p>
+                <p><strong>Registration:</strong> Mar 1 - 21, 2026</p>
+                <p><strong>Break:</strong> May 17 - 30, 2026</p>
+            </div>
+            <div class="calendar-card">
+                <h3>2026 Block 3</h3>
+                <p><strong>Duration:</strong> May 31 - July 25, 2026</p>
+                <p><strong>Registration:</strong> May 10 - 30, 2026</p>
+                <p><strong>Break:</strong> Jul 26 - Aug 8, 2026</p>
+            </div>
+            <div class="calendar-card">
+                <h3>2026 Block 4</h3>
+                <p><strong>Duration:</strong> Aug 9 - Oct 3, 2026</p>
+                <p><strong>Registration:</strong> Jul 19 - Aug 8, 2026</p>
+                <p><strong>Break:</strong> Oct 4 - 17, 2026</p>
+            </div>
+            <div class="calendar-card">
+                <h3>2026 Block 5</h3>
+                <p><strong>Duration:</strong> Oct 18 - Dec 12, 2026</p>
+                <p><strong>Registration:</strong> Aug 27 - Oct 17, 2026</p>
+                <p><strong>Break:</strong> Dec 13, 2026 - Jan 9, 2027</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="career-paths">
+        <h2 class="section-title">Online Career Paths</h2>
+        <p class="section-subtitle">Choose from our industry-aligned programs and start your tech journey</p>
+
+        <div class="career-accordion">
+            <!-- Web Development Career Path -->
+            <div class="career-item">
+                <div class="career-header">
+                    <h3>Web Development</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="career-content">
+                    <p>Become a full-stack developer and build dynamic web applications. Our programs cover both
+                        frontend and backend technologies.</p>
+
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="images/webdevelopment.jpeg" alt="Basics">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Web Development Basics</h4>
+                                <p class="program-description">Master HTML, CSS, JavaScript and modern frameworks like
+                                    React to build interactive user interfaces.</p>
+                                <!-- <span class="program-duration">1 Block</span> -->
+                                <div class="program-actions">
+
+                                    <a href="https://portal.impactdigitalacademy.com.ng"
+                                        class="apply-btn"> Apply Now</a></p> </a>
+                                    <a href="document/webdevsyll.pdf" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="Frontend Development">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Frontend Development</h4>
+                                <p class="program-description">Master HTML, CSS, JavaScript and modern frameworks like
+                                    React to build interactive user interfaces.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1555066931-bf19f8fd1085?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80"
+                                    alt="Backend Development">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Backend Development</h4>
+                                <p class="program-description">Learn server-side programming with Node.js, Python,
+                                    databases, and API development.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cybersecurity Career Path -->
+            <div class="career-item">
+                <div class="career-header">
+                    <h3>Cybersecurity</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="career-content">
+                    <p>Protect digital systems from cyber threats by becoming an expert in ethical hacking, network
+                        defense, and risk management.</p>
+
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="Data Analysis">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Junior Cybersecurity Analyst</h4>
+                                <p class="program-description">A Junior Cybersecurity Analyst helps protect an
+                                    organization’s digital assets by monitoring networks, detecting threats, and
+                                    responding to security incidents.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZilepIXi-Q5P8X5wa6oPpzX66NizxNeAzjADuTRfFyVXUYA/viewform?usp=header"
+                                        class="apply-btn"> Apply Now</a></p> </a>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="Data Analysis">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Cybersecurity Essentials</h4>
+                                <p class="program-description">This program focuses on protecting digital systems from
+                                    cyber threats. Students learn ethical hacking, cryptography, network security, risk
+                                    management, and incident response to defend against cyberattacks and secure
+                                    sensitive data.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZilepIXi-Q5P8X5wa6oPpzX66NizxNeAzjADuTRfFyVXUYA/viewform?usp=header"
+                                        class="apply-btn"> Apply Now</a></p> </a>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+                                    alt="Machine Learning">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Machine Learning</h4>
+                                <p class="program-description">Build predictive models and understand algorithms with
+                                    Python and scikit-learn.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+                                    alt="Machine Learning">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Ethical Hacking</h4>
+                                <p class="program-description">This career path focuses on identifying and fixing
+                                    security vulnerabilities by simulating cyberattacks. Ethical hackers use penetration
+                                    testing, vulnerability assessment, and hacking tools to strengthen defenses,
+                                    ensuring systems are secure against real-world threats. Skills include network
+                                    security, cryptography, and ethical hacking certifications like CEH or OSCP. Ideal
+                                    for those passionate about cybersecurity and proactive defense.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Science Career Path -->
+            <div class="career-item">
+                <div class="career-header">
+                    <h3>Data Science</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="career-content">
+                    <p>Unlock the power of data with our comprehensive data science programs covering analysis,
+                        visualization, and machine learning.</p>
+
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="Data Analysis">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Data Analysis</h4>
+                                <p class="program-description">Learn to clean, analyze, and visualize data using Python,
+                                    Pandas, and visualization libraries.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+                                    alt="Machine Learning">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">AI & Data Science</h4>
+                                <p class="program-description">This program equips students with the skills to analyze,
+                                    interpret, and leverage data using machine learning, artificial intelligence, and
+                                    statistical methods. Topics include Python/R programming, neural networks, big data
+                                    processing, and predictive modeling to solve real-world problems.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZilepIXi-Q5P8X5wa6oPpzX66NizxNeAzjADuTRfFyVXUYA/viewform?usp=header"
+                                        class="apply-btn"> Apply Now</a></p> </a>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programming -->
+            <div class="career-item">
+                <div class="career-header">
+                    <h3>Programming</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="career-content">
+                    <p>Learning to code puts the world at your fingertips. Create your own projects, gain valuable
+                        coding skills, and learn to think algorithmically - an excellent transferable skill.</p>
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Python Essentials</h4>
+                                <p class="program-description">Master the fundamentals of Python, one of the most
+                                    versatile and in-demand programming languages. This career path covers core concepts
+                                    like syntax, data structures, functions, and object-oriented programming (OOP), as
+                                    well as practical applications in automation, data analysis, and web development. By
+                                    the end, you’ll be equipped to write efficient Python code, solve real-world
+                                    problems, and pursue advanced roles in software development, AI, or data science.
+                                </p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">C Essentials</h4>
+                                <p class="program-description">Master the fundamentals of C programming, a powerful and
+                                    efficient language used in system development, embedded systems, and
+                                    high-performance applications. This path covers core concepts like variables,
+                                    control structures, pointers, memory management, and file handling, providing a
+                                    strong foundation for careers in software engineering, firmware development, and
+                                    game programming. Ideal for beginners and those looking to strengthen their
+                                    low-level programming skills.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">C Advanced</h4>
+                                <p class="program-description">This career path dives deep into advanced C programming,
+                                    focusing on low-level system development, performance optimization, and embedded
+                                    systems. Professionals master pointers, memory management, multithreading, and
+                                    hardware interaction to build high-performance applications, operating systems, and
+                                    firmware. Ideal for system programmers, embedded engineers, and developers working
+                                    on resource-constrained environments.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">C++ Essentials</h4>
+                                <p class="program-description">Master the fundamentals of C++ programming, a powerful
+                                    language used in game development, system programming, and high-performance
+                                    applications. This career path covers object-oriented programming (OOP), memory
+                                    management, data structures, and algorithm optimization, preparing you for roles in
+                                    software engineering, embedded systems, and competitive programming. Gain hands-on
+                                    experience to build efficient, scalable applications.</p>
+                                <span class="program-duration">2 Blocks</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Path -->
+            <div class="career-item">
+                <div class="career-header">
+                    <h3>Professional Path</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="career-content">
+                    <p>Master professional skills that helps enhance your IT impact.</p>
+
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">Digital Marketing</h4>
+                                <p class="program-description">Learn to optimize websites for search engines and create
+                                    engaging content strategies.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <button class="apply-btn" onclick="showUnavailableModal()">Apply</button>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-image">
+                                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                                    alt="SEO & Content Marketing">
+                            </div>
+                            <div class="program-content">
+                                <h4 class="program-title">English for IT</h4>
+                                <p class="program-description">This program helps IT professionals and students master
+                                    technical English for the tech industry. It covers IT-specific vocabulary,
+                                    documentation writing, effective communication in development teams, and preparing
+                                    for international certifications. Ideal for non-native speakers looking to excel in
+                                    global IT roles.</p>
+                                <span class="program-duration">1 Block</span>
+                                <div class="program-actions">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdZilepIXi-Q5P8X5wa6oPpzX66NizxNeAzjADuTRfFyVXUYA/viewform?usp=header"
+                                        class="apply-btn"> Apply Now</a></p> </a>
+                                    <a href="#" class="syllabus-link">
+                                        <i class="fas fa-download"></i> Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Unavailable Course Modal -->
+    <div class="unavailable-modal" id="unavailableModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-message">
+                <i class="fas fa-info-circle"></i>
+                <h3>Course Not Available Yet</h3>
+                <p>This course is not currently available. You will be notified when it becomes available.</p>
+                <button class="cta-button" id="closeUnavailableModal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="enrollModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="form-container">
+                <!-- Replace with your actual Google Form embed code -->
+                <iframe class="responsive-iframe"
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSdZilepIXi-Q5P8X5wa6oPpzX66NizxNeAzjADuTRfFyVXUYA/viewform?usp=header"
+                    frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>DigSkills</h3>
+                <p>Empowering Africa's digital workforce through industry-aligned training programs.</p>
+
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/16exnb9VsU/"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/DigSkills?t=-sO0HSAREApy6Igw39JbVA&s=09"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>Programs</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Data Science</a></li>
+                    <li><a href="#">Digital Marketing</a></li>
+                    <li><a href="#">Cybersecurity</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="#">Our Partners</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul class="footer-links">
+                    <li><a href="tel:+2349035448295">+234 903 544 8295</a></li>
+                    <li><a href="mailto:dig2skills@gmail.com">dig2skills@gmail.com</a></li>
+                    <li>Ota, Nigeria</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 DigSkills. All rights reserved. | <a href="#" style="color: #94a3b8;">Privacy Policy</a> | <a
+                    href="#" style="color: #94a3b8;">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Career Path Accordion
+        document.querySelectorAll('.career-header').forEach(header => {
+            header.addEventListener('click', function () {
+                const careerItem = this.parentElement;
+                careerItem.classList.toggle('active');
+
+                // Close other open items
+                document.querySelectorAll('.career-item').forEach(item => {
+                    if (item !== careerItem && item.classList.contains('active')) {
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        });
+        // Unavailable Course Modal Functionality
+        const unavailableModal = document.getElementById('unavailableModal');
+        const closeUnavailableModal = document.getElementById('closeUnavailableModal');
+
+        // Add this to your existing JavaScript
+        function showUnavailableModal() {
+            unavailableModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideUnavailableModal() {
+            unavailableModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        closeUnavailableModal.addEventListener('click', hideUnavailableModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === unavailableModal) {
+                hideUnavailableModal();
+            }
+        });
+        // Enrollment Modal Functionality
+        const enrollModal = document.getElementById('enrollModal');
+        const enrollIframe = document.getElementById('enrollIframe');
+        const closeModal = document.querySelector('.close-modal');
+
+        function showEnrollModal(formUrl) {
+            enrollIframe.src = formUrl;
+            enrollModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideEnrollModal() {
+            enrollModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            enrollIframe.src = '';
+        }
+
+        closeModal.addEventListener('click', hideEnrollModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === enrollModal) {
+                hideEnrollModal();
+            }
+        });
+
+        // Get the modal and link elements
+        const modal = document.getElementById("enrollModal");
+        const enrollLink = document.getElementById("enrollLink");
+        const span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the link, open the modal 
+        enrollLink.onclick = function (e) {
+            e.preventDefault(); // Prevent default link behavior
+            modal.style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling
+        }
+
+        // When the user clicks on (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto"; // Re-enable scrolling
+        }
+
+        // When the user clicks anywhere outside the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Re-enable scrolling
+            }
+        }
+
+        // Close modal when Escape key is pressed
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Re-enable scrolling
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

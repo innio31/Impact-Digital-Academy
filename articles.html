@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT & Career Articles | Impact Digital Knowledge Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Expert IT articles, career guidance, and digital transformation insights from Impact Digital. Bi-weekly content to help professionals, students, and organizations thrive in the digital age.">
+    <meta name="keywords" content="IT articles, career growth, digital transformation, tech tutorials, programming, cybersecurity, data science, professional development, Nigeria tech">
+    <meta name="author" content="Impact Digital Academy">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="IT & Career Articles | Impact Digital Knowledge Hub">
+    <meta property="og:description" content="Expert IT articles, career guidance, and digital transformation insights. Bi-weekly content for professionals, students, and organizations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://impactdigitalacademy.com.ng/articles">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://impactdigitalacademy.com.ng/articles">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --card-bg: #ffffff;
+            --section-bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header Styles (Same as main site) */
+        header {
+            background: white;
+            color: var(--dark);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.7rem 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active:after {
+            width: 100%;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .header-cta {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .cta-button.accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .cta-button.accent:hover {
+            background-color: var(--accent-dark);
+        }
+
+        /* Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Articles Hero Section */
+        .articles-hero {
+            padding: 140px 5% 60px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .articles-hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .articles-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .articles-hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .articles-hero-title {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .articles-hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 2rem 5%;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: var(--secondary);
+        }
+
+        .search-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .search-tag {
+            background: var(--section-bg);
+            color: var(--gray);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-tag:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .search-tag.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Featured Articles Carousel */
+        .featured-section {
+            padding: 4rem 5%;
+            background: var(--section-bg);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .carousel-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            color: white;
+            padding: 2rem;
+        }
+
+        .carousel-category {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .carousel-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .carousel-excerpt {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .carousel-prev, .carousel-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            z-index: 2;
+            border: none;
+        }
+
+        .carousel-prev:hover, .carousel-next:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-prev {
+            left: 20px;
+        }
+
+        .carousel-next {
+            right: 20px;
+        }
+
+        /* Articles Grid */
+        .articles-grid-section {
+            padding: 4rem 5%;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .article-content {
+            padding: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .article-category {
+            background: var(--section-bg);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .article-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .article-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .article-excerpt {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .article-link:hover {
+            color: var(--secondary);
+            gap: 0.8rem;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            padding: 4rem 5%;
+            background: var(--section-bg);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--section-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .category-count {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* CTA Section */
+        .articles-cta {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, var(--dark), #2d3748);
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+            margin: 2rem 5%;
+        }
+
+        .articles-cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .articles-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .articles-cta p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            padding: 4rem 5%;
+            background: white;
+            text-align: center;
+        }
+
+        .newsletter-form {
+            max-width: 500px;
+            margin: 2rem auto 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Footer (Same as main site) */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .contact-info {
+            color: #cbd5e0;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .social-media {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem 5%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .header-cta {
+                flex-direction: column;
+                margin-left: 0;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .articles-hero {
+                padding: 120px 5% 40px;
+            }
+
+            .articles-hero-title {
+                font-size: 2.2rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .carousel-content {
+                padding: 1.5rem;
+            }
+
+            .carousel-title {
+                font-size: 1.4rem;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .carousel-prev, .carousel-next {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .articles-cta h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .articles-hero-title {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .carousel-image {
+                height: 300px;
+            }
+        }
+
+        /* Floating WhatsApp */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="Impact Digital Logo" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="academy.html">Academy</a></li>
+                <li><a href="articles.html" class="active">Articles</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <div class="header-cta">
+                    <a href="services.html" class="cta-button">
+                        <i class="fas fa-briefcase"></i> Our Services
+                    </a>
+                    <a href="https://portal.impactdigitalacademy.com.ng" class="cta-button accent" target="_blank">
+                        <i class="fas fa-graduation-cap"></i> Student Portal
+                    </a>
+                </div>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Articles Hero Section -->
+    <section class="articles-hero">
+        <div class="articles-hero-content">
+            <span class="articles-hero-badge">Bi-Weekly Insights</span>
+            <h1 class="articles-hero-title">Impact Digital Knowledge Hub</h1>
+            <p class="articles-hero-subtitle">
+                Welcome to our commitment to your IT and career growth. We publish expert articles bi-weekly to help professionals, students, and organizations thrive in the digital age. Explore insights, tutorials, and industry trends that matter.
+            </p>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search articles by topic, keyword, or content...">
+                <button class="search-button" id="searchButton">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Tags -->
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-tags" id="searchTags">
+                <span class="search-tag active" data-category="all">All Articles</span>
+                <span class="search-tag" data-category="programming">Programming</span>
+                <span class="search-tag" data-category="career">Career Growth</span>
+                <span class="search-tag" data-category="cybersecurity">Cybersecurity</span>
+                <span class="search-tag" data-category="data">Data Science</span>
+                <span class="search-tag" data-category="business">Business Tech</span>
+                <span class="search-tag" data-category="web">Web Development</span>
+                <span class="search-tag" data-category="digital">Digital Marketing</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Articles Carousel -->
+    <section class="featured-section">
+        <div class="section-header">
+            <h2 class="section-title">Featured Articles</h2>
+            <div class="carousel-nav" id="carouselDots"></div>
+        </div>
+
+        <div class="carousel">
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Featured articles will be populated by JavaScript -->
+            </div>
+            <button class="carousel-prev" id="carouselPrev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-next" id="carouselNext">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Recent Articles Grid -->
+    <section class="articles-grid-section">
+        <h2 class="section-title">Recent Articles</h2>
+        <p class="section-subtitle" style="color: var(--gray); margin-top: 1rem; margin-bottom: 2rem;">
+            Latest insights and tutorials from our experts
+        </p>
+
+        <div class="articles-grid" id="articlesGrid">
+            <!-- Articles will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle" style="color: var(--gray); margin-top: 1rem; margin-bottom: 2rem;">
+            Find articles tailored to your interests
+        </p>
+
+        <div class="categories-grid">
+            <div class="category-card" data-category="programming">
+                <div class="category-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Programming</h3>
+                <p>Learn coding, frameworks, and best practices</p>
+                <span class="category-count">12 Articles</span>
+            </div>
+
+            <div class="category-card" data-category="career">
+                <div class="category-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Career Growth</h3>
+                <p>Advance your IT career with expert advice</p>
+                <span class="category-count">8 Articles</span>
+            </div>
+
+            <div class="category-card" data-category="cybersecurity">
+                <div class="category-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Cybersecurity</h3>
+                <p>Stay secure in the digital world</p>
+                <span class="category-count">6 Articles</span>
+            </div>
+
+            <div class="category-card" data-category="data">
+                <div class="category-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Data Science</h3>
+                <p>Analytics, ML, and data-driven insights</p>
+                <span class="category-count">5 Articles</span>
+            </div>
+
+            <div class="category-card" data-category="business">
+                <div class="category-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3>Business Tech</h3>
+                <p>Technology solutions for organizations</p>
+                <span class="category-count">7 Articles</span>
+            </div>
+
+            <div class="category-card" data-category="web">
+                <div class="category-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Web Development</h3>
+                <p>Frontend, backend, and full-stack guides</p>
+                <span class="category-count">10 Articles</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section class="newsletter-section">
+        <h2 class="section-title">Never Miss an Update</h2>
+        <p>Subscribe to our newsletter and get bi-weekly articles delivered to your inbox</p>
+        <form class="newsletter-form" id="newsletterForm">
+            <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+            <button type="submit" class="cta-button">
+                <i class="fas fa-paper-plane"></i> Subscribe
+            </button>
+        </form>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="articles-cta">
+        <div class="articles-cta-content">
+            <h2>Looking for Custom Solutions?</h2>
+            <p>Our articles provide general guidance, but every business and career is unique. Contact us for personalized consulting, training, or software development services.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+                <a href="contact.html" class="cta-button">
+                    <i class="fas fa-calendar-check"></i> Schedule Consultation
+                </a>
+                <a href="academy.html" class="cta-button outline" style="background: transparent; color: white; border-color: white;">
+                    <i class="fas fa-graduation-cap"></i> View Courses
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Impact Digital</h3>
+                <p>Your trusted partner for digital solutions and professional IT training. Empowering businesses and individuals through technology.</p>
+                <div class="social-media">
+                    <a href="https://www.facebook.com/share/16exnb9VsU/" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/DigSkills" class="social-link" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/dig-skills" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com/impactdigital" class="social-link" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="articles.html"><i class="fas fa-newspaper"></i> Articles</a></li>
+                    <li><a href="services.html"><i class="fas fa-briefcase"></i> Services</a></li>
+                    <li><a href="academy.html"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Article Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="articles.html?category=programming"><i class="fas fa-code"></i> Programming</a></li>
+                    <li><a href="articles.html?category=career"><i class="fas fa-chart-line"></i> Career Growth</a></li>
+                    <li><a href="articles.html?category=cybersecurity"><i class="fas fa-shield-alt"></i> Cybersecurity</a></li>
+                    <li><a href="articles.html?category=data"><i class="fas fa-database"></i> Data Science</a></li>
+                    <li><a href="articles.html?category=business"><i class="fas fa-briefcase"></i> Business Tech</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> dig2skills@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +234 903 544 8295</p>
+                    <p><i class="fas fa-whatsapp"></i> +234 905 158 6024</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ota, Nigeria</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> Impact Digital (Solutions & Academy). All rights reserved. | CAC Registered Business</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Website: impactdigitalacademy.com.ng | Portal: portal.impactdigitalacademy.com.ng</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <div class="floating-whatsapp">
+        <a href="https://wa.me/+2349051586024" class="whatsapp-button" target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Sample Articles Data
+        const articles = [
+            {
+                id: 1,
+                title: "Your GPA Is A Chapter, Not The Whole Story",
+                excerpt: "Explore the capabilities that matter more than your GPA in building a resilient and impactful career.",
+                category: "career",
+                date: "2026-01-28",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: true,
+                file: "articles/gpa_is_a_chapter.html"
+            },
+            {
+                id: 2,
+                title: "Cybersecurity Best Practices for Nigerian Businesses",
+                excerpt: "Essential security measures every Nigerian business should implement to protect digital assets.",
+                category: "cybersecurity",
+                date: "2024-03-10",
+                image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: true,
+                file: "articles/cybersecurity-nigeria-business.html"
+            },
+            {
+                id: 3,
+                title: "How to Transition from Non-Tech to Tech Career in Nigeria",
+                excerpt: "A step-by-step guide for professionals looking to switch careers into the tech industry.",
+                category: "career",
+                date: "2024-03-05",
+                image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: true,
+                file: "articles/career-transition-nigeria.html"
+            },
+            {
+                id: 4,
+                title: "Python vs JavaScript: Which Should You Learn First?",
+                excerpt: "Comparing two popular programming languages to help beginners make the right choice.",
+                category: "programming",
+                date: "2024-02-28",
+                image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: false,
+                file: "articles/python-vs-javascript.html"
+            },
+            {
+                id: 5,
+                title: "Data Analytics for Small Businesses in Africa",
+                excerpt: "How small businesses can leverage data analytics to drive growth and make informed decisions.",
+                category: "data",
+                date: "2024-02-20",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: false,
+                file: "articles/data-analytics-africa-business.html"
+            },
+            {
+                id: 6,
+                title: "Digital Marketing Strategies for Nigerian Startups",
+                excerpt: "Cost-effective digital marketing techniques tailored for Nigerian startup environments.",
+                category: "digital",
+                date: "2024-02-15",
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: false,
+                file: "articles/digital-marketing-nigeria.html"
+            },
+            {
+                id: 7,
+                title: "The Rise of Remote Work in Nigeria's Tech Industry",
+                excerpt: "How remote work is transforming Nigeria's tech landscape and what it means for professionals.",
+                category: "career",
+                date: "2024-02-10",
+                image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: false,
+                file: "articles/remote-work-nigeria.html"
+            },
+            {
+                id: 8,
+                title: "Building Scalable Software Architecture",
+                excerpt: "Principles and patterns for designing software that can grow with your business needs.",
+                category: "programming",
+                date: "2024-02-05",
+                image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                featured: false,
+                file: "articles/scalable-software-architecture.html"
+            }
+        ];
+
+        // Featured articles for carousel
+        const featuredArticles = articles.filter(article => article.featured);
+
+        // Carousel functionality
+        let currentSlide = 0;
+        const carouselTrack = document.getElementById('carouselTrack');
+        const carouselDots = document.getElementById('carouselDots');
+        const carouselPrev = document.getElementById('carouselPrev');
+        const carouselNext = document.getElementById('carouselNext');
+
+        // Initialize carousel
+        function initCarousel() {
+            // Clear existing content
+            carouselTrack.innerHTML = '';
+            carouselDots.innerHTML = '';
+
+            // Create slides
+            featuredArticles.forEach((article, index) => {
+                // Create slide
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}" class="carousel-image">
+                    <div class="carousel-content">
+                        <span class="carousel-category">${article.category.charAt(0).toUpperCase() + article.category.slice(1)}</span>
+                        <h3 class="carousel-title">${article.title}</h3>
+                        <p class="carousel-excerpt">${article.excerpt}</p>
+                        <a href="${article.file}" class="cta-button">
+                            <i class="fas fa-book-open"></i> Read Article
+                        </a>
+                    </div>
+                `;
+                carouselTrack.appendChild(slide);
+
+                // Create dot
+                const dot = document.createElement('div');
+                dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => goToSlide(index));
+                carouselDots.appendChild(dot);
+            });
+
+            // Update carousel width
+            carouselTrack.style.width = `${featuredArticles.length * 100}%`;
+
+            // Set initial position
+            updateCarousel();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const slideWidth = 100 / featuredArticles.length;
+            carouselTrack.style.transform = `translateX(-${currentSlide * slideWidth}%)`;
+            
+            // Update dots
+            document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        carouselPrev.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + featuredArticles.length) % featuredArticles.length;
+            updateCarousel();
+        });
+
+        carouselNext.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % featuredArticles.length;
+            updateCarousel();
+        });
+
+        // Auto-rotate carousel
+        let carouselInterval = setInterval(() => {
+            currentSlide = (currentSlide + 1) % featuredArticles.length;
+            updateCarousel();
+        }, 5000);
+
+        // Pause auto-rotate on hover
+        carouselTrack.addEventListener('mouseenter', () => clearInterval(carouselInterval));
+        carouselTrack.addEventListener('mouseleave', () => {
+            carouselInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % featuredArticles.length;
+                updateCarousel();
+            }, 5000);
+        });
+
+        // Render articles grid
+        function renderArticles(filteredArticles = articles) {
+            const articlesGrid = document.getElementById('articlesGrid');
+            articlesGrid.innerHTML = '';
+
+            filteredArticles.forEach(article => {
+                const articleCard = document.createElement('div');
+                articleCard.className = 'article-card';
+                articleCard.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}" class="article-image">
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-category">${article.category.charAt(0).toUpperCase() + article.category.slice(1)}</span>
+                            <span class="article-date">${formatDate(article.date)}</span>
+                        </div>
+                        <h3 class="article-title">${article.title}</h3>
+                        <p class="article-excerpt">${article.excerpt}</p>
+                        <a href="${article.file}" class="article-link">
+                            Read Full Article <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                `;
+                articlesGrid.appendChild(articleCard);
+            });
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchTags = document.querySelectorAll('.search-tag');
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeCategory = document.querySelector('.search-tag.active').dataset.category;
+
+            let filteredArticles = articles;
+
+            // Filter by category
+            if (activeCategory !== 'all') {
+                filteredArticles = filteredArticles.filter(article => article.category === activeCategory);
+            }
+
+            // Filter by search term
+            if (searchTerm) {
+                filteredArticles = filteredArticles.filter(article => 
+                    article.title.toLowerCase().includes(searchTerm) ||
+                    article.excerpt.toLowerCase().includes(searchTerm) ||
+                    article.category.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderArticles(filteredArticles);
+        }
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        // Category filtering
+        searchTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                searchTags.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                performSearch();
+            });
+        });
+
+        // Category cards filtering
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const category = this.dataset.category;
+                searchTags.forEach(t => t.classList.remove('active'));
+                document.querySelector(`.search-tag[data-category="${category}"]`).classList.add('active');
+                performSearch();
+                
+                // Scroll to search section
+                document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Newsletter form
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input').value;
+            alert(`Thank you for subscribing with ${email}! You'll receive our next article update.`);
+            this.reset();
+        });
+
+        // Initialize page
+        initCarousel();
+        renderArticles();
+
+        // Check URL for category parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+            const categoryTag = document.querySelector(`.search-tag[data-category="${categoryParam}"]`);
+            if (categoryTag) {
+                searchTags.forEach(t => t.classList.remove('active'));
+                categoryTag.classList.add('active');
+                performSearch();
+            }
+        }
+    </script>
+</body>
+
+</html>

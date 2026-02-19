@@ -1,0 +1,414 @@
+<style>
+  .user-avatar-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+}
+
+#userAvatarImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+}
+
+.avatar-upload-label {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--accent);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.avatar-upload-label:hover {
+    background: var(--secondary);
+}
+  /* Loading and error states */
+.loading, .no-data, .error {
+    padding: 1rem;
+    text-align: center;
+    color: #64748b;
+}
+
+.error {
+    color: #ef4444;
+}
+
+/* Assignment styles */
+.assignment-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.assignment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.assignment-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.assignment-status.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* Calendar event styles */
+.event-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: var(--light);
+    border-radius: 8px;
+}
+
+.event-day {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.event-month {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-title {
+    margin-bottom: 0.3rem;
+    color: var(--dark);
+}
+
+.event-time, .event-location {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+}
+</style>
+<h1>Your Dashboard</h1>
+<div id="enrollments"></div>
+<div class="user-profile">
+    <div class="user-avatar-container">
+        <img id="userAvatarImg" src="images/default-avatar.png" alt="Profile Picture">
+        <label for="avatarUpload" class="avatar-upload-label">
+            <i class="fas fa-camera"></i>
+            <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+        </label>
+    </div>
+    <h3 class="user-name" id="userName">Loading...</h3>
+    <p class="user-email" id="userEmail">user@example.com</p>
+</div>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h3>Upcoming Events</h3>
+        <a href="#">View Calendar</a>
+    </div>
+    <div id="calendarEvents">
+        <!-- Will be populated by JavaScript -->
+    </div>
+</div>
+<script>
+  auth.onAuthStateChanged(user => {
+    if (!user) window.location.href = "/academy.html";
+    
+    db.collection("enrollments")
+      .where("userId", "==", user.uid)
+      .get()
+      .then(snapshot => {
+        let html = "<h3>Your Enrollments:</h3>";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          html += `<p>${data.program} (Enrolled on ${data.enrolledAt.toDate().toLocaleDateString()})</p>`;
+        });
+        document.getElementById("enrollments").innerHTML = html;
+      });
+  });
+  // Profile picture handling
+const avatarUpload = document.getElementById('avatarUpload');
+const userAvatarImg = document.getElementById('userAvatarImg');
+
+// Initialize Firebase Storage
+const storage = firebase.storage();
+const storageRef = storage.ref();
+
+avatarUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const userId = firebase.auth().currentUser.uid;
+        const uploadTask = storageRef.child(`profile-pictures/${userId}`).put(file);
+        
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                // Progress monitoring
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                console.error("Upload error:", error);
+                alert("Error uploading picture: " + error.message);
+            },
+            () => {
+                // Upload complete
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    userAvatarImg.src = downloadURL;
+                    // Save URL to user's Firestore document
+                    firebase.firestore().collection('students').doc(userId).update({
+                        profilePicture: downloadURL
+                    });
+                });
+            }
+        );
+    }
+});
+
+// Load existing profile picture
+function loadProfilePicture(userId) {
+    storageRef.child(`profile-pictures/${userId}`).getDownloadURL()
+        .then((url) => {
+            userAvatarImg.src = url;
+        })
+        .catch(() => {
+            // Use default if no picture exists
+            userAvatarImg.src = "images/default-avatar.png";
+        });
+}
+  async function loadUserData(userId) {
+    const db = firebase.firestore();
+    const userRef = db.collection('students').doc(userId);
+    
+    try {
+        const doc = await userRef.get();
+        if (doc.exists) {
+            const userData = doc.data();
+            
+            // Display user name
+            const fullName = `${userData.firstName} ${userData.lastName}`;
+            document.getElementById('userName').textContent = fullName;
+            document.getElementById('greetingName').textContent = userData.firstName;
+            
+            // Load profile picture if exists
+            if (userData.profilePicture) {
+                userAvatarImg.src = userData.profilePicture;
+            } else {
+                loadProfilePicture(userId);
+            }
+            
+            // Load other data
+            await loadCourses(userId);
+            await loadAnnouncements(userId);
+            await loadAssignments(userId);
+            await loadCalendarEvents(userId);
+        }
+    } catch (error) {
+        console.error("Error loading user data:", error);
+    }
+}
+  async function loadCourses(userId) {
+    const db = firebase.firestore();
+    const container = document.getElementById('currentCourses');
+    container.innerHTML = '<div class="loading">Loading courses...</div>';
+    
+    try {
+        const snapshot = await db.collection('enrollments')
+            .where('studentId', '==', userId)
+            .get();
+            
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="no-data">No courses enrolled yet</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        const coursesPromises = snapshot.docs.map(async doc => {
+            const enrollment = doc.data();
+            const courseDoc = await db.collection('programs').doc(enrollment.courseId).get();
+            return courseDoc.data();
+        });
+        
+        const courses = await Promise.all(coursesPromises);
+        courses.forEach(course => {
+            const courseCard = document.createElement('div');
+            courseCard.className = 'course-card';
+            courseCard.innerHTML = `
+                <div class="course-image" style="background: ${getCategoryColor(course.category)}">
+                    <div class="course-progress" style="width: ${Math.floor(Math.random() * 100)}%"></div>
+                </div>
+                <div class="course-content">
+                    <h4 class="course-title">${course.name}</h4>
+                    <p class="course-instructor">${course.duration}</p>
+                    <div class="course-meta">
+                        <span><i class="fas fa-book"></i> ${course.category.toUpperCase()}</span>
+                        <span><i class="fas fa-calendar"></i> Started: ${new Date().toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(courseCard);
+        });
+    } catch (error) {
+        console.error("Error loading courses:", error);
+        container.innerHTML = '<div class="error">Error loading courses</div>';
+    }
+}
+
+function getCategoryColor(category) {
+    switch(category) {
+        case 'online': return '#3b82f6';
+        case 'onsite': return '#10b981';
+        case 'school': return '#8b5cf6';
+        default: return '#e2e8f0';
+    }
+}
+
+async function loadAnnouncements(userId) {
+    const db = firebase.firestore();
+    const container = document.getElementById('announcementsList');
+    container.innerHTML = '<div class="loading">Loading announcements...</div>';
+    
+    try {
+        const snapshot = await db.collection('announcements')
+            .where('forStudents', 'array-contains', userId)
+            .orderBy('date', 'desc')
+            .limit(5)
+            .get();
+            
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="no-data">No announcements found</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const announcement = doc.data();
+            const announcementItem = document.createElement('div');
+            announcementItem.className = 'announcement-item';
+            announcementItem.innerHTML = `
+                <h4 class="announcement-title">${announcement.title}</h4>
+                <div class="announcement-meta">
+                    <span><i class="fas fa-calendar-alt"></i> ${new Date(announcement.date.seconds * 1000).toLocaleDateString()}</span>
+                    <span><i class="fas fa-user-tie"></i> ${announcement.author}</span>
+                </div>
+                <p class="announcement-content">${announcement.content}</p>
+            `;
+            container.appendChild(announcementItem);
+        });
+    } catch (error) {
+        console.error("Error loading announcements:", error);
+        container.innerHTML = '<div class="error">Error loading announcements</div>';
+    }
+}
+
+async function loadAssignments(userId) {
+    const db = firebase.firestore();
+    const container = document.getElementById('assignmentsList');
+    container.innerHTML = '<div class="loading">Loading assignments...</div>';
+    
+    try {
+        const snapshot = await db.collection('assignments')
+            .where('forStudents', 'array-contains', userId)
+            .where('dueDate', '>=', new Date())
+            .orderBy('dueDate', 'asc')
+            .limit(5)
+            .get();
+            
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="no-data">No upcoming assignments</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const assignment = doc.data();
+            const assignmentItem = document.createElement('div');
+            assignmentItem.className = 'assignment-item';
+            assignmentItem.innerHTML = `
+                <div class="assignment-header">
+                    <h4 class="assignment-title">${assignment.title}</h4>
+                    <span class="assignment-status ${assignment.status === 'submitted' ? 'completed' : ''}">
+                        ${assignment.status || 'pending'}
+                    </span>
+                </div>
+                <div class="assignment-meta">
+                    <span><i class="fas fa-book"></i> ${assignment.course}</span>
+                    <span><i class="fas fa-clock"></i> Due: ${new Date(assignment.dueDate.seconds * 1000).toLocaleString()}</span>
+                </div>
+                <p class="assignment-description">${assignment.description}</p>
+                <button class="assignment-action">View Details</button>
+            `;
+            container.appendChild(assignmentItem);
+        });
+    } catch (error) {
+        console.error("Error loading assignments:", error);
+        container.innerHTML = '<div class="error">Error loading assignments</div>';
+    }
+}
+  async function loadCalendarEvents(userId) {
+    const db = firebase.firestore();
+    const container = document.getElementById('calendarEvents');
+    container.innerHTML = '<div class="loading">Loading calendar events...</div>';
+    
+    try {
+        const snapshot = await db.collection('calendarEvents')
+            .where('forStudents', 'array-contains', userId)
+            .where('eventDate', '>=', new Date())
+            .orderBy('eventDate', 'asc')
+            .limit(5)
+            .get();
+            
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="no-data">No upcoming events</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+            const event = doc.data();
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.innerHTML = `
+                <div class="event-date">
+                    <span class="event-day">${new Date(event.eventDate.seconds * 1000).getDate()}</span>
+                    <span class="event-month">${new Date(event.eventDate.seconds * 1000).toLocaleString('default', { month: 'short' })}</span>
+                </div>
+                <div class="event-details">
+                    <h4 class="event-title">${event.title}</h4>
+                    <p class="event-time"><i class="fas fa-clock"></i> ${new Date(event.eventDate.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location || 'Online'}</p>
+                </div>
+            `;
+            container.appendChild(eventItem);
+        });
+    } catch (error) {
+        console.error("Error loading calendar events:", error);
+        container.innerHTML = '<div class="error">Error loading events</div>';
+    }
+}
+</script>

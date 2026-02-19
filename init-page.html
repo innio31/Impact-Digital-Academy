@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Firestore Initializer</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c5aa0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #343a40;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .init-btn {
+            background-color: #4caf50;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .init-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-1px);
+        }
+
+        .danger-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .danger-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .log-area {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f8f8fa;
+            max-height: 400px;
+            overflow-y: scroll;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        .log-area span.success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .log-area span.error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .log-area span.warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Database Initialization Utility</h1>
+        <p>This utility will create the essential collections and seed the database with demo data.</p>
+
+        <h2>⚠️ Warning!</h2>
+        <p>Use the **Clear Database** button with caution. It attempts to delete all data in the defined collections.
+        </p>
+
+        <button class="danger-btn" onclick="clearDatabase()">Clear Database (Optional)</button>
+        <button class="init-btn" onclick="initializeDatabase()">Initialize & Seed Database</button>
+
+        <h3>Activity Log:</h3>
+        <div id="log" class="log-area">Awaiting action...</div>
+    </div>
+
+    <script>
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU1ouyoXpOP0Gz_IFARGGAK0OAu0GZHlI",
+            authDomain: "digskills-student-portal.firebaseapp.com",
+            projectId: "digskills-student-portal",
+            storageBucket: "digskills-student-portal.firebasestorage.app",
+            messagingSenderId: "992494289117",
+            appId: "1:992494289117:web:de1c682fb12ae9fae69b34",
+            measurementId: "G-PKF5FPQN38"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        const logElement = document.getElementById('log');
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            let styledMessage = message;
+            if (type === 'success') styledMessage = `<span class="success">${message}</span>`;
+            if (type === 'error') styledMessage = `<span class="error">${message}</span>`;
+            if (type === 'warning') styledMessage = `<span class="warning">${message}</span>`;
+            logElement.innerHTML += `[${timestamp}] ${styledMessage}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // --- SEED DATA ---
+        const currentTime = firebase.firestore.FieldValue.serverTimestamp();
+        const SEED_DATA = {
+            default_admin: {
+                email: "dig2skills@gmail.com",
+                password: "admin123",
+                firstName: "Emmanuel Ifeoluwa",
+                lastName: "Ademuyiwa",
+            },
+            default_student: {
+                email: "student@academy.com",
+                password: "studentpassword",
+                firstName: "Student",
+                lastName: "User",
+            },
+            schools: [
+                { name: "Impact Digital Academy", code: "IDA", address: "Irorun, Ijaba, Ota, Ogun State", contactEmail: "dig2skills@gmail.com", status: 'active', createdAt: currentTime },
+                { name: "The Climax Brains Academy", code: "CBA", address: "Ota, Ogun State", contactEmail: "info@climaxbrainsacademy.com", status: 'active', createdAt: currentTime },
+                { name: "The Climax Model Schools", code: "CMS", address: "Ota, Ogun State", contactEmail: "info@climaxmodelschools.com", status: 'active', createdAt: currentTime },
+                { name: "Mighty School For Valours", code: "MSV", address: "Ogun State, Nigeria", contactEmail: "contact@msv.edu.ng", status: 'active', createdAt: currentTime },
+                { name: "Latter Glory Schools", code: "LGS", address: "Ogun State, Nigeria", contactEmail: "admin@lattergloryschools.com", status: 'active', createdAt: currentTime },
+                { name: "Global Star Academy", code: "GSA", address: "Ogun State, Nigeria", contactEmail: "office@globalstaracademy.com", status: 'active', createdAt: currentTime },
+                { name: "Bright Future College", code: "BFC", address: "Abeokuta, Ogun State", contactEmail: "brightfuture@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Excel Minds Academy", code: "EMA", address: "Ibadan, Oyo State", contactEmail: "excelminds@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Prime Heights International School", code: "PHIS", address: "Akure, Ondo State", contactEmail: "primeheights@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Evergreen Scholars Academy", code: "ESA", address: "Lagos, Nigeria", contactEmail: "evergreen@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Golden Crest College", code: "GCC", address: "Ilorin, Kwara State", contactEmail: "goldencrest@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Unity Bridge Academy", code: "UBA", address: "Abuja, Nigeria", contactEmail: "unitybridge@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Rising Stars International School", code: "RSI", address: "Benin City, Edo State", contactEmail: "risingstars@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Noble Heights Academy", code: "NHA", address: "Port Harcourt, Rivers State", contactEmail: "nobleheights@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Silver Crest Schools", code: "SCS", address: "Ibadan, Oyo State", contactEmail: "silvercrest@edu.com", status: 'active', createdAt: currentTime },
+                { name: "Victory Gate Academy", code: "VGA", address: "Enugu, Nigeria", contactEmail: "victorygate@edu.com", status: 'active', createdAt: currentTime }
+            ],
+            programs: [
+                { name: "Desktop Publishing & Secretarial Studies", code: "DPSS", description: "Fundamentals of desktop publishing and office secretarial applications.", status: 'active', createdAt: currentTime },
+                { name: "Digital Marketing", code: "DMK", description: "Strategies and tools for online brand promotion and digital campaigns.", status: 'active', createdAt: currentTime },
+                { name: "Web Development", code: "WDT", description: "Front-end and back-end development for modern websites and applications.", status: 'active', createdAt: currentTime },
+                { name: "PC Technician", code: "PCT", description: "Training in computer hardware, troubleshooting, and system maintenance.", status: 'active', createdAt: currentTime },
+                { name: "UI/UX", code: "UIUX", description: "User interface and user experience design principles for digital products.", status: 'active', createdAt: currentTime },
+                { name: "Data Science", code: "DSC", description: "Data analysis, visualisation, and insights using modern tools and techniques.", status: 'active', createdAt: currentTime },
+                { name: "Graphic Design", code: "GDS", description: "Creative design fundamentals and tools for digital graphics.", status: 'active', createdAt: currentTime },
+                { name: "CyberSecurity Essentials", code: "CSE", description: "Core skills in protecting systems, networks, and data against threats.", status: 'active', createdAt: currentTime },
+                { name: "Android App Development", code: "AAD", description: "Building and deploying Android mobile applications.", status: 'active', createdAt: currentTime },
+                { name: "Junior CyberSecurity Analyst", code: "JCSA", description: "Introductory program for aspiring cybersecurity analysts.", status: 'active', createdAt: currentTime }
+            ],
+            settings_general: {
+                academyName: "Impact Digital Academy",
+                academicYear: new Date().getFullYear().toString(),
+                academicTerm: "First Term"
+            },
+            settings_grading: {
+                grades: [
+                    { grade: 'A', min_percent: 80 },
+                    { grade: 'B', min_percent: 70 },
+                    { grade: 'C', min_percent: 60 },
+                    { grade: 'D', min_percent: 50 },
+                    { grade: 'F', min_percent: 0 }
+                ]
+            }
+        };
+
+        // --- INITIALIZER ---
+        async function initializeDatabase() {
+            if (!confirm("Are you sure you want to initialize the database?")) return;
+            log("Starting database initialization...", 'info');
+
+            try {
+                // Create all schools
+                for (const school of SEED_DATA.schools) {
+                    await db.collection('schools').doc(school.code).set(school);
+                    log(`✅ School created: ${school.name}`);
+                }
+
+                // Create all programs linked to IDA
+                for (const program of SEED_DATA.programs) {
+                    await db.collection('programs').doc(program.code).set({
+                        ...program,
+                        schoolId: "IDA"
+                    });
+                    log(`✅ Program created: ${program.name} (linked to IDA)`);
+                }
+
+                // Settings
+                await db.collection('settings').doc('general').set(SEED_DATA.settings_general);
+                await db.collection('settings').doc('grading').set(SEED_DATA.settings_grading);
+                log("✅ Settings documents created.");
+
+                log("🎉 Database initialization complete!", 'success');
+            } catch (error) {
+                log(`❌ Initialization Failed: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // --- CLEAR FUNCTION ---
+        async function clearCollection(collectionName) {
+            log(`Attempting to clear collection: ${collectionName}...`);
+            const collectionRef = db.collection(collectionName);
+            const snapshot = await collectionRef.limit(100).get();
+            if (snapshot.size === 0) {
+                log(`- Collection ${collectionName} is empty. Skipped.`);
+                return;
+            }
+            const batch = db.batch();
+            snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+            await batch.commit();
+            log(`- Deleted ${snapshot.size} documents from ${collectionName}.`);
+            if (snapshot.size === 100) await clearCollection(collectionName);
+        }
+
+        async function clearDatabase() {
+            if (!confirm("ABSOLUTELY SURE? This will delete ALL data.")) return;
+            log("Starting database clear...", 'warning');
+            const collectionsToClear = ['results', 'exams', 'questions', 'classes', 'programs', 'users', 'schools', 'settings'];
+            try {
+                for (const collectionName of collectionsToClear) {
+                    await clearCollection(collectionName);
+                }
+                log("🎉 Database clear finished.", 'success');
+            } catch (error) {
+                log(`❌ Database Clear Failed: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

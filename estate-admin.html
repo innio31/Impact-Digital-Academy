@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estate Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+    <!-- QRCode.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .nav-link-active { background-color: #e0f2fe; color: #1d4ed8; }
+        .nav-link-active svg { color: #1d4ed8; }
+        /* A simple modal overlay style */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: white; padding: 2rem; border-radius: 0.75rem;
+            max-width: 56rem; width: 90%; max-height: 90vh; overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <!-- Login Page -->
+    <div id="login-page" class="flex items-center justify-center min-h-screen w-full">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    Dig<span class="text-blue-600">Skills</span>
+                </h1>
+                <p class="mt-2 text-gray-600">Estate Admin Login</p>
+            </div>
+            <p id="login-error" class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 hidden"></p>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="login-email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <button type="submit" id="login-button" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Wrapper -->
+    <div id="dashboard-wrapper" class="flex min-h-screen w-full hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-white text-gray-800 w-64 md:w-72 lg:w-80 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-50 shadow-lg">
+            <a href="#" class="text-2xl font-bold text-gray-900 flex items-center justify-center">
+                Dig<span class="text-blue-600">Skills</span>
+            </a>
+            <nav class="mt-8">
+                <a href="#overview" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="#residents" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <span>Residents Management</span>
+                </a>
+                <a href="#houses" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 13h6m-3 6v-6" /></svg>
+                    <span>Houses/Properties</span>
+                </a>
+                <a href="#security" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.031 12.031 0 002 12c0 2.836.84 5.485 2.382 7.749L12 22l7.618-2.251A12.031 12.031 0 0022 12c0-2.836-.84-5.485-2.382-7.749z" /></svg>
+                    <span>Security & Access Control</span>
+                </a>
+                <a href="#billing" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V5m0 0a2.001 2.001 0 10-2-2h4a2.001 2.001 0 10-2 2m-6 4H8m11-4h2m-2-4v6m-2 4h2m-6 4v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m0 0v-6a2 2 0 012-2h2" /></svg>
+                    <span>Billing & Subscription</span>
+                </a>
+                <a href="#settings" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37-2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="mt-auto px-4 py-2 border-t border-gray-200">
+                <button id="logout-button" class="w-full bg-red-500 text-white font-bold py-2 rounded-lg hover:bg-red-600 transition-colors">
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm flex items-center justify-between p-4 md:hidden z-40">
+                <button id="sidebar-toggle" class="text-gray-500 hover:text-gray-600 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                </button>
+                <h2 class="text-xl font-bold text-gray-900">Estate Admin Dashboard</h2>
+                <div class="w-6 h-6"></div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 md:p-10">
+                <div id="loading-screen" class="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50 transition-opacity duration-300 ease-in-out">
+                    <div class="flex flex-col items-center">
+                        <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-600">Loading dashboard...</p>
+                    </div>
+                </div>
+
+                <div id="content-container" class="space-y-8">
+                    <!-- Dashboard Overview -->
+                    <section id="overview" class="content-section">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+                        <div id="at-a-glance" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <!-- Stat cards will be inserted here by JavaScript -->
+                        </div>
+                        <div id="subscription-status" class="bg-white rounded-xl shadow p-6 mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Subscription Status</h2>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Plan: <span id="plan-name" class="font-semibold text-gray-800">Premium</span></p>
+                                    <p class="text-gray-600">Status: <span id="status-label" class="font-semibold text-green-500">...</span></p>
+                                    <p class="text-gray-600">Expiry Date: <span id="expiry-date" class="font-semibold text-gray-800">...</span></p>
+                                </div>
+                                <button class="mt-4 sm:mt-0 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">Manage Subscription</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Residents Management -->
+                    <section id="residents" class="content-section hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-3xl font-bold text-gray-800">Residents Management</h1>
+                            <button id="add-resident-button" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                <span>Add Resident</span>
+                            </button>
+                        </div>
+                        <div id="residents-table-container" class="bg-white rounded-xl shadow overflow-hidden">
+                            <!-- Resident table will be inserted here -->
+                        </div>
+                    </section>
+
+                    <!-- Houses/Properties -->
+                    <section id="houses" class="content-section hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-3xl font-bold text-gray-800">Houses/Properties</h1>
+                            <button id="add-house-button" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                <span>Add House</span>
+                            </button>
+                        </div>
+                        <div id="houses-table-container" class="bg-white rounded-xl shadow overflow-hidden">
+                            <!-- Houses table will be inserted here -->
+                        </div>
+                    </section>
+
+                    <!-- Security & Access Control -->
+                    <section id="security" class="content-section hidden">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-6">Security & Access Control</h1>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl shadow p-6">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4">Generate Visitor QR Code</h2>
+                                <p class="text-gray-500 mb-4">Generate a one-time QR code for a visitor. This will be linked to a resident.</p>
+                                <form id="generate-code-form" class="space-y-4">
+                                    <div>
+                                        <label for="resident-select" class="block text-sm font-medium text-gray-700">Resident</label>
+                                        <select id="resident-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required>
+                                            <option value="">Select a resident</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="visitor-name" class="block text-sm font-medium text-gray-700">Visitor's Name</label>
+                                        <input type="text" id="visitor-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                                    </div>
+                                    <button type="submit" id="generate-code-button" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">Generate Code</button>
+                                </form>
+                                <div id="generated-qr-code" class="mt-6 hidden flex flex-col items-center">
+                                    <h3 class="text-lg font-bold text-gray-800">Visitor QR Code</h3>
+                                    <div id="qr-canvas" class="p-4 bg-gray-200 rounded-lg mt-4"></div>
+                                    <p id="qr-expiry-info" class="mt-2 text-sm text-gray-500 text-center"></p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow p-6">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4">Security Guard Management</h2>
+                                <p class="text-gray-500 mb-4">Add, view, or remove security guards for your estate.</p>
+                                <div id="security-guards-list" class="space-y-4">
+                                    <!-- Security guards will be listed here -->
+                                </div>
+                                <button id="add-security-button" class="mt-4 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Add New Security Guard
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Billing & Subscription -->
+                    <section id="billing" class="content-section hidden">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-6">Billing & Subscription</h1>
+                        <div class="bg-white rounded-xl shadow p-6">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Manage Subscription</h2>
+                            <p class="text-gray-600">Your current plan details and billing history will be displayed here.</p>
+                        </div>
+                    </section>
+
+                    <!-- Settings -->
+                    <section id="settings" class="content-section hidden">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-6">Settings</h1>
+                        <div class="bg-white rounded-xl shadow p-6">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Account Settings</h2>
+                            <p class="text-gray-600">Update your profile information and change your password.</p>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Resident Modal -->
+    <div id="add-resident-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Add New Resident</h2>
+                <button id="close-add-resident-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <form id="add-resident-form" class="space-y-4">
+                <div>
+                    <label for="resident-full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="resident-full-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label for="resident-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="resident-email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label for="resident-phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="resident-phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
+                </div>
+                <div>
+                    <label for="resident-house" class="block text-sm font-medium text-gray-700">House/Unit</label>
+                    <select id="resident-house" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required>
+                        <option value="">Select a house</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">Add Resident</button>
+            </form>
+        </div>
+    </div>
+    <!-- End Add Resident Modal -->
+
+    <!-- Add House Modal -->
+    <div id="add-house-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Add New House</h2>
+                <button id="close-add-house-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <form id="add-house-form" class="space-y-4">
+                <div>
+                    <label for="house-number" class="block text-sm font-medium text-gray-700">House/Unit Number</label>
+                    <input type="text" id="house-number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label for="house-type" class="block text-sm font-medium text-gray-700">Type</label>
+                    <input type="text" id="house-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" placeholder="e.g., Duplex, Apartment" required />
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">Add House</button>
+            </form>
+        </div>
+    </div>
+    <!-- End Add House Modal -->
+
+    <!-- Add Security Guard Modal -->
+    <div id="add-security-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Add New Security Guard</h2>
+                <button id="close-add-security-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <form id="add-security-form" class="space-y-4">
+                <div>
+                    <label for="security-full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="security-full-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label for="security-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="security-email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <div>
+                    <label for="security-password" class="block text-sm font-medium text-gray-700">Temporary Password</label>
+                    <input type="text" id="security-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" required />
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">Add Security Guard</button>
+            </form>
+        </div>
+    </div>
+    <!-- End Add Security Guard Modal -->
+
+    <!-- Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase SDKs - IMPORTANT: Replace with your actual Firebase config
+        const firebaseConfig = {
+        apiKey: "AIzaSyAI7vUwO3B36biuw5BzpiYaa3lafqVGsK0",
+        authDomain: "digskills-estate-app.firebaseapp.com",
+        projectId: "digskills-estate-app",
+        storageBucket: "digskills-estate-app.firebasestorage.app",
+        messagingSenderId: "154722128946",
+        appId: "1:154722128946:web:07973f09ba2a9907c8d82b",
+        measurementId: "G-646V2WTPEP"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const dashboardWrapper = document.getElementById('dashboard-wrapper');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const loadingScreen = document.getElementById('loading-screen');
+        const logoutButton = document.getElementById('logout-button');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        // Modals and Forms
+        const addResidentModal = document.getElementById('add-resident-modal');
+        const addResidentButton = document.getElementById('add-resident-button');
+        const closeAddResidentModal = document.getElementById('close-add-resident-modal');
+        const addResidentForm = document.getElementById('add-resident-form');
+        const residentHouseSelect = document.getElementById('resident-house');
+
+        const addHouseModal = document.getElementById('add-house-modal');
+        const addHouseButton = document.getElementById('add-house-button');
+        const closeAddHouseModal = document.getElementById('close-add-house-modal');
+        const addHouseForm = document.getElementById('add-house-form');
+
+        const addSecurityModal = document.getElementById('add-security-modal');
+        const addSecurityButton = document.getElementById('add-security-button');
+        const closeAddSecurityModal = document.getElementById('close-add-security-modal');
+        const addSecurityForm = document.getElementById('add-security-form');
+        
+        const generateCodeForm = document.getElementById('generate-code-form');
+        const residentSelect = document.getElementById('resident-select');
+        const generatedQrCodeDiv = document.getElementById('generated-qr-code');
+        const qrCanvas = document.getElementById('qr-canvas');
+        const qrExpiryInfo = document.getElementById('qr-expiry-info');
+
+        let userRole = null;
+        let userEstateId = null;
+
+        // Function to toggle sidebar for mobile
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Function to handle login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginForm['login-email'].value;
+            const password = loginForm['login-password'].value;
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                // The onAuthStateChanged listener will handle the UI update
+            } catch (error) {
+                console.error("Login failed:", error);
+                loginError.textContent = "Invalid email or password.";
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Function to handle logout
+        logoutButton.addEventListener('click', async () => {
+            await signOut(auth);
+            // The onAuthStateChanged listener will handle the UI update
+        });
+
+        // Function to fetch all necessary dashboard data
+        const fetchDashboardData = async (estateId) => {
+            try {
+                // Example of fetching resident and house data
+                const residentsQuery = query(collection(db, "users"), where("estateId", "==", estateId), where("role", "==", "tenant"));
+                const housesQuery = query(collection(db, "houses"), where("estateId", "==", estateId));
+                
+                const [residentsSnapshot, housesSnapshot] = await Promise.all([
+                    getDocs(residentsQuery),
+                    getDocs(housesQuery)
+                ]);
+
+                const residents = residentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const houses = housesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Populate UI with fetched data
+                populateResidentTable(residents);
+                populateHouseSelect(houses);
+
+            } catch (error) {
+                console.error("Error fetching dashboard data:", error);
+                loadingScreen.innerHTML = `<p class="text-red-500">Error loading data. Please try again.</p>`;
+            } finally {
+                // Hide loading screen after all data is fetched
+                setTimeout(() => {
+                    loadingScreen.classList.add('opacity-0');
+                    setTimeout(() => loadingScreen.classList.add('hidden'), 300);
+                }, 500);
+            }
+        };
+
+        // UI population functions
+        const populateResidentTable = (residents) => {
+            const residentsTableContainer = document.getElementById('residents-table-container');
+            let tableHtml = `<table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">`;
+            residents.forEach(resident => {
+                tableHtml += `<tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${resident.fullName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${resident.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${resident.houseId || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Active</td>
+                </tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            residentsTableContainer.innerHTML = tableHtml;
+        };
+
+        const populateHouseSelect = (houses) => {
+            let optionsHtml = '<option value="">Select a house</option>';
+            houses.forEach(house => {
+                optionsHtml += `<option value="${house.id}">${house.number}</option>`;
+            });
+            residentHouseSelect.innerHTML = optionsHtml;
+        };
+
+        // Firebase Auth State Observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in, get their data
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        userRole = userDoc.data().role;
+                        userEstateId = userDoc.data().estateId;
+
+                        // Check if the user has a valid role for this dashboard
+                        if (userRole === 'admin' || userRole === 'landlord') {
+                            // Hide login, show dashboard and loading screen
+                            loginPage.classList.add('hidden');
+                            dashboardWrapper.classList.remove('hidden');
+                            loadingScreen.classList.remove('hidden', 'opacity-0');
+                            
+                            // Fetch all dashboard data
+                            await fetchDashboardData(userEstateId);
+                            
+                            // Show first content section by default
+                            document.querySelector('.nav-link').classList.add('nav-link-active');
+                            document.querySelector('.content-section').classList.remove('hidden');
+                        } else {
+                            // If the user's role is not admin/landlord, log them out
+                            await signOut(auth);
+                            alert("You do not have permission to access this dashboard.");
+                        }
+                    } else {
+                        // User document not found
+                        console.error("User document not found.");
+                        await signOut(auth);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    await signOut(auth);
+                }
+            } else {
+                // User is signed out
+                loginPage.classList.remove('hidden');
+                dashboardWrapper.classList.add('hidden');
+                userRole = null;
+                userEstateId = null;
+                // Clear any active links and content
+                navLinks.forEach(link => link.classList.remove('nav-link-active'));
+                contentSections.forEach(section => section.classList.add('hidden'));
+            }
+        });
+
+        // Navigation link functionality
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(nav => nav.classList.remove('nav-link-active'));
+                link.classList.add('nav-link-active');
+                
+                const targetId = link.getAttribute('href').substring(1);
+                contentSections.forEach(section => {
+                    if (section.id === targetId) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Modals functionality
+        addResidentButton.addEventListener('click', () => addResidentModal.classList.remove('hidden'));
+        closeAddResidentModal.addEventListener('click', () => addResidentModal.classList.add('hidden'));
+
+        addHouseButton.addEventListener('click', () => addHouseModal.classList.remove('hidden'));
+        closeAddHouseModal.addEventListener('click', () => addHouseModal.classList.add('hidden'));
+
+        addSecurityButton.addEventListener('click', () => addSecurityModal.classList.remove('hidden'));
+        closeAddSecurityModal.addEventListener('click', () => addSecurityModal.classList.add('hidden'));
+
+        // Form submission for adding resident
+        addResidentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = addResidentForm['resident-full-name'].value;
+            const email = addResidentForm['resident-email'].value;
+            const phone = addResidentForm['resident-phone'].value;
+            const houseId = addResidentForm['resident-house'].value;
+
+            try {
+                // Add resident to Firestore
+                await addDoc(collection(db, "users"), {
+                    fullName,
+                    email,
+                    phone,
+                    houseId,
+                    estateId: userEstateId,
+                    role: 'tenant',
+                    createdAt: serverTimestamp(),
+                });
+                alert("Resident added successfully!");
+                addResidentForm.reset();
+                addResidentModal.classList.add('hidden');
+            } catch (error) {
+                console.error("Error adding resident:", error);
+                alert("Failed to add resident. Please try again.");
+            }
+        });
+
+        // Form submission for generating QR code
+        generateCodeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const residentId = residentSelect.value;
+            const visitorName = document.getElementById('visitor-name').value;
+            
+            // Generate a random 6-digit code
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+            try {
+                // Set expiry time for 24 hours
+                const expiryTime = new Date();
+                expiryTime.setHours(expiryTime.getHours() + 24);
+
+                const codeData = {
+                    code: code,
+                    residentId: residentId,
+                    visitorName: visitorName,
+                    estateId: userEstateId,
+                    createdAt: serverTimestamp(),
+                    expiry: expiryTime,
+                    status: 'active',
+                };
+                
+                // Save the visitor code
+                await addDoc(collection(db, `users/${residentId}/visitorCodes`), codeData);
+
+                const qrData = JSON.stringify({
+                    type: 'visitor_code',
+                    code: code,
+                    estateId: userEstateId
+                });
+                
+                qrCanvas.innerHTML = ''; // Clear previous QR code
+                new QRCode(qrCanvas, {
+                    text: qrData,
+                    width: 256,
+                    height: 256,
+                    colorDark : "#1f2937",
+                    colorLight : "#f3f4f6",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                
+                qrExpiryInfo.textContent = `This code expires on ${expiryTime.toLocaleString()}.`;
+                generatedQrCodeDiv.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                alert("Failed to generate QR code. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

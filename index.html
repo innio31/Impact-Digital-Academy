@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impact Digital | Digital Solutions & Professional Training</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+    
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JZ2NR7MKM8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JZ2NR7MKM8');
+</script>
+    
+     <!-- Canonical URL for SEO -->
+    <link rel="canonical" href="https://impactdigitalacademy.com.ng" />
+    <meta property="og:url" content="https://impactdigitalacademy.com.ng" />
+    
+    <!-- Redirect for old Netlify domain users -->
+    <meta http-equiv="refresh" content="3; url=https://impactdigitalacademy.com.ng">
+    
+    <!-- Primary Meta Tags -->
+<meta name="description" content="Impact Digital provides comprehensive digital solutions for businesses and professional IT training through our academy. Services include software development, IT procurement, CBT setup, and company registration.">
+<meta name="keywords" content="digital solutions, IT training, software development, CBT setup, company registration, IT procurement, Nigeria, Ota, Impact Digital Academy, professional training">
+<meta name="author" content="Emmanuel Ademuyiwa">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Facebook (for social media sharing) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://impactdigitalacademy.com.ng/">
+<meta property="og:title" content="Impact Digital | Digital Solutions & Professional Training">
+<meta property="og:description" content="Comprehensive digital solutions for businesses and professional IT training programs in Nigeria.">
+<meta property="og:image" content="https://impactdigitalacademy.com.ng/images/og-image.jpg">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://impactdigitalacademy.com.ng/">
+<meta property="twitter:title" content="Impact Digital | Digital Solutions & Professional Training">
+<meta property="twitter:description" content="Comprehensive digital solutions for businesses and professional IT training programs in Nigeria.">
+<meta property="twitter:image" content="https://impactdigitalacademy.com.ng/images/og-image.jpg">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://impactdigitalacademy.com.ng/">
+
+<!-- Additional SEO Tags -->
+<meta name="language" content="English">
+<meta name="geo.region" content="NG">
+<meta name="geo.placename" content="Ota">
+<meta name="geo.position" content="6.6803;3.2351">
+<meta name="ICBM" content="6.6803, 3.2351">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --services-bg: #f0f9ff;
+            --academy-bg: #fef7e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            color: var(--dark);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.7rem 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Navigation Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active:after {
+            width: 100%;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* Dual CTA Buttons */
+        .header-cta {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .cta-button.accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .cta-button.accent:hover {
+            background-color: var(--accent-dark);
+        }
+
+        .cta-button.outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .cta-button.outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem 5%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .nav-links a:after {
+                display: none;
+            }
+
+            .header-cta {
+                flex-direction: column;
+                margin-left: 0;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 5% 80px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f2ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out 0.3s backwards;
+        }
+
+        .hero-title span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 0.8s ease-out;
+        }
+
+        .image-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .floating-card {
+            position: absolute;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-card.services {
+            bottom: -20px;
+            right: -20px;
+            max-width: 250px;
+            animation-delay: 0.5s;
+        }
+
+        .floating-card.academy {
+            top: -20px;
+            left: -20px;
+            max-width: 250px;
+            animation-delay: 1s;
+        }
+
+        .floating-card i {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .floating-card.services i {
+            color: var(--primary);
+        }
+
+        .floating-card.academy i {
+            color: var(--accent);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .floating-card {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 120px 5% 60px;
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-buttons .cta-button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* Dual Value Proposition */
+        .dual-value {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .value-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-card.services {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        }
+
+        .value-card.academy {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #fef7e5 0%, #ffffff 100%);
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-card.services .value-icon {
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+
+        .value-card.academy .value-icon {
+            color: var(--accent);
+            border: 3px solid var(--accent);
+        }
+
+        .value-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .value-list {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .value-list li {
+            padding: 0.5rem 0;
+            color: var(--gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .value-list li i {
+            color: var(--success);
+            margin-top: 0.2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 5%;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 1.5rem auto 3rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* Services Section */
+        .services {
+            background: var(--services-bg);
+            position: relative;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 5px solid var(--primary);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .service-description {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Academy Section */
+        .academy {
+            background: var(--academy-bg);
+            position: relative;
+        }
+
+        .academy-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .highlight-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .highlight-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .highlight-card i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .academy-cta {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        /* Portal Highlight */
+        .portal-section {
+            padding: 4rem 5%;
+            background: linear-gradient(135deg, var(--dark), #2d3748);
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+        }
+
+        .portal-section .section-title {
+            color: white;
+        }
+
+        .portal-section .section-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .portal-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .portal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .portal-link:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 4rem 5%;
+            background: white;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .contact-info {
+            color: #cbd5e0;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .contact-info i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Social Media */
+        .social-media {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section {
+                padding: 3rem 5%;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .value-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .stat-item {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Floating WhatsApp */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .whatsapp-button:hover + .whatsapp-tooltip {
+            opacity: 1;
+            right: 75px;
+        }
+
+        @media (max-width: 768px) {
+            .floating-whatsapp {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .whatsapp-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .whatsapp-tooltip {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="/" class="logo">
+                <img src="images/logo.png" alt="Impact Digital Logo" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="academy.html">Academy</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="articles.html">Articles</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <div class="header-cta">
+                    <a href="services.html" class="cta-button">
+                        <i class="fas fa-briefcase"></i> Our Services
+                    </a>
+                    <a href="https://portal.impactdigitalacademy.com.ng" class="cta-button accent" target="_blank">
+                        <i class="fas fa-graduation-cap"></i> Student Portal
+                    </a>
+                </div>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">Digital Transformation Partner</span>
+                <h1 class="hero-title">
+                    <span>Impact Digital:</span> Where Technology Meets Excellence
+                </h1>
+                <p class="hero-subtitle">
+                    We provide comprehensive digital solutions for businesses while empowering the next generation of tech professionals through our academy. Your journey to digital excellence starts here.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#services" class="cta-button">
+                        <i class="fas fa-laptop-code"></i> Explore Services
+                    </a>
+                    <a href="#academy" class="cta-button outline">
+                        <i class="fas fa-graduation-cap"></i> View Courses
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Impact Digital Team">
+                </div>
+                <div class="floating-card services">
+                    <i class="fas fa-cogs"></i>
+                    <h4>Digital Solutions</h4>
+                    <p>Custom software, IT procurement, system integration</p>
+                </div>
+                <div class="floating-card academy">
+                    <i class="fas fa-user-graduate"></i>
+                    <h4>Professional Training</h4>
+                    <p>Programming, certifications, career development</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dual Value Proposition -->
+    <section class="dual-value" id="dual-value">
+        <h2 class="section-title">Two Pillars of Excellence</h2>
+        <p class="section-subtitle">We operate through two interconnected divisions to deliver complete digital value</p>
+        
+        <div class="value-grid">
+            <div class="value-card services">
+                <div class="value-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3 class="value-title">Impact Digital Services</h3>
+                <p>Comprehensive digital solutions for businesses and organizations</p>
+                <ul class="value-list">
+                    <li><i class="fas fa-check-circle"></i> Custom Software Development</li>
+                    <li><i class="fas fa-check-circle"></i> IT Procurement & Consultancy</li>
+                    <li><i class="fas fa-check-circle"></i> CBT Setup (Online/Offline)</li>
+                    <li><i class="fas fa-check-circle"></i> Company (CAC) Registration</li>
+                    <li><i class="fas fa-check-circle"></i> System Integration & Support</li>
+                </ul>
+                <a href="#services" class="cta-button">Explore Services</a>
+            </div>
+            
+            <div class="value-card academy">
+                <div class="value-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="value-title">Impact Digital Academy</h3>
+                <p>Professional IT training and career development programs</p>
+                <ul class="value-list">
+                    <li><i class="fas fa-check-circle"></i> Programming & Web Development</li>
+                    <li><i class="fas fa-check-circle"></i> Data Science & Analytics</li>
+                    <li><i class="fas fa-check-circle"></i> Cybersecurity Training</li>
+                    <li><i class="fas fa-check-circle"></i> Digital Marketing Courses</li>
+                    <li><i class="fas fa-check-circle"></i> Professional Certifications</li>
+                </ul>
+                <a href="#academy" class="cta-button accent">View Courses</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section services" id="services">
+        <h2 class="section-title">Our Digital Services</h2>
+        <p class="section-subtitle">Comprehensive solutions to drive your digital transformation and business growth</p>
+        
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-laptop-medical"></i>
+                </div>
+                <h3 class="service-title">CBT Setup & Management</h3>
+                <p class="service-description">Complete Computer-Based Test solutions for institutions, including offline and online systems with secure administration.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3 class="service-title">IT Procurement</h3>
+                <p class="service-description">End-to-end IT equipment sourcing, deployment, and maintenance services for businesses and educational institutions.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="service-title">Software Development</h3>
+                <p class="service-description">Custom web and mobile applications, enterprise software, and digital solutions tailored to your specific needs.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="service-title">Company Registration</h3>
+                <p class="service-description">Complete CAC business registration services, from name reservation to certificate collection and post-registration compliance.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="service-title">IT Consultancy</h3>
+                <p class="service-description">Expert advice on technology strategy, digital transformation, system architecture, and IT infrastructure planning.</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3 class="service-title">System Integration</h3>
+                <p class="service-description">Seamless integration of disparate systems, software, and platforms to create unified, efficient operational environments.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academy Section -->
+    <section class="section academy" id="academy">
+        <h2 class="section-title">Impact Digital Academy</h2>
+        <p class="section-subtitle">Professional IT training programs designed for career growth and industry relevance</p>
+        
+        <div class="academy-highlights">
+            <div class="highlight-card">
+                <i class="fas fa-code"></i>
+                <h3>Programming</h3>
+                <p>Full-stack development, mobile apps, and software engineering</p>
+            </div>
+            
+            <div class="highlight-card">
+                <i class="fas fa-database"></i>
+                <h3>Data Science</h3>
+                <p>Data analytics, machine learning, and business intelligence</p>
+            </div>
+            
+            <div class="highlight-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Cybersecurity</h3>
+                <p>Ethical hacking, network security, and digital forensics</p>
+            </div>
+            
+            <div class="highlight-card">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Digital Marketing</h3>
+                <p>SEO, social media marketing, and digital advertising</p>
+            </div>
+        </div>
+        
+        <div class="academy-cta">
+            <a href="https://portal.impactdigitalacademy.com.ng" class="cta-button" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Visit Student Portal
+            </a>
+        </div>
+    </section>
+
+    <!-- Portal Highlight -->
+    <section class="portal-section">
+        <h2 class="section-title">Active Learning Portal</h2>
+        <p class="section-subtitle">Our students are already learning and growing through our comprehensive online platform</p>
+        
+        <div class="portal-card">
+            <h3>Impact Digital Academy Portal</h3>
+            <p>Access course materials, submit assignments, track progress, and connect with instructors through our dedicated learning management system.</p>
+            <a href="https://portal.impactdigitalacademy.com.ng" class="portal-link" target="_blank">
+                <i class="fas fa-graduation-cap"></i> Go to Student Portal
+            </a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">1000+</div>
+            <div class="stat-label">Students Trained</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Client Organizations</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Satisfaction Rate</div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Transform Your Digital Journey?</h2>
+            <p class="cta-subtitle">Whether you need digital solutions for your business or professional training for your career, we're here to help you succeed.</p>
+            <div class="hero-buttons">
+                <a href="mailto:services@impactdigitalacademy.com.ng" class="cta-button">
+                    <i class="fas fa-envelope"></i> Email Us
+                </a>
+                <a href="tel:+2349035448295" class="cta-button outline">
+                    <i class="fas fa-phone"></i> Call Now
+                </a>
+                <a href="https://wa.me/+2349051586024" class="cta-button accent" target="_blank">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Impact Digital</h3>
+                <p>Your trusted partner for digital solutions and professional IT training. Empowering businesses and individuals through technology.</p>
+                <div class="social-media">
+                    <a href="https://www.facebook.com/share/16exnb9VsU/" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/DigSkills" class="social-link" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/dig-skills" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com/impactdigital" class="social-link" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#services"><i class="fas fa-briefcase"></i> Services</a></li>
+                    <li><a href="#academy"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                    <li><a href="#about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Our Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#services"><i class="fas fa-laptop-medical"></i> CBT Setup</a></li>
+                    <li><a href="#services"><i class="fas fa-shopping-cart"></i> IT Procurement</a></li>
+                    <li><a href="#services"><i class="fas fa-code"></i> Software Development</a></li>
+                    <li><a href="#services"><i class="fas fa-building"></i> Company Registration</a></li>
+                    <li><a href="#services"><i class="fas fa-headset"></i> IT Consultancy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> dig2skills@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +234 903 544 8295</p>
+                    <p><i class="fas fa-whatsapp"></i> +234 905 158 6024</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ota, Nigeria</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+    <p>&copy; <span id="currentYear"></span> Impact Digital (Solutions & Academy). All rights reserved. | CAC Registered Business</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Website: impactdigitalacademy.com.ng | Portal: portal.impactdigitalacademy.com.ng</p>
+</div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <div class="floating-whatsapp">
+        <a href="https://wa.me/+2349051586024" class="whatsapp-button" target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <div class="whatsapp-tooltip">Chat with us!</div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href') === '#') return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Update active nav link on scroll
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.service-card, .highlight-card, .stat-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+        // Set current year in footer
+document.addEventListener('DOMContentLoaded', function() {
+    const yearSpan = document.getElementById('currentYear');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+});
+    </script>
+</body>
+
+</html>

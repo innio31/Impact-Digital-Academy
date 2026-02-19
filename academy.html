@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impact Digital Academy | Professional IT Training Programs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --online-bg: #f0f9ff;
+            --onsite-bg: #fef7e5;
+            --school-bg: #f0fdf4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            color: var(--dark);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.7rem 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Navigation Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active:after {
+            width: 100%;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* CTA Buttons */
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .cta-button.accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .cta-button.accent:hover {
+            background-color: var(--accent-dark);
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem 5%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .nav-links a:after {
+                display: none;
+            }
+        }
+
+        /* Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Academy Hero */
+        .academy-hero {
+            padding: 140px 5% 80px;
+            background: linear-gradient(135deg, var(--accent) 0%, #fbbf24 100%);
+            color: var(--dark);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: white;
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--dark);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 5%;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 1.5rem auto 3rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* Training Models */
+        .training-models {
+            padding: 5rem 5%;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .model-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid transparent;
+        }
+
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .model-card.online {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        }
+
+        .model-card.onsite {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #fef7e5 0%, #ffffff 100%);
+        }
+
+        .model-card.school {
+            border-color: var(--success);
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        }
+
+        .model-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .online .model-icon {
+            background: var(--primary);
+        }
+
+        .onsite .model-icon {
+            background: var(--accent);
+        }
+
+        .school .model-icon {
+            background: var(--success);
+        }
+
+        .model-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .model-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .online .model-tag {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .onsite .model-tag {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-dark);
+        }
+
+        .school .model-tag {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .model-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .model-features li {
+            padding: 0.5rem 0;
+            color: var(--gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .model-features li i {
+            color: var(--success);
+            margin-top: 0.2rem;
+        }
+
+        .model-location {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .model-location h4 {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-location p {
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        /* Course Categories */
+        .course-categories {
+            background: var(--light);
+            padding: 5rem 5%;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .category-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Why Choose Us */
+        .why-choose-us {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .benefit-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .benefit-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* Portal CTA */
+        .portal-cta {
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, var(--dark), #2d3748);
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+        }
+
+        .portal-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .portal-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .portal-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .portal-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+        }
+
+        .portal-stat {
+            text-align: center;
+        }
+
+        .portal-stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .portal-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .portal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .portal-link:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-links a i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .contact-info {
+            color: #cbd5e0;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .contact-info i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Social Media */
+        .social-media {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        /* Floating WhatsApp */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .academy-hero {
+                padding: 120px 5% 60px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 3rem 5%;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .models-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .portal-title {
+                font-size: 2rem;
+            }
+
+            .portal-stats {
+                gap: 2rem;
+            }
+
+            .portal-stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .portal-cta {
+                margin: 2rem 5%;
+                border-radius: 15px;
+                padding: 4rem 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="Impact Digital Logo" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="academy.html" class="active">Academy</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <a href="https://portal.impactdigitalacademy.com.ng" class="cta-button accent" target="_blank">
+                        <i class="fas fa-graduation-cap"></i> Student Portal
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Academy Hero -->
+    <section class="academy-hero">
+        <span class="hero-badge">Professional IT Training</span>
+        <h1 class="hero-title">Impact Digital Academy</h1>
+        <p class="hero-subtitle">Choose from three flexible learning models designed to fit your schedule, location, and learning preferences. From online convenience to on-site classroom experience.</p>
+        <div class="hero-buttons">
+            <a href="#training-models" class="cta-button">
+                <i class="fas fa-graduation-cap"></i> View Learning Models
+            </a>
+            <a href="#portal-cta" class="cta-button" style="background: white; color: var(--dark);">
+                <i class="fas fa-external-link-alt"></i> Go to Portal
+            </a>
+        </div>
+    </section>
+
+    <!-- Training Models -->
+    <section class="training-models" id="training-models">
+        <h2 class="section-title">Our Training Models</h2>
+        <p class="section-subtitle">We offer three distinct learning approaches to cater to different needs and preferences. Choose what works best for you.</p>
+        
+        <div class="models-grid">
+            <!-- Online Training -->
+            <div class="model-card online">
+                <div class="model-icon">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <h3 class="model-title">Online Training</h3>
+                <span class="model-tag">Virtual Learning</span>
+                <p>Learn from anywhere in the world with our comprehensive online training platform. Perfect for busy professionals and remote learners.</p>
+                
+                <ul class="model-features">
+                    <li><i class="fas fa-check-circle"></i> Live interactive sessions</li>
+                    <li><i class="fas fa-check-circle"></i> Recorded lectures available 24/7</li>
+                    <li><i class="fas fa-check-circle"></i> One-on-one mentorship</li>
+                    <li><i class="fas fa-check-circle"></i> Access to learning resources</li>
+                    <li><i class="fas fa-check-circle"></i> Flexible scheduling options</li>
+                </ul>
+                
+                <div class="model-cta">
+                    <a href="#portal-cta" class="cta-button">
+                        <i class="fas fa-play-circle"></i> Start Online Learning
+                    </a>
+                </div>
+            </div>
+
+            <!-- Onsite Training -->
+            <div class="model-card onsite">
+                <div class="model-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="model-title">Onsite Training</h3>
+                <span class="model-tag">In-person Classes</span>
+                <p>Experience hands-on learning at our physical training center. Perfect for those who prefer classroom interaction and practical sessions.</p>
+                
+                <ul class="model-features">
+                    <li><i class="fas fa-check-circle"></i> Physical classroom environment</li>
+                    <li><i class="fas fa-check-circle"></i> Hands-on practical sessions</li>
+                    <li><i class="fas fa-check-circle"></i> Direct instructor interaction</li>
+                    <li><i class="fas fa-check-circle"></i> Networking opportunities</li>
+                    <li><i class="fas fa-check-circle"></i> Professional lab equipment</li>
+                </ul>
+                
+                <div class="model-location">
+                    <h4><i class="fas fa-map-marker-alt"></i> Training Location:</h4>
+                    <p>Plot 6, Wema Bank Estate, Promise Avenue, Ijaba, Iyesi, Ota, Ogun State</p>
+                </div>
+                
+                <div class="model-cta">
+                    <a href="contact.html" class="cta-button accent">
+                        <i class="fas fa-calendar-alt"></i> Schedule Visit
+                    </a>
+                </div>
+            </div>
+
+            <!-- School Based Training -->
+            <div class="model-card school">
+                <div class="model-icon">
+                    <i class="fas fa-school"></i>
+                </div>
+                <h3 class="model-title">School Based Programs</h3>
+                <span class="model-tag">Institutional Partnership</span>
+                <p>We partner with schools to integrate digital skills into their curriculum, preparing students for the future workforce.</p>
+                
+                <ul class="model-features">
+                    <li><i class="fas fa-check-circle"></i> Custom curriculum development</li>
+                    <li><i class="fas fa-check-circle"></i> On-site training at your school</li>
+                    <li><i class="fas fa-check-circle"></i> Professional certification for students</li>
+                    <li><i class="fas fa-check-circle"></i> Teacher training programs</li>
+                    <li><i class="fas fa-check-circle"></i> Digital literacy integration</li>
+                </ul>
+                
+                <div class="model-location">
+                    <h4><i class="fas fa-handshake"></i> For Schools:</h4>
+                    <p>We bring digital skills training directly to your institution's premises</p>
+                </div>
+                
+                <div class="model-cta">
+                    <a href="contact.html" class="cta-button" style="background: var(--success);">
+                        <i class="fas fa-users"></i> Request Partnership
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Categories -->
+    <section class="course-categories" id="courses">
+        <h2 class="section-title">Our Course Categories</h2>
+        <p class="section-subtitle">Comprehensive training programs designed to build in-demand digital skills</p>
+        
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="category-title">Programming & Development</h3>
+                <p class="category-description">Web development, mobile apps, software engineering, and full-stack programming courses.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="category-title">Data Science & Analytics</h3>
+                <p class="category-description">Data analysis, machine learning, business intelligence, and data visualization.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="category-title">Cybersecurity</h3>
+                <p class="category-description">Network security, ethical hacking, digital forensics, and security management.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3 class="category-title">Digital Marketing</h3>
+                <p class="category-description">SEO, social media marketing, content strategy, and digital advertising.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-laptop-medical"></i>
+                </div>
+                <h3 class="category-title">CBT & IT Fundamentals</h3>
+                <p class="category-description">Computer-based test preparation, basic IT skills, and office productivity tools.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3 class="category-title">Professional Certifications</h3>
+                <p class="category-description">Industry-recognized certifications for career advancement and skill validation.</p>
+                <a href="#portal-cta" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Explore Courses
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-choose-us" id="benefits">
+        <h2 class="section-title">Why Choose Impact Digital Academy?</h2>
+        <p class="section-subtitle">We provide exceptional training experiences that lead to real-world results</p>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="benefit-title">Expert Instructors</h3>
+                <p class="benefit-description">Learn from industry professionals with years of practical experience and teaching expertise.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3 class="benefit-title">Career Support</h3>
+                <p class="benefit-description">Get career guidance, job placement assistance, and internship opportunities after training.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h3 class="benefit-title">Hands-on Projects</h3>
+                <p class="benefit-description">Work on real-world projects that build your portfolio and practical skills.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3 class="benefit-title">Industry Certification</h3>
+                <p class="benefit-description">Earn recognized certificates that validate your skills and enhance your employability.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="benefit-title">Community Network</h3>
+                <p class="benefit-description">Join a community of learners, alumni, and industry professionals for networking.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-laptop-house"></i>
+                </div>
+                <h3 class="benefit-title">Flexible Learning</h3>
+                <p class="benefit-description">Choose from online, onsite, or school-based programs that fit your schedule.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portal CTA -->
+    <section class="portal-cta" id="portal-cta">
+        <div class="portal-content">
+            <h2 class="portal-title">Ready to Start Learning?</h2>
+            <p class="portal-subtitle">Access our comprehensive learning portal to browse courses, enroll in programs, track your progress, and connect with instructors. Join hundreds of successful graduates who have transformed their careers with Impact Digital Academy.</p>
+            
+            <div class="portal-stats">
+                <div class="portal-stat">
+                    <div class="portal-stat-number">500+</div>
+                    <div class="portal-stat-label">Active Students</div>
+                </div>
+                <div class="portal-stat">
+                    <div class="portal-stat-number">50+</div>
+                    <div class="portal-stat-label">Courses Available</div>
+                </div>
+                <div class="portal-stat">
+                    <div class="portal-stat-number">98%</div>
+                    <div class="portal-stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+            
+            <a href="https://portal.impactdigitalacademy.com.ng" class="portal-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Go to Student Portal
+            </a>
+            
+            <p style="margin-top: 2rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                Already have an account? <a href="https://portal.impactdigitalacademy.com.ng" style="color: var(--accent); text-decoration: none; font-weight: 600;">Login here</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Impact Digital Academy</h3>
+                <p>Professional IT training programs designed to build in-demand digital skills and prepare you for the future workforce.</p>
+                <div class="social-media">
+                    <a href="https://www.facebook.com/share/16exnb9VsU/" class="social-link" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://x.com/DigSkills" class="social-link" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/dig-skills" class="social-link" target="_blank">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com/impactdigital" class="social-link" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Learning Models</h3>
+                <ul class="footer-links">
+                    <li><a href="#training-models"><i class="fas fa-laptop"></i> Online Training</a></li>
+                    <li><a href="#training-models"><i class="fas fa-building"></i> Onsite Training</a></li>
+                    <li><a href="#training-models"><i class="fas fa-school"></i> School Programs</a></li>
+                    <li><a href="#courses"><i class="fas fa-graduation-cap"></i> Course Catalog</a></li>
+                    <li><a href="#benefits"><i class="fas fa-star"></i> Why Choose Us</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Academy</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> admin@impactdigitalacademy.com.ng</p>
+                    <p><i class="fas fa-phone"></i> +234 903 544 8295</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Plot 6, Wema Bank Estate, Promise Avenue</p>
+                    <p><i class="fas fa-map-pin"></i> Ijaba, Iyesi, Ota, Ogun State</p>
+                    <p><i class="fas fa-external-link-alt"></i> Portal: portal.impactdigitalacademy.com.ng</p>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="services.html"><i class="fas fa-briefcase"></i> Digital Solutions</a></li>
+                    <li><a href="academy.html"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                    <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> Impact Digital Academy. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Website: impactdigitalacademy.com.ng | Portal: portal.impactdigitalacademy.com.ng</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <div class="floating-whatsapp">
+        <a href="https://wa.me/+2349051586024" class="whatsapp-button" target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script>
+        // Set current year in footer
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearSpan = document.getElementById('currentYear');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href') === '#') return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.model-card, .category-card, .benefit-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

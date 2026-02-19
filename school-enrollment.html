@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigSkills - School Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* Changed font to Inter */
+            border-radius: 8px; /* Added rounded corners to all elements */
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom-left-radius: 15px; /* Added rounded corners */
+            border-bottom-right-radius: 15px; /* Added rounded corners */
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .logo img {
+            height: 40px;
+            border-radius: 50%; /* Make logo image round */
+        }
+        
+        .home-btn {
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s ease; /* Added transition */
+        }
+        
+        .home-btn:hover {
+            background-color: #fbbf24; /* Darken on hover */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #64748b;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center; /* Center content when wrapped */
+        }
+        
+        .services-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .services-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        /* Services Grid */
+        .services-container {
+            padding: 0 5% 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted minmax for better responsiveness */
+            gap: 2.5rem;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        
+        .service-image {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .service-card:hover .service-image img {
+            transform: scale(1.05);
+        }
+        
+        .service-content {
+            padding: 1.8rem;
+        }
+        
+        .service-name {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .service-description {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .service-features {
+            margin-bottom: 1.8rem;
+            list-style: none; /* Remove default list style */
+        }
+        
+        .service-features li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            color: #475569;
+        }
+        
+        .service-features i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .learn-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .learn-more:hover {
+            color: var(--secondary);
+            gap: 0.7rem;
+        }
+        
+        .learn-more i {
+            transition: all 0.3s ease;
+        }
+
+        .registration-form {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex; /* Use flexbox for centering iframe */
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center horizontally */
+        }
+        
+        .registration-form h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Styling for the embedded Google Form iframe */
+        .google-form-embed {
+            width: 100%; /* Make iframe take full width of its container */
+            height: 2000px; /* Increased height to cover more space */
+            border: none; /* Remove iframe border */
+            border-radius: 8px; /* Apply rounded corners to the iframe */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Optional: add a subtle shadow */
+            margin-bottom: 1.5rem; /* Space below the iframe */
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center; /* Center text for the button */
+            text-decoration: none; /* Remove underline for anchor tag acting as button */
+            display: block; /* Make it a block element to take full width */
+        }
+        
+        .btn:hover {
+            background-color: #fbbf24;
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr; /* Stack service cards on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="DigSkills Logo" onerror="this.onerror=null;this.src='https://placehold.co/40x40/2563eb/ffffff?text=DS';">
+            <span>DigSkills Academy</span>
+        </div>
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-home"></i> Home
+        </a>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>School Registration</h1>
+            <p>Register your school to bring world-class digital skills training to your students. Fill out the form below to get started.</p>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="services-section">
+                <h2>Our School Services</h2>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-image">
+                            <img src="images/klacify.png" alt="Klacify" onerror="this.onerror=null;this.src='https://placehold.co/400x220/f59e0b/ffffff?text=Klacify';">
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-name">Klacify</h3>
+                            <p class="service-description">Monitor Your School From Home</p>
+                            <ul class="service-features">
+                                <li><i class="fas fa-check"></i> Staff/Student Digital Attendance</li>
+                                <li><i class="fas fa-check"></i> Student Portal</li>
+                                <li><i class="fas fa-check"></i> Automatic Report Sheet Generation</li>
+                            </ul>
+                            <a href="klacify.html" class="learn-more">Explore solutions <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <img src="images/aiineducation.png" alt="AI in Education" onerror="this.onerror=null;this.src='https://placehold.co/400x220/f59e0b/ffffff?text=AI+in+Education';">
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-name">Educators Training</h3>
+                            <p class="service-description">Educators Training on AI in Education</p>
+                            <ul class="service-features">
+                                <li><i class="fas fa-check"></i> AI-driven lesson planning & automation</li>
+                                <li><i class="fas fa-check"></i> Personalized learning with adaptive AI tools</li>
+                                <li><i class="fas fa-check"></i> Ethical AI integration & student engagement</li>
+                            </ul>
+                            <a href="educators-training.html" class="learn-more">Explore solutions <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-content">
+                            <h3 class="service-name"><i class="fas fa-laptop-code"></i> Comprehensive Digital Curriculum</h3>
+                            <p class="service-description">We provide a complete digital skills curriculum aligned with modern educational standards, covering everything from basic computer literacy to advanced programming.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-content">
+                            <h3 class="service-name"><i class="fas fa-chalkboard-teacher"></i> Certified Instructors</h3>
+                            <p class="service-description">Our team of certified and experienced instructors deliver engaging, hands-on training tailored to different age groups and skill levels.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-content">
+                            <h3 class="service-name"><i class="fas fa-certificate"></i> Certification Programs</h3>
+                            <p class="service-description">Students receive recognized certifications upon completion of courses, enhancing their academic and professional profiles.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-content">
+                            <h3 class="service-name"><i class="fas fa-calendar-alt"></i> Flexible Scheduling</h3>
+                            <p class="service-description">We work with your school's timetable to provide training sessions that don't disrupt regular academic activities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="registration-form">
+                <h2>Register Your School</h2>
+                <!-- Google Form Embedded Here -->
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeXBOH0DRJPHxvsHfN751Sj5-6HDEDBNycjLZMaG3ddoiMyTw/viewform?usp=header" class="google-form-embed" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+                <p style="margin-top: 1rem; text-align: center; color: #475569;">
+                    After successfully submitting the form above, click the button below to generate your curriculum!
+                </p>
+                <a href="curriculum-planner.html" class="btn" style="margin-top: 1rem;">
+                    Generate Curriculum
+                </a>
+                <a href="https://docs.google.com/document/d/e/2PACX-1vSkm-mV8BqIgwxQKflXlsNLqDYM4HFMhr8nRhMEl8wU2YjzkrLsCKfBECKxA-945on32o1BjgNyYxiD/pub" class="btn" style="margin-top: 1rem;">
+                    Operational Policy
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

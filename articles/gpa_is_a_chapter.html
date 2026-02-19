@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your GPA Is A Chapter, Not The Whole Story | Impact Digital</title>
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT & Career Articles | Impact Digital Knowledge Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Expert IT articles, career guidance, and digital transformation insights from Impact Digital. Bi-weekly content to help professionals, students, and organizations thrive in the digital age.">
+    <meta name="keywords" content="IT articles, career growth, digital transformation, tech tutorials, programming, cybersecurity, data science, professional development, Nigeria tech">
+    <meta name="author" content="Impact Digital Academy">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="IT & Career Articles | Impact Digital Knowledge Hub">
+    <meta property="og:description" content="Expert IT articles, career guidance, and digital transformation insights. Bi-weekly content for professionals, students, and organizations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://impactdigitalacademy.com.ng/articles">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://impactdigitalacademy.com.ng/articles">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --card-bg: #ffffff;
+            --section-bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            color: var(--dark);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 0.7rem 5%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Article Hero */
+        .article-hero {
+            padding: 140px 5% 80px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .article-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .article-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-title {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 99;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Table of Contents */
+        .toc-container {
+            position: fixed;
+            top: 120px;
+            right: 30px;
+            width: 280px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: none;
+            z-index: 90;
+        }
+
+        .toc-container.active {
+            display: block;
+        }
+
+        .toc-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.7rem;
+            padding-left: 1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .toc-item.active {
+            border-left-color: var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .toc-item a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .toc-item.active a {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .toc-item:hover a {
+            color: var(--dark);
+        }
+
+        /* Article Content */
+        .article-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+            position: relative;
+        }
+
+        .article-intro {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            background: var(--section-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .skill-section {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+            font-weight: 800;
+            color: rgba(37, 99, 235, 0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--section-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .skill-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        .skill-definition {
+            background: var(--section-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .definition-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .why-matters, .example, .fact, .illustration {
+            margin-bottom: 1.5rem;
+        }
+
+        .subsection-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .subsection-title i {
+            color: var(--accent);
+        }
+
+        /* Interactive Quiz */
+        .quiz-section {
+            background: linear-gradient(135deg, var(--dark), #2d3748);
+            color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .quiz-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            padding: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .quiz-result {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        /* Skills Assessment */
+        .assessment-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .assessment-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .skill-meter {
+            margin-bottom: 2rem;
+        }
+
+        .skill-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-meter-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-meter-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* Conclusion */
+        .conclusion {
+            background: var(--section-bg);
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .conclusion:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
+            border-radius: 50%;
+        }
+
+        .conclusion-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        /* CTA Buttons */
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .cta-button.accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .cta-button.accent:hover {
+            background-color: var(--accent-dark);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .toc-container {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem 5%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .article-hero {
+                padding: 120px 5% 60px;
+            }
+
+            .article-title {
+                font-size: 2.2rem;
+            }
+
+            .skill-section {
+                padding: 1.5rem;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .article-title {
+                font-size: 1.8rem;
+            }
+
+            .skill-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Floating TOC Toggle */
+        .toc-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toc-toggle:hover {
+            transform: scale(1.1);
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="index.html" class="logo">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../articles.html">Articles</a></li>
+                <li><a href="../academy.html">Academy</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc-container" id="tocContainer">
+        <h3 class="toc-title"><i class="fas fa-list"></i> Contents</h3>
+        <ul class="toc-list" id="tocList">
+            <!-- Populated by JavaScript -->
+        </ul>
+    </div>
+
+    <!-- Floating TOC Toggle -->
+    <div class="toc-toggle" id="tocToggle">
+        <i class="fas fa-list"></i>
+    </div>
+
+    <!-- Article Hero -->
+    <section class="article-hero">
+        <div class="article-hero-content">
+            <span class="article-badge">Career Development</span>
+            <h1 class="article-title">Your GPA Is A Chapter, Not The Whole Story</h1>
+            <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 2rem; opacity: 0.9;">
+                6 Skills That Define Your Future More Than Your Grades
+            </p>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> January 28, 2026</span>
+                <span><i class="far fa-clock"></i> 8 min read</span>
+                <span><i class="fas fa-tag"></i> Career Growth</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Article Content -->
+    <div class="article-content">
+        <!-- Introduction -->
+        <div class="article-intro">
+            <p>For decades, the Grade Point Average stood as the undisputed metric of potential. It was a neat number, a tidy summary of your worth on paper—a golden ticket to the next opportunity.</p>
+            <p>But step into today's dynamic job market, and that number suddenly feels... quiet. It whispers when you need to shout. Because while a strong GPA may still open doors—especially for entry-level roles, scholarships, and academic pathways—it is context, not destiny. Grades show you have discipline. Skills show you have readiness.</p>
+            <p>We are navigating a world reshaped by rapid change, automation, and complex global challenges. Employers are no longer just asking, "What did you score?" They are urgently asking, "What can you do with what you know, and who are you becoming?"</p>
+            <p>Here are the six skills that answer that question—the capabilities that matter more than your GPA in building a resilient and impactful career.</p>
+        </div>
+
+        <!-- Skill Sections -->
+        <div id="skill1" class="skill-section">
+            <div class="skill-number">1</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h2 class="skill-title">Emotional Intelligence: The Skill No Transcript Shows</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>EQ is the ability to identify, understand, and manage your own emotions and to recognize and influence the emotions of others. It comprises self-awareness, self-regulation, motivation, empathy, and social skills.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>A perfect GPA doesn't guarantee you can handle client criticism, mediate team conflict, or inspire direct reports. EQ is the bedrock of collaboration, leadership, and client relations.</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>Consider a project manager facing a missed deadline. A low-EQ response might involve assigning blame. A high-EQ leader recognizes team stress, facilitates a blameless post-mortem to understand systemic issues, and recalibrates timelines while acknowledging effort—maintaining morale and trust.</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>A study by TalentSmart found that EQ accounts for 58% of performance in all types of jobs and that 90% of top performers are high in emotional intelligence. Furthermore, research published in the Journal of Vocational Behaviour links high EQ to better stress management and job satisfaction.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Think of EQ as the operating system for workplace relationships. Hard skills are the apps you run; without a stable, sophisticated OS, even the best apps will crash under pressure.</p>
+            </div>
+        </div>
+
+        <div id="skill2" class="skill-section">
+            <div class="skill-number">2</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h2 class="skill-title">Communication: Knowing Isn't Enough, You Must Translate</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>Effective communication is the ability to translate complex ideas into clear, compelling, and actionable information across various mediums—written, verbal, and visual—tailored to your audience.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>You may have aced an engineering exam, but can you explain a technical failure to a non-technical executive in a way that builds confidence rather than panic? Can you write a project proposal that secures funding?</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>A data analyst doesn't just dump a spreadsheet on their manager. They synthesize key trends into a one-page brief with a clear narrative: "Sales in Region A dropped 15% last quarter. Our data suggests it's due to X. I recommend we test Y solution, which could potentially recover 10% of that loss."</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>According to a report by the National Association of Colleges and Employers (NACE), communication skills consistently rank as the #1 attribute employers seek on a candidate's resume. A survey by LinkedIn also identified it as the most common skills gap.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Knowledge is a locked warehouse of value. Communication is the key that unlocks it and delivers that value to others.</p>
+            </div>
+        </div>
+
+        <div id="skill3" class="skill-section">
+            <div class="skill-number">3</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h2 class="skill-title">Adaptability: The New Intelligence</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>The capacity to adjust thinking, behaviour, and approach in response to new information, changing conditions, or unexpected obstacles. It's a mindset of curiosity and resilience.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>The half-life of skills is shrinking. A technical skill learned in college may be obsolete in a few years. Your ability to learn new things quickly is your greatest career insurance.</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>When the pandemic hit, restaurant servers who adapted by mastering online reservation systems, POS platforms for takeout, and social media marketing for community engagement survived and thrived, while those who waited for a "return to normal" often struggled.</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>The World Economic Forum's Future of Jobs Report 2023 states that adaptability and flexibility are among the top skills for workers. They estimate that 44% of workers' core skills will be disrupted in the next five years.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Consider two plants: one is rigid, beautiful, but rooted in a single pot (static knowledge). The other is a vine, able to grow, climb, and find new sources of light (adaptability). In a storm or when the light shifts, which is more likely to survive?</p>
+            </div>
+        </div>
+
+        <!-- Interactive Quiz -->
+        <div class="quiz-section">
+            <h2 class="quiz-title">Quick Self-Assessment</h2>
+            <p class="quiz-question" id="quizQuestion">Which skill do you think is most important for career success in today's job market?</p>
+            
+            <div class="quiz-options" id="quizOptions">
+                <div class="quiz-option" data-value="eq">
+                    <i class="fas fa-heart fa-2x" style="margin-bottom: 10px;"></i>
+                    <h3>Emotional Intelligence</h3>
+                    <p>Understanding and managing emotions</p>
+                </div>
+                <div class="quiz-option" data-value="adaptability">
+                    <i class="fas fa-sync-alt fa-2x" style="margin-bottom: 10px;"></i>
+                    <h3>Adaptability</h3>
+                    <p>Learning and adjusting to change</p>
+                </div>
+                <div class="quiz-option" data-value="critical-thinking">
+                    <i class="fas fa-brain fa-2x" style="margin-bottom: 10px;"></i>
+                    <h3>Critical Thinking</h3>
+                    <p>Analyzing information and solving problems</p>
+                </div>
+                <div class="quiz-option" data-value="communication">
+                    <i class="fas fa-comments fa-2x" style="margin-bottom: 10px;"></i>
+                    <h3>Communication</h3>
+                    <p>Effectively sharing ideas and information</p>
+                </div>
+            </div>
+            
+            <button class="cta-button accent" id="submitQuiz">Submit Answer</button>
+            
+            <div class="quiz-result" id="quizResult">
+                <h3>Your Insight</h3>
+                <p id="resultText"></p>
+                <p style="margin-top: 1rem;"><strong>Remember:</strong> All six skills work together to create a complete professional profile!</p>
+            </div>
+        </div>
+
+        <!-- Continue with Skill 4, 5, 6 -->
+        <div id="skill4" class="skill-section">
+            <div class="skill-number">4</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h2 class="skill-title">Critical Thinking: When Google Isn't Enough</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>The objective analysis and evaluation of an issue or information set to form a reasoned judgment. It involves questioning assumptions, identifying biases, discerning causality, and synthesizing disparate data.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>In an age of AI-generated content and rampant misinformation, the ability to think critically is a superpower. It's the difference between using data and being used by it.</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>A marketing team sees a viral social media trend. A non-critical thinker might say, "Let's jump on this!" A critical thinker asks: "Does this align with our brand voice? Who is the actual audience engaging with this trend? What is the potential risk vs. reward? Is this a durable trend or a fleeting meme?"</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>A survey by the American Association of Colleges and Universities found that 93% of employers rate critical thinking as more important than a candidate's undergraduate major.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Google provides answers. Critical thinking provides understanding and judgment. It's the difference between having a map and knowing how to navigate.</p>
+            </div>
+        </div>
+
+        <div id="skill5" class="skill-section">
+            <div class="skill-number">5</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h2 class="skill-title">Work Ethic and Reliability: The Underrated Advantage</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>The commitment to consistently deliver quality work, meet obligations, take ownership, and demonstrate dedication. It's about being someone others can depend on absolutely.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>A 4.0 GPA indicates you can meet syllabi deadlines. Reliability shows you can meet real-world commitments where the stakes are higher.</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>Two junior analysts are given a research task. One delivers a sloppy, late document with several errors. The other delivers a polished, on-time report, has proactively identified one potential data inconsistency, and offers a brief summary upfront. The second analyst instantly becomes a "go-to" person.</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>In a survey by HR.com, reliability/dependability was ranked as the most important character trait for employees. Trust, built through consistent delivery, reduces organisational friction and managerial overhead.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Your talent gets you in the door. Your reliability gets you invited to stay, to lead, and to be entrusted with greater responsibility. It's the compound interest of your career.</p>
+            </div>
+        </div>
+
+        <div id="skill6" class="skill-section">
+            <div class="skill-number">6</div>
+            <div class="skill-header">
+                <div class="skill-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h2 class="skill-title">Self-Awareness: Knowing Your Strengths and Your Gaps</h2>
+            </div>
+            
+            <div class="skill-definition">
+                <div class="definition-title">
+                    <i class="fas fa-info-circle"></i> What it is:
+                </div>
+                <p>A conscious knowledge of one's own character, feelings, motives, strengths, and, crucially, weaknesses and blind spots. It's the foundation of purposeful development.</p>
+            </div>
+            
+            <div class="why-matters">
+                <div class="subsection-title">
+                    <i class="fas fa-question-circle"></i> Why it matters more than grades:
+                </div>
+                <p>Academic systems often reward proficiency in a broad set of subjects. The professional world rewards excellence in specific, complementary areas. Self-awareness allows you to strategically lean into your strengths and proactively address or compensate for your gaps.</p>
+            </div>
+            
+            <div class="example">
+                <div class="subsection-title">
+                    <i class="fas fa-lightbulb"></i> Example:
+                </div>
+                <p>A creative director knows she is brilliant at big-picture vision but prone to missing small details in production timelines. Her self-awareness leads her to hire or partner closely with a meticulous project manager, creating a powerhouse team.</p>
+            </div>
+            
+            <div class="fact">
+                <div class="subsection-title">
+                    <i class="fas fa-chart-bar"></i> Fact:
+                </div>
+                <p>Research from the organisational consulting firm Korn Ferry found that companies with strong self-aware leaders have significantly higher profitability. Furthermore, studies in Personnel Psychology show that self-aware individuals make better career decisions and experience less work-related stress.</p>
+            </div>
+            
+            <div class="illustration">
+                <div class="subsection-title">
+                    <i class="fas fa-paint-brush"></i> Illustration:
+                </div>
+                <p>Self-awareness is your internal GPS. It constantly answers: "Where am I now? What are my natural roads (strengths)? Where are the construction zones (gaps)? What's the best route to my destination?"</p>
+            </div>
+        </div>
+
+        <!-- Skills Assessment -->
+        <div class="assessment-section">
+            <h2 class="assessment-title">Rate Your Skills</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--gray);">Drag the sliders to assess your current proficiency in each skill</p>
+            
+            <div class="skill-meter">
+                <div class="skill-label">
+                    <span>Emotional Intelligence</span>
+                    <span id="eqValue">50%</span>
+                </div>
+                <div class="skill-meter-bar">
+                    <div class="skill-meter-fill" id="eqMeter"></div>
+                </div>
+                <input type="range" min="0" max="100" value="50" class="skill-slider" data-skill="eq" style="width: 100%; margin-top: 5px;">
+            </div>
+            
+            <div class="skill-meter">
+                <div class="skill-label">
+                    <span>Communication</span>
+                    <span id="comValue">50%</span>
+                </div>
+                <div class="skill-meter-bar">
+                    <div class="skill-meter-fill" id="comMeter"></div>
+                </div>
+                <input type="range" min="0" max="100" value="50" class="skill-slider" data-skill="com" style="width: 100%; margin-top: 5px;">
+            </div>
+            
+            <div class="skill-meter">
+                <div class="skill-label">
+                    <span>Adaptability</span>
+                    <span id="adaptValue">50%</span>
+                </div>
+                <div class="skill-meter-bar">
+                    <div class="skill-meter-fill" id="adaptMeter"></div>
+                </div>
+                <input type="range" min="0" max="100" value="50" class="skill-slider" data-skill="adapt" style="width: 100%; margin-top: 5px;">
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="cta-button" id="saveAssessment">
+                    <i class="fas fa-save"></i> Save Your Assessment
+                </button>
+                <p id="assessmentResult" style="margin-top: 1rem; display: none;"></p>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="conclusion">
+            <h2 class="conclusion-title">The New Equation</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">
+                Think of it this way: Your GPA represents your acquisition of knowledge. These six skills represent your application of character and capability.
+            </p>
+            <p style="margin-bottom: 1.5rem;">
+                They are what transform you from a candidate with potential into a professional with impact. They are the tools that allow you to not just enter the room, but to thrive within it, to contribute meaningfully, and to build a career that is not defined by a single number, but by the value you create and the problems you solve.
+            </p>
+            <p style="font-weight: 600; color: var(--primary); margin-bottom: 2rem;">
+                Start cultivating them now. The future belongs to the skilled, the adaptable, and the self-aware.
+            </p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="../articles.html" class="cta-button">
+                    <i class="fas fa-arrow-left"></i> Back to Articles
+                </a>
+                <a href="academy.html" class="cta-button accent">
+                    <i class="fas fa-graduation-cap"></i> Explore Our Courses
+                </a>
+            </div>
+        </div>
+
+        <!-- Share Section -->
+<div style="text-align: center; margin: 3rem 0; padding: 2rem; background: var(--section-bg); border-radius: 15px;">
+    <h3 style="margin-bottom: 1rem;">Found this helpful? Share it!</h3>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <button class="cta-button" style="background: #4267B2;" id="shareFacebook">
+            <i class="fab fa-facebook-f"></i> Facebook
+        </button>
+        <button class="cta-button" style="background: #1DA1F2;" id="shareTwitter">
+            <i class="fab fa-twitter"></i> Twitter
+        </button>
+        <button class="cta-button" style="background: #25D366;" id="shareWhatsApp">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </button>
+        <button class="cta-button" style="background: #0077B5;" id="shareLinkedIn">
+            <i class="fab fa-linkedin-in"></i> LinkedIn
+        </button>
+    </div>
+</div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Impact Digital</h3>
+                <p>Your trusted partner for digital solutions and professional IT training. Empowering businesses and individuals through technology.</p>
+            </div>
+            
+            
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> dig2skills@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +234 903 544 8295</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ota, Nigeria</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> Impact Digital (Solutions & Academy). All rights reserved. | CAC Registered Business</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Progress bar
+        const progressBar = document.getElementById('progressBar');
+        window.addEventListener('scroll', function() {
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            progressBar.style.width = scrolled + '%';
+        });
+
+        // Table of Contents
+        const tocContainer = document.getElementById('tocContainer');
+        const tocList = document.getElementById('tocList');
+        const tocToggle = document.getElementById('tocToggle');
+        const skillSections = document.querySelectorAll('.skill-section');
+
+        // Create TOC items
+        skillSections.forEach(section => {
+            const skillTitle = section.querySelector('.skill-title').textContent;
+            const skillId = section.id;
+            
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item';
+            tocItem.innerHTML = `<a href="#${skillId}">${skillTitle}</a>`;
+            tocList.appendChild(tocItem);
+        });
+
+        // Add intro to TOC
+        const introItem = document.createElement('li');
+        introItem.className = 'toc-item';
+        introItem.innerHTML = `<a href="#top">Introduction</a>`;
+        tocList.insertBefore(introItem, tocList.firstChild);
+
+        // Toggle TOC visibility
+        tocToggle.addEventListener('click', function() {
+            tocContainer.classList.toggle('active');
+            tocToggle.innerHTML = tocContainer.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-list"></i>';
+        });
+
+        // Update active TOC item on scroll
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY + 100;
+            
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find which section is currently in view
+            let currentSection = 'top';
+            skillSections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.id;
+                }
+            });
+            
+            // If we're at the top, highlight intro
+            if (scrollPosition < skillSections[0].offsetTop) {
+                currentSection = 'top';
+            }
+            
+            const activeTocItem = document.querySelector(`.toc-item a[href="#${currentSection}"]`);
+            if (activeTocItem) {
+                activeTocItem.parentElement.classList.add('active');
+            }
+        });
+
+        // Quiz functionality
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        const submitQuizBtn = document.getElementById('submitQuiz');
+        const quizResult = document.getElementById('quizResult');
+        const resultText = document.getElementById('resultText');
+        
+        let selectedOption = null;
+        
+        quizOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                quizOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedOption = this.dataset.value;
+            });
+        });
+        
+        submitQuizBtn.addEventListener('click', function() {
+            if (!selectedOption) {
+                alert('Please select an option first!');
+                return;
+            }
+            
+            const results = {
+                'eq': "Emotional Intelligence is indeed crucial! It's the foundation for effective teamwork, leadership, and navigating workplace dynamics. High-EQ individuals often excel in collaborative environments and leadership roles.",
+                'adaptability': "Adaptability is key in today's fast-changing world! Those who can learn, unlearn, and relearn quickly will thrive in any industry. This skill ensures you remain relevant despite technological disruptions.",
+                'critical-thinking': "Critical thinking is a superpower in the information age! The ability to analyze, evaluate, and synthesize information is what separates problem-solvers from task-completers. This skill is increasingly valuable with AI advancements.",
+                'communication': "Communication bridges knowledge and impact! The ability to translate complex ideas into clear, actionable information is what makes knowledge valuable to others. Strong communicators often become influencers and leaders."
+            };
+            
+            resultText.textContent = results[selectedOption];
+            quizResult.style.display = 'block';
+            
+            // Scroll to result
+            quizResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        // Skills assessment sliders
+        const skillSliders = document.querySelectorAll('.skill-slider');
+        
+        skillSliders.forEach(slider => {
+            const skill = slider.dataset.skill;
+            const valueElement = document.getElementById(`${skill}Value`);
+            const meterElement = document.getElementById(`${skill}Meter`);
+            
+            slider.addEventListener('input', function() {
+                const value = this.value;
+                valueElement.textContent = `${value}%`;
+                meterElement.style.width = `${value}%`;
+            });
+        });
+
+        // Save assessment
+        document.getElementById('saveAssessment').addEventListener('click', function() {
+            const eqValue = document.getElementById('eqValue').textContent;
+            const comValue = document.getElementById('comValue').textContent;
+            const adaptValue = document.getElementById('adaptValue').textContent;
+            
+            const resultElement = document.getElementById('assessmentResult');
+            resultElement.innerHTML = `
+                <strong>Your Skills Profile:</strong><br>
+                Emotional Intelligence: ${eqValue}<br>
+                Communication: ${comValue}<br>
+                Adaptability: ${adaptValue}<br><br>
+                <em>Keep developing these skills! Consider focusing on areas where you scored lower.</em>
+            `;
+            resultElement.style.display = 'block';
+            
+            // Create a simple visualization
+            setTimeout(() => {
+                resultElement.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+
+        // Share buttons
+        document.getElementById('shareFacebook').addEventListener('click', function() {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${title}`, '_blank');
+        });
+        
+        document.getElementById('shareTwitter').addEventListener('click', function() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("Check out this article: Your GPA Is A Chapter, Not The Whole Story");
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        });
+        
+        document.getElementById('shareLinkedIn').addEventListener('click', function() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        });
+
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc-item a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = targetId === '#top' 
+                    ? document.querySelector('.article-hero') 
+                    : document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close TOC on mobile
+                    if (window.innerWidth <= 768) {
+                        tocContainer.classList.remove('active');
+                        tocToggle.innerHTML = '<i class="fas fa-list"></i>';
+                    }
+                }
+            });
+        });
+
+        // Add animation to skill sections when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initially set styles for animation
+        skillSections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(section);
+        });
+        // WhatsApp Share functionality
+document.getElementById('shareWhatsApp').addEventListener('click', function() {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent("Check out this insightful article: Your GPA Is A Chapter, Not The Whole Story - 6 Skills That Define Your Future More Than Your Grades. Read it here:");
+    const whatsappUrl = `https://wa.me/?text=${text}%20${url}`;
+    window.open(whatsappUrl, '_blank');
+});
+    </script>
+</body>
+</html>

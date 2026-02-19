@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigSkills - Professional ID Card Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .saving-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; border-radius: 1rem;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px;
+            border-radius: 50%; border-left-color: #09f;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Theme Styles --- */
+        .id-card-container { 
+            background-size: cover; 
+            position: relative;
+            width: 85.6mm;
+            height: 54mm;
+            box-sizing: border-box;
+        }
+        .theme-blue .card-header { background-image: linear-gradient(to right, #007cf0, #00dfd8); color: white; }
+        .theme-blue { background-color: #e0f7fa; background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a0dae7' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E"); }
+        .theme-blue .id-badge { background-color: #a7f3d0; color: #047857; border: 1px solid #6ee7b7; }
+        
+        .theme-gray .card-header { background-image: linear-gradient(to right, #637282, #2c3e50); color: white; }
+        .theme-gray { background-color: #e5e7eb; background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20L0 20z' fill='%23cccccc' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+        .theme-gray .id-badge { background-color: #d1d5db; color: #1f2937; border: 1px solid #9ca3af; }
+
+        .theme-green .card-header { background-image: linear-gradient(to right, #10b981, #34d399); color: white; }
+        .theme-green { background-color: #d1fae5; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23a7f3d0' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.99-7.5L26 15v18.5l-13 7.5L0 33.5V15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .theme-green .id-badge { background-color: #a7f3d0; color: #047857; border: 1px solid #6ee7b7; }
+
+        .theme-purple .card-header { background-image: linear-gradient(to right, #8b5cf6, #a855f7); color: white; }
+        .theme-purple { background-color: #f5f3ff; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dadaf3' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .theme-purple .id-badge { background-color: #ddd6fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+
+        .theme-orange .card-header { background-image: linear-gradient(to right, #f97316, #fb923c); color: white; }
+        .theme-orange { background-color: #fff7ed; background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fdba74' fill-opacity='0.4'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .theme-orange .id-badge { background-color: #fed7aa; color: #9a3412; border: 1px solid #fdba74; }
+        
+        #preview-student-name { white-space: nowrap; overflow: hidden; }
+
+        /* QR Code Upload Styles */
+        .qr-upload-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .qr-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .qr-toggle-label {
+            font-size: 14px;
+            color: #4B5563;
+        }
+
+        .signature-input-container {
+            position: relative;
+        }
+
+        #signature-preview {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #1f2937;
+            text-align: center;
+            line-height: 1;
+            padding-top: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* Styles for print mode */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 2rem;
+            }
+            .id-card-container { 
+                page-break-inside: avoid; 
+                box-shadow: none; 
+                border: 1px solid #ccc; 
+                width: 48%;
+            }
+            .no-print { display: none; }
+        }
+
+        /* Export container for cloning */
+        .export-container {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            z-index: -9999;
+        }
+        
+        /* Card dimensions for export */
+        .id-card-export {
+            width: 85.6mm;
+            height: 54mm;
+            box-sizing: border-box;
+        }
+        
+        /* Preview card styling */
+        .preview-card {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Front card specific styling */
+        .front-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .front-card header {
+            flex-shrink: 0;
+        }
+        
+        .front-card main {
+            flex-grow: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Back card specific styling */
+        .back-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0.8rem;
+            box-sizing: border-box;
+        }
+        
+        .back-card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">DigSkills ID Card Generator</h1>
+            <p class="text-gray-600 mt-2">Create and save professional school ID cards instantly.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <aside class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-lg h-fit">
+                <h2 class="text-2xl font-semibold mb-6 border-b pb-3">Card Details</h2>
+                <div class="space-y-4">
+                    <input type="text" id="school-name" placeholder="School Name" value="DigiSkills Academy" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input type="text" id="student-name" placeholder="Student Name" value="Jane Doe" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="student-class" placeholder="Class / Grade" value="Grade 10" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="student-id" placeholder="Student ID" value="DS-102345" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="student-dob" placeholder="Date of Birth" value="01-Jan-2008" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="student-blood" placeholder="Blood Group" value="O+" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="issue-date" placeholder="Issue Date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="expiry-date" placeholder="Expiry Date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">School Logo</label>
+                            <input type="file" id="school-logo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Student Photo</label>
+                            <input type="file" id="student-photo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                    </div>
+                    <input type="text" id="contact-info" placeholder="Contact Info (for back)" value="123 Education Lane, Knowledge City, NG" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    
+                    <div class="signature-input-container">
+                        <label class="block text-sm font-medium text-gray-700">Authorised Signature Name</label>
+                        <input type="text" id="signature-name" placeholder="Name for signature" value="John Smith" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">QR Code Options</label>
+                        <div class="qr-toggle mt-2">
+                            <input type="radio" id="qr-type-link" name="qr-type" value="link" checked>
+                            <label for="qr-type-link" class="qr-toggle-label">Generate from Link</label>
+                        </div>
+                        <input type="text" id="qr-link" placeholder="QR Code Link (e.g., website)" value="https://digiskills.example.com" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        
+                        <div class="qr-toggle">
+                            <input type="radio" id="qr-type-upload" name="qr-type" value="upload">
+                            <label for="qr-type-upload" class="qr-toggle-label">Upload QR Code Image</label>
+                        </div>
+                        <div id="qr-upload-container" class="qr-upload-container hidden">
+                            <input type="file" id="qr-image-upload" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Select Theme</label>
+                        <div id="theme-selector" class="mt-2 grid grid-cols-5 gap-2">
+                            <button data-theme="theme-blue" class="theme-btn h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 ring-2 ring-offset-2 ring-blue-500"></button>
+                            <button data-theme="theme-gray" class="theme-btn h-10 w-10 rounded-full bg-gradient-to-r from-gray-600 to-gray-800"></button>
+                            <button data-theme="theme-green" class="theme-btn h-10 w-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-400"></button>
+                            <button data-theme="theme-purple" class="theme-btn h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-violet-400"></button>
+                            <button data-theme="theme-orange" class="theme-btn h-10 w-10 rounded-full bg-gradient-to-r from-orange-500 to-amber-400"></button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="lg:col-span-8">
+                <div class="flex flex-wrap items-center justify-between mb-4 gap-4 no-print">
+                    <h2 class="text-2xl font-semibold">Live Preview</h2>
+                    <div class="flex flex-wrap gap-2">
+                         <button id="save-front-btn" class="action-btn inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Save Front Only</button>
+                         <button id="save-back-btn" class="action-btn inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Save Back Only</button>
+                         <button id="save-both-btn" class="action-btn inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Save Both</button>
+                         <button id="print-btn" class="action-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Print</button>
+                    </div>
+                </div>
+                
+                <div id="print-area" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Front Card -->
+                    <div id="id-card-front" class="id-card-container theme-blue bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col preview-card front-card">
+                        <div class="saving-overlay hidden"><div class="spinner"></div></div>
+                        <header class="card-header p-2 flex items-center justify-between gap-2">
+                            <div class="w-14 h-14 bg-white rounded-md flex items-center justify-center p-1 shrink-0">
+                                <img id="preview-logo-front" src="https://placehold.co/100x100/FFFFFF/000000?text=Logo" alt="School Logo" class="max-w-full max-h-full object-contain">
+                            </div>
+                            <div class="text-right">
+                                <h3 id="preview-school-name-front" class="text-base font-bold leading-tight">DigiSkills Academy</h3>
+                                <p class="text-[10px] font-semibold opacity-90 mt-1">STUDENT IDENTITY CARD</p>
+                            </div>
+                        </header>
+                        <main class="p-3 flex-grow flex gap-3">
+                            <img id="preview-student-photo" src="https://placehold.co/400x400/EFEFEF/AAAAAA?text=Photo" class="w-1/3 rounded-lg border-2 border-white shadow-md aspect-[3/4] object-cover">
+                            <div class="w-2/3 text-xs flex flex-col">
+                                <h4 id="preview-student-name" class="text-xl font-bold text-gray-800 leading-tight mb-1">Jane Doe</h4>
+                                <p id="preview-student-id" class="id-badge self-start px-2 py-0.5 font-semibold rounded-full">DS-102345</p>
+                                <div class="mt-auto grid grid-cols-2 gap-x-2 gap-y-1 text-gray-700">
+                                    <strong>Class:</strong> <span id="preview-student-class">Grade 10</span>
+                                    <strong>D.O.B:</strong> <span id="preview-student-dob">01-Jan-2008</span>
+                                    <strong>Blood G:</strong> <span id="preview-student-blood">O+</span>
+                                    <span></span><span></span>
+                                    <strong>Issued:</strong> <span id="preview-issue-date">01-Sep-2024</span>
+                                    <strong>Expires:</strong> <span id="preview-expiry-date">31-Aug-2025</span>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+
+                    <!-- Back Card -->
+                    <div id="id-card-back" class="id-card-container bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col preview-card back-card">
+                       <div class="saving-overlay hidden"><div class="spinner"></div></div>
+                       <div class="back-card-content">
+                         <div class="text-center">
+                           <p class="text-sm text-gray-600">This card is the property of:</p>
+                           <p id="preview-school-name-back" class="font-semibold text-gray-800 mt-1">DigiSkills Academy</p>
+                           <p id="preview-contact-info" class="text-xs text-gray-500 mt-1">123 Education Lane, Knowledge City, NG</p>
+                         </div>
+                         <div class="flex items-end justify-between gap-4 mt-4">
+                            <div class="w-2/3 text-xs text-gray-500">
+                                <p>If found, please return to the school administration office. Misuse of this card is strictly prohibited.</p>
+                                <div class="mt-4 pr-4">
+                                    <hr class="border-gray-400">
+                                    <div id="signature-preview-container" class="mt-1 text-center">
+                                         <p class="text-sm font-semibold text-gray-700">Authorised Signature</p>
+                                         <p id="signature-preview" class="text-xl italic font-script">John Smith</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-1/3 flex justify-end">
+                                <div id="preview-qrcode-container" class="p-1 bg-white border rounded-md w-32 h-32 flex items-center justify-center">
+                                    <div id="preview-qrcode"></div>
+                                    <img id="preview-custom-qr" class="hidden w-full h-full object-contain" />
+                                </div>
+                            </div>
+                         </div>
+                       </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Hidden export containers -->
+    <div id="export-container" class="export-container">
+        <div id="export-front" class="id-card-export"></div>
+        <div id="export-back" class="id-card-export"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { jsPDF } = window.jspdf;
+            const qrCodeInstance = new QRCode(document.getElementById('preview-qrcode'), { 
+                width: 116, 
+                height: 116, 
+                correctLevel: QRCode.CorrectLevel.H 
+            });
+            
+            // Store uploaded images as data URLs
+            const uploadedImages = {
+                schoolLogo: null,
+                studentPhoto: null,
+                customQr: null
+            };
+            
+            const inputs = {
+                schoolName: document.getElementById('school-name'), 
+                studentName: document.getElementById('student-name'),
+                studentClass: document.getElementById('student-class'), 
+                studentId: document.getElementById('student-id'),
+                studentDob: document.getElementById('student-dob'), 
+                studentBlood: document.getElementById('student-blood'),
+                issueDate: document.getElementById('issue-date'), 
+                expiryDate: document.getElementById('expiry-date'),
+                contactInfo: document.getElementById('contact-info'), 
+                schoolLogo: document.getElementById('school-logo'),
+                studentPhoto: document.getElementById('student-photo'), 
+                signatureName: document.getElementById('signature-name'),
+                qrLink: document.getElementById('qr-link'),
+                qrTypeLink: document.getElementById('qr-type-link'),
+                qrTypeUpload: document.getElementById('qr-type-upload'),
+                qrImageUpload: document.getElementById('qr-image-upload'),
+                qrUploadContainer: document.getElementById('qr-upload-container')
+            };
+
+            const previews = {
+                schoolNameFront: document.getElementById('preview-school-name-front'), 
+                schoolNameBack: document.getElementById('preview-school-name-back'),
+                studentName: document.getElementById('preview-student-name'), 
+                studentClass: document.getElementById('preview-student-class'),
+                studentId: document.getElementById('preview-student-id'), 
+                studentDob: document.getElementById('preview-student-dob'),
+                studentBlood: document.getElementById('preview-student-blood'), 
+                issueDate: document.getElementById('preview-issue-date'),
+                expiryDate: document.getElementById('preview-expiry-date'), 
+                logoFront: document.getElementById('preview-logo-front'),
+                studentPhoto: document.getElementById('preview-student-photo'), 
+                contactInfo: document.getElementById('preview-contact-info'),
+                signature: document.getElementById('signature-preview'),
+                customQr: document.getElementById('preview-custom-qr'),
+                qrCodeContainer: document.getElementById('preview-qrcode-container')
+            };
+
+            // Adjust name font size to fit container
+            const adjustNameFontSize = () => {
+                const nameEl = previews.studentName;
+                const container = nameEl.parentElement;
+                nameEl.style.fontSize = '1.25rem'; // Reset to base size (xl)
+                let currentSize = 1.25;
+                while (nameEl.scrollWidth > container.clientWidth && currentSize > 0.5) {
+                    currentSize -= 0.1;
+                    nameEl.style.fontSize = `${currentSize}rem`;
+                }
+            };
+            
+            // Function to generate and display a signature
+            const generateSignature = (name) => {
+                if (!name) {
+                    previews.signature.textContent = '';
+                    return;
+                }
+                previews.signature.textContent = name;
+                previews.signature.style.fontFamily = "'Dancing Script', cursive";
+            };
+
+            // Update card preview with input values
+            const updateCard = () => {
+                for (const key in previews) {
+                    const inputKey = key.replace(/Front|Back/, '').charAt(0).toLowerCase() + key.slice(1).replace(/Front|Back/, '');
+                    if (inputs[inputKey] && previews[key].tagName !== 'IMG' && previews[key].id !== 'preview-qrcode' && previews[key].id !== 'signature-preview') {
+                        previews[key].textContent = inputs[inputKey].value;
+                    }
+                }
+                previews.schoolNameBack.textContent = inputs.schoolName.value;
+                
+                // Update QR code based on selection
+                if (inputs.qrTypeLink.checked && inputs.qrLink.value) {
+                    qrCodeInstance.makeCode(inputs.qrLink.value);
+                    previews.customQr.classList.add('hidden');
+                    document.getElementById('preview-qrcode').classList.remove('hidden');
+                }
+
+                // Update signature
+                generateSignature(inputs.signatureName.value);
+                
+                adjustNameFontSize();
+            };
+
+            // Update image previews and store as data URLs
+            const updateImage = (input, output, storageKey) => {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        output.src = e.target.result;
+                        uploadedImages[storageKey] = e.target.result; // Store as data URL
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
+            
+            // Set default dates for issue and expiry
+            const setupDefaultDates = () => {
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const today = new Date();
+                const expiry = new Date(today);
+                expiry.setFullYear(today.getFullYear() + 1);
+                const formatDate = d => `${String(d.getDate()).padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+                inputs.issueDate.value = formatDate(today);
+                inputs.expiryDate.value = formatDate(expiry);
+            };
+
+            // Set up event listeners for all inputs
+            for (const key in inputs) {
+                if (inputs[key] && inputs[key].type === 'file') continue;
+                if (inputs[key] && inputs[key].addEventListener) {
+                    inputs[key].addEventListener('input', updateCard);
+                }
+            }
+            
+            // File upload handlers
+            inputs.schoolLogo.addEventListener('change', () => updateImage(inputs.schoolLogo, previews.logoFront, 'schoolLogo'));
+            inputs.studentPhoto.addEventListener('change', () => updateImage(inputs.studentPhoto, previews.studentPhoto, 'studentPhoto'));
+            
+            // QR code upload handler
+            inputs.qrImageUpload.addEventListener('change', () => {
+                if (inputs.qrImageUpload.files && inputs.qrImageUpload.files[0]) {
+                    updateImage(inputs.qrImageUpload, previews.customQr, 'customQr');
+                    previews.customQr.classList.remove('hidden');
+                    document.getElementById('preview-qrcode').classList.add('hidden');
+                }
+            });
+            
+            // QR code type toggle
+            inputs.qrTypeLink.addEventListener('change', updateCard);
+            inputs.qrTypeUpload.addEventListener('change', () => {
+                if (inputs.qrTypeUpload.checked) {
+                    inputs.qrUploadContainer.classList.remove('hidden');
+                    if (previews.customQr.src && !previews.customQr.src.includes('placehold')) {
+                        previews.customQr.classList.remove('hidden');
+                        document.getElementById('preview-qrcode').classList.add('hidden');
+                    }
+                } else {
+                    inputs.qrUploadContainer.classList.add('hidden');
+                    if (inputs.qrLink.value) {
+                        qrCodeInstance.makeCode(inputs.qrLink.value);
+                        document.getElementById('preview-qrcode').classList.remove('hidden');
+                        previews.customQr.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Theme selector
+            document.getElementById('theme-selector').addEventListener('click', e => {
+                if (e.target.matches('.theme-btn')) {
+                    const theme = e.target.dataset.theme;
+                    document.getElementById('id-card-front').className = 
+                        document.getElementById('id-card-front').className.replace(/theme-\w+/g, '') + ' ' + theme;
+                    // Back card should remain white, no theme
+                    document.getElementById('id-card-back').className = 
+                        'id-card-container bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between p-4 preview-card back-card';
+
+                    document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-offset-2', 'ring-blue-500'));
+                    e.target.classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+                }
+            });
+
+            // Toggle loading state
+            const toggleLoading = (isLoading) => {
+                document.querySelectorAll('.action-btn').forEach(btn => btn.disabled = isLoading);
+                document.querySelectorAll('.saving-overlay').forEach(el => {
+                    el.style.display = isLoading ? 'flex' : 'none';
+                });
+            };
+
+            // Trigger download
+            const triggerDownload = (href, filename) => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = href;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            // Prepare card for export
+            const prepareCardForExport = (cardId, isFront) => {
+                const card = document.getElementById(cardId);
+                const exportElement = document.getElementById(isFront ? 'export-front' : 'export-back');
+                
+                // Clear previous content
+                exportElement.innerHTML = '';
+                
+                // Clone the card
+                const clone = card.cloneNode(true);
+                
+                // Apply theme to front card only
+                if (isFront) {
+                    const theme = document.getElementById('id-card-front').className.match(/theme-\w+/g)[0];
+                    clone.className = `id-card-container ${theme} bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col preview-card front-card`;
+                } else {
+                    clone.className = 'id-card-container bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between p-4 preview-card back-card';
+                }
+                
+                // Apply export dimensions
+                clone.style.width = '85.6mm';
+                clone.style.height = '54mm';
+                
+                // Replace images with stored data URLs
+                if (isFront) {
+                    const logoImg = clone.querySelector('#preview-logo-front');
+                    const photoImg = clone.querySelector('#preview-student-photo');
+                    
+                    if (uploadedImages.schoolLogo) {
+                        logoImg.src = uploadedImages.schoolLogo;
+                    }
+                    
+                    if (uploadedImages.studentPhoto) {
+                        photoImg.src = uploadedImages.studentPhoto;
+                    }
+                } else {
+                    const qrImg = clone.querySelector('#preview-custom-qr');
+                    
+                    if (uploadedImages.customQr) {
+                        qrImg.src = uploadedImages.customQr;
+                        qrImg.classList.remove('hidden');
+                        clone.querySelector('#preview-qrcode').classList.add('hidden');
+                    }
+                }
+                
+                // Update signature in clone
+                const signatureEl = clone.querySelector('#signature-preview');
+                if (signatureEl && inputs.signatureName.value) {
+                    signatureEl.textContent = inputs.signatureName.value;
+                    signatureEl.style.fontFamily = "'Dancing Script', cursive";
+                }
+                
+                // Hide saving overlay in clone
+                const overlay = clone.querySelector('.saving-overlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+                
+                // Append to export container
+                exportElement.appendChild(clone);
+                
+                return clone;
+            };
+
+            // Save front only
+            document.getElementById('save-front-btn').addEventListener('click', async () => {
+                toggleLoading(true);
+                try {
+                    // Prepare card for export
+                    const frontClone = prepareCardForExport('id-card-front', true);
+                    
+                    // Wait for images to load
+                    await new Promise(resolve => {
+                        const checkImagesLoaded = () => {
+                            const images = frontClone.querySelectorAll('img');
+                            let allLoaded = true;
+                            
+                            images.forEach(img => {
+                                if (!img.complete) allLoaded = false;
+                            });
+                            
+                            if (allLoaded) {
+                                resolve();
+                            } else {
+                                setTimeout(checkImagesLoaded, 100);
+                            }
+                        };
+                        checkImagesLoaded();
+                    });
+                    
+                    // Convert to canvas with proper dimensions
+                    const canvas = await html2canvas(frontClone, {
+                        scale: 3,
+                        backgroundColor: null,
+                        logging: false,
+                        width: 85.6 * 3.78, // Convert mm to pixels for high resolution
+                        height: 54 * 3.78,
+                        windowWidth: 85.6 * 3.78,
+                        windowHeight: 54 * 3.78
+                    });
+                    
+                    // Trigger download
+                    triggerDownload(
+                        canvas.toDataURL('image/png'), 
+                        `ID-Card-Front-${inputs.studentName.value.replace(/\s+/g, '-') || 'Student'}.png`
+                    );
+                } catch (error) {
+                    console.error('Error saving front image:', error);
+                    alert('Error saving front image. Please try again.');
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+
+            // Save back only
+            document.getElementById('save-back-btn').addEventListener('click', async () => {
+                toggleLoading(true);
+                try {
+                    // Prepare card for export
+                    const backClone = prepareCardForExport('id-card-back', false);
+                    
+                    // Wait for images to load
+                    await new Promise(resolve => {
+                        const checkImagesLoaded = () => {
+                            const images = backClone.querySelectorAll('img');
+                            let allLoaded = true;
+                            
+                            images.forEach(img => {
+                                if (!img.complete) allLoaded = false;
+                            });
+                            
+                            if (allLoaded) {
+                                resolve();
+                            } else {
+                                setTimeout(checkImagesLoaded, 100);
+                            }
+                        };
+                        checkImagesLoaded();
+                    });
+                    
+                    // Convert to canvas with proper dimensions
+                    const canvas = await html2canvas(backClone, {
+                        scale: 3,
+                        backgroundColor: null,
+                        logging: false,
+                        width: 85.6 * 3.78, // Convert mm to pixels for high resolution
+                        height: 54 * 3.78,
+                        windowWidth: 85.6 * 3.78,
+                        windowHeight: 54 * 3.78
+                    });
+                    
+                    // Trigger download
+                    triggerDownload(
+                        canvas.toDataURL('image/png'), 
+                        `ID-Card-Back-${inputs.studentName.value.replace(/\s+/g, '-') || 'Student'}.png`
+                    );
+                } catch (error) {
+                    console.error('Error saving back image:', error);
+                    alert('Error saving back image. Please try again.');
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+
+            // Save both
+            document.getElementById('save-both-btn').addEventListener('click', async () => {
+                toggleLoading(true);
+                try {
+                    // Prepare both cards for export
+                    const frontClone = prepareCardForExport('id-card-front', true);
+                    const backClone = prepareCardForExport('id-card-back', false);
+                    
+                    // Wait for images to load
+                    await Promise.all([
+                        new Promise(resolve => {
+                            const checkImagesLoaded = () => {
+                                const images = frontClone.querySelectorAll('img');
+                                let allLoaded = true;
+                                
+                                images.forEach(img => {
+                                    if (!img.complete) allLoaded = false;
+                                });
+                                
+                                if (allLoaded) {
+                                    resolve();
+                                } else {
+                                    setTimeout(checkImagesLoaded, 100);
+                                }
+                            };
+                            checkImagesLoaded();
+                        }),
+                        new Promise(resolve => {
+                            const checkImagesLoaded = () => {
+                                const images = backClone.querySelectorAll('img');
+                                let allLoaded = true;
+                                
+                                images.forEach(img => {
+                                    if (!img.complete) allLoaded = false;
+                                });
+                                
+                                if (allLoaded) {
+                                    resolve();
+                                } else {
+                                    setTimeout(checkImagesLoaded, 100);
+                                }
+                            };
+                            checkImagesLoaded();
+                        })
+                    ]);
+                    
+                    // Convert to canvas with proper dimensions
+                    const frontCanvas = await html2canvas(frontClone, {
+                        scale: 3,
+                        backgroundColor: null,
+                        logging: false,
+                        width: 85.6 * 3.78,
+                        height: 54 * 3.78,
+                        windowWidth: 85.6 * 3.78,
+                        windowHeight: 54 * 3.78
+                    });
+                    
+                    const backCanvas = await html2canvas(backClone, {
+                        scale: 3,
+                        backgroundColor: null,
+                        logging: false,
+                        width: 85.6 * 3.78,
+                        height: 54 * 3.78,
+                        windowWidth: 85.6 * 3.78,
+                        windowHeight: 54 * 3.78
+                    });
+                    
+                    // Create PDF
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: [85.6, 54]
+                    });
+                    
+                    // Add front card to PDF
+                    pdf.addImage(
+                        frontCanvas.toDataURL('image/png'), 
+                        'PNG', 
+                        0, 0, 85.6, 54
+                    );
+                    
+                    // Add new page for back card
+                    pdf.addPage([85.6, 54], 'landscape');
+                    
+                    // Add back card to PDF
+                    pdf.addImage(
+                        backCanvas.toDataURL('image/png'), 
+                        'PNG', 
+                        0, 0, 85.6, 54
+                    );
+                    
+                    // Save PDF
+                    pdf.save(`ID-Card-${inputs.studentName.value.replace(/\s+/g, '-') || 'Student'}.pdf`);
+                } catch (error) {
+                    console.error('Error saving PDF:', error);
+                    alert('Error saving PDF. Please try again.');
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+
+            // Print functionality
+            document.getElementById('print-btn').addEventListener('click', () => {
+                window.print();
+            });
+
+            // Initialize
+            setupDefaultDates();
+            updateCard();
+            
+            // Set initial QR code
+            if (inputs.qrLink.value) {
+                qrCodeInstance.makeCode(inputs.qrLink.value);
+            }
+            
+            // Set initial theme button as active
+            document.querySelector('[data-theme="theme-blue"]').classList.add('ring-2', 'ring-offset-2', 'ring-blue-500');
+        });
+    </script>
+</body>
+</html>
