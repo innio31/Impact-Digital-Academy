@@ -2712,6 +2712,7 @@ function getAcademicYear()
         return ($year - 1) . '/' . $year;
     }
 }
+
 function getFileTypeLabel($file_type)
 {
     $labels = [
@@ -2730,24 +2731,11 @@ function getFileTypeLabel($file_type)
 // ===== EMAIL FUNCTIONS =====
 
 /**
- * Send email using PHP's mail() function with HostAfrica
+ * Main email sending function using PHP's mail() - IMPROVED VERSION
  */
 function sendEmail($to, $subject, $body, $isHTML = true, $attachments = [])
 {
     try {
-        // Prepare headers
-        $headers = "From: Impact Digital Academy <admin@impactdigitalacademy.com.ng>\r\n";
-        $headers .= "Reply-To: admin@impactdigitalacademy.com.ng\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-
-        // Set content type based on HTML or plain text
-        if ($isHTML) {
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        } else {
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-        }
-
         // Prepare recipients
         if (is_array($to)) {
             $toEmail = implode(', ', $to);
@@ -2755,25 +2743,108 @@ function sendEmail($to, $subject, $body, $isHTML = true, $attachments = [])
             $toEmail = $to;
         }
 
+        // Validate email
+        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+            error_log("Invalid email address: $toEmail");
+            return false;
+        }
+
+        // Prepare headers
+        $headers = "From: Impact Digital Academy <admin@impactdigitalacademy.com.ng>\r\n";
+        $headers .= "Reply-To: admin@impactdigitalacademy.com.ng\r\n";
+        $headers .= "Return-Path: admin@impactdigitalacademy.com.ng\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "X-Priority: 3\r\n";
+
+        // Set content type
+        if ($isHTML) {
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+        } else {
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        }
+
+        // Add additional headers for better deliverability
+        $headers .= "X-Mailer-Info: Impact Digital Academy Portal\r\n";
+        $headers .= "X-Originating-IP: " . ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') . "\r\n";
+
+        // Clean subject (remove any line breaks)
+        $subject = str_replace(["\r", "\n"], '', $subject);
+        $subject = trim($subject);
+
+        // Ensure body is properly formatted
+        if ($isHTML) {
+            // Make sure HTML has proper structure
+            if (stripos($body, '<html') === false) {
+                $body = "<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='UTF-8'>
+                    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                    <title>{$subject}</title>
+                </head>
+                <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;'>
+                    <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                        {$body}
+                    </div>
+                </body>
+                </html>";
+            }
+        }
+
         // Log the attempt
         error_log("Attempting to send email via PHP mail() to: $toEmail");
 
-        // Send email
-        $result = mail($toEmail, $subject, $body, $headers);
+        // Send email with additional parameters for better delivery
+        $additional_params = "-f admin@impactdigitalacademy.com.ng";
+
+        // Try sending with additional parameters first
+        if (function_exists('mail')) {
+            $result = mail($toEmail, $subject, $body, $headers, $additional_params);
+
+            // If that fails, try without additional parameters
+            if (!$result) {
+                $result = mail($toEmail, $subject, $body, $headers);
+            }
+        } else {
+            error_log("mail() function is not available");
+            return false;
+        }
 
         if ($result) {
+            error_log("Email sent successfully to: $toEmail");
             logActivity('email_sent', "Email sent via PHP mail() to: " . $toEmail);
             return true;
         } else {
-            error_log("PHP mail() failed to send to: $toEmail");
+            $error = error_get_last();
+            error_log("PHP mail() failed to send to: $toEmail. Error: " . ($error['message'] ?? 'Unknown error'));
             logActivity('email_failed', "Failed to send email via PHP mail() to: " . $toEmail);
             return false;
         }
     } catch (Exception $e) {
-        error_log("Email send failed: " . $e->getMessage());
+        error_log("Email send exception: " . $e->getMessage());
         logActivity('email_failed', "Exception sending email: " . $e->getMessage());
         return false;
     }
+}
+
+/**
+ * Test email configuration
+ */
+function testEmailConfiguration($test_email = null)
+{
+    if (!$test_email) {
+        $test_email = 'admin@impactdigitalacademy.com.ng'; // Send to yourself for testing
+    }
+
+    $subject = "Test Email from Impact Digital Academy";
+    $body = "<h2>Email Configuration Test</h2>
+            <p>This is a test email to verify that the email system is working correctly.</p>
+            <p><strong>Time:</strong> " . date('Y-m-d H:i:s') . "</p>
+            <p><strong>Server:</strong> " . $_SERVER['SERVER_NAME'] . "</p>
+            <p>If you received this email, your email configuration is working!</p>";
+
+    return sendEmail($test_email, $subject, $body);
 }
 
 /**
@@ -2782,65 +2853,59 @@ function sendEmail($to, $subject, $body, $isHTML = true, $attachments = [])
 function sendWelcomeEmail($user_id, $password = null)
 {
     $user = getUserById($user_id);
-    if (!$user) return false;
+    if (!$user || empty($user['email'])) {
+        error_log("Welcome email failed: User not found or no email for ID: $user_id");
+        return false;
+    }
 
-    $subject = "Welcome to " . getSetting('school_name', 'Our School');
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Welcome to $school_name";
     $login_url = BASE_URL . 'modules/auth/login.php';
 
-    $body = "<!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #4a6fa5; color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 30px; }
-            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; }
-            .button { display: inline-block; background: #4a6fa5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
-        </style>
-    </head>
-    <body>
-        <div class='container'>
-            <div class='header'>
-                <h1>Welcome to " . getSetting('school_name', 'Our Learning Platform') . "</h1>
-            </div>
-            <div class='content'>
-                <p>Hello " . htmlspecialchars($user['first_name']) . ",</p>
-                <p>Your account has been successfully created!</p>
-                <p><strong>Account Details:</strong></p>
-                <ul>
-                    <li>Email: " . htmlspecialchars($user['email']) . "</li>
-                    <li>Role: " . ucfirst($user['role']) . "</li>" .
-        ($password ? "<li>Temporary Password: " . htmlspecialchars($password) . "</li>" : "") .
-        "</ul>
-                <p>Please login to get started:</p>
-                <p style='text-align: center;'>
-                    <a href='{$login_url}' class='button'>Login to Your Account</a>
-                </p>
-                <p>After logging in, please:</p>
-                <ol>
-                    <li>Complete your profile</li>
-                    <li>" . ($password ? "Change your password" : "Set up your password") . "</li>
-                    <li>Review your dashboard</li>
-                </ol>
-                <p>If you have any questions, please contact our support team.</p>
-            </div>
-            <div class='footer'>
-                <p>&copy; " . date('Y') . " " . getSetting('school_name', 'Our School') . ". All rights reserved.</p>
-                <p>This is an automated message, please do not reply to this email.</p>
-            </div>
+    $body = "
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+        <div style='background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;'>
+            <h1 style='margin: 0;'>Welcome to $school_name</h1>
         </div>
-    </body>
-    </html>";
+        
+        <div style='background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 10px 10px;'>
+            <p>Hello " . htmlspecialchars($user['first_name']) . ",</p>
+            
+            <p>Your account has been successfully created! Here are your account details:</p>
+            
+            <div style='background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb;'>
+                <p><strong>Email:</strong> " . htmlspecialchars($user['email']) . "</p>
+                <p><strong>Role:</strong> " . ucfirst($user['role']) . "</p>
+                " . ($password ? "<p><strong>Temporary Password:</strong> <code style='background: #f1f5f9; padding: 5px; border-radius: 4px;'>" . htmlspecialchars($password) . "</code></p>" : "") . "
+            </div>
+            
+            <p style='text-align: center; margin: 30px 0;'>
+                <a href='{$login_url}' style='background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Login to Your Account</a>
+            </p>
+            
+            <p><strong>Next Steps:</strong></p>
+            <ol style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px;'>
+                <li>Login using your email and " . ($password ? "temporary password" : "password") . "</li>
+                <li>" . ($password ? "Change your temporary password" : "Complete your profile") . "</li>
+                <li>Explore your dashboard and available courses</li>
+            </ol>
+            
+            <p>If you have any questions, please contact our support team.</p>
+            
+            <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+            
+            <p style='color: #64748b; font-size: 12px; text-align: center;'>
+                &copy; " . date('Y') . " $school_name. All rights reserved.<br>
+                This is an automated message, please do not reply.
+            </p>
+        </div>
+    </div>";
 
     return sendEmail($user['email'], $subject, $body);
 }
 
 /**
- * Send password reset email
- */
-/**
- * Send password reset email (Updated version)
+ * Send password reset email - FIXED VERSION
  */
 function sendPasswordResetEmail($email, $token)
 {
@@ -2886,41 +2951,52 @@ function sendPasswordResetEmail($email, $token)
 
         $subject = "Password Reset Request - Impact Digital Academy";
 
-        // Simple email template
+        // HTML email template
         $body = "
         <!DOCTYPE html>
         <html>
         <head>
+            <meta charset='UTF-8'>
             <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
-                .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; }
-                .button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }
-                .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
+                .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+                .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+                .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
                 .warning { color: #dc2626; font-weight: bold; }
+                .reset-link { background: #f1f5f9; padding: 15px; border-radius: 5px; word-break: break-all; font-family: monospace; }
             </style>
         </head>
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h2>Password Reset Request</h2>
+                    <h1 style='margin: 0;'>Password Reset Request</h1>
                 </div>
+                
                 <div class='content'>
                     <p>Hello " . htmlspecialchars($user['first_name']) . ",</p>
-                    <p>We received a request to reset your password for your Impact Digital Academy account.</p>
+                    
+                    <p>We received a request to reset your password for your Impact Digital Academy account. If you didn't make this request, you can safely ignore this email.</p>
                     
                     <p style='text-align: center; margin: 30px 0;'>
                         <a href='{$reset_url}' class='button'>Reset Your Password</a>
                     </p>
                     
                     <p>Or copy and paste this link in your browser:</p>
-                    <p><code style='background: #f1f5f9; padding: 10px; border-radius: 5px; display: block; word-break: break-all;'>{$reset_url}</code></p>
+                    <div class='reset-link'>{$reset_url}</div>
                     
-                    <p class='warning'>⚠ This link will expire in {$expiry_hours} hours.</p>
+                    <p class='warning' style='margin-top: 20px;'>⚠ This link will expire in {$expiry_hours} hours.</p>
                     
-                    <p>If you didn't request this password reset, please ignore this email. Your password will not be changed.</p>
+                    <p>For security reasons, this password reset link can only be used once. If you need to reset your password again, please request a new reset link.</p>
+                    
+                    <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                    
+                    <p style='color: #64748b; font-size: 13px;'>
+                        If you didn't request this password reset, please ignore this email or contact support if you have concerns about your account security.
+                    </p>
                 </div>
+                
                 <div class='footer'>
                     <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
                     <p>This is an automated message, please do not reply.</p>
@@ -2947,85 +3023,114 @@ function sendPasswordResetEmail($email, $token)
 }
 
 /**
- * Send assignment notification email
+ * Send assignment notification email - FIXED VERSION
  */
-function sendAssignmentNotificationEmail($assignment_id, $conn = null)
+function sendAssignmentNotificationEmail($assignment_id, $conn = null, $assignment = null)
 {
     if (!$conn) $conn = getDBConnection();
 
-    // Get assignment details
-    $sql = "SELECT a.*, cb.batch_code, c.title as course_title, 
-                   c.course_code, u.email as instructor_email
-            FROM assignments a 
-            JOIN class_batches cb ON a.class_id = cb.id 
-            JOIN courses c ON cb.course_id = c.id 
-            JOIN users u ON cb.instructor_id = u.id 
-            WHERE a.id = ?";
+    // Get assignment details if not provided
+    if (!$assignment) {
+        $sql = "SELECT a.*, cb.batch_code, c.title as course_title, 
+                       c.course_code, u.email as instructor_email
+                FROM assignments a 
+                JOIN class_batches cb ON a.class_id = cb.id 
+                JOIN courses c ON cb.course_id = c.id 
+                JOIN users u ON cb.instructor_id = u.id 
+                WHERE a.id = ?";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $assignment_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $assignment = $result->fetch_assoc();
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $assignment_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $assignment = $result->fetch_assoc();
+        $stmt->close();
+    }
 
-    if (!$assignment) return false;
+    if (!$assignment) {
+        error_log("Assignment notification email failed: Assignment not found for ID: $assignment_id");
+        return 0;
+    }
 
-    // Get enrolled students
+    // Get enrolled students with valid emails
     $sql = "SELECT u.id, u.email, u.first_name, u.last_name 
             FROM enrollments e 
             JOIN users u ON e.student_id = u.id 
             WHERE e.class_id = ? AND e.status = 'active' 
-            AND u.email IS NOT NULL AND u.email != ''";
+            AND u.email IS NOT NULL AND u.email != '' AND u.email LIKE '%@%.%'";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $assignment['class_id']);
     $stmt->execute();
     $students = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (empty($students)) {
+        error_log("Assignment notification email failed: No students found for class ID: " . $assignment['class_id']);
+        return 0;
+    }
 
     $notification_count = 0;
     $due_date = formatDate($assignment['due_date'], 'F j, Y g:i A');
     $course_link = BASE_URL . "modules/student/course.php?id=" . $assignment['class_id'];
 
     foreach ($students as $student) {
+        if (empty($student['email'])) continue;
+
         $subject = "New Assignment: " . $assignment['title'] . " - " . $assignment['course_title'];
 
-        $body = "<!DOCTYPE html>
+        $body = "
+        <!DOCTYPE html>
         <html>
         <head>
+            <meta charset='UTF-8'>
             <style>
                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #4a6fa5; color: white; padding: 20px; text-align: center; }
-                .content { background: #f9f9f9; padding: 30px; }
-                .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; }
-                .button { display: inline-block; background: #4a6fa5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+                .header { background: #4a6fa5; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+                .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+                .button { display: inline-block; background: #4a6fa5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
                 .deadline { color: #d9534f; font-weight: bold; }
+                .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4a6fa5; }
             </style>
         </head>
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h1>New Assignment Posted</h1>
+                    <h1 style='margin: 0;'>New Assignment Posted</h1>
                 </div>
+                
                 <div class='content'>
                     <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                    
                     <p>A new assignment has been posted for your course: <strong>" . htmlspecialchars($assignment['course_title']) . "</strong></p>
-                    <h3>Assignment Details:</h3>
-                    <ul>
-                        <li><strong>Title:</strong> " . htmlspecialchars($assignment['title']) . "</li>
-                        <li><strong>Course:</strong> " . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['course_code']) . ")</li>
-                        <li><strong>Batch:</strong> " . htmlspecialchars($assignment['batch_code']) . "</li>
-                        <li class='deadline'><strong>Due Date:</strong> " . $due_date . "</li>
-                    </ul>
-                    <p>Please submit your assignment before the due date.</p>
-                    <p style='text-align: center;'>
-                        <a href='{$course_link}' class='button'>View Assignment</a>
+                    
+                    <div class='info-box'>
+                        <h3 style='margin-top: 0; color: #4a6fa5;'>Assignment Details:</h3>
+                        <p><strong>Title:</strong> " . htmlspecialchars($assignment['title']) . "</p>
+                        <p><strong>Course:</strong> " . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['course_code']) . ")</p>
+                        <p><strong>Batch:</strong> " . htmlspecialchars($assignment['batch_code']) . "</p>
+                        <p class='deadline'><strong>Due Date:</strong> " . $due_date . "</p>
+                    </div>
+                    
+                    <p>Please submit your assignment before the due date. Late submissions may be subject to grade deductions.</p>
+                    
+                    <p style='text-align: center; margin: 30px 0;'>
+                        <a href='{$course_link}' class='button'>View Assignment Details</a>
                     </p>
+                    
                     <p>If you have any questions, please contact your instructor.</p>
+                    
+                    <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                    
+                    <p style='color: #666; font-size: 13px;'>
+                        This is an automated notification from your learning portal. Please do not reply to this email.
+                    </p>
                 </div>
+                
                 <div class='footer'>
-                    <p>&copy; " . date('Y') . " " . getSetting('school_name', 'Our School') . ". All rights reserved.</p>
-                    <p>This is an automated message from your learning platform.</p>
+                    <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -3041,7 +3146,7 @@ function sendAssignmentNotificationEmail($assignment_id, $conn = null)
 }
 
 /**
- * Send grade notification email
+ * Send grade notification email - FIXED VERSION
  */
 function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn = null)
 {
@@ -3049,12 +3154,16 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn =
 
     // Get student details
     $student = getUserById($student_id);
-    if (!$student || empty($student['email'])) return false;
+    if (!$student || empty($student['email'])) {
+        error_log("Grade notification email failed: Student not found or no email for ID: $student_id");
+        return false;
+    }
 
     // Get assignment details
-    $sql = "SELECT a.*, c.title as course_title, c.course_code 
+    $sql = "SELECT a.*, c.title as course_title, c.course_code, cb.id as class_id
             FROM assignments a 
             JOIN courses c ON a.course_id = c.id 
+            JOIN class_batches cb ON a.class_id = cb.id
             WHERE a.id = ?";
 
     $stmt = $conn->prepare($sql);
@@ -3062,54 +3171,69 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn =
     $stmt->execute();
     $result = $stmt->get_result();
     $assignment = $result->fetch_assoc();
+    $stmt->close();
 
-    if (!$assignment) return false;
+    if (!$assignment) {
+        error_log("Grade notification email failed: Assignment not found for ID: $assignment_id");
+        return false;
+    }
 
     $percentage = ($grade / $assignment['total_points']) * 100;
     $grade_letter = calculateGradeLetter($percentage);
     $subject = "Grade Posted: " . $assignment['title'] . " - " . $assignment['course_title'];
     $course_link = BASE_URL . "modules/student/course.php?id=" . $assignment['class_id'];
 
-    $body = "<!DOCTYPE html>
+    $body = "
+    <!DOCTYPE html>
     <html>
     <head>
+        <meta charset='UTF-8'>
         <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #5cb85c; color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 30px; }
-            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; }
+            .header { background: #5cb85c; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
             .grade-box { background: white; border: 2px solid #5cb85c; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center; }
             .grade-number { font-size: 36px; font-weight: bold; color: #5cb85c; }
-            .grade-letter { font-size: 24px; color: #337ab7; }
-            .button { display: inline-block; background: #5cb85c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            .grade-letter { font-size: 24px; color: #337ab7; margin-top: 10px; }
+            .button { display: inline-block; background: #5cb85c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
         </style>
     </head>
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>Grade Posted</h1>
+                <h1 style='margin: 0;'>Grade Posted</h1>
             </div>
+            
             <div class='content'>
                 <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                
                 <p>Your grade has been posted for the following assignment:</p>
-                <h3>Assignment: " . htmlspecialchars($assignment['title']) . "</h3>
-                <p><strong>Course:</strong> " . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['course_code']) . ")</p>
+                
+                <p><strong>Assignment:</strong> " . htmlspecialchars($assignment['title']) . "<br>
+                <strong>Course:</strong> " . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['course_code']) . ")</p>
                 
                 <div class='grade-box'>
                     <div class='grade-number'>" . round($grade, 1) . "/" . round($assignment['total_points'], 1) . "</div>
                     <div class='grade-letter'>Grade: " . $grade_letter . " (" . round($percentage, 1) . "%)</div>
                 </div>
                 
-                <p style='text-align: center;'>
+                <p style='text-align: center; margin: 30px 0;'>
                     <a href='{$course_link}' class='button'>View All Grades</a>
                 </p>
                 
                 <p>If you have any questions about your grade, please contact your instructor.</p>
+                
+                <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                
+                <p style='color: #666; font-size: 13px;'>
+                    This is an automated notification from your learning portal. Please do not reply to this email.
+                </p>
             </div>
+            
             <div class='footer'>
-                <p>&copy; " . date('Y') . " " . getSetting('school_name', 'Our School') . ". All rights reserved.</p>
-                <p>This is an automated message from your learning platform.</p>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
             </div>
         </div>
     </body>
@@ -3119,13 +3243,15 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn =
 
     if ($result) {
         logActivity('grade_email_sent', "Grade notification email sent to student #{$student_id} for assignment #{$assignment_id}");
+    } else {
+        error_log("Failed to send grade notification email to student #{$student_id} for assignment #{$assignment_id}");
     }
 
     return $result;
 }
 
 /**
- * Send invoice/payment reminder email
+ * Send invoice/payment reminder email - FIXED VERSION
  */
 function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
 {
@@ -3145,59 +3271,72 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
     $stmt->execute();
     $result = $stmt->get_result();
     $invoice = $result->fetch_assoc();
+    $stmt->close();
 
-    if (!$invoice || empty($invoice['email'])) return false;
+    if (!$invoice || empty($invoice['email'])) {
+        error_log("Invoice email failed: Invoice not found or no email for ID: $invoice_id");
+        return false;
+    }
 
     $due_date = formatDate($invoice['due_date'], 'F j, Y');
     $amount = formatCurrency($invoice['amount']);
     $payment_url = BASE_URL . "modules/student/payment.php?invoice=" . $invoice['invoice_number'];
 
+    // Set colors and titles based on invoice type
     switch ($type) {
         case 'new':
-            $subject = "New Invoice: " . $invoice['invoice_number'] . " - " . getSetting('school_name', 'Our School');
+            $bg_color = '#337ab7';
+            $subject = "New Invoice: " . $invoice['invoice_number'] . " - Impact Digital Academy";
             $title = "New Invoice Generated";
             $message = "A new invoice has been generated for your account.";
             break;
         case 'reminder':
+            $bg_color = '#f0ad4e';
             $subject = "Payment Reminder: Invoice " . $invoice['invoice_number'] . " - Due Soon";
             $title = "Payment Reminder";
             $message = "This is a friendly reminder that your invoice is due soon.";
             break;
         case 'overdue':
+            $bg_color = '#d9534f';
             $subject = "URGENT: Invoice " . $invoice['invoice_number'] . " is Overdue";
-            $title = "Invoice Overdue";
-            $message = "Your invoice is now overdue. Please make payment immediately to avoid suspension.";
+            $title = "Invoice Overdue - Immediate Action Required";
+            $message = "Your invoice is now overdue. Please make payment immediately to avoid account suspension.";
             break;
         default:
+            $bg_color = '#337ab7';
             $subject = "Invoice: " . $invoice['invoice_number'];
             $title = "Invoice";
             $message = "Invoice details";
     }
 
-    $body = "<!DOCTYPE html>
+    $body = "
+    <!DOCTYPE html>
     <html>
     <head>
+        <meta charset='UTF-8'>
         <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: " . ($type == 'overdue' ? '#d9534f' : ($type == 'reminder' ? '#f0ad4e' : '#337ab7')) . "; color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 30px; }
-            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; }
-            .invoice-box { background: white; border: 2px solid #ddd; border-radius: 10px; padding: 20px; margin: 20px 0; }
-            .invoice-row { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; border-bottom: 1px solid #eee; }
-            .invoice-label { font-weight: bold; }
-            .invoice-value { text-align: right; }
-            .total-row { font-size: 18px; font-weight: bold; background: #f8f9fa; }
-            .button { display: inline-block; background: " . ($type == 'overdue' ? '#d9534f' : ($type == 'reminder' ? '#f0ad4e' : '#337ab7')) . "; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            .header { background: {$bg_color}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+            .invoice-box { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; }
+            .invoice-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+            .invoice-label { font-weight: bold; color: #555; }
+            .invoice-value { font-weight: bold; }
+            .total-row { background: #f8f9fa; font-size: 18px; font-weight: bold; border-bottom: none; }
+            .button { display: inline-block; background: {$bg_color}; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
         </style>
     </head>
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>{$title}</h1>
+                <h1 style='margin: 0;'>{$title}</h1>
             </div>
+            
             <div class='content'>
                 <p>Hello " . htmlspecialchars($invoice['first_name']) . ",</p>
+                
                 <p>{$message}</p>
                 
                 <div class='invoice-box'>
@@ -3219,28 +3358,40 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
 
     $body .= "<div class='invoice-row'>
                 <span class='invoice-label'>Amount Due:</span>
-                <span class='invoice-value'>{$amount}</span>
+                <span class='invoice-value' style='color: {$bg_color};'>{$amount}</span>
               </div>
               <div class='invoice-row'>
                 <span class='invoice-label'>Due Date:</span>
-                <span class='invoice-value'>{$due_date}</span>
+                <span class='invoice-value'>" . ($type == 'overdue' ? '<span style="color: #d9534f;">' . $due_date . ' (OVERDUE)</span>' : $due_date) . "</span>
               </div>
               <div class='invoice-row total-row'>
                 <span class='invoice-label'>Total Amount:</span>
-                <span class='invoice-value'>{$amount}</span>
+                <span class='invoice-value' style='color: {$bg_color};'>{$amount}</span>
               </div>
             </div>
             
-            <p style='text-align: center;'>
-                <a href='{$payment_url}' class='button'>Pay Now</a>
+            <p style='text-align: center; margin: 30px 0;'>
+                <a href='{$payment_url}' class='button'>Make Payment Now</a>
             </p>
             
-            <p>If you have already made this payment, please disregard this email.</p>
-            <p>For payment questions, please contact our finance department.</p>
+            <p><strong>Payment Options:</strong></p>
+            <ul style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px;'>
+                <li>Pay online via our secure payment portal</li>
+                <li>Bank transfer to our official account (details available upon request)</li>
+                <li>Visit our finance office for in-person payment</li>
+            </ul>
+            
+            <p>If you have already made this payment, please disregard this email. For payment questions, contact our finance department.</p>
+            
+            <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+            
+            <p style='color: #666; font-size: 13px;'>
+                This is an automated notification from your learning portal. Please do not reply to this email.
+            </p>
         </div>
+        
         <div class='footer'>
-            <p>&copy; " . date('Y') . " " . getSetting('school_name', 'Our School') . ". All rights reserved.</p>
-            <p>This is an automated message, please do not reply to this email.</p>
+            <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
         </div>
     </div>
 </body>
@@ -3250,6 +3401,8 @@ function sendInvoiceEmail($invoice_id, $type = 'new', $conn = null)
 
     if ($result) {
         logActivity('invoice_email_sent', "Invoice email ({$type}) sent for invoice #{$invoice_id}");
+    } else {
+        error_log("Failed to send invoice email for invoice #{$invoice_id}");
     }
 
     return $result;
@@ -3301,25 +3454,29 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
     $stmt->execute();
     $result = $stmt->get_result();
     $announcement = $result->fetch_assoc();
+    $stmt->close();
 
-    if (!$announcement) return false;
+    if (!$announcement) {
+        error_log("Announcement email failed: Announcement not found for ID: $announcement_id");
+        return false;
+    }
 
     // Determine recipients
     $recipients = [];
 
     switch ($recipient_type) {
         case 'all':
-            $sql = "SELECT email, first_name FROM users WHERE status = 'active' AND email IS NOT NULL";
+            $sql = "SELECT email, first_name FROM users WHERE status = 'active' AND email IS NOT NULL AND email != '' AND email LIKE '%@%.%'";
             $result = $conn->query($sql);
             break;
 
         case 'students':
-            $sql = "SELECT email, first_name FROM users WHERE role = 'student' AND status = 'active' AND email IS NOT NULL";
+            $sql = "SELECT email, first_name FROM users WHERE role = 'student' AND status = 'active' AND email IS NOT NULL AND email != '' AND email LIKE '%@%.%'";
             $result = $conn->query($sql);
             break;
 
         case 'instructors':
-            $sql = "SELECT email, first_name FROM users WHERE role = 'instructor' AND status = 'active' AND email IS NOT NULL";
+            $sql = "SELECT email, first_name FROM users WHERE role = 'instructor' AND status = 'active' AND email IS NOT NULL AND email != '' AND email LIKE '%@%.%'";
             $result = $conn->query($sql);
             break;
 
@@ -3329,7 +3486,7 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
                     FROM enrollments e 
                     JOIN users u ON e.student_id = u.id 
                     WHERE e.class_id = ? AND e.status = 'active' 
-                    AND u.email IS NOT NULL";
+                    AND u.email IS NOT NULL AND u.email != '' AND u.email LIKE '%@%.%'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $announcement['class_id']);
             $stmt->execute();
@@ -3341,55 +3498,80 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
     }
 
     while ($row = $result->fetch_assoc()) {
-        $recipients[$row['email']] = $row['first_name'];
+        if (!empty($row['email'])) {
+            $recipients[$row['email']] = $row['first_name'];
+        }
+    }
+
+    if (empty($recipients)) {
+        error_log("Announcement email failed: No recipients found for announcement #{$announcement_id}");
+        return false;
     }
 
     // Send emails
     $subject = "Announcement: " . $announcement['title'];
     $announcement_link = BASE_URL . "modules/student/announcements.php";
 
-    $body = "<!DOCTYPE html>
+    $body = "
+    <!DOCTYPE html>
     <html>
     <head>
+        <meta charset='UTF-8'>
         <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #6f42c1; color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 30px; }
-            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; }
-            .announcement-box { background: white; border-left: 4px solid #6f42c1; padding: 15px; margin: 15px 0; }
-            .button { display: inline-block; background: #6f42c1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            .header { background: #6f42c1; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+            .announcement-box { background: white; border-left: 4px solid #6f42c1; padding: 20px; margin: 20px 0; border-radius: 8px; }
+            .button { display: inline-block; background: #6f42c1; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .meta-info { color: #666; font-size: 14px; margin-bottom: 15px; }
         </style>
     </head>
     <body>
         <div class='container'>
             <div class='header'>
-                <h1>Important Announcement</h1>
+                <h1 style='margin: 0;'>Important Announcement</h1>
             </div>
+            
             <div class='content'>
                 <p>Hello,</p>
+                
                 <p>An important announcement has been posted:</p>
                 
                 <div class='announcement-box'>
-                    <h3>" . htmlspecialchars($announcement['title']) . "</h3>
-                    <p><strong>From:</strong> " . htmlspecialchars($announcement['author_name']) . "</p>";
+                    <h2 style='margin-top: 0; color: #6f42c1;'>" . htmlspecialchars($announcement['title']) . "</h2>
+                    
+                    <div class='meta-info'>
+                        <p><strong>From:</strong> " . htmlspecialchars($announcement['author_name']) . "</p>";
 
     if ($announcement['course_title']) {
         $body .= "<p><strong>Course:</strong> " . htmlspecialchars($announcement['course_title']) . " (" . htmlspecialchars($announcement['batch_code']) . ")</p>";
     }
 
-    $body .= "<p>" . nl2br(htmlspecialchars($announcement['content'])) . "</p>
+    $body .= "<p><strong>Posted:</strong> " . formatDate($announcement['created_at'], 'F j, Y g:i A') . "</p>
+                    </div>
+                    
+                    <div style='background: #f8f9fa; padding: 15px; border-radius: 5px;'>
+                        " . nl2br(htmlspecialchars($announcement['content'])) . "
+                    </div>
                 </div>
                 
-                <p style='text-align: center;'>
+                <p style='text-align: center; margin: 30px 0;'>
                     <a href='{$announcement_link}' class='button'>View All Announcements</a>
                 </p>
                 
                 <p>If you have any questions, please contact the administration.</p>
+                
+                <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                
+                <p style='color: #666; font-size: 13px;'>
+                    This is an automated notification from your learning portal. Please do not reply to this email.
+                </p>
             </div>
+            
             <div class='footer'>
-                <p>&copy; " . date('Y') . " " . getSetting('school_name', 'Our School') . ". All rights reserved.</p>
-                <p>This is an automated message from your learning platform.</p>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
             </div>
         </div>
     </body>
@@ -3397,7 +3579,7 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
 
     $results = sendBulkEmail($recipients, $subject, $body);
 
-    logActivity('announcement_email_sent', "Announcement email sent to " . count($recipients) . " recipients");
+    logActivity('announcement_email_sent', "Announcement email sent to " . count($recipients) . " recipients. Success: {$results['success']}, Failed: {$results['failed']}");
 
     return $results;
 }
