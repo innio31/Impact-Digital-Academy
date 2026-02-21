@@ -138,16 +138,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Calculate dates for the month
                 $start_date = $academic_year . '-' . str_pad($month['month_num'], 2, '0', STR_PAD_LEFT) . '-01';
                 $end_date = date('Y-m-t', strtotime($start_date));
-                
+
                 // Set registration to open 2 weeks before start, close 1 week before
                 $reg_start = date('Y-m-d', strtotime($start_date . " -2 weeks"));
                 $reg_deadline = date('Y-m-d', strtotime($start_date . " -1 week"));
-                
+
                 $stmt = $conn->prepare("INSERT INTO academic_periods 
                     (program_type, period_type, period_number, period_name, academic_year, 
                      start_date, end_date, duration_weeks, registration_start_date, registration_deadline, status) 
                     VALUES ('onsite', 'month', ?, ?, ?, ?, ?, 4, ?, ?, 'upcoming')");
-                
+
                 $period_name = $month['name'] . " " . $academic_year . " Monthly Cohort";
 
                 $stmt->bind_param(
@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($terms as $term) {
                 $term_year = $year;
-                
+
                 // Adjust for terms that start in next calendar year
                 if ($term['number'] === 1) {
                     // First term starts in September of the same year
@@ -239,17 +239,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Calculate dates for each term (13 weeks)
                 $start_date = $term_year . '-' . $term['month'] . '-02';
-                
+
                 // Find the first Monday of the month for start
                 $start_date = date('Y-m-d', strtotime("first monday of " . date('F Y', strtotime($start_date))));
-                
+
                 // End date is 13 weeks (91 days) after start
                 $end_date = date('Y-m-d', strtotime($start_date . " +12 weeks +6 days"));
-                
+
                 // Registration opens 4 weeks before start, closes 1 week before
                 $reg_start = date('Y-m-d', strtotime($start_date . " -4 weeks"));
                 $reg_deadline = date('Y-m-d', strtotime($start_date . " -1 week"));
-                
+
                 $stmt = $conn->prepare("INSERT INTO academic_periods 
                     (program_type, period_type, period_number, period_name, academic_year, 
                      start_date, end_date, duration_weeks, registration_start_date, registration_deadline, status) 
@@ -368,7 +368,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
     <title>Academic Calendar Manager - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -504,7 +504,8 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             color: white;
         }
 
-        .btn-primary:hover, .btn-primary:active {
+        .btn-primary:hover,
+        .btn-primary:active {
             background: var(--secondary);
             transform: translateY(-1px);
         }
@@ -515,7 +516,8 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             border: 2px solid var(--light-gray);
         }
 
-        .btn-secondary:hover, .btn-secondary:active {
+        .btn-secondary:hover,
+        .btn-secondary:active {
             background: var(--light);
             border-color: var(--primary);
         }
@@ -845,7 +847,8 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             color: #1e40af;
         }
 
-        .btn-edit:hover, .btn-edit:active {
+        .btn-edit:hover,
+        .btn-edit:active {
             background: #bfdbfe;
         }
 
@@ -854,7 +857,8 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             color: #dc2626;
         }
 
-        .btn-delete:hover, .btn-delete:active {
+        .btn-delete:hover,
+        .btn-delete:active {
             background: #fecaca;
         }
 
@@ -930,6 +934,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
                 transform: translateY(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -1025,8 +1030,13 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Modal Header with Close Button */
@@ -1125,13 +1135,13 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
         <!-- Statistics Cards -->
         <div class="stats-cards">
             <div class="stat-card total" onclick="window.location.href='?'">
-                <div class="stat-value"><?php 
-                    $total = 0;
-                    foreach ($period_counts as $type => $count) {
-                        $total += $count['total'] ?? 0;
-                    }
-                    echo $total;
-                ?></div>
+                <div class="stat-value"><?php
+                                        $total = 0;
+                                        foreach ($period_counts as $type => $count) {
+                                            $total += $count['total'] ?? 0;
+                                        }
+                                        echo $total;
+                                        ?></div>
                 <div class="stat-label">Total Periods</div>
             </div>
             <div class="stat-card onsite-total" onclick="window.location.href='?program_type=onsite'">
@@ -1550,7 +1560,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
     <script>
         // Improved Mobile Functions
         let isMobile = window.innerWidth <= 768;
-        
+
         // Update mobile detection on resize
         window.addEventListener('resize', function() {
             isMobile = window.innerWidth <= 768;
@@ -1560,7 +1570,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             modal.style.display = 'flex';
-            
+
             // Prevent background scrolling on mobile
             if (isMobile) {
                 document.body.style.overflow = 'hidden';
@@ -1568,7 +1578,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             } else {
                 modal.style.alignItems = 'center';
             }
-            
+
             // Focus first input
             const firstInput = modal.querySelector('input, select, textarea');
             if (firstInput) {
@@ -1579,7 +1589,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             document.body.style.overflow = 'auto';
-            
+
             // Remove edit parameter from URL for edit modal
             if (modalId === 'editPeriodModal') {
                 const url = new URL(window.location.href);
@@ -1599,12 +1609,12 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             const monthOption = document.querySelector('#addPeriodModal option[value="month"]');
             const durationInput = document.getElementById('durationWeeksInput');
             const periodNumberInput = document.getElementById('periodNumberInput');
-            
+
             // Hide all options first
             termOption.style.display = 'none';
             blockOption.style.display = 'none';
             monthOption.style.display = 'none';
-            
+
             if (programType === 'onsite') {
                 monthOption.style.display = 'block';
                 document.querySelector('#addPeriodModal select[name="period_type"]').value = 'month';
@@ -1642,12 +1652,12 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
             const monthOption = document.querySelector('#editPeriodModal option[value="month"]');
             const durationInput = document.getElementById('editDurationWeeksInput');
             const periodNumberInput = document.getElementById('editPeriodNumberInput');
-            
+
             // Hide all options first
             termOption.style.display = 'none';
             blockOption.style.display = 'none';
             monthOption.style.display = 'none';
-            
+
             if (programType === 'onsite') {
                 monthOption.style.display = 'block';
                 if (durationInput) {

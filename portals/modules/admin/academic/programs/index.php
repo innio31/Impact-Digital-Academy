@@ -158,14 +158,14 @@ logActivity('view_programs', "Viewed programs list with filters");
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
     $bulk_action = $_POST['bulk_action'];
     $selected_ids = $_POST['selected_ids'] ?? [];
-    
+
     if (!empty($selected_ids)) {
         $success_count = 0;
         $error_count = 0;
-        
+
         foreach ($selected_ids as $id) {
             $id = (int)$id;
-            
+
             switch ($bulk_action) {
                 case 'activate':
                     $result = updateProgramStatus($id, 'active');
@@ -182,21 +182,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 default:
                     continue 2;
             }
-            
+
             if ($result['success']) {
                 $success_count++;
             } else {
                 $error_count++;
             }
         }
-        
+
         if ($success_count > 0) {
             $_SESSION['success'] = "Successfully processed $success_count program(s)";
         }
         if ($error_count > 0) {
             $_SESSION['error'] = "Failed to process $error_count program(s)";
         }
-        
+
         // Redirect to avoid form resubmission
         header("Location: " . $_SERVER['REQUEST_URI']);
         exit();
@@ -204,62 +204,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 }
 
 // Function to update program status
-function updateProgramStatus($id, $status) {
+function updateProgramStatus($id, $status)
+{
     global $conn;
-    
+
     $sql = "UPDATE programs SET status = ?, updated_at = NOW() WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $status, $id);
-    
+
     if ($stmt->execute()) {
         logActivity('program_status_update', "Updated program #$id status to $status", 'programs', $id);
         return ['success' => true];
     }
-    
+
     return ['success' => false, 'message' => 'Database error'];
 }
 
 // Function to delete program
-function deleteProgram($id) {
+function deleteProgram($id)
+{
     global $conn;
-    
+
     // Start transaction
     $conn->begin_transaction();
-    
+
     try {
         // Check if program has related records
         $check_sql = "SELECT 
                      (SELECT COUNT(*) FROM courses WHERE program_id = ?) as course_count,
                      (SELECT COUNT(*) FROM applications WHERE program_id = ?) as application_count,
                      (SELECT COUNT(*) FROM class_batches WHERE course_id IN (SELECT id FROM courses WHERE program_id = ?)) as class_count";
-        
+
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("iii", $id, $id, $id);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
         $counts = $check_result->fetch_assoc();
-        
+
         if ($counts['course_count'] > 0 || $counts['application_count'] > 0 || $counts['class_count'] > 0) {
             return ['success' => false, 'message' => 'Cannot delete program with related courses, classes, or applications'];
         }
-        
+
         // Delete payment plans first
         $delete_plans_sql = "DELETE FROM payment_plans WHERE program_id = ?";
         $delete_plans_stmt = $conn->prepare($delete_plans_sql);
         $delete_plans_stmt->bind_param("i", $id);
         $delete_plans_stmt->execute();
-        
+
         // Delete program
         $delete_sql = "DELETE FROM programs WHERE id = ?";
         $delete_stmt = $conn->prepare($delete_sql);
         $delete_stmt->bind_param("i", $id);
         $delete_stmt->execute();
-        
+
         $conn->commit();
-        
+
         logActivity('program_delete', "Deleted program #$id", 'programs', $id);
         return ['success' => true];
-        
     } catch (Exception $e) {
         $conn->rollback();
         return ['success' => false, 'message' => $e->getMessage()];
@@ -267,12 +268,13 @@ function deleteProgram($id) {
 }
 
 // Function to clone program
-function cloneProgram($id) {
+function cloneProgram($id)
+{
     global $conn;
-    
+
     // Start transaction
     $conn->begin_transaction();
-    
+
     try {
         // Get original program
         $sql = "SELECT * FROM programs WHERE id = ?";
@@ -280,31 +282,31 @@ function cloneProgram($id) {
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $original = $stmt->get_result()->fetch_assoc();
-        
+
         if (!$original) {
             return ['success' => false, 'message' => 'Program not found'];
         }
-        
+
         // Generate new program code
         $base_code = $original['program_code'];
         $counter = 1;
         $new_code = $base_code . '-COPY';
-        
+
         // Check if code already exists
         while (true) {
             $check_sql = "SELECT id FROM programs WHERE program_code = ?";
             $check_stmt = $conn->prepare($check_sql);
             $check_stmt->bind_param("s", $new_code);
             $check_stmt->execute();
-            
+
             if ($check_stmt->get_result()->num_rows === 0) {
                 break;
             }
-            
+
             $counter++;
             $new_code = $base_code . '-COPY' . $counter;
         }
-        
+
         // Clone the program
         $clone_sql = "INSERT INTO programs (
             program_code, name, description, duration_weeks, fee, base_fee,
@@ -313,7 +315,7 @@ function cloneProgram($id) {
             currency, fee_description, status, duration_mode, schedule_type,
             created_by, school_id, school_name
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $clone_stmt = $conn->prepare($clone_sql);
         $user_id = $_SESSION['user_id'] ?? 1;
         $clone_stmt->bind_param(
@@ -340,27 +342,27 @@ function cloneProgram($id) {
             $original['school_id'],
             $original['school_name']
         );
-        
+
         if (!$clone_stmt->execute()) {
             throw new Exception("Failed to clone program");
         }
-        
+
         $new_program_id = $conn->insert_id;
-        
+
         // Clone payment plans
         $plan_sql = "SELECT * FROM payment_plans WHERE program_id = ?";
         $plan_stmt = $conn->prepare($plan_sql);
         $plan_stmt->bind_param("i", $id);
         $plan_stmt->execute();
         $plans = $plan_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        
+
         foreach ($plans as $plan) {
             $insert_plan_sql = "INSERT INTO payment_plans (
                 program_id, program_type, plan_name, registration_fee,
                 block1_percentage, block2_percentage, block1_due_days, block2_due_days,
                 late_fee_percentage, suspension_days, refund_policy_days, is_active
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+
             $insert_plan_stmt = $conn->prepare($insert_plan_sql);
             $insert_plan_stmt->bind_param(
                 "issddddddddi",
@@ -379,12 +381,11 @@ function cloneProgram($id) {
             );
             $insert_plan_stmt->execute();
         }
-        
+
         $conn->commit();
-        
+
         logActivity('program_clone', "Cloned program #$id to #$new_program_id", 'programs', $new_program_id);
         return ['success' => true, 'new_id' => $new_program_id];
-        
     } catch (Exception $e) {
         $conn->rollback();
         return ['success' => false, 'message' => $e->getMessage()];
@@ -393,12 +394,13 @@ function cloneProgram($id) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Programs - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -565,15 +567,41 @@ function cloneProgram($id) {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card.total { border-left-color: var(--primary); }
-        .stat-card.active { border-left-color: var(--success); }
-        .stat-card.inactive { border-left-color: var(--danger); }
-        .stat-card.upcoming { border-left-color: var(--warning); }
-        .stat-card.revenue { border-left-color: var(--accent); }
-        .stat-card.fee { border-left-color: var(--info); }
-        .stat-card.duration { border-left-color: var(--primary); }
-        .stat-card.online { border-left-color: var(--online-color); }
-        .stat-card.onsite { border-left-color: var(--onsite-color); }
+        .stat-card.total {
+            border-left-color: var(--primary);
+        }
+
+        .stat-card.active {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.inactive {
+            border-left-color: var(--danger);
+        }
+
+        .stat-card.upcoming {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.revenue {
+            border-left-color: var(--accent);
+        }
+
+        .stat-card.fee {
+            border-left-color: var(--info);
+        }
+
+        .stat-card.duration {
+            border-left-color: var(--primary);
+        }
+
+        .stat-card.online {
+            border-left-color: var(--online-color);
+        }
+
+        .stat-card.onsite {
+            border-left-color: var(--onsite-color);
+        }
 
         .stat-value {
             font-size: 1.8rem;
@@ -749,9 +777,20 @@ function cloneProgram($id) {
             text-transform: uppercase;
         }
 
-        .status-active { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .status-inactive { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .status-upcoming { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .status-upcoming {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
 
         .program-header {
             padding: 1.5rem;
@@ -926,14 +965,45 @@ function cloneProgram($id) {
             flex: 1;
         }
 
-        .btn-view { background: rgba(37, 99, 235, 0.1); color: var(--primary); }
-        .btn-edit { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .btn-activate { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .btn-deactivate { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .btn-clone { background: rgba(139, 92, 246, 0.1); color: var(--onsite-color); }
-        .btn-fees { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .btn-courses { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+        .btn-view {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-edit {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .btn-activate {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .btn-deactivate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .btn-clone {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--onsite-color);
+        }
+
+        .btn-fees {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .btn-courses {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
 
         .btn-icon:hover {
             transform: translateY(-2px);
@@ -1080,13 +1150,13 @@ function cloneProgram($id) {
             align-items: center;
             gap: 0.75rem;
         }
-        
+
         .alert-success {
             background-color: #d1fae5;
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
-        
+
         .alert-error {
             background-color: #fee2e2;
             color: #991b1b;
@@ -1305,23 +1375,25 @@ function cloneProgram($id) {
         .export-btn:hover {
             background: #0da271;
         }
+
         /* Add to the CSS section */
-.program-type-badge.school {
-    background: rgba(59, 130, 246, 0.15);
-    color: var(--info);
-}
+        .program-type-badge.school {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
 
-.badge-school {
-    background: rgba(59, 130, 246, 0.15);
-    color: var(--info);
-}
+        .badge-school {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
 
-/* Add school to the stat card colors */
-.stat-card.school { 
-    border-left-color: var(--info); 
-}
+        /* Add school to the stat card colors */
+        .stat-card.school {
+            border-left-color: var(--info);
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Breadcrumb -->
@@ -1370,40 +1442,40 @@ function cloneProgram($id) {
 
         <!-- Statistics Cards -->
         <div class="stats-cards">
-            <div class="stat-card total" onclick="window.location.href='?status=all<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card total" onclick="window.location.href='?status=all<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-graduation-cap"></i>
                     <?php echo number_format($stats['total'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Total Programs</div>
                 <div class="stat-subtext">
-    <?php echo number_format($stats['online_count'] ?? 0); ?> online, 
-    <?php echo number_format($stats['onsite_count'] ?? 0); ?> onsite,
-    <?php echo number_format($stats['school_count'] ?? 0); ?> school
-</div>
+                    <?php echo number_format($stats['online_count'] ?? 0); ?> online,
+                    <?php echo number_format($stats['onsite_count'] ?? 0); ?> onsite,
+                    <?php echo number_format($stats['school_count'] ?? 0); ?> school
+                </div>
             </div>
-            <div class="stat-card active" onclick="window.location.href='?status=active<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card active" onclick="window.location.href='?status=active<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-check-circle"></i>
                     <?php echo number_format($stats['active'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Active</div>
             </div>
-            <div class="stat-card inactive" onclick="window.location.href='?status=inactive<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card inactive" onclick="window.location.href='?status=inactive<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-times-circle"></i>
                     <?php echo number_format($stats['inactive'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Inactive</div>
             </div>
-            <div class="stat-card upcoming" onclick="window.location.href='?status=upcoming<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card upcoming" onclick="window.location.href='?status=upcoming<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-clock"></i>
                     <?php echo number_format($stats['upcoming'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Upcoming</div>
             </div>
-            <div class="stat-card revenue" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card revenue" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-chart-line"></i>
                     ₦<?php echo number_format($stats['total_value'] ?? 0, 0); ?>
@@ -1411,58 +1483,58 @@ function cloneProgram($id) {
                 <div class="stat-label">Total Value</div>
                 <div class="stat-subtext">Includes registration fees</div>
             </div>
-            <div class="stat-card fee" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card fee" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-money-bill"></i>
                     ₦<?php echo number_format($stats['avg_fee'] ?? 0, 0); ?>
                 </div>
                 <div class="stat-label">Avg. Program Fee</div>
             </div>
-            <div class="stat-card online" onclick="window.location.href='?program_type=online<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card online" onclick="window.location.href='?program_type=online<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-globe"></i>
                     <?php echo number_format($stats['online_count'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Online Programs</div>
             </div>
-            <div class="stat-card onsite" onclick="window.location.href='?program_type=onsite<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
+            <div class="stat-card onsite" onclick="window.location.href='?program_type=onsite<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-building"></i>
                     <?php echo number_format($stats['onsite_count'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Onsite Programs</div>
             </div>
-            
-<div class="stat-card school" onclick="window.location.href='?program_type=school<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>'">
-    <div class="stat-value">
-        <i class="fas fa-school"></i>
-        <?php echo number_format($stats['school_count'] ?? 0); ?>
-    </div>
-    <div class="stat-label">School Programs</div>
-</div>
+
+            <div class="stat-card school" onclick="window.location.href='?program_type=school<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
+                <div class="stat-value">
+                    <i class="fas fa-school"></i>
+                    <?php echo number_format($stats['school_count'] ?? 0); ?>
+                </div>
+                <div class="stat-label">School Programs</div>
+            </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <a href="?status=active<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'active' ? 'active' : ''; ?>">
+            <a href="?status=active<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'active' ? 'active' : ''; ?>">
                 <i class="fas fa-check-circle"></i> Active
             </a>
-            <a href="?status=inactive<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'inactive' ? 'active' : ''; ?>">
+            <a href="?status=inactive<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'inactive' ? 'active' : ''; ?>">
                 <i class="fas fa-times-circle"></i> Inactive
             </a>
-            <a href="?status=upcoming<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'upcoming' ? 'active' : ''; ?>">
+            <a href="?status=upcoming<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $status === 'upcoming' ? 'active' : ''; ?>">
                 <i class="fas fa-clock"></i> Upcoming
             </a>
-            <a href="?program_type=online<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'online' ? 'active' : ''; ?>">
+            <a href="?program_type=online<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'online' ? 'active' : ''; ?>">
                 <i class="fas fa-globe"></i> Online
             </a>
-            <a href="?program_type=onsite<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'onsite' ? 'active' : ''; ?>">
+            <a href="?program_type=onsite<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'onsite' ? 'active' : ''; ?>">
                 <i class="fas fa-building"></i> Onsite
             </a>
-            <a href="?program_type=school<?php echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-   class="quick-action-btn <?php echo $program_type === 'school' ? 'active' : ''; ?>">
-    <i class="fas fa-school"></i> School
-</a>
+            <a href="?program_type=school<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                class="quick-action-btn <?php echo $program_type === 'school' ? 'active' : ''; ?>">
+                <i class="fas fa-school"></i> School
+            </a>
         </div>
 
         <!-- Filters -->
@@ -1487,26 +1559,26 @@ function cloneProgram($id) {
                     </div>
 
                     <!-- In the program type filter dropdown -->
-<div class="filter-group">
-    <label for="program_type">Program Type</label>
-    <select id="program_type" name="program_type" class="form-control" onchange="this.form.submit()">
-        <option value="all" <?php echo $program_type === 'all' ? 'selected' : ''; ?>>All Types</option>
-        <option value="online" <?php echo $program_type === 'online' ? 'selected' : ''; ?>>Online</option>
-        <option value="onsite" <?php echo $program_type === 'onsite' ? 'selected' : ''; ?>>Onsite</option>
-        <option value="school" <?php echo $program_type === 'school' ? 'selected' : ''; ?>>School</option>
-    </select>
-</div>
+                    <div class="filter-group">
+                        <label for="program_type">Program Type</label>
+                        <select id="program_type" name="program_type" class="form-control" onchange="this.form.submit()">
+                            <option value="all" <?php echo $program_type === 'all' ? 'selected' : ''; ?>>All Types</option>
+                            <option value="online" <?php echo $program_type === 'online' ? 'selected' : ''; ?>>Online</option>
+                            <option value="onsite" <?php echo $program_type === 'onsite' ? 'selected' : ''; ?>>Onsite</option>
+                            <option value="school" <?php echo $program_type === 'school' ? 'selected' : ''; ?>>School</option>
+                        </select>
+                    </div>
 
                     <div class="filter-group">
                         <label for="filter_school">School</label>
                         <select id="filter_school" name="filter_school" class="form-control" onchange="this.form.submit()">
                             <option value="">All Schools</option>
                             <?php
-                                $schools_sql = "SELECT id, name FROM schools ORDER BY name";
-                                $schools_result = $conn->query($schools_sql);
-                                while ($school = $schools_result->fetch_assoc()):
+                            $schools_sql = "SELECT id, name FROM schools ORDER BY name";
+                            $schools_result = $conn->query($schools_sql);
+                            while ($school = $schools_result->fetch_assoc()):
                             ?>
-                                <option value="<?php echo $school['id']; ?>" 
+                                <option value="<?php echo $school['id']; ?>"
                                     <?php echo $filter_school == $school['id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($school['name']); ?>
                                 </option>
@@ -1539,8 +1611,8 @@ function cloneProgram($id) {
                     <div class="filter-group">
                         <label for="search">Search</label>
                         <input type="text" id="search" name="search" class="form-control"
-                               value="<?php echo htmlspecialchars($search); ?>"
-                               placeholder="Search by code, name, description...">
+                            value="<?php echo htmlspecialchars($search); ?>"
+                            placeholder="Search by code, name, description...">
                     </div>
                 </div>
 
@@ -1575,7 +1647,7 @@ function cloneProgram($id) {
                         </button>
                     </div>
                 <?php else: ?>
-                    <?php foreach ($programs as $program): 
+                    <?php foreach ($programs as $program):
                         $total_fee = $program['fee'] + ($program['registration_fee'] ?? 0);
                         $program_type_class = $program['program_type'];
                     ?>
@@ -1583,8 +1655,8 @@ function cloneProgram($id) {
                             <div class="program-header">
                                 <div class="program-badges">
                                     <div class="program-type-badge <?php echo $program_type_class; ?>">
-    <?php echo strtoupper($program['program_type']); ?>
-</div>
+                                        <?php echo strtoupper($program['program_type']); ?>
+                                    </div>
                                     <div class="program-status status-<?php echo $program['status']; ?>">
                                         <?php echo ucfirst($program['status']); ?>
                                     </div>
@@ -1592,7 +1664,7 @@ function cloneProgram($id) {
                                 <div class="program-code"><?php echo htmlspecialchars($program['program_code']); ?></div>
                                 <h3 class="program-title"><?php echo htmlspecialchars($program['name']); ?></h3>
                             </div>
-                            
+
                             <div class="program-content">
                                 <?php if ($program['school_name']): ?>
                                     <div style="margin-bottom: 0.5rem;">
@@ -1601,14 +1673,14 @@ function cloneProgram($id) {
                                         </span>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <?php if ($program['description']): ?>
                                     <div class="program-description" title="<?php echo htmlspecialchars($program['description']); ?>">
                                         <?php echo htmlspecialchars(substr($program['description'], 0, 150)); ?>
                                         <?php if (strlen($program['description']) > 150): ?>...<?php endif; ?>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <!-- Fee Breakdown -->
                                 <div class="program-fees">
                                     <div class="fee-row">
@@ -1616,17 +1688,17 @@ function cloneProgram($id) {
                                         <span class="fee-value">₦<?php echo number_format($program['fee'], 2); ?></span>
                                     </div>
                                     <?php if (($program['registration_fee'] ?? 0) > 0): ?>
-                                    <div class="fee-row">
-                                        <span class="fee-label">Registration:</span>
-                                        <span class="fee-value">₦<?php echo number_format($program['registration_fee'], 2); ?></span>
-                                    </div>
+                                        <div class="fee-row">
+                                            <span class="fee-label">Registration:</span>
+                                            <span class="fee-value">₦<?php echo number_format($program['registration_fee'], 2); ?></span>
+                                        </div>
                                     <?php endif; ?>
                                     <div class="fee-row total">
                                         <span class="fee-label">Total Fee:</span>
                                         <span class="fee-value">₦<?php echo number_format($total_fee, 2); ?></span>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Payment Info -->
                                 <div class="program-payment-info">
                                     <div class="payment-type" title="Payment Plan Type">
@@ -1634,13 +1706,13 @@ function cloneProgram($id) {
                                         <span><?php echo ucfirst($program['payment_plan_type'] ?? 'full'); ?></span>
                                     </div>
                                     <?php if ($program['installment_count'] > 1): ?>
-                                    <div class="payment-type" title="Number of Installments">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span><?php echo $program['installment_count']; ?> installments</span>
-                                    </div>
+                                        <div class="payment-type" title="Number of Installments">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span><?php echo $program['installment_count']; ?> installments</span>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <!-- Program Stats -->
                                 <div class="program-stats">
                                     <div class="program-stat">
@@ -1665,7 +1737,7 @@ function cloneProgram($id) {
                                         <div class="stat-label-small">Students</div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Additional Details -->
                                 <div class="program-details">
                                     <div class="detail-row">
@@ -1673,19 +1745,19 @@ function cloneProgram($id) {
                                         <span class="detail-value"><?php echo $program['duration_weeks']; ?> weeks</span>
                                     </div>
                                     <?php if ($program['duration_mode']): ?>
-                                    <div class="detail-row">
-                                        <span class="detail-label">Duration Mode:</span>
-                                        <span class="detail-value"><?php echo ucwords(str_replace('_', ' ', $program['duration_mode'])); ?></span>
-                                    </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label">Duration Mode:</span>
+                                            <span class="detail-value"><?php echo ucwords(str_replace('_', ' ', $program['duration_mode'])); ?></span>
+                                        </div>
                                     <?php endif; ?>
                                     <?php if ($program['creator_first_name']): ?>
-                                    <div class="detail-row">
-                                        <span class="detail-label">Created By:</span>
-                                        <span class="detail-value"><?php echo htmlspecialchars($program['creator_first_name'] . ' ' . $program['creator_last_name']); ?></span>
-                                    </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label">Created By:</span>
+                                            <span class="detail-value"><?php echo htmlspecialchars($program['creator_first_name'] . ' ' . $program['creator_last_name']); ?></span>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <!-- Program Actions -->
                                 <div class="program-actions">
                                     <a href="view.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-view" title="View Details">
@@ -1701,26 +1773,30 @@ function cloneProgram($id) {
                                         <i class="fas fa-book"></i>
                                     </a>
                                     <?php if ($program['status'] === 'active'): ?>
-                                        <a href="?action=deactivate&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                           class="btn-icon btn-deactivate" title="Deactivate"
-                                           onclick="return confirm('Deactivate this program? Current enrollments will not be affected.')">
+                                        <a href="?action=deactivate&id=<?php echo $program['id'];
+                                                                        echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                            class="btn-icon btn-deactivate" title="Deactivate"
+                                            onclick="return confirm('Deactivate this program? Current enrollments will not be affected.')">
                                             <i class="fas fa-pause"></i>
                                         </a>
                                     <?php elseif ($program['status'] === 'inactive'): ?>
-                                        <a href="?action=activate&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                           class="btn-icon btn-activate" title="Activate"
-                                           onclick="return confirm('Activate this program?')">
+                                        <a href="?action=activate&id=<?php echo $program['id'];
+                                                                        echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                            class="btn-icon btn-activate" title="Activate"
+                                            onclick="return confirm('Activate this program?')">
                                             <i class="fas fa-play"></i>
                                         </a>
                                     <?php endif; ?>
-                                    <a href="?action=clone&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                       class="btn-icon btn-clone" title="Clone Program"
-                                       onclick="return confirm('Create a copy of this program?')">
+                                    <a href="?action=clone&id=<?php echo $program['id'];
+                                                                echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                        class="btn-icon btn-clone" title="Clone Program"
+                                        onclick="return confirm('Create a copy of this program?')">
                                         <i class="fas fa-copy"></i>
                                     </a>
-                                    <a href="?action=delete&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                       class="btn-icon btn-delete" title="Delete"
-                                       onclick="return confirm('Delete this program? This action cannot be undone and will remove all associated data.')">
+                                    <a href="?action=delete&id=<?php echo $program['id'];
+                                                                echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                        class="btn-icon btn-delete" title="Delete"
+                                        onclick="return confirm('Delete this program? This action cannot be undone and will remove all associated data.')">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -1753,7 +1829,7 @@ function cloneProgram($id) {
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
@@ -1796,7 +1872,7 @@ function cloneProgram($id) {
                                     </td>
                                 </tr>
                             <?php else: ?>
-                                <?php foreach ($programs as $program): 
+                                <?php foreach ($programs as $program):
                                     $total_fee = $program['fee'] + ($program['registration_fee'] ?? 0);
                                 ?>
                                     <tr data-id="<?php echo $program['id']; ?>">
@@ -1815,16 +1891,16 @@ function cloneProgram($id) {
                                         </td>
                                         <td>
                                             <span class="badge badge-<?php echo $program['program_type']; ?>">
-    <?php echo strtoupper($program['program_type']); ?>
-</span>
+                                                <?php echo strtoupper($program['program_type']); ?>
+                                            </span>
                                         </td>
                                         <td><?php echo $program['duration_weeks']; ?> weeks</td>
                                         <td>
                                             <div style="font-weight: 600;">₦<?php echo number_format($program['fee'], 2); ?></div>
                                             <?php if (($program['registration_fee'] ?? 0) > 0): ?>
-                                            <div style="font-size: 0.85rem; color: var(--gray);">
-                                                +₦<?php echo number_format($program['registration_fee'], 2); ?> reg
-                                            </div>
+                                                <div style="font-size: 0.85rem; color: var(--gray);">
+                                                    +₦<?php echo number_format($program['registration_fee'], 2); ?> reg
+                                                </div>
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -1851,9 +1927,9 @@ function cloneProgram($id) {
                                                 <?php echo ucfirst($program['payment_plan_type'] ?? 'full'); ?>
                                             </div>
                                             <?php if ($program['installment_count'] > 1): ?>
-                                            <div style="font-size: 0.8rem; color: var(--gray);">
-                                                <?php echo $program['installment_count']; ?> installments
-                                            </div>
+                                                <div style="font-size: 0.8rem; color: var(--gray);">
+                                                    <?php echo $program['installment_count']; ?> installments
+                                                </div>
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -1874,26 +1950,30 @@ function cloneProgram($id) {
                                                     <i class="fas fa-money-bill"></i>
                                                 </a>
                                                 <?php if ($program['status'] === 'active'): ?>
-                                                    <a href="?action=deactivate&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                                       class="btn-icon btn-deactivate" title="Deactivate"
-                                                       onclick="return confirm('Deactivate this program?')">
+                                                    <a href="?action=deactivate&id=<?php echo $program['id'];
+                                                                                    echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                                        class="btn-icon btn-deactivate" title="Deactivate"
+                                                        onclick="return confirm('Deactivate this program?')">
                                                         <i class="fas fa-pause"></i>
                                                     </a>
                                                 <?php elseif ($program['status'] === 'inactive'): ?>
-                                                    <a href="?action=activate&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                                       class="btn-icon btn-activate" title="Activate"
-                                                       onclick="return confirm('Activate this program?')">
+                                                    <a href="?action=activate&id=<?php echo $program['id'];
+                                                                                    echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                                        class="btn-icon btn-activate" title="Activate"
+                                                        onclick="return confirm('Activate this program?')">
                                                         <i class="fas fa-play"></i>
                                                     </a>
                                                 <?php endif; ?>
-                                                <a href="?action=clone&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                                   class="btn-icon btn-clone" title="Clone"
-                                                   onclick="return confirm('Create a copy of this program?')">
+                                                <a href="?action=clone&id=<?php echo $program['id'];
+                                                                            echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                                    class="btn-icon btn-clone" title="Clone"
+                                                    onclick="return confirm('Create a copy of this program?')">
                                                     <i class="fas fa-copy"></i>
                                                 </a>
-                                                <a href="?action=delete&id=<?php echo $program['id']; echo $filter_school ? '&filter_school='.$filter_school : ''; ?>" 
-                                                   class="btn-icon btn-delete" title="Delete"
-                                                   onclick="return confirm('Delete this program? This action cannot be undone.')">
+                                                <a href="?action=delete&id=<?php echo $program['id'];
+                                                                            echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                                    class="btn-icon btn-delete" title="Delete"
+                                                    onclick="return confirm('Delete this program? This action cannot be undone.')">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
@@ -1909,58 +1989,59 @@ function cloneProgram($id) {
 
         <!-- Pagination -->
         <?php if ($total_pages > 1): ?>
-        <div class="pagination">
-            <div class="page-info">
-                Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_programs); ?> of <?php echo number_format($total_programs); ?> programs
+            <div class="pagination">
+                <div class="page-info">
+                    Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_programs); ?> of <?php echo number_format($total_programs); ?> programs
+                </div>
+
+                <?php
+                // Build query parameters for pagination
+                $query_params = $_GET;
+                unset($query_params['page']);
+                ?>
+
+                <?php if ($page > 1): ?>
+                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page - 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                <?php else: ?>
+                    <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
+                    <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
+                <?php endif; ?>
+
+                <?php
+                $start_page = max(1, $page - 2);
+                $end_page = min($total_pages, $page + 2);
+
+                for ($p = $start_page; $p <= $end_page; $p++):
+                    if ($p == 1 || $p == $total_pages || ($p >= $page - 2 && $p <= $page + 2)):
+                ?>
+                        <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $p])); ?>"
+                            class="page-link <?php echo $p == $page ? 'active' : ''; ?>">
+                            <?php echo $p; ?>
+                        </a>
+                    <?php
+                    elseif ($p == $start_page + 2 || $p == $end_page - 2):
+                    ?>
+                        <span class="page-link">...</span>
+                <?php endif;
+                endfor; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page + 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $total_pages])); ?>" class="page-link">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                <?php else: ?>
+                    <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
+                    <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
+                <?php endif; ?>
             </div>
-            
-            <?php 
-            // Build query parameters for pagination
-            $query_params = $_GET;
-            unset($query_params['page']);
-            ?>
-            
-            <?php if ($page > 1): ?>
-                <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-double-left"></i>
-                </a>
-                <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page - 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-left"></i>
-                </a>
-            <?php else: ?>
-                <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
-                <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
-            <?php endif; ?>
-            
-            <?php 
-            $start_page = max(1, $page - 2);
-            $end_page = min($total_pages, $page + 2);
-            
-            for ($p = $start_page; $p <= $end_page; $p++):
-                if ($p == 1 || $p == $total_pages || ($p >= $page - 2 && $p <= $page + 2)):
-            ?>
-                <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $p])); ?>" 
-                   class="page-link <?php echo $p == $page ? 'active' : ''; ?>">
-                    <?php echo $p; ?>
-                </a>
-            <?php 
-                elseif ($p == $start_page + 2 || $p == $end_page - 2):
-            ?>
-                <span class="page-link">...</span>
-            <?php endif; endfor; ?>
-            
-            <?php if ($page < $total_pages): ?>
-                <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page + 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-right"></i>
-                </a>
-                <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $total_pages])); ?>" class="page-link">
-                    <i class="fas fa-angle-double-right"></i>
-                </a>
-            <?php else: ?>
-                <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
-                <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
-            <?php endif; ?>
-        </div>
         <?php endif; ?>
     </div>
 
@@ -1992,12 +2073,12 @@ function cloneProgram($id) {
             const url = new URL(window.location.href);
             const currentSort = url.searchParams.get('sort');
             const currentOrder = url.searchParams.get('order');
-            
+
             let newOrder = 'asc';
             if (currentSort === column && currentOrder === 'asc') {
                 newOrder = 'desc';
             }
-            
+
             url.searchParams.set('sort', column);
             url.searchParams.set('order', newOrder);
             window.location.href = url.toString();
@@ -2008,7 +2089,7 @@ function cloneProgram($id) {
             const selectAll = document.getElementById('selectAll') || document.getElementById('selectAllTable');
             const checkboxes = document.querySelectorAll('.row-selector');
             const isChecked = selectAll.checked;
-            
+
             checkboxes.forEach(checkbox => {
                 checkbox.checked = isChecked;
                 const row = checkbox.closest('tr');
@@ -2016,7 +2097,7 @@ function cloneProgram($id) {
                     row.classList.toggle('selected', isChecked);
                 }
             });
-            
+
             // Sync both select all checkboxes
             const otherSelectAll = document.getElementById('selectAll') ? document.getElementById('selectAllTable') : document.getElementById('selectAll');
             if (otherSelectAll) {
@@ -2031,7 +2112,7 @@ function cloneProgram($id) {
                 if (row) {
                     row.classList.toggle('selected', this.checked);
                 }
-                
+
                 // Update select all checkbox
                 const allCheckboxes = document.querySelectorAll('.row-selector');
                 const selectAll = document.getElementById('selectAll') || document.getElementById('selectAllTable');
@@ -2047,24 +2128,24 @@ function cloneProgram($id) {
             const form = document.getElementById('bulkForm');
             const bulkAction = form.bulk_action.value;
             const selectedCount = document.querySelectorAll('.row-selector:checked').length;
-            
+
             if (!bulkAction) {
                 alert('Please select a bulk action');
                 return false;
             }
-            
+
             if (selectedCount === 0) {
                 alert('Please select at least one program');
                 return false;
             }
-            
+
             const actionMessages = {
                 'activate': 'activate',
                 'deactivate': 'deactivate',
                 'clone': 'create copies of',
                 'delete': 'delete'
             };
-            
+
             const actionText = actionMessages[bulkAction] || bulkAction;
             return confirm(`Are you sure you want to ${actionText} ${selectedCount} program(s)?`);
         }
@@ -2082,7 +2163,7 @@ function cloneProgram($id) {
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
         const id = urlParams.get('id');
-        
+
         if (action && id) {
             // Actions are already handled server-side via the functions above
             // Remove action from URL after processing
@@ -2107,14 +2188,14 @@ function cloneProgram($id) {
             } else {
                 showGridView();
             }
-            
+
             // Auto-expand search on focus if there's a search term
             const searchInput = document.getElementById('search');
             if (searchInput && searchInput.value) {
                 searchInput.focus();
                 searchInput.select();
             }
-            
+
             // Add keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 // Ctrl/Cmd + F for search
@@ -2126,13 +2207,13 @@ function cloneProgram($id) {
                         searchInput.select();
                     }
                 }
-                
+
                 // Ctrl/Cmd + N for new program
                 if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                     e.preventDefault();
                     window.location.href = 'create.php';
                 }
-                
+
                 // Escape to clear search
                 if (e.key === 'Escape') {
                     const searchInput = document.getElementById('search');
@@ -2142,7 +2223,7 @@ function cloneProgram($id) {
                     }
                 }
             });
-            
+
             // Add tooltips for fee breakdown
             document.querySelectorAll('.fee-tooltip').forEach(element => {
                 element.addEventListener('mouseenter', function() {
@@ -2150,7 +2231,7 @@ function cloneProgram($id) {
                 });
             });
         });
-        
+
         // Quick filter functions
         function filterByType(type) {
             const url = new URL(window.location.href);
@@ -2158,7 +2239,7 @@ function cloneProgram($id) {
             url.searchParams.set('page', '1');
             window.location.href = url.toString();
         }
-        
+
         function filterByStatus(status) {
             const url = new URL(window.location.href);
             url.searchParams.set('status', status);
@@ -2179,4 +2260,5 @@ function cloneProgram($id) {
         }
     </script>
 </body>
+
 </html>

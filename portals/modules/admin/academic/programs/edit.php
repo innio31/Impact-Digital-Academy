@@ -171,8 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->rollback();
             $errors['requirements'] = "Error updating requirements: " . $e->getMessage();
         }
-    }
-    else {
+    } else {
         // Original form submission logic (basic program info update)
         // Validate required fields
         $program_code = trim($_POST['program_code'] ?? '');
@@ -343,7 +342,7 @@ $page_title = "Edit Program: " . htmlspecialchars($program['name']);
     <title>Edit Program - <?php echo htmlspecialchars($program['name']); ?> - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         /* Keep all the CSS from the original edit.php - it's comprehensive and well-structured */
         :root {
@@ -1189,7 +1188,7 @@ $page_title = "Edit Program: " . htmlspecialchars($program['name']);
                                 <select name="school_id" id="school_id" class="form-control">
                                     <option value="">Select School (Optional)</option>
                                     <?php foreach ($schools as $school): ?>
-                                        <option value="<?php echo $school['id']; ?>" 
+                                        <option value="<?php echo $school['id']; ?>"
                                             <?php echo ($program['school_id'] == $school['id']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($school['name']); ?>
                                             <?php if ($school['short_name']): ?> (<?php echo htmlspecialchars($school['short_name']); ?>)<?php endif; ?>
@@ -1836,14 +1835,14 @@ $page_title = "Edit Program: " . htmlspecialchars($program['name']);
         // Toggle program type settings
         function toggleProgramTypeSettings() {
             const programType = programTypeSelect.value;
-            
+
             // Show/hide fee calculator and specific fee groups
             if (programType === 'school') {
                 feeCalculator.style.display = 'none';
                 specificFeeGroups.style.display = 'none';
                 programTypeHint.style.display = 'block';
                 programTypeHintText.textContent = 'School programs typically follow the school\'s own fee structure. The base fee entered will be used as the default program fee.';
-                
+
                 // Hide online/onsite specific fields
                 onlineFeeGroup.style.display = 'none';
                 onsiteFeeGroup.style.display = 'none';
@@ -1851,7 +1850,7 @@ $page_title = "Edit Program: " . htmlspecialchars($program['name']);
                 feeCalculator.style.display = 'block';
                 specificFeeGroups.style.display = 'grid';
                 programTypeHint.style.display = 'none';
-                
+
                 // Show appropriate fee group
                 if (programType === 'online') {
                     onlineFeeGroup.style.display = 'block';

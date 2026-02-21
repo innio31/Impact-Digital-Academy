@@ -53,12 +53,13 @@ while ($row = $periods_result->fetch_assoc()) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Management - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -75,20 +76,20 @@ while ($row = $periods_result->fetch_assoc()) {
             --gray: #64748b;
             --light-gray: #e2e8f0;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background: #f1f5f9;
             color: var(--dark);
             min-height: 100vh;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -177,19 +178,19 @@ while ($row = $periods_result->fetch_assoc()) {
             border-radius: 8px;
             margin-bottom: 1.5rem;
         }
-        
+
         .alert-success {
             background-color: #d1fae5;
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
-        
+
         .alert-error {
             background-color: #fee2e2;
             color: #991b1b;
             border: 1px solid #fecaca;
         }
-        
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -197,7 +198,7 @@ while ($row = $periods_result->fetch_assoc()) {
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
-        
+
         .stat-card {
             background: white;
             padding: 1.5rem;
@@ -209,17 +210,28 @@ while ($row = $periods_result->fetch_assoc()) {
             overflow: hidden;
             cursor: pointer;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-        
-        .stat-card.programs { border-left-color: #8b5cf6; }
-        .stat-card.courses { border-left-color: #10b981; }
-        .stat-card.onsite { border-left-color: #f59e0b; }
-        .stat-card.online { border-left-color: #3b82f6; }
-        
+
+        .stat-card.programs {
+            border-left-color: #8b5cf6;
+        }
+
+        .stat-card.courses {
+            border-left-color: #10b981;
+        }
+
+        .stat-card.onsite {
+            border-left-color: #f59e0b;
+        }
+
+        .stat-card.online {
+            border-left-color: #3b82f6;
+        }
+
         .stat-icon {
             width: 50px;
             height: 50px;
@@ -230,19 +242,34 @@ while ($row = $periods_result->fetch_assoc()) {
             font-size: 1.5rem;
             margin-bottom: 1rem;
         }
-        
-        .stat-card.programs .stat-icon { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-        .stat-card.courses .stat-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .stat-card.onsite .stat-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-        .stat-card.online .stat-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        
+
+        .stat-card.programs .stat-icon {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .stat-card.courses .stat-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .stat-card.onsite .stat-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .stat-card.online .stat-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
         .stat-main {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--dark);
         }
-        
+
         .stat-label {
             font-size: 0.9rem;
             color: #64748b;
@@ -251,14 +278,14 @@ while ($row = $periods_result->fetch_assoc()) {
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-details {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
             flex-wrap: wrap;
         }
-        
+
         .stat-detail {
             display: flex;
             align-items: center;
@@ -266,13 +293,13 @@ while ($row = $periods_result->fetch_assoc()) {
             font-size: 0.875rem;
             color: #64748b;
         }
-        
+
         .detail-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
         }
-        
+
         /* Quick Actions */
         .quick-actions {
             display: grid;
@@ -280,7 +307,7 @@ while ($row = $periods_result->fetch_assoc()) {
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
-        
+
         .action-card {
             background: white;
             padding: 1.5rem;
@@ -292,32 +319,32 @@ while ($row = $periods_result->fetch_assoc()) {
             display: block;
             border: 2px solid transparent;
         }
-        
+
         .action-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
             border-color: var(--primary);
         }
-        
+
         .action-icon {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             color: var(--primary);
         }
-        
+
         .action-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--dark);
         }
-        
+
         .action-description {
             color: #64748b;
             line-height: 1.5;
             margin-bottom: 1rem;
         }
-        
+
         .action-link {
             color: var(--primary);
             font-weight: 600;
@@ -325,7 +352,7 @@ while ($row = $periods_result->fetch_assoc()) {
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         /* Recent Activity */
         .recent-activity {
             background: white;
@@ -333,7 +360,7 @@ while ($row = $periods_result->fetch_assoc()) {
             padding: 1.5rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
-        
+
         .section-title {
             font-size: 1.25rem;
             font-weight: 600;
@@ -343,15 +370,15 @@ while ($row = $periods_result->fetch_assoc()) {
             align-items: center;
             gap: 0.75rem;
         }
-        
+
         .section-title i {
             color: var(--primary);
         }
-        
+
         .activity-list {
             list-style: none;
         }
-        
+
         .activity-item {
             padding: 1rem 0;
             border-bottom: 1px solid #e2e8f0;
@@ -359,11 +386,11 @@ while ($row = $periods_result->fetch_assoc()) {
             align-items: center;
             gap: 1rem;
         }
-        
+
         .activity-item:last-child {
             border-bottom: none;
         }
-        
+
         .activity-icon {
             width: 40px;
             height: 40px;
@@ -374,20 +401,20 @@ while ($row = $periods_result->fetch_assoc()) {
             justify-content: center;
             color: var(--primary);
         }
-        
+
         .activity-content {
             flex: 1;
         }
-        
+
         .activity-text {
             margin-bottom: 0.25rem;
         }
-        
+
         .activity-time {
             font-size: 0.875rem;
             color: #94a3b8;
         }
-        
+
         .badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -395,24 +422,43 @@ while ($row = $periods_result->fetch_assoc()) {
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
-        .badge-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .badge-inactive { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
-        .badge-upcoming { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-        .badge-onsite { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-        .badge-online { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-        
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .badge-inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .badge-upcoming {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .badge-onsite {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .badge-online {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
-            
+
             .page-title {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
-            
+
             .stats-grid,
             .quick-actions {
                 grid-template-columns: 1fr;
@@ -420,6 +466,7 @@ while ($row = $periods_result->fetch_assoc()) {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Breadcrumb -->
@@ -460,7 +507,7 @@ while ($row = $periods_result->fetch_assoc()) {
                 <?php unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
-        
+
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card programs" onclick="window.location.href='programs/'">
@@ -484,7 +531,7 @@ while ($row = $periods_result->fetch_assoc()) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card courses" onclick="window.location.href='courses/'">
                 <div class="stat-icon">
                     <i class="fas fa-book-open"></i>
@@ -506,7 +553,7 @@ while ($row = $periods_result->fetch_assoc()) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card onsite" onclick="window.location.href='calendar_manager.php?program_type=onsite'">
                 <div class="stat-icon">
                     <i class="fas fa-building"></i>
@@ -528,7 +575,7 @@ while ($row = $periods_result->fetch_assoc()) {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card online" onclick="window.location.href='calendar_manager.php?program_type=online'">
                 <div class="stat-icon">
                     <i class="fas fa-laptop-code"></i>
@@ -551,7 +598,7 @@ while ($row = $periods_result->fetch_assoc()) {
                 </div>
             </div>
         </div>
-        
+
         <!-- Quick Actions -->
         <div class="quick-actions">
             <a href="calendar_manager.php" class="action-card">
@@ -566,7 +613,7 @@ while ($row = $periods_result->fetch_assoc()) {
                     Manage Calendar <i class="fas fa-arrow-right"></i>
                 </div>
             </a>
-            
+
             <a href="programs/index.php" class="action-card">
                 <div class="action-icon">
                     <i class="fas fa-graduation-cap"></i>
@@ -579,7 +626,7 @@ while ($row = $periods_result->fetch_assoc()) {
                     Manage Programs <i class="fas fa-arrow-right"></i>
                 </div>
             </a>
-            
+
             <a href="courses/index.php" class="action-card">
                 <div class="action-icon">
                     <i class="fas fa-book-open"></i>
@@ -606,14 +653,14 @@ while ($row = $periods_result->fetch_assoc()) {
                 </div>
             </a>
         </div>
-        
+
         <!-- Recent Activity -->
         <div class="recent-activity">
             <h2 class="section-title">
                 <i class="fas fa-history"></i>
                 Recent Academic Activity
             </h2>
-            
+
             <ul class="activity-list">
                 <li class="activity-item">
                     <div class="activity-icon">
@@ -627,7 +674,7 @@ while ($row = $periods_result->fetch_assoc()) {
                         <div class="activity-time">2 hours ago</div>
                     </div>
                 </li>
-                
+
                 <li class="activity-item">
                     <div class="activity-icon">
                         <i class="fas fa-calendar-check"></i>
@@ -640,7 +687,7 @@ while ($row = $periods_result->fetch_assoc()) {
                         <div class="activity-time">Yesterday, 3:45 PM</div>
                     </div>
                 </li>
-                
+
                 <li class="activity-item">
                     <div class="activity-icon">
                         <i class="fas fa-book"></i>
@@ -653,7 +700,7 @@ while ($row = $periods_result->fetch_assoc()) {
                         <div class="activity-time">Dec 19, 2024</div>
                     </div>
                 </li>
-                
+
                 <li class="activity-item">
                     <div class="activity-icon">
                         <i class="fas fa-calendar-plus"></i>
@@ -669,7 +716,7 @@ while ($row = $periods_result->fetch_assoc()) {
             </ul>
         </div>
     </div>
-    
+
     <script>
         // Add animation on load
         document.addEventListener('DOMContentLoaded', function() {
@@ -678,20 +725,20 @@ while ($row = $periods_result->fetch_assoc()) {
             statCards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
-                
+
                 setTimeout(() => {
                     card.style.transition = 'all 0.6s ease';
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
-            
+
             // Animate action cards
             const actionCards = document.querySelectorAll('.action-card');
             actionCards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
-                
+
                 setTimeout(() => {
                     card.style.transition = 'all 0.6s ease';
                     card.style.opacity = '1';
@@ -699,17 +746,18 @@ while ($row = $periods_result->fetch_assoc()) {
                 }, (index + statCards.length) * 100);
             });
         });
-        
+
         // Add hover effects
         document.querySelectorAll('.stat-card').forEach(card => {
             card.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-5px) scale(1.02)';
             });
-            
+
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
         });
     </script>
 </body>
+
 </html>
