@@ -86,6 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = 'Discussion created successfully!';
                 $message_type = 'success';
 
+                // After successful discussion creation, add:
+                if (isset($discussion_id) && $discussion_id) {
+                    // Send notifications to all class participants
+                    sendNewDiscussionNotification($discussion_id, $conn);
+                }
                 // Log activity
                 logActivity('create_discussion', "Created discussion: {$title}", 'discussions', $discussion_id);
 
@@ -143,6 +148,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $message = 'Reply posted successfully!';
                     $message_type = 'success';
+
+                    // After successful reply insertion, add:
+                    if (isset($reply_id) && $reply_id) {
+                        // Send notifications to discussion participants
+                        sendDiscussionReplyNotification($reply_id, $conn);
+                    }
 
                     // Log activity
                     logActivity('post_reply', "Posted reply to discussion #{$discussion_id}", 'discussion_replies', $stmt->insert_id);

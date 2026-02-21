@@ -60,7 +60,7 @@ $stmt->close();
 // Handle assignment download
 if (isset($_GET['download_assignment']) && is_numeric($_GET['download_assignment'])) {
     $assignment_id = (int)$_GET['download_assignment'];
-    
+
     // Get assignment details and verify student can access it
     $sql = "SELECT a.*, cb.instructor_id, cb.id as class_id
             FROM assignments a 
@@ -72,14 +72,14 @@ if (isset($_GET['download_assignment']) && is_numeric($_GET['download_assignment
     $stmt->bind_param("iii", $assignment_id, $student_id, $class_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $assignment = $result->fetch_assoc();
-        
+
         if (!empty($assignment['attachment_path']) && !empty($assignment['original_filename'])) {
             $file_path = __DIR__ . '/../../../' . $assignment['attachment_path'];
             $original_name = $assignment['original_filename'];
-            
+
             if (file_exists($file_path)) {
                 header('Content-Description: File Transfer');
                 header('Content-Type: application/octet-stream');
@@ -101,7 +101,7 @@ if (isset($_GET['download_assignment']) && is_numeric($_GET['download_assignment
         $_SESSION['error_message'] = "Assignment not found or you don't have access to it.";
     }
     $stmt->close();
-    
+
     // Redirect back to assignments page
     header("Location: assignments.php?class_id=$class_id");
     exit();
@@ -156,107 +156,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $submission_id = $insert_stmt->insert_id;
 
                 // Handle file uploads
-if (isset($_FILES['submission_files']) && $assignment['submission_type'] !== 'text') {
-    $file_count = count($_FILES['submission_files']['name']);
-    $max_files = $assignment['max_files'];
+                if (isset($_FILES['submission_files']) && $assignment['submission_type'] !== 'text') {
+                    $file_count = count($_FILES['submission_files']['name']);
+                    $max_files = $assignment['max_files'];
 
-    if ($file_count > $max_files) {
-        $submit_error = "Maximum $max_files files allowed";
-    } else {
-        $allowed_extensions = !empty($assignment['allowed_extensions']) 
-            ? explode(',', str_replace(' ', '', $assignment['allowed_extensions'])) 
-            : [];
+                    if ($file_count > $max_files) {
+                        $submit_error = "Maximum $max_files files allowed";
+                    } else {
+                        $allowed_extensions = !empty($assignment['allowed_extensions'])
+                            ? explode(',', str_replace(' ', '', $assignment['allowed_extensions']))
+                            : [];
 
-        // Define upload directory
-        $upload_base_dir = realpath(__DIR__ . '/../../../') . '/uploads/assignments/submissions/';
-        
-        // Ensure directory exists
-        if (!file_exists($upload_base_dir)) {
-            if (!mkdir($upload_base_dir, 0755, true)) {
-                $submit_error = "Upload directory could not be created. Please contact administrator.";
-            }
-        }
-        
-        // Check if directory is writable
-        if (!is_writable($upload_base_dir)) {
-            $submit_error = "Upload directory is not writable. Please check permissions.";
-        }
+                        // Define upload directory
+                        $upload_base_dir = realpath(__DIR__ . '/../../../') . '/uploads/assignments/submissions/';
 
-        if (empty($submit_error)) {
-            for ($i = 0; $i < $file_count; $i++) {
-                if ($_FILES['submission_files']['error'][$i] === UPLOAD_ERR_OK) {
-                    $file_name = $_FILES['submission_files']['name'][$i];
-                    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-                    $file_size = $_FILES['submission_files']['size'][$i];
-                    $tmp_name = $_FILES['submission_files']['tmp_name'][$i];
+                        // Ensure directory exists
+                        if (!file_exists($upload_base_dir)) {
+                            if (!mkdir($upload_base_dir, 0755, true)) {
+                                $submit_error = "Upload directory could not be created. Please contact administrator.";
+                            }
+                        }
 
-                    // Check file type if allowed extensions are specified
-                    if (!empty($allowed_extensions) && !in_array($file_ext, $allowed_extensions)) {
-                        $submit_error = "File type not allowed: .$file_ext. Allowed types: " . implode(', ', $allowed_extensions);
-                        break;
-                    }
+                        // Check if directory is writable
+                        if (!is_writable($upload_base_dir)) {
+                            $submit_error = "Upload directory is not writable. Please check permissions.";
+                        }
 
-                    // Generate unique filename
-                    $new_filename = uniqid() . '_' . preg_replace('/[^A-Za-z0-9\.\-_]/', '_', $file_name);
-                    $upload_path = $upload_base_dir . $new_filename;
-                    $file_url = 'uploads/assignments/submissions/' . $new_filename;
+                        if (empty($submit_error)) {
+                            for ($i = 0; $i < $file_count; $i++) {
+                                if ($_FILES['submission_files']['error'][$i] === UPLOAD_ERR_OK) {
+                                    $file_name = $_FILES['submission_files']['name'][$i];
+                                    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                                    $file_size = $_FILES['submission_files']['size'][$i];
+                                    $tmp_name = $_FILES['submission_files']['tmp_name'][$i];
 
-                    // Move uploaded file
-                    if (move_uploaded_file($tmp_name, $upload_path)) {
-                        // Save file record
-                        $file_sql = "INSERT INTO submission_files 
+                                    // Check file type if allowed extensions are specified
+                                    if (!empty($allowed_extensions) && !in_array($file_ext, $allowed_extensions)) {
+                                        $submit_error = "File type not allowed: .$file_ext. Allowed types: " . implode(', ', $allowed_extensions);
+                                        break;
+                                    }
+
+                                    // Generate unique filename
+                                    $new_filename = uniqid() . '_' . preg_replace('/[^A-Za-z0-9\.\-_]/', '_', $file_name);
+                                    $upload_path = $upload_base_dir . $new_filename;
+                                    $file_url = 'uploads/assignments/submissions/' . $new_filename;
+
+                                    // Move uploaded file
+                                    if (move_uploaded_file($tmp_name, $upload_path)) {
+                                        // Save file record
+                                        $file_sql = "INSERT INTO submission_files 
                                     (submission_id, file_url, file_name, file_type, file_size) 
                                     VALUES (?, ?, ?, ?, ?)";
-                        $file_stmt = $conn->prepare($file_sql);
-                        if ($file_stmt) {
-                            $file_stmt->bind_param("isssi", $submission_id, $file_url, $file_name, $file_ext, $file_size);
-                            if (!$file_stmt->execute()) {
-                                $submit_error = "Failed to save file record: " . $conn->error;
-                                @unlink($upload_path); // Clean up file
-                                break;
+                                        $file_stmt = $conn->prepare($file_sql);
+                                        if ($file_stmt) {
+                                            $file_stmt->bind_param("isssi", $submission_id, $file_url, $file_name, $file_ext, $file_size);
+                                            if (!$file_stmt->execute()) {
+                                                $submit_error = "Failed to save file record: " . $conn->error;
+                                                @unlink($upload_path); // Clean up file
+                                                break;
+                                            }
+                                            $file_stmt->close();
+                                        } else {
+                                            $submit_error = "Failed to prepare file statement: " . $conn->error;
+                                            @unlink($upload_path); // Clean up file
+                                            break;
+                                        }
+                                    } else {
+                                        $error_code = $_FILES['submission_files']['error'][$i];
+                                        $error_messages = [
+                                            UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
+                                            UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive',
+                                            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                                            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                                            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                                            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                                            UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
+                                        ];
+
+                                        $submit_error = "Failed to upload file '$file_name': " .
+                                            ($error_messages[$error_code] ?? "Unknown error (code: $error_code)");
+                                        break;
+                                    }
+                                } elseif ($_FILES['submission_files']['error'][$i] !== UPLOAD_ERR_NO_FILE) {
+                                    // Handle upload errors (except no file uploaded)
+                                    $error_code = $_FILES['submission_files']['error'][$i];
+                                    $error_messages = [
+                                        UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
+                                        UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive',
+                                        UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                                        UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                                        UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                                        UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
+                                    ];
+
+                                    $submit_error = "Upload error for file #" . ($i + 1) . ": " .
+                                        ($error_messages[$error_code] ?? "Unknown error (code: $error_code)");
+                                    break;
+                                }
                             }
-                            $file_stmt->close();
-                        } else {
-                            $submit_error = "Failed to prepare file statement: " . $conn->error;
-                            @unlink($upload_path); // Clean up file
-                            break;
                         }
-                    } else {
-                        $error_code = $_FILES['submission_files']['error'][$i];
-                        $error_messages = [
-                            UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
-                            UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive',
-                            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
-                            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
-                            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
-                            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
-                            UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
-                        ];
-                        
-                        $submit_error = "Failed to upload file '$file_name': " . 
-                                      ($error_messages[$error_code] ?? "Unknown error (code: $error_code)");
-                        break;
                     }
-                } elseif ($_FILES['submission_files']['error'][$i] !== UPLOAD_ERR_NO_FILE) {
-                    // Handle upload errors (except no file uploaded)
-                    $error_code = $_FILES['submission_files']['error'][$i];
-                    $error_messages = [
-                        UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
-                        UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive',
-                        UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
-                        UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
-                        UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
-                        UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
-                    ];
-                    
-                    $submit_error = "Upload error for file #" . ($i + 1) . ": " . 
-                                  ($error_messages[$error_code] ?? "Unknown error (code: $error_code)");
-                    break;
                 }
-            }
-        }
-    }
-}
+                // After successful submission insertion, add:
+                if (isset($submission_id) && $submission_id) {
+                    // Send notification to instructor
+                    sendAssignmentSubmissionNotification($submission_id, $conn);
+                }
 
                 if (empty($submit_error)) {
                     $submit_success = true;
@@ -348,7 +353,8 @@ $stmt->close();
 $conn->close();
 
 // Function to get submission status badge
-function getSubmissionStatusBadge($assignment, $submission) {
+function getSubmissionStatusBadge($assignment, $submission)
+{
     $now = time();
     $due = strtotime($assignment['due_date']);
 
@@ -372,7 +378,8 @@ function getSubmissionStatusBadge($assignment, $submission) {
 }
 
 // Function to get grade color
-function getGradeColor($grade) {
+function getGradeColor($grade)
+{
     if ($grade >= 90) return 'grade-excellent';
     if ($grade >= 80) return 'grade-good';
     if ($grade >= 70) return 'grade-average';
@@ -381,7 +388,8 @@ function getGradeColor($grade) {
 }
 
 // Function to get submission type label
-function getSubmissionTypeLabel($type) {
+function getSubmissionTypeLabel($type)
+{
     $labels = [
         'file' => 'File Upload',
         'text' => 'Text Submission',
@@ -392,6 +400,7 @@ function getSubmissionTypeLabel($type) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1269,6 +1278,7 @@ function getSubmissionTypeLabel($type) {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Breadcrumb -->
@@ -1557,8 +1567,8 @@ function getSubmissionTypeLabel($type) {
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="?class_id=<?php echo $class_id; ?>&download_assignment=<?php echo $assignment['id']; ?>" 
-                                       class="btn btn-primary btn-small">
+                                    <a href="?class_id=<?php echo $class_id; ?>&download_assignment=<?php echo $assignment['id']; ?>"
+                                        class="btn btn-primary btn-small">
                                         <i class="fas fa-download"></i> Download
                                     </a>
                                 </div>
@@ -1646,11 +1656,11 @@ function getSubmissionTypeLabel($type) {
                                         <i class="fas fa-times"></i> Missing
                                     </span>
                                 <?php endif; ?>
-                                
+
                                 <!-- View assignment file button -->
                                 <?php if (!empty($assignment['has_attachment']) && !empty($assignment['attachment_path'])): ?>
-                                    <a href="?class_id=<?php echo $class_id; ?>&download_assignment=<?php echo $assignment['id']; ?>" 
-                                       class="btn btn-info btn-small">
+                                    <a href="?class_id=<?php echo $class_id; ?>&download_assignment=<?php echo $assignment['id']; ?>"
+                                        class="btn btn-info btn-small">
                                         <i class="fas fa-file-download"></i> Assignment File
                                     </a>
                                 <?php endif; ?>
@@ -1988,4 +1998,5 @@ function getSubmissionTypeLabel($type) {
         });
     </script>
 </body>
+
 </html>
