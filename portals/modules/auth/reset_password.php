@@ -16,14 +16,38 @@ if (isLoggedIn()) {
     redirectToDashboard();
 }
 
-// Get token and user_id from query parameters
+// Get token from query parameters only (no user_id needed)
 $token = $_GET['token'] ?? '';
-$user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 
-// Check if token is valid
+// Check if token is valid (we need to get email from token first)
 $is_valid_token = false;
-if ($token && $user_id) {
-    $is_valid_token = validateResetToken($token, $user_id);
+$token_email = '';
+
+if ($token) {
+    // Get email associated with this token
+    $conn = getDBConnection();
+    $sql = "SELECT email FROM password_resets WHERE token = ? AND used = 0 AND expires_at > NOW()";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $token_email = $row['email'];
+
+        // Now validate the token with the email
+        // We need to get user_id from email for the validation function
+        $user_sql = "SELECT id FROM users WHERE email = ?";
+        $user_stmt = $conn->prepare($user_sql);
+        $user_stmt->bind_param("s", $token_email);
+        $user_stmt->execute();
+        $user_result = $user_stmt->get_result();
+
+        if ($user_row = $user_result->fetch_assoc()) {
+            $user_id = $user_row['id'];
+            $is_valid_token = validateResetToken($token, $user_id);
+        }
+    }
 }
 
 // Handle form submission
@@ -39,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_password = $_POST['new_password'] ?? '';
         $confirm_password = $_POST['confirm_password'] ?? '';
         $submitted_token = $_POST['token'] ?? '';
-        $submitted_user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
+        $submitted_email = $_POST['email'] ?? '';
 
         // Validate required fields
         if (empty($new_password) || empty($confirm_password)) {
@@ -49,16 +73,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($new_password !== $confirm_password) {
             $error = 'Passwords do not match.';
         } else {
-            $result = completePasswordReset($submitted_user_id, $submitted_token, $new_password);
+            // Get user_id from email
+            $conn = getDBConnection();
+            $user_sql = "SELECT id FROM users WHERE email = ?";
+            $user_stmt = $conn->prepare($user_sql);
+            $user_stmt->bind_param("s", $submitted_email);
+            $user_stmt->execute();
+            $user_result = $user_stmt->get_result();
 
-            if ($result['success']) {
-                $success = true;
-                $message = $result['message'];
+            if ($user_row = $user_result->fetch_assoc()) {
+                $submitted_user_id = $user_row['id'];
+                $result = completePasswordReset($submitted_user_id, $submitted_token, $new_password);
 
-                // Redirect to login page after a delay
-                header("Refresh: 5; url=" . BASE_URL . "modules/auth/login.php");
+                if ($result['success']) {
+                    $success = true;
+                    $message = $result['message'];
+
+                    // Redirect to login page after a delay
+                    header("Refresh: 5; url=" . BASE_URL . "modules/auth/login.php");
+                } else {
+                    $error = $result['message'];
+                }
             } else {
-                $error = $result['message'];
+                $error = 'User not found.';
             }
         }
     }
@@ -77,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
 
     <style>
+        /* Your existing styles remain exactly the same */
         :root {
             --primary: #2563eb;
             --secondary: #1e40af;
@@ -476,7 +514,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form method="POST" id="resetForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
-                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
+                    <input type="hidden" name="email" value="<?php echo htmlspecialchars($token_email); ?>">
 
                     <div class="form-group">
                         <label for="new_password">New Password</label>
