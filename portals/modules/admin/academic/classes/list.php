@@ -143,25 +143,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
     } elseif (!empty($_POST['selected_classes'])) {
         $selected_ids = $_POST['selected_classes'];
         $placeholders = implode(',', array_fill(0, count($selected_ids), '?'));
-        
+
         $update_sql = "UPDATE class_batches SET status = ?, updated_at = NOW() WHERE id IN ($placeholders)";
         $update_stmt = $conn->prepare($update_sql);
-        
+
         $status_param = $_POST['bulk_action'];
         $all_params = array_merge([$status_param], $selected_ids);
         $types = str_repeat('i', count($selected_ids) + 1);
-        
+
         $update_stmt->bind_param($types, ...$all_params);
-        
+
         if ($update_stmt->execute()) {
             $_SESSION['success'] = count($selected_ids) . ' classes updated successfully.';
-            
+
             // Log each update
             foreach ($selected_ids as $class_id) {
-                logActivity($_SESSION['user_id'], 'class_update', 
-                    "Class #$class_id bulk updated to $status_param", 'class_batches', $class_id);
+                logActivity(
+                    $_SESSION['user_id'],
+                    'class_update',
+                    "Class #$class_id bulk updated to $status_param",
+                    'class_batches',
+                    $class_id
+                );
             }
-            
+
             // Refresh page
             header('Location: ' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']);
             exit();
@@ -175,11 +180,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Management - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -326,14 +333,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             right: 0;
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
             transform: rotate(45deg) translate(30px, -30px);
         }
 
-        .stat-card.scheduled { border-left-color: var(--scheduled); }
-        .stat-card.ongoing { border-left-color: var(--ongoing); }
-        .stat-card.completed { border-left-color: var(--completed); }
-        .stat-card.cancelled { border-left-color: var(--cancelled); }
+        .stat-card.scheduled {
+            border-left-color: var(--scheduled);
+        }
+
+        .stat-card.ongoing {
+            border-left-color: var(--ongoing);
+        }
+
+        .stat-card.completed {
+            border-left-color: var(--completed);
+        }
+
+        .stat-card.cancelled {
+            border-left-color: var(--cancelled);
+        }
 
         .stat-number {
             font-size: 2rem;
@@ -507,10 +525,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             letter-spacing: 0.5px;
         }
 
-        .status-scheduled { background: #ede9fe; color: #5b21b6; }
-        .status-ongoing { background: #d1fae5; color: #065f46; }
-        .status-completed { background: #dbeafe; color: #1e40af; }
-        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        .status-scheduled {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .status-ongoing {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-completed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
         .program-badge {
             display: inline-block;
@@ -520,8 +553,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-weight: 600;
         }
 
-        .badge-onsite { background: #e0f2fe; color: #0369a1; }
-        .badge-online { background: #dcfce7; color: #166534; }
+        .badge-onsite {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-online {
+            background: #dcfce7;
+            color: #166534;
+        }
 
         .actions {
             display: flex;
@@ -651,6 +691,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             .sidebar {
                 width: 200px;
             }
+
             .main-content {
                 margin-left: 200px;
             }
@@ -660,23 +701,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             .admin-container {
                 flex-direction: column;
             }
+
             .sidebar {
                 width: 100%;
                 height: auto;
                 position: relative;
             }
+
             .main-content {
                 margin-left: 0;
             }
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .filter-form {
                 grid-template-columns: 1fr;
             }
+
             .actions {
                 flex-direction: column;
             }
+
             .table-header {
                 flex-direction: column;
                 gap: 1rem;
@@ -685,6 +732,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
@@ -696,23 +744,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">
-                        <i class="fas fa-file-alt"></i> Applications</a></li>
+                            <i class="fas fa-file-alt"></i> Applications</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">
-                        <i class="fas fa-users"></i> Users</a></li>
+                            <i class="fas fa-users"></i> Users</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/">
-                        <i class="fas fa-graduation-cap"></i> Academic</a></li>
+                            <i class="fas fa-graduation-cap"></i> Academic</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php" class="active">
-                        <i class="fas fa-chalkboard-teacher"></i> Classes</a></li>
+                            <i class="fas fa-chalkboard-teacher"></i> Classes</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/announcements.php">
-                        <i class="fas fa-bullhorn"></i> Announcements</a></li>
+                            <i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/logs.php">
-                        <i class="fas fa-history"></i> Activity Logs</a></li>
+                            <i class="fas fa-history"></i> Activity Logs</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/settings.php">
-                        <i class="fas fa-cog"></i> Settings</a></li>
+                            <i class="fas fa-cog"></i> Settings</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
-                        <i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -740,14 +788,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
-                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                    <?php echo $_SESSION['success'];
+                    unset($_SESSION['success']); ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                    <?php echo $_SESSION['error'];
+                    unset($_SESSION['error']); ?>
                 </div>
             <?php endif; ?>
 
@@ -809,7 +859,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <select name="program_id" class="form-control">
                             <option value="">All Programs</option>
                             <?php foreach ($programs as $program): ?>
-                                <option value="<?php echo $program['id']; ?>" 
+                                <option value="<?php echo $program['id']; ?>"
                                     <?php echo $program_id == $program['id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
                                 </option>
@@ -821,7 +871,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <select name="instructor_id" class="form-control">
                             <option value="">All Instructors</option>
                             <?php foreach ($instructors as $instructor): ?>
-                                <option value="<?php echo $instructor['id']; ?>" 
+                                <option value="<?php echo $instructor['id']; ?>"
                                     <?php echo $instructor_id == $instructor['id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($instructor['first_name'] . ' ' . $instructor['last_name']); ?>
                                 </option>
@@ -830,9 +880,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     </div>
                     <div class="form-group">
                         <label>Search</label>
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Batch code, class name, or course..." 
-                               value="<?php echo htmlspecialchars($search); ?>">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Batch code, class name, or course..."
+                            value="<?php echo htmlspecialchars($search); ?>">
                     </div>
                     <div class="form-group">
                         <label>From Date</label>
@@ -864,7 +914,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
                 <form method="POST" id="bulkForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                    
+
                     <?php if (!empty($classes)): ?>
                         <div class="table-container">
                             <table>
@@ -883,16 +933,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($classes as $class): 
+                                    <?php foreach ($classes as $class):
                                         // Calculate enrollment progress
-                                        $enrollment_progress = $class['max_students'] > 0 
-                                            ? ($class['enrolled_students'] / $class['max_students']) * 100 
+                                        $enrollment_progress = $class['max_students'] > 0
+                                            ? ($class['enrolled_students'] / $class['max_students']) * 100
                                             : 0;
                                     ?>
                                         <tr>
                                             <td class="checkbox-cell">
-                                                <input type="checkbox" name="selected_classes[]" 
-                                                       value="<?php echo $class['id']; ?>" class="class-checkbox">
+                                                <input type="checkbox" name="selected_classes[]"
+                                                    value="<?php echo $class['id']; ?>" class="class-checkbox">
                                             </td>
                                             <td>
                                                 <div class="class-code">
@@ -932,7 +982,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                             </td>
                                             <td>
                                                 <div>
-                                                    <strong><?php echo $class['enrolled_students']; ?></strong> / 
+                                                    <strong><?php echo $class['enrolled_students']; ?></strong> /
                                                     <?php echo $class['max_students']; ?> students
                                                 </div>
                                                 <div class="progress-bar">
@@ -948,16 +998,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                                 </span>
                                             </td>
                                             <td class="actions">
-                                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/view.php?id=<?php echo $class['id']; ?>" 
-                                                   class="btn btn-primary btn-sm">
+                                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/view.php?id=<?php echo $class['id']; ?>"
+                                                    class="btn btn-primary btn-sm">
                                                     <i class="fas fa-eye"></i> View
                                                 </a>
-                                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class['id']; ?>" 
-                                                   class="btn btn-secondary btn-sm">
+                                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class['id']; ?>"
+                                                    class="btn btn-secondary btn-sm">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class['id']; ?>/home.php" 
-                                                   class="btn btn-success btn-sm" target="_blank">
+                                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class['id']; ?>/home.php"
+                                                    class="btn btn-success btn-sm" target="_blank">
                                                     <i class="fas fa-chalkboard-teacher"></i> Class View
                                                 </a>
                                             </td>
@@ -1036,24 +1086,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         document.getElementById('bulkForm').addEventListener('submit', function(e) {
             const action = this.bulk_action.value;
             const selectedCount = document.querySelectorAll('.class-checkbox:checked').length;
-            
+
             if (!action) {
                 e.preventDefault();
                 alert('Please select a bulk action.');
                 return false;
             }
-            
+
             if (selectedCount === 0) {
                 e.preventDefault();
                 alert('Please select at least one class.');
                 return false;
             }
-            
-            const actionText = action === 'scheduled' ? 'mark as scheduled' : 
-                              action === 'ongoing' ? 'mark as ongoing' : 
-                              action === 'completed' ? 'mark as completed' : 
-                              'mark as cancelled';
-            
+
+            const actionText = action === 'scheduled' ? 'mark as scheduled' :
+                action === 'ongoing' ? 'mark as ongoing' :
+                action === 'completed' ? 'mark as completed' :
+                'mark as cancelled';
+
             if (!confirm(`Are you sure you want to ${actionText} ${selectedCount} class(es)?`)) {
                 e.preventDefault();
                 return false;
@@ -1066,7 +1116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         // Quick search functionality
         const searchInput = document.querySelector('input[name="search"]');
         let searchTimer;
-        
+
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimer);
             searchTimer = setTimeout(() => {
@@ -1087,5 +1137,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         });
     </script>
 </body>
+
 </html>
 <?php $conn->close(); ?>

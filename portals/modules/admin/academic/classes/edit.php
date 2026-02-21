@@ -354,6 +354,7 @@ logActivity($_SESSION['user_id'], "class_edit_access", "Accessed edit class form
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Class: <?php echo htmlspecialchars($class_data['batch_code']); ?> - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;

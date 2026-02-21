@@ -309,6 +309,7 @@ logActivity($_SESSION['user_id'], "class_form_access", "Accessed {$action_text} 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $edit_mode ? 'Edit Class' : 'Create New Class'; ?> - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -934,12 +935,12 @@ logActivity($_SESSION['user_id'], "class_form_access", "Accessed {$action_text} 
                                                     data-course-title="<?php echo htmlspecialchars($course['title']); ?>"
                                                     data-program-name="<?php echo htmlspecialchars($course['program_name']); ?>">
                                                     <?php echo htmlspecialchars($course['course_code'] . ' - ' . $course['title']); ?>
-                                                    (<?php 
+                                                    (<?php
                                                         if ($course['program_type'] === 'onsite') echo 'Onsite';
                                                         elseif ($course['program_type'] === 'online') echo 'Online';
                                                         elseif ($course['program_type'] === 'school') echo 'School-Based';
                                                         else echo ucfirst($course['program_type']);
-                                                    ?>)
+                                                        ?>)
                                                 </option>
                                             <?php endforeach; ?>
                                         </optgroup>
@@ -952,7 +953,7 @@ logActivity($_SESSION['user_id'], "class_form_access", "Accessed {$action_text} 
                                     <h4 id="selected-course-title"></h4>
                                     <p><strong>Course Code:</strong> <span id="selected-course-code"></span></p>
                                     <p><strong>Program:</strong> <span id="selected-program-name"></span></p>
-                                    <p><strong>Program Type:</strong> 
+                                    <p><strong>Program Type:</strong>
                                         <span id="selected-program-type-badge"></span>
                                     </p>
                                 </div>
@@ -1013,12 +1014,12 @@ logActivity($_SESSION['user_id'], "class_form_access", "Accessed {$action_text} 
                                     foreach ($periods_by_program as $key => $periods):
                                         list($program_type, $academic_year) = explode('_', $key, 2);
                                     ?>
-                                        <optgroup label="<?php 
-                                            if ($program_type === 'onsite') echo 'Onsite';
-                                            elseif ($program_type === 'online') echo 'Online';
-                                            elseif ($program_type === 'school') echo 'School-Based';
-                                            else echo ucfirst($program_type);
-                                        ?> - <?php echo $academic_year; ?>"
+                                        <optgroup label="<?php
+                                                            if ($program_type === 'onsite') echo 'Onsite';
+                                                            elseif ($program_type === 'online') echo 'Online';
+                                                            elseif ($program_type === 'school') echo 'School-Based';
+                                                            else echo ucfirst($program_type);
+                                                            ?> - <?php echo $academic_year; ?>"
                                             data-program-type="<?php echo $program_type; ?>">
                                             <?php foreach ($periods as $period): ?>
                                                 <option value="<?php echo $period['id']; ?>"
@@ -1153,13 +1154,13 @@ Or: Every Tuesday, 10:00 AM - 12:00 PM (Virtual)"
                 document.getElementById('selected-course-code').textContent = selectedOption.getAttribute('data-course-code');
                 document.getElementById('selected-course-title').textContent = selectedOption.getAttribute('data-course-title');
                 document.getElementById('selected-program-name').textContent = selectedOption.getAttribute('data-program-name');
-                
+
                 // Create program type badge
                 const programType = selectedOption.getAttribute('data-program-type');
                 let badgeClass = '';
                 let badgeText = '';
-                
-                switch(programType) {
+
+                switch (programType) {
                     case 'online':
                         badgeClass = 'badge-online';
                         badgeText = 'Online Program';
@@ -1176,10 +1177,10 @@ Or: Every Tuesday, 10:00 AM - 12:00 PM (Virtual)"
                         badgeClass = '';
                         badgeText = programType.charAt(0).toUpperCase() + programType.slice(1) + ' Program';
                 }
-                
+
                 const badgeHtml = `<span class="program-type-badge ${badgeClass}">${badgeText}</span>`;
                 document.getElementById('selected-program-type-badge').innerHTML = badgeHtml;
-                
+
                 courseInfo.style.display = 'block';
 
                 // Auto-select program type based on course
@@ -1446,7 +1447,7 @@ Or: Every Tuesday, 10:00 AM - 12:00 PM (Virtual)"
                             }
 
                             let programTypeText = '';
-                            switch(programType) {
+                            switch (programType) {
                                 case 'online':
                                     programTypeText = 'Online';
                                     break;
@@ -1478,7 +1479,7 @@ Or: Every Tuesday, 10:00 AM - 12:00 PM (Virtual)"
                         const programType = selectedPeriod.getAttribute('data-program-type');
 
                         let programTypeText = '';
-                        switch(programType) {
+                        switch (programType) {
                             case 'online':
                                 programTypeText = 'Online';
                                 break;

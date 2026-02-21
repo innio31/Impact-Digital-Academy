@@ -77,11 +77,13 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($course['title']); ?> - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -179,8 +181,15 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
             margin-bottom: 1rem;
         }
 
-        .status-active { background: var(--success); color: white; }
-        .status-inactive { background: var(--danger); color: white; }
+        .status-active {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-inactive {
+            background: var(--danger);
+            color: white;
+        }
 
         .course-description {
             color: var(--gray);
@@ -264,10 +273,21 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card.hours { border-top-color: var(--accent); }
-        .stat-card.classes { border-top-color: var(--info); }
-        .stat-card.students { border-top-color: var(--success); }
-        .stat-card.order { border-top-color: var(--warning); }
+        .stat-card.hours {
+            border-top-color: var(--accent);
+        }
+
+        .stat-card.classes {
+            border-top-color: var(--info);
+        }
+
+        .stat-card.students {
+            border-top-color: var(--success);
+        }
+
+        .stat-card.order {
+            border-top-color: var(--warning);
+        }
 
         .stat-icon {
             font-size: 2rem;
@@ -364,9 +384,20 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
             text-transform: uppercase;
         }
 
-        .level-beginner { background: rgba(59, 130, 246, 0.1); color: var(--info); }
-        .level-intermediate { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .level-advanced { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .level-beginner {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .level-intermediate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .level-advanced {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
 
         .classes-list {
             list-style: none;
@@ -408,9 +439,20 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
             text-transform: uppercase;
         }
 
-        .status-ongoing { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-scheduled { background: rgba(59, 130, 246, 0.1); color: var(--info); }
-        .status-completed { background: rgba(107, 114, 128, 0.1); color: var(--gray); }
+        .status-ongoing {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-scheduled {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .status-completed {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--gray);
+        }
 
         .class-title {
             font-size: 1.1rem;
@@ -444,13 +486,13 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
             border-radius: 8px;
             margin-bottom: 1.5rem;
         }
-        
+
         .alert-success {
             background-color: #d1fae5;
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
-        
+
         .alert-error {
             background-color: #fee2e2;
             color: #991b1b;
@@ -482,6 +524,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Breadcrumb -->
@@ -529,7 +572,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                     <?php echo nl2br(htmlspecialchars($course['description'])); ?>
                 </div>
             </div>
-            
+
             <div class="page-actions">
                 <a href="edit.php?id=<?php echo $course['id']; ?>" class="btn btn-primary">
                     <i class="fas fa-edit"></i> Edit Course
@@ -538,21 +581,21 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                     <i class="fas fa-arrow-left"></i> Back to List
                 </a>
                 <?php if ($course['status'] === 'active'): ?>
-                    <a href="?action=deactivate&id=<?php echo $course['id']; ?>" 
-                       class="btn btn-warning"
-                       onclick="return confirm('Deactivate this course?')">
+                    <a href="?action=deactivate&id=<?php echo $course['id']; ?>"
+                        class="btn btn-warning"
+                        onclick="return confirm('Deactivate this course?')">
                         <i class="fas fa-pause"></i> Deactivate
                     </a>
                 <?php elseif ($course['status'] === 'inactive'): ?>
-                    <a href="?action=activate&id=<?php echo $course['id']; ?>" 
-                       class="btn btn-success"
-                       onclick="return confirm('Activate this course?')">
+                    <a href="?action=activate&id=<?php echo $course['id']; ?>"
+                        class="btn btn-success"
+                        onclick="return confirm('Activate this course?')">
                         <i class="fas fa-play"></i> Activate
                     </a>
                 <?php endif; ?>
-                <a href="?action=delete&id=<?php echo $course['id']; ?>" 
-                   class="btn btn-danger"
-                   onclick="return confirm('Delete this course? This action cannot be undone.')">
+                <a href="?action=delete&id=<?php echo $course['id']; ?>"
+                    class="btn btn-danger"
+                    onclick="return confirm('Delete this course? This action cannot be undone.')">
                     <i class="fas fa-trash"></i> Delete
                 </a>
             </div>
@@ -567,7 +610,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                 <div class="stat-value"><?php echo $course['duration_hours']; ?></div>
                 <div class="stat-label">Hours</div>
             </div>
-            
+
             <div class="stat-card classes" onclick="window.location.href='<?php echo BASE_URL; ?>modules/admin/academic/classes/?course=<?php echo $course['id']; ?>'">
                 <div class="stat-icon">
                     <i class="fas fa-chalkboard"></i>
@@ -575,7 +618,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                 <div class="stat-value"><?php echo $course['class_count'] ?: '0'; ?></div>
                 <div class="stat-label">Active Classes</div>
             </div>
-            
+
             <div class="stat-card students">
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
@@ -583,7 +626,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                 <div class="stat-value"><?php echo $course['student_count'] ?: '0'; ?></div>
                 <div class="stat-label">Enrolled Students</div>
             </div>
-            
+
             <div class="stat-card order">
                 <div class="stat-icon">
                     <i class="fas fa-list-ol"></i>
@@ -608,7 +651,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                 <label>Course Code</label>
                                 <div class="value"><?php echo htmlspecialchars($course['course_code']); ?></div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Status</label>
                                 <div class="value">
@@ -617,12 +660,12 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Duration</label>
                                 <div class="value"><?php echo $course['duration_hours']; ?> hours</div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Level</label>
                                 <div class="value">
@@ -631,31 +674,31 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Order Number</label>
                                 <div class="value">#<?php echo $course['order_number']; ?></div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Required Course</label>
                                 <div class="value"><?php echo $course['is_required'] ? 'Yes' : 'No'; ?></div>
                             </div>
-                            
+
                             <?php if ($course['creator_first_name']): ?>
-                            <div class="detail-group">
-                                <label>Created By</label>
-                                <div class="value">
-                                    <?php echo htmlspecialchars($course['creator_first_name'] . ' ' . $course['creator_last_name']); ?>
+                                <div class="detail-group">
+                                    <label>Created By</label>
+                                    <div class="value">
+                                        <?php echo htmlspecialchars($course['creator_first_name'] . ' ' . $course['creator_last_name']); ?>
+                                    </div>
                                 </div>
-                            </div>
                             <?php endif; ?>
-                            
+
                             <div class="detail-group">
                                 <label>Created Date</label>
                                 <div class="value"><?php echo formatDate($course['created_at'], 'F j, Y \a\t h:i A'); ?></div>
                             </div>
-                            
+
                             <div class="detail-group">
                                 <label>Last Updated</label>
                                 <div class="value"><?php echo formatDate($course['updated_at'], 'F j, Y \a\t h:i A'); ?></div>
@@ -668,8 +711,8 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                 <div class="section-card">
                     <div class="section-header">
                         <h2>Active Classes</h2>
-                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php?course_id=<?php echo $course['id']; ?>" 
-                           class="btn btn-primary" style="background: white; color: var(--primary);">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php?course_id=<?php echo $course['id']; ?>"
+                            class="btn btn-primary" style="background: white; color: var(--primary);">
                             <i class="fas fa-plus"></i> Create Class
                         </a>
                     </div>
@@ -694,7 +737,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                         <div class="class-details">
                                             <div>
                                                 <i class="fas fa-calendar"></i>
-                                                <?php echo date('M j, Y', strtotime($class['start_date'])); ?> - 
+                                                <?php echo date('M j, Y', strtotime($class['start_date'])); ?> -
                                                 <?php echo date('M j, Y', strtotime($class['end_date'])); ?>
                                             </div>
                                             <div>
@@ -714,10 +757,10 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                 <?php endforeach; ?>
                             </ul>
                         <?php endif; ?>
-                        
+
                         <div style="text-align: center; margin-top: 1.5rem;">
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/?course=<?php echo $course['id']; ?>" 
-                               class="btn btn-secondary">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/?course=<?php echo $course['id']; ?>"
+                                class="btn btn-secondary">
                                 <i class="fas fa-list"></i> View All Classes
                             </a>
                         </div>
@@ -739,10 +782,10 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                                 <?php echo htmlspecialchars($course['program_code'] . ' - ' . $course['program_name']); ?>
                             </div>
                         </div>
-                        
+
                         <div style="text-align: center; margin-top: 1.5rem;">
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/view.php?id=<?php echo $course['program_id']; ?>" 
-                               class="btn btn-secondary" style="width: 100%;">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/view.php?id=<?php echo $course['program_id']; ?>"
+                                class="btn btn-secondary" style="width: 100%;">
                                 <i class="fas fa-external-link-alt"></i> View Program Details
                             </a>
                         </div>
@@ -756,23 +799,23 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                     </div>
                     <div class="section-content">
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php?course_id=<?php echo $course['id']; ?>" 
-                               class="btn btn-primary">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php?course_id=<?php echo $course['id']; ?>"
+                                class="btn btn-primary">
                                 <i class="fas fa-chalkboard"></i> Create New Class
                             </a>
-                            
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/create.php?program_id=<?php echo $course['program_id']; ?>" 
-                               class="btn btn-secondary">
+
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/create.php?program_id=<?php echo $course['program_id']; ?>"
+                                class="btn btn-secondary">
                                 <i class="fas fa-book"></i> Add Another Course
                             </a>
-                            
-                            <a href="<?php echo BASE_URL; ?>modules/admin/reports/?type=course&id=<?php echo $course['id']; ?>" 
-                               class="btn btn-secondary">
+
+                            <a href="<?php echo BASE_URL; ?>modules/admin/reports/?type=course&id=<?php echo $course['id']; ?>"
+                                class="btn btn-secondary">
                                 <i class="fas fa-chart-bar"></i> Generate Report
                             </a>
-                            
-                            <a href="edit.php?id=<?php echo $course['id']; ?>" 
-                               class="btn btn-secondary">
+
+                            <a href="edit.php?id=<?php echo $course['id']; ?>"
+                                class="btn btn-secondary">
                                 <i class="fas fa-cog"></i> Course Settings
                             </a>
                         </div>
@@ -787,7 +830,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
         const id = urlParams.get('id');
-        
+
         if (action && id && id === '<?php echo $course_id; ?>') {
             // Actions are handled server-side, just show confirmation
             const actionMessages = {
@@ -795,7 +838,7 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                 'deactivate': 'Course has been deactivated successfully.',
                 'delete': 'Course has been deleted. Redirecting...'
             };
-            
+
             if (actionMessages[action]) {
                 alert(actionMessages[action]);
                 if (action === 'delete') {
@@ -807,4 +850,5 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
         }
     </script>
 </body>
+
 </html>

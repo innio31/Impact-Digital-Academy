@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt = $conn->prepare($sql);
             $user_id = $_SESSION['user_id'] ?? 1;
-            
+
             // Count the parameters: we have 20 parameters before created_by
             // Let's debug what we're binding
             $bind_params = [
@@ -207,11 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $school_id,             // 19. i
                 $user_id                // 20. i
             ];
-            
+
             // Type string should match: 20 parameters
             // s = string, i = integer, d = double/float
             $type_string = "sssididdddssidssssii";
-            
+
             $stmt->bind_param(
                 $type_string,
                 $program_code,
@@ -307,7 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Program - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="icon" href="/../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -824,17 +824,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">School/Institution</label>
-                            <?php 
-                                $school_name = '';
-                                if ($school_id) {
-                                    $school_stmt = $conn->prepare("SELECT name FROM schools WHERE id = ?");
-                                    $school_stmt->bind_param("i", $school_id);
-                                    $school_stmt->execute();
-                                    $school_result = $school_stmt->get_result();
-                                    if ($school_row = $school_result->fetch_assoc()) {
-                                        $school_name = $school_row['name'];
-                                    }
+                            <?php
+                            $school_name = '';
+                            if ($school_id) {
+                                $school_stmt = $conn->prepare("SELECT name FROM schools WHERE id = ?");
+                                $school_stmt->bind_param("i", $school_id);
+                                $school_stmt->execute();
+                                $school_result = $school_stmt->get_result();
+                                if ($school_row = $school_result->fetch_assoc()) {
+                                    $school_name = $school_row['name'];
                                 }
+                            }
                             ?>
                             <input type="text" class="form-control" value="<?php echo htmlspecialchars($school_name); ?>" readonly>
                             <div class="form-text">This program will be associated with <?php echo htmlspecialchars($school_name); ?></div>
@@ -847,7 +847,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <select name="school_id" id="school_id" class="form-control">
                                 <option value="">Select School (Optional)</option>
                                 <?php foreach ($schools as $school): ?>
-                                    <option value="<?php echo $school['id']; ?>" 
+                                    <option value="<?php echo $school['id']; ?>"
                                         <?php echo ($program['school_id'] == $school['id']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($school['name']); ?>
                                         <?php if ($school['short_name']): ?> (<?php echo htmlspecialchars($school['short_name']); ?>)<?php endif; ?>
@@ -1160,14 +1160,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Toggle fee groups based on program type
         function toggleProgramTypeSettings() {
             const programType = programTypeSelect.value;
-            
+
             // Show/hide fee calculator and specific fee groups
             if (programType === 'school') {
                 feeCalculator.style.display = 'none';
                 specificFeeGroups.style.display = 'none';
                 programTypeHint.style.display = 'block';
                 programTypeHintText.textContent = 'School programs typically follow the school\'s own fee structure. The base fee entered will be used as the default program fee.';
-                
+
                 // Hide online/onsite specific fields
                 onlineFeeGroup.style.display = 'none';
                 onsiteFeeGroup.style.display = 'none';
@@ -1175,7 +1175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 feeCalculator.style.display = 'block';
                 specificFeeGroups.style.display = 'grid';
                 programTypeHint.style.display = 'none';
-                
+
                 // Show appropriate fee group
                 if (programType === 'online') {
                     onlineFeeGroup.style.display = 'block';

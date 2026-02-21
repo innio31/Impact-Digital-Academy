@@ -138,12 +138,13 @@ logActivity('view_courses', "Viewed courses list with filters");
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Courses - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -270,12 +271,29 @@ logActivity('view_courses', "Viewed courses list with filters");
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card.total { border-left-color: var(--primary); }
-        .stat-card.active { border-left-color: var(--success); }
-        .stat-card.beginner { border-left-color: var(--info); }
-        .stat-card.intermediate { border-left-color: var(--warning); }
-        .stat-card.advanced { border-left-color: var(--danger); }
-        .stat-card.duration { border-left-color: var(--accent); }
+        .stat-card.total {
+            border-left-color: var(--primary);
+        }
+
+        .stat-card.active {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.beginner {
+            border-left-color: var(--info);
+        }
+
+        .stat-card.intermediate {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.advanced {
+            border-left-color: var(--danger);
+        }
+
+        .stat-card.duration {
+            border-left-color: var(--accent);
+        }
 
         .stat-value {
             font-size: 1.8rem;
@@ -409,8 +427,13 @@ logActivity('view_courses', "Viewed courses list with filters");
             text-transform: uppercase;
         }
 
-        .status-active { background: rgba(255, 255, 255, 0.2); }
-        .status-inactive { background: rgba(0, 0, 0, 0.2); }
+        .status-active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .status-inactive {
+            background: rgba(0, 0, 0, 0.2);
+        }
 
         .course-program {
             font-size: 0.85rem;
@@ -514,9 +537,20 @@ logActivity('view_courses', "Viewed courses list with filters");
             text-transform: uppercase;
         }
 
-        .level-beginner { background: rgba(59, 130, 246, 0.1); color: var(--info); }
-        .level-intermediate { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .level-advanced { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .level-beginner {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .level-intermediate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .level-advanced {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
 
         .course-actions {
             display: flex;
@@ -539,11 +573,30 @@ logActivity('view_courses', "Viewed courses list with filters");
             flex: 1;
         }
 
-        .btn-view { background: rgba(37, 99, 235, 0.1); color: var(--primary); }
-        .btn-edit { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .btn-activate { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .btn-deactivate { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .btn-view {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-edit {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .btn-activate {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .btn-deactivate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
 
         .btn-icon:hover {
             transform: translateY(-2px);
@@ -570,13 +623,13 @@ logActivity('view_courses', "Viewed courses list with filters");
             border-radius: 8px;
             margin-bottom: 1.5rem;
         }
-        
+
         .alert-success {
             background-color: #d1fae5;
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
-        
+
         .alert-error {
             background-color: #fee2e2;
             color: #991b1b;
@@ -665,6 +718,7 @@ logActivity('view_courses', "Viewed courses list with filters");
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Breadcrumb -->
@@ -754,7 +808,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                         <select id="program" name="program" class="form-control" onchange="this.form.submit()">
                             <option value="all" <?php echo $program_id === 'all' ? 'selected' : ''; ?>>All Programs</option>
                             <?php foreach ($programs as $program): ?>
-                                <option value="<?php echo $program['id']; ?>" 
+                                <option value="<?php echo $program['id']; ?>"
                                     <?php echo $program_id == $program['id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
                                 </option>
@@ -803,8 +857,8 @@ logActivity('view_courses', "Viewed courses list with filters");
                     <div class="filter-group">
                         <label for="search">Search</label>
                         <input type="text" id="search" name="search" class="form-control"
-                               value="<?php echo htmlspecialchars($search); ?>"
-                               placeholder="Search by code, title, or description...">
+                            value="<?php echo htmlspecialchars($search); ?>"
+                            placeholder="Search by code, title, or description...">
                     </div>
                 </div>
 
@@ -840,7 +894,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                             <div class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></div>
                             <h3 class="course-title"><?php echo htmlspecialchars($course['title']); ?></h3>
                         </div>
-                        
+
                         <div class="course-content">
                             <?php if ($course['description']): ?>
                                 <div class="course-description" title="<?php echo htmlspecialchars($course['description']); ?>">
@@ -848,7 +902,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                                     <?php if (strlen($course['description']) > 120): ?>...<?php endif; ?>
                                 </div>
                             <?php endif; ?>
-                            
+
                             <div class="course-stats">
                                 <div class="course-stat">
                                     <div class="stat-icon">
@@ -872,7 +926,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                                     <div class="stat-label-small">Students</div>
                                 </div>
                             </div>
-                            
+
                             <div class="course-details">
                                 <div class="detail-row">
                                     <span class="detail-label">Level:</span>
@@ -891,7 +945,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                                     <span class="detail-value"><?php echo $course['is_required'] ? 'Yes' : 'No'; ?></span>
                                 </div>
                             </div>
-                            
+
                             <div class="course-actions">
                                 <a href="view.php?id=<?php echo $course['id']; ?>" class="btn-full btn-view">
                                     <i class="fas fa-eye"></i> View
@@ -900,15 +954,15 @@ logActivity('view_courses', "Viewed courses list with filters");
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <?php if ($course['status'] === 'active'): ?>
-                                    <a href="?action=deactivate&id=<?php echo $course['id']; ?>" 
-                                       class="btn-full btn-deactivate"
-                                       onclick="return confirm('Deactivate this course?')">
+                                    <a href="?action=deactivate&id=<?php echo $course['id']; ?>"
+                                        class="btn-full btn-deactivate"
+                                        onclick="return confirm('Deactivate this course?')">
                                         <i class="fas fa-pause"></i> Deactivate
                                     </a>
                                 <?php elseif ($course['status'] === 'inactive'): ?>
-                                    <a href="?action=activate&id=<?php echo $course['id']; ?>" 
-                                       class="btn-full btn-activate"
-                                       onclick="return confirm('Activate this course?')">
+                                    <a href="?action=activate&id=<?php echo $course['id']; ?>"
+                                        class="btn-full btn-activate"
+                                        onclick="return confirm('Activate this course?')">
                                         <i class="fas fa-play"></i> Activate
                                     </a>
                                 <?php endif; ?>
@@ -921,52 +975,53 @@ logActivity('view_courses', "Viewed courses list with filters");
 
         <!-- Pagination -->
         <?php if ($total_pages > 1): ?>
-        <div class="pagination">
-            <div class="page-info">
-                Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_courses); ?> of <?php echo number_format($total_courses); ?> courses
+            <div class="pagination">
+                <div class="page-info">
+                    Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_courses); ?> of <?php echo number_format($total_courses); ?> courses
+                </div>
+
+                <?php if ($page > 1): ?>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                <?php else: ?>
+                    <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
+                    <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
+                <?php endif; ?>
+
+                <?php
+                $start_page = max(1, $page - 2);
+                $end_page = min($total_pages, $page + 2);
+
+                for ($p = $start_page; $p <= $end_page; $p++):
+                    if ($p == 1 || $p == $total_pages || ($p >= $page - 2 && $p <= $page + 2)):
+                ?>
+                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $p])); ?>"
+                            class="page-link <?php echo $p == $page ? 'active' : ''; ?>">
+                            <?php echo $p; ?>
+                        </a>
+                    <?php
+                    elseif ($p == $start_page + 2 || $p == $end_page - 2):
+                    ?>
+                        <span class="page-link">...</span>
+                <?php endif;
+                endfor; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="page-link">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>" class="page-link">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                <?php else: ?>
+                    <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
+                    <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
+                <?php endif; ?>
             </div>
-            
-            <?php if ($page > 1): ?>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-double-left"></i>
-                </a>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-left"></i>
-                </a>
-            <?php else: ?>
-                <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
-                <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
-            <?php endif; ?>
-            
-            <?php 
-            $start_page = max(1, $page - 2);
-            $end_page = min($total_pages, $page + 2);
-            
-            for ($p = $start_page; $p <= $end_page; $p++):
-                if ($p == 1 || $p == $total_pages || ($p >= $page - 2 && $p <= $page + 2)):
-            ?>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $p])); ?>" 
-                   class="page-link <?php echo $p == $page ? 'active' : ''; ?>">
-                    <?php echo $p; ?>
-                </a>
-            <?php 
-                elseif ($p == $start_page + 2 || $p == $end_page - 2):
-            ?>
-                <span class="page-link">...</span>
-            <?php endif; endfor; ?>
-            
-            <?php if ($page < $total_pages): ?>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="page-link">
-                    <i class="fas fa-angle-right"></i>
-                </a>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>" class="page-link">
-                    <i class="fas fa-angle-double-right"></i>
-                </a>
-            <?php else: ?>
-                <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
-                <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
-            <?php endif; ?>
-        </div>
         <?php endif; ?>
     </div>
 
@@ -989,7 +1044,7 @@ logActivity('view_courses', "Viewed courses list with filters");
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
         const id = urlParams.get('id');
-        
+
         if (action && id) {
             // Actions are handled server-side, just show confirmation
             const actionMessages = {
@@ -997,7 +1052,7 @@ logActivity('view_courses', "Viewed courses list with filters");
                 'deactivate': 'Course has been deactivated successfully.',
                 'delete': 'Course has been deleted. Redirecting...'
             };
-            
+
             if (actionMessages[action]) {
                 alert(actionMessages[action]);
                 if (action === 'delete') {
@@ -1009,4 +1064,5 @@ logActivity('view_courses', "Viewed courses list with filters");
         }
     </script>
 </body>
+
 </html>
