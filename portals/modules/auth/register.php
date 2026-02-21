@@ -45,46 +45,67 @@ if ($schools_result) {
     $schools = $schools_result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Get upcoming academic periods for all program types
+// Get upcoming academic periods for all program types with registration availability
 $academic_periods = [
     'onsite' => [],
     'online' => [],
     'school' => []
 ];
 
-// Get upcoming terms (onsite)
-$terms_sql = "SELECT id, period_name, academic_year, start_date, end_date 
+// Get upcoming terms (onsite) with registration availability
+$terms_sql = "SELECT id, period_name, academic_year, start_date, end_date, 
+              registration_start_date, registration_deadline,
+              CASE 
+                  WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                  WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                  WHEN registration_deadline < CURDATE() THEN 'closed'
+              END as registration_status
               FROM academic_periods 
               WHERE program_type = 'onsite' 
               AND period_type = 'term' 
               AND status IN ('upcoming', 'active')
-              AND (start_date > CURDATE() OR status = 'active')
+              AND registration_deadline >= CURDATE()
+              AND registration_start_date IS NOT NULL
               ORDER BY start_date LIMIT 3";
 $terms_result = $conn->query($terms_sql);
 if ($terms_result) {
     $academic_periods['onsite'] = $terms_result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Get upcoming blocks (online)
-$blocks_sql = "SELECT id, period_name, academic_year, start_date, end_date 
+// Get upcoming blocks (online) with registration availability
+$blocks_sql = "SELECT id, period_name, academic_year, start_date, end_date,
+               registration_start_date, registration_deadline,
+               CASE 
+                   WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                   WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                   WHEN registration_deadline < CURDATE() THEN 'closed'
+               END as registration_status
                FROM academic_periods 
                WHERE program_type = 'online' 
                AND period_type = 'block' 
                AND status IN ('upcoming', 'active')
-               AND (start_date > CURDATE() OR status = 'active')
+               AND registration_deadline >= CURDATE()
+               AND registration_start_date IS NOT NULL
                ORDER BY start_date LIMIT 3";
 $blocks_result = $conn->query($blocks_sql);
 if ($blocks_result) {
     $academic_periods['online'] = $blocks_result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Get upcoming school terms
-$school_terms_sql = "SELECT id, period_name, academic_year, start_date, end_date 
+// Get upcoming school terms with registration availability
+$school_terms_sql = "SELECT id, period_name, academic_year, start_date, end_date,
+                     registration_start_date, registration_deadline,
+                     CASE 
+                         WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                         WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                         WHEN registration_deadline < CURDATE() THEN 'closed'
+                     END as registration_status
                      FROM academic_periods 
                      WHERE program_type = 'school' 
                      AND period_type = 'term' 
                      AND status IN ('upcoming', 'active')
-                     AND (start_date > CURDATE() OR status = 'active')
+                     AND registration_deadline >= CURDATE()
+                     AND registration_start_date IS NOT NULL
                      ORDER BY start_date LIMIT 3";
 $school_terms_result = $conn->query($school_terms_sql);
 if ($school_terms_result) {
@@ -1393,16 +1414,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred term start date:</p>
                                 <div class="period-options">
                                     <?php foreach ($academic_periods['onsite'] as $term): ?>
+                                        <!-- Update the period-option divs in each section -->
                                         <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="selectPeriod('onsite', '<?php echo $term['period_name']; ?>')"
+                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
                                             tabindex="0"
-                                            role="button">
-                                            <div class="period-name"><?php echo htmlspecialchars($term['period_name']); ?></div>
+                                            role="button"
+                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
+                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                            <div class="period-name">
+                                                <?php echo htmlspecialchars($term['period_name']); ?>
+                                                <?php if ($term['registration_status'] === 'open'): ?>
+                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-check-circle"></i> Registration Open
+                                                    </span>
+                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
+                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-times-circle"></i> Registration Closed
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
                                             <div class="period-dates">
                                                 <?php echo date('M j', strtotime($term['start_date'])); ?> -
                                                 <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
                                             </div>
                                             <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
+                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
+                                                <i class="fas fa-calendar-check"></i>
+                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['onsite'])): ?>
@@ -1421,16 +1464,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred block start date:</p>
                                 <div class="period-options">
                                     <?php foreach ($academic_periods['online'] as $block): ?>
-                                        <div class="period-option <?php echo ($_POST['preferred_block'] ?? '') === $block['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="selectPeriod('online', '<?php echo $block['period_name']; ?>')"
+                                        <!-- Update the period-option divs in each section -->
+                                        <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
+                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
                                             tabindex="0"
-                                            role="button">
-                                            <div class="period-name"><?php echo htmlspecialchars($block['period_name']); ?></div>
-                                            <div class="period-dates">
-                                                <?php echo date('M j', strtotime($block['start_date'])); ?> -
-                                                <?php echo date('M j, Y', strtotime($block['end_date'])); ?>
+                                            role="button"
+                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
+                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                            <div class="period-name">
+                                                <?php echo htmlspecialchars($term['period_name']); ?>
+                                                <?php if ($term['registration_status'] === 'open'): ?>
+                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-check-circle"></i> Registration Open
+                                                    </span>
+                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
+                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-times-circle"></i> Registration Closed
+                                                    </span>
+                                                <?php endif; ?>
                                             </div>
-                                            <div class="period-academic-year"><?php echo htmlspecialchars($block['academic_year']); ?></div>
+                                            <div class="period-dates">
+                                                <?php echo date('M j', strtotime($term['start_date'])); ?> -
+                                                <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
+                                            </div>
+                                            <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
+                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
+                                                <i class="fas fa-calendar-check"></i>
+                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['online'])): ?>
@@ -1449,16 +1514,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred school term start date:</p>
                                 <div class="period-options">
                                     <?php foreach ($academic_periods['school'] as $term): ?>
-                                        <div class="period-option <?php echo ($_POST['preferred_school_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="selectPeriod('school', '<?php echo $term['period_name']; ?>')"
+                                        <!-- Update the period-option divs in each section -->
+                                        <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
+                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
                                             tabindex="0"
-                                            role="button">
-                                            <div class="period-name"><?php echo htmlspecialchars($term['period_name']); ?></div>
+                                            role="button"
+                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
+                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                            <div class="period-name">
+                                                <?php echo htmlspecialchars($term['period_name']); ?>
+                                                <?php if ($term['registration_status'] === 'open'): ?>
+                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-check-circle"></i> Registration Open
+                                                    </span>
+                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
+                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
+                                                        <i class="fas fa-times-circle"></i> Registration Closed
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
                                             <div class="period-dates">
                                                 <?php echo date('M j', strtotime($term['start_date'])); ?> -
                                                 <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
                                             </div>
                                             <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
+                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
+                                                <i class="fas fa-calendar-check"></i>
+                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['school'])): ?>
@@ -2048,25 +2135,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Validate period selection based on program type
-            if (programType === 'onsite' && !preferredTerm) {
-                showFieldError('preferred_term', 'Please select a preferred term');
-                isValid = false;
-            } else if (programType === 'onsite') {
-                clearFieldError('preferred_term');
-            }
-
-            if (programType === 'online' && !preferredBlock) {
-                showFieldError('preferred_block', 'Please select a preferred block');
-                isValid = false;
+            if (programType === 'onsite') {
+                if (!preferredTerm) {
+                    showFieldError('preferred_term', 'Please select a preferred term');
+                    isValid = false;
+                } else {
+                    // Check if the selected term is still available
+                    const selectedTermElement = document.querySelector('#onsite-terms .period-option.selected');
+                    if (selectedTermElement && selectedTermElement.style.cursor === 'not-allowed') {
+                        showFieldError('preferred_term', 'Registration for this term is no longer available');
+                        isValid = false;
+                    } else {
+                        clearFieldError('preferred_term');
+                    }
+                }
             } else if (programType === 'online') {
-                clearFieldError('preferred_block');
-            }
-
-            if (programType === 'school' && !preferredSchoolTerm) {
-                showFieldError('preferred_school_term', 'Please select a preferred school term');
-                isValid = false;
+                if (!preferredBlock) {
+                    showFieldError('preferred_block', 'Please select a preferred block');
+                    isValid = false;
+                } else {
+                    // Check if the selected block is still available
+                    const selectedBlockElement = document.querySelector('#online-blocks .period-option.selected');
+                    if (selectedBlockElement && selectedBlockElement.style.cursor === 'not-allowed') {
+                        showFieldError('preferred_block', 'Registration for this block is no longer available');
+                        isValid = false;
+                    } else {
+                        clearFieldError('preferred_block');
+                    }
+                }
             } else if (programType === 'school') {
-                clearFieldError('preferred_school_term');
+                if (!preferredSchoolTerm) {
+                    showFieldError('preferred_school_term', 'Please select a preferred school term');
+                    isValid = false;
+                } else {
+                    // Check if the selected school term is still available
+                    const selectedTermElement = document.querySelector('#school-terms .period-option.selected');
+                    if (selectedTermElement && selectedTermElement.style.cursor === 'not-allowed') {
+                        showFieldError('preferred_school_term', 'Registration for this term is no longer available');
+                        isValid = false;
+                    } else {
+                        clearFieldError('preferred_school_term');
+                    }
+                }
             }
 
             // Validate school selection for school-based programs
@@ -2455,6 +2565,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function selectPeriod(type, periodName) {
+            // Check if the clicked period has registration open
+            const clickedOption = event.target.closest('.period-option');
+            const isDisabled = clickedOption.style.cursor === 'not-allowed' || clickedOption.hasAttribute('aria-disabled');
+
+            if (isDisabled) {
+                alert('Registration for this period is not currently available. Please check the registration dates.');
+                return;
+            }
+
             // Clear all period selections first
             document.querySelectorAll('.period-option').forEach(option => {
                 option.classList.remove('selected');
@@ -2475,7 +2594,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Highlight selected option
-            event.target.closest('.period-option').classList.add('selected');
+            clickedOption.classList.add('selected');
 
             // Save selection
             saveFormData();
