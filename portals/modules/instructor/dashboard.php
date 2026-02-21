@@ -254,19 +254,15 @@ if ($result && $result->num_rows > 0) {
 }
 $stmt->close();
 
-
 $unread_message_count = getUnreadMessageCount($instructor_id, $conn);
 
 // Log dashboard access
 logActivity('instructor_dashboard_access', 'Instructor accessed dashboard');
 
-
 // Get instructor name
 $instructor_name = $_SESSION['user_name'] ?? 'Instructor';
 
-// In the PHP section of dashboard.php, add this after getting other data:
-
-// Get admin announcements (breaking news) - FIXED VERSION
+// Get admin announcements
 $admin_announcements = [];
 $sql = "SELECT a.*, cb.batch_code, c.title as course_title,
                CONCAT(u.first_name, ' ', u.last_name) as author_name,
@@ -300,207 +296,285 @@ $stmt->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Instructor Dashboard - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/images/favicon.ico">
     <style>
-        :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --light-gray: #e2e8f0;
-            --sidebar-width: 280px;
-            --sidebar-collapsed: 70px;
-            --header-height: 70px;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --white: #ffffff;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
         }
 
         body {
             background: #f1f5f9;
             color: var(--dark);
-            min-height: 100vh;
-            overflow-x: hidden;
+            line-height: 1.5;
         }
 
-        /* Mobile First Layout */
-        .app-container {
+        /* App Container */
+        .app {
+            min-height: 100vh;
             display: flex;
-            min-height: 100vh;
-            transition: all 0.3s ease;
+            flex-direction: column;
         }
 
-        /* Mobile Sidebar Overlay */
-        .sidebar-overlay {
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--gray);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+        }
+
+        .menu-btn:hover {
+            background: var(--light);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .logo span {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--dark);
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            backdrop-filter: blur(3px);
         }
 
-        /* Sidebar - Mobile Optimized */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #1e3a8a, #1e40af);
+        @media (min-width: 480px) {
+            .logo span {
+                display: inline;
+            }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: var(--gray);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--light);
+        }
+
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger);
             color: white;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            transform: translateX(-100%);
+            font-size: 0.7rem;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .user-info:hover {
+            background: var(--light);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-details {
+            display: none;
         }
 
         @media (min-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                position: relative;
+            .user-details {
+                display: block;
             }
 
-            .sidebar.collapsed {
-                width: var(--sidebar-collapsed);
+            .user-details .name {
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .user-details .role {
+                font-size: 0.75rem;
+                color: var(--gray);
             }
         }
 
-        .sidebar.show {
-            transform: translateX(0);
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            left: 0;
         }
 
         .sidebar-header {
             padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: var(--header-height);
-            position: sticky;
-            top: 0;
-            background: inherit;
-            z-index: 10;
+            border-bottom: 1px solid var(--gray-light);
         }
 
         .sidebar-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 0.5rem;
         }
 
-        .logo img {
-            height: 40px;
-            width: auto;
-            border-radius: 6px;
-            padding: 4px;
-            background: white;
+        .sidebar-logo img {
+            height: 32px;
         }
 
-        @media (min-width: 768px) {
-            .logo img {
-                height: 50px;
-            }
-        }
-
-        .logo-text {
-            font-size: 1.1rem;
+        .sidebar-logo span {
             font-weight: 600;
-            white-space: nowrap;
+            color: var(--dark);
         }
 
-        .sidebar.collapsed .logo-text {
-            display: none;
-        }
-
-        .toggle-sidebar {
-            background: transparent;
+        .close-btn {
+            background: none;
             border: none;
-            color: white;
+            font-size: 1.1rem;
+            color: var(--gray);
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background 0.3s ease;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: var(--radius-sm);
         }
 
-        .toggle-sidebar:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* User Info - Mobile Optimized */
-        .user-info {
+        .sidebar-user {
             padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        .sidebar.collapsed .user-info {
-            justify-content: center;
-            padding: 1rem 0.5rem;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
+        .sidebar-user .avatar {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: white;
+            background: var(--primary);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1e40af;
-            font-weight: bold;
-            font-size: 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            flex-shrink: 0;
+            font-weight: 600;
+            font-size: 1.2rem;
         }
 
-        @media (min-width: 768px) {
-            .user-avatar {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-        }
-
-        .user-details h3 {
-            font-size: 0.9rem;
+        .sidebar-user .details h4 {
+            font-size: 0.95rem;
             margin-bottom: 0.25rem;
-            white-space: nowrap;
         }
 
-        .user-details p {
-            font-size: 0.75rem;
-            opacity: 0.8;
+        .sidebar-user .details p {
+            font-size: 0.8rem;
+            color: var(--gray);
         }
 
-        .sidebar.collapsed .user-details {
-            display: none;
-        }
-
-        /* Mobile Navigation */
         .sidebar-nav {
             padding: 1rem 0;
         }
@@ -508,385 +582,271 @@ $stmt->close();
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.8rem 1rem;
-            color: rgba(255, 255, 255, 0.8);
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--secondary);
             text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        @media (min-width: 768px) {
-            .nav-item {
-                padding: 0.8rem 1.5rem;
-            }
-        }
-
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-left-color: white;
+            transition: all 0.2s;
+            margin: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
         }
 
         .nav-item i {
             width: 20px;
-            text-align: center;
-            flex-shrink: 0;
             font-size: 1rem;
         }
 
-        .nav-label {
-            flex-grow: 1;
-            white-space: nowrap;
+        .nav-item span {
+            flex: 1;
             font-size: 0.9rem;
         }
 
-        .sidebar.collapsed .nav-label {
+        .nav-item .badge {
+            position: static;
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-item.active .badge {
+            background: white;
+            color: var(--primary);
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: var(--gray-light);
+            margin: 0.5rem 1rem;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 90;
             display: none;
         }
 
-        .badge {
-            background: var(--accent);
-            color: var(--dark);
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        .sidebar.collapsed .badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            transform: scale(0.8);
-        }
-
-        /* Dropdown for Mobile */
-        .nav-dropdown {
-            position: relative;
-        }
-
-        .nav-dropdown .dropdown-toggle {
-            cursor: pointer;
-            position: relative;
-        }
-
-        .nav-dropdown .dropdown-toggle .dropdown-arrow {
-            font-size: 0.8rem;
-            transition: transform 0.3s ease;
-            margin-left: auto;
-        }
-
-        .nav-dropdown .dropdown-toggle.active .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .sidebar.collapsed .dropdown-arrow {
-            display: none;
-        }
-
-        .nav-dropdown .dropdown-content {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            margin: 0.5rem;
-            display: none;
-            overflow: hidden;
-        }
-
-        .nav-dropdown .dropdown-content.show {
+        .overlay.show {
             display: block;
-            animation: slideDown 0.3s ease;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .nav-dropdown .dropdown-content .nav-item {
-            padding-left: 2.5rem;
-            border-left: none;
-            font-size: 0.85rem;
-        }
-
-        /* Main Content - Mobile First */
-        .main-content {
+        /* Main Content */
+        .main {
             flex: 1;
             padding: 1rem;
-            min-height: 100vh;
-            transition: all 0.3s ease;
-            width: 100%;
         }
 
-        @media (min-width: 768px) {
-            .main-content {
-                margin-left: var(--sidebar-width);
-                padding: 1.5rem;
-            }
-
-            .sidebar.collapsed ~ .main-content {
-                margin-left: var(--sidebar-collapsed);
-            }
+        /* Welcome Section */
+        .welcome {
+            margin-bottom: 1.5rem;
         }
 
-        /* Mobile Header */
-        .mobile-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin: -1rem -1rem 1rem -1rem;
-        }
-
-        @media (min-width: 768px) {
-            .mobile-header {
-                display: none;
-            }
-        }
-
-        .mobile-menu-btn {
-            background: transparent;
-            border: none;
+        .welcome h1 {
             font-size: 1.5rem;
-            color: var(--dark);
-            cursor: pointer;
-            padding: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
-        .mobile-title h1 {
-            font-size: 1.2rem;
-            color: var(--dark);
-        }
-
-        .mobile-title p {
-            font-size: 0.8rem;
+        .welcome p {
             color: var(--gray);
+            font-size: 0.9rem;
         }
 
-        /* Top Bar for Desktop */
-        .top-bar {
-            display: none;
-        }
-
-        @media (min-width: 768px) {
-            .top-bar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid var(--light-gray);
-            }
-        }
-
-        .page-title h1 {
-            font-size: 1.8rem;
-            color: var(--dark);
-        }
-
-        .page-title p {
-            color: var(--gray);
-            margin-top: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .top-actions {
+        /* Breaking News */
+        .breaking-news {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 1rem;
         }
 
-        .search-box {
-            position: relative;
+        .breaking-news-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        .search-box input {
-            padding: 0.8rem 1rem 0.8rem 2.5rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            width: 100%;
-            max-width: 300px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+        .breaking-news-content {
+            flex: 1;
         }
 
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
+        .breaking-news-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
-        .notification-bell {
-            position: relative;
-            cursor: pointer;
+        .breaking-news-text {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
         }
 
-        .notification-bell i {
-            font-size: 1.3rem;
-            color: var(--gray);
-            transition: color 0.3s ease;
+        .breaking-news-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
 
-        .notification-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.15rem 0.4rem;
-            border-radius: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        /* Stats Grid - Mobile Responsive */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
 
         @media (min-width: 640px) {
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.5rem;
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
         .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border-left: 4px solid var(--primary);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
 
         .stat-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.8rem;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
         }
 
         .stat-title {
-            font-size: 0.8rem;
             color: var(--gray);
-            font-weight: 500;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .stat-icon {
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-card.primary .stat-icon {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .stat-card.success .stat-icon {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .stat-card.warning .stat-icon {
+            background: #fed7aa;
+            color: var(--warning);
+        }
+
+        .stat-card.info .stat-icon {
+            background: #cffafe;
+            color: var(--info);
         }
 
         .stat-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.25rem;
         }
 
-        @media (min-width: 768px) {
-            .stat-card {
-                padding: 1.5rem;
-            }
-            
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-            
-            .stat-value {
-                font-size: 2rem;
-            }
+        .stat-desc {
+            font-size: 0.7rem;
+            color: var(--gray);
         }
 
-        /* Content Grid - Mobile Stack */
-        .content-grid {
+        /* Dashboard Grid */
+        .dashboard-grid {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         @media (min-width: 1024px) {
-            .content-grid {
+            .dashboard-grid {
                 display: grid;
                 grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
+                gap: 1rem;
             }
         }
 
-        .content-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin-bottom: 1rem;
         }
 
         .card-header {
+            padding: 1rem;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            border-bottom: 1px solid var(--gray-light);
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
             font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            text-decoration: none;
-            white-space: nowrap;
         }
 
         .btn-primary {
@@ -895,228 +855,212 @@ $stmt->close();
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
+            background: var(--primary-dark);
         }
 
         .btn-secondary {
-            background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-        }
-
-        /* Tables - Mobile Scrollable */
-        .table-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 0 -1.2rem;
-            padding: 0 1.2rem;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 0.8rem;
             background: var(--light);
             color: var(--gray);
-            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .data-table td {
-            padding: 0.8rem;
-            border-bottom: 1px solid var(--light-gray);
-            vertical-align: middle;
-            font-size: 0.9rem;
+        .card-body {
+            padding: 1rem;
         }
 
-        /* Status Badges */
-        .status-badge {
-            padding: 0.2rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-
-        .status-ongoing {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .status-scheduled {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        /* Activity Items */
-        .activity-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.8rem;
-            padding: 0.8rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .activity-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.2rem;
-            font-size: 0.9rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .activity-description {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-bottom: 0.2rem;
-        }
-
-        /* Quick Actions - Mobile Grid */
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.8rem;
-            margin-top: 1rem;
-        }
-
-        @media (min-width: 640px) {
-            .quick-actions-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-        }
-
-        .quick-action {
+        /* Class List */
+        .class-list {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            background: white;
-            border-radius: 10px;
-            text-decoration: none;
-            color: var(--dark);
-            transition: all 0.3s ease;
-            border: 2px solid var(--light-gray);
-            min-height: 100px;
+            gap: 0.75rem;
         }
 
-        .quick-action:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .quick-action-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(59, 130, 246, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .quick-action-label {
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        /* Breaking News - Mobile Optimized */
-        .breaking-news-alert {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            animation: pulse 2s infinite;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .breaking-news-header {
+        .class-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
         }
 
-        .breaking-news-label {
-            background: white;
-            color: #ee5a52;
-            padding: 0.2rem 0.6rem;
+        .class-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-info p {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .class-badge {
+            background: var(--white);
+            padding: 0.25rem 0.5rem;
             border-radius: 15px;
-            font-weight: bold;
             font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .breaking-news-title {
             font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 0.3rem;
         }
 
-        .breaking-news-content {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
+        .class-badge.ongoing {
+            background: #dbeafe;
+            color: var(--primary);
         }
 
-        .breaking-news-meta {
+        .class-badge.scheduled {
+            background: #f1f5f9;
+            color: var(--gray);
+        }
+
+        /* Assignment List */
+        .assignment-list {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            opacity: 0.8;
+            gap: 0.75rem;
         }
 
-        @media (min-width: 640px) {
-            .breaking-news-meta {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
+        .assignment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+        }
+
+        .assignment-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--warning);
+        }
+
+        .assignment-info {
+            flex: 1;
+        }
+
+        .assignment-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .assignment-info p {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .assignment-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .assignment-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .assignment-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+
+        /* Schedule List */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+        }
+
+        .schedule-time {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.8rem;
+            min-width: 65px;
+        }
+
+        .schedule-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .schedule-info p {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 480px) {
+            .actions-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        /* Notifications Panel - Mobile Full Screen */
+        .action-item {
+            background: var(--light);
+            padding: 1rem 0.5rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.2s;
+        }
+
+        .action-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-item i {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .action-item:hover i {
+            color: white;
+        }
+
+        .action-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Notifications Panel */
         .notifications-panel {
             position: fixed;
             top: 0;
@@ -1124,98 +1068,96 @@ $stmt->close();
             width: 100%;
             max-width: 400px;
             height: 100vh;
-            background: white;
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
-            z-index: 2000;
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            z-index: 200;
             transition: right 0.3s ease;
             display: flex;
             flex-direction: column;
         }
 
-        @media (min-width: 640px) {
-            .notifications-panel {
-                top: 80px;
-                right: -400px;
-                height: auto;
-                max-height: 500px;
-                border-radius: 12px;
-            }
-        }
-
-        .notifications-panel.show {
+        .notifications-panel.open {
             right: 0;
         }
 
-        .notifications-header {
+        .panel-header {
             padding: 1rem;
-            background: var(--light);
-            border-bottom: 2px solid var(--light-gray);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        .notifications-content {
+        .panel-header h3 {
+            font-size: 1rem;
+        }
+
+        .panel-content {
             flex: 1;
             overflow-y: auto;
-            padding: 0.5rem;
+            padding: 1rem;
         }
 
-        /* Footer */
-        .dashboard-footer {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--light-gray);
-            color: var(--gray);
-            font-size: 0.8rem;
+        .notification-item {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        @media (min-width: 640px) {
-            .dashboard-footer {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .system-status {
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--light);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            color: var(--primary);
         }
 
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            animation: pulse 2s infinite;
+        .notification-content {
+            flex: 1;
         }
 
-        /* Mobile Bottom Navigation */
-        .mobile-bottom-nav {
+        .notification-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-time {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            background: var(--white);
             display: flex;
             justify-content: space-around;
-            padding: 0.5rem;
-            z-index: 1000;
+            padding: 0.5rem 0.25rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 40;
         }
 
         @media (min-width: 768px) {
-            .mobile-bottom-nav {
+            .bottom-nav {
                 display: none;
             }
         }
 
-        .mobile-nav-item {
+        .bottom-nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1225,33 +1167,51 @@ $stmt->close();
             text-decoration: none;
             font-size: 0.7rem;
             flex: 1;
-            text-align: center;
-            -webkit-tap-highlight-color: transparent;
+            position: relative;
         }
 
-        .mobile-nav-item.active {
+        .bottom-nav-item i {
+            font-size: 1.1rem;
+        }
+
+        .bottom-nav-item.active {
             color: var(--primary);
         }
 
-        .mobile-nav-item i {
-            font-size: 1.2rem;
+        .bottom-nav-item .badge {
+            position: absolute;
+            top: 0;
+            right: 20px;
+            font-size: 0.6rem;
         }
 
-        /* Touch-friendly elements */
-        button, 
-        a,
-        .nav-item,
-        .mobile-nav-item {
-            touch-action: manipulation;
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            margin-bottom: 4rem;
+            padding: 1rem;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--gray-light);
         }
 
-        /* Loading state */
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
+        @media (min-width: 768px) {
+            .footer {
+                margin-bottom: 1rem;
+            }
         }
 
-        /* No data states */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 0.25rem;
+        }
+
+        /* No Data */
         .no-data {
             text-align: center;
             padding: 2rem;
@@ -1260,209 +1220,151 @@ $stmt->close();
 
         .no-data i {
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             opacity: 0.5;
         }
     </style>
 </head>
 
 <body>
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="mobile-title">
-            <h1>Dashboard</h1>
-            <p><?php echo htmlspecialchars($instructor_name); ?></p>
-        </div>
-        <div class="notification-bell" onclick="toggleNotifications()">
-            <i class="fas fa-bell"></i>
-            <?php if (count($notifications) > 0): ?>
-                <span class="notification-count"><?php echo count($notifications); ?></span>
-            <?php endif; ?>
-        </div>
-    </div>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <img src="<?php echo BASE_URL; ?>public/images/logo_official.jpg" alt="Impact">
+                    <span>Instructor Panel</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <?php if (count($notifications) > 0): ?>
+                        <span class="badge"><?php echo count($notifications); ?></span>
+                    <?php endif; ?>
+                </button>
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($instructor_name, 0, 1)); ?>
+                    </div>
+                    <div class="user-details">
+                        <div class="name"><?php echo htmlspecialchars($instructor_name); ?></div>
+                        <div class="role">Instructor</div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
-
-    <!-- App Container -->
-    <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="logo">
-                        <img src="<?php echo BASE_URL; ?>public/images/logo_official.jpg" alt="Impact Digital Academy">
-                    </div>
-                    <div class="logo-text">Instructor Panel</div>
+                    <img src="<?php echo BASE_URL; ?>public/images/logo_official.jpg" alt="Impact">
+                    <span>Instructor Panel</span>
                 </div>
-                <button class="toggle-sidebar" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
+                <button class="close-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-
-            <div class="user-info">
-                <div class="user-avatar">
+            <div class="sidebar-user">
+                <div class="avatar">
                     <?php echo strtoupper(substr($instructor_name, 0, 1)); ?>
                 </div>
-                <div class="user-details">
-                    <h3><?php echo htmlspecialchars($instructor_name); ?></h3>
-                    <p><i class="fas fa-chalkboard-teacher"></i> Instructor</p>
+                <div class="details">
+                    <h4><?php echo htmlspecialchars($instructor_name); ?></h4>
+                    <p>Instructor</p>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
-                <a href="<?php echo BASE_URL; ?>modules/instructor/dashboard.php" class="nav-item active">
+                <a href="#" class="nav-item active">
                     <i class="fas fa-tachometer-alt"></i>
-                    <span class="nav-label">Dashboard</span>
+                    <span>Dashboard</span>
                 </a>
-
-                <!-- Teaching Center -->
-                <div class="nav-dropdown">
-                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span class="nav-label">Teaching Center</span>
-                        <?php if ($stats['active_classes'] > 0): ?>
-                            <span class="badge"><?php echo $stats['active_classes']; ?></span>
-                        <?php endif; ?>
-                        <i class="fas fa-chevron-down dropdown-arrow"></i>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="nav-item">
-                            <i class="fas fa-chalkboard"></i>
-                            <span class="nav-label">My Classes</span>
-                        </a>
-                        <a href="<?php echo BASE_URL; ?>modules/instructor/schedule.php" class="nav-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="nav-label">Schedule</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Assessments -->
-                <div class="nav-dropdown">
-                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
-                        <i class="fas fa-tasks"></i>
-                        <span class="nav-label">Assessments</span>
-                        <?php if ($stats['pending_grading'] > 0): ?>
-                            <span class="badge"><?php echo $stats['pending_grading']; ?></span>
-                        <?php endif; ?>
-                        <i class="fas fa-chevron-down dropdown-arrow"></i>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/index.php" class="nav-item">
-                            <i class="fas fa-list"></i>
-                            <span class="nav-label">All Assignments</span>
-                        </a>
-                        <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/pending.php" class="nav-item">
-                            <i class="fas fa-clock"></i>
-                            <span class="nav-label">Pending Grading</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Students -->
+                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="nav-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>My Classes</span>
+                    <?php if ($stats['active_classes'] > 0): ?>
+                        <span class="badge"><?php echo $stats['active_classes']; ?></span>
+                    <?php endif; ?>
+                </a>
+                <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/index.php" class="nav-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Assignments</span>
+                    <?php if ($stats['pending_grading'] > 0): ?>
+                        <span class="badge"><?php echo $stats['pending_grading']; ?></span>
+                    <?php endif; ?>
+                </a>
                 <a href="<?php echo BASE_URL; ?>modules/instructor/students/list.php" class="nav-item">
                     <i class="fas fa-user-graduate"></i>
-                    <span class="nav-label">Students</span>
+                    <span>Students</span>
                     <?php if ($stats['total_students'] > 0): ?>
                         <span class="badge"><?php echo $stats['total_students']; ?></span>
                     <?php endif; ?>
                 </a>
-
-                <!-- Materials -->
                 <a href="<?php echo BASE_URL; ?>modules/instructor/materials/index.php" class="nav-item">
                     <i class="fas fa-folder-open"></i>
-                    <span class="nav-label">Materials</span>
+                    <span>Materials</span>
                     <?php if ($stats['total_materials'] > 0): ?>
                         <span class="badge"><?php echo $stats['total_materials']; ?></span>
                     <?php endif; ?>
                 </a>
-
-                <!-- Profile -->
+                <div class="nav-divider"></div>
+                <a href="<?php echo BASE_URL; ?>modules/instructor/schedule.php" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Schedule</span>
+                </a>
                 <a href="<?php echo BASE_URL; ?>modules/instructor/profile/edit.php" class="nav-item">
                     <i class="fas fa-user"></i>
-                    <span class="nav-label">Profile</span>
+                    <span>Profile</span>
                 </a>
-
-                <!-- Settings -->
-                <a href="<?php echo BASE_URL; ?>modules/instructor/settings.php" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span class="nav-label">Settings</span>
+                <a href="<?php echo BASE_URL; ?>modules/shared/mail/index.php" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                    <?php if ($unread_message_count > 0): ?>
+                        <span class="badge"><?php echo $unread_message_count; ?></span>
+                    <?php endif; ?>
                 </a>
-
-                <!-- Help -->
                 <a href="<?php echo BASE_URL; ?>modules/shared/help/" class="nav-item">
                     <i class="fas fa-question-circle"></i>
-                    <span class="nav-label">Help</span>
+                    <span>Help</span>
                 </a>
-
-                <!-- Logout -->
-                <a href="<?php echo BASE_URL; ?>modules/auth/logout.php" class="nav-item"
-                    onclick="return confirm('Are you sure you want to logout?');">
+                <div class="nav-divider"></div>
+                <a href="<?php echo BASE_URL; ?>modules/auth/logout.php" class="nav-item" onclick="return confirm('Are you sure you want to logout?')">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span class="nav-label">Logout</span>
+                    <span>Logout</span>
                 </a>
             </nav>
         </aside>
 
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- Desktop Top Bar -->
-            <div class="top-bar">
-                <div class="page-title">
-                    <h1>Instructor Dashboard</h1>
-                    <p>Welcome back, <?php echo htmlspecialchars($instructor_name); ?>! Here's your teaching overview.</p>
-                </div>
-
-                <div class="top-actions">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search...">
-                    </div>
-
-                    <div class="notification-bell" onclick="toggleNotifications()">
-                        <i class="fas fa-bell"></i>
-                        <?php if (count($notifications) > 0): ?>
-                            <span class="notification-count"><?php echo count($notifications); ?></span>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="user-avatar" style="width: 40px; height: 40px; cursor: pointer;" 
-                         onclick="toggleUserMenu()">
-                        <?php echo strtoupper(substr($instructor_name, 0, 1)); ?>
-                    </div>
-                </div>
+        <main class="main">
+            <!-- Welcome Section -->
+            <div class="welcome">
+                <h1>Welcome back, <?php echo htmlspecialchars(explode(' ', $instructor_name)[0]); ?>! 👋</h1>
+                <p>Here's what's happening with your classes today.</p>
             </div>
 
             <!-- Breaking News -->
             <?php if (!empty($admin_announcements)): ?>
-                <div class="breaking-news-alert">
-                    <div class="breaking-news-header">
-                        <span class="breaking-news-label">
-                            <i class="fas fa-bullhorn"></i> News
-                        </span>
-                        <span><?php echo count($admin_announcements); ?> new</span>
+                <div class="breaking-news">
+                    <div class="breaking-news-icon">
+                        <i class="fas fa-bullhorn"></i>
                     </div>
-
-                    <?php foreach (array_slice($admin_announcements, 0, 1) as $announcement): ?>
-                        <div class="breaking-news-title">
-                            <?php echo htmlspecialchars($announcement['title']); ?>
-                        </div>
-                        <div class="breaking-news-content">
-                            <?php echo truncate_text(strip_tags($announcement['content']), 100); ?>
-                        </div>
+                    <div class="breaking-news-content">
+                        <?php $announcement = $admin_announcements[0]; ?>
+                        <div class="breaking-news-title"><?php echo htmlspecialchars($announcement['title']); ?></div>
+                        <div class="breaking-news-text"><?php echo truncate_text(strip_tags($announcement['content']), 100); ?></div>
                         <div class="breaking-news-meta">
-                            <div class="breaking-news-author">
-                                Admin: <?php echo htmlspecialchars($announcement['author_name']); ?>
-                            </div>
-                            <div class="breaking-news-time">
-                                <?php echo time_ago($announcement['created_at']); ?>
-                            </div>
+                            <span><i class="fas fa-user"></i> Admin</span>
+                            <span><i class="fas fa-clock"></i> <?php echo time_ago($announcement['created_at']); ?></span>
                         </div>
-                    <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -1470,596 +1372,401 @@ $stmt->close();
             <div class="stats-grid">
                 <div class="stat-card primary">
                     <div class="stat-header">
-                        <div class="stat-title">Active Classes</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-chalkboard"></i>
-                        </div>
+                        <span class="stat-title">Active Classes</span>
+                        <div class="stat-icon"><i class="fas fa-chalkboard"></i></div>
                     </div>
                     <div class="stat-value"><?php echo $stats['active_classes']; ?></div>
-                    <div style="font-size: 0.75rem; color: var(--gray);">
-                        <?php echo $stats['total_classes']; ?> total
-                    </div>
+                    <div class="stat-desc"><?php echo $stats['total_classes']; ?> total classes</div>
                 </div>
-
                 <div class="stat-card success">
                     <div class="stat-header">
-                        <div class="stat-title">Students</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
+                        <span class="stat-title">Students</span>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
                     </div>
                     <div class="stat-value"><?php echo $stats['total_students']; ?></div>
-                    <div style="font-size: 0.75rem; color: var(--gray);">
-                        Across all classes
-                    </div>
+                    <div class="stat-desc">Active enrollments</div>
                 </div>
-
                 <div class="stat-card warning">
                     <div class="stat-header">
-                        <div class="stat-title">Pending</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
+                        <span class="stat-title">To Grade</span>
+                        <div class="stat-icon"><i class="fas fa-tasks"></i></div>
                     </div>
                     <div class="stat-value"><?php echo $stats['pending_grading']; ?></div>
-                    <div style="font-size: 0.75rem; color: var(--gray);">
-                        Need grading
-                    </div>
+                    <div class="stat-desc">Pending submissions</div>
                 </div>
-
                 <div class="stat-card info">
                     <div class="stat-header">
-                        <div class="stat-title">Materials</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
+                        <span class="stat-title">Materials</span>
+                        <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
                     </div>
                     <div class="stat-value"><?php echo $stats['total_materials']; ?></div>
-                    <div style="font-size: 0.75rem; color: var(--gray);">
-                        Uploaded
-                    </div>
+                    <div class="stat-desc">Uploaded resources</div>
                 </div>
             </div>
 
-            <!-- Content Grid -->
-            <div class="content-grid">
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
                 <!-- Left Column -->
-                <div class="left-column">
-                    <!-- My Classes -->
-                    <div class="content-card">
+                <div class="left-col">
+                    <!-- My Classes Card -->
+                    <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">My Classes</h2>
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="btn btn-primary">
-                                View All
-                            </a>
+                            <h3 class="card-title">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                My Classes
+                            </h3>
+                            <div class="card-actions">
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="btn btn-secondary btn-sm">View All</a>
+                            </div>
                         </div>
-
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Class</th>
-                                        <th>Course</th>
-                                        <th>Students</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($current_classes)): ?>
-                                        <tr>
-                                            <td colspan="4" class="no-data">
-                                                <i class="fas fa-chalkboard"></i>
-                                                <div>No classes assigned</div>
-                                            </td>
-                                        </tr>
-                                    <?php else: ?>
-                                        <?php foreach (array_slice($current_classes, 0, 3) as $class): ?>
-                                            <tr>
-                                                <td>
-                                                    <div style="font-weight: 600;"><?php echo htmlspecialchars($class['batch_code']); ?></div>
-                                                    <div style="font-size: 0.8rem; color: var(--gray);">
-                                                        <?php echo truncate_text($class['name'], 15); ?>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div style="font-size: 0.8rem;">
-                                                        <?php echo truncate_text($class['course_title'], 20); ?>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="status-badge status-ongoing">
-                                                        <?php echo $class['student_count']; ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="status-badge status-<?php echo strtolower($class['status']); ?>">
-                                                        <?php echo ucfirst($class['status']); ?>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                        <div class="card-body">
+                            <div class="class-list">
+                                <?php if (empty($current_classes)): ?>
+                                    <div class="no-data">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <p>No classes assigned yet</p>
+                                    </div>
+                                <?php else: ?>
+                                    <?php foreach (array_slice($current_classes, 0, 3) as $class): ?>
+                                        <div class="class-item">
+                                            <div class="class-info">
+                                                <h4><?php echo htmlspecialchars($class['batch_code']); ?></h4>
+                                                <p><?php echo truncate_text($class['course_title'], 30); ?></p>
+                                            </div>
+                                            <div class="class-meta">
+                                                <span class="class-badge <?php echo strtolower($class['status']); ?>">
+                                                    <?php echo ucfirst($class['status']); ?>
+                                                </span>
+                                                <div style="font-size: 0.7rem; color: var(--gray); text-align: right;">
+                                                    <?php echo $class['student_count']; ?> students
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Pending Assignments -->
-                    <div class="content-card">
+                    <!-- Pending Assignments Card -->
+                    <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Pending Grading</h2>
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/pending.php" class="btn btn-primary">
-                                Grade All
-                            </a>
+                            <h3 class="card-title">
+                                <i class="fas fa-clock"></i>
+                                Need Grading
+                            </h3>
+                            <div class="card-actions">
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/pending.php" class="btn btn-primary btn-sm">Grade All</a>
+                            </div>
                         </div>
-
-                        <div class="activity-list">
-                            <?php if (empty($pending_assignments)): ?>
-                                <div class="no-data">
-                                    <i class="fas fa-check"></i>
-                                    <div>All assignments graded</div>
-                                </div>
-                            <?php else: ?>
-                                <?php foreach (array_slice($pending_assignments, 0, 3) as $assignment): ?>
-                                    <div class="activity-item">
-                                        <div class="activity-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                                            <i class="fas fa-tasks"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-title">
-                                                <?php echo truncate_text($assignment['title'], 30); ?>
-                                            </div>
-                                            <div class="activity-description">
-                                                <?php echo truncate_text($assignment['course_title'], 25); ?>
-                                            </div>
-                                            <div style="font-size: 0.7rem; color: var(--gray);">
-                                                <?php echo $assignment['submission_count']; ?> submissions
-                                            </div>
-                                        </div>
-                                        <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/grade.php?id=<?php echo $assignment['id']; ?>"
-                                           class="btn btn-secondary btn-sm">
-                                            Grade
-                                        </a>
+                        <div class="card-body">
+                            <div class="assignment-list">
+                                <?php if (empty($pending_assignments)): ?>
+                                    <div class="no-data">
+                                        <i class="fas fa-check-circle"></i>
+                                        <p>All caught up!</p>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                                <?php else: ?>
+                                    <?php foreach (array_slice($pending_assignments, 0, 3) as $assignment): ?>
+                                        <div class="assignment-item">
+                                            <div class="assignment-icon">
+                                                <i class="fas fa-file-alt"></i>
+                                            </div>
+                                            <div class="assignment-info">
+                                                <h4><?php echo truncate_text($assignment['title'], 25); ?></h4>
+                                                <p><?php echo $assignment['course_title']; ?></p>
+                                            </div>
+                                            <div class="assignment-meta">
+                                                <span class="assignment-count"><?php echo $assignment['submission_count']; ?></span>
+                                                <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/grade.php?id=<?php echo $assignment['id']; ?>" class="assignment-link">Grade</a>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Column -->
-                <div class="right-column">
-                    <!-- Today's Schedule -->
-                    <div class="content-card">
+                <div class="right-col">
+                    <!-- Today's Schedule Card -->
+                    <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Today's Schedule</h2>
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/schedule.php" class="btn btn-secondary btn-sm">
-                                Full
-                            </a>
+                            <h3 class="card-title">
+                                <i class="fas fa-calendar-day"></i>
+                                Today's Schedule
+                            </h3>
+                            <div class="card-actions">
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/schedule.php" class="btn btn-secondary btn-sm">View All</a>
+                            </div>
                         </div>
-
-                        <div class="activity-list">
-                            <?php if (empty($today_schedule)): ?>
-                                <div class="no-data">
-                                    <i class="fas fa-calendar"></i>
-                                    <div>No classes today</div>
-                                </div>
-                            <?php else: ?>
-                                <?php foreach ($today_schedule as $class): ?>
-                                    <div class="activity-item">
-                                        <div style="font-weight: 600; color: var(--primary); min-width: 70px;">
-                                            <?php echo $class['class_time']; ?>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-title">
-                                                <?php echo htmlspecialchars($class['batch_code']); ?>
-                                            </div>
-                                            <div class="activity-description">
-                                                <?php echo truncate_text($class['course_title'], 25); ?>
-                                            </div>
-                                        </div>
+                        <div class="card-body">
+                            <div class="schedule-list">
+                                <?php if (empty($today_schedule)): ?>
+                                    <div class="no-data">
+                                        <i class="fas fa-calendar"></i>
+                                        <p>No classes today</p>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                                <?php else: ?>
+                                    <?php foreach ($today_schedule as $class): ?>
+                                        <div class="schedule-item">
+                                            <div class="schedule-time"><?php echo $class['class_time']; ?></div>
+                                            <div class="schedule-info">
+                                                <h4><?php echo htmlspecialchars($class['batch_code']); ?></h4>
+                                                <p><?php echo truncate_text($class['course_title'], 25); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="content-card">
+                    <!-- Quick Actions Card -->
+                    <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Quick Actions</h2>
+                            <h3 class="card-title">
+                                <i class="fas fa-bolt"></i>
+                                Quick Actions
+                            </h3>
                         </div>
-
-                        <div class="quick-actions-grid">
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/create.php" class="quick-action">
-                                <div class="quick-action-icon">
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <div class="quick-action-label">New Assignment</div>
-                            </a>
-
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/materials/upload.php" class="quick-action">
-                                <div class="quick-action-icon">
+                        <div class="card-body">
+                            <div class="actions-grid">
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/create.php" class="action-item">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Assignment</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/materials/upload.php" class="action-item">
                                     <i class="fas fa-upload"></i>
-                                </div>
-                                <div class="quick-action-label">Upload Material</div>
-                            </a>
-
-                            <a href="<?php echo BASE_URL; ?>modules/shared/mail/compose.php" class="quick-action">
-                                <div class="quick-action-icon">
+                                    <span>Material</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>modules/shared/mail/compose.php" class="action-item">
                                     <i class="fas fa-envelope"></i>
-                                </div>
-                                <div class="quick-action-label">Send Message</div>
-                            </a>
-
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/announcements/create.php" class="quick-action">
-                                <div class="quick-action-icon">
+                                    <span>Message</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/announcements/create.php" class="action-item">
                                     <i class="fas fa-bullhorn"></i>
-                                </div>
-                                <div class="quick-action-label">Post Announcement</div>
-                            </a>
+                                    <span>Announce</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Recent Submissions Card -->
+                    <?php if (!empty($recent_submissions)): ?>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-history"></i>
+                                    Recent Submissions
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="assignment-list">
+                                    <?php foreach (array_slice($recent_submissions, 0, 3) as $submission): ?>
+                                        <div class="assignment-item">
+                                            <div class="assignment-icon" style="color: var(--success);">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <div class="assignment-info">
+                                                <h4><?php echo htmlspecialchars($submission['first_name'] . ' ' . $submission['last_name']); ?></h4>
+                                                <p><?php echo truncate_text($submission['assignment_title'], 20); ?></p>
+                                            </div>
+                                            <div style="font-size: 0.7rem; color: var(--gray);">
+                                                <?php echo time_ago($submission['submitted_at']); ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="dashboard-footer">
-                <div class="system-status">
-                    <div class="status-indicator"></div>
-                    <span>Teaching Status: Active</span>
+            <div class="footer">
+                <div style="margin-bottom: 0.5rem;">
+                    <span class="status-indicator"></span>
+                    System Online
                 </div>
-                <div>
-                    <span>Updated: <?php echo date('M j, g:i a'); ?></span>
-                </div>
+                <div>&copy; <?php echo date('Y'); ?> Impact Digital Academy. All rights reserved.</div>
             </div>
         </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="bottom-nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Home</span>
+            </a>
+            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="bottom-nav-item">
+                <i class="fas fa-chalkboard"></i>
+                <span>Classes</span>
+                <?php if ($stats['active_classes'] > 0): ?>
+                    <span class="badge"><?php echo $stats['active_classes']; ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/pending.php" class="bottom-nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Grade</span>
+                <?php if ($stats['pending_grading'] > 0): ?>
+                    <span class="badge"><?php echo $stats['pending_grading']; ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo BASE_URL; ?>modules/shared/mail/index.php" class="bottom-nav-item">
+                <i class="fas fa-envelope"></i>
+                <span>Mail</span>
+                <?php if ($unread_message_count > 0): ?>
+                    <span class="badge"><?php echo $unread_message_count; ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo BASE_URL; ?>modules/instructor/profile/edit.php" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+
+        <!-- Notifications Panel -->
+        <div class="notifications-panel" id="notificationsPanel">
+            <div class="panel-header">
+                <h3>Notifications</h3>
+                <button class="close-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="panel-content">
+                <?php if (empty($notifications)): ?>
+                    <div class="no-data">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($notifications as $notification): ?>
+                        <div class="notification-item">
+                            <div class="notification-icon">
+                                <i class="fas fa-<?php echo $notification['type'] ?? 'info-circle'; ?>"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title"><?php echo htmlspecialchars($notification['title']); ?></div>
+                                <div class="notification-text"><?php echo htmlspecialchars($notification['message']); ?></div>
+                                <div class="notification-time"><?php echo time_ago($notification['created_at']); ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            <div style="padding: 1rem; border-top: 1px solid var(--gray-light);">
+                <a href="<?php echo BASE_URL; ?>modules/instructor/notifications/" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center;">
+                    View All Notifications
+                </a>
+            </div>
+        </div>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav">
-        <a href="<?php echo BASE_URL; ?>modules/instructor/dashboard.php" class="mobile-nav-item active">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/" class="mobile-nav-item">
-            <i class="fas fa-chalkboard"></i>
-            <span>Classes</span>
-        </a>
-        <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/pending.php" class="mobile-nav-item">
-            <i class="fas fa-tasks"></i>
-            <span>Grade</span>
-            <?php if ($stats['pending_grading'] > 0): ?>
-                <span style="position: absolute; top: 5px; right: 20px; background: var(--danger); color: white; font-size: 0.6rem; padding: 0.1rem 0.3rem; border-radius: 50%;">
-                    <?php echo $stats['pending_grading']; ?>
-                </span>
-            <?php endif; ?>
-        </a>
-        <a href="<?php echo BASE_URL; ?>modules/shared/mail/index.php" class="mobile-nav-item">
-            <i class="fas fa-envelope"></i>
-            <span>Mail</span>
-            <?php if ($unread_message_count > 0): ?>
-                <span style="position: absolute; top: 5px; right: 20px; background: var(--danger); color: white; font-size: 0.6rem; padding: 0.1rem 0.3rem; border-radius: 50%;">
-                    <?php echo $unread_message_count; ?>
-                </span>
-            <?php endif; ?>
-        </a>
-        <a href="<?php echo BASE_URL; ?>modules/instructor/profile/edit.php" class="mobile-nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </nav>
-
     <script>
-        // Mobile sidebar toggle
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.toggle('show');
-            overlay.style.display = sidebar.classList.contains('show') ? 'block' : 'none';
-            
-            // Prevent body scroll when sidebar is open
-            document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
-        }
-
-        // Desktop sidebar toggle
+        // Toggle sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth >= 768) {
-                sidebar.classList.toggle('collapsed');
-                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-            } else {
-                toggleMobileSidebar();
-            }
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
         }
 
-        // Toggle dropdowns
-        function toggleDropdown(element) {
-            // Close other dropdowns on mobile
-            if (window.innerWidth < 768) {
-                const allDropdowns = document.querySelectorAll('.nav-dropdown .dropdown-content');
-                const allToggles = document.querySelectorAll('.nav-dropdown .dropdown-toggle');
-                
-                allDropdowns.forEach(dropdown => {
-                    if (dropdown !== element.nextElementSibling) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-                
-                allToggles.forEach(toggle => {
-                    if (toggle !== element) {
-                        toggle.classList.remove('active');
-                    }
-                });
-            }
-            
-            // Toggle current dropdown
-            const dropdownContent = element.nextElementSibling;
-            element.classList.toggle('active');
-            dropdownContent.classList.toggle('show');
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.nav-dropdown');
-            dropdowns.forEach(dropdown => {
-                if (!dropdown.contains(event.target)) {
-                    dropdown.querySelector('.dropdown-content')?.classList.remove('show');
-                    dropdown.querySelector('.dropdown-toggle')?.classList.remove('active');
-                }
-            });
-        });
-
-        // Load sidebar state
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth >= 768) {
-                const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (isCollapsed) {
-                    document.getElementById('sidebar').classList.add('collapsed');
-                }
-            }
-            
-            // Add touch support for mobile
-            addTouchSupport();
-        });
-
-        // Notifications panel
-        let notificationsPanel = null;
+        // Toggle notifications panel
+        let notificationsPanel = document.getElementById('notificationsPanel');
 
         function toggleNotifications() {
-            if (!notificationsPanel) {
-                createNotificationsPanel();
-            }
-            
-            notificationsPanel.classList.toggle('show');
-            
-            // Close on mobile when clicking outside
-            if (notificationsPanel.classList.contains('show')) {
-                setTimeout(() => {
-                    document.addEventListener('click', closeNotificationsOnClickOutside);
-                }, 10);
-            } else {
-                document.removeEventListener('click', closeNotificationsOnClickOutside);
-            }
+            notificationsPanel.classList.toggle('open');
         }
 
-        function closeNotificationsOnClickOutside(event) {
-            if (!event.target.closest('.notifications-panel') && 
-                !event.target.closest('.notification-bell')) {
-                notificationsPanel.classList.remove('show');
-                document.removeEventListener('click', closeNotificationsOnClickOutside);
-            }
-        }
-
-        function createNotificationsPanel() {
-            notificationsPanel = document.createElement('div');
-            notificationsPanel.className = 'notifications-panel';
-            notificationsPanel.innerHTML = `
-                <div class="notifications-header">
-                    <h3 style="margin: 0; font-size: 1.1rem;">Notifications</h3>
-                    <button onclick="toggleNotifications()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="notifications-content">
-                    <?php if (empty($notifications)): ?>
-                        <div class="no-data">
-                            <i class="fas fa-bell-slash"></i>
-                            <div>No notifications</div>
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($notifications as $notification): ?>
-                            <div class="activity-item">
-                                <div class="activity-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
-                                    <i class="fas fa-${notification.type === 'assignment' ? 'tasks' : 'bullhorn'}"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">${notification.title}</div>
-                                    <div class="activity-description">${notification.message}</div>
-                                    <div style="font-size: 0.7rem; color: var(--gray);">
-                                        ${formatTimeAgo(notification.created_at)}
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-                <div style="padding: 1rem; border-top: 1px solid var(--light-gray); text-align: center;">
-                    <a href="<?php echo BASE_URL; ?>modules/instructor/notifications/" 
-                       class="btn btn-primary btn-sm" style="width: 100%;">
-                        View All Notifications
-                    </a>
-                </div>
-            `;
-            
-            document.body.appendChild(notificationsPanel);
-        }
-
-        // Format time ago for notifications
-        function formatTimeAgo(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMin = Math.floor(diffMs / 60000);
-            const diffHour = Math.floor(diffMin / 60);
-            const diffDay = Math.floor(diffHour / 24);
-            
-            if (diffMin < 1) return 'just now';
-            if (diffMin < 60) return diffMin + ' min ago';
-            if (diffHour < 24) return diffHour + ' hour' + (diffHour > 1 ? 's' : '') + ' ago';
-            if (diffDay < 7) return diffDay + ' day' + (diffDay > 1 ? 's' : '') + ' ago';
-            
-            return date.toLocaleDateString();
-        }
-
-        // Add touch support for mobile
-        function addTouchSupport() {
-            // Add swipe support for sidebar on mobile
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            document.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-            
-            document.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, { passive: true });
-            
-            function handleSwipe() {
-                const swipeThreshold = 50;
-                const swipeDistance = touchEndX - touchStartX;
-                
-                // Swipe right to open sidebar
-                if (swipeDistance > swipeThreshold && window.innerWidth < 768) {
-                    toggleMobileSidebar();
-                }
-                // Swipe left to close sidebar
-                else if (swipeDistance < -swipeThreshold && window.innerWidth < 768) {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar.classList.contains('show')) {
-                        toggleMobileSidebar();
-                    }
+        // Close notifications when clicking outside
+        document.addEventListener('click', function(event) {
+            if (notificationsPanel.classList.contains('open')) {
+                if (!notificationsPanel.contains(event.target) && !event.target.closest('.icon-btn')) {
+                    notificationsPanel.classList.remove('open');
                 }
             }
-            
-            // Prevent zoom on double tap
-            let lastTap = 0;
-            document.addEventListener('touchend', e => {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 300 && tapLength > 0) {
-                    e.preventDefault();
-                }
-                lastTap = currentTime;
-            });
-        }
+        });
 
         // Handle window resize
         window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            // Auto-close sidebar on mobile when switching to desktop
             if (window.innerWidth >= 768) {
-                sidebar.classList.remove('show');
-                overlay.style.display = 'none';
-                document.body.style.overflow = '';
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('overlay');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
             }
         });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Esc to close modals
             if (e.key === 'Escape') {
-                if (notificationsPanel && notificationsPanel.classList.contains('show')) {
-                    toggleNotifications();
-                }
-                
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar.classList.contains('show')) {
-                    toggleMobileSidebar();
-                }
-            }
-            
-            // / to focus search
-            if (e.key === '/' && window.innerWidth >= 768) {
-                e.preventDefault();
-                document.querySelector('.search-box input')?.focus();
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('overlay').classList.remove('show');
+                notificationsPanel.classList.remove('open');
             }
         });
 
-        // Acknowledge announcement
-        function acknowledgeAnnouncement(announcementId) {
-            if (!confirm('Acknowledge this announcement?')) return;
-            
-            // Implement acknowledgment logic here
-            console.log('Acknowledging announcement:', announcementId);
-            
-            // Show success message
-            showNotification('Announcement acknowledged!', 'success');
+        // Mark notification as read
+        function markAsRead(notificationId) {
+            // AJAX call to mark notification as read
+            fetch('<?php echo BASE_URL; ?>modules/instructor/mark-notification.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: notificationId
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
         }
 
-        // Show notification toast
-        function showNotification(message, type = 'info') {
+        // Show success message
+        function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.style.cssText = `
                 position: fixed;
                 bottom: 80px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
                 color: white;
-                padding: 0.8rem 1.2rem;
-                border-radius: 8px;
-                z-index: 9999;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 0.75rem 1.5rem;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                z-index: 1000;
+                box-shadow: var(--shadow-lg);
                 animation: slideUp 0.3s ease;
-                max-width: 90%;
-                text-align: center;
             `;
-            
-            toast.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
+            toast.textContent = message;
             document.body.appendChild(toast);
-            
+
             setTimeout(() => {
                 toast.style.animation = 'slideDown 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
-            
-            // Add animation styles
-            if (!document.querySelector('#toast-styles')) {
-                const style = document.createElement('style');
-                style.id = 'toast-styles';
-                style.textContent = `
-                    @keyframes slideUp {
-                        from { transform: translate(-50%, 100%); opacity: 0; }
-                        to { transform: translate(-50%, 0); opacity: 1; }
-                    }
-                    @keyframes slideDown {
-                        from { transform: translate(-50%, 0); opacity: 1; }
-                        to { transform: translate(-50%, 100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
         }
 
-        // Handle mobile back button
-        window.addEventListener('popstate', function() {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('show')) {
-                toggleMobileSidebar();
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from { transform: translate(-50%, 100%); opacity: 0; }
+                to { transform: translate(-50%, 0); opacity: 1; }
             }
-        });
+            @keyframes slideDown {
+                from { transform: translate(-50%, 0); opacity: 1; }
+                to { transform: translate(-50%, 100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
+
 </html>

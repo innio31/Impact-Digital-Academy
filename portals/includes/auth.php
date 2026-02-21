@@ -87,9 +87,11 @@ function loginUser($email, $password)
                 echo "</pre>";
             }
 
+            // MODIFIED: Return user_id along with user data for easy access
             return [
                 'success' => true,
-                'user' => $user
+                'user' => $user,
+                'user_id' => $user['id']  // ADD THIS LINE
             ];
         } else {
             if (DEBUG_MODE) {

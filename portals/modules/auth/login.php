@@ -43,10 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Store email in session for convenience
             $_SESSION['login_email'] = $email;
 
+            // Send login notification email (non-blocking - don't wait for result)
+            // We'll log the user's ID from the login result
+            if (isset($login_result['user_id'])) {
+                sendLoginNotificationEmail($login_result['user_id']);
+            } else {
+                // If user_id not in login result, get it from session
+                startSession();
+                if (isset($_SESSION['user_id'])) {
+                    sendLoginNotificationEmail($_SESSION['user_id']);
+                }
+            }
+
             // Redirect based on role
             redirectToDashboard();
-        } else {
-            $error = $login_result['message'];
         }
     }
 
