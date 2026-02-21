@@ -44,12 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_period'])) {
         // Add new academic period
         $stmt = $conn->prepare("INSERT INTO academic_periods 
-            (program_type, period_type, period_number, period_name, academic_year, 
-             start_date, end_date, duration_weeks, registration_start_date, registration_deadline, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        (program_type, period_type, period_number, period_name, academic_year, 
+         start_date, end_date, duration_weeks, registration_start_date, registration_deadline, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        // Handle empty date values
+        $registration_start_date = !empty($_POST['registration_start_date']) ? $_POST['registration_start_date'] : null;
+        $registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
 
         $stmt->bind_param(
-            "ssissssiiss",
+            "ssissssiss",
             $_POST['program_type'],
             $_POST['period_type'],
             $_POST['period_number'],
@@ -58,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['start_date'],
             $_POST['end_date'],
             $_POST['duration_weeks'],
-            $_POST['registration_start_date'],
-            $_POST['registration_deadline'],
+            $registration_start_date,
+            $registration_deadline,
             $_POST['status']
         );
 
@@ -73,31 +77,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_period'])) {
         // Update existing academic period
         $stmt = $conn->prepare("UPDATE academic_periods SET 
-            program_type = ?,
-            period_type = ?,
-            period_number = ?,
-            period_name = ?,
-            academic_year = ?,
-            start_date = ?,
-            end_date = ?,
-            duration_weeks = ?,
-            registration_start_date = ?,
-            registration_deadline = ?,
-            status = ?
-            WHERE id = ?");
+        program_type = ?,
+        period_type = ?,
+        period_number = ?,
+        period_name = ?,
+        academic_year = ?,
+        start_date = ?,
+        end_date = ?,
+        duration_weeks = ?,
+        registration_start_date = ?,
+        registration_deadline = ?,
+        status = ?
+        WHERE id = ?");
+
+        // Handle empty date values
+        $registration_start_date = !empty($_POST['registration_start_date']) ? $_POST['registration_start_date'] : null;
+        $registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
+        $academic_year = $_POST['academic_year'];
+
+        // Validate academic year format (ensure it's not a single year if database expects full date)
+        // The error shows '2026' is being passed, which suggests academic_year might be being used incorrectly
+        // Make sure academic_year is stored properly (should be like '2024' or '2024/2025')
 
         $stmt->bind_param(
-            "ssissssiisii",
+            "ssissssisisi",
             $_POST['program_type'],
             $_POST['period_type'],
             $_POST['period_number'],
             $_POST['period_name'],
-            $_POST['academic_year'],
+            $academic_year,
             $_POST['start_date'],
             $_POST['end_date'],
             $_POST['duration_weeks'],
-            $_POST['registration_start_date'],
-            $_POST['registration_deadline'],
+            $registration_start_date,
+            $registration_deadline,
             $_POST['status'],
             $_POST['edit_id']
         );
@@ -1372,14 +1385,18 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
                         <label>Duration (weeks)</label>
                         <input type="number" name="duration_weeks" class="form-control" required min="1" max="52" id="durationWeeksInput">
                     </div>
+                    <!-- Update these fields in your edit modal -->
                     <div class="filter-group">
                         <label>Registration Start</label>
-                        <input type="date" name="registration_start_date" class="form-control" required>
+                        <input type="date" name="registration_start_date" class="form-control"
+                            value="<?php echo !empty($period_to_edit['registration_start_date']) ? htmlspecialchars($period_to_edit['registration_start_date']) : ''; ?>">
                         <small style="color: #666; font-size: 0.85rem;">Registration opens</small>
                     </div>
+
                     <div class="filter-group">
                         <label>Registration Deadline</label>
-                        <input type="date" name="registration_deadline" class="form-control" required>
+                        <input type="date" name="registration_deadline" class="form-control"
+                            value="<?php echo !empty($period_to_edit['registration_deadline']) ? htmlspecialchars($period_to_edit['registration_deadline']) : ''; ?>">
                         <small style="color: #666; font-size: 0.85rem;">Registration closes</small>
                     </div>
                     <div class="filter-group">
