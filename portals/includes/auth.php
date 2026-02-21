@@ -198,40 +198,54 @@ function registerUser($data)
         );
         $profile_stmt->execute();
 
-        // Insert application record - always 'student' for applying_as
-        $app_sql = "INSERT INTO applications (user_id, applying_as, program_id, motivation, qualifications, experience, program_type, school_id, preferred_term, preferred_block, preferred_school_term, learning_mode_preference, status) 
-                    VALUES (?, 'student', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')";
+        // Determine the program type and school fields to store
+        // For school-based programs, we'll store the school info in the existing fields
+        $program_id = !empty($data['program_id']) ? $data['program_id'] : null;
+        $program_type = $data['program_type'] ?? 'online';
+        $school_id = !empty($data['school_id']) ? $data['school_id'] : null;
+
+        // Store program type info in the existing fields
+        // For now, we'll use program_id for the program and store other info in existing text fields
+        $motivation = !empty($data['motivation']) ? $data['motivation'] : null;
+
+        // Combine qualifications, experience, and program preferences into the existing fields
+        $qualifications = !empty($data['qualifications']) ? $data['qualifications'] : '';
+        $experience = !empty($data['experience']) ? $data['experience'] : '';
+
+        // Add program type and school info to qualifications or experience for reference
+        if ($program_type === 'school' && $school_id) {
+            $school_info = "\n\n[School Program - School ID: " . $school_id . "]";
+            if (!empty($data['school_name'])) {
+                $school_info .= " - " . $data['school_name'];
+            }
+            if (!empty($data['preferred_school_term'])) {
+                $school_info .= " - Preferred Term: " . $data['preferred_school_term'];
+            }
+            $qualifications .= $school_info;
+        } elseif ($program_type === 'onsite' && !empty($data['preferred_term'])) {
+            $qualifications .= "\n\n[Onsite Program - Preferred Term: " . $data['preferred_term'] . "]";
+        } elseif ($program_type === 'online' && !empty($data['preferred_block'])) {
+            $qualifications .= "\n\n[Online Program - Preferred Block: " . $data['preferred_block'] . "]";
+        }
+
+        // Add learning mode preference to qualifications
+        if (!empty($data['learning_mode_preference'])) {
+            $qualifications .= "\n[Learning Mode: " . $data['learning_mode_preference'] . "]";
+        }
+
+        // Insert application record - only using columns that exist in your table
+        // Based on your SQL dump, the applications table has: user_id, applying_as, program_id, motivation, qualifications, experience, status
+        $app_sql = "INSERT INTO applications (user_id, applying_as, program_id, motivation, qualifications, experience, status) 
+                    VALUES (?, 'student', ?, ?, ?, ?, 'pending')";
         $app_stmt = $conn->prepare($app_sql);
 
-        // Extract values for application
-        $program_id = !empty($data['program_id']) ? $data['program_id'] : null;
-        $motivation = !empty($data['motivation']) ? $data['motivation'] : null;
-        $qualifications = !empty($data['qualifications']) ? $data['qualifications'] : null;
-        $experience = !empty($data['experience']) ? $data['experience'] : null;
-        $program_type = !empty($data['program_type']) ? $data['program_type'] : 'online';
-        $school_id = !empty($data['school_id']) ? $data['school_id'] : null;
-        $preferred_term = !empty($data['preferred_term']) ? $data['preferred_term'] : null;
-        $preferred_block = !empty($data['preferred_block']) ? $data['preferred_block'] : null;
-        $preferred_school_term = !empty($data['preferred_school_term']) ? $data['preferred_school_term'] : null;
-        $learning_mode_preference = !empty($data['learning_mode_preference']) ? $data['learning_mode_preference'] : 'online_only';
-
-        // Debug: Log values before binding
-        error_log("Application Values: user_id=$user_id, program_id=$program_id, program_type=$program_type");
-
-        // Bind parameters - all as strings except user_id and program_id which are integers
         $app_stmt->bind_param(
-            "iissssisssss",
+            "iisss",
             $user_id,
             $program_id,
             $motivation,
             $qualifications,
-            $experience,
-            $program_type,
-            $school_id,
-            $preferred_term,
-            $preferred_block,
-            $preferred_school_term,
-            $learning_mode_preference
+            $experience
         );
 
         $app_stmt->execute();
