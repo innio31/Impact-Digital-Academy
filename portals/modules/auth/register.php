@@ -19,13 +19,10 @@ if (isLoggedIn()) {
     redirectToDashboard();
 }
 
-// Get role from query parameter (always student now, but keep for backward compatibility)
-$role = 'student'; // Force to student only
-
 // Get database connection
 $conn = getDBConnection();
 
-// Get programs for dropdown (with program type)
+// Get programs for dropdown
 $programs = [];
 $programs_sql = "SELECT id, program_code, name, program_type, duration_mode 
                  FROM programs WHERE status = 'active' 
@@ -45,71 +42,110 @@ if ($schools_result) {
     $schools = $schools_result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Get upcoming academic periods for all program types with registration availability
+// Get academic periods with registration availability
 $academic_periods = [
-    'onsite' => [],
-    'online' => [],
-    'school' => []
+    'onsite' => [],    // Monthly cohorts
+    'online' => [],    // Block-based
+    'school' => []     // School terms
 ];
 
-// Get upcoming terms (onsite) with registration availability
-$terms_sql = "SELECT id, period_name, academic_year, start_date, end_date, 
-              registration_start_date, registration_deadline,
-              CASE 
-                  WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
-                  WHEN registration_start_date > CURDATE() THEN 'upcoming'
-                  WHEN registration_deadline < CURDATE() THEN 'closed'
-              END as registration_status
+// Get upcoming monthly cohorts (onsite)
+$onsite_sql = "SELECT 
+                id, 
+                period_name, 
+                academic_year, 
+                start_date, 
+                end_date,
+                registration_start_date, 
+                registration_deadline,
+                period_number,
+                duration_weeks,
+                CASE 
+                    WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                    WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                    WHEN registration_deadline < CURDATE() THEN 'closed'
+                    ELSE 'unavailable'
+                END as registration_status,
+                DATEDIFF(registration_deadline, CURDATE()) as days_remaining,
+                DATEDIFF(registration_start_date, CURDATE()) as days_until_open
               FROM academic_periods 
               WHERE program_type = 'onsite' 
-              AND period_type = 'term' 
+              AND period_type = '' 
               AND status IN ('upcoming', 'active')
-              AND registration_deadline >= CURDATE()
-              AND registration_start_date IS NOT NULL
-              ORDER BY start_date LIMIT 3";
-$terms_result = $conn->query($terms_sql);
-if ($terms_result) {
-    $academic_periods['onsite'] = $terms_result->fetch_all(MYSQLI_ASSOC);
+              AND (registration_deadline >= CURDATE() OR registration_start_date > CURDATE())
+              ORDER BY start_date 
+              LIMIT 12";
+$onsite_result = $conn->query($onsite_sql);
+if ($onsite_result) {
+    while ($row = $onsite_result->fetch_assoc()) {
+        $academic_periods['onsite'][] = $row;
+    }
 }
 
-// Get upcoming blocks (online) with registration availability
-$blocks_sql = "SELECT id, period_name, academic_year, start_date, end_date,
-               registration_start_date, registration_deadline,
-               CASE 
-                   WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
-                   WHEN registration_start_date > CURDATE() THEN 'upcoming'
-                   WHEN registration_deadline < CURDATE() THEN 'closed'
-               END as registration_status
+// Get upcoming blocks (online)
+$online_sql = "SELECT 
+                id, 
+                period_name, 
+                academic_year, 
+                start_date, 
+                end_date,
+                registration_start_date, 
+                registration_deadline,
+                period_number,
+                duration_weeks,
+                CASE 
+                    WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                    WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                    WHEN registration_deadline < CURDATE() THEN 'closed'
+                    ELSE 'unavailable'
+                END as registration_status,
+                DATEDIFF(registration_deadline, CURDATE()) as days_remaining,
+                DATEDIFF(registration_start_date, CURDATE()) as days_until_open
                FROM academic_periods 
                WHERE program_type = 'online' 
                AND period_type = 'block' 
                AND status IN ('upcoming', 'active')
-               AND registration_deadline >= CURDATE()
-               AND registration_start_date IS NOT NULL
-               ORDER BY start_date LIMIT 3";
-$blocks_result = $conn->query($blocks_sql);
-if ($blocks_result) {
-    $academic_periods['online'] = $blocks_result->fetch_all(MYSQLI_ASSOC);
+               AND (registration_deadline >= CURDATE() OR registration_start_date > CURDATE())
+               ORDER BY start_date 
+               LIMIT 6";
+$online_result = $conn->query($online_sql);
+if ($online_result) {
+    while ($row = $online_result->fetch_assoc()) {
+        $academic_periods['online'][] = $row;
+    }
 }
 
-// Get upcoming school terms with registration availability
-$school_terms_sql = "SELECT id, period_name, academic_year, start_date, end_date,
-                     registration_start_date, registration_deadline,
-                     CASE 
-                         WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
-                         WHEN registration_start_date > CURDATE() THEN 'upcoming'
-                         WHEN registration_deadline < CURDATE() THEN 'closed'
-                     END as registration_status
-                     FROM academic_periods 
-                     WHERE program_type = 'school' 
-                     AND period_type = 'term' 
-                     AND status IN ('upcoming', 'active')
-                     AND registration_deadline >= CURDATE()
-                     AND registration_start_date IS NOT NULL
-                     ORDER BY start_date LIMIT 3";
-$school_terms_result = $conn->query($school_terms_sql);
-if ($school_terms_result) {
-    $academic_periods['school'] = $school_terms_result->fetch_all(MYSQLI_ASSOC);
+// Get upcoming school terms
+$school_sql = "SELECT 
+                id, 
+                period_name, 
+                academic_year, 
+                start_date, 
+                end_date,
+                registration_start_date, 
+                registration_deadline,
+                period_number,
+                duration_weeks,
+                CASE 
+                    WHEN registration_start_date <= CURDATE() AND registration_deadline >= CURDATE() THEN 'open'
+                    WHEN registration_start_date > CURDATE() THEN 'upcoming'
+                    WHEN registration_deadline < CURDATE() THEN 'closed'
+                    ELSE 'unavailable'
+                END as registration_status,
+                DATEDIFF(registration_deadline, CURDATE()) as days_remaining,
+                DATEDIFF(registration_start_date, CURDATE()) as days_until_open
+             FROM academic_periods 
+             WHERE program_type = 'school' 
+             AND period_type = 'term' 
+             AND status IN ('upcoming', 'active')
+             AND (registration_deadline >= CURDATE() OR registration_start_date > CURDATE())
+             ORDER BY start_date 
+             LIMIT 6";
+$school_result = $conn->query($school_sql);
+if ($school_result) {
+    while ($row = $school_result->fetch_assoc()) {
+        $academic_periods['school'][] = $row;
+    }
 }
 
 // Handle form submission
@@ -122,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Invalid security token. Please try again.';
     } else {
-        // Collect form data - always 'student' for applying_as
+        // Collect form data
         $form_data = [
             'email' => trim($_POST['email'] ?? ''),
             'password' => $_POST['password'] ?? '',
@@ -130,14 +166,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'first_name' => trim($_POST['first_name'] ?? ''),
             'last_name' => trim($_POST['last_name'] ?? ''),
             'phone' => trim($_POST['phone'] ?? ''),
-            'applying_as' => 'student', // Force to student only
+            'applying_as' => 'student',
             'program_type' => $_POST['program_type'] ?? 'online',
             'program_id' => !empty($_POST['program_id']) ? (int)$_POST['program_id'] : null,
             'school_id' => !empty($_POST['school_id']) ? (int)$_POST['school_id'] : null,
             'school_name' => trim($_POST['school_name'] ?? ''),
-            'preferred_term' => trim($_POST['preferred_term'] ?? ''),
-            'preferred_block' => trim($_POST['preferred_block'] ?? ''),
-            'preferred_school_term' => trim($_POST['preferred_school_term'] ?? ''),
+            'academic_period_id' => !empty($_POST['academic_period_id']) ? (int)$_POST['academic_period_id'] : null,
             'date_of_birth' => !empty($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null,
             'gender' => $_POST['gender'] ?? null,
             'address' => trim($_POST['address'] ?? ''),
@@ -178,39 +212,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Please enter a valid phone number.';
         }
 
-        // Validate program selection for students
-        if ($form_data['program_type'] === 'school' && empty($form_data['school_id'])) {
-            $errors[] = 'Please select a school for school-based program.';
-        } elseif ($form_data['program_type'] !== 'school' && empty($form_data['program_id'])) {
-            $errors[] = 'Please select a program.';
-        }
-
         // Validate program type selection
         if (!in_array($form_data['program_type'], ['onsite', 'online', 'school'])) {
             $errors[] = 'Please select a valid program type.';
         }
 
-        // Validate term/block/school term selection based on program type
-        if ($form_data['program_type'] === 'onsite' && empty($form_data['preferred_term'])) {
-            $errors[] = 'Please select your preferred term for onsite program.';
+        // Validate school selection for school-based programs
+        if ($form_data['program_type'] === 'school') {
+            if (empty($form_data['school_id'])) {
+                $errors[] = 'Please select a school for school-based program.';
+            }
+        } else {
+            // Validate program selection for non-school programs
+            if (empty($form_data['program_id'])) {
+                $errors[] = 'Please select a program.';
+            }
         }
 
-        if ($form_data['program_type'] === 'online' && empty($form_data['preferred_block'])) {
-            $errors[] = 'Please select your preferred block for online program.';
-        }
+        // Validate academic period selection
+        if (empty($form_data['academic_period_id'])) {
+            $errors[] = 'Please select your preferred start period.';
+        } else {
+            // Verify that the selected academic period is still available for registration
+            $period_check_sql = "SELECT id, registration_start_date, registration_deadline, 
+                                program_type, period_name, start_date
+                                FROM academic_periods 
+                                WHERE id = ?";
+            $stmt = $conn->prepare($period_check_sql);
+            $stmt->bind_param('i', $form_data['academic_period_id']);
+            $stmt->execute();
+            $period_result = $stmt->get_result();
 
-        if ($form_data['program_type'] === 'school' && empty($form_data['preferred_school_term'])) {
-            $errors[] = 'Please select your preferred term for school-based program.';
+            if ($period_result->num_rows === 0) {
+                $errors[] = 'The selected period is invalid.';
+            } else {
+                $period = $period_result->fetch_assoc();
+
+                // Check registration availability
+                $today = date('Y-m-d');
+                $reg_start = $period['registration_start_date'];
+                $reg_deadline = $period['registration_deadline'];
+
+                if ($reg_start && $reg_start > $today) {
+                    $errors[] = 'Registration for ' . $period['period_name'] . ' opens on ' . date('F j, Y', strtotime($reg_start));
+                } elseif ($reg_deadline && $reg_deadline < $today) {
+                    $errors[] = 'Registration deadline for ' . $period['period_name'] . ' has passed (was ' . date('F j, Y', strtotime($reg_deadline)) . ')';
+                } elseif (!$reg_start || !$reg_deadline) {
+                    $errors[] = 'Registration dates are not set for this period. Please contact support.';
+                }
+            }
+            $stmt->close();
         }
 
         // If no errors, process registration
         if (empty($errors)) {
             require_once __DIR__ . '/../../includes/auth.php';
 
-            // Remove confirm_password from data before sending to registration function
+            // Remove confirm_password from data
             unset($form_data['confirm_password']);
 
-            // Convert learning_mode_preference based on program_type
+            // Set learning mode preference based on program type
             if ($form_data['program_type'] === 'onsite') {
                 $form_data['learning_mode_preference'] = 'onsite_only';
             } elseif ($form_data['program_type'] === 'online') {
@@ -223,14 +284,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($result['success']) {
                 $success = true;
-
-                // Store success message in session for redirect
                 $_SESSION['success'] = $result['message'];
-
-                // Store email for login page
                 $_SESSION['login_email'] = $form_data['email'];
-
-                // Store program type for login context
                 $_SESSION['registered_program_type'] = $form_data['program_type'];
 
                 // Redirect to login page after a brief delay
@@ -250,8 +305,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply to Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
 
     <style>
@@ -264,6 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #3b82f6;
             --onsite-color: #8b5cf6;
             --online-color: #10b981;
             --school-color: #8b4513;
@@ -289,45 +343,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             padding: 1rem;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         .register-container {
             max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
         }
 
         .register-header {
             text-align: center;
             margin-bottom: 2rem;
-            padding: 0 0.5rem;
         }
 
         .register-header h1 {
             color: var(--dark);
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 0.5rem;
-            line-height: 1.2;
             font-weight: 700;
         }
 
         .register-header p {
             color: var(--gray-500);
             font-size: clamp(0.95rem, 3vw, 1.1rem);
-            line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .progress-steps {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 2.5rem;
             position: relative;
-            padding: 0 0.5rem;
             flex-wrap: wrap;
             gap: 0.5rem;
         }
@@ -354,7 +398,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex-direction: column;
             align-items: center;
             z-index: 2;
-            padding: 0.5rem;
             flex: 1;
             min-width: 80px;
         }
@@ -371,9 +414,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 700;
             color: var(--gray-500);
             margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-            position: relative;
-            z-index: 2;
             transition: all 0.3s ease;
         }
 
@@ -389,7 +429,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--gray-500);
             font-weight: 600;
             text-align: center;
-            line-height: 1.3;
         }
 
         .step.active .step-label {
@@ -404,7 +443,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .step-number {
                 width: 36px;
                 height: 36px;
-                font-size: 0.85rem;
             }
         }
 
@@ -427,12 +465,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .card-header h2 {
             font-size: clamp(1.4rem, 4vw, 1.8rem);
             margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .card-header p {
-            opacity: 0.9;
-            font-size: clamp(0.9rem, 3vw, 1rem);
         }
 
         .card-content {
@@ -446,13 +478,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding-bottom: 1rem;
             border-bottom: 2px solid var(--gray-200);
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .form-navigation::-webkit-scrollbar {
-            display: none;
         }
 
         .nav-step {
@@ -460,13 +485,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             padding: 0.75rem 0.5rem;
             cursor: pointer;
-            position: relative;
             font-weight: 500;
-            font-size: 0.9rem;
             color: var(--gray-500);
             white-space: nowrap;
             min-width: 80px;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .nav-step:hover {
@@ -488,7 +512,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 3px;
             background: var(--primary);
             transition: width 0.3s ease;
-            border-radius: 3px 3px 0 0;
         }
 
         .nav-step.active::after {
@@ -522,19 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
             border-bottom: 2px solid var(--gray-200);
-            position: relative;
             font-weight: 600;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
         }
 
         .program-type-selector {
@@ -547,7 +558,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @media (max-width: 640px) {
             .program-type-selector {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
         }
 
@@ -560,9 +570,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: white;
             position: relative;
             overflow: hidden;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
         }
 
         .program-type-card:hover {
@@ -576,45 +583,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
         }
 
-        .program-type-card.onsite {
-            border-left: 4px solid var(--onsite-color);
-        }
-
-        .program-type-card.online {
-            border-left: 4px solid var(--online-color);
-        }
-
-        .program-type-card.school {
-            border-left: 4px solid var(--school-color);
-        }
-
         .program-type-card.onsite.active {
             border-color: var(--onsite-color);
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(124, 58, 237, 0.05));
         }
 
         .program-type-card.online.active {
             border-color: var(--online-color);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
         }
 
         .program-type-card.school.active {
             border-color: var(--school-color);
-            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(101, 51, 15, 0.05));
         }
 
         .program-type-icon {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            display: flex;
-            justify-content: center;
+            text-align: center;
         }
 
         .program-type-card.onsite .program-type-icon {
             color: var(--onsite-color);
         }
 
-        .program-type-card.online .program-type-card.online .program-type-icon {
+        .program-type-card.online .program-type-icon {
             color: var(--online-color);
         }
 
@@ -635,11 +626,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.95rem;
             line-height: 1.5;
             margin-bottom: 0.5rem;
-            flex-grow: 1;
-        }
-
-        .program-type-card p strong {
-            color: var(--dark);
         }
 
         .program-type-badge {
@@ -650,25 +636,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 600;
             margin-top: 1rem;
             text-align: center;
-            align-self: center;
+            width: 100%;
         }
 
         .badge-onsite {
             background: rgba(139, 92, 246, 0.1);
             color: var(--onsite-color);
-            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .badge-online {
             background: rgba(16, 185, 129, 0.1);
             color: var(--online-color);
-            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .badge-school {
             background: rgba(139, 69, 19, 0.1);
             color: var(--school-color);
-            border: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px;
+            padding-right: 3rem;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-control.invalid {
+            border-color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
         }
 
         .school-selection-container {
@@ -753,25 +841,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .school-name {
             font-weight: 500;
             color: var(--dark);
-            font-size: 0.95rem;
         }
 
         .school-info {
-            margin-top: 0.25rem;
             font-size: 0.85rem;
             color: var(--gray-500);
-        }
-
-        .no-schools-found {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
-        }
-
-        .no-schools-found i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
         }
 
         .selected-school-display {
@@ -781,21 +855,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 1rem;
             border: 1px solid var(--gray-200);
             display: none;
+            align-items: center;
+            gap: 1rem;
         }
 
         .selected-school-display.active {
             display: flex;
-            align-items: center;
-            gap: 1rem;
         }
 
         .selected-school-display i {
             color: var(--school-color);
             font-size: 1.5rem;
-        }
-
-        .selected-school-text {
-            flex-grow: 1;
         }
 
         .selected-school-name {
@@ -812,137 +882,161 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.9rem;
         }
 
-        .change-school-btn:hover {
-            text-decoration: underline;
-        }
-
-        .form-grid {
+        .period-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.25rem;
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 0;
         }
 
         @media (max-width: 640px) {
-            .form-grid {
+            .period-options {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
         }
 
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--gray-700);
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .required::after {
-            content: ' *';
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.85rem 1rem;
+        .period-option {
             border: 2px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
             transition: all 0.3s ease;
             background: white;
-            color: var(--gray-800);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            position: relative;
+            overflow: hidden;
         }
 
-        .form-control:focus {
-            outline: none;
+        .period-option:hover:not(.disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
-        select.form-control {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 16px;
-            padding-right: 3rem;
+        .period-option.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(30, 64, 175, 0.05));
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
         }
 
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.5;
-            font-family: inherit;
+        .period-option.open {
+            border-left: 4px solid var(--success);
         }
 
-        .form-control.invalid {
-            border-color: var(--danger);
-            background-color: rgba(239, 68, 68, 0.05);
+        .period-option.upcoming {
+            border-left: 4px solid var(--warning);
         }
 
-        .error-message {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 0.4rem;
+        .period-option.closed {
+            border-left: 4px solid var(--danger);
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: var(--gray-50);
+        }
+
+        .period-option.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: var(--gray-50);
+        }
+
+        .period-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
             display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            line-height: 1.4;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .error-message i {
-            font-size: 0.8rem;
-            margin-top: 0.1rem;
-            flex-shrink: 0;
-        }
-
-        .alert {
-            padding: 1.25rem;
+        .period-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-open {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-upcoming {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-closed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .period-dates {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .period-dates i {
+            width: 16px;
+            margin-right: 0.25rem;
+            color: var(--gray-400);
+        }
+
+        .period-deadline {
+            font-size: 0.85rem;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            border-top: 1px dashed var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .period-deadline i {
+            margin-right: 0.25rem;
+            color: var(--danger);
+        }
+
+        .period-countdown {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        .countdown-urgent {
+            color: var(--danger);
+        }
+
+        .countdown-warning {
+            color: var(--warning);
+        }
+
+        .program-info {
+            background: var(--gray-50);
+            padding: 1.25rem;
+            border-radius: 10px;
             margin-bottom: 1.5rem;
-            border: 1px solid transparent;
-            animation: slideIn 0.3s ease;
+            border: 1px solid var(--gray-200);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .program-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
         }
 
-        .alert-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #a7f3d0;
+        .program-type-indicator {
+            font-size: 0.85rem;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
         }
 
-        .alert-success i {
-            color: #059669;
-            margin-right: 0.5rem;
-        }
-
-        .alert-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #fecaca;
-        }
-
-        .alert-error i {
-            color: #dc2626;
-            margin-right: 0.5rem;
+        .character-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
         }
 
         .form-actions {
@@ -969,12 +1063,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
-            white-space: nowrap;
-            touch-action: manipulation;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -998,25 +1086,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
         }
 
-        .btn-submit {
-            min-width: 200px;
-        }
-
-        .btn-nav {
-            min-width: 140px;
-        }
-
-        @media (max-width: 640px) {
-            .form-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .btn-submit,
-            .btn-nav {
-                width: 100%;
-                min-width: unset;
-            }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .login-link {
@@ -1030,188 +1102,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.2s ease;
         }
 
         .login-link a:hover {
             text-decoration: underline;
-            color: var(--secondary);
         }
 
-        .program-info {
-            background: var(--gray-50);
-            padding: 1.25rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--gray-200);
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+        .password-toggle-wrapper {
+            position: relative;
         }
 
-        @media (min-width: 640px) {
-            .program-info {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .program-name {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-
-        .program-fee {
-            color: var(--success);
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .program-type-indicator {
-            font-size: 0.85rem;
-            padding: 0.35rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .character-count {
-            text-align: right;
-            font-size: 0.85rem;
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
             color: var(--gray-500);
-            margin-top: 0.25rem;
-        }
-
-        .character-count.warning {
-            color: var(--warning);
-        }
-
-        .character-count.error {
-            color: var(--danger);
-        }
-
-        .period-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        @media (max-width: 640px) {
-            .period-options {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .period-option {
-            border: 2px solid var(--gray-200);
-            border-radius: 10px;
-            padding: 1.25rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
+            font-size: 1rem;
+            padding: 5px;
         }
 
-        .period-option:hover {
-            border-color: var(--primary);
-            background: rgba(37, 99, 235, 0.05);
-            transform: translateY(-2px);
+        .password-toggle-btn:hover {
+            color: var(--primary);
         }
 
-        .period-option.selected {
-            border-color: var(--primary);
-            background: rgba(37, 99, 235, 0.1);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        }
-
-        .period-name {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .period-dates {
-            font-size: 0.9rem;
-            color: var(--gray-600);
-            line-height: 1.5;
-        }
-
-        .period-academic-year {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        /* Mobile-specific optimizations */
         @media (max-width: 480px) {
             body {
                 padding: 0.75rem;
             }
 
-            .register-card {
-                border-radius: 12px;
-            }
-
-            .card-header,
             .card-content {
                 padding: 1.25rem;
             }
 
             .form-control {
-                padding: 0.75rem;
                 font-size: 16px;
-                /* Prevents iOS zoom on focus */
             }
 
             .btn {
-                padding: 0.75rem 1.5rem;
+                width: 100%;
             }
 
-            .program-type-card {
-                padding: 1.25rem;
-            }
-        }
-
-        /* iOS specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            .form-control {
-                font-size: 16px;
-            }
-
-            select.form-control {
-                font-size: 16px;
-            }
-        }
-
-        /* Accessibility improvements */
-        .btn:focus-visible,
-        .form-control:focus-visible,
-        .program-type-card:focus-visible,
-        .period-option:focus-visible {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        /* Print styles */
-        @media print {
-
-            .form-navigation,
-            .form-actions,
-            .login-link {
-                display: none;
-            }
-
-            .register-card {
-                box-shadow: none;
-                border: 1px solid #ccc;
-            }
-
-            .form-section {
-                display: block !important;
+            .form-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -1239,7 +1175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="step">
                 <div class="step-number">4</div>
-                <div class="step-label">Application Details</div>
+                <div class="step-label">Application</div>
             </div>
         </div>
 
@@ -1279,60 +1215,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="hidden" name="school_name" id="school_name" value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>">
                     <input type="hidden" name="applying_as" value="student">
+                    <input type="hidden" name="academic_period_id" id="academic_period_id" value="<?php echo htmlspecialchars($_POST['academic_period_id'] ?? ''); ?>">
 
                     <!-- Form Navigation -->
                     <div class="form-navigation">
-                        <div class="nav-step active" onclick="showStep(1)" tabindex="0" role="button" aria-label="Go to Program Type section">
-                            <span>Program Type</span>
-                        </div>
-                        <div class="nav-step" onclick="showStep(2)" tabindex="0" role="button" aria-label="Go to Account Info section">
-                            <span>Account Info</span>
-                        </div>
-                        <div class="nav-step" onclick="showStep(3)" tabindex="0" role="button" aria-label="Go to Personal Info section">
-                            <span>Personal Info</span>
-                        </div>
-                        <div class="nav-step" onclick="showStep(4)" tabindex="0" role="button" aria-label="Go to Application Details section">
-                            <span>Application Details</span>
-                        </div>
+                        <div class="nav-step active" onclick="showStep(1)">Program Type</div>
+                        <div class="nav-step" onclick="showStep(2)">Account Info</div>
+                        <div class="nav-step" onclick="showStep(3)">Personal Info</div>
+                        <div class="nav-step" onclick="showStep(4)">Application</div>
                     </div>
 
-                    <!-- Step 1: Program Type Selection -->
+                    <!-- Step 1: Program Type & Period Selection -->
                     <div id="step1" class="form-section active">
                         <h3 class="section-title">Select Program Type</h3>
-                        <p style="color: var(--gray-600); margin-bottom: 1.5rem; line-height: 1.6;">
-                            Choose between our onsite (term-based), online (block-based), and school-based programs.
-                            Each offers comprehensive digital skills training with different delivery modes.
-                        </p>
 
                         <div class="program-type-selector">
                             <div class="program-type-card onsite <?php echo ($_POST['program_type'] ?? '') === 'onsite' ? 'active' : ''; ?>"
-                                onclick="selectProgramType('onsite')"
-                                tabindex="0"
-                                role="button"
-                                aria-label="Select Onsite Program">
-                                <div class="program-type-icon">
-                                    <i class="fas fa-building"></i>
-                                </div>
+                                onclick="selectProgramType('onsite')">
+                                <div class="program-type-icon"><i class="fas fa-building"></i></div>
                                 <h3>Onsite Program</h3>
-                                <p><strong>Term-based structure</strong> (10 weeks per term)</p>
-                                <p>• 3 terms per academic year</p>
+                                <p><strong>Monthly Cohorts</strong> (4 weeks per month)</p>
+                                <p>• Monthly intake throughout the year</p>
                                 <p>• Physical classroom attendance</p>
                                 <p>• Hands-on practical sessions</p>
-                                <p>• Regular face-to-face interactions</p>
+                                <p>• Face-to-face instruction</p>
                                 <div class="program-type-badge badge-onsite">Onsite Learning</div>
                             </div>
 
                             <div class="program-type-card online <?php echo ($_POST['program_type'] ?? '') === 'online' ? 'active' : ''; ?>"
-                                onclick="selectProgramType('online')"
-                                tabindex="0"
-                                role="button"
-                                aria-label="Select Online Program">
-                                <div class="program-type-icon">
-                                    <i class="fas fa-laptop-code"></i>
-                                </div>
+                                onclick="selectProgramType('online')">
+                                <div class="program-type-icon"><i class="fas fa-laptop-code"></i></div>
                                 <h3>Online Program</h3>
                                 <p><strong>Block-based structure</strong> (8 weeks per block)</p>
-                                <p>• 5 blocks per academic year</p>
+                                <p>• 6 blocks per year</p>
                                 <p>• Flexible virtual learning</p>
                                 <p>• Recorded and live sessions</p>
                                 <p>• Global student community</p>
@@ -1340,13 +1255,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="program-type-card school <?php echo ($_POST['program_type'] ?? '') === 'school' ? 'active' : ''; ?>"
-                                onclick="selectProgramType('school')"
-                                tabindex="0"
-                                role="button"
-                                aria-label="Select School-based Program">
-                                <div class="program-type-icon">
-                                    <i class="fas fa-school"></i>
-                                </div>
+                                onclick="selectProgramType('school')">
+                                <div class="program-type-icon"><i class="fas fa-school"></i></div>
                                 <h3>School-based Program</h3>
                                 <p><strong>School partnership programs</strong></p>
                                 <p>• Customized digital curriculum</p>
@@ -1356,9 +1266,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="program-type-badge badge-school">School Learning</div>
                             </div>
                         </div>
+
                         <input type="hidden" name="program_type" id="program_type" value="<?php echo htmlspecialchars($_POST['program_type'] ?? 'online'); ?>">
 
-                        <!-- School Selection Section (only shown for school-based programs) -->
+                        <!-- School Selection Section -->
                         <div class="school-selection-container <?php echo ($_POST['program_type'] ?? '') === 'school' ? 'active' : ''; ?>">
                             <h3 class="section-title">Select Your School</h3>
 
@@ -1395,169 +1306,200 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <div class="no-schools-found">
-                                        <i class="fas fa-school"></i>
+                                    <div class="no-schools-found" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                        <i class="fas fa-school" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                                         <p>No school partnerships available at the moment.</p>
-                                        <p>Please contact admissions for school-based program inquiries.</p>
                                     </div>
                                 <?php endif; ?>
                             </div>
                             <input type="hidden" name="school_id" id="school_id" value="<?php echo htmlspecialchars($_POST['school_id'] ?? ''); ?>">
                         </div>
 
-                        <!-- Academic Period Selection -->
-                        <div id="academic-period-section" style="display: <?php echo isset($_POST['program_type']) ? 'block' : 'none'; ?>; margin-top: 2rem;">
-                            <h3 class="section-title">Select Preferred Start Period</h3>
+                        <!-- Period Selection Section -->
+                        <div id="period-selection-section" style="margin-top: 2rem; <?php echo !isset($_POST['program_type']) ? 'display: none;' : ''; ?>">
+                            <h3 class="section-title">Select Your Preferred Start Period</h3>
 
-                            <!-- Onsite Terms -->
-                            <div id="onsite-terms" style="display: <?php echo ($_POST['program_type'] ?? '') === 'onsite' ? 'block' : 'none'; ?>;">
-                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred term start date:</p>
+                            <!-- Onsite Monthly Cohorts -->
+                            <div id="onsite-periods" style="display: <?php echo ($_POST['program_type'] ?? '') === 'onsite' ? 'block' : 'none'; ?>;">
+                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Choose your preferred monthly cohort:</p>
                                 <div class="period-options">
-                                    <?php foreach ($academic_periods['onsite'] as $term): ?>
-                                        <!-- Update the period-option divs in each section -->
-                                        <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
-                                            tabindex="0"
-                                            role="button"
-                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
-                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                    <?php foreach ($academic_periods['onsite'] as $period):
+                                        $is_selected = ($_POST['academic_period_id'] ?? '') == $period['id'];
+                                        $status_class = $period['registration_status'];
+                                        $can_select = $period['registration_status'] === 'open';
+                                    ?>
+                                        <div class="period-option <?php echo $status_class; ?> <?php echo $is_selected ? 'selected' : ''; ?> <?php echo !$can_select ? 'disabled' : ''; ?>"
+                                            onclick="<?php echo $can_select ? "selectPeriod(" . $period['id'] . ", '" . addslashes($period['period_name']) . "')" : ''; ?>"
+                                            <?php echo !$can_select ? 'style="cursor: not-allowed;"' : ''; ?>>
                                             <div class="period-name">
-                                                <?php echo htmlspecialchars($term['period_name']); ?>
-                                                <?php if ($term['registration_status'] === 'open'): ?>
-                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-check-circle"></i> Registration Open
-                                                    </span>
-                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
-                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-times-circle"></i> Registration Closed
-                                                    </span>
-                                                <?php endif; ?>
+                                                <?php echo htmlspecialchars($period['period_name']); ?>
+                                                <span class="period-badge badge-<?php echo $status_class; ?>">
+                                                    <?php if ($status_class === 'open'): ?>
+                                                        <i class="fas fa-check-circle"></i> Open
+                                                    <?php elseif ($status_class === 'upcoming'): ?>
+                                                        <i class="fas fa-clock"></i> Upcoming
+                                                    <?php else: ?>
+                                                        <i class="fas fa-times-circle"></i> Closed
+                                                    <?php endif; ?>
+                                                </span>
                                             </div>
                                             <div class="period-dates">
-                                                <?php echo date('M j', strtotime($term['start_date'])); ?> -
-                                                <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <?php echo date('M j', strtotime($period['start_date'])); ?> -
+                                                <?php echo date('M j, Y', strtotime($period['end_date'])); ?>
+                                                (<?php echo $period['duration_weeks']; ?> weeks)
                                             </div>
-                                            <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
-                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
-                                                <i class="fas fa-calendar-check"></i>
-                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
-                                            </div>
+                                            <?php if ($period['registration_start_date']): ?>
+                                                <div class="period-dates">
+                                                    <i class="fas fa-door-open"></i>
+                                                    Registration opens: <?php echo date('M j, Y', strtotime($period['registration_start_date'])); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if ($period['registration_deadline']): ?>
+                                                <div class="period-deadline">
+                                                    <i class="fas fa-hourglass-end"></i>
+                                                    Deadline: <?php echo date('M j, Y', strtotime($period['registration_deadline'])); ?>
+                                                    <?php if ($status_class === 'open' && $period['days_remaining'] <= 7): ?>
+                                                        <div class="period-countdown countdown-<?php echo $period['days_remaining'] <= 3 ? 'urgent' : 'warning'; ?>">
+                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                            Only <?php echo $period['days_remaining']; ?> day<?php echo $period['days_remaining'] > 1 ? 's' : ''; ?> left!
+                                                        </div>
+                                                    <?php elseif ($status_class === 'upcoming' && $period['days_until_open'] <= 7): ?>
+                                                        <div class="period-countdown countdown-warning">
+                                                            <i class="fas fa-clock"></i>
+                                                            Opens in <?php echo $period['days_until_open']; ?> day<?php echo $period['days_until_open'] > 1 ? 's' : ''; ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['onsite'])): ?>
                                         <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
                                             <i class="fas fa-calendar-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                                            <p>No upcoming terms available at the moment.</p>
+                                            <p>No monthly cohorts available at the moment.</p>
                                             <p>Please check back later or contact admissions.</p>
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                <input type="hidden" name="preferred_term" id="preferred_term" value="<?php echo htmlspecialchars($_POST['preferred_term'] ?? ''); ?>">
                             </div>
 
                             <!-- Online Blocks -->
-                            <div id="online-blocks" style="display: <?php echo ($_POST['program_type'] ?? '') === 'online' ? 'block' : 'none'; ?>;">
-                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred block start date:</p>
+                            <div id="online-periods" style="display: <?php echo ($_POST['program_type'] ?? '') === 'online' ? 'block' : 'none'; ?>;">
+                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Choose your preferred block:</p>
                                 <div class="period-options">
-                                    <?php foreach ($academic_periods['online'] as $block): ?>
-                                        <!-- Update the period-option divs in each section -->
-                                        <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
-                                            tabindex="0"
-                                            role="button"
-                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
-                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                    <?php foreach ($academic_periods['online'] as $period):
+                                        $is_selected = ($_POST['academic_period_id'] ?? '') == $period['id'];
+                                        $status_class = $period['registration_status'];
+                                        $can_select = $period['registration_status'] === 'open';
+                                    ?>
+                                        <div class="period-option <?php echo $status_class; ?> <?php echo $is_selected ? 'selected' : ''; ?> <?php echo !$can_select ? 'disabled' : ''; ?>"
+                                            onclick="<?php echo $can_select ? "selectPeriod(" . $period['id'] . ", '" . addslashes($period['period_name']) . "')" : ''; ?>"
+                                            <?php echo !$can_select ? 'style="cursor: not-allowed;"' : ''; ?>>
                                             <div class="period-name">
-                                                <?php echo htmlspecialchars($term['period_name']); ?>
-                                                <?php if ($term['registration_status'] === 'open'): ?>
-                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-check-circle"></i> Registration Open
-                                                    </span>
-                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
-                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-times-circle"></i> Registration Closed
-                                                    </span>
-                                                <?php endif; ?>
+                                                <?php echo htmlspecialchars($period['period_name']); ?>
+                                                <span class="period-badge badge-<?php echo $status_class; ?>">
+                                                    <?php if ($status_class === 'open'): ?>
+                                                        <i class="fas fa-check-circle"></i> Open
+                                                    <?php elseif ($status_class === 'upcoming'): ?>
+                                                        <i class="fas fa-clock"></i> Upcoming
+                                                    <?php else: ?>
+                                                        <i class="fas fa-times-circle"></i> Closed
+                                                    <?php endif; ?>
+                                                </span>
                                             </div>
                                             <div class="period-dates">
-                                                <?php echo date('M j', strtotime($term['start_date'])); ?> -
-                                                <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <?php echo date('M j', strtotime($period['start_date'])); ?> -
+                                                <?php echo date('M j, Y', strtotime($period['end_date'])); ?>
+                                                (<?php echo $period['duration_weeks']; ?> weeks)
                                             </div>
-                                            <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
-                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
-                                                <i class="fas fa-calendar-check"></i>
-                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
-                                            </div>
+                                            <?php if ($period['registration_start_date']): ?>
+                                                <div class="period-dates">
+                                                    <i class="fas fa-door-open"></i>
+                                                    Registration opens: <?php echo date('M j, Y', strtotime($period['registration_start_date'])); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if ($period['registration_deadline']): ?>
+                                                <div class="period-deadline">
+                                                    <i class="fas fa-hourglass-end"></i>
+                                                    Deadline: <?php echo date('M j, Y', strtotime($period['registration_deadline'])); ?>
+                                                    <?php if ($status_class === 'open' && $period['days_remaining'] <= 7): ?>
+                                                        <div class="period-countdown countdown-<?php echo $period['days_remaining'] <= 3 ? 'urgent' : 'warning'; ?>">
+                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                            Only <?php echo $period['days_remaining']; ?> day<?php echo $period['days_remaining'] > 1 ? 's' : ''; ?> left!
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['online'])): ?>
                                         <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
                                             <i class="fas fa-calendar-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                                             <p>No upcoming blocks available at the moment.</p>
-                                            <p>Please check back later or contact admissions.</p>
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                <input type="hidden" name="preferred_block" id="preferred_block" value="<?php echo htmlspecialchars($_POST['preferred_block'] ?? ''); ?>">
                             </div>
 
                             <!-- School Terms -->
-                            <div id="school-terms" style="display: <?php echo ($_POST['program_type'] ?? '') === 'school' ? 'block' : 'none'; ?>;">
-                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Select your preferred school term start date:</p>
+                            <div id="school-periods" style="display: <?php echo ($_POST['program_type'] ?? '') === 'school' ? 'block' : 'none'; ?>;">
+                                <p style="color: var(--gray-600); margin-bottom: 1rem;">Choose your preferred school term:</p>
                                 <div class="period-options">
-                                    <?php foreach ($academic_periods['school'] as $term): ?>
-                                        <!-- Update the period-option divs in each section -->
-                                        <div class="period-option <?php echo ($_POST['preferred_term'] ?? '') === $term['period_name'] ? 'selected' : ''; ?>"
-                                            onclick="<?php echo $term['registration_status'] === 'open' ? "selectPeriod('onsite', '" . $term['period_name'] . "')" : ''; ?>"
-                                            tabindex="0"
-                                            role="button"
-                                            <?php echo $term['registration_status'] !== 'open' ? 'style="opacity:0.6; cursor:not-allowed;"' : ''; ?>
-                                            <?php echo $term['registration_status'] !== 'open' ? 'aria-disabled="true"' : ''; ?>>
+                                    <?php foreach ($academic_periods['school'] as $period):
+                                        $is_selected = ($_POST['academic_period_id'] ?? '') == $period['id'];
+                                        $status_class = $period['registration_status'];
+                                        $can_select = $period['registration_status'] === 'open';
+                                    ?>
+                                        <div class="period-option <?php echo $status_class; ?> <?php echo $is_selected ? 'selected' : ''; ?> <?php echo !$can_select ? 'disabled' : ''; ?>"
+                                            onclick="<?php echo $can_select ? "selectPeriod(" . $period['id'] . ", '" . addslashes($period['period_name']) . "')" : ''; ?>"
+                                            <?php echo !$can_select ? 'style="cursor: not-allowed;"' : ''; ?>>
                                             <div class="period-name">
-                                                <?php echo htmlspecialchars($term['period_name']); ?>
-                                                <?php if ($term['registration_status'] === 'open'): ?>
-                                                    <span style="color: var(--success); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-check-circle"></i> Registration Open
-                                                    </span>
-                                                <?php elseif ($term['registration_status'] === 'upcoming'): ?>
-                                                    <span style="color: var(--warning); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-clock"></i> Opens <?php echo date('M j', strtotime($term['registration_start_date'])); ?>
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span style="color: var(--danger); font-size: 0.75rem; margin-left: 0.5rem;">
-                                                        <i class="fas fa-times-circle"></i> Registration Closed
-                                                    </span>
-                                                <?php endif; ?>
+                                                <?php echo htmlspecialchars($period['period_name']); ?>
+                                                <span class="period-badge badge-<?php echo $status_class; ?>">
+                                                    <?php if ($status_class === 'open'): ?>
+                                                        <i class="fas fa-check-circle"></i> Open
+                                                    <?php elseif ($status_class === 'upcoming'): ?>
+                                                        <i class="fas fa-clock"></i> Upcoming
+                                                    <?php else: ?>
+                                                        <i class="fas fa-times-circle"></i> Closed
+                                                    <?php endif; ?>
+                                                </span>
                                             </div>
                                             <div class="period-dates">
-                                                <?php echo date('M j', strtotime($term['start_date'])); ?> -
-                                                <?php echo date('M j, Y', strtotime($term['end_date'])); ?>
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <?php echo date('M j', strtotime($period['start_date'])); ?> -
+                                                <?php echo date('M j, Y', strtotime($period['end_date'])); ?>
+                                                (<?php echo $period['duration_weeks']; ?> weeks)
                                             </div>
-                                            <div class="period-academic-year"><?php echo htmlspecialchars($term['academic_year']); ?></div>
-                                            <div style="font-size:0.8rem; color:var(--gray-500); margin-top:0.5rem;">
-                                                <i class="fas fa-calendar-check"></i>
-                                                Register by: <?php echo date('M j, Y', strtotime($term['registration_deadline'])); ?>
-                                            </div>
+                                            <?php if ($period['registration_start_date']): ?>
+                                                <div class="period-dates">
+                                                    <i class="fas fa-door-open"></i>
+                                                    Registration opens: <?php echo date('M j, Y', strtotime($period['registration_start_date'])); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if ($period['registration_deadline']): ?>
+                                                <div class="period-deadline">
+                                                    <i class="fas fa-hourglass-end"></i>
+                                                    Deadline: <?php echo date('M j, Y', strtotime($period['registration_deadline'])); ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (empty($academic_periods['school'])): ?>
                                         <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
                                             <i class="fas fa-calendar-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                                             <p>No upcoming school terms available at the moment.</p>
-                                            <p>Please check back later or contact admissions.</p>
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                <input type="hidden" name="preferred_school_term" id="preferred_school_term" value="<?php echo htmlspecialchars($_POST['preferred_school_term'] ?? ''); ?>">
                             </div>
+                        </div>
+
+                        <div id="selected-period-display" style="display: none; margin: 1rem 0; padding: 1rem; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200);">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                            <span id="selected-period-text"></span>
                         </div>
 
                         <div class="form-actions">
@@ -1577,25 +1519,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="email" class="required">Email Address</label>
                                 <input type="email" id="email" name="email" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
-                                    required
-                                    placeholder="your.email@example.com"
-                                    autocomplete="email">
+                                    required placeholder="your.email@example.com">
                             </div>
 
                             <div class="form-group">
                                 <label for="password" class="required">Password</label>
-                                <input type="password" id="password" name="password" class="form-control"
-                                    required minlength="8"
-                                    placeholder="At least 8 characters"
-                                    autocomplete="new-password">
+                                <div class="password-toggle-wrapper">
+                                    <input type="password" id="password" name="password" class="form-control"
+                                        required minlength="8" placeholder="At least 8 characters">
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="confirm_password" class="required">Confirm Password</label>
-                                <input type="password" id="confirm_password" name="confirm_password" class="form-control"
-                                    required
-                                    placeholder="Re-enter your password"
-                                    autocomplete="new-password">
+                                <div class="password-toggle-wrapper">
+                                    <input type="password" id="confirm_password" name="confirm_password" class="form-control"
+                                        required placeholder="Re-enter your password">
+                                </div>
                             </div>
                         </div>
 
@@ -1617,34 +1557,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="first_name" class="required">First Name</label>
                                 <input type="text" id="first_name" name="first_name" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>"
-                                    required
-                                    placeholder="Enter your first name"
-                                    autocomplete="given-name">
+                                    required placeholder="Enter your first name">
                             </div>
 
                             <div class="form-group">
                                 <label for="last_name" class="required">Last Name</label>
                                 <input type="text" id="last_name" name="last_name" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>"
-                                    required
-                                    placeholder="Enter your last name"
-                                    autocomplete="family-name">
+                                    required placeholder="Enter your last name">
                             </div>
 
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
                                 <input type="tel" id="phone" name="phone" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
-                                    placeholder="+234 800 000 0000"
-                                    autocomplete="tel">
+                                    placeholder="+234 800 000 0000">
                             </div>
 
                             <div class="form-group">
                                 <label for="date_of_birth">Date of Birth</label>
                                 <input type="date" id="date_of_birth" name="date_of_birth" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['date_of_birth'] ?? ''); ?>"
-                                    max="<?php echo date('Y-m-d'); ?>"
-                                    autocomplete="bday">
+                                    max="<?php echo date('Y-m-d'); ?>">
                             </div>
 
                             <div class="form-group">
@@ -1662,32 +1596,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="form-group">
                                 <label for="address">Address</label>
                                 <textarea id="address" name="address" class="form-control"
-                                    placeholder="Enter your full address"
-                                    autocomplete="street-address"><?php echo htmlspecialchars($_POST['address'] ?? ''); ?></textarea>
+                                    placeholder="Enter your full address"><?php echo htmlspecialchars($_POST['address'] ?? ''); ?></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="city">City</label>
                                 <input type="text" id="city" name="city" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>"
-                                    placeholder="Enter your city"
-                                    autocomplete="address-level2">
+                                    placeholder="Enter your city">
                             </div>
 
                             <div class="form-group">
                                 <label for="state">State</label>
                                 <input type="text" id="state" name="state" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['state'] ?? ''); ?>"
-                                    placeholder="Enter your state"
-                                    autocomplete="address-level1">
+                                    placeholder="Enter your state">
                             </div>
 
                             <div class="form-group">
                                 <label for="country">Country</label>
                                 <input type="text" id="country" name="country" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['country'] ?? 'Nigeria'); ?>"
-                                    placeholder="Enter your country"
-                                    autocomplete="country">
+                                    placeholder="Enter your country">
                             </div>
                         </div>
 
@@ -1704,56 +1634,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Step 4: Application Details -->
                     <div id="step4" class="form-section">
                         <h3 class="section-title">Program Selection</h3>
+
                         <div class="form-group">
                             <label for="program_id" class="<?php echo ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>">Select Program</label>
-                            <select id="program_id" name="program_id" class="form-control"
-                                <?php echo ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>>
+                            <select id="program_id" name="program_id" class="form-control">
                                 <option value="">-- Select a Program --</option>
                                 <?php
-                                $programs_by_type = [
-                                    'onsite' => [],
-                                    'online' => []
-                                ];
-
-                                foreach ($programs as $program) {
-                                    if (isset($programs_by_type[$program['program_type']])) {
-                                        $programs_by_type[$program['program_type']][] = $program;
-                                    }
-                                }
-
                                 $selected_program_type = $_POST['program_type'] ?? 'online';
+                                foreach ($programs as $program):
+                                    if ($program['program_type'] !== $selected_program_type && $selected_program_type !== 'school') {
+                                        continue;
+                                    }
                                 ?>
-
-                                <?php if ($selected_program_type !== 'school' && !empty($programs_by_type[$selected_program_type])): ?>
-                                    <optgroup label="<?php echo $selected_program_type === 'onsite' ? 'Onsite Programs' : 'Online Programs'; ?>">
-                                        <?php foreach ($programs_by_type[$selected_program_type] as $program): ?>
-                                            <option value="<?php echo $program['id']; ?>"
-                                                <?php echo ($_POST['program_id'] ?? '') == $program['id'] ? 'selected' : ''; ?>
-                                                data-duration="<?php echo $program['duration_mode']; ?>">
-                                                <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
-                                                - <?php echo $program['program_type'] === 'onsite' ? 'Onsite' : 'Online'; ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </optgroup>
-                                <?php elseif ($selected_program_type !== 'school'): ?>
-                                    <option value="">No programs available for <?php echo $selected_program_type === 'onsite' ? 'onsite' : 'online'; ?> learning</option>
-                                <?php endif; ?>
+                                    <option value="<?php echo $program['id']; ?>"
+                                        <?php echo ($_POST['program_id'] ?? '') == $program['id'] ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
-                            <small id="program-note" style="color: var(--gray-500); <?php echo ($selected_program_type ?? 'online') === 'school' ? 'display: block;' : 'display: none;'; ?>">
+                            <small id="program-note" style="color: var(--gray-500); <?php echo $selected_program_type === 'school' ? 'display: block;' : 'display: none;'; ?>">
                                 School-based programs are selected in Step 1
                             </small>
-                        </div>
-
-                        <div id="program-details" style="display: none; margin-bottom: 1.5rem;">
-                            <div class="program-info">
-                                <div>
-                                    <span class="program-name" id="selected-program-name"></span><br>
-                                    <small id="selected-program-duration"></small>
-                                </div>
-                                <div>
-                                    <span class="program-type-indicator" id="selected-program-type"></span>
-                                </div>
-                            </div>
                         </div>
 
                         <h3 class="section-title">Application Details</h3>
@@ -1761,38 +1662,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-group">
                             <label for="motivation">Motivation Statement</label>
                             <textarea id="motivation" name="motivation" class="form-control"
-                                placeholder="Tell us why you want to join the academy, your goals, and what you hope to achieve..."
+                                placeholder="Tell us why you want to join the academy..."
                                 rows="4"><?php echo htmlspecialchars($_POST['motivation'] ?? ''); ?></textarea>
-                            <div class="character-count">
-                                <span id="motivation_count">0</span> / 500 characters
-                            </div>
+                            <div class="character-count"><span id="motivation_count">0</span> / 500 characters</div>
                         </div>
 
                         <div class="form-group">
                             <label for="qualifications">Educational Background & Qualifications</label>
                             <textarea id="qualifications" name="qualifications" class="form-control"
-                                placeholder="List your educational background, degrees, certifications, and relevant qualifications..."
+                                placeholder="List your educational background..."
                                 rows="4"><?php echo htmlspecialchars($_POST['qualifications'] ?? ''); ?></textarea>
-                            <div class="character-count">
-                                <span id="qualifications_count">0</span> / 500 characters
-                            </div>
+                            <div class="character-count"><span id="qualifications_count">0</span> / 500 characters</div>
                         </div>
 
                         <div class="form-group">
                             <label for="experience">Relevant Experience</label>
                             <textarea id="experience" name="experience" class="form-control"
-                                placeholder="Describe your relevant work experience, skills, and achievements..."
+                                placeholder="Describe your relevant experience..."
                                 rows="4"><?php echo htmlspecialchars($_POST['experience'] ?? ''); ?></textarea>
-                            <div class="character-count">
-                                <span id="experience_count">0</span> / 500 characters
-                            </div>
+                            <div class="character-count"><span id="experience_count">0</span> / 500 characters</div>
                         </div>
 
                         <div class="form-actions">
                             <button type="button" class="btn btn-secondary btn-nav" onclick="showStep(3)">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-
                             <button type="submit" class="btn btn-primary btn-submit">
                                 <i class="fas fa-paper-plane"></i> Submit Application
                             </button>
@@ -1803,10 +1697,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="login-link">
                     Already have an account? <a href="<?php echo BASE_URL; ?>modules/auth/login.php">Login here</a>
                 </div>
-
-                <div class="login-link" style="margin-top: 0.5rem; font-size: 0.85rem;">
-                    <em>Note: This application is for students only. Instructors are added by administrators.</em>
-                </div>
             </div>
         </div>
     </div>
@@ -1814,304 +1704,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         // Global variables
         let currentStep = 1;
-        let isProcessingStep = false;
-        let formData = {};
         let allSchools = <?php echo json_encode($schools); ?>;
+        let selectedPeriodId = '<?php echo $_POST['academic_period_id'] ?? ''; ?>';
+        let selectedPeriodName = '';
 
-        // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', function() {
-            // Load saved form data if any
-            loadSavedFormData();
-
-            // Initialize character counters
+            initializePasswordToggles();
             initializeCharacterCounters();
-
-            // Set up password validation and visibility toggle
-            setupPasswordFields();
-
-            // Initialize program dropdown
-            setupProgramSelection();
-
-            // Set up form submission
-            setupFormSubmission();
-
-            // Initialize step navigation
             initializeStepNavigation();
 
-            // Set up program type selection
-            setupProgramTypeSelection();
-
-            // Set up period selection
-            setupPeriodSelection();
-
-            // Set up school search functionality
-            setupSchoolSearch();
-
-            // Initialize based on POST data
-            initializeFromPostData();
+            <?php if (!empty($_POST['academic_period_id'])): ?>
+                // If a period was already selected, show it
+                document.getElementById('selected-period-display').style.display = 'block';
+                document.getElementById('selected-period-text').innerHTML = 'Selected: <?php echo addslashes($_POST['period_name'] ?? ''); ?>';
+            <?php endif; ?>
         });
 
-        // School search functionality
-        function setupSchoolSearch() {
-            const searchInput = document.getElementById('schoolSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    filterSchools();
-                    saveFormData();
-                });
-            }
-        }
+        function initializePasswordToggles() {
+            ['password', 'confirm_password'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field) return;
 
-        function filterSchools() {
-            const searchInput = document.getElementById('schoolSearch');
-            const searchTerm = searchInput.value.toLowerCase();
-            const schoolOptions = document.querySelectorAll('.school-option');
-            let found = false;
+                const wrapper = field.closest('.password-toggle-wrapper');
+                if (!wrapper) return;
 
-            schoolOptions.forEach(option => {
-                const schoolName = option.querySelector('.school-name').textContent.toLowerCase();
-                if (schoolName.includes(searchTerm) || searchTerm === '') {
-                    option.style.display = 'flex';
-                    found = true;
-                } else {
-                    option.style.display = 'none';
-                }
+                const toggle = document.createElement('button');
+                toggle.type = 'button';
+                toggle.className = 'password-toggle-btn';
+                toggle.innerHTML = '<i class="fas fa-eye"></i>';
+
+                toggle.onclick = function() {
+                    const type = field.type === 'password' ? 'text' : 'password';
+                    field.type = type;
+                    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                };
+
+                wrapper.appendChild(toggle);
+                field.style.paddingRight = '40px';
             });
-
-            // Show "no results" message if no schools match
-            const noResultsDiv = document.querySelector('.no-schools-found');
-            if (schoolOptions.length > 0 && !found && searchTerm !== '') {
-                if (!noResultsDiv) {
-                    const schoolsList = document.getElementById('schoolsList');
-                    const message = document.createElement('div');
-                    message.className = 'no-schools-found';
-                    message.innerHTML = `
-                        <i class="fas fa-search"></i>
-                        <p>No schools found matching "${searchTerm}"</p>
-                        <p>Try a different search term or contact admissions</p>
-                    `;
-                    schoolsList.appendChild(message);
-                }
-            } else if (noResultsDiv && (found || searchTerm === '')) {
-                noResultsDiv.remove();
-            }
         }
 
-        function selectSchool(schoolId, schoolName) {
-            document.getElementById('school_id').value = schoolId;
-            document.getElementById('school_name').value = schoolName;
-
-            const selectedDisplay = document.getElementById('selectedSchoolDisplay');
-            const schoolNameElement = document.querySelector('.selected-school-name');
-            schoolNameElement.textContent = schoolName;
-
-            selectedDisplay.style.display = 'flex';
-            selectedDisplay.classList.add('active');
-            document.getElementById('schoolsList').style.display = 'none';
-
-            // Clear search
-            document.getElementById('schoolSearch').value = '';
-            filterSchools();
-
-            saveFormData();
-        }
-
-        function showSchoolSelection() {
-            document.getElementById('selectedSchoolDisplay').style.display = 'none';
-            document.getElementById('selectedSchoolDisplay').classList.remove('active');
-            document.getElementById('schoolsList').style.display = 'block';
-        }
-
-        // Form data persistence
-        function loadSavedFormData() {
-            try {
-                const saved = sessionStorage.getItem('registrationFormData');
-                if (saved) {
-                    formData = JSON.parse(saved);
-
-                    // Restore form values
-                    Object.keys(formData).forEach(key => {
-                        const element = document.querySelector(`[name="${key}"]`);
-                        if (element) {
-                            if (element.type === 'radio' || element.type === 'checkbox') {
-                                if (element.value === formData[key]) {
-                                    element.checked = true;
-                                }
-                            } else {
-                                element.value = formData[key];
-                            }
-
-                            // Trigger change for selects
-                            if (element.tagName === 'SELECT') {
-                                element.dispatchEvent(new Event('change'));
-                            }
-                        }
+        function initializeCharacterCounters() {
+            ['motivation', 'qualifications', 'experience'].forEach(id => {
+                const textarea = document.getElementById(id);
+                const counter = document.getElementById(id + '_count');
+                if (textarea && counter) {
+                    textarea.addEventListener('input', function() {
+                        counter.textContent = this.value.length;
                     });
+                    counter.textContent = textarea.value.length;
                 }
-            } catch (e) {
-                console.warn('Failed to load saved form data:', e);
-            }
+            });
         }
 
-        function saveFormData() {
-            try {
-                const form = document.getElementById('applicationForm');
-                const data = new FormData(form);
-                const formObject = {};
-
-                for (let [key, value] of data.entries()) {
-                    formObject[key] = value;
-                }
-
-                // Save program type and school selections
-                formObject['program_type'] = document.getElementById('program_type').value;
-                formObject['school_name'] = document.getElementById('school_name').value;
-                formObject['school_id'] = document.getElementById('school_id').value;
-
-                sessionStorage.setItem('registrationFormData', JSON.stringify(formObject));
-                formData = formObject;
-            } catch (e) {
-                console.warn('Failed to save form data:', e);
-            }
-        }
-
-        function clearSavedFormData() {
-            sessionStorage.removeItem('registrationFormData');
-            formData = {};
-        }
-
-        // Step navigation
         function initializeStepNavigation() {
-            // Navigation step clicks
             document.querySelectorAll('.nav-step').forEach((nav, index) => {
-                nav.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetStep = index + 1;
-                    if (targetStep !== currentStep) {
-                        navigateToStep(targetStep);
-                    }
-                });
-            });
-
-            // Next button handlers
-            document.addEventListener('click', function(e) {
-                const nextBtn = e.target.closest('.btn-nav');
-                if (!nextBtn) return;
-
-                e.preventDefault();
-
-                if (nextBtn.textContent.includes('Next')) {
-                    if (validateCurrentStep()) {
-                        navigateToStep(currentStep + 1);
-                    }
-                }
-            });
-
-            // Back button handlers
-            document.addEventListener('click', function(e) {
-                const backBtn = e.target.closest('.btn-nav');
-                if (!backBtn) return;
-
-                if (backBtn.textContent.includes('Back')) {
-                    e.preventDefault();
-                    navigateToStep(currentStep - 1);
-                }
+                nav.addEventListener('click', () => showStep(index + 1));
             });
         }
 
-        function navigateToStep(stepNumber) {
-            // Prevent multiple rapid calls
-            if (isProcessingStep || stepNumber < 1 || stepNumber > 4) {
+        function showStep(step) {
+            if (step === currentStep) return;
+
+            // Validate current step before moving forward
+            if (step > currentStep && !validateStep(currentStep)) {
                 return;
             }
 
-            // Don't navigate to current step
-            if (stepNumber === currentStep) {
-                return;
-            }
+            // Hide all steps
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
 
-            // Moving forward requires validation
-            if (stepNumber > currentStep && !validateCurrentStep()) {
-                return;
-            }
+            // Show target step
+            document.getElementById(`step${step}`).classList.add('active');
 
-            isProcessingStep = true;
-
-            try {
-                // Hide all steps
-                document.querySelectorAll('.form-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                // Show target step
-                const targetStep = document.getElementById(`step${stepNumber}`);
-                if (targetStep) {
-                    targetStep.classList.add('active');
-                }
-
-                // Update navigation indicators
-                updateNavigationIndicators(stepNumber);
-
-                // Save form data before moving
-                saveFormData();
-
-                // Scroll to form
-                scrollToForm();
-
-                currentStep = stepNumber;
-
-            } catch (error) {
-                console.error('Error navigating to step:', error);
-            } finally {
-                // Reset processing flag with delay
-                setTimeout(() => {
-                    isProcessingStep = false;
-                }, 300);
-            }
-        }
-
-        function updateNavigationIndicators(stepNumber) {
-            // Update nav steps
+            // Update navigation
             document.querySelectorAll('.nav-step').forEach((nav, index) => {
-                nav.classList.remove('active');
-                if (index === stepNumber - 1) {
-                    nav.classList.add('active');
-                }
+                nav.classList.toggle('active', index === step - 1);
             });
 
             // Update progress steps
-            document.querySelectorAll('.step').forEach((step, index) => {
-                if (index < stepNumber) {
-                    step.classList.add('active');
-                } else {
-                    step.classList.remove('active');
-                }
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                stepEl.classList.toggle('active', index < step);
+            });
+
+            currentStep = step;
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         }
 
-        function scrollToForm() {
-            setTimeout(() => {
-                const card = document.querySelector('.register-card');
-                if (card) {
-                    window.scrollTo({
-                        top: card.offsetTop - 50,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 100);
-        }
-
-        // Step validation
-        function validateCurrentStep() {
-            switch (currentStep) {
+        function validateStep(step) {
+            switch (step) {
                 case 1:
                     return validateStep1();
                 case 2:
                     return validateStep2();
                 case 3:
                     return validateStep3();
-                case 4:
-                    return validateStep4();
                 default:
                     return true;
             }
@@ -2119,740 +1811,151 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         function validateStep1() {
             const programType = document.getElementById('program_type').value;
-            const preferredTerm = document.getElementById('preferred_term').value;
-            const preferredBlock = document.getElementById('preferred_block').value;
-            const preferredSchoolTerm = document.getElementById('preferred_school_term').value;
-            const schoolId = document.getElementById('school_id').value;
-            const schoolName = document.getElementById('school_name').value;
-
-            let isValid = true;
+            const periodId = document.getElementById('academic_period_id').value;
 
             if (!programType) {
-                showFieldError('program_type', 'Please select a program type');
-                isValid = false;
-            } else {
-                clearFieldError('program_type');
+                alert('Please select a program type');
+                return false;
             }
 
-            // Validate period selection based on program type
-            if (programType === 'onsite') {
-                if (!preferredTerm) {
-                    showFieldError('preferred_term', 'Please select a preferred term');
-                    isValid = false;
-                } else {
-                    // Check if the selected term is still available
-                    const selectedTermElement = document.querySelector('#onsite-terms .period-option.selected');
-                    if (selectedTermElement && selectedTermElement.style.cursor === 'not-allowed') {
-                        showFieldError('preferred_term', 'Registration for this term is no longer available');
-                        isValid = false;
-                    } else {
-                        clearFieldError('preferred_term');
-                    }
-                }
-            } else if (programType === 'online') {
-                if (!preferredBlock) {
-                    showFieldError('preferred_block', 'Please select a preferred block');
-                    isValid = false;
-                } else {
-                    // Check if the selected block is still available
-                    const selectedBlockElement = document.querySelector('#online-blocks .period-option.selected');
-                    if (selectedBlockElement && selectedBlockElement.style.cursor === 'not-allowed') {
-                        showFieldError('preferred_block', 'Registration for this block is no longer available');
-                        isValid = false;
-                    } else {
-                        clearFieldError('preferred_block');
-                    }
-                }
-            } else if (programType === 'school') {
-                if (!preferredSchoolTerm) {
-                    showFieldError('preferred_school_term', 'Please select a preferred school term');
-                    isValid = false;
-                } else {
-                    // Check if the selected school term is still available
-                    const selectedTermElement = document.querySelector('#school-terms .period-option.selected');
-                    if (selectedTermElement && selectedTermElement.style.cursor === 'not-allowed') {
-                        showFieldError('preferred_school_term', 'Registration for this term is no longer available');
-                        isValid = false;
-                    } else {
-                        clearFieldError('preferred_school_term');
-                    }
+            if (!periodId) {
+                alert('Please select your preferred start period');
+                return false;
+            }
+
+            if (programType === 'school') {
+                const schoolId = document.getElementById('school_id').value;
+                if (!schoolId) {
+                    alert('Please select a school');
+                    return false;
                 }
             }
 
-            // Validate school selection for school-based programs
-            if (programType === 'school' && (!schoolId || !schoolName)) {
-                showFieldError('school_id', 'Please select a school');
-                isValid = false;
-            } else if (programType === 'school') {
-                clearFieldError('school_id');
-            }
-
-            if (!isValid) {
-                // Ensure user sees the error
-                navigateToStep(1);
-            }
-
-            return isValid;
+            return true;
         }
 
         function validateStep2() {
-            const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
+            const confirm = document.getElementById('confirm_password').value;
 
-            let isValid = true;
-
-            // Email validation
-            if (!email) {
-                showFieldError('email', 'Email is required');
-                isValid = false;
-            } else if (!isValidEmail(email)) {
-                showFieldError('email', 'Please enter a valid email address');
-                isValid = false;
-            } else {
-                clearFieldError('email');
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return false;
             }
 
-            // Password validation
-            if (!password) {
-                showFieldError('password', 'Password is required');
-                isValid = false;
-            } else if (password.length < 8) {
-                showFieldError('password', 'Password must be at least 8 characters');
-                isValid = false;
-            } else {
-                clearFieldError('password');
+            if (!password || password.length < 8) {
+                alert('Password must be at least 8 characters');
+                return false;
             }
 
-            // Confirm password validation
-            if (!confirmPassword) {
-                showFieldError('confirm_password', 'Please confirm your password');
-                isValid = false;
-            } else if (password !== confirmPassword) {
-                showFieldError('confirm_password', 'Passwords do not match');
-                isValid = false;
-            } else {
-                clearFieldError('confirm_password');
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return false;
             }
 
-            if (!isValid) {
-                navigateToStep(2);
-            }
-
-            return isValid;
+            return true;
         }
 
         function validateStep3() {
-            const firstName = document.getElementById('first_name').value.trim();
-            const lastName = document.getElementById('last_name').value.trim();
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
 
-            let isValid = true;
-
-            if (!firstName) {
-                showFieldError('first_name', 'First name is required');
-                isValid = false;
-            } else {
-                clearFieldError('first_name');
+            if (!firstName || !lastName) {
+                alert('Please enter your full name');
+                return false;
             }
 
-            if (!lastName) {
-                showFieldError('last_name', 'Last name is required');
-                isValid = false;
-            } else {
-                clearFieldError('last_name');
-            }
-
-            if (!isValid) {
-                navigateToStep(3);
-            }
-
-            return isValid;
-        }
-
-        function validateStep4() {
-            const programType = document.getElementById('program_type').value;
-            let isValid = true;
-
-            // Validate program selection for students in non-school programs
-            if (programType !== 'school') {
-                const programId = document.getElementById('program_id').value;
-                if (!programId) {
-                    showFieldError('program_id', 'Please select a program');
-                    isValid = false;
-                } else {
-                    clearFieldError('program_id');
-                }
-            }
-
-            // Validate school selection for school-based student programs
-            if (programType === 'school') {
-                const schoolId = document.getElementById('school_id').value;
-                const schoolName = document.getElementById('school_name').value;
-                if (!schoolId || !schoolName) {
-                    showFieldError('school_id', 'Please select a school');
-                    isValid = false;
-                } else {
-                    clearFieldError('school_id');
-                }
-            }
-
-            if (!isValid) {
-                navigateToStep(4);
-            }
-
-            return isValid;
-        }
-
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        function showFieldError(fieldName, message) {
-            const field = document.querySelector(`[name="${fieldName}"]`);
-            if (!field) return;
-
-            field.classList.add('invalid');
-
-            // Remove existing error message
-            const existingError = field.parentNode.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
-            }
-
-            // Add error message
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-            field.parentNode.appendChild(errorDiv);
-        }
-
-        function clearFieldError(fieldName) {
-            const field = document.querySelector(`[name="${fieldName}"]`);
-            if (!field) return;
-
-            field.classList.remove('invalid');
-
-            const errorDiv = field.parentNode.querySelector('.error-message');
-            if (errorDiv) {
-                errorDiv.remove();
-            }
-        }
-
-        // Password field setup with visibility toggle
-        function setupPasswordFields() {
-            // Create password toggle buttons
-            createPasswordToggle('password');
-            createPasswordToggle('confirm_password');
-
-            // Set up password validation
-            setupPasswordValidation();
-        }
-
-        function createPasswordToggle(fieldId) {
-            const passwordField = document.getElementById(fieldId);
-            if (!passwordField) return;
-
-            // Create toggle button wrapper
-            const wrapper = document.createElement('div');
-            wrapper.className = 'password-toggle-wrapper';
-            wrapper.style.position = 'relative';
-
-            // Wrap the password field
-            passwordField.parentNode.insertBefore(wrapper, passwordField);
-            wrapper.appendChild(passwordField);
-
-            // Create toggle button
-            const toggleBtn = document.createElement('button');
-            toggleBtn.type = 'button';
-            toggleBtn.className = 'password-toggle-btn';
-            toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
-            toggleBtn.title = 'Show password';
-
-            // Style the button
-            toggleBtn.style.cssText = `
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                color: #64748b;
-                cursor: pointer;
-                font-size: 1rem;
-                padding: 5px;
-                outline: none;
-                transition: color 0.3s;
-            `;
-
-            // Add hover effect
-            toggleBtn.addEventListener('mouseenter', function() {
-                this.style.color = '#2563eb';
-            });
-
-            toggleBtn.addEventListener('mouseleave', function() {
-                if (!this.classList.contains('active')) {
-                    this.style.color = '#64748b';
-                }
-            });
-
-            wrapper.appendChild(toggleBtn);
-
-            // Add padding to password field for the button
-            passwordField.style.paddingRight = '40px';
-
-            // Toggle functionality
-            toggleBtn.addEventListener('click', function() {
-                const isPassword = passwordField.type === 'password';
-
-                if (isPassword) {
-                    // Show password
-                    passwordField.type = 'text';
-                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                    this.title = 'Hide password';
-                    this.classList.add('active');
-                    this.style.color = '#2563eb';
-                } else {
-                    // Hide password
-                    passwordField.type = 'password';
-                    this.innerHTML = '<i class="fas fa-eye"></i>';
-                    this.title = 'Show password';
-                    this.classList.remove('active');
-                    this.style.color = '#64748b';
-                }
-
-                // Focus back on the password field
-                passwordField.focus();
-            });
-        }
-
-        function setupPasswordValidation() {
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirm_password');
-
-            function validatePasswordMatch() {
-                const passwordValue = password.value;
-                const confirmValue = confirmPassword.value;
-
-                if (confirmValue && passwordValue !== confirmValue) {
-                    showFieldError('confirm_password', 'Passwords do not match');
-                    confirmPassword.classList.add('invalid');
-                } else if (confirmValue) {
-                    clearFieldError('confirm_password');
-                    confirmPassword.classList.remove('invalid');
-                }
-
-                saveFormData();
-            }
-
-            password.addEventListener('input', validatePasswordMatch);
-            confirmPassword.addEventListener('input', validatePasswordMatch);
-        }
-
-        // Program type selection
-        function setupProgramTypeSelection() {
-            document.querySelectorAll('.program-type-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    let type = '';
-                    if (this.classList.contains('onsite')) type = 'onsite';
-                    else if (this.classList.contains('online')) type = 'online';
-                    else if (this.classList.contains('school')) type = 'school';
-                    selectProgramType(type);
-                });
-            });
+            return true;
         }
 
         function selectProgramType(type) {
-            // Update hidden field
             document.getElementById('program_type').value = type;
 
-            // Update active class
+            // Update card styles
             document.querySelectorAll('.program-type-card').forEach(card => {
                 card.classList.remove('active');
-                if (card.classList.contains(type)) {
-                    card.classList.add('active');
-                }
             });
+            document.querySelector(`.program-type-card.${type}`).classList.add('active');
 
-            // Show/hide school selection section
+            // Show/hide school selection
             const schoolSection = document.querySelector('.school-selection-container');
-            const schoolNameInput = document.getElementById('school_name');
-
             if (type === 'school') {
                 schoolSection.classList.add('active');
-                if (schoolNameInput) schoolNameInput.required = true;
             } else {
                 schoolSection.classList.remove('active');
-                if (schoolNameInput) schoolNameInput.required = false;
             }
 
-            // Show academic period section
-            document.getElementById('academic-period-section').style.display = 'block';
+            // Show appropriate periods
+            document.getElementById('onsite-periods').style.display = type === 'onsite' ? 'block' : 'none';
+            document.getElementById('online-periods').style.display = type === 'online' ? 'block' : 'none';
+            document.getElementById('school-periods').style.display = type === 'school' ? 'block' : 'none';
 
-            // Show/hide appropriate periods
-            document.getElementById('onsite-terms').style.display = 'none';
-            document.getElementById('online-blocks').style.display = 'none';
-            document.getElementById('school-terms').style.display = 'none';
+            // Show period selection section
+            document.getElementById('period-selection-section').style.display = 'block';
 
-            // Clear all period values
-            document.getElementById('preferred_term').value = '';
-            document.getElementById('preferred_block').value = '';
-            document.getElementById('preferred_school_term').value = '';
-
-            // Clear period selections
-            document.querySelectorAll('.period-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-
-            if (type === 'onsite') {
-                document.getElementById('onsite-terms').style.display = 'block';
-            } else if (type === 'online') {
-                document.getElementById('online-blocks').style.display = 'block';
-            } else if (type === 'school') {
-                document.getElementById('school-terms').style.display = 'block';
-            }
+            // Clear previously selected period
+            document.getElementById('academic_period_id').value = '';
+            document.getElementById('selected-period-display').style.display = 'none';
 
             // Update program dropdown
             updateProgramDropdown(type);
-
-            // Show/hide program selection note
-            const programNote = document.getElementById('program-note');
-            const programIdSelect = document.getElementById('program_id');
-
-            if (type === 'school') {
-                programNote.style.display = 'block';
-                if (programIdSelect) {
-                    programIdSelect.disabled = true;
-                    programIdSelect.required = false;
-                }
-            } else {
-                programNote.style.display = 'none';
-                if (programIdSelect) {
-                    programIdSelect.disabled = false;
-                    programIdSelect.required = true;
-                }
-            }
-
-            // Save selection
-            saveFormData();
         }
 
-        // Period selection
-        function setupPeriodSelection() {
-            // Onsite terms
-            document.querySelectorAll('#onsite-terms .period-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const periodName = this.querySelector('.period-name').textContent;
-                    selectPeriod('onsite', periodName);
-                });
+        function selectPeriod(periodId, periodName) {
+            document.getElementById('academic_period_id').value = periodId;
+            selectedPeriodName = periodName;
+
+            // Update display
+            document.getElementById('selected-period-display').style.display = 'block';
+            document.getElementById('selected-period-text').innerHTML = `Selected: ${periodName}`;
+
+            // Update selected class on period options
+            document.querySelectorAll('.period-option').forEach(opt => {
+                opt.classList.remove('selected');
             });
-
-            // Online blocks
-            document.querySelectorAll('#online-blocks .period-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const periodName = this.querySelector('.period-name').textContent;
-                    selectPeriod('online', periodName);
-                });
-            });
-
-            // School terms
-            document.querySelectorAll('#school-terms .period-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const periodName = this.querySelector('.period-name').textContent;
-                    selectPeriod('school', periodName);
-                });
-            });
-        }
-
-        function selectPeriod(type, periodName) {
-            // Check if the clicked period has registration open
-            const clickedOption = event.target.closest('.period-option');
-            const isDisabled = clickedOption.style.cursor === 'not-allowed' || clickedOption.hasAttribute('aria-disabled');
-
-            if (isDisabled) {
-                alert('Registration for this period is not currently available. Please check the registration dates.');
-                return;
-            }
-
-            // Clear all period selections first
-            document.querySelectorAll('.period-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-
-            if (type === 'onsite') {
-                document.getElementById('preferred_term').value = periodName;
-                document.getElementById('preferred_block').value = '';
-                document.getElementById('preferred_school_term').value = '';
-            } else if (type === 'online') {
-                document.getElementById('preferred_block').value = periodName;
-                document.getElementById('preferred_term').value = '';
-                document.getElementById('preferred_school_term').value = '';
-            } else if (type === 'school') {
-                document.getElementById('preferred_school_term').value = periodName;
-                document.getElementById('preferred_term').value = '';
-                document.getElementById('preferred_block').value = '';
-            }
-
-            // Highlight selected option
-            clickedOption.classList.add('selected');
-
-            // Save selection
-            saveFormData();
-        }
-
-        // Program dropdown
-        function setupProgramSelection() {
-            const programSelect = document.getElementById('program_id');
-
-            programSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const programDetails = document.getElementById('program-details');
-
-                if (selectedOption.value) {
-                    const programName = selectedOption.textContent;
-                    const programType = selectedOption.textContent.includes('Onsite') ? 'Onsite' : 'Online';
-                    const durationMode = selectedOption.getAttribute('data-duration');
-
-                    // Update display
-                    document.getElementById('selected-program-name').textContent = programName;
-                    document.getElementById('selected-program-type').textContent = programType;
-                    document.getElementById('selected-program-type').className = `program-type-indicator ${programType === 'Onsite' ? 'badge-onsite' : 'badge-online'}`;
-
-                    // Format duration
-                    let durationText = '';
-                    if (durationMode === 'termly_10_weeks') {
-                        durationText = '10 weeks per term, 3 terms/year';
-                    } else if (durationMode === 'block_8_weeks') {
-                        durationText = '8 weeks per block, 6 blocks/year';
-                    }
-                    document.getElementById('selected-program-duration').textContent = durationText;
-
-                    programDetails.style.display = 'block';
-                } else {
-                    programDetails.style.display = 'none';
-                }
-
-                saveFormData();
-            });
+            event.currentTarget.classList.add('selected');
         }
 
         function updateProgramDropdown(programType) {
             const programSelect = document.getElementById('program_id');
-            const options = programSelect.querySelectorAll('option');
             const programNote = document.getElementById('program-note');
-
-            // Reset to default
-            programSelect.value = '';
-            document.getElementById('program-details').style.display = 'none';
 
             if (programType === 'school') {
                 programSelect.disabled = true;
                 programNote.style.display = 'block';
-                return;
             } else {
                 programSelect.disabled = false;
                 programNote.style.display = 'none';
             }
+        }
 
-            // Filter options based on program type
-            options.forEach(option => {
-                if (option.value === '') {
-                    option.style.display = 'block';
-                } else {
-                    const isOnsite = option.textContent.includes('Onsite');
-                    const isOnline = option.textContent.includes('Online');
+        function selectSchool(schoolId, schoolName) {
+            document.getElementById('school_id').value = schoolId;
+            document.getElementById('school_name').value = schoolName;
 
-                    if (programType === 'onsite' && isOnsite) {
-                        option.style.display = 'block';
-                    } else if (programType === 'online' && isOnline) {
-                        option.style.display = 'block';
-                    } else {
-                        option.style.display = 'none';
-                    }
-                }
+            // Update display
+            const display = document.getElementById('selectedSchoolDisplay');
+            document.querySelector('.selected-school-name').textContent = schoolName;
+            display.classList.add('active');
+            display.style.display = 'flex';
+
+            // Hide schools list
+            document.getElementById('schoolsList').style.display = 'none';
+            document.getElementById('schoolSearch').value = '';
+        }
+
+        function showSchoolSelection() {
+            document.getElementById('selectedSchoolDisplay').classList.remove('active');
+            document.getElementById('schoolsList').style.display = 'block';
+        }
+
+        function filterSchools() {
+            const search = document.getElementById('schoolSearch').value.toLowerCase();
+            document.querySelectorAll('.school-option').forEach(option => {
+                const name = option.querySelector('.school-name').textContent.toLowerCase();
+                option.style.display = name.includes(search) ? 'flex' : 'none';
             });
-        }
-
-        // Character counters
-        function initializeCharacterCounters() {
-            setupCharacterCounter('motivation', 'motivation_count');
-            setupCharacterCounter('qualifications', 'qualifications_count');
-            setupCharacterCounter('experience', 'experience_count');
-        }
-
-        function setupCharacterCounter(textareaId, countId, maxLength = 500) {
-            const textarea = document.getElementById(textareaId);
-            const count = document.getElementById(countId);
-
-            if (!textarea || !count) return;
-
-            function updateCount() {
-                const length = textarea.value.length;
-                count.textContent = length;
-
-                if (length > maxLength) {
-                    count.style.color = '#ef4444';
-                    textarea.classList.add('invalid');
-                } else {
-                    count.style.color = '';
-                    textarea.classList.remove('invalid');
-                }
-
-                saveFormData();
-            }
-
-            textarea.addEventListener('input', updateCount);
-            updateCount(); // Initialize
-        }
-
-        // Form submission
-        function setupFormSubmission() {
-            const form = document.getElementById('applicationForm');
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Clear all previous errors
-                document.querySelectorAll('.error-message').forEach(el => el.remove());
-                document.querySelectorAll('.form-control.invalid').forEach(el => el.classList.remove('invalid'));
-
-                // Validate all steps
-                let isValid = true;
-
-                // Step 1 validation
-                if (!validateStep1()) {
-                    isValid = false;
-                    navigateToStep(1);
-                }
-
-                // Step 2 validation
-                if (isValid && !validateStep2()) {
-                    isValid = false;
-                    navigateToStep(2);
-                }
-
-                // Step 3 validation
-                if (isValid && !validateStep3()) {
-                    isValid = false;
-                    navigateToStep(3);
-                }
-
-                // Step 4 validation
-                if (isValid && !validateStep4()) {
-                    isValid = false;
-                    navigateToStep(4);
-                }
-
-                // Additional validations
-                if (isValid) {
-                    const programType = document.getElementById('program_type').value;
-
-                    // Validate program type period selection
-                    if (programType === 'onsite' && !document.getElementById('preferred_term').value) {
-                        alert('Please select your preferred term for onsite program.');
-                        isValid = false;
-                        navigateToStep(1);
-                    } else if (programType === 'online' && !document.getElementById('preferred_block').value) {
-                        alert('Please select your preferred block for online program.');
-                        isValid = false;
-                        navigateToStep(1);
-                    } else if (programType === 'school' && !document.getElementById('preferred_school_term').value) {
-                        alert('Please select your preferred term for school-based program.');
-                        isValid = false;
-                        navigateToStep(1);
-                    }
-
-                    // Validate program selection for students
-                    if (isValid) {
-                        if (programType === 'school') {
-                            // Validate school selection for school-based programs
-                            const schoolId = document.getElementById('school_id').value;
-                            const schoolName = document.getElementById('school_name').value;
-                            if (!schoolId || !schoolName) {
-                                showFieldError('school_id', 'Please select a school');
-                                isValid = false;
-                                navigateToStep(1);
-                            }
-                        } else {
-                            // Validate program selection for non-school programs
-                            if (!document.getElementById('program_id').value) {
-                                showFieldError('program_id', 'Please select a program');
-                                isValid = false;
-                                navigateToStep(4);
-                            }
-                        }
-                    }
-                }
-
-                if (isValid) {
-                    // Clear saved data
-                    clearSavedFormData();
-
-                    // Submit the form
-                    form.submit();
-                } else {
-                    // Scroll to first error
-                    const firstError = form.querySelector('.invalid');
-                    if (firstError) {
-                        firstError.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                        firstError.focus();
-                    }
-                }
-            });
-        }
-
-        // Initialize from POST data
-        function initializeFromPostData() {
-            // Program type
-            const programType = document.getElementById('program_type').value;
-            if (programType) {
-                selectProgramType(programType);
-
-                // Set selected period
-                const preferredTerm = document.getElementById('preferred_term').value;
-                const preferredBlock = document.getElementById('preferred_block').value;
-                const preferredSchoolTerm = document.getElementById('preferred_school_term').value;
-
-                if (programType === 'onsite' && preferredTerm) {
-                    document.querySelectorAll('#onsite-terms .period-option').forEach(element => {
-                        if (element.querySelector('.period-name').textContent === preferredTerm) {
-                            element.classList.add('selected');
-                        }
-                    });
-                } else if (programType === 'online' && preferredBlock) {
-                    document.querySelectorAll('#online-blocks .period-option').forEach(element => {
-                        if (element.querySelector('.period-name').textContent === preferredBlock) {
-                            element.classList.add('selected');
-                        }
-                    });
-                } else if (programType === 'school' && preferredSchoolTerm) {
-                    document.querySelectorAll('#school-terms .period-option').forEach(element => {
-                        if (element.querySelector('.period-name').textContent === preferredSchoolTerm) {
-                            element.classList.add('selected');
-                        }
-                    });
-                }
-
-                // Set selected school
-                const schoolId = document.getElementById('school_id').value;
-                const schoolName = document.getElementById('school_name').value;
-                if (programType === 'school' && schoolId && schoolName) {
-                    const selectedDisplay = document.getElementById('selectedSchoolDisplay');
-                    const schoolNameElement = document.querySelector('.selected-school-name');
-                    schoolNameElement.textContent = schoolName;
-                    selectedDisplay.style.display = 'flex';
-                    selectedDisplay.classList.add('active');
-                    document.getElementById('schoolsList').style.display = 'none';
-                }
-            }
-
-            // Update program dropdown based on selected program type
-            if (programType) {
-                updateProgramDropdown(programType);
-            }
         }
     </script>
 </body>
