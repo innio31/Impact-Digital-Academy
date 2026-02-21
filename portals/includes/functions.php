@@ -861,6 +861,11 @@ function logActivity($action, $description = null, $table_name = null, $record_i
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
     $old_data = null;
 
+    // Truncate table_name if it's too long (column is likely varchar(50))
+    if ($table_name && strlen($table_name) > 50) {
+        $table_name = substr($table_name, 0, 50);
+    }
+
     $sql = "INSERT INTO activity_logs (user_id, user_ip, user_agent, action, description, table_name, record_id, old_data) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 

@@ -142,7 +142,9 @@ if (isset($_SESSION['recently_approved'])) {
 }
 
 // Log activity
-logActivity($_SESSION['user_id'], 'view_applications', "Viewed applications list with filter: status=$status");
+$filter_desc = "Viewed applications list";
+if ($status) $filter_desc .= " - status:$status";
+logActivity($_SESSION['user_id'], 'view_applications', $filter_desc);
 
 // Process bulk actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
@@ -173,8 +175,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             foreach ($selected_ids as $app_id) {
                 logActivity(
                     $_SESSION['user_id'],
-                    'application_update',
-                    "Application #$app_id bulk updated to $status_param"
+                    'bulk_update',
+                    "Application #$app_id to $status_param"
                 );
             }
 
@@ -1120,7 +1122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             margin: 0.25rem;
         }
 
-        select, button, .btn {
+        select,
+        button,
+        .btn {
             min-height: 44px;
         }
 
@@ -1308,7 +1312,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
                     <div><?php echo $_SESSION['success'];
-                    unset($_SESSION['success']); ?></div>
+                            unset($_SESSION['success']); ?></div>
                 </div>
             <?php endif; ?>
 
@@ -1316,7 +1320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i>
                     <div><?php echo $_SESSION['error'];
-                    unset($_SESSION['error']); ?></div>
+                            unset($_SESSION['error']); ?></div>
                 </div>
             <?php endif; ?>
 
@@ -1723,7 +1727,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
-            
+
             // Prevent body scroll when sidebar is open
             if (sidebar.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
@@ -1809,7 +1813,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             select.addEventListener('touchstart', function() {
                 this.style.backgroundColor = '#f8fafc';
             });
-            
+
             select.addEventListener('touchend', function() {
                 setTimeout(() => {
                     this.style.backgroundColor = '';
@@ -1829,7 +1833,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             if (e.scale !== 1) {
                 e.preventDefault();
             }
-        }, { passive: false });
+        }, {
+            passive: false
+        });
     </script>
 </body>
 

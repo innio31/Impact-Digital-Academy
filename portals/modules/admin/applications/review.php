@@ -261,6 +261,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $notification_stmt->bind_param('issi', $application['user_id'], $title, $message, $application_id);
                     $notification_stmt->execute();
+
+                    // ===== ADD APPROVAL EMAIL NOTIFICATION =====
+                    // Send approval email
+                    if (function_exists('sendApplicationApprovalEmail')) {
+                        $email_sent = sendApplicationApprovalEmail($application['user_id']);
+                        if (!$email_sent) {
+                            // Log email failure but don't stop the process
+                            error_log("Failed to send approval email to user ID: " . $application['user_id']);
+                        }
+                    }
+                    // ===== END APPROVAL EMAIL NOTIFICATION =====
                 }
 
                 // If rejected, update user status
@@ -281,6 +292,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $message = "Your application has been reviewed and unfortunately was not approved at this time.";
                     $notification_stmt->bind_param('issi', $application['user_id'], $title, $message, $application_id);
                     $notification_stmt->execute();
+
+                    // ===== ADD REJECTION EMAIL NOTIFICATION =====
+                    // Get rejection reason from form
+                    $rejection_reason = $_POST['review_notes'] ?? '';
+
+                    // Send rejection email
+                    if (function_exists('sendApplicationRejectionEmail')) {
+                        $email_sent = sendApplicationRejectionEmail($application['user_id'], $rejection_reason);
+                        if (!$email_sent) {
+                            // Log email failure but don't stop the process
+                            error_log("Failed to send rejection email to user ID: " . $application['user_id']);
+                        }
+                    }
+                    // ===== END REJECTION EMAIL NOTIFICATION =====
                 }
 
                 $conn->commit();
