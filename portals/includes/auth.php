@@ -269,6 +269,22 @@ function registerUser($data)
             );
         }
 
+        // After successful registration, send confirmation email
+        try {
+            $application_data = [
+                'program_type' => $data['program_type'] ?? 'online',
+                'program_id' => $program_id,
+                'school_name' => $data['school_name'] ?? '',
+                'preferred_term' => $data['preferred_term'] ?? '',
+                'preferred_block' => $data['preferred_block'] ?? '',
+                'preferred_school_term' => $data['preferred_school_term'] ?? ''
+            ];
+            sendApplicationConfirmationEmail($user_id, $application_data);
+        } catch (Exception $e) {
+            error_log("Failed to send confirmation email: " . $e->getMessage());
+            // Don't fail the registration if email fails
+        }
+
         return [
             'success' => true,
             'user_id' => $user_id,

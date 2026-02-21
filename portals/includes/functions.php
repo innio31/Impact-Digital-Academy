@@ -3583,3 +3583,277 @@ function sendAnnouncementEmail($announcement_id, $recipient_type = 'all', $conn 
 
     return $results;
 }
+
+/**
+ * Send application confirmation email to applicant
+ */
+function sendApplicationConfirmationEmail($user_id, $application_data = [])
+{
+    $user = getUserById($user_id);
+    if (!$user || empty($user['email'])) {
+        error_log("Application confirmation email failed: User not found or no email for ID: $user_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Application Received - Impact Digital Academy";
+
+    // Format program type for display
+    $program_type = isset($application_data['program_type']) ? ucfirst($application_data['program_type']) : 'Online';
+    $program_name = 'Not specified';
+
+    // Get program name if program_id exists
+    if (!empty($application_data['program_id'])) {
+        $conn = getDBConnection();
+        $sql = "SELECT name FROM programs WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $application_data['program_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $program_name = $row['name'];
+        }
+        $stmt->close();
+    }
+
+    // Format preferred period
+    $preferred_period = '';
+    if ($program_type === 'Onsite' && !empty($application_data['preferred_term'])) {
+        $preferred_period = "Preferred Term: " . $application_data['preferred_term'];
+    } elseif ($program_type === 'Online' && !empty($application_data['preferred_block'])) {
+        $preferred_period = "Preferred Block: " . $application_data['preferred_block'];
+    } elseif ($program_type === 'School' && !empty($application_data['preferred_school_term'])) {
+        $preferred_period = "Preferred School Term: " . $application_data['preferred_school_term'];
+    }
+
+    // School name if applicable
+    $school_info = '';
+    if (!empty($application_data['school_name'])) {
+        $school_info = "School: " . $application_data['school_name'];
+    }
+
+    $login_url = BASE_URL . 'modules/auth/login.php';
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb; }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .status-badge { background: #f59e0b; color: #1e293b; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>Application Received!</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($user['first_name']) . ",</p>
+                
+                <p>Thank you for applying to <strong>$school_name</strong>! We have received your application and it is now under review.</p>
+                
+                <div class='info-box'>
+                    <h3 style='margin-top: 0; color: #2563eb;'>Application Details:</h3>
+                    <p><strong>Application ID:</strong> #" . $user_id . date('Ymd') . "</p>
+                    <p><strong>Name:</strong> " . htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) . "</p>
+                    <p><strong>Email:</strong> " . htmlspecialchars($user['email']) . "</p>
+                    <p><strong>Program Type:</strong> " . $program_type . " Program</p>
+                    <p><strong>Program:</strong> " . htmlspecialchars($program_name) . "</p>
+                    " . (!empty($school_info) ? "<p><strong>$school_info</strong></p>" : "") . "
+                    " . (!empty($preferred_period) ? "<p><strong>$preferred_period</strong></p>" : "") . "
+                    <p><strong>Status:</strong> <span class='status-badge'>Pending Review</span></p>
+                </div>
+                
+                <p><strong>What happens next?</strong></p>
+                <ol style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px;'>
+                    <li>Our admissions team will review your application</li>
+                    <li>You'll receive an email notification once your application is approved</li>
+                    <li>After approval, you can log in to complete your registration and make payment</li>
+                </ol>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$login_url}' class='button'>Track Your Application</a>
+                </p>
+                
+                <p>If you have any questions, please contact our admissions office.</p>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    This is an automated message from your learning portal. Please do not reply to this email.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($user['email'], $subject, $body);
+}
+/**
+ * Send application approval email to student
+ */
+function sendApplicationApprovalEmail($user_id)
+{
+    $user = getUserById($user_id);
+    if (!$user || empty($user['email'])) {
+        error_log("Application approval email failed: User not found or no email for ID: $user_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Congratulations! Your Application has been Approved - Impact Digital Academy";
+    $login_url = BASE_URL . 'modules/auth/login.php';
+    $payment_url = BASE_URL . 'modules/student/make-payment.php';
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #10b981; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .success-box { background: #d1fae5; border: 2px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+            .button { display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 5px; }
+            .button-secondary { background: #2563eb; }
+            .steps { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>Application Approved! 🎉</h1>
+            </div>
+            
+            <div class='content'>
+                <div class='success-box'>
+                    <h2 style='color: #065f46; margin: 0;'>Congratulations " . htmlspecialchars($user['first_name']) . "!</h2>
+                </div>
+                
+                <p>We are pleased to inform you that your application to <strong>$school_name</strong> has been <strong style='color: #10b981;'>APPROVED</strong>.</p>
+                
+                <div class='steps'>
+                    <h3 style='color: #2563eb; margin-top: 0;'>Next Steps:</h3>
+                    <ol style='margin-bottom: 0;'>
+                        <li><strong>Login to Your Account</strong> - Use your email and password to access your dashboard</li>
+                        <li><strong>Complete Your Registration</strong> - Fill out any remaining required information</li>
+                        <li><strong>Make Payment</strong> - Pay your registration fee to secure your spot</li>
+                        <li><strong>Start Learning</strong> - Access your courses and begin your journey</li>
+                    </ol>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$login_url}' class='button button-secondary'>Login to Dashboard</a>
+                    <a href='{$payment_url}' class='button'>Make Payment</a>
+                </p>
+                
+                <p><strong>Important:</strong> Please complete your registration and payment within 7 days to secure your spot in the upcoming session.</p>
+                
+                <p>If you have any questions, please contact our admissions office.</p>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    Welcome to the $school_name family! We're excited to have you on board.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($user['email'], $subject, $body);
+}
+/**
+ * Send application rejection email to applicant
+ */
+function sendApplicationRejectionEmail($user_id, $reason = '')
+{
+    $user = getUserById($user_id);
+    if (!$user || empty($user['email'])) {
+        error_log("Application rejection email failed: User not found or no email for ID: $user_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Update on Your Application - Impact Digital Academy";
+
+    $reason_text = !empty($reason) ? "<p><strong>Reason:</strong> " . htmlspecialchars($reason) . "</p>" : "";
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #64748b; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .info-box { background: #fee2e2; border: 1px solid #ef4444; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>Application Status Update</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Dear " . htmlspecialchars($user['first_name']) . ",</p>
+                
+                <p>Thank you for your interest in <strong>$school_name</strong>.</p>
+                
+                <div class='info-box'>
+                    <p style='margin: 0;'>After careful review of your application, we regret to inform you that we are unable to offer you admission at this time.</p>
+                    $reason_text
+                </div>
+                
+                <p>This decision does not diminish your potential, and we encourage you to:</p>
+                <ul>
+                    <li>Consider applying for our next intake</li>
+                    <li>Explore our short courses and workshops</li>
+                    <li>Strengthen your application with additional qualifications</li>
+                </ul>
+                
+                <p>If you would like feedback on your application or have any questions, please contact our admissions office.</p>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='mailto:admissions@impactdigitalacademy.com.ng' class='button'>Contact Admissions</a>
+                </p>
+                
+                <p>We wish you success in your future endeavors.</p>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($user['email'], $subject, $body);
+}
