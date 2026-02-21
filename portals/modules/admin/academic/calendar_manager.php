@@ -42,15 +42,40 @@ if ($edit_id) {
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_period'])) {
-        // Add new academic period
+        // Validate and sanitize date inputs
+        $registration_start_date = null;
+        $registration_deadline = null;
+
+        // Check if registration start date is valid
+        if (!empty($_POST['registration_start_date']) && $_POST['registration_start_date'] != '0000-00-00') {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['registration_start_date'])) {
+                $registration_start_date = $_POST['registration_start_date'];
+            }
+        }
+
+        // Check if registration deadline is valid
+        if (!empty($_POST['registration_deadline']) && $_POST['registration_deadline'] != '0000-00-00') {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['registration_deadline'])) {
+                $registration_deadline = $_POST['registration_deadline'];
+            }
+        }
+
+        // Validate required fields
+        if (
+            empty($_POST['program_type']) || empty($_POST['period_type']) ||
+            empty($_POST['period_number']) || empty($_POST['period_name']) ||
+            empty($_POST['academic_year']) || empty($_POST['start_date']) ||
+            empty($_POST['end_date']) || empty($_POST['duration_weeks'])
+        ) {
+            $_SESSION['error'] = "All required fields must be filled.";
+            header("Location: calendar_manager.php");
+            exit();
+        }
+
         $stmt = $conn->prepare("INSERT INTO academic_periods 
         (program_type, period_type, period_number, period_name, academic_year, 
          start_date, end_date, duration_weeks, registration_start_date, registration_deadline, status) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-        // Handle empty date values
-        $registration_start_date = !empty($_POST['registration_start_date']) ? $_POST['registration_start_date'] : null;
-        $registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
 
         $stmt->bind_param(
             "ssissssiss",
@@ -62,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['start_date'],
             $_POST['end_date'],
             $_POST['duration_weeks'],
-            $registration_start_date,
-            $registration_deadline,
+            $registration_start_date,  // Now properly validated
+            $registration_deadline,      // Now properly validated
             $_POST['status']
         );
 
@@ -72,10 +97,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $_SESSION['error'] = "Error adding academic period: " . $stmt->error;
         }
+
+        header("Location: calendar_manager.php");
+        exit();
     }
 
     if (isset($_POST['update_period'])) {
-        // Update existing academic period
+        // Validate and sanitize date inputs
+        $registration_start_date = null;
+        $registration_deadline = null;
+
+        // Check if registration start date is valid
+        if (!empty($_POST['registration_start_date']) && $_POST['registration_start_date'] != '0000-00-00') {
+            // Validate date format (YYYY-MM-DD)
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['registration_start_date'])) {
+                $registration_start_date = $_POST['registration_start_date'];
+            }
+        }
+
+        // Check if registration deadline is valid
+        if (!empty($_POST['registration_deadline']) && $_POST['registration_deadline'] != '0000-00-00') {
+            // Validate date format (YYYY-MM-DD)
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['registration_deadline'])) {
+                $registration_deadline = $_POST['registration_deadline'];
+            }
+        }
+
+        // Validate start_date and end_date are present
+        if (empty($_POST['start_date']) || empty($_POST['end_date'])) {
+            $_SESSION['error'] = "Start date and end date are required.";
+            header("Location: calendar_manager.php?edit=" . $_POST['edit_id']);
+            exit();
+        }
+
         $stmt = $conn->prepare("UPDATE academic_periods SET 
         program_type = ?,
         period_type = ?,
@@ -90,27 +144,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         status = ?
         WHERE id = ?");
 
-        // Handle empty date values
-        $registration_start_date = !empty($_POST['registration_start_date']) ? $_POST['registration_start_date'] : null;
-        $registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
-        $academic_year = $_POST['academic_year'];
-
-        // Validate academic year format (ensure it's not a single year if database expects full date)
-        // The error shows '2026' is being passed, which suggests academic_year might be being used incorrectly
-        // Make sure academic_year is stored properly (should be like '2024' or '2024/2025')
-
         $stmt->bind_param(
             "ssissssisisi",
             $_POST['program_type'],
             $_POST['period_type'],
             $_POST['period_number'],
             $_POST['period_name'],
-            $academic_year,
+            $_POST['academic_year'],
             $_POST['start_date'],
             $_POST['end_date'],
             $_POST['duration_weeks'],
-            $registration_start_date,
-            $registration_deadline,
+            $registration_start_date,  // Now properly validated
+            $registration_deadline,      // Now properly validated
             $_POST['status'],
             $_POST['edit_id']
         );
@@ -1468,17 +1513,20 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
                             <label>Duration (weeks)</label>
                             <input type="number" name="duration_weeks" class="form-control" required min="1" max="52" value="<?php echo $period_to_edit['duration_weeks']; ?>" id="editDurationWeeksInput">
                         </div>
+                        <!-- Registration Start Date -->
                         <div class="filter-group">
                             <label>Registration Start</label>
                             <input type="date" name="registration_start_date" class="form-control"
-                                value="<?php echo $period_to_edit['registration_start_date'] ?? ''; ?>">
-                            <small style="color: #666; font-size: 0.85rem;">Registration opens</small>
+                                value="<?php echo !empty($period_to_edit['registration_start_date']) && $period_to_edit['registration_start_date'] != '0000-00-00' ? htmlspecialchars($period_to_edit['registration_start_date']) : ''; ?>">
+                            <small style="color: #666; font-size: 0.85rem;">Registration opens (leave empty if not set)</small>
                         </div>
+
+                        <!-- Registration Deadline -->
                         <div class="filter-group">
                             <label>Registration Deadline</label>
                             <input type="date" name="registration_deadline" class="form-control"
-                                value="<?php echo $period_to_edit['registration_deadline'] ?? ''; ?>">
-                            <small style="color: #666; font-size: 0.85rem;">Registration closes</small>
+                                value="<?php echo !empty($period_to_edit['registration_deadline']) && $period_to_edit['registration_deadline'] != '0000-00-00' ? htmlspecialchars($period_to_edit['registration_deadline']) : ''; ?>">
+                            <small style="color: #666; font-size: 0.85rem;">Registration closes (leave empty if not set)</small>
                         </div>
                         <div class="filter-group">
                             <label>Status</label>
