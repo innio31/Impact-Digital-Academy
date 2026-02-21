@@ -1,18 +1,32 @@
 <?php
 // modules/auth/forgot-password.php
-require_once '../../includes/config.php';
+
+// Start session
+session_start();
+
+// Include configuration
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/functions.php';
+require_once __DIR__ . '/../../includes/auth.php';
 
 // Initialize variables
 $message = '';
 $error = '';
+$email = '';
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
+    // Validate CSRF token
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        $_SESSION['error'] = 'Invalid form submission. Please try again.';
+        redirect(BASE_URL . 'modules/auth/forgot_password.php');
+    }
+
+    $email = sanitize($_POST['email'] ?? '');
 
     if (empty($email)) {
         $error = 'Please enter your email address.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } elseif (!isValidEmail($email)) {
         $error = 'Please enter a valid email address.';
     } else {
         $conn = getDBConnection();
@@ -109,6 +123,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
     }
+
+    // If there's an error, store it in session and redirect back
+    if ($error) {
+        $_SESSION['forgot_error'] = $error;
+        $_SESSION['forgot_email'] = $email;
+        redirect(BASE_URL . 'modules/auth/forgot_password.php');
+    }
+
+    // If there's a message, store it in session and redirect back
+    if ($message) {
+        $_SESSION['forgot_success'] = $message;
+        redirect(BASE_URL . 'modules/auth/forgot_password.php');
+    }
+}
+
+// Get messages from session if they exist
+if (isset($_SESSION['forgot_success'])) {
+    $message = $_SESSION['forgot_success'];
+    unset($_SESSION['forgot_success']);
+}
+
+if (isset($_SESSION['forgot_error'])) {
+    $error = $_SESSION['forgot_error'];
+    unset($_SESSION['forgot_error']);
+}
+
+if (isset($_SESSION['forgot_email'])) {
+    $email = $_SESSION['forgot_email'];
+    unset($_SESSION['forgot_email']);
 }
 ?>
 <!DOCTYPE html>
@@ -118,237 +161,225 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Impact Digital Academy</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
-
     <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1rem;
         }
 
         .container {
             width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 400px;
         }
 
         .card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: slideIn 0.5s ease-out;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .logo-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 30px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
             text-align: center;
         }
 
-        .card-header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .card-header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-
-        .card-body {
-            padding: 40px;
+        .subtitle {
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            font-size: 14px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
 
         .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
         .info-text {
-            color: #666;
-            font-size: 14px;
+            background-color: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            font-size: 0.95rem;
             line-height: 1.6;
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
         }
 
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
             font-weight: 500;
-            font-size: 14px;
         }
 
-        .input-group {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-        }
-
-        input[type="email"] {
+        .form-control {
             width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
             transition: all 0.3s ease;
-            background: #f8f9fa;
         }
 
-        input[type="email"]:focus {
+        .form-control:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        input[type="email"]::placeholder {
-            color: #aaa;
-            font-size: 14px;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .btn {
             width: 100%;
-            padding: 15px;
+            padding: 1rem;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
         .btn-primary:hover {
+            background: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
         }
 
         .btn-outline {
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
         .btn-outline:hover {
-            background: #f8f9fa;
+            background: #f8fafc;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-outline:active {
-            transform: translateY(0);
         }
 
         .footer-links {
+            margin-top: 1.5rem;
             text-align: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
         }
 
         .footer-links a {
-            color: #667eea;
+            color: var(--primary);
             text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .footer-links a:hover {
-            color: #764ba2;
             text-decoration: underline;
         }
 
         .security-note {
+            margin-top: 1.5rem;
             text-align: center;
-            margin-top: 20px;
-            color: #999;
-            font-size: 12px;
+            color: #6c757d;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .security-note i {
-            margin-right: 5px;
+        .back-home {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
         }
 
         /* Loading state */
@@ -372,6 +403,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             animation: spin 0.8s linear infinite;
         }
 
+        .btn-outline.btn-loading:after {
+            border: 2px solid var(--primary);
+            border-top-color: transparent;
+        }
+
         @keyframes spin {
             to {
                 transform: translate(-50%, -50%) rotate(360deg);
@@ -380,113 +416,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Responsive */
         @media (max-width: 576px) {
-            .card-body {
-                padding: 25px;
-            }
-
-            .card-header {
-                padding: 25px;
-            }
-
-            .card-header h1 {
-                font-size: 24px;
-            }
-
-            input[type="email"] {
-                padding: 12px 12px 12px 40px;
-                font-size: 15px;
-            }
-
-            .btn {
-                padding: 12px;
+            .card {
+                padding: 1.5rem;
             }
         }
     </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <div class="container">
         <div class="card">
-            <div class="card-header">
-                <h1><i class="fas fa-lock" style="margin-right: 10px;"></i>Forgot Password?</h1>
-                <p>Enter your email to reset your password</p>
+            <div class="logo-header">
+                <div class="logo">
+                    <img src="<?php echo BASE_URL; ?>public/images/logo_official.jpg" alt="Impact Digital Academy" style="height: 60px;">
+                </div>
+                <h1>Forgot Password?</h1>
+                <p class="subtitle">Enter your email to reset your password</p>
             </div>
 
-            <div class="card-body">
-                <?php if ($message): ?>
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                        <?php echo htmlspecialchars($message); ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($error): ?>
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
-                        <?php echo htmlspecialchars($error); ?>
-                    </div>
-                <?php endif; ?>
-
-                <div class="info-text">
-                    <i class="fas fa-info-circle" style="margin-right: 8px; color: #667eea;"></i>
-                    We'll send a password reset link to your email address. The link will expire in 2 hours for security reasons.
+            <?php if ($message): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <?php echo htmlspecialchars($message); ?>
                 </div>
+            <?php endif; ?>
 
-                <form method="POST" action="" id="resetForm">
-                    <div class="form-group">
-                        <label for="email">
-                            <i class="fas fa-envelope" style="margin-right: 5px; color: #667eea;"></i>
-                            Email Address
-                        </label>
-                        <div class="input-group">
-                            <i class="fas fa-envelope input-icon"></i>
-                            <input type="email"
-                                class="form-control"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your email address"
-                                required
-                                autofocus
-                                value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtn">
-                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
-                        Send Reset Link
-                    </button>
-
-                    <a href="<?php echo BASE_URL; ?>modules/auth/login.php" class="btn btn-outline">
-                        <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>
-                        Back to Login
-                    </a>
-                </form>
-
-                <div class="footer-links">
-                    <a href="<?php echo BASE_URL; ?>">
-                        <i class="fas fa-home"></i> Return to Homepage
-                    </a>
+            <?php if ($error): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo htmlspecialchars($error); ?>
                 </div>
+            <?php endif; ?>
 
-                <div class="security-note">
-                    <i class="fas fa-shield-alt"></i>
-                    This is a secure area. Your information is protected.
-                </div>
+            <div class="info-text">
+                <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                We'll send a password reset link to your email address. The link will expire in 2 hours for security reasons.
             </div>
+
+            <form method="POST" action="" id="resetForm">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope" style="margin-right: 5px; color: var(--primary);"></i>
+                        Email Address
+                    </label>
+                    <input type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        required
+                        autofocus
+                        value="<?php echo htmlspecialchars($email); ?>">
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Reset Link
+                </button>
+
+                <a href="<?php echo BASE_URL; ?>modules/auth/login.php" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Login
+                </a>
+            </form>
+
+            <div class="footer-links">
+                <a href="<?php echo BASE_URL; ?>">
+                    <i class="fas fa-home"></i> Return to Homepage
+                </a>
+            </div>
+
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                This is a secure area. Your information is protected.
+            </div>
+        </div>
+
+        <div class="back-home">
+            <a href="<?php echo BASE_URL; ?>">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
         </div>
     </div>
 
     <script>
-        // Simple form submission - FIXED VERSION
+        // Focus on email field
+        document.getElementById('email')?.focus();
+
+        // Clear form on page refresh
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        // Form submission with loading state
         document.getElementById('resetForm').addEventListener('submit', function(e) {
             const submitBtn = document.getElementById('submitBtn');
             const email = document.getElementById('email').value.trim();
 
             // Only show loading if email is not empty
             if (email) {
-                // Change button text and add loading class
                 submitBtn.innerHTML = 'Sending...';
                 submitBtn.classList.add('btn-loading');
                 // Don't prevent default - let the form submit normally

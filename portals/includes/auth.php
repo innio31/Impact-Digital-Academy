@@ -420,54 +420,76 @@ function requestPasswordReset($email)
 }
 
 /**
- * Validate reset token
+ * Validate reset token (updated to work with database)
  */
 function validateResetToken($token, $user_id)
 {
-    if (
-        !isset($_SESSION['reset_token']) ||
-        !isset($_SESSION['reset_user_id']) ||
-        !isset($_SESSION['reset_expires'])
-    ) {
+    $conn = getDBConnection();
+
+    // Get user email first
+    $sql = "SELECT email FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
         return false;
     }
 
-    if (!hash_equals($_SESSION['reset_token'], $token)) {
-        return false;
-    }
+    $user = $result->fetch_assoc();
+    $email = $user['email'];
 
-    if ($_SESSION['reset_user_id'] != $user_id) {
-        return false;
-    }
+    // Check token in database
+    $token_sql = "SELECT * FROM password_resets 
+                  WHERE email = ? AND token = ? AND used = 0 AND expires_at > NOW() 
+                  ORDER BY created_at DESC LIMIT 1";
+    $token_stmt = $conn->prepare($token_sql);
+    $token_stmt->bind_param("ss", $email, $token);
+    $token_stmt->execute();
+    $token_result = $token_stmt->get_result();
 
-    if (strtotime($_SESSION['reset_expires']) < time()) {
-        return false;
-    }
-
-    return true;
+    return $token_result->num_rows > 0;
 }
 
 /**
- * Complete password reset
+ * Complete password reset (updated to work with database)
  */
 function completePasswordReset($user_id, $token, $new_password)
 {
+    $conn = getDBConnection();
+
+    // Get user email
+    $sql = "SELECT email FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        return ['success' => false, 'message' => 'User not found'];
+    }
+
+    $user = $result->fetch_assoc();
+    $email = $user['email'];
+
+    // Verify token
     if (!validateResetToken($token, $user_id)) {
         return ['success' => false, 'message' => 'Invalid or expired reset token'];
     }
 
-    $conn = getDBConnection();
-
+    // Update password
     $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
-    $sql = "UPDATE users SET password = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $new_hash, $user_id);
+    $update_sql = "UPDATE users SET password = ? WHERE id = ?";
+    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt->bind_param("si", $new_hash, $user_id);
 
-    if ($stmt->execute()) {
-        // Clear reset session
-        unset($_SESSION['reset_token']);
-        unset($_SESSION['reset_user_id']);
-        unset($_SESSION['reset_expires']);
+    if ($update_stmt->execute()) {
+        // Mark token as used
+        $mark_sql = "UPDATE password_resets SET used = 1 WHERE email = ? AND token = ?";
+        $mark_stmt = $conn->prepare($mark_sql);
+        $mark_stmt->bind_param("ss", $email, $token);
+        $mark_stmt->execute();
 
         logActivity('password_reset_complete', 'Password reset completed', 'users', $user_id);
 
