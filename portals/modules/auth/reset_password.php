@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm_password = $_POST['confirm_password'] ?? '';
         $submitted_token = $_POST['token'] ?? '';
         $submitted_user_id = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
-        
+
         // Validate required fields
         if (empty($new_password) || empty($confirm_password)) {
             $error = 'Please enter and confirm your new password.';
@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Passwords do not match.';
         } else {
             $result = completePasswordReset($submitted_user_id, $submitted_token, $new_password);
-            
+
             if ($result['success']) {
                 $success = true;
                 $message = $result['message'];
-                
+
                 // Redirect to login page after a delay
                 header("Refresh: 5; url=" . BASE_URL . "modules/auth/login.php");
             } else {
@@ -66,12 +66,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
+
     <style>
         :root {
             --primary: #2563eb;
@@ -119,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 600;
             margin-bottom: 1rem;
         }
-        
+
         .logo-icon {
             width: 50px;
             height: 50px;
@@ -223,9 +227,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: var(--danger);
         }
 
-        .strength-fill.weak { width: 33%; background: var(--danger); }
-        .strength-fill.medium { width: 66%; background: var(--accent); }
-        .strength-fill.strong { width: 100%; background: var(--success); }
+        .strength-fill.weak {
+            width: 33%;
+            background: var(--danger);
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background: var(--accent);
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background: var(--success);
+        }
 
         .strength-text {
             font-size: 0.875rem;
@@ -377,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .logo {
                 font-size: 1.5rem;
             }
-            
+
             .logo-icon {
                 width: 40px;
                 height: 40px;
@@ -386,6 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 <body>
     <div class="reset-container">
         <div class="reset-header">
@@ -404,13 +420,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <strong>Invalid or Expired Link</strong>
                     <p style="margin-top: 0.5rem;">This password reset link is invalid or has expired. Please request a new password reset link.</p>
                 </div>
-                
+
                 <div class="back-link">
                     <a href="<?php echo BASE_URL; ?>modules/auth/forgot_password.php">
                         <i class="fas fa-redo"></i> Request New Reset Link
                     </a>
                 </div>
-                
+
                 <div class="back-link">
                     <a href="<?php echo BASE_URL; ?>modules/auth/login.php">
                         <i class="fas fa-arrow-left"></i> Back to Login
@@ -424,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h3>Password Reset Successful!</h3>
                     <p><?php echo htmlspecialchars($message); ?></p>
                     <p>You will be redirected to the login page in 5 seconds.</p>
-                    
+
                     <div class="alert alert-info">
                         <strong>What to do next:</strong>
                         <ul>
@@ -433,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <li>Enable two-factor authentication if available</li>
                         </ul>
                     </div>
-                    
+
                     <a href="<?php echo BASE_URL; ?>modules/auth/login.php" class="btn btn-secondary">
                         <i class="fas fa-sign-in-alt"></i> Go to Login Now
                     </a>
@@ -461,13 +477,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
                     <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
-                    
+
                     <div class="form-group">
                         <label for="new_password">New Password</label>
-                        <input type="password" id="new_password" name="new_password" class="form-control" 
-                               required minlength="8"
-                               placeholder="Enter new password">
-                        
+                        <input type="password" id="new_password" name="new_password" class="form-control"
+                            required minlength="8"
+                            placeholder="Enter new password">
+
                         <div class="password-strength">
                             <div class="strength-bar">
                                 <div class="strength-fill" id="strength-fill"></div>
@@ -478,17 +494,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="confirm_password">Confirm New Password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" 
-                               required
-                               placeholder="Confirm new password">
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control"
+                            required
+                            placeholder="Confirm new password">
                         <div class="error-message" id="confirm-error" style="display: none;">
                             <i class="fas fa-exclamation-circle"></i> Passwords do not match
                         </div>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-lock"></i> Reset Password
                     </button>
@@ -509,17 +525,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const confirmInput = document.getElementById('confirm_password');
         const strengthFill = document.getElementById('strength-fill');
         const strengthText = document.getElementById('strength-text');
-        
+
         // Password requirements elements
         const reqLength = document.getElementById('req-length');
         const reqUppercase = document.getElementById('req-uppercase');
         const reqLowercase = document.getElementById('req-lowercase');
         const reqNumber = document.getElementById('req-number');
         const reqSpecial = document.getElementById('req-special');
-        
+
         function checkPasswordStrength(password) {
             let score = 0;
-            
+
             // Length requirement
             if (password.length >= 8) {
                 score++;
@@ -529,7 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reqLength.classList.remove('valid');
                 reqLength.classList.add('invalid');
             }
-            
+
             // Uppercase requirement
             if (/[A-Z]/.test(password)) {
                 score++;
@@ -539,7 +555,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reqUppercase.classList.remove('valid');
                 reqUppercase.classList.add('invalid');
             }
-            
+
             // Lowercase requirement
             if (/[a-z]/.test(password)) {
                 score++;
@@ -549,7 +565,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reqLowercase.classList.remove('valid');
                 reqLowercase.classList.add('invalid');
             }
-            
+
             // Number requirement
             if (/\d/.test(password)) {
                 score++;
@@ -559,7 +575,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reqNumber.classList.remove('valid');
                 reqNumber.classList.add('invalid');
             }
-            
+
             // Special character requirement
             if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
                 score++;
@@ -569,9 +585,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reqSpecial.classList.remove('valid');
                 reqSpecial.classList.add('invalid');
             }
-            
+
             // Update strength indicator
-            switch(score) {
+            switch (score) {
                 case 0:
                 case 1:
                 case 2:
@@ -588,20 +604,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     strengthText.textContent = 'Strong';
                     break;
             }
-            
+
             return score;
         }
-        
+
         passwordInput.addEventListener('input', function() {
             checkPasswordStrength(this.value);
             validatePasswordMatch();
         });
-        
+
         function validatePasswordMatch() {
             const password = passwordInput.value;
             const confirm = confirmInput.value;
             const confirmError = document.getElementById('confirm-error');
-            
+
             if (confirm && password !== confirm) {
                 confirmInput.classList.add('invalid');
                 confirmError.style.display = 'flex';
@@ -612,29 +628,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return true;
             }
         }
-        
+
         confirmInput.addEventListener('input', validatePasswordMatch);
-        
+
         // Form validation
         document.getElementById('resetForm')?.addEventListener('submit', function(e) {
             const password = passwordInput.value;
             const confirm = confirmInput.value;
-            
+
             // Check password strength
             const strength = checkPasswordStrength(password);
-            
+
             if (strength < 3) {
                 e.preventDefault();
                 alert('Please use a stronger password. Your password should meet at least 4 of the requirements.');
                 return;
             }
-            
+
             // Check password match
             if (!validatePasswordMatch()) {
                 e.preventDefault();
                 return;
             }
-            
+
             // Additional validation
             if (password.length < 8) {
                 e.preventDefault();
@@ -642,9 +658,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
         });
-        
+
         // Initialize strength check
         checkPasswordStrength(passwordInput.value);
     </script>
 </body>
+
 </html>

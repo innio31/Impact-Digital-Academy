@@ -19,11 +19,8 @@ if (isLoggedIn()) {
     redirectToDashboard();
 }
 
-// Get role from query parameter (default to student)
-$default_role = 'student';
-$role = isset($_GET['role']) && in_array($_GET['role'], ['student', 'instructor'])
-    ? $_GET['role']
-    : $default_role;
+// Get role from query parameter (always student now, but keep for backward compatibility)
+$role = 'student'; // Force to student only
 
 // Get database connection
 $conn = getDBConnection();
@@ -104,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Invalid security token. Please try again.';
     } else {
-        // Collect form data
+        // Collect form data - always 'student' for applying_as
         $form_data = [
             'email' => trim($_POST['email'] ?? ''),
             'password' => $_POST['password'] ?? '',
@@ -112,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'first_name' => trim($_POST['first_name'] ?? ''),
             'last_name' => trim($_POST['last_name'] ?? ''),
             'phone' => trim($_POST['phone'] ?? ''),
-            'applying_as' => $_POST['applying_as'] ?? 'student',
+            'applying_as' => 'student', // Force to student only
             'program_type' => $_POST['program_type'] ?? 'online',
             'program_id' => !empty($_POST['program_id']) ? (int)$_POST['program_id'] : null,
             'school_id' => !empty($_POST['school_id']) ? (int)$_POST['school_id'] : null,
@@ -133,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         // Validate required fields
-        $required_fields = ['email', 'password', 'confirm_password', 'first_name', 'last_name', 'applying_as', 'program_type'];
+        $required_fields = ['email', 'password', 'confirm_password', 'first_name', 'last_name', 'program_type'];
         foreach ($required_fields as $field) {
             if (empty($form_data[$field])) {
                 $errors[] = ucfirst(str_replace('_', ' ', $field)) . ' is required.';
@@ -161,12 +158,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Validate program selection for students
-        if ($form_data['applying_as'] === 'student') {
-            if ($form_data['program_type'] === 'school' && empty($form_data['school_id'])) {
-                $errors[] = 'Please select a school for school-based program.';
-            } elseif ($form_data['program_type'] !== 'school' && empty($form_data['program_id'])) {
-                $errors[] = 'Please select a program.';
-            }
+        if ($form_data['program_type'] === 'school' && empty($form_data['school_id'])) {
+            $errors[] = 'Please select a school for school-based program.';
+        } elseif ($form_data['program_type'] !== 'school' && empty($form_data['program_id'])) {
+            $errors[] = 'Please select a program.';
         }
 
         // Validate program type selection
@@ -234,6 +229,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply to Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
 
     <style>
         :root {
@@ -797,65 +795,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
 
-        .role-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 640px) {
-            .role-selector {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        .role-card {
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .role-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.1);
-        }
-
-        .role-card.active {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(30, 64, 175, 0.05));
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
-        }
-
-        .role-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .role-card h3 {
-            margin-bottom: 0.75rem;
-            color: var(--dark);
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .role-card p {
-            color: var(--gray-600);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            flex-grow: 1;
-        }
-
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1211,8 +1150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 padding: 0.75rem 1.5rem;
             }
 
-            .program-type-card,
-            .role-card {
+            .program-type-card {
                 padding: 1.25rem;
             }
         }
@@ -1232,7 +1170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn:focus-visible,
         .form-control:focus-visible,
         .program-type-card:focus-visible,
-        .role-card:focus-visible,
         .period-option:focus-visible {
             outline: 3px solid var(--primary);
             outline-offset: 2px;
@@ -1263,7 +1200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="register-container">
         <div class="register-header">
             <h1>Apply to Impact Digital Academy</h1>
-            <p>Start your digital transformation journey. Fill out the application form below.</p>
+            <p>Start your digital transformation journey as a student. Fill out the application form below.</p>
         </div>
 
         <div class="progress-steps">
@@ -1273,7 +1210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <div class="step-label">Role & Account</div>
+                <div class="step-label">Account Info</div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
@@ -1312,22 +1249,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="register-card">
             <div class="card-header">
-                <h2>Application Form</h2>
-                <p>Complete all sections below</p>
+                <h2>Student Application Form</h2>
+                <p>Complete all sections below to apply as a student</p>
             </div>
 
             <div class="card-content">
                 <form method="POST" id="applicationForm" novalidate>
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="hidden" name="school_name" id="school_name" value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>">
+                    <input type="hidden" name="applying_as" value="student">
 
                     <!-- Form Navigation -->
                     <div class="form-navigation">
                         <div class="nav-step active" onclick="showStep(1)" tabindex="0" role="button" aria-label="Go to Program Type section">
                             <span>Program Type</span>
                         </div>
-                        <div class="nav-step" onclick="showStep(2)" tabindex="0" role="button" aria-label="Go to Role & Account section">
-                            <span>Role & Account</span>
+                        <div class="nav-step" onclick="showStep(2)" tabindex="0" role="button" aria-label="Go to Account Info section">
+                            <span>Account Info</span>
                         </div>
                         <div class="nav-step" onclick="showStep(3)" tabindex="0" role="button" aria-label="Go to Personal Info section">
                             <span>Personal Info</span>
@@ -1402,13 +1340,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <!-- School Selection Section (only shown for school-based programs) -->
                         <div class="school-selection-container <?php echo ($_POST['program_type'] ?? '') === 'school' ? 'active' : ''; ?>">
                             <h3 class="section-title">Select Your School</h3>
-                            
+
                             <div class="school-search-container">
                                 <div class="school-search-box">
                                     <i class="fas fa-search"></i>
-                                    <input type="text" id="schoolSearch" class="school-search-input" 
-                                           placeholder="Search for your school by name..."
-                                           oninput="filterSchools()">
+                                    <input type="text" id="schoolSearch" class="school-search-input"
+                                        placeholder="Search for your school by name..."
+                                        oninput="filterSchools()">
                                 </div>
                             </div>
 
@@ -1427,7 +1365,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php if (!empty($schools)): ?>
                                     <?php foreach ($schools as $school): ?>
                                         <div class="school-option <?php echo ($_POST['school_id'] ?? '') == $school['id'] ? 'selected' : ''; ?>"
-                                             onclick="selectSchool(<?php echo $school['id']; ?>, '<?php echo htmlspecialchars(addslashes($school['name'])); ?>')">
+                                            onclick="selectSchool(<?php echo $school['id']; ?>, '<?php echo htmlspecialchars(addslashes($school['name'])); ?>')">
                                             <i class="fas fa-university"></i>
                                             <div>
                                                 <div class="school-name"><?php echo htmlspecialchars($school['name']); ?></div>
@@ -1538,41 +1476,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-actions">
                             <div style="flex: 1;"></div>
                             <button type="button" class="btn btn-primary btn-nav" onclick="showStep(2)">
-                                Next: Role Selection <i class="fas fa-arrow-right"></i>
+                                Next: Account Info <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Step 2: Role and Account Information -->
+                    <!-- Step 2: Account Information -->
                     <div id="step2" class="form-section">
-                        <h3 class="section-title">Role & Account Information</h3>
-
-                        <div class="role-selector" style="margin-bottom: 2.5rem;">
-                            <div class="role-card <?php echo ($_POST['applying_as'] ?? 'student') === 'student' ? 'active' : ''; ?>"
-                                onclick="selectRole('student')"
-                                tabindex="0"
-                                role="button"
-                                aria-label="Apply as Student">
-                                <div class="role-icon">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <h3>Student</h3>
-                                <p>Join our digital skills training programs and gain industry-relevant certifications.</p>
-                            </div>
-
-                            <div class="role-card <?php echo ($_POST['applying_as'] ?? '') === 'instructor' ? 'active' : ''; ?>"
-                                onclick="selectRole('instructor')"
-                                tabindex="0"
-                                role="button"
-                                aria-label="Apply as Instructor">
-                                <div class="role-icon">
-                                    <i class="fas fa-chalkboard-teacher"></i>
-                                </div>
-                                <h3>Instructor</h3>
-                                <p>Share your expertise and guide the next generation of digital professionals.</p>
-                            </div>
-                        </div>
-                        <input type="hidden" name="applying_as" id="applying_as" value="<?php echo htmlspecialchars($_POST['applying_as'] ?? 'student'); ?>">
+                        <h3 class="section-title">Account Information</h3>
 
                         <div class="form-grid">
                             <div class="form-group">
@@ -1705,58 +1616,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Step 4: Application Details -->
                     <div id="step4" class="form-section">
-                        <!-- Program Selection Section (hidden for school-based and instructors) -->
-                        <div id="program-section" style="<?php echo ($_POST['applying_as'] ?? 'student') === 'instructor' ? 'display: none;' : 'display: block;'; ?>">
-                            <h3 class="section-title">Program Selection</h3>
-                            <div class="form-group">
-                                <label for="program_id" class="<?php echo ($_POST['applying_as'] ?? 'student') === 'student' && ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>">Select Program</label>
-                                <select id="program_id" name="program_id" class="form-control" 
-                                    <?php echo ($_POST['applying_as'] ?? 'student') === 'student' && ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>>
-                                    <option value="">-- Select a Program --</option>
-                                    <?php
-                                    $programs_by_type = [
-                                        'onsite' => [],
-                                        'online' => []
-                                    ];
+                        <h3 class="section-title">Program Selection</h3>
+                        <div class="form-group">
+                            <label for="program_id" class="<?php echo ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>">Select Program</label>
+                            <select id="program_id" name="program_id" class="form-control"
+                                <?php echo ($_POST['program_type'] ?? 'online') !== 'school' ? 'required' : ''; ?>>
+                                <option value="">-- Select a Program --</option>
+                                <?php
+                                $programs_by_type = [
+                                    'onsite' => [],
+                                    'online' => []
+                                ];
 
-                                    foreach ($programs as $program) {
-                                        if (isset($programs_by_type[$program['program_type']])) {
-                                            $programs_by_type[$program['program_type']][] = $program;
-                                        }
+                                foreach ($programs as $program) {
+                                    if (isset($programs_by_type[$program['program_type']])) {
+                                        $programs_by_type[$program['program_type']][] = $program;
                                     }
+                                }
 
-                                    $selected_program_type = $_POST['program_type'] ?? 'online';
-                                    ?>
+                                $selected_program_type = $_POST['program_type'] ?? 'online';
+                                ?>
 
-                                    <?php if ($selected_program_type !== 'school' && !empty($programs_by_type[$selected_program_type])): ?>
-                                        <optgroup label="<?php echo $selected_program_type === 'onsite' ? 'Onsite Programs' : 'Online Programs'; ?>">
-                                            <?php foreach ($programs_by_type[$selected_program_type] as $program): ?>
-                                                <option value="<?php echo $program['id']; ?>"
-                                                    <?php echo ($_POST['program_id'] ?? '') == $program['id'] ? 'selected' : ''; ?>
-                                                    data-duration="<?php echo $program['duration_mode']; ?>">
-                                                    <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
-                                                    - <?php echo $program['program_type'] === 'onsite' ? 'Onsite' : 'Online'; ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </optgroup>
-                                    <?php elseif ($selected_program_type !== 'school'): ?>
-                                        <option value="">No programs available for <?php echo $selected_program_type === 'onsite' ? 'onsite' : 'online'; ?> learning</option>
-                                    <?php endif; ?>
-                                </select>
-                                <small id="program-note" style="color: var(--gray-500); display: none;">
-                                    School-based programs are selected in Step 1
-                                </small>
-                            </div>
+                                <?php if ($selected_program_type !== 'school' && !empty($programs_by_type[$selected_program_type])): ?>
+                                    <optgroup label="<?php echo $selected_program_type === 'onsite' ? 'Onsite Programs' : 'Online Programs'; ?>">
+                                        <?php foreach ($programs_by_type[$selected_program_type] as $program): ?>
+                                            <option value="<?php echo $program['id']; ?>"
+                                                <?php echo ($_POST['program_id'] ?? '') == $program['id'] ? 'selected' : ''; ?>
+                                                data-duration="<?php echo $program['duration_mode']; ?>">
+                                                <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
+                                                - <?php echo $program['program_type'] === 'onsite' ? 'Onsite' : 'Online'; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                <?php elseif ($selected_program_type !== 'school'): ?>
+                                    <option value="">No programs available for <?php echo $selected_program_type === 'onsite' ? 'onsite' : 'online'; ?> learning</option>
+                                <?php endif; ?>
+                            </select>
+                            <small id="program-note" style="color: var(--gray-500); <?php echo ($selected_program_type ?? 'online') === 'school' ? 'display: block;' : 'display: none;'; ?>">
+                                School-based programs are selected in Step 1
+                            </small>
+                        </div>
 
-                            <div id="program-details" style="display: none; margin-bottom: 1.5rem;">
-                                <div class="program-info">
-                                    <div>
-                                        <span class="program-name" id="selected-program-name"></span><br>
-                                        <small id="selected-program-duration"></small>
-                                    </div>
-                                    <div>
-                                        <span class="program-type-indicator" id="selected-program-type"></span>
-                                    </div>
+                        <div id="program-details" style="display: none; margin-bottom: 1.5rem;">
+                            <div class="program-info">
+                                <div>
+                                    <span class="program-name" id="selected-program-name"></span><br>
+                                    <small id="selected-program-duration"></small>
+                                </div>
+                                <div>
+                                    <span class="program-type-indicator" id="selected-program-type"></span>
                                 </div>
                             </div>
                         </div>
@@ -1808,6 +1716,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="login-link">
                     Already have an account? <a href="<?php echo BASE_URL; ?>modules/auth/login.php">Login here</a>
                 </div>
+
+                <div class="login-link" style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    <em>Note: This application is for students only. Instructors are added by administrators.</em>
+                </div>
             </div>
         </div>
     </div>
@@ -1841,9 +1753,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Set up program type selection
             setupProgramTypeSelection();
-
-            // Set up role selection
-            setupRoleSelection();
 
             // Set up period selection
             setupPeriodSelection();
@@ -1904,19 +1813,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function selectSchool(schoolId, schoolName) {
             document.getElementById('school_id').value = schoolId;
             document.getElementById('school_name').value = schoolName;
-            
+
             const selectedDisplay = document.getElementById('selectedSchoolDisplay');
             const schoolNameElement = document.querySelector('.selected-school-name');
             schoolNameElement.textContent = schoolName;
-            
+
             selectedDisplay.style.display = 'flex';
             selectedDisplay.classList.add('active');
             document.getElementById('schoolsList').style.display = 'none';
-            
+
             // Clear search
             document.getElementById('schoolSearch').value = '';
             filterSchools();
-            
+
             saveFormData();
         }
 
@@ -1967,9 +1876,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     formObject[key] = value;
                 }
 
-                // Save program type, role, and school selections
+                // Save program type and school selections
                 formObject['program_type'] = document.getElementById('program_type').value;
-                formObject['applying_as'] = document.getElementById('applying_as').value;
                 formObject['school_name'] = document.getElementById('school_name').value;
                 formObject['school_id'] = document.getElementById('school_id').value;
 
@@ -2181,7 +2089,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
-            const role = document.getElementById('applying_as').value;
 
             let isValid = true;
 
@@ -2216,14 +2123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             } else {
                 clearFieldError('confirm_password');
-            }
-
-            // Role validation
-            if (!role) {
-                showFieldError('applying_as', 'Please select your role');
-                isValid = false;
-            } else {
-                clearFieldError('applying_as');
             }
 
             if (!isValid) {
@@ -2261,12 +2160,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function validateStep4() {
-            const role = document.getElementById('applying_as').value;
             const programType = document.getElementById('program_type').value;
             let isValid = true;
 
-            // Only validate program selection for students in non-school programs
-            if (role === 'student' && programType !== 'school') {
+            // Validate program selection for students in non-school programs
+            if (programType !== 'school') {
                 const programId = document.getElementById('program_id').value;
                 if (!programId) {
                     showFieldError('program_id', 'Please select a program');
@@ -2277,7 +2175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Validate school selection for school-based student programs
-            if (role === 'student' && programType === 'school') {
+            if (programType === 'school') {
                 const schoolId = document.getElementById('school_id').value;
                 const schoolName = document.getElementById('school_name').value;
                 if (!schoolId || !schoolName) {
@@ -2469,7 +2367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Show/hide school selection section
             const schoolSection = document.querySelector('.school-selection-container');
             const schoolNameInput = document.getElementById('school_name');
-            
+
             if (type === 'school') {
                 schoolSection.classList.add('active');
                 if (schoolNameInput) schoolNameInput.required = true;
@@ -2485,12 +2383,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('onsite-terms').style.display = 'none';
             document.getElementById('online-blocks').style.display = 'none';
             document.getElementById('school-terms').style.display = 'none';
-            
+
             // Clear all period values
             document.getElementById('preferred_term').value = '';
             document.getElementById('preferred_block').value = '';
             document.getElementById('preferred_school_term').value = '';
-            
+
             // Clear period selections
             document.querySelectorAll('.period-option').forEach(option => {
                 option.classList.remove('selected');
@@ -2510,7 +2408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Show/hide program selection note
             const programNote = document.getElementById('program-note');
             const programIdSelect = document.getElementById('program_id');
-            
+
             if (type === 'school') {
                 programNote.style.display = 'block';
                 if (programIdSelect) {
@@ -2522,50 +2420,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (programIdSelect) {
                     programIdSelect.disabled = false;
                     programIdSelect.required = true;
-                }
-            }
-
-            // Save selection
-            saveFormData();
-        }
-
-        // Role selection
-        function setupRoleSelection() {
-            document.querySelectorAll('.role-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const isInstructor = this.querySelector('h3').textContent.toLowerCase().includes('instructor');
-                    const role = isInstructor ? 'instructor' : 'student';
-                    selectRole(role);
-                });
-            });
-        }
-
-        function selectRole(role) {
-            // Update hidden field
-            document.getElementById('applying_as').value = role;
-
-            // Update active class
-            document.querySelectorAll('.role-card').forEach(card => {
-                card.classList.remove('active');
-                if ((role === 'instructor' && card.querySelector('h3').textContent.includes('Instructor')) ||
-                    (role === 'student' && card.querySelector('h3').textContent.includes('Student'))) {
-                    card.classList.add('active');
-                }
-            });
-
-            // Show/hide program section based on role and program type
-            const programSection = document.getElementById('program-section');
-            const programType = document.getElementById('program_type').value;
-
-            if (role === 'student' && programType !== 'school') {
-                programSection.style.display = 'block';
-                document.getElementById('program_id').required = true;
-            } else {
-                programSection.style.display = 'block'; // Always show, but may be disabled
-                if (role === 'instructor' || programType === 'school') {
-                    document.getElementById('program_id').required = false;
-                } else {
-                    document.getElementById('program_id').required = true;
                 }
             }
 
@@ -2772,7 +2626,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Additional validations
                 if (isValid) {
-                    const role = document.getElementById('applying_as').value;
                     const programType = document.getElementById('program_type').value;
 
                     // Validate program type period selection
@@ -2791,7 +2644,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     // Validate program selection for students
-                    if (isValid && role === 'student') {
+                    if (isValid) {
                         if (programType === 'school') {
                             // Validate school selection for school-based programs
                             const schoolId = document.getElementById('school_id').value;
@@ -2875,12 +2728,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     selectedDisplay.classList.add('active');
                     document.getElementById('schoolsList').style.display = 'none';
                 }
-            }
-
-            // Role
-            const role = document.getElementById('applying_as').value;
-            if (role) {
-                selectRole(role);
             }
 
             // Update program dropdown based on selected program type
