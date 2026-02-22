@@ -11,8 +11,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Include configuration and functions
-require_once __DIR__ . '/../../../includes/config.php';
-require_once __DIR__ . '/../../../includes/functions.php';
+require_once __DIR__ . '/../../../../includes/config.php';
+require_once __DIR__ . '/../../../../includes/functions.php';
 
 // Check if user is logged in and is instructor
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'instructor') {
