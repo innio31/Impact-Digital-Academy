@@ -1,6 +1,7 @@
 <?php
 // includes/auth.php
 
+
 /**
  * Login user
  */
@@ -8,12 +9,11 @@ function loginUser($email, $password)
 {
     $conn = getDBConnection();
 
-    // Debug output
+    // Debug logging (not output)
     if (DEBUG_MODE) {
-        echo "<pre style='background: #f0f0f0; padding: 10px;'>";
-        echo "=== DEBUG LOGIN ===\n";
-        echo "Email: " . htmlspecialchars($email) . "\n";
-        echo "Password: " . htmlspecialchars($password) . "\n";
+        error_log("=== DEBUG LOGIN ===");
+        error_log("Email: " . $email);
+        error_log("Password: " . $password);
     }
 
     $email = escapeSQL($email);
@@ -27,24 +27,21 @@ function loginUser($email, $password)
     $result = $stmt->get_result();
 
     if (DEBUG_MODE) {
-        echo "SQL: " . htmlspecialchars($sql) . "\n";
-        echo "Found rows: " . $result->num_rows . "\n";
+        error_log("SQL: " . $sql);
+        error_log("Found rows: " . $result->num_rows);
     }
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
         if (DEBUG_MODE) {
-            echo "User found:\n";
-            print_r($user);
-            echo "\n";
+            error_log("User found: " . print_r($user, true));
         }
 
         // Check user status
         if ($user['status'] !== 'active') {
             if (DEBUG_MODE) {
-                echo "User status is: " . $user['status'] . " (not active)\n";
-                echo "</pre>";
+                error_log("User status is: " . $user['status'] . " (not active)");
             }
             return [
                 'success' => false,
@@ -54,15 +51,15 @@ function loginUser($email, $password)
 
         // Verify password
         if (DEBUG_MODE) {
-            echo "Testing password verification...\n";
-            echo "Input password: " . $password . "\n";
-            echo "Stored hash: " . $user['password'] . "\n";
+            error_log("Testing password verification...");
+            error_log("Input password: " . $password);
+            error_log("Stored hash: " . $user['password']);
         }
 
         $password_verified = password_verify($password, $user['password']);
 
         if (DEBUG_MODE) {
-            echo "password_verify result: " . ($password_verified ? 'TRUE' : 'FALSE') . "\n";
+            error_log("password_verify result: " . ($password_verified ? 'TRUE' : 'FALSE'));
         }
 
         if ($password_verified) {
@@ -83,32 +80,29 @@ function loginUser($email, $password)
             logActivity('login', 'User logged in successfully');
 
             if (DEBUG_MODE) {
-                echo "✓ Login successful!\n";
-                echo "</pre>";
+                error_log("✓ Login successful!");
             }
 
-            // MODIFIED: Return user_id along with user data for easy access
             return [
                 'success' => true,
                 'user' => $user,
-                'user_id' => $user['id']  // ADD THIS LINE
+                'user_id' => $user['id']
             ];
         } else {
             if (DEBUG_MODE) {
-                echo "✗ Password verification failed\n";
-                echo "</pre>";
+                error_log("✗ Password verification failed");
             }
         }
     } else {
         if (DEBUG_MODE) {
-            echo "✗ No user found with email: " . htmlspecialchars($email) . "\n";
-            echo "</pre>";
+            error_log("✗ No user found with email: " . $email);
         }
     }
 
     // Log failed attempt
     logActivity('login_failed', 'Failed login attempt for email: ' . $email);
 
+    // Return generic error message - don't reveal whether email exists or password was wrong
     return [
         'success' => false,
         'message' => 'Invalid email or password'

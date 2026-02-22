@@ -4,6 +4,17 @@
 // Start session
 session_start();
 
+// Get error from session if exists
+if (isset($_SESSION['login_error'])) {
+    $error = $_SESSION['login_error'];
+    unset($_SESSION['login_error']);
+}
+
+if (isset($_SESSION['login_email'])) {
+    $email = $_SESSION['login_email'];
+    unset($_SESSION['login_email']);
+}
+
 // Include configuration
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
