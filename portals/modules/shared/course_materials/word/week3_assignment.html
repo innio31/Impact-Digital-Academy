@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Project Plan Guide</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/images/favicon.ico">
     <style>
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             margin: 0;
             padding: 20px;
@@ -18,7 +20,7 @@
             color: #333;
             line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -27,7 +29,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #0d3d8c 0%, #1a5bb8 100%);
             color: white;
@@ -35,53 +37,53 @@
             display: flex;
             align-items: center;
         }
-        
+
         .header-icon {
             font-size: 2.5rem;
             margin-right: 20px;
         }
-        
+
         .header h1 {
             margin: 0;
             font-size: 1.8rem;
         }
-        
+
         .header p {
             margin: 5px 0 0 0;
             opacity: 0.9;
         }
-        
+
         .content-area {
             display: flex;
             min-height: 700px;
         }
-        
+
         .sidebar {
             width: 300px;
             background-color: #f0f4f9;
             padding: 25px 20px;
             border-right: 1px solid #e0e6ed;
         }
-        
+
         .main-content {
             flex: 1;
             padding: 30px;
         }
-        
+
         .step-container {
             margin-bottom: 40px;
             border-left: 4px solid #0d3d8c;
             padding-left: 20px;
             position: relative;
         }
-        
+
         .step-header {
             display: flex;
             align-items: center;
             cursor: pointer;
             padding: 15px 0;
         }
-        
+
         .step-number {
             display: flex;
             align-items: center;
@@ -95,23 +97,23 @@
             font-weight: bold;
             flex-shrink: 0;
         }
-        
+
         .step-title {
             font-size: 1.3rem;
             font-weight: 600;
             color: #0d3d8c;
             margin: 0;
         }
-        
+
         .step-content {
             padding: 0 0 20px 50px;
             display: none;
         }
-        
+
         .step-content.active {
             display: block;
         }
-        
+
         .instructions {
             background-color: #f8fafc;
             border-radius: 8px;
@@ -119,7 +121,7 @@
             margin-bottom: 20px;
             border-left: 4px solid #4CAF50;
         }
-        
+
         .demo-area {
             background-color: #f9f9f9;
             border: 1px dashed #ccc;
@@ -128,20 +130,20 @@
             margin-top: 25px;
             min-height: 300px;
         }
-        
+
         .demo-area h3 {
             color: #0d3d8c;
             margin-top: 0;
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 15px;
             margin-top: 20px;
         }
-        
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -153,33 +155,33 @@
             gap: 8px;
             transition: all 0.3s;
         }
-        
+
         .btn-next {
             background-color: #0d3d8c;
             color: white;
         }
-        
+
         .btn-prev {
             background-color: #6c757d;
             color: white;
         }
-        
+
         .btn-complete {
             background-color: #28a745;
             color: white;
         }
-        
+
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-2px);
         }
-        
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .progress-bar {
             height: 8px;
             background-color: #e0e6ed;
@@ -187,27 +189,27 @@
             margin-bottom: 25px;
             overflow: hidden;
         }
-        
+
         .progress-fill {
             height: 100%;
             background-color: #0d3d8c;
             width: 0%;
             transition: width 0.5s ease;
         }
-        
+
         .progress-text {
             text-align: center;
             font-weight: 600;
             color: #0d3d8c;
             margin-bottom: 10px;
         }
-        
+
         .step-indicator {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        
+
         .step-indicator-item {
             display: flex;
             align-items: center;
@@ -216,16 +218,16 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .step-indicator-item:hover {
             background-color: rgba(13, 61, 140, 0.08);
         }
-        
+
         .step-indicator-item.active {
             background-color: rgba(13, 61, 140, 0.15);
             border-left: 4px solid #0d3d8c;
         }
-        
+
         .step-indicator-number {
             display: flex;
             align-items: center;
@@ -239,61 +241,63 @@
             font-size: 0.9rem;
             font-weight: bold;
         }
-        
+
         .step-indicator-item.active .step-indicator-number {
             background-color: #1a5bb8;
         }
-        
+
         .step-indicator-text {
             font-size: 0.95rem;
         }
-        
+
         .completed-step {
             color: #28a745;
             margin-left: auto;
         }
-        
+
         /* Table styling for demo area */
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
-        
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 12px 15px;
             text-align: left;
         }
-        
+
         th {
             background-color: #0d3d8c;
             color: white;
         }
-        
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        
+
         .merged-cell {
             background-color: #e3f2fd;
             font-weight: bold;
             text-align: center;
         }
-        
-        ol, ul {
+
+        ol,
+        ul {
             padding-left: 25px;
         }
-        
+
         li {
             margin-bottom: 8px;
         }
-        
+
         .checkmark {
             color: #28a745;
             margin-right: 5px;
         }
-        
+
         .download-area {
             background-color: #e8f5e9;
             padding: 20px;
@@ -301,11 +305,11 @@
             margin-top: 30px;
             display: none;
         }
-        
+
         .download-area.active {
             display: block;
         }
-        
+
         .file-name {
             font-family: monospace;
             background-color: #333;
@@ -315,12 +319,12 @@
             display: inline-block;
             margin: 10px 0;
         }
-        
+
         @media (max-width: 768px) {
             .content-area {
                 flex-direction: column;
             }
-            
+
             .sidebar {
                 width: 100%;
                 border-right: none;
@@ -329,6 +333,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -340,25 +345,25 @@
                 <p>Create a Project Plan with Tables and Lists</p>
             </div>
         </div>
-        
+
         <div class="content-area">
             <div class="sidebar">
                 <div class="progress-text">Progress: <span id="progress-percent">0%</span></div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
-                
+
                 <h3>Exercise Steps</h3>
                 <div class="step-indicator" id="step-indicator">
                     <!-- Steps will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <div class="main-content">
                 <div id="step-content-container">
                     <!-- Step content will be loaded here by JavaScript -->
                 </div>
-                
+
                 <div class="action-buttons">
                     <button class="btn btn-prev" id="prev-btn" disabled>
                         <i class="fas fa-arrow-left"></i> Previous Step
@@ -370,7 +375,7 @@
                         <i class="fas fa-check-circle"></i> Complete Exercise
                     </button>
                 </div>
-                
+
                 <div class="download-area" id="download-area">
                     <h3><i class="fas fa-download"></i> Exercise Completed Successfully!</h3>
                     <p>Your project plan has been created. Save your document with the following filename:</p>
@@ -383,7 +388,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         // Exercise steps data
         const exerciseSteps = [
@@ -714,13 +719,13 @@
             renderStepContent(currentStep);
             updateProgress();
             updateButtons();
-            
+
             // Set up event listeners
             prevBtn.addEventListener('click', goToPrevStep);
             nextBtn.addEventListener('click', goToNextStep);
             completeBtn.addEventListener('click', completeExercise);
             restartBtn.addEventListener('click', restartExercise);
-            
+
             // Prompt for student name
             setTimeout(() => {
                 const studentName = prompt("Please enter your name for the exercise:", "Student Name");
@@ -734,24 +739,24 @@
         // Render the step indicator in the sidebar
         function renderStepIndicator() {
             stepIndicator.innerHTML = '';
-            
+
             exerciseSteps.forEach(step => {
                 const stepItem = document.createElement('div');
                 stepItem.className = `step-indicator-item ${step.id === currentStep ? 'active' : ''}`;
                 stepItem.dataset.stepId = step.id;
-                
+
                 stepItem.innerHTML = `
                     <div class="step-indicator-number">${step.id}</div>
                     <div class="step-indicator-text">${step.title}</div>
                     ${step.id < currentStep ? '<div class="completed-step"><i class="fas fa-check"></i></div>' : ''}
                 `;
-                
+
                 stepItem.addEventListener('click', () => {
                     if (step.id <= currentStep) {
                         goToStep(step.id);
                     }
                 });
-                
+
                 stepIndicator.appendChild(stepItem);
             });
         }
@@ -760,7 +765,7 @@
         function renderStepContent(stepId) {
             const step = exerciseSteps.find(s => s.id === stepId);
             if (!step) return;
-            
+
             stepContentContainer.innerHTML = `
                 <div class="step-container">
                     <div class="step-header" onclick="toggleStepContent(${stepId})">
@@ -790,7 +795,7 @@
         // Go to a specific step
         function goToStep(stepId) {
             if (stepId < 1 || stepId > totalSteps) return;
-            
+
             currentStep = stepId;
             renderStepIndicator();
             renderStepContent(currentStep);
@@ -826,7 +831,7 @@
             renderStepContent(currentStep);
             updateProgress();
             updateButtons();
-            
+
             downloadArea.classList.remove('active');
             stepContentContainer.style.display = 'block';
             document.querySelector('.action-buttons').style.display = 'flex';
@@ -842,7 +847,7 @@
         // Update button states
         function updateButtons() {
             prevBtn.disabled = currentStep === 1;
-            
+
             if (currentStep === totalSteps) {
                 nextBtn.style.display = 'none';
                 completeBtn.style.display = 'flex';
@@ -856,4 +861,5 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>

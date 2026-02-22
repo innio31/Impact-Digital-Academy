@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 6 Assignment: Document Collaboration - Impact Digital Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/images/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d3d8c 0%, #1a5bb8 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .header .week-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section-title {
+            color: #0d3d8c;
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e0e6ed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #185abd;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            color: #185abd;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #185abd;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: #0d3d8c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .success-box h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assignment-details {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .step-container {
+            margin-bottom: 40px;
+            border-left: 4px solid #28a745;
+            padding-left: 20px;
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .task-table th {
+            background: #0d3d8c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .task-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .task-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .task-table tr:hover {
+            background: #e8f0ff;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid #185abd;
+        }
+
+        .checklist li i {
+            color: #28a745;
+            width: 20px;
+        }
+
+        .submission-area {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px dashed #4caf50;
+        }
+
+        .submission-title {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-name {
+            font-family: monospace;
+            background: #333;
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #0d3d8c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #185abd;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #34ce57;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #ffca2c;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .download-btn {
+            background: #185abd;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+        .download-btn:hover {
+            background: #0d3d8c;
+        }
+
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        .rubric-table th {
+            background: #0d3d8c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .rubric-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .rubric-table tr:hover {
+            background: #f0f7ff;
+        }
+
+        .points-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .shortcut-key {
+            background: #185abd;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #0d3d8c;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-answer {
+            padding-left: 30px;
+            color: #666;
+        }
+
+        .progress-tracker {
+            background: #f0f7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e6ed;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #185abd, #28a745);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .reviewer-tag {
+            background: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #0d3d8c;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .task-table {
+                font-size: 0.9rem;
+            }
+
+            .task-table th,
+            .task-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Week 6 Assignment</h1>
+            <div class="subtitle">Managing Document Collaboration</div>
+            <div class="week-badge">Due:
+                <?php echo date('l, F j, Y', strtotime('+7 days')); ?>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Assignment Overview -->
+            <div class="info-box">
+                <h4><i class="fas fa-clipboard-list"></i> Assignment Overview</h4>
+                <p>In this assignment, you'll simulate a real-world collaborative editing scenario. You'll work with a
+                    sample document, add comments, track changes, review edits, and finalize the document using Word's
+                    collaboration tools. This hands-on exercise will prepare you for the MO-100 exam and professional
+                    document collaboration situations.</p>
+
+                <div style="display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
+                    <div><span class="points-badge">100 Total Points</span></div>
+                    <div><span class="points-badge">⏱️ 2-3 Hours</span></div>
+                    <div><span class="points-badge">📄 2 Files to Submit</span></div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="section-title">
+                <i class="fas fa-bullseye"></i> Learning Objectives
+            </div>
+
+            <ul style="margin-bottom: 30px;">
+                <li>Add, reply to, resolve, and delete comments in a Word document</li>
+                <li>Enable Track Changes and make tracked edits</li>
+                <li>Navigate between changes and comments</li>
+                <li>Accept and reject tracked changes</li>
+                <li>Lock and unlock change tracking with password protection</li>
+                <li>Compare different markup views</li>
+                <li>Document the collaborative review process</li>
+            </ul>
+
+            <!-- Materials Needed -->
+            <div class="success-box">
+                <h4><i class="fas fa-box-open"></i> Materials Needed</h4>
+                <ul style="margin-bottom: 0;">
+                    <li>Microsoft Word 2019 or Microsoft 365</li>
+                    <li><strong>Sample Document:</strong> Week6_Collaboration_Exercise.docx (download below)</li>
+                    <li>Week 6 Handout (for reference)</li>
+                    <li>MO-100 Exam Objectives Guide</li>
+                </ul>
+
+                <div style="margin: 20px 0;">
+                    <a href="#" class="download-btn" onclick="downloadSample()">
+                        <i class="fas fa-download"></i> Download Sample Document
+                    </a>
+                    <a href="#" class="download-btn" onclick="downloadTemplate()">
+                        <i class="fas fa-download"></i> Download Review Template
+                    </a>
+                </div>
+            </div>
+
+            <!-- Assignment Tasks -->
+            <div class="section-title">
+                <i class="fas fa-tasks"></i> Assignment Tasks (100 points)
+            </div>
+
+            <!-- Task 1: Comments -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Add and Manage Comments (20 points)</div>
+                </div>
+
+                <p>Open the sample document and add meaningful comments as specified below.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Add a comment to the title suggesting a more engaging headline</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="1"></td>
+                        </tr>
+                        <tr>
+                            <td>Add a comment to the first paragraph questioning the data source</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="2"></td>
+                        </tr>
+                        <tr>
+                            <td>Add a comment to a table cell noting formatting improvements</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="3"></td>
+                        </tr>
+                        <tr>
+                            <td>Add a general comment at the end: "Please review statistics for accuracy"</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="4"></td>
+                        </tr>
+                        <tr>
+                            <td>Reply to the first comment with: "Agreed. Changed to '2024 Market Analysis'"</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Resolve the second comment after addressing it</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="6"></td>
+                        </tr>
+                        <tr>
+                            <td>Delete the third comment (the one about table formatting)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="7"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4><i class="fas fa-lightbulb"></i> Comment Guidelines</h4>
+                    <ul style="margin-bottom: 0;">
+                        <li>Be specific and constructive in your comments</li>
+                        <li>Use professional language suitable for workplace collaboration</li>
+                        <li>For resolved comments, ensure they appear grayed out</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Task 2: Track Changes -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Make Tracked Changes (25 points)</div>
+                </div>
+
+                <p>Enable Track Changes and make the following edits to the document.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Enable Track Changes using shortcut <span class="shortcut-key">Ctrl + Shift + E</span>
+                            </td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="8"></td>
+                        </tr>
+                        <tr>
+                            <td>Delete one complete sentence from the introduction</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="9"></td>
+                        </tr>
+                        <tr>
+                            <td>Add a new sentence after the first paragraph</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="10"></td>
+                        </tr>
+                        <tr>
+                            <td>Change three words to improve clarity (e.g., "good" → "excellent")</td>
+                            <td>4</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="11"></td>
+                        </tr>
+                        <tr>
+                            <td>Change the formatting of a heading (font size, color, or style)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="12"></td>
+                        </tr>
+                        <tr>
+                            <td>Move a paragraph to a different location in the document</td>
+                            <td>4</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="13"></td>
+                        </tr>
+                        <tr>
+                            <td>Add a new row to an existing table</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="14"></td>
+                        </tr>
+                        <tr>
+                            <td>Verify Track Changes is still ON (check status bar)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="15"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Task 3: Markup Views -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Explore Markup Views (10 points)</div>
+                </div>
+
+                <p>Switch between different markup views and document your observations.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Switch to Simple Markup and describe what you see (in reflection doc)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="16"></td>
+                        </tr>
+                        <tr>
+                            <td>Switch to All Markup and describe the differences (in reflection doc)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="17"></td>
+                        </tr>
+                        <tr>
+                            <td>Switch to No Markup and describe what you see (in reflection doc)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="18"></td>
+                        </tr>
+                        <tr>
+                            <td>Switch to Original and describe what you see (in reflection doc)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="19"></td>
+                        </tr>
+                        <tr>
+                            <td>Explain when you would use each view (in reflection doc)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="20"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Task 4: Review Changes -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Review and Finalize Changes (20 points)</div>
+                </div>
+
+                <p>Review all tracked changes and comments, then accept or reject as specified.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Navigate to the next tracked change using <span class="shortcut-key">Ctrl + Shift +
+                                    ></span></td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="21"></td>
+                        </tr>
+                        <tr>
+                            <td>Accept the added sentence from Task 2</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="22"></td>
+                        </tr>
+                        <tr>
+                            <td>Reject the deleted sentence from Task 2</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="23"></td>
+                        </tr>
+                        <tr>
+                            <td>Accept two of the word changes, reject one</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="24"></td>
+                        </tr>
+                        <tr>
+                            <td>Accept the formatting change to the heading</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="25"></td>
+                        </tr>
+                        <tr>
+                            <td>Accept the paragraph move</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="26"></td>
+                        </tr>
+                        <tr>
+                            <td>Accept the new table row addition</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="27"></td>
+                        </tr>
+                        <tr>
+                            <td>Ensure all changes are either accepted or rejected (no remaining markup)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="28"></td>
+                        </tr>
+                        <tr>
+                            <td>Turn OFF Track Changes (<span class="shortcut-key">Ctrl + Shift + E</span>)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="29"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Task 5: Lock Tracking -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Lock Change Tracking (10 points)</div>
+                </div>
+
+                <p>Practice locking Track Changes to protect the document's edit history.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lock Track Changes with password: <strong>collab2024</strong></td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="30"></td>
+                        </tr>
+                        <tr>
+                            <td>Attempt to turn off Track Changes (should require password)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="31"></td>
+                        </tr>
+                        <tr>
+                            <td>Make one more tracked change (it should be recorded)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="32"></td>
+                        </tr>
+                        <tr>
+                            <td>Unlock Track Changes using the password</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="33"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <h4><i class="fas fa-lock"></i> Important</h4>
+                    <p>Remember the password you set. Write it down in a secure place. In a real work environment, lost
+                        passwords can cause significant delays.</p>
+                </div>
+            </div>
+
+            <!-- Task 6: Documentation -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Reflection & Documentation (15 points)</div>
+                </div>
+
+                <p>Create a separate document documenting your collaboration process and reflections.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Document all comments you added (text and location)</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="34"></td>
+                        </tr>
+                        <tr>
+                            <td>List all tracked changes you made</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="35"></td>
+                        </tr>
+                        <tr>
+                            <td>Explain which changes you accepted/rejected and why</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="36"></td>
+                        </tr>
+                        <tr>
+                            <td>Describe your observations of each markup view (Simple, All, No Markup, Original)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="37"></td>
+                        </tr>
+                        <tr>
+                            <td>Explain when and why you would use Lock Tracking</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="38"></td>
+                        </tr>
+                        <tr>
+                            <td>Reflect on challenges encountered and how you overcame them</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="39"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="progress-tracker">
+                <h4><i class="fas fa-chart-line"></i> Your Progress</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <p id="progressText">0/39 tasks completed (0%)</p>
+                <p><small>Check off tasks as you complete them. Progress saves automatically in your browser.</small>
+                </p>
+            </div>
+
+            <!-- Submission Instructions -->
+            <div class="section-title">
+                <i class="fas fa-upload"></i> Submission Instructions
+            </div>
+
+            <div class="submission-area">
+                <div class="submission-title">
+                    <i class="fas fa-check-circle"></i> Ready to Submit
+                </div>
+
+                <p>You need to submit <strong>TWO files</strong> for this assignment:</p>
+
+                <ol style="margin-bottom: 20px;">
+                    <li><strong>Collaboration Document:</strong> Your fully edited Word document with all comments and
+                        changes (final version after review)</li>
+                    <li><strong>Reflection Document:</strong> Your documentation and reflection (Word or PDF format)
+                    </li>
+                </ol>
+
+                <div class="file-name">
+                    YourName_Week6_Collaboration.docx
+                </div>
+
+                <div class="file-name" style="background: #555;">
+                    YourName_Week6_Reflection.docx
+                </div>
+
+                <p style="margin: 20px 0;"><strong>Naming Convention:</strong> Replace "YourName" with your actual name
+                    (e.g., JohnDoe_Week6_Collaboration.docx)</p>
+
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="simulateUpload()">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Assignment
+                    </button>
+                    <button class="btn btn-success" onclick="validateSubmission()">
+                        <i class="fas fa-check"></i> Validate Submission
+                    </button>
+                    <button class="btn btn-info" onclick="saveProgress()">
+                        <i class="fas fa-save"></i> Save Progress
+                    </button>
+                    <button class="btn btn-warning" onclick="resetProgress()">
+                        <i class="fas fa-undo"></i> Reset Progress
+                    </button>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> You can save your progress and return later. Make sure to submit
+                    before the deadline.
+                </p>
+            </div>
+
+            <!-- Grading Rubric -->
+            <div class="section-title">
+                <i class="fas fa-star"></i> Grading Rubric
+            </div>
+
+            <table class="rubric-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Excellent (90-100%)</th>
+                        <th>Good (75-89%)</th>
+                        <th>Satisfactory (60-74%)</th>
+                        <th>Needs Improvement (&lt;60%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Comments</strong> (20 pts)</td>
+                        <td>All comments added correctly, replies made, resolve/delete used appropriately</td>
+                        <td>Most comments added, some missing replies or resolution</td>
+                        <td>Some comments added, but incomplete comment management</td>
+                        <td>Few or no comments added</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Track Changes</strong> (25 pts)</td>
+                        <td>All required changes made and tracked correctly, various edit types demonstrated</td>
+                        <td>Most changes made and tracked, minor omissions</td>
+                        <td>Some changes made, tracking issues present</td>
+                        <td>Few changes made or tracking not properly enabled</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Markup Views</strong> (10 pts)</td>
+                        <td>All views explored, excellent observations documented</td>
+                        <td>Most views explored, good observations</td>
+                        <td>Some views explored, basic observations</td>
+                        <td>Views not explored or observations missing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Review Process</strong> (20 pts)</td>
+                        <td>Changes accepted/rejected appropriately, all markup cleared</td>
+                        <td>Most changes reviewed, some remaining markup</td>
+                        <td>Some changes reviewed, significant remaining markup</td>
+                        <td>Little or no review completed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lock Tracking</strong> (10 pts)</td>
+                        <td>Locking/unlocking demonstrated correctly, password used</td>
+                        <td>Locking demonstrated but issues with unlocking</td>
+                        <td>Attempted but not fully successful</td>
+                        <td>Not attempted or incomplete</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Documentation</strong> (15 pts)</td>
+                        <td>Comprehensive reflection with all elements, thoughtful analysis</td>
+                        <td>Good reflection with most elements</td>
+                        <td>Basic reflection with some elements</td>
+                        <td>Missing or very minimal reflection</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Collaboration Scenario -->
+            <div class="section-title">
+                <i class="fas fa-users"></i> Real-World Collaboration Scenario
+            </div>
+
+            <div style="background: #f0f7ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="color: #0d3d8c; margin-bottom: 10px;">Scenario: Quarterly Report Review</h4>
+                <p>You are part of a team preparing the Q3 Financial Report. The document has been passed between team
+                    members for review. Your role is to:</p>
+                <ol style="margin-top: 10px;">
+                    <li>Add comments with suggestions for improvement</li>
+                    <li>Track your own edits so others can see what you changed</li>
+                    <li>Review comments and changes from other team members (simulated in this assignment)</li>
+                    <li>Make decisions about which changes to accept or reject</li>
+                    <li>Finalize the document for distribution</li>
+                    <li>Lock the document to prevent further changes before sending to management</li>
+                </ol>
+                <p style="margin-top: 15px; font-style: italic; color: #666;">This scenario mirrors common workplace
+                    collaboration workflows. The skills you practice here are directly applicable to real-world document
+                    management.</p>
+            </div>
+
+            <!-- Self-Review Questions -->
+            <div class="section-title">
+                <i class="fas fa-question-circle"></i> Self-Review Questions
+            </div>
+
+            <p>Answer these questions in your reflection document:</p>
+
+            <ol style="margin: 20px 0 30px 30px;">
+                <li>What is the difference between Simple Markup and All Markup, and when would you use each?</li>
+                <li>Why would you resolve a comment instead of deleting it?</li>
+                <li>In what situations would you lock Track Changes with a password?</li>
+                <li>How can you view changes from only one specific reviewer?</li>
+                <li>What happens to formatting changes when you accept or reject them?</li>
+                <li>How does Track Changes help maintain document integrity during collaborative editing?</li>
+                <li>What challenges did you encounter with the review process and how did you resolve them?</li>
+            </ol>
+
+            <!-- MO-100 Exam Tips -->
+            <div class="info-box">
+                <h4><i class="fas fa-graduation-cap"></i> MO-100 Exam Tips: Collaboration</h4>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>Know the shortcuts:</strong> Memorize Ctrl+Alt+M (comment), Ctrl+Shift+E (track changes)
+                    </li>
+                    <li><strong>Understand markup views:</strong> Questions often ask about the visual differences
+                        between Simple, All, No Markup, and Original</li>
+                    <li><strong>Reviewer filtering:</strong> Practice viewing changes from specific reviewers</li>
+                    <li><strong>Accept/Reject options:</strong> Know how to accept/reject individual changes, all
+                        changes, or changes from specific reviewers</li>
+                    <li><strong>Lock Tracking:</strong> Understand when and why to lock change tracking</li>
+                </ul>
+            </div>
+
+            <!-- Keyboard Shortcuts Summary -->
+            <div class="section-title">
+                <i class="fas fa-keyboard"></i> Collaboration Keyboard Shortcuts
+            </div>
+
+            <table class="task-table" style="margin-bottom: 30px;">
+                <thead>
+                    <tr>
+                        <th width="40%">Shortcut</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Alt + M</span></td>
+                        <td>Insert a new comment</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Shift + E</span></td>
+                        <td>Turn Track Changes on/off</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Shift + A</span></td>
+                        <td>Accept a tracked change</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Shift + R</span></td>
+                        <td>Reject a tracked change</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Shift + ></span></td>
+                        <td>Go to next comment/change</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Ctrl + Shift + << /span>
+                        </td>
+                        <td>Go to previous comment/change</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- FAQs -->
+            <div class="section-title">
+                <i class="fas fa-comments"></i> Frequently Asked Questions
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    What if I accidentally accept or reject the wrong change?
+                </div>
+                <div class="faq-answer">
+                    You can use Undo (Ctrl+Z) immediately after accepting/rejecting. However, if you've closed the
+                    document, the action is permanent. Always save a copy before bulk accepting/rejecting changes.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    How do I see changes from only one reviewer?
+                </div>
+                <div class="faq-answer">
+                    Go to Review tab → Show Markup → Reviewers → deselect all reviewers except the one you want to see.
+                    This filters both comments and tracked changes.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    Can I recover a resolved comment?
+                </div>
+                <div class="faq-answer">
+                    No, resolving a comment is permanent. The comment remains but is grayed out and cannot be
+                    unresolved. If you might need it again, consider leaving it active or copying the text elsewhere
+                    before resolving.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    What happens if I forget the Lock Tracking password?
+                </div>
+                <div class="faq-answer">
+                    There is no password recovery option in Word. If you forget the password, you cannot unlock
+                    tracking. You would need to work on a copy of the document without the lock, but this would break
+                    the edit history. Always store passwords securely.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    How can I tell if Track Changes is on without looking at the Review tab?
+                </div>
+                <div class="faq-answer">
+                    Check the status bar at the bottom of the Word window. It displays "Track Changes: On" when enabled.
+                    You can also customize the status bar to always show this indicator.
+                </div>
+            </div>
+
+            <!-- Deadline Reminder -->
+            <div class="warning-box" style="margin-top: 30px;">
+                <h4><i class="fas fa-clock"></i> Deadline Reminder</h4>
+                <p>This assignment is due by <strong>
+                        <?php echo date('l, F j, Y \a\t g:i A', strtotime('next Friday 11:59 PM')); ?>
+                    </strong>. Late submissions will incur a 10% penalty per day.</p>
+                <p style="margin-top: 10px;"><strong>Week 7 Preview:</strong> Document Inspection and Final Exam
+                    Preparation. Complete this assignment to build your collaboration skills for the exam!</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>MO-100: Microsoft Word Certification Prep Program – Week 6 Assignment: Document Collaboration</p>
+            <p>Impact Digital Academy • ©
+                <?php echo date('Y'); ?> All rights reserved.
+            </p>
+            <p id="currentDate" style="margin-top: 10px; font-size: 0.8rem;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress tracking with localStorage
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            // Load saved progress
+            loadProgress();
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+
+                // Add visual feedback on change
+                checkbox.addEventListener('change', function () {
+                    const row = this.closest('tr');
+                    if (this.checked) {
+                        row.style.backgroundColor = '#e8f5e9';
+                    } else {
+                        row.style.backgroundColor = '';
+                    }
+                });
+            });
+
+            function updateProgress() {
+                const total = document.querySelectorAll('.task-checkbox').length;
+                const checked = document.querySelectorAll('.task-checkbox:checked').length;
+                const percentage = (checked / total) * 100;
+
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = `${checked}/${total} tasks completed (${Math.round(percentage)}%)`;
+
+                // Auto-save progress
+                saveProgress();
+            }
+
+            function saveProgress() {
+                const progress = {};
+                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    progress[checkbox.dataset.task] = checkbox.checked;
+                });
+                localStorage.setItem('week6AssignmentProgress', JSON.stringify(progress));
+                localStorage.setItem('week6LastSaved', new Date().toISOString());
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem('week6AssignmentProgress');
+                if (saved) {
+                    const progress = JSON.parse(saved);
+                    document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                        if (progress[checkbox.dataset.task]) {
+                            checkbox.checked = true;
+                            checkbox.closest('tr').style.backgroundColor = '#e8f5e9';
+                        }
+                    });
+                }
+                updateProgress();
+
+                // Show last saved time
+                const lastSaved = localStorage.getItem('week6LastSaved');
+                if (lastSaved) {
+                    const savedDate = new Date(lastSaved);
+                    console.log('Last saved:', savedDate.toLocaleString());
+                }
+            }
+
+            // Expose functions globally
+            window.saveProgress = function () {
+                saveProgress();
+                alert('Progress saved successfully! You can return to this page later.');
+            };
+
+            window.resetProgress = function () {
+                if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                    localStorage.removeItem('week6AssignmentProgress');
+                    localStorage.removeItem('week6LastSaved');
+                    location.reload();
+                }
+            };
+        });
+
+        // Current date
+        document.getElementById('currentDate').textContent = 'Assignment accessed: ' + new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Download functions
+        function downloadSample() {
+            alert('Sample document would download. In production, this would link to Week6_Collaboration_Exercise.docx');
+            // window.location.href = 'modules/shared/course_materials/MSWord/exercises/week6_collaboration.docx';
+        }
+
+        function downloadTemplate() {
+            alert('Review template would download. In production, this would link to collaboration_review_template.docx');
+            // window.location.href = 'modules/shared/course_materials/MSWord/templates/review_template.docx';
+        }
+
+        // Submission validation
+        function validateSubmission() {
+            const total = document.querySelectorAll('.task-checkbox').length;
+            const checked = document.querySelectorAll('.task-checkbox:checked').length;
+
+            if (checked === total) {
+                alert('✓ Validation passed! You have completed all tasks. Ready to submit!');
+            } else {
+                const remaining = total - checked;
+                alert(`⚠️ You still have ${remaining} incomplete tasks. Complete all tasks before submitting for full credit.`);
+            }
+        }
+
+        function simulateUpload() {
+            validateSubmission();
+            if (confirm('This simulates file upload. In production, this would open a file browser. Continue?')) {
+                alert('Assignment upload simulation complete. In the real system, you would now select your files to upload.');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Ctrl+S to save progress
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveProgress();
+            }
+
+            // Ctrl+Q to show quick tips
+            if (e.ctrlKey && e.key === 'q') {
+                e.preventDefault();
+                alert('Week 6 Assignment Tips:\n\n' +
+                    '1. Work through tasks in order\n' +
+                    '2. Save a copy before locking tracking\n' +
+                    '3. Use keyboard shortcuts for efficiency\n' +
+                    '4. Document your process as you go\n' +
+                    '5. Test different markup views thoroughly');
+            }
+
+            // Ctrl+D to show deadline
+
+        });
+
+        // Warn before leaving with unsaved changes
+        window.addEventListener('beforeunload', function (e) {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+            if (anyChecked) {
+                const saved = localStorage.getItem('week6AssignmentProgress');
+                if (saved) {
+                    const currentProgress = {};
+                    checkboxes.forEach(cb => {
+                        currentProgress[cb.dataset.task] = cb.checked;
+                    });
+
+                    if (JSON.stringify(currentProgress) !== saved) {
+                        e.preventDefault();
+                        e.returnValue = 'You have unsaved progress. Save before leaving?';
+                    }
+                }
+            }
+        });
+
+        // Print function
+        function printAssignment() {
+            window.print();
+        }
+
+        // Export checklist
+        function exportChecklist() {
+            const tasks = [];
+            document.querySelectorAll('.task-table tbody tr').forEach(row => {
+                const taskText = row.cells[0]?.textContent || '';
+                const points = row.cells[1]?.textContent || '';
+                if (taskText && points) {
+                    tasks.push(`${taskText} (${points})`);
+                }
+            });
+
+            console.log('Checklist exported:', tasks);
+            alert(`Checklist exported to console (F12). ${tasks.length} tasks listed.`);
+        }
+
+        // Highlight incomplete tasks
+        function showIncomplete() {
+            const incomplete = [];
+            document.querySelectorAll('.task-checkbox:not(:checked)').forEach(cb => {
+                const row = cb.closest('tr');
+                if (row) {
+                    const taskText = row.cells[0]?.textContent || 'Unknown task';
+                    incomplete.push(taskText);
+                }
+            });
+
+            if (incomplete.length === 0) {
+                alert('All tasks complete! Great job!');
+            } else {
+                alert(`Incomplete tasks (${incomplete.length}):\n\n${incomplete.slice(0, 5).join('\n')}${incomplete.length > 5 ? '\n...and more' : ''}`);
+            }
+        }
+
+        // Quick navigation
+        document.addEventListener('keydown', function (e) {
+            if (e.altKey && e.key === '1') window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (e.altKey && e.key === '2') {
+                document.querySelector('.submission-area').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+
+</html>
