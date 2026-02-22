@@ -799,6 +799,9 @@ logActivity('course_view', "Viewed course: {$course['course_code']}", 'courses',
                     </div>
                     <div class="section-content">
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <a href="template_manager.php?course_id=<?php echo $course['id']; ?>" class="btn btn-info">
+                                <i class="fas fa-layer-group"></i> Manage Content Templates
+                            </a>
                             <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php?course_id=<?php echo $course['id']; ?>"
                                 class="btn btn-primary">
                                 <i class="fas fa-chalkboard"></i> Create New Class

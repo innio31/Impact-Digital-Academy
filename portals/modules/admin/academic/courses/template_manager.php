@@ -1,5 +1,5 @@
 <?php
-// modules/instructor/courses/template_manager.php
+// modules/admin/academic/courses/template_manager.php
 
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
@@ -7,16 +7,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Include configuration and functions
-require_once __DIR__ . '/../../../includes/config.php';
-require_once __DIR__ . '/../../../includes/functions.php';
+require_once __DIR__ . '/../../../../includes/config.php';
+require_once __DIR__ . '/../../../../includes/functions.php';
 
-// Check if user is logged in and is instructor
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'instructor') {
-    header('Location: ' . BASE_URL . 'modules/auth/login.php');
-    exit();
-}
+// Check if user is logged in and is admin
+requireRole('admin');
 
-$instructor_id = $_SESSION['user_id'];
+$admin_id = $_SESSION['user_id'];
 
 // Get database connection
 $conn = getDBConnection();
@@ -26,14 +23,14 @@ if (!$conn) {
 
 // Get course ID from URL
 if (!isset($_GET['course_id']) || !is_numeric($_GET['course_id'])) {
-    header('Location: ../courses.php');
+    header('Location: index.php');
     exit();
 }
 
 $course_id = (int)$_GET['course_id'];
 
-// Verify instructor has access to this course
-$sql = "SELECT c.*, p.name as program_name 
+// Get course details
+$sql = "SELECT c.*, p.name as program_name, p.program_code 
         FROM courses c 
         JOIN programs p ON c.program_id = p.id 
         WHERE c.id = ?";
@@ -45,7 +42,7 @@ $result = $stmt->get_result();
 if ($result->num_rows === 0) {
     $stmt->close();
     $conn->close();
-    header('Location: ../courses.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -65,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Initialize content data array
         $content_data = [
-            'instructor_id' => $instructor_id,
+            'admin_id' => $admin_id,
             'week_number' => $week_number,
             'description' => $description
         ];
@@ -91,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $content_data['due_days'] = (int)$_POST['due_days']; // Days after publish
             $content_data['max_files'] = (int)$_POST['max_files'];
             $content_data['allowed_extensions'] = $_POST['allowed_extensions'];
+            $content_data['instructions'] = trim($_POST['instructions'] ?? '');
 
             // Handle assignment attachment if any
             if (isset($_FILES['assignment_attachment']) && $_FILES['assignment_attachment']['error'] === 0) {
@@ -110,31 +108,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $content_data['shuffle_questions'] = isset($_POST['shuffle_questions']) ? 1 : 0;
             $content_data['shuffle_options'] = isset($_POST['shuffle_options']) ? 1 : 0;
             $content_data['show_correct_answers'] = isset($_POST['show_correct_answers']) ? 1 : 0;
+            $content_data['instructions'] = trim($_POST['instructions'] ?? '');
         }
 
         if (!$upload_error) {
             // Save template to database
             $sql = "INSERT INTO course_content_templates 
-                    (course_id, instructor_id, week_number, content_type, title, content_data, file_references) 
+                    (course_id, admin_id, week_number, content_type, title, content_data, file_references) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            $stmt = $conn->prepare($sql);
+            $insert_stmt = $conn->prepare($sql);
             $content_data_json = json_encode($content_data);
             $file_refs_json = json_encode($file_references);
 
-            $stmt->bind_param("iiissss", $course_id, $instructor_id, $week_number, $content_type, $title, $content_data_json, $file_refs_json);
+            $insert_stmt->bind_param("iiissss", $course_id, $admin_id, $week_number, $content_type, $title, $content_data_json, $file_refs_json);
 
-            if ($stmt->execute()) {
+            if ($insert_stmt->execute()) {
                 $message = "Template created successfully!";
                 $message_type = "success";
 
                 // Log activity
-                logActivity('template_created', "Created {$content_type} template: {$title}", 'course_content_templates', $stmt->insert_id);
+                logActivity('template_created', "Created {$content_type} template: {$title}", 'course_content_templates', $insert_stmt->insert_id);
             } else {
                 $message = "Failed to create template: " . $conn->error;
                 $message_type = "error";
             }
-            $stmt->close();
+            $insert_stmt->close();
         } else {
             $message = $upload_error;
             $message_type = "error";
@@ -143,9 +142,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template_id = (int)$_POST['template_id'];
 
         // Get file references to delete actual files
-        $sql = "SELECT file_references FROM course_content_templates WHERE id = ? AND instructor_id = ?";
+        $sql = "SELECT file_references FROM course_content_templates WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $template_id, $instructor_id);
+        $stmt->bind_param("i", $template_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -153,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_refs = json_decode($row['file_references'], true);
             if (!empty($file_refs)) {
                 foreach ($file_refs as $file) {
-                    $file_path = __DIR__ . '/../../../uploads/templates/' . $file['path'];
+                    $file_path = __DIR__ . '/../../../../uploads/templates/' . $file['path'];
                     if (file_exists($file_path)) {
                         unlink($file_path);
                     }
@@ -163,11 +162,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         // Delete template
-        $sql = "DELETE FROM course_content_templates WHERE id = ? AND instructor_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $template_id, $instructor_id);
+        $sql = "DELETE FROM course_content_templates WHERE id = ?";
+        $delete_stmt = $conn->prepare($sql);
+        $delete_stmt->bind_param("i", $template_id);
 
-        if ($stmt->execute()) {
+        if ($delete_stmt->execute()) {
             $message = "Template deleted successfully!";
             $message_type = "success";
             logActivity('template_deleted', "Deleted template ID: {$template_id}", 'course_content_templates', $template_id);
@@ -175,29 +174,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "Failed to delete template: " . $conn->error;
             $message_type = "error";
         }
-        $stmt->close();
+        $delete_stmt->close();
     } elseif (isset($_POST['action']) && $_POST['action'] === 'duplicate_template') {
         $template_id = (int)$_POST['template_id'];
         $target_week = (int)$_POST['target_week'];
 
         // Get original template
-        $sql = "SELECT * FROM course_content_templates WHERE id = ? AND instructor_id = ?";
+        $sql = "SELECT * FROM course_content_templates WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $template_id, $instructor_id);
+        $stmt->bind_param("i", $template_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
             // Duplicate template with new week number
             $insert_sql = "INSERT INTO course_content_templates 
-                          (course_id, instructor_id, week_number, content_type, title, content_data, file_references) 
+                          (course_id, admin_id, week_number, content_type, title, content_data, file_references) 
                           VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             $insert_stmt = $conn->prepare($insert_sql);
             $insert_stmt->bind_param(
                 "iiissss",
                 $row['course_id'],
-                $row['instructor_id'],
+                $row['admin_id'],
                 $target_week,
                 $row['content_type'],
                 $row['title'] . ' (Copy)',
@@ -216,15 +215,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insert_stmt->close();
         }
         $stmt->close();
+    } elseif (isset($_POST['action']) && $_POST['action'] === 'toggle_active') {
+        $template_id = (int)$_POST['template_id'];
+        $is_active = (int)$_POST['is_active'];
+
+        $sql = "UPDATE course_content_templates SET is_active = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $is_active, $template_id);
+
+        if ($stmt->execute()) {
+            $message = "Template " . ($is_active ? 'activated' : 'deactivated') . " successfully!";
+            $message_type = "success";
+        }
+        $stmt->close();
     }
 }
 
 // Get all templates for this course
 $templates_sql = "SELECT * FROM course_content_templates 
-                  WHERE course_id = ? AND instructor_id = ? 
+                  WHERE course_id = ? 
                   ORDER BY week_number, content_type, created_at";
 $stmt = $conn->prepare($templates_sql);
-$stmt->bind_param("ii", $course_id, $instructor_id);
+$stmt->bind_param("i", $course_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $templates = [];
@@ -248,7 +260,7 @@ foreach ($templates as $template) {
 // Helper function for file uploads
 function handleTemplateFileUpload($file, $course_id, $type)
 {
-    $upload_dir = __DIR__ . '/../../../uploads/templates/' . $course_id . '/';
+    $upload_dir = __DIR__ . '/../../../../uploads/templates/' . $course_id . '/';
 
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0755, true);
@@ -258,7 +270,7 @@ function handleTemplateFileUpload($file, $course_id, $type)
     $unique_name = uniqid() . '_' . time() . '.' . $file_ext;
     $target_path = $upload_dir . $unique_name;
 
-    $allowed_types = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'mp4', 'zip'];
+    $allowed_types = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'mp4', 'zip', 'txt'];
 
     if (in_array($file_ext, $allowed_types)) {
         if (move_uploaded_file($file['tmp_name'], $target_path)) {
@@ -288,19 +300,22 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Template Manager - <?php echo htmlspecialchars($course['title']); ?></title>
+    <title>Course Content Templates - <?php echo htmlspecialchars($course['title']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #f59e0b;
             --success: #10b981;
-            --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #0ea5e9;
+            --info: #3b82f6;
+            --warning: #f59e0b;
             --light: #f8fafc;
             --dark: #1e293b;
             --gray: #64748b;
+            --light-gray: #e2e8f0;
         }
 
         * {
@@ -318,7 +333,7 @@ $conn->close();
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 2rem;
         }
 
         /* Header */
@@ -342,6 +357,92 @@ $conn->close();
             font-size: 1.1rem;
         }
 
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .context-switch {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--light-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: white;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
         /* Week Tabs */
         .week-tabs {
             display: flex;
@@ -354,12 +455,14 @@ $conn->close();
         .week-tab {
             padding: 1rem 2rem;
             background: white;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--light-gray);
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
             white-space: nowrap;
+            min-width: 100px;
+            text-align: center;
         }
 
         .week-tab:hover {
@@ -385,11 +488,11 @@ $conn->close();
         /* Content Grid */
         .content-grid {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 450px;
             gap: 2rem;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .content-grid {
                 grid-template-columns: 1fr;
             }
@@ -411,6 +514,11 @@ $conn->close();
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .content-card.inactive {
+            opacity: 0.6;
         }
 
         .content-card.material {
@@ -442,7 +550,7 @@ $conn->close();
         }
 
         .badge-material {
-            background: rgba(14, 165, 233, 0.1);
+            background: rgba(59, 130, 246, 0.1);
             color: var(--info);
         }
 
@@ -466,8 +574,8 @@ $conn->close();
         .content-preview {
             display: none;
             padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            background: #f8fafc;
+            border-top: 1px solid var(--light-gray);
+            background: var(--light);
         }
 
         .content-card.expanded .content-preview {
@@ -479,6 +587,25 @@ $conn->close();
             gap: 0.5rem;
         }
 
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
         /* Form Panel */
         .form-panel {
             background: white;
@@ -487,6 +614,8 @@ $conn->close();
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 1rem;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
         }
 
         .form-panel h2 {
@@ -499,7 +628,7 @@ $conn->close();
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
@@ -507,22 +636,27 @@ $conn->close();
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--dark);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group label.required::after {
+            content: " *";
+            color: var(--danger);
         }
 
         .form-control {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e2e8f0;
+            border: 1px solid var(--light-gray);
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-row {
@@ -531,71 +665,10 @@ $conn->close();
             gap: 1rem;
         }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 0.875rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--gray);
-            border: 2px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: var(--gray);
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        .btn-danger {
-            background: white;
-            color: var(--danger);
-            border: 2px solid var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #0d9c6e;
-            transform: translateY(-2px);
-        }
-
         .file-upload {
-            border: 2px dashed #e2e8f0;
-            border-radius: 6px;
-            padding: 1.5rem;
+            border: 2px dashed var(--light-gray);
+            border-radius: 8px;
+            padding: 2rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -603,11 +676,26 @@ $conn->close();
 
         .file-upload:hover {
             border-color: var(--primary);
-            background: #f8fafc;
+            background: var(--light);
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
         }
 
         .file-upload input {
             display: none;
+        }
+
+        .file-info {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--primary);
         }
 
         .message {
@@ -631,37 +719,98 @@ $conn->close();
             border: 1px solid #fecaca;
         }
 
-        .context-switch {
-            margin-top: 1rem;
-            text-align: right;
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            background: white;
+            border-radius: 12px;
         }
 
-        .file-info {
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: #f1f5f9;
-            border-radius: 4px;
-            font-size: 0.875rem;
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
         }
 
-        .duplicate-form {
-            display: inline;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/">Programs</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/">Courses</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Template Manager</span>
+        </div>
+
         <!-- Header -->
         <div class="header">
             <h1><i class="fas fa-layer-group"></i> Content Template Manager</h1>
-            <p><?php echo htmlspecialchars($course['title']); ?> (<?php echo htmlspecialchars($course['course_code']); ?>)</p>
+            <p><?php echo htmlspecialchars($course['program_name']); ?> - <?php echo htmlspecialchars($course['title']); ?> (<?php echo htmlspecialchars($course['course_code']); ?>)</p>
             <div class="context-switch">
-                <a href="schedule_builder.php?course_id=<?php echo $course_id; ?>" class="btn btn-primary">
-                    <i class="fas fa-calendar-alt"></i> Go to Schedule Builder
+                <a href="view.php?id=<?php echo $course_id; ?>" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-eye"></i> View Course
                 </a>
-                <a href="../classes/class_home.php?course_id=<?php echo $course_id; ?>" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Course
+                <a href="edit.php?id=<?php echo $course_id; ?>" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-edit"></i> Edit Course
+                </a>
+                <a href="../../classes/schedule_builder.php?course_id=<?php echo $course_id; ?>" class="btn btn-primary btn-sm">
+                    <i class="fas fa-calendar-alt"></i> Go to Schedule Builder
                 </a>
             </div>
         </div>
@@ -693,35 +842,37 @@ $conn->close();
             <div class="left-column">
                 <?php for ($week = 1; $week <= 12; $week++): ?>
                     <div class="week-content <?php echo $week === 1 ? 'active' : ''; ?>" id="week-<?php echo $week; ?>">
-                        <h2 style="margin-bottom: 1.5rem;">Week <?php echo $week; ?> Content</h2>
+                        <h2 style="margin-bottom: 1.5rem;">Week <?php echo $week; ?> Content Templates</h2>
 
                         <?php if (isset($templates_by_week[$week])): ?>
                             <?php foreach ($templates_by_week[$week] as $template): ?>
-                                <div class="content-card <?php echo $template['content_type']; ?>" id="template-<?php echo $template['id']; ?>">
+                                <div class="content-card <?php echo $template['content_type']; ?> <?php echo !$template['is_active'] ? 'inactive' : ''; ?>" id="template-<?php echo $template['id']; ?>">
                                     <div class="content-header" onclick="toggleTemplate(<?php echo $template['id']; ?>)">
                                         <div>
                                             <span class="content-type-badge badge-<?php echo $template['content_type']; ?>">
                                                 <?php echo ucfirst($template['content_type']); ?>
                                             </span>
+                                            <?php if (!$template['is_active']): ?>
+                                                <span class="status-badge status-inactive">Inactive</span>
+                                            <?php endif; ?>
                                             <div class="content-title">
                                                 <?php echo htmlspecialchars($template['title']); ?>
                                             </div>
                                         </div>
-                                        <div class="content-actions">
-                                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); editTemplate(<?php echo $template['id']; ?>)">
+                                        <div class="content-actions" onclick="event.stopPropagation()">
+                                            <button class="btn btn-sm btn-secondary" onclick="editTemplate(<?php echo $template['id']; ?>)">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteTemplate(<?php echo $template['id']; ?>, '<?php echo htmlspecialchars($template['title']); ?>')">
+                                            <button class="btn btn-sm btn-<?php echo $template['is_active'] ? 'warning' : 'success'; ?>"
+                                                onclick="toggleActive(<?php echo $template['id']; ?>, <?php echo $template['is_active'] ? 0 : 1; ?>, '<?php echo htmlspecialchars($template['title']); ?>')">
+                                                <i class="fas fa-<?php echo $template['is_active'] ? 'pause' : 'play'; ?>"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success" onclick="duplicateTemplate(<?php echo $template['id']; ?>, <?php echo $week; ?>)">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteTemplate(<?php echo $template['id']; ?>, '<?php echo htmlspecialchars($template['title']); ?>')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <form method="POST" class="duplicate-form" onsubmit="event.stopPropagation()">
-                                                <input type="hidden" name="action" value="duplicate_template">
-                                                <input type="hidden" name="template_id" value="<?php echo $template['id']; ?>">
-                                                <input type="hidden" name="target_week" value="<?php echo $week; ?>">
-                                                <button type="submit" class="btn btn-sm btn-success" onclick="event.stopPropagation()">
-                                                    <i class="fas fa-copy"></i>
-                                                </button>
-                                            </form>
                                         </div>
                                     </div>
                                     <div class="content-preview">
@@ -729,13 +880,14 @@ $conn->close();
 
                                         <?php if ($template['content_type'] === 'material'): ?>
                                             <p><strong>File:</strong> <?php echo htmlspecialchars($template['content_data']['original_filename'] ?? 'No file'); ?></p>
+                                            <p><small>File type: <?php echo strtoupper($template['content_data']['file_type'] ?? 'unknown'); ?></small></p>
 
                                         <?php elseif ($template['content_type'] === 'assignment'): ?>
                                             <p><strong>Points:</strong> <?php echo $template['content_data']['total_points']; ?></p>
                                             <p><strong>Submission Type:</strong> <?php echo ucfirst($template['content_data']['submission_type']); ?></p>
                                             <p><strong>Due Days:</strong> <?php echo $template['content_data']['due_days']; ?> days after publish</p>
-                                            <?php if (!empty($template['content_data']['has_attachment'])): ?>
-                                                <p><strong>Attachment:</strong> <?php echo htmlspecialchars($template['content_data']['original_filename']); ?></p>
+                                            <?php if (!empty($template['content_data']['instructions'])): ?>
+                                                <p><strong>Instructions:</strong> <?php echo htmlspecialchars(substr($template['content_data']['instructions'], 0, 100)); ?>...</p>
                                             <?php endif; ?>
 
                                         <?php elseif ($template['content_type'] === 'quiz'): ?>
@@ -752,7 +904,8 @@ $conn->close();
                         <?php else: ?>
                             <div class="empty-state">
                                 <i class="fas fa-folder-open"></i>
-                                <p>No templates for this week yet. Use the form to add your first template.</p>
+                                <p>No templates for this week yet.</p>
+                                <p>Use the form on the right to create your first template.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -768,7 +921,7 @@ $conn->close();
                         <input type="hidden" name="action" value="create_template">
 
                         <div class="form-group">
-                            <label for="week_number">Week Number</label>
+                            <label for="week_number" class="required">Week Number</label>
                             <select id="week_number" name="week_number" class="form-control" required>
                                 <?php for ($w = 1; $w <= 12; $w++): ?>
                                     <option value="<?php echo $w; ?>">Week <?php echo $w; ?></option>
@@ -777,16 +930,16 @@ $conn->close();
                         </div>
 
                         <div class="form-group">
-                            <label for="content_type">Content Type</label>
+                            <label for="content_type" class="required">Content Type</label>
                             <select id="content_type" name="content_type" class="form-control" required onchange="toggleContentFields()">
-                                <option value="material">Material</option>
-                                <option value="assignment">Assignment</option>
-                                <option value="quiz">Quiz</option>
+                                <option value="material">📄 Material</option>
+                                <option value="assignment">📝 Assignment</option>
+                                <option value="quiz">❓ Quiz</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="title">Title</label>
+                            <label for="title" class="required">Title</label>
                             <input type="text" id="title" name="title" class="form-control" required>
                         </div>
 
@@ -795,16 +948,24 @@ $conn->close();
                             <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                         </div>
 
+                        <!-- Common fields for assignment and quiz -->
+                        <div id="common_fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="instructions">Instructions</label>
+                                <textarea id="instructions" name="instructions" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+
                         <!-- Material Fields -->
                         <div id="material_fields" class="content-fields">
                             <div class="form-group">
                                 <label>Material File</label>
                                 <div class="file-upload" onclick="document.getElementById('material_file').click()">
-                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                    <i class="fas fa-cloud-upload-alt"></i>
                                     <p>Click to upload or drag and drop</p>
-                                    <p class="file-upload-hint">PDF, Word, PowerPoint, Images, Video (Max: 100MB)</p>
+                                    <p class="form-help">PDF, Word, PowerPoint, Images, Video (Max: 100MB)</p>
                                     <input type="file" id="material_file" name="material_file"
-                                        accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.zip">
+                                        accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.zip,.txt">
                                 </div>
                                 <div id="material_file_name" class="file-info" style="display: none;"></div>
                             </div>
@@ -881,13 +1042,13 @@ $conn->close();
                             <div class="form-group">
                                 <label>Quiz Settings</label>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                    <label>
+                                    <label class="form-check">
                                         <input type="checkbox" name="shuffle_questions" value="1"> Shuffle Questions
                                     </label>
-                                    <label>
+                                    <label class="form-check">
                                         <input type="checkbox" name="shuffle_options" value="1"> Shuffle Options
                                     </label>
-                                    <label>
+                                    <label class="form-check">
                                         <input type="checkbox" name="show_correct_answers" value="1" checked> Show Correct Answers
                                     </label>
                                 </div>
@@ -898,25 +1059,101 @@ $conn->close();
                             <i class="fas fa-save"></i> Create Template
                         </button>
                     </form>
+
+                    <!-- Quick Stats -->
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--light-gray);">
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem;">Quick Stats</h3>
+                        <?php
+                        $total_templates = count($templates);
+                        $active_templates = count(array_filter($templates, function ($t) {
+                            return $t['is_active'];
+                        }));
+                        ?>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">
+                                    <?php echo $total_templates; ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">Total Templates</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--success);">
+                                    <?php echo $active_templates; ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">Active</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%;">
-            <h3 style="margin-bottom: 1rem; color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Delete Template</h3>
-            <p>Are you sure you want to delete "<strong id="deleteTitle"></strong>"?</p>
-            <p style="color: var(--gray); font-size: 0.875rem; margin-top: 0.5rem;">This action cannot be undone.</p>
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end;">
-                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-                <form method="POST" id="deleteForm">
-                    <input type="hidden" name="action" value="delete_template">
-                    <input type="hidden" name="template_id" id="deleteTemplateId">
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                </form>
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Delete Template</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
             </div>
+            <p>Are you sure you want to delete "<strong id="deleteTitle"></strong>"?</p>
+            <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">This action cannot be undone. Any classes using this template will lose scheduled content.</p>
+            <form method="POST" id="deleteForm">
+                <input type="hidden" name="action" value="delete_template">
+                <input type="hidden" name="template_id" id="deleteTemplateId">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toggle Active Modal -->
+    <div class="modal" id="toggleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exchange-alt"></i> Toggle Template Status</h3>
+                <button class="modal-close" onclick="closeModal('toggleModal')">&times;</button>
+            </div>
+            <p id="toggleMessage"></p>
+            <form method="POST" id="toggleForm">
+                <input type="hidden" name="action" value="toggle_active">
+                <input type="hidden" name="template_id" id="toggleTemplateId">
+                <input type="hidden" name="is_active" id="toggleIsActive">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('toggleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="toggleConfirmBtn">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Duplicate Modal -->
+    <div class="modal" id="duplicateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-copy"></i> Duplicate Template</h3>
+                <button class="modal-close" onclick="closeModal('duplicateModal')">&times;</button>
+            </div>
+            <form method="POST" id="duplicateForm">
+                <input type="hidden" name="action" value="duplicate_template">
+                <input type="hidden" name="template_id" id="duplicateTemplateId">
+
+                <div class="form-group">
+                    <label for="target_week">Target Week</label>
+                    <select id="target_week" name="target_week" class="form-control">
+                        <?php for ($w = 1; $w <= 12; $w++): ?>
+                            <option value="<?php echo $w; ?>">Week <?php echo $w; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('duplicateModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success">Duplicate</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -929,11 +1166,9 @@ $conn->close();
             tab.addEventListener('click', function() {
                 const week = this.dataset.week;
 
-                // Update tabs
                 weekTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
 
-                // Update content
                 weekContents.forEach(c => c.classList.remove('active'));
                 document.getElementById(`week-${week}`).classList.add('active');
 
@@ -954,17 +1189,21 @@ $conn->close();
             const materialFields = document.getElementById('material_fields');
             const assignmentFields = document.getElementById('assignment_fields');
             const quizFields = document.getElementById('quiz_fields');
+            const commonFields = document.getElementById('common_fields');
 
             materialFields.style.display = 'none';
             assignmentFields.style.display = 'none';
             quizFields.style.display = 'none';
+            commonFields.style.display = 'none';
 
             if (type === 'material') {
                 materialFields.style.display = 'block';
             } else if (type === 'assignment') {
                 assignmentFields.style.display = 'block';
+                commonFields.style.display = 'block';
             } else if (type === 'quiz') {
                 quizFields.style.display = 'block';
+                commonFields.style.display = 'block';
             }
         }
 
@@ -998,28 +1237,51 @@ $conn->close();
             }
         });
 
-        // Delete modal functions
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
         function deleteTemplate(id, title) {
             document.getElementById('deleteTemplateId').value = id;
             document.getElementById('deleteTitle').textContent = title;
-            document.getElementById('deleteModal').style.display = 'flex';
+            openModal('deleteModal');
         }
 
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
+        function toggleActive(id, newState, title) {
+            document.getElementById('toggleTemplateId').value = id;
+            document.getElementById('toggleIsActive').value = newState;
+            const message = `Are you sure you want to ${newState ? 'activate' : 'deactivate'} "${title}"?`;
+            document.getElementById('toggleMessage').textContent = message;
+            document.getElementById('toggleConfirmBtn').className = newState ? 'btn btn-success' : 'btn btn-warning';
+            openModal('toggleModal');
         }
 
-        // Close modal when clicking outside
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDeleteModal();
-            }
+        function duplicateTemplate(id, currentWeek) {
+            document.getElementById('duplicateTemplateId').value = id;
+            document.getElementById('target_week').value = currentWeek;
+            openModal('duplicateModal');
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this.id);
+                }
+            });
         });
 
-        // Escape key to close modal
+        // Escape key to close modals
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeDeleteModal();
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    closeModal(modal.id);
+                });
             }
         });
 
@@ -1027,38 +1289,36 @@ $conn->close();
         document.addEventListener('DOMContentLoaded', function() {
             toggleContentFields();
 
-            // Set form week to active tab
             const activeTab = document.querySelector('.week-tab.active');
             if (activeTab) {
                 document.getElementById('week_number').value = activeTab.dataset.week;
             }
         });
 
-        // Drag and drop support for file uploads
+        // Drag and drop support
         const dropZones = document.querySelectorAll('.file-upload');
 
         dropZones.forEach(zone => {
             zone.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 this.style.borderColor = 'var(--primary)';
-                this.style.backgroundColor = 'rgba(59, 130, 246, 0.05)';
+                this.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
             });
 
             zone.addEventListener('dragleave', function(e) {
                 e.preventDefault();
-                this.style.borderColor = '#e2e8f0';
+                this.style.borderColor = 'var(--light-gray)';
                 this.style.backgroundColor = 'white';
             });
 
             zone.addEventListener('drop', function(e) {
                 e.preventDefault();
-                this.style.borderColor = '#e2e8f0';
+                this.style.borderColor = 'var(--light-gray)';
                 this.style.backgroundColor = 'white';
 
                 const fileInput = this.querySelector('input[type="file"]');
                 if (fileInput && e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
-                    // Trigger change event
                     const event = new Event('change', {
                         bubbles: true
                     });
@@ -1067,49 +1327,18 @@ $conn->close();
             });
         });
 
-        // Auto-save draft in local storage
-        const form = document.getElementById('templateForm');
-        const formInputs = form.querySelectorAll('input, textarea, select');
+        // Form validation
+        document.getElementById('templateForm').addEventListener('submit', function(e) {
+            const type = document.getElementById('content_type').value;
 
-        formInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const draft = {};
-                formInputs.forEach(field => {
-                    if (field.type === 'checkbox') {
-                        draft[field.name] = field.checked;
-                    } else if (field.type === 'file') {
-                        // Can't store file in localStorage, skip
-                    } else {
-                        draft[field.name] = field.value;
-                    }
-                });
-                localStorage.setItem('templateDraft', JSON.stringify(draft));
-            });
-        });
-
-        // Load draft
-        const draft = localStorage.getItem('templateDraft');
-        if (draft) {
-            try {
-                const draftData = JSON.parse(draft);
-                Object.keys(draftData).forEach(key => {
-                    const field = document.querySelector(`[name="${key}"]`);
-                    if (field) {
-                        if (field.type === 'checkbox') {
-                            field.checked = draftData[key];
-                        } else if (field.type !== 'file') {
-                            field.value = draftData[key];
-                        }
-                    }
-                });
-            } catch (e) {
-                console.error('Failed to load draft', e);
+            if (type === 'material') {
+                const file = document.getElementById('material_file').files[0];
+                if (!file) {
+                    e.preventDefault();
+                    alert('Please select a file for the material.');
+                    return false;
+                }
             }
-        }
-
-        // Clear draft on successful submit
-        form.addEventListener('submit', function() {
-            localStorage.removeItem('templateDraft');
         });
     </script>
 </body>
