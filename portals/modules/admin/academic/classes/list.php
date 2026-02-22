@@ -753,7 +753,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                             <i class="fas fa-graduation-cap"></i> Academic</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php" class="active">
                             <i class="fas fa-chalkboard-teacher"></i> Classes</a></li>
-                    <a href="schedule_builder.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
+                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/schedule_builder.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
                         <i class="fas fa-calendar-alt"></i> Schedule Content
                     </a>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/announcements.php">
