@@ -1,21 +1,21 @@
 <?php
 // modules/instructor/classes/schedule_builder.php
 
-// Enable error reporting for debugging (remove in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Include configuration and functions
-require_once __DIR__ . '/../../../../includes/config.php';
-require_once __DIR__ . '/../../../../includes/functions.php';
+// Include configuration and functions - FIXED PATHS
+require_once __DIR__ . '/../../../includes/config.php';
+require_once __DIR__ . '/../../../includes/functions.php';
 
-// Check if user is logged in and is instructor
+// Check if user is logged in and is instructor (NOT admin)
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'instructor') {
+    // If user is admin, don't redirect to admin dashboard, just show error
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+        die("Access Denied: This page is for instructors only. Please use the admin template manager instead.");
+    }
     header('Location: ' . BASE_URL . 'modules/auth/login.php');
     exit();
 }
@@ -30,13 +30,14 @@ if (!$conn) {
 
 // Get class ID from URL
 if (!isset($_GET['class_id']) || !is_numeric($_GET['class_id'])) {
+    $_SESSION['error'] = "Invalid class ID.";
     header('Location: index.php');
     exit();
 }
 
 $class_id = (int)$_GET['class_id'];
 
-// Get class details and verify instructor access
+// Verify instructor has access to this class
 $sql = "SELECT cb.*, c.title as course_title, c.course_code, c.id as course_id,
                p.name as program_name
         FROM class_batches cb 
@@ -46,7 +47,7 @@ $sql = "SELECT cb.*, c.title as course_title, c.course_code, c.id as course_id,
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
+    die("Database error: " . $conn->error);
 }
 
 $stmt->bind_param("ii", $class_id, $instructor_id);
@@ -56,6 +57,7 @@ $result = $stmt->get_result();
 if ($result->num_rows === 0) {
     $stmt->close();
     $conn->close();
+    $_SESSION['error'] = "You don't have access to this class.";
     header('Location: index.php');
     exit();
 }
@@ -66,10 +68,10 @@ $stmt->close();
 // Check if course_content_templates table exists
 $table_check = $conn->query("SHOW TABLES LIKE 'course_content_templates'");
 if ($table_check->num_rows === 0) {
-    die("Error: course_content_templates table does not exist. Please run the SQL setup first.");
+    die("The template system hasn't been set up yet. Please contact the administrator to create templates first.");
 }
 
-// Get admin-created templates for this course
+// Get admin-created templates for this course (only active ones)
 $templates_sql = "SELECT * FROM course_content_templates 
                   WHERE course_id = ? AND is_active = 1
                   ORDER BY week_number, content_type, created_at";
@@ -84,17 +86,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 $templates = [];
 while ($row = $result->fetch_assoc()) {
-    // Safely decode JSON with error checking
-    $row['content_data'] = json_decode($row['content_data'], true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        $row['content_data'] = [];
-    }
-
-    $row['file_references'] = json_decode($row['file_references'], true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        $row['file_references'] = [];
-    }
-
+    // Safely decode JSON
+    $row['content_data'] = json_decode($row['content_data'], true) ?: [];
+    $row['file_references'] = json_decode($row['file_references'], true) ?: [];
     $templates[] = $row;
 }
 $stmt->close();
@@ -111,7 +105,7 @@ foreach ($templates as $template) {
 
 // Check if class_content_schedules table exists
 $schedule_table_check = $conn->query("SHOW TABLES LIKE 'class_content_schedules'");
-$schedules_table_exists = ($schedule_table_check->num_rows > 0);
+$schedules_table_exists = ($schedule_table_check && $schedule_table_check->num_rows > 0);
 
 $existing_schedules = [];
 if ($schedules_table_exists) {
@@ -129,10 +123,7 @@ if ($schedules_table_exists) {
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
-            $row['content_data'] = json_decode($row['content_data'], true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $row['content_data'] = [];
-            }
+            $row['content_data'] = json_decode($row['content_data'], true) ?: [];
             $existing_schedules[$row['template_id']] = $row;
         }
         $stmt->close();
@@ -170,7 +161,7 @@ $message_type = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$schedules_table_exists) {
-        $message = "Error: class_content_schedules table does not exist. Please run the SQL setup first.";
+        $message = "The scheduling system hasn't been set up yet. Please contact the administrator.";
         $message_type = "error";
     } elseif (isset($_POST['action']) && $_POST['action'] === 'save_schedule') {
         $schedules = $_POST['schedules'] ?? [];
@@ -272,10 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result2 = $stmt2->get_result();
                 $existing_schedules = [];
                 while ($row2 = $result2->fetch_assoc()) {
-                    $row2['content_data'] = json_decode($row2['content_data'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        $row2['content_data'] = [];
-                    }
+                    $row2['content_data'] = json_decode($row2['content_data'], true) ?: [];
                     $existing_schedules[$row2['template_id']] = $row2;
                 }
                 $stmt2->close();
@@ -311,10 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $result2 = $stmt2->get_result();
                     $existing_schedules = [];
                     while ($row2 = $result2->fetch_assoc()) {
-                        $row2['content_data'] = json_decode($row2['content_data'], true);
-                        if (json_last_error() !== JSON_ERROR_NONE) {
-                            $row2['content_data'] = [];
-                        }
+                        $row2['content_data'] = json_decode($row2['content_data'], true) ?: [];
                         $existing_schedules[$row2['template_id']] = $row2;
                     }
                     $stmt2->close();
@@ -329,22 +314,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
-
-// Helper function to get time options
-function getTimeOptions($selected = '08:00')
-{
-    $options = [];
-    for ($hour = 0; $hour < 24; $hour++) {
-        for ($minute = 0; $minute < 60; $minute += 30) {
-            $time = sprintf("%02d:%02d", $hour, $minute);
-            $display = date('g:i A', strtotime($time));
-            $selected_attr = ($time === $selected) ? 'selected' : '';
-            $options[] = "<option value=\"{$time}\" {$selected_attr}>{$display}</option>";
-        }
-    }
-    return implode('', $options);
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -385,7 +356,6 @@ function getTimeOptions($selected = '08:00')
             padding: 1rem;
         }
 
-        /* Breadcrumb */
         .breadcrumb {
             display: flex;
             align-items: center;
@@ -404,7 +374,6 @@ function getTimeOptions($selected = '08:00')
             text-decoration: underline;
         }
 
-        /* Header */
         .header {
             background: white;
             border-radius: 12px;
@@ -443,435 +412,9 @@ function getTimeOptions($selected = '08:00')
             font-size: 0.875rem;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            border-top: 4px solid var(--primary);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--gray);
-            text-transform: uppercase;
-        }
-
-        /* Week Navigation */
-        .week-nav {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .week-btn {
-            padding: 1rem 1.5rem;
-            background: white;
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .week-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .week-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .week-btn.has-scheduled {
-            position: relative;
-        }
-
-        .week-btn.has-scheduled::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            width: 12px;
-            height: 12px;
-            background: var(--success);
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .week-btn .small {
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-
-        /* Main Grid Layout */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Templates Panel */
-        .templates-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            height: fit-content;
-            position: sticky;
-            top: 1rem;
-        }
-
-        .templates-panel h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .templates-panel h2 i {
-            color: var(--primary);
-        }
-
-        .templates-list {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .template-card {
-            background: var(--light);
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            cursor: grab;
-            transition: all 0.3s ease;
-        }
-
-        .template-card:hover {
-            border-color: var(--primary);
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .template-card.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-            transform: scale(0.95);
-        }
-
-        .template-card.scheduled {
-            border-left: 4px solid var(--success);
-            background: #f0fdf4;
-        }
-
-        .template-type {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .type-material {
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--info);
-        }
-
-        .type-assignment {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .type-quiz {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .template-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
-        }
-
-        .template-week {
-            font-size: 0.75rem;
-            color: var(--gray);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .template-preview {
-            display: none;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
-        .template-card.expanded .template-preview {
-            display: block;
-        }
-
-        /* Calendar Panel */
-        .calendar-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .week-display {
-            display: none;
-        }
-
-        .week-display.active {
-            display: block;
-        }
-
-        .week-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .week-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .week-dates {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Day Grid */
-        .day-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .day-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
-
-        .day-card {
-            background: var(--light);
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 1rem;
-            min-height: 180px;
-            transition: all 0.3s ease;
-        }
-
-        .day-card.today {
-            border-color: var(--primary);
-            background: #eff6ff;
-        }
-
-        .day-card.drag-over {
-            border-color: var(--success);
-            background: #f0fdf4;
-            transform: scale(1.02);
-        }
-
-        .day-header {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .day-name {
-            font-size: 0.85rem;
-        }
-
-        .day-date {
-            font-size: 0.7rem;
-            color: var(--gray);
-        }
-
-        .scheduled-items {
-            min-height: 100px;
-        }
-
-        .scheduled-item {
-            background: white;
-            border-left: 3px solid;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .scheduled-item:hover {
-            transform: translateX(2px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-
-        .scheduled-item.material {
-            border-left-color: var(--info);
-        }
-
-        .scheduled-item.assignment {
-            border-left-color: var(--warning);
-        }
-
-        .scheduled-item.quiz {
-            border-left-color: var(--success);
-        }
-
-        .scheduled-item .item-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            padding-right: 1.5rem;
-        }
-
-        .scheduled-item .item-time {
-            font-size: 0.65rem;
-            color: var(--gray);
-        }
-
-        .scheduled-item .item-remove {
-            position: absolute;
-            top: 0.25rem;
-            right: 0.25rem;
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .scheduled-item:hover .item-remove {
-            opacity: 1;
-        }
-
-        /* Legend */
-        .legend {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: var(--light);
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-        }
-
-        .legend-color.material {
-            background: var(--info);
-        }
-
-        .legend-color.assignment {
-            background: var(--warning);
-        }
-
-        .legend-color.quiz {
-            background: var(--success);
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -904,28 +447,11 @@ function getTimeOptions($selected = '08:00')
             border-color: var(--primary);
         }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
         .btn-sm {
             padding: 0.4rem 0.8rem;
             font-size: 0.8rem;
         }
 
-        .btn-danger {
-            background: white;
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Message */
         .message {
             padding: 1rem;
             border-radius: 8px;
@@ -953,104 +479,64 @@ function getTimeOptions($selected = '08:00')
             border: 1px solid #bfdbfe;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
+            background: white;
+            border-radius: 12px;
             color: var(--gray);
         }
 
         .empty-state i {
-            font-size: 2rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
+        /* Simple template list for now */
+        .template-list {
             background: white;
             border-radius: 12px;
-            padding: 2rem;
-            max-width: 400px;
-            width: 90%;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .template-item {
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
             margin-bottom: 1rem;
+            background: var(--light);
         }
 
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
+        .template-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: flex-end;
+        .type-material {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--info);
         }
 
-        /* Loading Spinner */
-        .spinner {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 2000;
-            text-align: center;
+        .type-assignment {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
         }
 
-        .spinner i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
+        .type-quiz {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Debug Info - Remove in production -->
-        <div class="debug-info">
-            <strong>Debug Information:</strong>
-            <pre>
-Class ID: <?php echo $class_id; ?>
-Course ID: <?php echo $class['course_id'] ?? 'Not found'; ?>
-Templates Found: <?php echo count($templates); ?>
-Schedules Found: <?php echo count($existing_schedules); ?>
-Total Weeks: <?php echo $total_weeks; ?>
-            </pre>
-        </div>
-
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/instructor/dashboard.php">
@@ -1071,14 +557,21 @@ Total Weeks: <?php echo $total_weeks; ?>
             <h1><i class="fas fa-calendar-alt"></i> Content Schedule Builder</h1>
             <p><?php echo htmlspecialchars($class['batch_code'] ?? ''); ?> - <?php echo htmlspecialchars($class['name'] ?? ''); ?></p>
 
-            <div style="margin-top: 1rem;">
-                <strong><?php echo htmlspecialchars($class['course_title'] ?? ''); ?></strong>
-                <span style="color: var(--gray); margin-left: 0.5rem;">(<?php echo htmlspecialchars($class['course_code'] ?? ''); ?>)</span>
-                <span style="margin-left: 2rem;">
+            <div class="class-info">
+                <div>
+                    <strong><?php echo htmlspecialchars($class['course_title'] ?? ''); ?></strong>
+                    <span style="color: var(--gray); margin-left: 0.5rem;">(<?php echo htmlspecialchars($class['course_code'] ?? ''); ?>)</span>
+                </div>
+                <div class="date-range">
                     <i class="fas fa-calendar"></i>
                     <?php echo $start_date->format('M d, Y'); ?> - <?php echo $end_date->format('M d, Y'); ?>
                     (<?php echo $total_weeks; ?> weeks)
-                </span>
+                </div>
+                <div>
+                    <a href="class_home.php?id=<?php echo $class_id; ?>" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Class
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -1090,16 +583,37 @@ Total Weeks: <?php echo $total_weeks; ?>
             </div>
         <?php endif; ?>
 
-        <!-- Simple placeholders until CSS is fixed -->
-        <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center;">
-            <i class="fas fa-tools" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
-            <h2>Schedule Builder Loading...</h2>
-            <p>Found <?php echo count($templates); ?> templates and <?php echo count($existing_schedules); ?> existing schedules.</p>
+        <!-- Templates Section -->
+        <div class="template-list">
+            <h2 style="margin-bottom: 1.5rem;">Available Templates (<?php echo count($templates); ?>)</h2>
 
             <?php if (empty($templates)): ?>
-                <div style="margin-top: 2rem; padding: 2rem; background: var(--light); border-radius: 8px;">
-                    <p>No templates available for this course. Templates must be created by an administrator first.</p>
-                    <a href="class_home.php?id=<?php echo $class_id; ?>" class="btn" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: white; text-decoration: none; border-radius: 8px;">Back to Class</a>
+                <div class="empty-state">
+                    <i class="fas fa-layer-group"></i>
+                    <h3>No Templates Available</h3>
+                    <p>There are no templates created for this course yet.</p>
+                    <p style="font-size: 0.9rem; margin-top: 1rem;">Templates must be created by an administrator first.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($templates as $template): ?>
+                    <div class="template-item">
+                        <span class="template-type type-<?php echo $template['content_type']; ?>">
+                            <?php echo ucfirst($template['content_type']); ?>
+                        </span>
+                        <h3 style="margin: 0.5rem 0;"><?php echo htmlspecialchars($template['title']); ?></h3>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Week <?php echo $template['week_number']; ?></p>
+                        <?php if (isset($existing_schedules[$template['id']])): ?>
+                            <p style="color: var(--success); margin-top: 0.5rem;">
+                                <i class="fas fa-check-circle"></i> Scheduled for
+                                <?php echo date('M d, Y g:i A', strtotime($existing_schedules[$template['id']]['scheduled_publish_date'])); ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <p style="color: var(--gray); margin-bottom: 1rem;">The full drag-and-drop interface is under construction. Please check back later.</p>
+                    <a href="class_home.php?id=<?php echo $class_id; ?>" class="btn btn-primary">Return to Class Home</a>
                 </div>
             <?php endif; ?>
         </div>
