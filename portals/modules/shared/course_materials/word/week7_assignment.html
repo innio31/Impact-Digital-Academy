@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7 Assignment: Document Inspection & Exam Preparation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d3d8c 0%, #1a5bb8 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .header .week-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section-title {
+            color: #0d3d8c;
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e0e6ed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #185abd;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            color: #185abd;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #185abd;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: #0d3d8c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assignment-details {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .step-container {
+            margin-bottom: 30px;
+            border-left: 4px solid #28a745;
+            padding-left: 20px;
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .task-table th {
+            background: #0d3d8c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .task-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .task-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .task-table tr:hover {
+            background: #e8f0ff;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist li i {
+            color: #28a745;
+        }
+
+        .submission-area {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px dashed #4caf50;
+        }
+
+        .submission-title {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-name {
+            font-family: monospace;
+            background: #333;
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #0d3d8c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #185abd;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #34ce57;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #ffca2c;
+            transform: translateY(-2px);
+        }
+
+        .download-btn {
+            background: #185abd;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+        .download-btn:hover {
+            background: #0d3d8c;
+        }
+
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .rubric-table th {
+            background: #0d3d8c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .rubric-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .rubric-table tr:hover {
+            background: #f0f7ff;
+        }
+
+        .points-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #0d3d8c;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-answer {
+            padding-left: 30px;
+            color: #666;
+        }
+
+        .progress-tracker {
+            background: #f0f7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e6ed;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #185abd, #28a745);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Week 7 Assignment</h1>
+            <div class="subtitle">Document Inspection & Final Exam Preparation</div>
+            <div class="week-badge">Due:
+                <?php echo date('l, F j, Y', strtotime('+7 days')); ?>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Assignment Overview -->
+            <div class="info-box">
+                <h4><i class="fas fa-clipboard-list"></i> Assignment Overview</h4>
+                <p>In this assignment, you'll apply document inspection techniques to clean and prepare a professional
+                    report. You'll use the Document Inspector, Accessibility Checker, and Compatibility Checker to
+                    identify and fix issues, then document your process. This assignment simulates real-world document
+                    preparation and reinforces skills tested on the MO-100 exam.</p>
+                <p style="margin-top: 15px;"><strong>Total Points:</strong> 100 | <strong>Estimated Time:</strong> 2-3
+                    hours</p>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="section-title">
+                <i class="fas fa-bullseye"></i> Learning Objectives
+            </div>
+
+            <ul style="margin-bottom: 30px;">
+                <li>Use Document Inspector to find and remove hidden properties and personal information</li>
+                <li>Run Accessibility Checker and fix all accessibility issues</li>
+                <li>Check document compatibility and resolve compatibility warnings</li>
+                <li>Create accessible documents with proper structure and alt text</li>
+                <li>Document your inspection process and justify your fixes</li>
+                <li>Prepare for the MO-100 exam through hands-on practice</li>
+            </ul>
+
+            <!-- Materials Needed -->
+            <div class="subsection">
+                <h3><i class="fas fa-box-open"></i> Materials Needed</h3>
+                <ul>
+                    <li>Microsoft Word 2019 or Microsoft 365</li>
+                    <li><strong>Sample Document:</strong> Week7_Financial_Report.docx (download below)</li>
+                    <li>Week 7 Handout (for reference)</li>
+                    <li>MO-100 Exam Objectives Guide</li>
+                </ul>
+
+                <div style="margin: 20px 0;">
+                    <a href="#" class="download-btn" onclick="downloadSample()">
+                        <i class="fas fa-download"></i> Download Sample Document
+                    </a>
+                    <a href="#" class="download-btn" onclick="downloadChecklist()">
+                        <i class="fas fa-download"></i> Download Inspection Checklist
+                    </a>
+                </div>
+            </div>
+
+            <!-- Assignment Tasks -->
+            <div class="section-title">
+                <i class="fas fa-tasks"></i> Assignment Tasks (100 points)
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Initial Document Inspection (15 points)</div>
+                </div>
+                <p>Open the sample document and perform an initial inspection without making changes.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Run Document Inspector and list all issues found</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="1"></td>
+                        </tr>
+                        <tr>
+                            <td>Run Accessibility Checker and document all errors/warnings</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="2"></td>
+                        </tr>
+                        <tr>
+                            <td>Run Compatibility Checker and note all compatibility issues</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Remove Hidden Information (20 points)</div>
+                </div>
+                <p>Use Document Inspector to remove hidden data and personal information.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Remove all document properties and personal information</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="4"></td>
+                        </tr>
+                        <tr>
+                            <td>Remove any comments or tracked changes</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Remove hidden text (if any exists)</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="6"></td>
+                        </tr>
+                        <tr>
+                            <td>Remove any custom XML data</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="7"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Important</h4>
+                    <p>Save a copy of the original document before removing items. Some removals are permanent!</p>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Fix Accessibility Issues (25 points)</div>
+                </div>
+                <p>Address all accessibility issues identified by the Accessibility Checker.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Add descriptive alt text to all images (at least 3 images)</td>
+                            <td>8</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="8"></td>
+                        </tr>
+                        <tr>
+                            <td>Define header rows for all tables (2 tables minimum)</td>
+                            <td>6</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="9"></td>
+                        </tr>
+                        <tr>
+                            <td>Fix color contrast issues (identify and resolve 2 issues)</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="10"></td>
+                        </tr>
+                        <tr>
+                            <td>Ensure heading styles are used sequentially (H1, H2, H3)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="11"></td>
+                        </tr>
+                        <tr>
+                            <td>Add meaningful hyperlink text (replace "click here")</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="12"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4><i class="fas fa-lightbulb"></i> Alt Text Guidelines</h4>
+                    <ul>
+                        <li>Be descriptive but concise (1-2 sentences)</li>
+                        <li>Include important information shown in the image</li>
+                        <li>For decorative images, mark as decorative</li>
+                        <li>Don't start with "image of" or "picture of"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Resolve Compatibility Issues (15 points)</div>
+                </div>
+                <p>Check and resolve compatibility issues for users with older Word versions.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Run Compatibility Checker and document all issues</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="13"></td>
+                        </tr>
+                        <tr>
+                            <td>Resolve at least 3 compatibility warnings</td>
+                            <td>6</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="14"></td>
+                        </tr>
+                        <tr>
+                            <td>Save a version in Word 97-2003 format (*.doc)</td>
+                            <td>4</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="15"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Final Document Preparation (15 points)</div>
+                </div>
+                <p>Prepare the final cleaned document with proper formatting.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Add a cover page with document title and date</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="16"></td>
+                        </tr>
+                        <tr>
+                            <td>Insert a table of contents (using heading styles)</td>
+                            <td>4</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="17"></td>
+                        </tr>
+                        <tr>
+                            <td>Add document properties (Title, Author, Company)</td>
+                            <td>3</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="18"></td>
+                        </tr>
+                        <tr>
+                            <td>Run final Document Inspector to ensure all issues resolved</td>
+                            <td>5</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="19"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Documentation & Reflection (10 points)</div>
+                </div>
+                <p>Create a separate document documenting your inspection process.</p>
+
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th width="60%">Task</th>
+                            <th width="20%">Points</th>
+                            <th width="20%">Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>List all issues found during initial inspection</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="20"></td>
+                        </tr>
+                        <tr>
+                            <td>Explain how you resolved each issue (minimum 5 resolutions)</td>
+                            <td>4</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="21"></td>
+                        </tr>
+                        <tr>
+                            <td>Reflect on what you learned and how it applies to the MO-100 exam</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="22"></td>
+                        </tr>
+                        <tr>
+                            <td>Describe challenges encountered and how you overcame them</td>
+                            <td>2</td>
+                            <td><input type="checkbox" class="task-checkbox" data-task="23"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="progress-tracker">
+                <h4><i class="fas fa-chart-line"></i> Your Progress</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <p id="progressText">0/23 tasks completed (0%)</p>
+                <p><small>Check off tasks as you complete them to track your progress</small></p>
+            </div>
+
+            <!-- Submission Instructions -->
+            <div class="section-title">
+                <i class="fas fa-upload"></i> Submission Instructions
+            </div>
+
+            <div class="submission-area">
+                <div class="submission-title">
+                    <i class="fas fa-check-circle"></i> Ready to Submit
+                </div>
+
+                <p>You need to submit <strong>TWO files</strong> for this assignment:</p>
+
+                <ol style="margin-bottom: 20px;">
+                    <li><strong>Cleaned Document:</strong> Your fully inspected and fixed Word document</li>
+                    <li><strong>Reflection Document:</strong> Your documentation and reflection (Word or PDF)</li>
+                </ol>
+
+                <div class="file-name">
+                    StudentName_Week7_Cleaned_Report.docx
+                </div>
+
+                <div class="file-name" style="background: #555;">
+                    StudentName_Week7_Reflection.docx
+                </div>
+
+                <p style="margin: 20px 0;"><strong>Naming Convention:</strong> Replace "StudentName" with your actual
+                    name (e.g., JohnDoe_Week7_Cleaned_Report.docx)</p>
+
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="simulateUpload()">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Assignment
+                    </button>
+                    <button class="btn btn-success" onclick="markComplete()">
+                        <i class="fas fa-check"></i> Mark as Complete
+                    </button>
+                    <button class="btn btn-warning" onclick="saveProgress()">
+                        <i class="fas fa-save"></i> Save Progress
+                    </button>
+                </div>
+
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> You can save your progress and return later. Make sure to submit
+                    before the deadline.
+                </p>
+            </div>
+
+            <!-- Grading Rubric -->
+            <div class="section-title">
+                <i class="fas fa-star"></i> Grading Rubric
+            </div>
+
+            <table class="rubric-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Excellent (90-100%)</th>
+                        <th>Good (75-89%)</th>
+                        <th>Satisfactory (60-74%)</th>
+                        <th>Needs Improvement (Below 60%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Document Inspection</strong> (25 pts)</td>
+                        <td>All hidden data removed, inspection thorough and complete</td>
+                        <td>Most hidden data removed, minor oversights</td>
+                        <td>Some hidden data removed, several issues remain</td>
+                        <td>Little to no inspection performed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accessibility</strong> (25 pts)</td>
+                        <td>All accessibility issues fixed, excellent alt text, proper structure</td>
+                        <td>Most issues fixed, good alt text</td>
+                        <td>Some issues fixed, basic alt text</td>
+                        <td>Few or no accessibility fixes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compatibility</strong> (15 pts)</td>
+                        <td>All compatibility issues resolved, multiple formats saved</td>
+                        <td>Most issues resolved</td>
+                        <td>Some issues addressed</td>
+                        <td>Compatibility not checked</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Documentation</strong> (10 pts)</td>
+                        <td>Comprehensive documentation with detailed reflection</td>
+                        <td>Good documentation with reflection</td>
+                        <td>Basic documentation</td>
+                        <td>Missing or incomplete documentation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Self-Review Questions -->
+            <div class="section-title">
+                <i class="fas fa-question-circle"></i> Self-Review Questions
+            </div>
+
+            <p>Answer these questions in your reflection document:</p>
+
+            <ol style="margin: 20px 0 30px 30px;">
+                <li>What types of hidden information did the Document Inspector find in your sample document?</li>
+                <li>Why is it important to add alt text to images? Provide examples of good vs. poor alt text.</li>
+                <li>What compatibility issues did you encounter and how did you resolve them?</li>
+                <li>How will you apply document inspection techniques to your future Word documents?</li>
+                <li>What MO-100 exam topics did this assignment help you practice?</li>
+            </ol>
+
+            <!-- FAQs -->
+            <div class="section-title">
+                <i class="fas fa-comments"></i> Frequently Asked Questions
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    What if I accidentally remove something important?
+                </div>
+                <div class="faq-answer">
+                    Always save a copy of your original document before using the Document Inspector. The "Remove All"
+                    option is permanent, so work on a copy.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    How do I know if my alt text is good enough?
+                </div>
+                <div class="faq-answer">
+                    Good alt text conveys the same information as the image. For a chart, include the key insight. For a
+                    photo, describe what's important. If someone couldn't see the image, would they miss important
+                    information?
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    What if I can't fix all compatibility issues?
+                </div>
+                <div class="faq-answer">
+                    Document which issues you couldn't fix and explain why. Sometimes newer features don't have
+                    equivalents in older versions. In these cases, consider if you can achieve the same effect with
+                    simpler formatting.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    Can I use a different sample document?
+                </div>
+                <div class="faq-answer">
+                    It's recommended to use the provided sample document as it contains specific issues we want you to
+                    find. If you must use your own document, ensure it contains comments, tracked changes, images,
+                    tables, and multiple pages.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-chevron-right" style="color: #185abd;"></i>
+                    How long should my reflection be?
+                </div>
+                <div class="faq-answer">
+                    Aim for 500-750 words (about 1-2 pages). Be thorough in explaining your process and what you
+                    learned.
+                </div>
+            </div>
+
+            <!-- Exam Tips -->
+            <div class="info-box">
+                <h4><i class="fas fa-graduation-cap"></i> MO-100 Exam Tips</h4>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>Document Inspector questions:</strong> Know what each option checks and the implications
+                        of removing items.</li>
+                    <li><strong>Accessibility scenarios:</strong> Be ready to identify and fix common accessibility
+                        issues.</li>
+                    <li><strong>Compatibility:</strong> Understand when and why to check compatibility.</li>
+                    <li><strong>Performance tasks:</strong> Practice the steps until they become automatic.</li>
+                </ul>
+            </div>
+
+            <!-- Deadline Reminder -->
+            <div class="warning-box" style="margin-top: 30px;">
+                <h4><i class="fas fa-clock"></i> Deadline Reminder</h4>
+                <p>This assignment is due by <strong>
+                        <?php echo date('l, F j, Y \a\t g:i A', strtotime('next Friday 11:59 PM')); ?>
+                    </strong>. Late submissions will incur a 10% penalty per day.</p>
+                <p style="margin-top: 10px;"><strong>Week 8 Preview:</strong> Mock Exam and Final Review Session.
+                    Complete this assignment to prepare!</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>MO-100: Microsoft Word Certification Prep Program – Week 7 Assignment</p>
+            <p>Impact Digital Academy • ©
+                <?php echo date('Y'); ?> All rights reserved.
+            </p>
+            <p id="currentDate" style="margin-top: 10px; font-size: 0.8rem;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress tracking
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            // Load saved progress from localStorage
+            loadProgress();
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+
+            function updateProgress() {
+                const total = document.querySelectorAll('.task-checkbox').length;
+                const checked = document.querySelectorAll('.task-checkbox:checked').length;
+                const percentage = (checked / total) * 100;
+
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = `${checked}/${total} tasks completed (${Math.round(percentage)}%)`;
+
+                // Save progress to localStorage
+                saveProgress();
+            }
+
+            function saveProgress() {
+                const progress = {};
+                document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    progress[checkbox.dataset.task] = checkbox.checked;
+                });
+                localStorage.setItem('week7AssignmentProgress', JSON.stringify(progress));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem('week7AssignmentProgress');
+                if (saved) {
+                    const progress = JSON.parse(saved);
+                    document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                        if (progress[checkbox.dataset.task]) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+                updateProgress();
+            }
+
+            // Expose saveProgress globally for button
+            window.saveProgress = function () {
+                saveProgress();
+                alert('Progress saved!');
+            };
+        });
+
+        // Current date
+        document.getElementById('currentDate').textContent = 'Assignment accessed: ' + new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Download functions
+        function downloadSample() {
+            alert('Sample document would download. In production, this would link to Week7_Financial_Report.docx');
+            // window.location.href = '<?php echo BASE_URL; ?>modules/shared/course_materials/MSWord/samples/week7_financial_report.docx';
+        }
+
+        function downloadChecklist() {
+            alert('Inspection checklist would download. In production, this would link to inspection_checklist.pdf');
+            // window.location.href = '<?php echo BASE_URL; ?>modules/shared/course_materials/MSWord/checklists/inspection_checklist.pdf';
+        }
+
+        // Submission simulation
+        function simulateUpload() {
+            alert('Assignment upload simulation. In production, this would open a file upload dialog.');
+        }
+
+        function markComplete() {
+            const total = document.querySelectorAll('.task-checkbox').length;
+            const checked = document.querySelectorAll('.task-checkbox:checked').length;
+
+            if (checked === total) {
+                alert('Congratulations! You have completed all tasks. Ready to submit!');
+            } else {
+                const remaining = total - checked;
+                alert(`You still have ${remaining} incomplete tasks. Complete all tasks before submitting.`);
+            }
+        }
+
+        // Save progress (called by button)
+        window.saveProgress = function () {
+            const progress = {};
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                progress[checkbox.dataset.task] = checkbox.checked;
+            });
+            localStorage.setItem('week7AssignmentProgress', JSON.stringify(progress));
+            alert('Progress saved successfully! You can return to this page later.');
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Ctrl+S to save progress
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveProgress();
+            }
+
+            // Ctrl+Q to show quick tips
+            if (e.ctrlKey && e.key === 'q') {
+                e.preventDefault();
+                alert('Week 7 Assignment Tips:\n\n1. Always work on a COPY of the document\n2. Run Document Inspector first\n3. Fix accessibility issues one by one\n4. Document your process as you go\n5. Save multiple versions');
+            }
+        });
+
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', function (e) {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+            if (anyChecked) {
+                // Check if progress is saved
+                const saved = localStorage.getItem('week7AssignmentProgress');
+                if (saved) {
+                    const currentProgress = {};
+                    checkboxes.forEach(cb => {
+                        currentProgress[cb.dataset.task] = cb.checked;
+                    });
+
+                    if (JSON.stringify(currentProgress) !== saved) {
+                        e.preventDefault();
+                        e.returnValue = 'You have unsaved progress. Save before leaving?';
+                    }
+                }
+            }
+        });
+
+        // Task highlighting
+        document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const row = this.closest('tr');
+                if (this.checked) {
+                    row.style.backgroundColor = '#e8f5e9';
+                } else {
+                    row.style.backgroundColor = '';
+                }
+            });
+        });
+
+        // Print functionality
+        function printAssignment() {
+            window.print();
+        }
+
+        // Export checklist
+        function exportChecklist() {
+            const tasks = [];
+            document.querySelectorAll('.task-table tbody tr').forEach(row => {
+                const taskText = row.cells[0].textContent;
+                const points = row.cells[1].textContent;
+                tasks.push(`${taskText} (${points})`);
+            });
+
+            console.log('Checklist exported:', tasks);
+            alert('Checklist exported to console (F12)');
+        }
+    </script>
+</body>
+
+</html>
