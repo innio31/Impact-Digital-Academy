@@ -818,7 +818,7 @@ $conn->close();
                 <a href="discussions.php?class_id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-bullhorn"></i> Discussions
                 </a>
-                // In modules/instructor/classes/class_home.php
+
                 <a href="schedule_builder.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
                     <i class="fas fa-calendar-alt"></i> Schedule Content
                 </a>
