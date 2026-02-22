@@ -87,25 +87,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Handle file upload if attachment is enabled
         $attachment_path = '';
         $original_filename = '';
-        
+
         if ($has_attachment && isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] === 0) {
             $file = $_FILES['assignment_file'];
-            
+
             // Create upload directory if it doesn't exist
             $upload_dir = __DIR__ . '/../../../uploads/assignments/' . $class_id . '/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
-            
+
             // Generate unique filename
             $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $unique_name = uniqid() . '_' . time() . '.' . $file_ext;
             $original_filename = $file['name'];
             $target_path = $upload_dir . $unique_name;
-            
+
             // Allowed file types (you can customize this)
             $allowed_types = ['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'zip', 'rar'];
-            
+
             if (in_array(strtolower($file_ext), $allowed_types)) {
                 if (move_uploaded_file($file['tmp_name'], $target_path)) {
                     $attachment_path = 'uploads/assignments/' . $class_id . '/' . $unique_name;
@@ -147,6 +147,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             if ($stmt->execute()) {
                 $create_success = true;
                 $assignment_id = $stmt->insert_id;
+
+                if ($stmt->execute()) {
+                    $create_success = true;
+                    $assignment_id = $stmt->insert_id;
+
+                    // Send notifications - ADD THIS BLOCK
+                    require_once __DIR__ . '/../../../includes/email_functions.php';
+
+                    $notification_schedule = [
+                        'class_id' => $class_id,
+                        'instructor_id' => $instructor_id,
+                        'title' => $title
+                    ];
+
+                    sendNewAssignmentNotifications($conn, $assignment_id, $notification_schedule);
+
+                    // Log activity
+                    logActivity('assignment_created', "Created assignment: $title", 'assignments', $assignment_id);
+
+                    // Clear form
+                    $_POST = [];
+                    $_FILES = [];
+                }
 
                 // Log activity
                 logActivity('assignment_created', "Created assignment: $title", 'assignments', $assignment_id);
@@ -202,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Handle file upload for update
         $attachment_path = $current_attachment;
         $original_filename = '';
-        
+
         if ($remove_attachment && $current_attachment) {
             // Remove existing file
             $file_path = __DIR__ . '/../../../' . $current_attachment;
@@ -211,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             }
             $attachment_path = '';
         }
-        
+
         if ($has_attachment && isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] === 0) {
             // Remove old file if exists
             if ($current_attachment) {
@@ -220,24 +243,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     unlink($old_file_path);
                 }
             }
-            
+
             $file = $_FILES['assignment_file'];
-            
+
             // Create upload directory if it doesn't exist
             $upload_dir = __DIR__ . '/../../../uploads/assignments/' . $class_id . '/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
-            
+
             // Generate unique filename
             $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $unique_name = uniqid() . '_' . time() . '.' . $file_ext;
             $original_filename = $file['name'];
             $target_path = $upload_dir . $unique_name;
-            
+
             // Allowed file types
             $allowed_types = ['pdf', 'doc', 'docx', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'zip', 'rar'];
-            
+
             if (in_array(strtolower($file_ext), $allowed_types)) {
                 if (move_uploaded_file($file['tmp_name'], $target_path)) {
                     $attachment_path = 'uploads/assignments/' . $class_id . '/' . $unique_name;
@@ -259,12 +282,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                           total_points = ?, submission_type = ?, max_files = ?,
                           allowed_extensions = ?, is_published = ?, updated_at = NOW(),
                           has_attachment = ?, attachment_path = ?";
-            
+
             // Only update original_filename if we have a new file
             if ($original_filename) {
                 $update_sql .= ", original_filename = ?";
                 $update_sql .= " WHERE id = ? AND instructor_id = ?";
-                
+
                 $update_stmt = $conn->prepare($update_sql);
                 $update_stmt->bind_param(
                     "ssssdsssissii",
@@ -285,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 );
             } else {
                 $update_sql .= " WHERE id = ? AND instructor_id = ?";
-                
+
                 $update_stmt = $conn->prepare($update_sql);
                 $update_stmt->bind_param(
                     "ssssdsssiiii",
@@ -332,7 +355,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 
     if ($result->num_rows > 0) {
         $assignment = $result->fetch_assoc();
-        
+
         // Delete attached file if exists
         if (!empty($assignment['attachment_path'])) {
             $file_path = __DIR__ . '/../../../' . $assignment['attachment_path'];
@@ -340,7 +363,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                 unlink($file_path);
             }
         }
-        
+
         // Delete assignment (or soft delete by setting is_published to 0)
         $delete_sql = "UPDATE assignments SET is_published = 0 WHERE id = ? AND instructor_id = ?";
         $delete_stmt = $conn->prepare($delete_sql);
@@ -361,20 +384,20 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 // Handle download request
 if (isset($_GET['download']) && is_numeric($_GET['download'])) {
     $assignment_id = (int)$_GET['download'];
-    
+
     $sql = "SELECT attachment_path, original_filename FROM assignments WHERE id = ? AND instructor_id = ? AND class_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iii", $assignment_id, $instructor_id, $class_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $assignment = $result->fetch_assoc();
-        
+
         if (!empty($assignment['attachment_path'])) {
             $file_path = __DIR__ . '/../../../' . $assignment['attachment_path'];
             $original_name = $assignment['original_filename'] ?: 'assignment_file';
-            
+
             if (file_exists($file_path)) {
                 header('Content-Description: File Transfer');
                 header('Content-Type: application/octet-stream');
@@ -1604,8 +1627,8 @@ function getStatusBadge($due_date, $is_published)
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a href="?class_id=<?php echo $class_id; ?>&download=<?php echo $assignment['id']; ?>" 
-                                               class="btn btn-primary btn-sm">
+                                            <a href="?class_id=<?php echo $class_id; ?>&download=<?php echo $assignment['id']; ?>"
+                                                class="btn btn-primary btn-sm">
                                                 <i class="fas fa-download"></i> Download
                                             </a>
                                         </div>
@@ -1633,8 +1656,8 @@ function getStatusBadge($due_date, $is_published)
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                         <?php if ($assignment['has_attachment'] && $assignment['attachment_path']): ?>
-                                            <a href="?class_id=<?php echo $class_id; ?>&download=<?php echo $assignment['id']; ?>" 
-                                               class="btn btn-info btn-sm">
+                                            <a href="?class_id=<?php echo $class_id; ?>&download=<?php echo $assignment['id']; ?>"
+                                                class="btn btn-info btn-sm">
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         <?php endif; ?>
@@ -1813,9 +1836,9 @@ function getStatusBadge($due_date, $is_published)
                             <div class="file-upload-hint">
                                 Supports: PDF, Word, Excel, PowerPoint, Images, ZIP (Max: 50MB)
                             </div>
-                            <input type="file" id="create_assignment_file" name="assignment_file" 
-                                   accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar"
-                                   onchange="previewFile('create', this)">
+                            <input type="file" id="create_assignment_file" name="assignment_file"
+                                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar"
+                                onchange="previewFile('create', this)">
                         </div>
                         <div id="create_file_preview"></div>
                     </div>
@@ -1941,9 +1964,9 @@ function getStatusBadge($due_date, $is_published)
                             <div class="file-upload-hint">
                                 Supports: PDF, Word, Excel, PowerPoint, Images, ZIP (Max: 50MB)
                             </div>
-                            <input type="file" id="edit_assignment_file" name="assignment_file" 
-                                   accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar"
-                                   onchange="previewFile('edit', this)">
+                            <input type="file" id="edit_assignment_file" name="assignment_file"
+                                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar"
+                                onchange="previewFile('edit', this)">
                         </div>
                         <div id="edit_file_preview"></div>
                     </div>
@@ -2031,28 +2054,28 @@ function getStatusBadge($due_date, $is_published)
                         document.getElementById('edit_title').value = data.title;
                         document.getElementById('edit_description').value = data.description || '';
                         document.getElementById('edit_instructions').value = data.instructions || '';
-                        
+
                         // Format date and time
                         const dueDate = new Date(data.due_date);
                         document.getElementById('edit_due_date').value = dueDate.toISOString().split('T')[0];
-                        document.getElementById('edit_due_time').value = dueDate.toTimeString().slice(0,5);
-                        
+                        document.getElementById('edit_due_time').value = dueDate.toTimeString().slice(0, 5);
+
                         document.getElementById('edit_total_points').value = data.total_points;
                         document.getElementById('edit_submission_type').value = data.submission_type;
                         document.getElementById('edit_max_files').value = data.max_files;
                         document.getElementById('edit_allowed_extensions').value = data.allowed_extensions || '';
                         document.getElementById('edit_is_published').checked = data.is_published == 1;
-                        
+
                         // Handle attachment
                         document.getElementById('edit_has_attachment').checked = data.has_attachment == 1;
                         if (data.has_attachment && data.original_filename) {
                             document.getElementById('edit_current_filename').textContent = data.original_filename;
                             document.getElementById('edit_current_file').style.display = 'block';
                         }
-                        
+
                         // Show/hide attachment section
                         toggleAttachmentSection('edit');
-                        
+
                         // Show modal
                         document.getElementById('editModal').classList.add('show');
                         document.body.style.overflow = 'hidden';
@@ -2123,7 +2146,7 @@ function getStatusBadge($due_date, $is_published)
         function toggleAttachmentSection(type) {
             const checkbox = document.getElementById(`${type}_has_attachment`);
             const section = document.getElementById(`${type}_attachment_section`);
-            
+
             if (checkbox.checked) {
                 section.style.display = 'block';
             } else {
@@ -2138,11 +2161,11 @@ function getStatusBadge($due_date, $is_published)
         // Preview uploaded file
         function previewFile(type, input) {
             const preview = document.getElementById(`${type}_file_preview`);
-            
+
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const fileSize = (file.size / (1024 * 1024)).toFixed(2); // MB
-                
+
                 preview.innerHTML = `
                     <div class="file-preview">
                         <div class="file-preview-icon">
@@ -2169,9 +2192,9 @@ function getStatusBadge($due_date, $is_published)
         // Get file icon based on extension
         function getFileIcon(filename) {
             if (!filename) return 'fas fa-file';
-            
+
             const ext = filename.split('.').pop().toLowerCase();
-            
+
             const icons = {
                 'pdf': 'fas fa-file-pdf',
                 'doc': 'fas fa-file-word',
@@ -2187,7 +2210,7 @@ function getStatusBadge($due_date, $is_published)
                 'zip': 'fas fa-file-archive',
                 'rar': 'fas fa-file-archive'
             };
-            
+
             return icons[ext] || 'fas fa-file';
         }
 
@@ -2208,10 +2231,10 @@ function getStatusBadge($due_date, $is_published)
                 element.addEventListener('drop', function(e) {
                     e.preventDefault();
                     this.classList.remove('dragover');
-                    
+
                     const type = id.split('_')[0];
                     const fileInput = document.getElementById(`${type}_assignment_file`);
-                    
+
                     if (e.dataTransfer.files.length) {
                         fileInput.files = e.dataTransfer.files;
                         previewFile(type, fileInput);
