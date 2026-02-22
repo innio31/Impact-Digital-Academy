@@ -1290,7 +1290,7 @@ $stmt->close();
                         <span class="badge"><?php echo $stats['active_classes']; ?></span>
                     <?php endif; ?>
                 </a>
-                <a href="<?php echo BASE_URL; ?>modules/instructor/courses/schedule-builder.php" class="nav-item">
+                <a href="<?php echo BASE_URL; ?>modules/instructor/courses/schedule_builder.php" class="nav-item">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Schedule Builder</span>
                     <?php if ($stats['active_classes'] > 0): ?>
