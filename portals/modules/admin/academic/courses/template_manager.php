@@ -59,56 +59,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content_type = $_POST['content_type'];
         $title = trim($_POST['title']);
         $description = trim($_POST['description']);
+        $content_source = $_POST['content_source'] ?? 'file'; // 'file' or 'link'
 
         // Initialize content data array
         $content_data = [
             'admin_id' => $admin_id,
             'week_number' => $week_number,
-            'description' => $description
+            'description' => $description,
+            'content_source' => $content_source
         ];
 
         $file_references = [];
         $upload_error = false;
 
-        // Handle file uploads based on content type
-        if ($content_type === 'material' && isset($_FILES['material_file']) && $_FILES['material_file']['error'] === 0) {
-            $upload_result = handleTemplateFileUpload($_FILES['material_file'], $course_id, $content_type);
-            if ($upload_result['success']) {
-                $file_references[] = $upload_result['file_data'];
-                $content_data['file_url'] = $upload_result['file_data']['path'];
-                $content_data['file_type'] = $upload_result['file_data']['type'];
-                $content_data['file_size'] = $upload_result['file_data']['size'];
-                $content_data['original_filename'] = $upload_result['file_data']['original_name'];
-            } else {
-                $upload_error = $upload_result['error'];
-            }
-        } elseif ($content_type === 'assignment') {
-            $content_data['total_points'] = (float)$_POST['total_points'];
-            $content_data['submission_type'] = $_POST['submission_type'];
-            $content_data['due_days'] = (int)$_POST['due_days']; // Days after publish
-            $content_data['max_files'] = (int)$_POST['max_files'];
-            $content_data['allowed_extensions'] = $_POST['allowed_extensions'];
-            $content_data['instructions'] = trim($_POST['instructions'] ?? '');
+        // Handle based on content source
+        if ($content_source === 'link') {
+            // Handle link submission
+            $link_url = trim($_POST['link_url'] ?? '');
+            if (!empty($link_url)) {
+                // Validate URL
+                if (filter_var($link_url, FILTER_VALIDATE_URL)) {
+                    $content_data['external_url'] = $link_url;
+                    $content_data['is_external_link'] = true;
 
-            // Handle assignment attachment if any
-            if (isset($_FILES['assignment_attachment']) && $_FILES['assignment_attachment']['error'] === 0) {
-                $upload_result = handleTemplateFileUpload($_FILES['assignment_attachment'], $course_id, 'assignment_attachment');
+                    // For assignments/quizzes, they might also need a link
+                    if ($content_type === 'assignment') {
+                        $content_data['assignment_link'] = $link_url;
+                    } elseif ($content_type === 'quiz') {
+                        $content_data['quiz_link'] = $link_url;
+                    }
+                } else {
+                    $upload_error = "Invalid URL format";
+                }
+            } else {
+                $upload_error = "Please enter a valid URL";
+            }
+        } else {
+            // Handle file uploads based on content type
+            if ($content_type === 'material' && isset($_FILES['material_file']) && $_FILES['material_file']['error'] === 0) {
+                $upload_result = handleTemplateFileUpload($_FILES['material_file'], $course_id, $content_type);
                 if ($upload_result['success']) {
                     $file_references[] = $upload_result['file_data'];
-                    $content_data['has_attachment'] = true;
-                    $content_data['attachment_path'] = $upload_result['file_data']['path'];
+                    $content_data['file_url'] = $upload_result['file_data']['path'];
+                    $content_data['file_type'] = $upload_result['file_data']['type'];
+                    $content_data['file_size'] = $upload_result['file_data']['size'];
                     $content_data['original_filename'] = $upload_result['file_data']['original_name'];
+                    $content_data['is_external_link'] = false;
+                } else {
+                    $upload_error = $upload_result['error'];
                 }
+            } elseif ($content_type === 'assignment') {
+                $content_data['total_points'] = (float)$_POST['total_points'];
+                $content_data['submission_type'] = $_POST['submission_type'];
+                $content_data['due_days'] = (int)$_POST['due_days'];
+                $content_data['max_files'] = (int)$_POST['max_files'];
+                $content_data['allowed_extensions'] = $_POST['allowed_extensions'];
+                $content_data['instructions'] = trim($_POST['instructions'] ?? '');
+                $content_data['is_external_link'] = false;
+
+                // Handle assignment attachment if any
+                if (isset($_FILES['assignment_attachment']) && $_FILES['assignment_attachment']['error'] === 0) {
+                    $upload_result = handleTemplateFileUpload($_FILES['assignment_attachment'], $course_id, 'assignment_attachment');
+                    if ($upload_result['success']) {
+                        $file_references[] = $upload_result['file_data'];
+                        $content_data['has_attachment'] = true;
+                        $content_data['attachment_path'] = $upload_result['file_data']['path'];
+                        $content_data['original_filename'] = $upload_result['file_data']['original_name'];
+                    }
+                }
+            } elseif ($content_type === 'quiz') {
+                $content_data['total_points'] = (float)$_POST['total_points'];
+                $content_data['time_limit'] = (int)$_POST['time_limit'];
+                $content_data['attempts_allowed'] = (int)$_POST['attempts_allowed'];
+                $content_data['available_days'] = (int)$_POST['available_days'];
+                $content_data['shuffle_questions'] = isset($_POST['shuffle_questions']) ? 1 : 0;
+                $content_data['shuffle_options'] = isset($_POST['shuffle_options']) ? 1 : 0;
+                $content_data['show_correct_answers'] = isset($_POST['show_correct_answers']) ? 1 : 0;
+                $content_data['instructions'] = trim($_POST['instructions'] ?? '');
+                $content_data['is_external_link'] = false;
             }
-        } elseif ($content_type === 'quiz') {
-            $content_data['total_points'] = (float)$_POST['total_points'];
-            $content_data['time_limit'] = (int)$_POST['time_limit'];
-            $content_data['attempts_allowed'] = (int)$_POST['attempts_allowed'];
-            $content_data['available_days'] = (int)$_POST['available_days']; // Days available after publish
-            $content_data['shuffle_questions'] = isset($_POST['shuffle_questions']) ? 1 : 0;
-            $content_data['shuffle_options'] = isset($_POST['shuffle_options']) ? 1 : 0;
-            $content_data['show_correct_answers'] = isset($_POST['show_correct_answers']) ? 1 : 0;
-            $content_data['instructions'] = trim($_POST['instructions'] ?? '');
         }
 
         if (!$upload_error) {
@@ -443,6 +472,47 @@ $conn->close();
             font-size: 0.85rem;
         }
 
+        .btn-link {
+            background: white;
+            color: var(--primary);
+            border: 1px dashed var(--primary);
+        }
+
+        .btn-link:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Source Toggle */
+        .source-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--light);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .source-btn {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            border: 1px solid var(--light-gray);
+        }
+
+        .source-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .source-btn i {
+            margin-right: 0.5rem;
+        }
+
         /* Week Tabs */
         .week-tabs {
             display: flex;
@@ -564,6 +634,25 @@ $conn->close();
             color: var(--success);
         }
 
+        .source-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+            background: var(--light-gray);
+        }
+
+        .source-badge.link {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .source-badge.file {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
         .content-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -604,6 +693,16 @@ $conn->close();
         .status-inactive {
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
+        }
+
+        .external-link {
+            color: var(--primary);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .external-link:hover {
+            text-decoration: underline;
         }
 
         /* Form Panel */
@@ -696,6 +795,15 @@ $conn->close();
             border-radius: 4px;
             font-size: 0.85rem;
             border-left: 3px solid var(--primary);
+        }
+
+        .link-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .link-input input {
+            flex: 1;
         }
 
         .message {
@@ -843,12 +951,25 @@ $conn->close();
 
                         <?php if (isset($templates_by_week[$week])): ?>
                             <?php foreach ($templates_by_week[$week] as $template): ?>
+                                <?php
+                                $content_source = $template['content_data']['content_source'] ?? 'file';
+                                $is_link = $content_source === 'link' || !empty($template['content_data']['external_url']);
+                                ?>
                                 <div class="content-card <?php echo $template['content_type']; ?> <?php echo !$template['is_active'] ? 'inactive' : ''; ?>" id="template-<?php echo $template['id']; ?>">
                                     <div class="content-header" onclick="toggleTemplate(<?php echo $template['id']; ?>)">
                                         <div>
                                             <span class="content-type-badge badge-<?php echo $template['content_type']; ?>">
                                                 <?php echo ucfirst($template['content_type']); ?>
                                             </span>
+                                            <?php if ($is_link): ?>
+                                                <span class="source-badge link">
+                                                    <i class="fas fa-link"></i> Link
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="source-badge file">
+                                                    <i class="fas fa-file"></i> File
+                                                </span>
+                                            <?php endif; ?>
                                             <?php if (!$template['is_active']): ?>
                                                 <span class="status-badge status-inactive">Inactive</span>
                                             <?php endif; ?>
@@ -875,9 +996,21 @@ $conn->close();
                                     <div class="content-preview">
                                         <p><strong>Description:</strong> <?php echo htmlspecialchars($template['content_data']['description'] ?? ''); ?></p>
 
+                                        <?php if ($is_link): ?>
+                                            <p>
+                                                <strong>Link:</strong>
+                                                <a href="<?php echo htmlspecialchars($template['content_data']['external_url'] ?? '#'); ?>"
+                                                    target="_blank" class="external-link">
+                                                    <?php echo htmlspecialchars($template['content_data']['external_url'] ?? ''); ?>
+                                                </a>
+                                            </p>
+                                        <?php endif; ?>
+
                                         <?php if ($template['content_type'] === 'material'): ?>
-                                            <p><strong>File:</strong> <?php echo htmlspecialchars($template['content_data']['original_filename'] ?? 'No file'); ?></p>
-                                            <p><small>File type: <?php echo strtoupper($template['content_data']['file_type'] ?? 'unknown'); ?></small></p>
+                                            <?php if (!$is_link): ?>
+                                                <p><strong>File:</strong> <?php echo htmlspecialchars($template['content_data']['original_filename'] ?? 'No file'); ?></p>
+                                                <p><small>File type: <?php echo strtoupper($template['content_data']['file_type'] ?? 'unknown'); ?></small></p>
+                                            <?php endif; ?>
 
                                         <?php elseif ($template['content_type'] === 'assignment'): ?>
                                             <p><strong>Points:</strong> <?php echo $template['content_data']['total_points']; ?></p>
@@ -916,6 +1049,7 @@ $conn->close();
 
                     <form method="POST" enctype="multipart/form-data" id="templateForm">
                         <input type="hidden" name="action" value="create_template">
+                        <input type="hidden" name="content_source" id="content_source" value="file">
 
                         <div class="form-group">
                             <label for="week_number" class="required">Week Number</label>
@@ -935,6 +1069,16 @@ $conn->close();
                             </select>
                         </div>
 
+                        <!-- Source Toggle -->
+                        <div class="source-toggle">
+                            <div class="source-btn active" onclick="setContentSource('file')" id="source_file_btn">
+                                <i class="fas fa-upload"></i> Upload File
+                            </div>
+                            <div class="source-btn" onclick="setContentSource('link')" id="source_link_btn">
+                                <i class="fas fa-link"></i> Add Link
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="title" class="required">Title</label>
                             <input type="text" id="title" name="title" class="form-control" required>
@@ -945,6 +1089,18 @@ $conn->close();
                             <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                         </div>
 
+                        <!-- Link Input (shown when link source is selected) -->
+                        <div id="link_fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="link_url" class="required">URL/Link</label>
+                                <div class="link-input">
+                                    <input type="url" id="link_url" name="link_url" class="form-control"
+                                        placeholder="https://example.com/resource">
+                                </div>
+                                <small style="color: var(--gray);">Enter the full URL including http:// or https://</small>
+                            </div>
+                        </div>
+
                         <!-- Common fields for assignment and quiz -->
                         <div id="common_fields" style="display: none;">
                             <div class="form-group">
@@ -953,7 +1109,7 @@ $conn->close();
                             </div>
                         </div>
 
-                        <!-- Material Fields -->
+                        <!-- Material Fields (File) -->
                         <div id="material_fields" class="content-fields">
                             <div class="form-group">
                                 <label>Material File</label>
@@ -968,7 +1124,7 @@ $conn->close();
                             </div>
                         </div>
 
-                        <!-- Assignment Fields -->
+                        <!-- Assignment Fields (File) -->
                         <div id="assignment_fields" class="content-fields" style="display: none;">
                             <div class="form-row">
                                 <div class="form-group">
@@ -1012,7 +1168,7 @@ $conn->close();
                             </div>
                         </div>
 
-                        <!-- Quiz Fields -->
+                        <!-- Quiz Fields (File) -->
                         <div id="quiz_fields" class="content-fields" style="display: none;">
                             <div class="form-row">
                                 <div class="form-group">
@@ -1065,19 +1221,29 @@ $conn->close();
                         $active_templates = count(array_filter($templates, function ($t) {
                             return $t['is_active'];
                         }));
+                        $link_templates = count(array_filter($templates, function ($t) {
+                            return ($t['content_data']['content_source'] ?? 'file') === 'link' || !empty($t['content_data']['external_url']);
+                        }));
+                        $file_templates = $total_templates - $link_templates;
                         ?>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                             <div style="text-align: center;">
                                 <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">
                                     <?php echo $total_templates; ?>
                                 </div>
-                                <div style="font-size: 0.85rem; color: var(--gray);">Total Templates</div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">Total</div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="font-size: 1.5rem; font-weight: 600; color: var(--success);">
                                     <?php echo $active_templates; ?>
                                 </div>
                                 <div style="font-size: 0.85rem; color: var(--gray);">Active</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--warning);">
+                                    <?php echo $link_templates; ?>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">Links</div>
                             </div>
                         </div>
                     </div>
@@ -1174,6 +1340,41 @@ $conn->close();
             });
         });
 
+        // Source toggle
+        function setContentSource(source) {
+            document.getElementById('content_source').value = source;
+
+            // Update button styles
+            document.getElementById('source_file_btn').classList.toggle('active', source === 'file');
+            document.getElementById('source_link_btn').classList.toggle('active', source === 'link');
+
+            // Show/hide appropriate fields
+            const linkFields = document.getElementById('link_fields');
+            const materialFields = document.getElementById('material_fields');
+            const assignmentFields = document.getElementById('assignment_fields');
+            const quizFields = document.getElementById('quiz_fields');
+
+            if (source === 'link') {
+                linkFields.style.display = 'block';
+                // Hide file upload fields but keep other fields visible
+                if (materialFields) materialFields.style.display = 'none';
+                // For assignments and quizzes, we still show the config fields but hide file attachments
+                const contentType = document.getElementById('content_type').value;
+                if (contentType === 'assignment') {
+                    assignmentFields.style.display = 'block';
+                    // Hide the attachment file upload section
+                    const attachmentUpload = assignmentFields.querySelector('.file-upload');
+                    if (attachmentUpload) attachmentUpload.style.display = 'none';
+                } else if (contentType === 'quiz') {
+                    quizFields.style.display = 'block';
+                }
+            } else {
+                linkFields.style.display = 'none';
+                // Restore normal file upload fields based on content type
+                toggleContentFields();
+            }
+        }
+
         // Toggle template expansion
         function toggleTemplate(id) {
             const card = document.getElementById(`template-${id}`);
@@ -1183,24 +1384,44 @@ $conn->close();
         // Toggle content fields based on selected type
         function toggleContentFields() {
             const type = document.getElementById('content_type').value;
+            const source = document.getElementById('content_source').value;
             const materialFields = document.getElementById('material_fields');
             const assignmentFields = document.getElementById('assignment_fields');
             const quizFields = document.getElementById('quiz_fields');
             const commonFields = document.getElementById('common_fields');
+            const linkFields = document.getElementById('link_fields');
 
             materialFields.style.display = 'none';
             assignmentFields.style.display = 'none';
             quizFields.style.display = 'none';
             commonFields.style.display = 'none';
 
-            if (type === 'material') {
-                materialFields.style.display = 'block';
-            } else if (type === 'assignment') {
-                assignmentFields.style.display = 'block';
-                commonFields.style.display = 'block';
-            } else if (type === 'quiz') {
-                quizFields.style.display = 'block';
-                commonFields.style.display = 'block';
+            if (source === 'link') {
+                linkFields.style.display = 'block';
+                if (type === 'assignment') {
+                    assignmentFields.style.display = 'block';
+                    commonFields.style.display = 'block';
+                    // Hide file upload sections for link mode
+                    const fileUploads = assignmentFields.querySelectorAll('.file-upload');
+                    fileUploads.forEach(upload => upload.style.display = 'none');
+                } else if (type === 'quiz') {
+                    quizFields.style.display = 'block';
+                    commonFields.style.display = 'block';
+                }
+            } else {
+                linkFields.style.display = 'none';
+                if (type === 'material') {
+                    materialFields.style.display = 'block';
+                } else if (type === 'assignment') {
+                    assignmentFields.style.display = 'block';
+                    commonFields.style.display = 'block';
+                    // Show file upload sections
+                    const fileUploads = assignmentFields.querySelectorAll('.file-upload');
+                    fileUploads.forEach(upload => upload.style.display = 'block');
+                } else if (type === 'quiz') {
+                    quizFields.style.display = 'block';
+                    commonFields.style.display = 'block';
+                }
             }
         }
 
@@ -1327,12 +1548,31 @@ $conn->close();
         // Form validation
         document.getElementById('templateForm').addEventListener('submit', function(e) {
             const type = document.getElementById('content_type').value;
+            const source = document.getElementById('content_source').value;
 
-            if (type === 'material') {
-                const file = document.getElementById('material_file').files[0];
-                if (!file) {
+            if (source === 'file') {
+                if (type === 'material') {
+                    const file = document.getElementById('material_file').files[0];
+                    if (!file) {
+                        e.preventDefault();
+                        alert('Please select a file for the material.');
+                        return false;
+                    }
+                }
+            } else {
+                const linkUrl = document.getElementById('link_url').value;
+                if (!linkUrl) {
                     e.preventDefault();
-                    alert('Please select a file for the material.');
+                    alert('Please enter a URL for the link.');
+                    return false;
+                }
+
+                // Basic URL validation
+                try {
+                    new URL(linkUrl);
+                } catch {
+                    e.preventDefault();
+                    alert('Please enter a valid URL (including http:// or https://).');
                     return false;
                 }
             }
