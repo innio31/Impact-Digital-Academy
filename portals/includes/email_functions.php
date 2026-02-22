@@ -2323,3 +2323,182 @@ function getIPLocation($ip)
     // For now, return empty string
     return '';
 }
+
+/**
+ * Send notification to admins when a new application is submitted
+ */
+function sendNewApplicationAdminNotification($user_id, $application_data = [])
+{
+    $conn = getDBConnection();
+
+    // Get applicant details
+    $user = getUserById($user_id);
+    if (!$user || empty($user['email'])) {
+        error_log("Admin notification failed: User not found for ID: $user_id");
+        return false;
+    }
+
+    // Get all admin emails
+    $sql = "SELECT email, first_name FROM users WHERE role = 'admin' AND status = 'active' AND email IS NOT NULL AND email != ''";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows === 0) {
+        error_log("No admin emails found for application notification");
+        return false;
+    }
+
+    $admins = [];
+    while ($row = $result->fetch_assoc()) {
+        if (!empty($row['email'])) {
+            $admins[$row['email']] = $row['first_name'];
+        }
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "New Application Received - Impact Digital Academy";
+
+    // Format program type for display
+    $program_type = isset($application_data['program_type']) ? ucfirst($application_data['program_type']) : 'Online';
+    $program_name = 'Not specified';
+
+    // Get program name if program_id exists
+    if (!empty($application_data['program_id'])) {
+        $sql = "SELECT name FROM programs WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $application_data['program_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $program_name = $row['name'];
+        }
+        $stmt->close();
+    }
+
+    // Format preferred period
+    $preferred_period = '';
+    if ($program_type === 'Onsite' && !empty($application_data['preferred_term'])) {
+        $preferred_period = "Preferred Term: " . $application_data['preferred_term'];
+    } elseif ($program_type === 'Online' && !empty($application_data['preferred_block'])) {
+        $preferred_period = "Preferred Block: " . $application_data['preferred_block'];
+    } elseif ($program_type === 'School' && !empty($application_data['preferred_school_term'])) {
+        $preferred_period = "Preferred School Term: " . $application_data['preferred_school_term'];
+    }
+
+    // School name if applicable
+    $school_info = '';
+    if (!empty($application_data['school_name'])) {
+        $school_info = "School: " . $application_data['school_name'];
+    }
+
+    $admin_url = BASE_URL . 'modules/admin/applications.php';
+    $profile_url = BASE_URL . 'modules/admin/user-details.php?id=' . $user_id;
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb; }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 5px; }
+            .button-secondary { background: #10b981; }
+            .badge { background: #f59e0b; color: #1e293b; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+            .info-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+            .info-row:last-child { border-bottom: none; }
+            .label { font-weight: 600; color: #475569; width: 140px; display: inline-block; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>📝 New Application Received</h1>
+                <p style='margin: 10px 0 0; opacity: 0.9;'>" . date('F j, Y g:i A') . "</p>
+            </div>
+            
+            <div class='content'>
+                <p>Hello Admin,</p>
+                
+                <p>A new application has been submitted to <strong>$school_name</strong> and is awaiting your review.</p>
+                
+                <div class='info-box'>
+                    <h3 style='margin-top: 0; color: #2563eb;'>Applicant Details:</h3>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Full Name:</span>
+                        <span><strong>" . htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) . "</strong></span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Email:</span>
+                        <span><a href='mailto:" . htmlspecialchars($user['email']) . "'>" . htmlspecialchars($user['email']) . "</a></span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Phone:</span>
+                        <span>" . htmlspecialchars($user['phone'] ?? 'Not provided') . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Application ID:</span>
+                        <span>#" . $user_id . date('Ymd') . " <span class='badge'>Pending</span></span>
+                    </div>
+                </div>
+                
+                <div class='info-box'>
+                    <h3 style='margin-top: 0; color: #2563eb;'>Program Details:</h3>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Program Type:</span>
+                        <span>" . $program_type . " Program</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='label'>Program:</span>
+                        <span>" . htmlspecialchars($program_name) . "</span>
+                    </div>
+                    
+                    " . (!empty($school_info) ? "<div class='info-row'><span class='label'>School Info:</span><span>" . htmlspecialchars($school_info) . "</span></div>" : "") . "
+                    
+                    " . (!empty($preferred_period) ? "<div class='info-row'><span class='label'>Preferred Period:</span><span>" . htmlspecialchars($preferred_period) . "</span></div>" : "") . "
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$profile_url}' class='button'>View Applicant Details</a>
+                    <a href='{$admin_url}' class='button button-secondary'>Manage Applications</a>
+                </p>
+                
+                <p><strong>Next Steps:</strong></p>
+                <ol style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px;'>
+                    <li>Review the applicant's information and qualifications</li>
+                    <li>Approve or reject the application based on admission criteria</li>
+                    <li>Contact the applicant if additional information is needed</li>
+                    <li>The applicant will be notified automatically of your decision</li>
+                </ol>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    <i class='fas fa-clock'></i> This application was submitted on " . date('F j, Y \a\t g:i A') . ". Please review it at your earliest convenience.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px;'>This is an automated notification for administrators.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    // Send to all admins
+    $results = sendBulkEmail($admins, $subject, $body);
+
+    logActivity('admin_application_notification', "Sent new application notification to " . count($admins) . " admins for applicant #{$user_id}");
+
+    return $results['success'] > 0;
+}

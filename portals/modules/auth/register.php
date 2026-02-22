@@ -288,6 +288,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['login_email'] = $form_data['email'];
                 $_SESSION['registered_program_type'] = $form_data['program_type'];
 
+                // --- ALTERNATIVE: Get user ID by email ---
+                // Query to get the user ID of the newly registered user
+                $get_user_sql = "SELECT id FROM users WHERE email = ? ORDER BY created_at DESC LIMIT 1";
+                $stmt = $conn->prepare($get_user_sql);
+                $stmt->bind_param("s", $form_data['email']);
+                $stmt->execute();
+                $user_result = $stmt->get_result();
+
+                if ($user_result->num_rows > 0) {
+                    $user_row = $user_result->fetch_assoc();
+                    $user_id = $user_row['id'];
+
+                    // Prepare application data
+                    $application_data = [
+                        'program_type' => $form_data['program_type'],
+                        'program_id' => $form_data['program_id'],
+                        'school_id' => $form_data['school_id'] ?? null,
+                        'school_name' => $form_data['school_name'] ?? '',
+                        'academic_period_id' => $form_data['academic_period_id'],
+                        'learning_mode_preference' => $form_data['learning_mode_preference']
+                    ];
+
+                    // Send notification to all admins
+                    require_once __DIR__ . '/../../includes/email_functions.php';
+                    sendNewApplicationAdminNotification($user_id, $application_data);
+                }
+                $stmt->close();
+                // --- END ALTERNATIVE ---
+
                 // Redirect to login page after a brief delay
                 header("Refresh: 3; url=" . BASE_URL . "modules/auth/login.php");
             } else {
