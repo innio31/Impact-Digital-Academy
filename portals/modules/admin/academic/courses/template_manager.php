@@ -809,7 +809,7 @@ $conn->close();
                 <a href="edit.php?id=<?php echo $course_id; ?>" class="btn btn-secondary btn-sm">
                     <i class="fas fa-edit"></i> Edit Course
                 </a>
-                <a href="../../classes/schedule_builder.php?course_id=<?php echo $course_id; ?>" class="btn btn-primary btn-sm">
+                <a href="../../academic/classes/schedule_builder.php?course_id=<?php echo $course_id; ?>" class="btn btn-primary btn-sm">
                     <i class="fas fa-calendar-alt"></i> Go to Schedule Builder
                 </a>
             </div>
