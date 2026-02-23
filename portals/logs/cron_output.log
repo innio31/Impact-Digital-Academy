@@ -1,0 +1,12 @@
+PHP Warning:  Undefined array key "HTTP_HOST" in /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/includes/config.php on line 7
+PHP Fatal error:  Uncaught Error: mysqli_stmt::bind_param(): Argument #8 could not be passed by reference in /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php:207
+Stack trace:
+#0 /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php(61): publishAssignment()
+#1 {main}
+  thrown in /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php on line 207
+
+Fatal error: Uncaught Error: mysqli_stmt::bind_param(): Argument #8 could not be passed by reference in /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php:207
+Stack trace:
+#0 /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php(61): publishAssignment()
+#1 {main}
+  thrown in /home/impactdi/domains/impactdigitalacademy.com.ng/public_html/portals/cron/publish_scheduled_content.php on line 207

@@ -4,6 +4,23 @@
  * Cron Job Script to Publish Scheduled Content
  * Run this script every minute via cron: * * * * * php /path/to/cron/publish_scheduled_content.php
  */
+// Define logMessage function FIRST
+function logMessage($message)
+{
+    global $log_dir;
+    $logFile = $log_dir . '/schedule_publisher.log';
+    $timestamp = date('Y-m-d H:i:s');
+    file_put_contents($logFile, "[$timestamp] $message\n", FILE_APPEND);
+}
+
+// Create logs directory if it doesn't exist
+$log_dir = __DIR__ . '/../logs';
+if (!file_exists($log_dir)) {
+    mkdir($log_dir, 0755, true);
+}
+
+// Now you can use logMessage
+logMessage("=== CRON JOB STARTED ===");
 
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
@@ -120,8 +137,27 @@ echo "Published: $published_count, Failed: $failed_count\n";
 /**
  * Publish a material and send notifications
  */
-function publishMaterial($conn, $schedule, $content_data, $file_references)
+/**
+ * Publish a material - FIXED VERSION
+ */
+function publishMaterial($conn, $schedule, $content_data)
 {
+    logMessage("Starting publishMaterial for: " . $schedule['title']);
+
+    // Determine file type from content data
+    $file_type = $content_data['file_type'] ?? 'document';
+    $file_url = $content_data['file_url'] ?? '';
+    $file_size = isset($content_data['file_size']) ? (int)$content_data['file_size'] : 0;
+    $topic = $content_data['topic'] ?? '';
+    $week_number = isset($schedule['week_number']) ? (int)$schedule['week_number'] : null;
+
+    // Handle null week_number
+    if ($week_number === null) {
+        $week_number = 0; // or NULL depending on your DB schema
+    }
+
+    logMessage("Material data - Type: $file_type, Week: $week_number");
+
     // Insert material
     $sql = "INSERT INTO materials (
                 class_id, instructor_id, title, description, 
@@ -130,16 +166,12 @@ function publishMaterial($conn, $schedule, $content_data, $file_references)
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
-
-    // Get file info from content_data or file_references
-    $file_url = $content_data['file_url'] ?? '';
-    $file_type = $content_data['file_type'] ?? 'document';
-    $file_size = $content_data['file_size'] ?? 0;
-    $week_number = $schedule['week_number'] ?? null;
-    $topic = $content_data['topic'] ?? '';
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . $conn->error);
+    }
 
     $stmt->bind_param(
-        "iissssiss",
+        "iissssiss",  // i,i,s,s,s,s,i,s,s
         $schedule['class_id'],
         $schedule['instructor_id'],
         $schedule['title'],
@@ -152,19 +184,13 @@ function publishMaterial($conn, $schedule, $content_data, $file_references)
     );
 
     if (!$stmt->execute()) {
-        throw new Exception("Failed to insert material: " . $stmt->error);
+        throw new Exception("Execute failed: " . $stmt->error);
     }
 
     $material_id = $stmt->insert_id;
     $stmt->close();
 
-    // Handle file copying if needed (if files need to be duplicated from template)
-    if (!empty($file_references)) {
-        copyTemplateFiles($file_references, $schedule['class_id'], 'materials', $material_id);
-    }
-
-    // Send notifications
-    sendNewMaterialNotifications($conn, $material_id, $schedule);
+    logMessage("Material created with ID: $material_id");
 
     return $material_id;
 }
@@ -172,11 +198,28 @@ function publishMaterial($conn, $schedule, $content_data, $file_references)
 /**
  * Publish an assignment and send notifications
  */
+/**
+ * Publish an assignment - FIXED VERSION
+ */
 function publishAssignment($conn, $schedule, $content_data)
 {
-    // Calculate due date based on template settings
-    $due_days = $content_data['due_days'] ?? 7;
+    logMessage("Starting publishAssignment for: " . $schedule['title']);
+
+    // Calculate due date based on template settings (default 7 days from publish)
+    $due_days = isset($content_data['due_days']) ? (int)$content_data['due_days'] : 7;
     $due_date = date('Y-m-d H:i:s', strtotime($schedule['scheduled_publish_date'] . " + $due_days days"));
+
+    // Get values with defaults
+    $instructions = $content_data['instructions'] ?? '';
+    $submission_type = $content_data['submission_type'] ?? 'file';
+    $max_files = isset($content_data['max_files']) ? (int)$content_data['max_files'] : 1;
+    $allowed_extensions = $content_data['allowed_extensions'] ?? '';
+    $has_attachment = isset($content_data['has_attachment']) ? (int)$content_data['has_attachment'] : 0;
+    $attachment_path = $content_data['attachment_path'] ?? '';
+    $original_filename = $content_data['original_filename'] ?? '';
+    $total_points = isset($content_data['total_points']) ? (float)$content_data['total_points'] : 100;
+
+    logMessage("Assignment data - Title: {$schedule['title']}, Due: $due_date, Points: $total_points");
 
     // Insert assignment
     $sql = "INSERT INTO assignments (
@@ -187,41 +230,38 @@ function publishAssignment($conn, $schedule, $content_data)
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . $conn->error);
+    }
 
-    $instructions = $content_data['instructions'] ?? '';
-    $submission_type = $content_data['submission_type'] ?? 'file';
-    $max_files = $content_data['max_files'] ?? 1;
-    $allowed_extensions = $content_data['allowed_extensions'] ?? '';
-    $has_attachment = $content_data['has_attachment'] ?? 0;
-    $attachment_path = $content_data['attachment_path'] ?? '';
-    $original_filename = $content_data['original_filename'] ?? '';
-
+    // IMPORTANT: Make sure parameter types match exactly
+    // i = integer, s = string, d = double, etc.
     $stmt->bind_param(
-        "iissssdsssiss",
-        $schedule['class_id'],
-        $schedule['instructor_id'],
-        $schedule['title'],
-        $schedule['description'],
-        $instructions,
-        $due_date,
-        $content_data['total_points'] ?? 100,
-        $submission_type,
-        $max_files,
-        $allowed_extensions,
-        $has_attachment,
-        $attachment_path,
-        $original_filename
+        "iissssdsssisss",  // Make sure this string matches the number and type of parameters
+        $schedule['class_id'],        // i
+        $schedule['instructor_id'],   // i
+        $schedule['title'],           // s
+        $schedule['description'],     // s
+        $instructions,                // s
+        $due_date,                    // s
+        $total_points,                // d (double/decimal)
+        $submission_type,             // s
+        $max_files,                   // i (integer)
+        $allowed_extensions,          // s
+        $has_attachment,              // i (integer)
+        $attachment_path,             // s
+        $original_filename,           // s
+        $original_filename            // s (this is for the last s in the pattern)
     );
 
     if (!$stmt->execute()) {
-        throw new Exception("Failed to insert assignment: " . $stmt->error);
+        throw new Exception("Execute failed: " . $stmt->error);
     }
 
     $assignment_id = $stmt->insert_id;
     $stmt->close();
 
-    // Send notifications
-    sendNewAssignmentNotifications($conn, $assignment_id, $schedule);
+    logMessage("Assignment created with ID: $assignment_id");
 
     return $assignment_id;
 }

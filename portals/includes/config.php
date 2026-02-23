@@ -1,6 +1,18 @@
 <?php
 // includes/config.php
 
+// Define BASE_URL safely for both web and CLI
+if (php_sapi_name() === 'cli') {
+    // We're running from command line - use a fixed URL
+    define('BASE_URL', 'https://impactdigitalacademy.com.ng/portals/');
+} else {
+    // We're running from web - use the server variables
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'] ?? 'impactdigitalacademy.com.ng';
+    $base_path = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    define('BASE_URL', $protocol . $host . $base_path);
+}
+
 // Prevent duplicate definitions
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
