@@ -49,7 +49,7 @@ if ($result->num_rows === 0) {
 $course = $result->fetch_assoc();
 $stmt->close();
 
-// Handle template creation
+// Handle template creation/editing
 $message = '';
 $message_type = '';
 
@@ -166,6 +166,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $message = $upload_error;
             $message_type = "error";
+        }
+    } elseif (isset($_POST['action']) && $_POST['action'] === 'edit_template') {
+        $template_id = (int)$_POST['template_id'];
+        $week_number = (int)$_POST['week_number'];
+        $title = trim($_POST['title']);
+        $description = trim($_POST['description']);
+
+        // Get current template data
+        $sql = "SELECT content_data, content_type FROM course_content_templates WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $template_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $current = $result->fetch_assoc();
+        $stmt->close();
+
+        if ($current) {
+            $content_data = json_decode($current['content_data'], true);
+            $content_type = $current['content_type'];
+
+            // Update common fields
+            $content_data['description'] = $description;
+
+            // Update type-specific fields
+            if ($content_type === 'assignment') {
+                if (isset($_POST['total_points'])) {
+                    $content_data['total_points'] = (float)$_POST['total_points'];
+                }
+                if (isset($_POST['due_days'])) {
+                    $content_data['due_days'] = (int)$_POST['due_days'];
+                }
+                if (isset($_POST['instructions'])) {
+                    $content_data['instructions'] = trim($_POST['instructions']);
+                }
+            } elseif ($content_type === 'quiz') {
+                if (isset($_POST['total_points'])) {
+                    $content_data['total_points'] = (float)$_POST['total_points'];
+                }
+                if (isset($_POST['time_limit'])) {
+                    $content_data['time_limit'] = (int)$_POST['time_limit'];
+                }
+                if (isset($_POST['attempts_allowed'])) {
+                    $content_data['attempts_allowed'] = (int)$_POST['attempts_allowed'];
+                }
+                if (isset($_POST['available_days'])) {
+                    $content_data['available_days'] = (int)$_POST['available_days'];
+                }
+                if (isset($_POST['instructions'])) {
+                    $content_data['instructions'] = trim($_POST['instructions']);
+                }
+            }
+
+            $content_data_json = json_encode($content_data);
+
+            // Update template
+            $sql = "UPDATE course_content_templates 
+                    SET week_number = ?, title = ?, content_data = ? 
+                    WHERE id = ?";
+            $update_stmt = $conn->prepare($sql);
+            $update_stmt->bind_param("issi", $week_number, $title, $content_data_json, $template_id);
+
+            if ($update_stmt->execute()) {
+                $message = "Template updated successfully!";
+                $message_type = "success";
+                logActivity('template_updated', "Updated template: {$title}", 'course_content_templates', $template_id);
+            } else {
+                $message = "Failed to update template: " . $conn->error;
+                $message_type = "error";
+            }
+            $update_stmt->close();
         }
     } elseif (isset($_POST['action']) && $_POST['action'] === 'delete_template') {
         $template_id = (int)$_POST['template_id'];
@@ -865,6 +935,8 @@ $conn->close();
             padding: 2rem;
             max-width: 500px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -1320,6 +1392,86 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Edit Template Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Template</h3>
+                <button class="modal-close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <form method="POST" enctype="multipart/form-data" id="editForm">
+                <input type="hidden" name="action" value="edit_template">
+                <input type="hidden" name="template_id" id="edit_template_id">
+
+                <div class="form-group">
+                    <label for="edit_week_number">Week Number</label>
+                    <select id="edit_week_number" name="week_number" class="form-control" required>
+                        <?php for ($w = 1; $w <= 12; $w++): ?>
+                            <option value="<?php echo $w; ?>">Week <?php echo $w; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_title">Title</label>
+                    <input type="text" id="edit_title" name="title" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_description">Description</label>
+                    <textarea id="edit_description" name="description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <!-- Edit fields for assignments -->
+                <div id="edit_assignment_fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit_total_points">Total Points</label>
+                            <input type="number" id="edit_total_points" name="total_points" class="form-control" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_due_days">Due Days</label>
+                            <input type="number" id="edit_due_days" name="due_days" class="form-control" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_instructions">Instructions</label>
+                        <textarea id="edit_instructions" name="instructions" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Edit fields for quizzes -->
+                <div id="edit_quiz_fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit_quiz_points">Total Points</label>
+                            <input type="number" id="edit_quiz_points" name="total_points" class="form-control" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_time_limit">Time Limit (minutes)</label>
+                            <input type="number" id="edit_time_limit" name="time_limit" class="form-control" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit_attempts_allowed">Attempts Allowed</label>
+                            <input type="number" id="edit_attempts_allowed" name="attempts_allowed" class="form-control" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_available_days">Available Days</label>
+                            <input type="number" id="edit_available_days" name="available_days" class="form-control" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Week tab switching
         const weekTabs = document.querySelectorAll('.week-tab');
@@ -1483,6 +1635,88 @@ $conn->close();
             document.getElementById('duplicateTemplateId').value = id;
             document.getElementById('target_week').value = currentWeek;
             openModal('duplicateModal');
+        }
+
+        // Edit template function
+        function editTemplate(id) {
+            // Find the template data from the DOM
+            const templateCard = document.getElementById(`template-${id}`);
+            const title = templateCard.querySelector('.content-title').textContent.trim();
+            const type = templateCard.classList.contains('material') ? 'material' :
+                templateCard.classList.contains('assignment') ? 'assignment' : 'quiz';
+
+            // Get description from preview
+            const previewDiv = templateCard.querySelector('.content-preview');
+            const descriptionElem = previewDiv.querySelector('p:first-child');
+            let description = '';
+            if (descriptionElem && descriptionElem.innerHTML.includes('Description:')) {
+                description = descriptionElem.innerHTML.replace('<strong>Description:</strong>', '').trim();
+            }
+
+            // Get week number from the parent week content
+            const weekContent = templateCard.closest('.week-content');
+            const weekNum = weekContent.id.replace('week-', '');
+
+            // Populate modal fields
+            document.getElementById('edit_template_id').value = id;
+            document.getElementById('edit_week_number').value = weekNum;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_description').value = description;
+
+            // Hide all type-specific fields first
+            document.getElementById('edit_assignment_fields').style.display = 'none';
+            document.getElementById('edit_quiz_fields').style.display = 'none';
+
+            // Extract additional data from preview and show appropriate fields
+            if (type === 'assignment') {
+                document.getElementById('edit_assignment_fields').style.display = 'block';
+
+                // Parse points from preview
+                const pointsMatch = previewDiv.innerHTML.match(/Points:?\s*(\d+(?:\.\d+)?)/i);
+                if (pointsMatch) {
+                    document.getElementById('edit_total_points').value = pointsMatch[1];
+                }
+
+                // Parse due days from preview
+                const dueMatch = previewDiv.innerHTML.match(/Due Days:?\s*(\d+)/i);
+                if (dueMatch) {
+                    document.getElementById('edit_due_days').value = dueMatch[1];
+                }
+
+                // Parse instructions
+                const instrMatch = previewDiv.innerHTML.match(/Instructions:?\s*([^<]+)/i);
+                if (instrMatch) {
+                    document.getElementById('edit_instructions').value = instrMatch[1].trim();
+                }
+            } else if (type === 'quiz') {
+                document.getElementById('edit_quiz_fields').style.display = 'block';
+
+                // Parse points
+                const pointsMatch = previewDiv.innerHTML.match(/Points:?\s*(\d+(?:\.\d+)?)/i);
+                if (pointsMatch) {
+                    document.getElementById('edit_quiz_points').value = pointsMatch[1];
+                }
+
+                // Parse time limit
+                const timeMatch = previewDiv.innerHTML.match(/Time Limit:?\s*(\d+)/i);
+                if (timeMatch) {
+                    document.getElementById('edit_time_limit').value = timeMatch[1];
+                }
+
+                // Parse attempts
+                const attemptsMatch = previewDiv.innerHTML.match(/Attempts Allowed:?\s*(\d+)/i);
+                if (attemptsMatch) {
+                    document.getElementById('edit_attempts_allowed').value = attemptsMatch[1];
+                }
+
+                // Parse available days
+                const daysMatch = previewDiv.innerHTML.match(/Available Days:?\s*(\d+)/i);
+                if (daysMatch) {
+                    document.getElementById('edit_available_days').value = daysMatch[1];
+                }
+            }
+
+            openModal('editModal');
         }
 
         // Close modals when clicking outside

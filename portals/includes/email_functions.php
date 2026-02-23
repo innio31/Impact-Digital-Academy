@@ -2502,3 +2502,422 @@ function sendNewApplicationAdminNotification($user_id, $application_data = [])
 
     return $results['success'] > 0;
 }
+
+/**
+ * Send notification for new material
+ */
+function sendNewMaterialNotifications($conn, $material_id, $schedule)
+{
+    // Get material details
+    $sql = "SELECT m.*, cb.batch_code, c.title as course_title, 
+                   c.course_code, u.email as instructor_email,
+                   CONCAT(u.first_name, ' ', u.last_name) as instructor_name
+            FROM materials m 
+            JOIN class_batches cb ON m.class_id = cb.id 
+            JOIN courses c ON cb.course_id = c.id 
+            JOIN users u ON cb.instructor_id = u.id 
+            WHERE m.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $material_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $material = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$material) {
+        error_log("Material notification failed: Material not found for ID: $material_id");
+        return 0;
+    }
+
+    // Get enrolled students with valid emails
+    $sql = "SELECT u.id, u.email, u.first_name, u.last_name 
+            FROM enrollments e 
+            JOIN users u ON e.student_id = u.id 
+            WHERE e.class_id = ? AND e.status = 'active' 
+            AND u.email IS NOT NULL AND u.email != '' AND u.email LIKE '%@%.%'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $material['class_id']);
+    $stmt->execute();
+    $students = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (empty($students)) {
+        error_log("Material notification failed: No students found for class ID: " . $material['class_id']);
+        return 0;
+    }
+
+    $notification_count = 0;
+    $class_link = BASE_URL . "modules/student/classes/materials.php?class_id=" . $material['class_id'];
+
+    // Determine if it's an external link
+    $is_external = $material['is_external_link'] ?? 0;
+    $material_type = $is_external ? 'External Link' : 'Document';
+    $material_icon = $is_external ? '🔗' : '📄';
+    $type_color = $is_external ? '#8b5cf6' : '#3b82f6';
+
+    foreach ($students as $student) {
+        if (empty($student['email'])) continue;
+
+        $subject = "📚 New Material: " . $material['title'] . " - " . $material['course_title'];
+
+        $body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: {$type_color}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+                .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+                .material-box { background: white; border-left: 4px solid {$type_color}; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+                .button { display: inline-block; background: {$type_color}; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+                .meta { color: #64748b; font-size: 14px; margin-top: 10px; }
+                .external-badge { background: #ede9fe; color: #6b21a8; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; }
+                .info-row { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+                .info-label { font-weight: 600; color: #475569; width: 120px; display: inline-block; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1 style='margin: 0;'>{$material_icon} New Learning Material</h1>
+                </div>
+                
+                <div class='content'>
+                    <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                    
+                    <p>New learning material has been posted for your course: <strong>" . htmlspecialchars($material['course_title']) . " (" . htmlspecialchars($material['batch_code']) . ")</strong></p>
+                    
+                    <div class='material-box'>
+                        <h2 style='margin: 0 0 15px 0; color: #1e293b;'>" . htmlspecialchars($material['title']) . "</h2>
+                        
+                        " . (!empty($material['description']) ? "<p style='color: #4b5563; margin-bottom: 15px;'>" . nl2br(htmlspecialchars($material['description'])) . "</p>" : "") . "
+                        
+                        <div class='meta'>
+                            <div class='info-row'>
+                                <span class='info-label'>Type:</span>
+                                <span>
+                                    <strong>" . $material_type . "</strong>
+                                    " . ($is_external ? "<span class='external-badge'>External Link</span>" : "") . "
+                                </span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Week:</span>
+                                <span><strong>" . ($material['week_number'] ? 'Week ' . $material['week_number'] : 'Current') . "</strong></span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Topic:</span>
+                                <span><strong>" . ($material['topic'] ? htmlspecialchars($material['topic']) : 'General') . "</strong></span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Posted by:</span>
+                                <span><strong>" . htmlspecialchars($material['instructor_name']) . "</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p style='text-align: center; margin: 30px 0;'>
+                        <a href='{$class_link}' class='button'>View Material</a>
+                    </p>
+                    
+                    <p>Check your class dashboard to access this and other learning materials.</p>
+                    
+                    <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                    
+                    <p style='color: #666; font-size: 13px;'>
+                        This is an automated notification from your learning portal. Please do not reply to this email.
+                    </p>
+                </div>
+                
+                <div class='footer'>
+                    <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+
+        if (sendEmail($student['email'], $subject, $body)) {
+            $notification_count++;
+
+            // Create in-app notification
+            $notif_sql = "INSERT INTO notifications (user_id, title, message, type, related_id, created_at) 
+                         VALUES (?, ?, ?, 'new_material', ?, NOW())";
+            $notif_stmt = $conn->prepare($notif_sql);
+            $notif_title = "New Material: " . $material['title'];
+            $notif_message = "New learning material posted in " . $material['course_title'];
+            $notif_stmt->bind_param("issi", $student['id'], $notif_title, $notif_message, $material_id);
+            $notif_stmt->execute();
+            $notif_stmt->close();
+        }
+    }
+
+    logActivity('material_notification', "Sent {$notification_count} notifications for new material #{$material_id}");
+    return $notification_count;
+}
+
+/**
+ * Send notification for new assignment (immediate notification)
+ */
+function sendNewAssignmentNotifications($conn, $assignment_id, $schedule)
+{
+    // Get assignment details if not provided in schedule
+    if (!isset($schedule['title']) || !isset($schedule['class_id'])) {
+        $sql = "SELECT a.*, cb.batch_code, c.title as course_title, 
+                       c.course_code, u.email as instructor_email,
+                       CONCAT(u.first_name, ' ', u.last_name) as instructor_name
+                FROM assignments a 
+                JOIN class_batches cb ON a.class_id = cb.id 
+                JOIN courses c ON cb.course_id = c.id 
+                JOIN users u ON cb.instructor_id = u.id 
+                WHERE a.id = ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $assignment_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $assignment = $result->fetch_assoc();
+        $stmt->close();
+    } else {
+        // Use schedule data
+        $assignment = [
+            'id' => $assignment_id,
+            'title' => $schedule['title'],
+            'description' => $schedule['description'] ?? '',
+            'class_id' => $schedule['class_id'],
+            'instructor_id' => $schedule['instructor_id'],
+            'due_date' => $schedule['due_date'] ?? date('Y-m-d H:i:s', strtotime('+7 days')),
+            'total_points' => $schedule['total_points'] ?? 100,
+            'submission_type' => $schedule['submission_type'] ?? 'file',
+            'course_title' => $schedule['course_title'] ?? 'Course',
+            'batch_code' => $schedule['batch_code'] ?? '',
+            'instructor_name' => $schedule['instructor_name'] ?? 'Instructor'
+        ];
+
+        // Get course title if not set
+        if (!isset($schedule['course_title']) || !isset($schedule['batch_code'])) {
+            $sql = "SELECT c.title as course_title, cb.batch_code
+                    FROM class_batches cb
+                    JOIN courses c ON cb.course_id = c.id
+                    WHERE cb.id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $schedule['class_id']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $assignment['course_title'] = $row['course_title'];
+                $assignment['batch_code'] = $row['batch_code'];
+            }
+            $stmt->close();
+        }
+    }
+
+    if (!$assignment) {
+        error_log("Assignment notification failed: Assignment not found for ID: $assignment_id");
+        return 0;
+    }
+
+    // Get enrolled students with valid emails
+    $sql = "SELECT u.id, u.email, u.first_name, u.last_name 
+            FROM enrollments e 
+            JOIN users u ON e.student_id = u.id 
+            WHERE e.class_id = ? AND e.status = 'active' 
+            AND u.email IS NOT NULL AND u.email != '' AND u.email LIKE '%@%.%'";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $assignment['class_id']);
+    $stmt->execute();
+    $students = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (empty($students)) {
+        error_log("Assignment notification failed: No students found for class ID: " . $assignment['class_id']);
+        return 0;
+    }
+
+    $notification_count = 0;
+    $due_date = date('F j, Y g:i A', strtotime($assignment['due_date']));
+    $course_link = BASE_URL . "modules/student/classes/assignments.php?class_id=" . $assignment['class_id'];
+
+    foreach ($students as $student) {
+        if (empty($student['email'])) continue;
+
+        $subject = "📝 New Assignment: " . $assignment['title'] . " - " . $assignment['course_title'];
+
+        $body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: #f59e0b; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+                .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+                .assignment-box { background: white; border-left: 4px solid #f59e0b; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+                .button { display: inline-block; background: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+                .deadline { color: #dc2626; font-weight: 600; }
+                .meta { color: #64748b; font-size: 14px; margin-top: 10px; }
+                .info-row { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+                .info-label { font-weight: 600; color: #475569; width: 120px; display: inline-block; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1 style='margin: 0;'>📝 New Assignment Posted</h1>
+                </div>
+                
+                <div class='content'>
+                    <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                    
+                    <p>A new assignment has been posted for your course: <strong>" . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['batch_code']) . ")</strong></p>
+                    
+                    <div class='assignment-box'>
+                        <h2 style='margin: 0 0 15px 0; color: #1e293b;'>" . htmlspecialchars($assignment['title']) . "</h2>
+                        
+                        " . (!empty($assignment['description']) ? "<p style='color: #4b5563; margin-bottom: 15px;'>" . nl2br(htmlspecialchars($assignment['description'])) . "</p>" : "") . "
+                        
+                        <div class='meta'>
+                            <div class='info-row'>
+                                <span class='info-label'>Due Date:</span>
+                                <span class='deadline'><strong>{$due_date}</strong></span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Points:</span>
+                                <span><strong>" . $assignment['total_points'] . "</strong></span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Submission Type:</span>
+                                <span><strong>" . ucfirst($assignment['submission_type']) . "</strong></span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Posted by:</span>
+                                <span><strong>" . htmlspecialchars($assignment['instructor_name'] ?? 'Instructor') . "</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p style='text-align: center; margin: 30px 0;'>
+                        <a href='{$course_link}' class='button'>View Assignment Details</a>
+                    </p>
+                    
+                    <p>Please submit your assignment before the due date. Late submissions may be subject to grade deductions.</p>
+                    
+                    <hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>
+                    
+                    <p style='color: #666; font-size: 13px;'>
+                        This is an automated notification from your learning portal. Please do not reply to this email.
+                    </p>
+                </div>
+                
+                <div class='footer'>
+                    <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+
+        if (sendEmail($student['email'], $subject, $body)) {
+            $notification_count++;
+
+            // Create in-app notification
+            $notif_sql = "INSERT INTO notifications (user_id, title, message, type, related_id, created_at) 
+                         VALUES (?, ?, ?, 'new_assignment', ?, NOW())";
+            $notif_stmt = $conn->prepare($notif_sql);
+            $notif_title = "New Assignment: " . $assignment['title'];
+            $notif_message = "New assignment posted in " . $assignment['course_title'];
+            $notif_stmt->bind_param("issi", $student['id'], $notif_title, $notif_message, $assignment_id);
+            $notif_stmt->execute();
+            $notif_stmt->close();
+        }
+    }
+
+    // Also notify the instructor that the assignment was published
+    sendInstructorAssignmentNotification($conn, $assignment, $notification_count);
+
+    logActivity('assignment_notification', "Sent {$notification_count} notifications for new assignment #{$assignment_id}");
+    return $notification_count;
+}
+
+/**
+ * Send notification to instructor when assignment is published
+ */
+function sendInstructorAssignmentNotification($conn, $assignment, $student_count)
+{
+    // Get instructor email
+    $sql = "SELECT email, first_name, last_name FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $assignment['instructor_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $instructor = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$instructor || empty($instructor['email'])) {
+        return false;
+    }
+
+    $subject = "✅ Assignment Published: " . $assignment['title'];
+    $class_link = BASE_URL . "modules/instructor/classes/assignments.php?class_id=" . $assignment['class_id'];
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #10b981; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; }
+            .footer { background: #eee; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
+            .button { display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .stats { background: #f8fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; }
+            .stat-number { font-size: 32px; font-weight: bold; color: #10b981; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>✅ Assignment Published Successfully</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($instructor['first_name']) . ",</p>
+                
+                <p>Your assignment has been published successfully for course: <strong>" . htmlspecialchars($assignment['course_title']) . " (" . htmlspecialchars($assignment['batch_code']) . ")</strong></p>
+                
+                <div class='info-box'>
+                    <h3 style='margin: 0 0 10px 0; color: #1e293b;'>Assignment Details:</h3>
+                    <p><strong>Title:</strong> " . htmlspecialchars($assignment['title']) . "</p>
+                    <p><strong>Due Date:</strong> " . date('F j, Y g:i A', strtotime($assignment['due_date'])) . "</p>
+                    <p><strong>Points:</strong> " . $assignment['total_points'] . "</p>
+                </div>
+                
+                <div class='stats'>
+                    <div class='stat-number'>{$student_count}</div>
+                    <div>Students have been notified</div>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$class_link}' class='button'>View Submissions</a>
+                </p>
+                
+                <p>Students will now see this assignment in their dashboard and have received email notifications.</p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($instructor['email'], $subject, $body);
+}
