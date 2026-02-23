@@ -133,17 +133,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     break;
                 }
 
-                // Map program_type for enrollments table
+                // Use the original program_type from class - now that we've modified the database to accept all three values
                 $enrollment_program_type = $class['program_type'];
-                if ($enrollment_program_type === 'school') {
-                    $enrollment_program_type = 'online'; // Default to online for school programs
-                }
 
-                // Set attendance mode
+                // Set attendance mode based on class type
                 $attendance_mode = 'virtual';
-                if ($class['program_type'] === 'onsite') {
-                    $attendance_mode = 'physical';
-                } elseif ($class['program_type'] === 'school') {
+                if ($class['program_type'] === 'onsite' || $class['program_type'] === 'school') {
                     $attendance_mode = 'physical';
                 }
 
@@ -154,48 +149,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                               VALUES (?, ?, CURDATE(), 'active', ?, ?, NOW(), NOW())";
 
                 $enroll_stmt = $conn->prepare($enroll_sql);
+                if (!$enroll_stmt) {
+                    throw new Exception("Prepare failed: " . $conn->error);
+                }
+
                 $enroll_stmt->bind_param('iiss', $student_id, $class_id, $enrollment_program_type, $attendance_mode);
 
-                if ($enroll_stmt->execute()) {
-                    $enrollment_id = $conn->insert_id;
-
-                    // Get program fee
-                    $fee_sql = "SELECT p.fee FROM programs p
-                               JOIN courses c ON p.id = c.program_id
-                               JOIN class_batches cb ON c.id = cb.course_id
-                               WHERE cb.id = ?";
-                    $fee_stmt = $conn->prepare($fee_sql);
-                    $fee_stmt->bind_param('i', $class_id);
-                    $fee_stmt->execute();
-                    $fee_result = $fee_stmt->get_result();
-                    $fee_data = $fee_result->fetch_assoc();
-                    $program_fee = $fee_data['fee'] ?? 0.00;
-
-                    // Insert financial status
-                    $financial_sql = "INSERT INTO student_financial_status 
-                                     (student_id, class_id, total_fee, paid_amount, balance, 
-                                      current_block, is_cleared, is_suspended, created_at, updated_at)
-                                     VALUES (?, ?, ?, 0, ?, 1, 0, 0, NOW(), NOW())";
-
-                    $financial_stmt = $conn->prepare($financial_sql);
-                    $balance = $program_fee;
-                    $financial_stmt->bind_param('iidd', $student_id, $class_id, $program_fee, $balance);
-
-                    if ($financial_stmt->execute()) {
-                        logActivity(
-                            $_SESSION['user_id'],
-                            'enrollment_create',
-                            "Enrolled student #$student_id in class #$class_id",
-                            'enrollments',
-                            $enrollment_id
-                        );
-                        $success_count++;
-                    } else {
-                        throw new Exception("Failed to create financial record: " . $financial_stmt->error);
-                    }
-                } else {
+                if (!$enroll_stmt->execute()) {
                     throw new Exception("Failed to enroll student: " . $enroll_stmt->error);
                 }
+
+                $enrollment_id = $conn->insert_id;
+
+                // Get program fee
+                $fee_sql = "SELECT p.fee FROM programs p
+                           JOIN courses c ON p.id = c.program_id
+                           JOIN class_batches cb ON c.id = cb.course_id
+                           WHERE cb.id = ?";
+                $fee_stmt = $conn->prepare($fee_sql);
+                $fee_stmt->bind_param('i', $class_id);
+                $fee_stmt->execute();
+                $fee_result = $fee_stmt->get_result();
+                $fee_data = $fee_result->fetch_assoc();
+                $program_fee = $fee_data['fee'] ?? 0.00;
+
+                // Insert financial status
+                $financial_sql = "INSERT INTO student_financial_status 
+                                 (student_id, class_id, total_fee, paid_amount, balance, 
+                                  current_block, is_cleared, is_suspended, created_at, updated_at)
+                                 VALUES (?, ?, ?, 0, ?, 1, 0, 0, NOW(), NOW())";
+
+                $financial_stmt = $conn->prepare($financial_sql);
+                if (!$financial_stmt) {
+                    throw new Exception("Prepare financial failed: " . $conn->error);
+                }
+
+                $balance = $program_fee;
+                $financial_stmt->bind_param('iidd', $student_id, $class_id, $program_fee, $balance);
+
+                if (!$financial_stmt->execute()) {
+                    throw new Exception("Failed to create financial record: " . $financial_stmt->error);
+                }
+
+                // Log activity
+                logActivity(
+                    $_SESSION['user_id'],
+                    'enrollment_create',
+                    "Enrolled student #$student_id in class #$class_id",
+                    'enrollments',
+                    $enrollment_id
+                );
+
+                $success_count++;
             }
 
             $conn->commit();
@@ -229,6 +234,7 @@ $csrf_token = generateCSRFToken();
     <title>Enroll Students - <?php echo htmlspecialchars($class['batch_code']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Keep all the existing CSS styles from the previous version */
         * {
             margin: 0;
             padding: 0;
@@ -758,6 +764,9 @@ $csrf_token = generateCSRFToken();
                 <i class="fas fa-chalkboard-teacher"></i>
                 <span><?php echo htmlspecialchars($class['batch_code']); ?></span>
                 <span class="class-code"><?php echo htmlspecialchars($class['course_code']); ?></span>
+                <span class="class-code" style="background: #fef3c7; color: #92400e;">
+                    <?php echo ucfirst($class['program_type']); ?>
+                </span>
             </div>
         </div>
 
@@ -900,7 +909,7 @@ $csrf_token = generateCSRFToken();
                             <?php endif; ?>
                         </p>
                         <div class="empty-actions">
-                            <a href="create.php" class="btn btn-primary">
+                            <a href="../users/create.php" class="btn btn-primary">
                                 <i class="fas fa-user-plus"></i> Add New Student
                             </a>
                             <a href="list.php" class="btn btn-secondary">
@@ -930,7 +939,7 @@ $csrf_token = generateCSRFToken();
                             <i class="fas fa-times"></i> Cancel
                         </a>
                         <button type="submit" class="btn btn-success" id="enroll-btn">
-                            <i class="fas fa-user-plus"></i> Enroll
+                            <i class="fas fa-user-plus"></i> Enroll Selected
                         </button>
                     </div>
                 <?php endif; ?>
