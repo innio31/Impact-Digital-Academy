@@ -82,9 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             foreach ($student_ids as $student_id) {
+                // Debug: Log current operation
+                error_log("Processing enrollment for student ID: " . $student_id);
+
                 // Check if student is already enrolled
                 $check_sql = "SELECT id FROM enrollments 
-                              WHERE student_id = ? AND class_id = ? AND status != 'dropped'";
+                      WHERE student_id = ? AND class_id = ? AND status != 'dropped'";
                 $check_stmt = $conn->prepare($check_sql);
                 $check_stmt->bind_param('ii', $student_id, $class_id);
                 $check_stmt->execute();
@@ -109,28 +112,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $block_id = null;
 
                 if ($class['program_type'] === 'onsite') {
-                    // Get current term for onsite
                     $term_sql = "SELECT id FROM academic_periods 
-                                WHERE program_type = 'onsite' 
-                                AND period_type = 'term'
-                                AND start_date <= CURDATE() 
-                                AND end_date >= CURDATE()
-                                AND status = 'active'
-                                LIMIT 1";
+                        WHERE program_type = 'onsite' 
+                        AND period_type = 'term'
+                        AND start_date <= CURDATE() 
+                        AND end_date >= CURDATE()
+                        AND status = 'active'
+                        LIMIT 1";
                     $term_result = $conn->query($term_sql);
                     if ($term_result && $term_result->num_rows > 0) {
                         $term = $term_result->fetch_assoc();
                         $term_id = $term['id'];
                     }
                 } else {
-                    // Get current block for online
                     $block_sql = "SELECT id FROM academic_periods 
-                                 WHERE program_type = 'online' 
-                                 AND period_type = 'block'
-                                 AND start_date <= CURDATE() 
-                                 AND end_date >= CURDATE()
-                                 AND status = 'active'
-                                 LIMIT 1";
+                         WHERE program_type = 'online' 
+                         AND period_type = 'block'
+                         AND start_date <= CURDATE() 
+                         AND end_date >= CURDATE()
+                         AND status = 'active'
+                         LIMIT 1";
                     $block_result = $conn->query($block_sql);
                     if ($block_result && $block_result->num_rows > 0) {
                         $block = $block_result->fetch_assoc();
@@ -138,47 +139,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
 
-                // Map the program_type to valid values for enrollments table
+                // Map program_type for enrollments table
                 $enrollment_program_type = $class['program_type'];
                 if ($enrollment_program_type === 'school') {
-                    // Decide how to handle 'school' type - perhaps default to 'online' or 'onsite'
-                    // You might want to check your business logic for how school programs should be handled
-                    $enrollment_program_type = 'online'; // or 'onsite' depending on your needs
+                    $enrollment_program_type = 'online'; // or 'onsite' based on your needs
                 }
-
-                $enrollment_sql = "INSERT INTO enrollments 
-                  (student_id, class_id, enrollment_date, status, 
-                   program_type, attendance_mode, created_at, updated_at)
-                  VALUES (?, ?, CURDATE(), 'active', ?, ?, NOW(), NOW())";
 
                 $attendance_mode = $class['program_type'] === 'onsite' ? 'physical' : 'virtual';
-                // For 'school' type, you might want to set attendance_mode based on some logic
                 if ($class['program_type'] === 'school') {
-                    $attendance_mode = 'physical'; // or 'virtual' depending on your school setup
+                    $attendance_mode = 'physical'; // adjust as needed
                 }
+
+                // Debug: Log the values before insertion
+                error_log("Attempting enrollment with values:");
+                error_log("student_id: " . $student_id . " (type: " . gettype($student_id) . ")");
+                error_log("class_id: " . $class_id . " (type: " . gettype($class_id) . ")");
+                error_log("program_type: " . $enrollment_program_type . " (type: " . gettype($enrollment_program_type) . ")");
+                error_log("attendance_mode: " . $attendance_mode . " (type: " . gettype($attendance_mode) . ")");
+
+                // Enroll student
+                $enrollment_sql = "INSERT INTO enrollments 
+                          (student_id, class_id, enrollment_date, status, 
+                           program_type, attendance_mode, created_at, updated_at)
+                          VALUES (?, ?, CURDATE(), 'active', ?, ?, NOW(), NOW())";
 
                 $enroll_stmt = $conn->prepare($enrollment_sql);
                 if (!$enroll_stmt) {
-                    throw new Exception("Prepare failed: " . $conn->error);
+                    throw new Exception("Prepare failed for enrollment: " . $conn->error);
                 }
 
                 $enroll_stmt->bind_param(
                     'iiss',
                     $student_id,
                     $class_id,
-                    $enrollment_program_type, // Use the mapped value instead of original
+                    $enrollment_program_type,
                     $attendance_mode
                 );
 
                 if ($enroll_stmt->execute()) {
                     $enrollment_id = $conn->insert_id;
+                    error_log("Enrollment successful. Enrollment ID: " . $enrollment_id);
 
-                    // Create initial financial status record
-                    // First get the program fee
+                    // Get program fee
                     $fee_sql = "SELECT p.fee FROM class_batches cb
-                               JOIN courses c ON cb.course_id = c.id
-                               JOIN programs p ON c.program_id = p.id
-                               WHERE cb.id = ?";
+                       JOIN courses c ON cb.course_id = c.id
+                       JOIN programs p ON c.program_id = p.id
+                       WHERE cb.id = ?";
                     $fee_stmt = $conn->prepare($fee_sql);
                     $fee_stmt->bind_param('i', $class_id);
                     $fee_stmt->execute();
@@ -186,25 +192,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $fee_data = $fee_result->fetch_assoc();
                     $program_fee = $fee_data['fee'] ?? 0.00;
 
-                    // Set current_block as integer, not string
-                    $current_block = 1; // integer, not string
+                    error_log("Program fee retrieved: " . $program_fee);
 
+                    // Create financial status record
                     $financial_sql = "INSERT INTO student_financial_status 
-                 (student_id, class_id, total_fee, current_block, 
-                  created_at, updated_at)
-                 VALUES (?, ?, ?, ?, NOW(), NOW())";
+                             (student_id, class_id, total_fee, paid_amount, balance, current_block, 
+                              created_at, updated_at)
+                             VALUES (?, ?, ?, 0, ?, 1, NOW(), NOW())";
 
                     $financial_stmt = $conn->prepare($financial_sql);
                     if (!$financial_stmt) {
-                        throw new Exception("Prepare financial failed: " . $conn->error);
+                        throw new Exception("Prepare failed for financial status: " . $conn->error);
                     }
 
-                    // Bind all 4 parameters including current_block as integer
+                    // Balance equals total_fee initially
+                    $balance = $program_fee;
+                    $current_block = 1;
+
+                    error_log("Financial insert values:");
+                    error_log("student_id: " . $student_id);
+                    error_log("class_id: " . $class_id);
+                    error_log("total_fee: " . $program_fee);
+                    error_log("balance: " . $balance);
+                    error_log("current_block: " . $current_block);
+
                     $financial_stmt->bind_param(
-                        'iidi',  // i=integer, i=integer, d=double, i=integer
+                        'iiddi',  // i=integer, i=integer, d=double, d=double, i=integer
                         $student_id,
                         $class_id,
                         $program_fee,
+                        $balance,
                         $current_block
                     );
 
@@ -219,24 +236,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         );
 
                         $success_count++;
+                        error_log("Financial status created successfully for student " . $student_id);
                     } else {
-                        $errors[] = "Failed to create financial record for student #$student_id: " . $financial_stmt->error;
+                        $error_msg = "Failed to create financial record for student #$student_id: " . $financial_stmt->error;
+                        error_log($error_msg);
+                        $errors[] = $error_msg;
                         $error_count++;
                     }
                 } else {
-                    $errors[] = "Failed to enroll student #$student_id: " . $enroll_stmt->error;
+                    $error_msg = "Failed to enroll student #$student_id: " . $enroll_stmt->error;
+                    error_log($error_msg);
+                    $errors[] = $error_msg;
                     $error_count++;
                 }
             }
 
             // Commit transaction
             $conn->commit();
+            error_log("Transaction committed successfully");
 
-            // Prepare success/error messages
             if ($success_count > 0) {
                 $_SESSION['success'] = "Successfully enrolled $success_count student(s).";
-
-                // Redirect to class view
                 header('Location: view.php?id=' . $class_id);
                 exit();
             }
@@ -248,9 +268,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Rollback transaction on error
             $conn->rollback();
 
-            // Log the specific error
-            error_log("Enrollment error: " . $e->getMessage());
-            error_log("Last SQL error: " . $conn->error);
+            // Log detailed error information
+            error_log("========== ENROLLMENT ERROR ==========");
+            error_log("Exception message: " . $e->getMessage());
+            error_log("Exception code: " . $e->getCode());
+            error_log("Exception file: " . $e->getFile());
+            error_log("Exception line: " . $e->getLine());
+            error_log("Exception trace: " . $e->getTraceAsString());
+
+            // Check MySQL error
+            if (isset($conn)) {
+                error_log("MySQL error number: " . $conn->errno);
+                error_log("MySQL error: " . $conn->error);
+            }
+
+            error_log("========== END ERROR ==========");
 
             $_SESSION['error'] = "An error occurred during enrollment: " . $e->getMessage();
         }
