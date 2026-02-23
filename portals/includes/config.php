@@ -9,20 +9,19 @@ if (php_sapi_name() === 'cli') {
     // We're running from web - use the server variables
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $host = $_SERVER['HTTP_HOST'] ?? 'impactdigitalacademy.com.ng';
-    $base_path = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+
+    // Get the script path and remove the filename
+    $script_path = dirname($_SERVER['SCRIPT_NAME']);
+
+    // If we're in the portals directory, make sure we have the correct base
+    // Remove this if you want to auto-detect the path
+    $base_path = '/portals/';
+
     define('BASE_URL', $protocol . $host . $base_path);
 }
 
-// Prevent duplicate definitions
-if (!defined('BASE_URL')) {
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
-    $host = $_SERVER['HTTP_HOST'];
-    $host = str_replace('www.', '', $host);
-
-    // For HostAfrica with /portals subdirectory
-    // This will generate: https://impactdigitalacademy.com.ng/portals/
-    define('BASE_URL', $protocol . $host . '/portals/');
-}
+// Prevent duplicate definitions - REMOVED THE SECOND BASE_URL DEFINITION
+// if (!defined('BASE_URL')) { ... } - This section has been removed
 
 if (!defined('BASE_PATH')) {
     // Points to the root directory of your portal files
@@ -57,14 +56,14 @@ if (!defined('DB_HOST')) {
 // SMTP Email Configuration - HostAfrica Professional Email
 if (!defined('SMTP_HOST')) {
     // HostAfrica's email servers
-    define('SMTP_HOST', 'mail.impactdigitalacademy.com.ng'); // or 'localhost' if using local mail server
-    define('SMTP_PORT', 587); // Common port for TLS
-    define('SMTP_USERNAME', 'admin@impactdigitalacademy.com.ng'); // Your full email address
-    define('SMTP_PASSWORD', 'Innioluwa@1995'); // The password you set for this email account
-    define('SMTP_FROM_EMAIL', 'admin@impactdigitalacademy.com.ng'); // Must match the authenticated user
+    define('SMTP_HOST', 'mail.impactdigitalacademy.com.ng');
+    define('SMTP_PORT', 587);
+    define('SMTP_USERNAME', 'admin@impactdigitalacademy.com.ng');
+    define('SMTP_PASSWORD', 'Innioluwa@1995');
+    define('SMTP_FROM_EMAIL', 'admin@impactdigitalacademy.com.ng');
     define('SMTP_FROM_NAME', 'Impact Digital Academy');
-    define('SMTP_SECURE', 'tls'); // 'tls' or 'ssl' - HostAfrica supports both
-    define('SMTP_DEBUG', 0); // 0 = off, 1 = client messages, 2 = client and server messages
+    define('SMTP_SECURE', 'tls');
+    define('SMTP_DEBUG', 0);
 }
 
 // Session Configuration
@@ -103,15 +102,13 @@ if (!defined('CSRF_TOKEN_NAME')) {
 }
 
 // IMPORTANT: Set your actual InfinityFree domain here
-// Check what $_SERVER['HTTP_HOST'] shows when you access your site
 if (!defined('ALLOWED_HOSTS')) {
     // Common InfinityFree domains - ADD YOUR ACTUAL DOMAIN HERE
     define('ALLOWED_HOSTS', [
         'impactdigitalacademy.epizy.com',  // Change this to your actual domain
         'www.impactdigitalacademy.epizy.com',
-        // If you have a custom domain, add it here too
-        // 'yourcustomdomain.com',
-        // 'www.yourcustomdomain.com',
+        'impactdigitalacademy.com.ng',     // Added your main domain
+        'www.impactdigitalacademy.com.ng',  // Added with www
         // For local development:
         'localhost',
         '127.0.0.1'
