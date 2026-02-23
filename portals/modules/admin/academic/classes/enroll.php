@@ -186,21 +186,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $fee_data = $fee_result->fetch_assoc();
                     $program_fee = $fee_data['fee'] ?? 0.00;
 
+                    // Set current_block as integer, not string
+                    $current_block = 1; // integer, not string
+
                     $financial_sql = "INSERT INTO student_financial_status 
-                                     (student_id, class_id, total_fee, current_block, 
-                                      created_at, updated_at)
-                                     VALUES (?, ?, ?, 1, NOW(), NOW())";
+                 (student_id, class_id, total_fee, current_block, 
+                  created_at, updated_at)
+                 VALUES (?, ?, ?, ?, NOW(), NOW())";
 
                     $financial_stmt = $conn->prepare($financial_sql);
                     if (!$financial_stmt) {
                         throw new Exception("Prepare financial failed: " . $conn->error);
                     }
 
+                    // Bind all 4 parameters including current_block as integer
                     $financial_stmt->bind_param(
-                        'iid',
+                        'iidi',  // i=integer, i=integer, d=double, i=integer
                         $student_id,
                         $class_id,
-                        $program_fee
+                        $program_fee,
+                        $current_block
                     );
 
                     if ($financial_stmt->execute()) {
