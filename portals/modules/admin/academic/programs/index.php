@@ -103,7 +103,7 @@ $count_result = $count_stmt->get_result();
 $total_programs = $count_result->fetch_assoc()['total'] ?? 0;
 
 // Pagination
-$per_page = 15;
+$per_page = 12; // Reduced from 15 for better grid display
 $total_pages = ceil($total_programs / $per_page);
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $per_page;
@@ -397,15 +397,16 @@ function cloneProgram($id)
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Manage Programs - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
-            --secondary: #1e40af;
-            --accent: #f59e0b;
+            --primary-dark: #1e40af;
+            --primary-light: #3b82f6;
+            --secondary: #f59e0b;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
@@ -413,20 +414,23 @@ function cloneProgram($id)
             --light: #f8fafc;
             --dark: #1e293b;
             --gray: #64748b;
-            --light-gray: #e2e8f0;
+            --gray-light: #94a3b8;
+            --gray-lighter: #e2e8f0;
+            --white: #ffffff;
             --online-color: #10b981;
             --onsite-color: #8b5cf6;
+            --school-color: #3b82f6;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             color: var(--dark);
             min-height: 100vh;
         }
@@ -434,26 +438,33 @@ function cloneProgram($id)
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
         }
 
-        /* Header */
-        .header {
-            margin-bottom: 2rem;
-        }
-
+        /* Breadcrumb */
         .breadcrumb {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             color: var(--gray);
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 0.25rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
         }
 
         .breadcrumb a {
             color: var(--primary);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .breadcrumb a:hover {
@@ -464,107 +475,127 @@ function cloneProgram($id)
             font-size: 0.75rem;
         }
 
+        /* Header */
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--white);
+            padding: 1.25rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
         .page-title {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .page-title h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--dark);
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
 
         .page-title h1 i {
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .page-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex: 1;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
         }
 
         .btn-secondary {
-            background: white;
+            background: var(--white);
             color: var(--primary);
-            border: 1px solid var(--light-gray);
+            border: 2px solid var(--primary-light);
         }
 
         .btn-secondary:hover {
-            background: var(--light);
-            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--white);
         }
 
         .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: var(--white);
         }
 
         .btn-warning {
-            background: var(--warning);
-            color: white;
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: var(--white);
         }
 
-        .btn-info {
-            background: var(--info);
-            color: white;
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary-light);
         }
 
         /* Stats Cards */
         .stats-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 4px solid var(--primary);
+            border: 2px solid transparent;
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
         }
 
         .stat-card.total {
@@ -584,15 +615,11 @@ function cloneProgram($id)
         }
 
         .stat-card.revenue {
-            border-left-color: var(--accent);
+            border-left-color: var(--secondary);
         }
 
         .stat-card.fee {
             border-left-color: var(--info);
-        }
-
-        .stat-card.duration {
-            border-left-color: var(--primary);
         }
 
         .stat-card.online {
@@ -603,51 +630,97 @@ function cloneProgram($id)
             border-left-color: var(--onsite-color);
         }
 
+        .stat-card.school {
+            border-left-color: var(--school-color);
+        }
+
         .stat-value {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
         .stat-value i {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--primary);
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.65rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .stat-subtext {
-            font-size: 0.8rem;
-            color: var(--gray);
+            font-size: 0.65rem;
+            color: var(--gray-light);
             margin-top: 0.25rem;
         }
 
-        /* Filters */
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            background: var(--white);
+            border: 2px solid var(--gray-lighter);
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--light);
+        }
+
+        .quick-action-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .quick-action-btn i {
+            font-size: 0.9rem;
+        }
+
+        /* Filters Card */
         .filters-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .filters-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .filters-header h3 {
             color: var(--dark);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -658,41 +731,45 @@ function cloneProgram($id)
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
         .filter-reset:hover {
-            text-decoration: underline;
+            background: rgba(37, 99, 235, 0.1);
         }
 
         .filters-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
         }
 
         .filter-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .filter-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--dark);
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-lighter);
+            border-radius: 12px;
             font-size: 0.9rem;
-            background: white;
+            background: var(--white);
+            transition: all 0.2s ease;
         }
 
         .form-control:focus {
@@ -703,145 +780,160 @@ function cloneProgram($id)
 
         .filter-actions {
             display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
+            justify-content: center;
             margin-top: 1rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--light-gray);
+            border-top: 2px solid var(--gray-lighter);
         }
 
         /* Programs Grid */
         .programs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .programs-grid {
-                grid-template-columns: 1fr;
-            }
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .program-card {
-            background: white;
-            border-radius: 12px;
+            background: var(--white);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            border: 1px solid var(--light-gray);
+            border: 2px solid transparent;
             position: relative;
         }
 
         .program-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15);
             border-color: var(--primary);
         }
 
         .program-badges {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 0.75rem;
+            right: 0.75rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             align-items: flex-end;
+            z-index: 10;
         }
 
         .program-type-badge {
             padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .program-type-badge.online {
-            background: rgba(16, 185, 129, 0.15);
             color: var(--online-color);
         }
 
         .program-type-badge.onsite {
-            background: rgba(139, 92, 246, 0.15);
             color: var(--onsite-color);
+        }
+
+        .program-type-badge.school {
+            color: var(--school-color);
         }
 
         .program-status {
             padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .status-active {
-            background: rgba(16, 185, 129, 0.15);
             color: var(--success);
         }
 
         .status-inactive {
-            background: rgba(239, 68, 68, 0.15);
             color: var(--danger);
         }
 
         .status-upcoming {
-            background: rgba(245, 158, 11, 0.15);
             color: var(--warning);
         }
 
         .program-header {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            position: relative;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
         }
 
         .program-code {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.9;
             margin-bottom: 0.5rem;
             font-family: 'Courier New', monospace;
-            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
         }
 
         .program-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
             line-height: 1.3;
+            word-break: break-word;
+            padding-right: 80px;
         }
 
         .program-content {
-            padding: 1.5rem;
+            padding: 1.25rem;
+        }
+
+        .school-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .school-badge i {
+            margin-right: 0.3rem;
         }
 
         .program-description {
             color: var(--gray);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.6;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
         .program-fees {
-            background: #f8f9fa;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 16px;
             padding: 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--light-gray);
+            margin-bottom: 1rem;
+            border: 2px solid var(--gray-lighter);
         }
 
         .fee-row {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .fee-row:last-child {
@@ -858,19 +950,21 @@ function cloneProgram($id)
 
         .fee-label {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .fee-value {
             color: var(--dark);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .program-payment-info {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
         }
 
         .payment-type {
@@ -878,20 +972,24 @@ function cloneProgram($id)
             align-items: center;
             gap: 0.25rem;
             color: var(--gray);
+            background: var(--light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
         }
 
         .payment-type i {
-            color: var(--info);
+            color: var(--primary);
         }
 
         .program-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: var(--light);
-            border-radius: 8px;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--light), var(--white));
+            border-radius: 16px;
+            border: 2px solid var(--gray-lighter);
         }
 
         .program-stat {
@@ -899,34 +997,35 @@ function cloneProgram($id)
         }
 
         .stat-icon {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value-small {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark);
             margin-bottom: 0.25rem;
         }
 
+        .stat-value-small {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.1rem;
+        }
+
         .stat-label-small {
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .program-details {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--light-gray);
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed var(--gray-lighter);
+            font-size: 0.85rem;
         }
 
         .detail-row:last-child {
@@ -935,7 +1034,6 @@ function cloneProgram($id)
 
         .detail-label {
             color: var(--gray);
-            font-size: 0.9rem;
         }
 
         .detail-value {
@@ -945,24 +1043,35 @@ function cloneProgram($id)
 
         .program-actions {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 0.5rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--light-gray);
+            border-top: 2px solid var(--gray-lighter);
         }
 
         .btn-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            padding: 0.5rem;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0.3rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: var(--light);
+            color: var(--gray);
+        }
+
+        .btn-icon i {
             font-size: 0.9rem;
-            flex: 1;
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
         }
 
         .btn-view {
@@ -975,9 +1084,14 @@ function cloneProgram($id)
             color: var(--success);
         }
 
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+        .btn-fees {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .btn-courses {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
         }
 
         .btn-activate {
@@ -995,41 +1109,17 @@ function cloneProgram($id)
             color: var(--onsite-color);
         }
 
-        .btn-fees {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .btn-courses {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--info);
-        }
-
-        .btn-icon:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-full {
-            flex: 1;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
 
         /* Table View */
         .programs-table-card {
-            background: white;
-            border-radius: 10px;
+            background: var(--white);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
             display: none;
         }
@@ -1043,15 +1133,16 @@ function cloneProgram($id)
 
         .view-btn {
             padding: 0.5rem 1rem;
-            border-radius: 6px;
-            background: white;
-            border: 1px solid var(--light-gray);
+            border-radius: 30px;
+            background: var(--white);
+            border: 2px solid var(--gray-lighter);
             color: var(--gray);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.85rem;
         }
 
         .view-btn:hover {
@@ -1060,28 +1151,28 @@ function cloneProgram($id)
         }
 
         .view-btn.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-color: var(--primary);
-            color: white;
+            color: var(--white);
         }
 
         .table-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--gray-lighter);
         }
 
         .table-header h3 {
             color: var(--dark);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .bulk-actions {
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .bulk-select {
@@ -1092,40 +1183,38 @@ function cloneProgram($id)
 
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         .data-table th {
             text-align: left;
             padding: 1rem;
-            background: var(--light);
+            background: linear-gradient(135deg, var(--light), var(--white));
             color: var(--gray);
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--light-gray);
+            border-bottom: 2px solid var(--gray-lighter);
             cursor: pointer;
-            user-select: none;
+            white-space: nowrap;
         }
 
         .data-table th:hover {
-            background: var(--light-gray);
-        }
-
-        .data-table th i {
-            margin-left: 0.5rem;
-            opacity: 0.5;
+            color: var(--primary);
         }
 
         .data-table td {
             padding: 1rem;
-            border-bottom: 1px solid var(--light-gray);
+            border-bottom: 1px solid var(--gray-lighter);
             vertical-align: middle;
+            font-size: 0.85rem;
         }
 
         .data-table tr:hover {
@@ -1143,62 +1232,83 @@ function cloneProgram($id)
 
         /* Alert Messages */
         .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
+            padding: 1rem;
+            border-radius: 12px;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-size: 0.9rem;
+            border: 2px solid transparent;
+            animation: slideIn 0.3s ease;
         }
 
         .alert-success {
-            background-color: #d1fae5;
+            background: rgba(16, 185, 129, 0.1);
             color: #065f46;
-            border: 1px solid #a7f3d0;
+            border-color: rgba(16, 185, 129, 0.2);
         }
 
         .alert-error {
-            background-color: #fee2e2;
+            background: rgba(239, 68, 68, 0.1);
             color: #991b1b;
-            border: 1px solid #fecaca;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .alert i {
+            font-size: 1.2rem;
         }
 
         /* Pagination */
         .pagination {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
             align-items: center;
-            gap: 0.5rem;
             margin-top: 2rem;
-            padding: 1rem;
-            border-top: 1px solid var(--light-gray);
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .page-info {
             color: var(--gray);
-            font-size: 0.9rem;
-            margin-right: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .page-link {
-            padding: 0.5rem 0.75rem;
-            border-radius: 4px;
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
             text-decoration: none;
             color: var(--primary);
-            background: white;
-            border: 1px solid var(--light-gray);
-            font-size: 0.9rem;
+            background: var(--white);
+            border: 2px solid var(--gray-lighter);
+            font-size: 0.85rem;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
         .page-link:hover {
-            background: var(--light);
+            background: var(--primary);
+            color: var(--white);
             border-color: var(--primary);
         }
 
         .page-link.active {
             background: var(--primary);
-            color: white;
+            color: var(--white);
             border-color: var(--primary);
         }
 
@@ -1208,31 +1318,12 @@ function cloneProgram($id)
             pointer-events: none;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray);
-            grid-column: 1 / -1;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Badges in table */
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1246,6 +1337,11 @@ function cloneProgram($id)
         .badge-onsite {
             background: rgba(139, 92, 246, 0.15);
             color: var(--onsite-color);
+        }
+
+        .badge-school {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--school-color);
         }
 
         .badge-active {
@@ -1263,133 +1359,165 @@ function cloneProgram($id)
             color: var(--warning);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Tablet Breakpoint */
+        @media (min-width: 640px) {
             .container {
-                padding: 1rem;
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                flex: none;
             }
 
             .stats-cards {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem;
             }
 
             .filters-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-title {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .program-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .program-actions {
-                grid-template-columns: repeat(3, 1fr);
+            .programs-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
             }
 
             .table-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .bulk-actions {
-                width: 100%;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .pagination {
+                flex-direction: row;
                 justify-content: space-between;
             }
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+        /* Desktop Breakpoint */
+        @media (min-width: 1024px) {
+            .stats-cards {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(3, 1fr) auto;
+            }
+
+            .programs-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+
+            .program-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
-        .quick-action-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            background: white;
-            border: 1px solid var(--light-gray);
-            color: var(--gray);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        /* Large Desktop Breakpoint */
+        @media (min-width: 1280px) {
+            .stats-cards {
+                grid-template-columns: repeat(8, 1fr);
+            }
+
+            .programs-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
-        .quick-action-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--light);
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .program-card,
+            .page-link,
+            .filter-reset,
+            .quick-action-btn,
+            .view-btn,
+            .btn-icon {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .btn:active,
+            .stat-card:active,
+            .program-card:active,
+            .btn-icon:active {
+                transform: scale(0.98);
+            }
         }
 
-        .quick-action-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        /* Fee Breakdown Tooltip */
-        .fee-tooltip {
-            position: relative;
-            cursor: help;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .fee-tooltip:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Export Button */
-        .export-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .export-btn:hover {
-            background: #0da271;
-        }
-
-        /* Add to the CSS section */
-        .program-type-badge.school {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--info);
-        }
-
-        .badge-school {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--info);
-        }
-
-        /* Add school to the stat card colors */
-        .stat-card.school {
-            border-left-color: var(--info);
+        .program-card {
+            animation: fadeInUp 0.5s ease;
         }
     </style>
 </head>
@@ -1407,15 +1535,20 @@ function cloneProgram($id)
             <span>Programs</span>
         </div>
 
-        <!-- Page Title -->
-        <div class="page-title">
-            <h1><i class="fas fa-graduation-cap"></i> Manage Programs</h1>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1><i class="fas fa-graduation-cap"></i> Programs</h1>
+                <div style="color: var(--gray); font-size: 0.9rem;">
+                    <?php echo number_format($total_programs); ?> total programs
+                </div>
+            </div>
             <div class="page-actions">
                 <a href="create.php" class="btn btn-primary">
-                    <i class="fas fa-plus-circle"></i> Create New Program
+                    <i class="fas fa-plus-circle"></i> New Program
                 </a>
                 <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/" class="btn btn-secondary">
-                    <i class="fas fa-book"></i> Manage Courses
+                    <i class="fas fa-book"></i> Courses
                 </a>
                 <button class="btn btn-success" onclick="exportPrograms()">
                     <i class="fas fa-file-export"></i> Export
@@ -1427,7 +1560,7 @@ function cloneProgram($id)
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
-                <?php echo htmlspecialchars($_SESSION['success']); ?>
+                <div><?php echo htmlspecialchars($_SESSION['success']); ?></div>
                 <?php unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
@@ -1435,7 +1568,7 @@ function cloneProgram($id)
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-triangle"></i>
-                <?php echo htmlspecialchars($_SESSION['error']); ?>
+                <div><?php echo htmlspecialchars($_SESSION['error']); ?></div>
                 <?php unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
@@ -1450,8 +1583,7 @@ function cloneProgram($id)
                 <div class="stat-label">Total Programs</div>
                 <div class="stat-subtext">
                     <?php echo number_format($stats['online_count'] ?? 0); ?> online,
-                    <?php echo number_format($stats['onsite_count'] ?? 0); ?> onsite,
-                    <?php echo number_format($stats['school_count'] ?? 0); ?> school
+                    <?php echo number_format($stats['onsite_count'] ?? 0); ?> onsite
                 </div>
             </div>
             <div class="stat-card active" onclick="window.location.href='?status=active<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
@@ -1460,13 +1592,6 @@ function cloneProgram($id)
                     <?php echo number_format($stats['active'] ?? 0); ?>
                 </div>
                 <div class="stat-label">Active</div>
-            </div>
-            <div class="stat-card inactive" onclick="window.location.href='?status=inactive<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
-                <div class="stat-value">
-                    <i class="fas fa-times-circle"></i>
-                    <?php echo number_format($stats['inactive'] ?? 0); ?>
-                </div>
-                <div class="stat-label">Inactive</div>
             </div>
             <div class="stat-card upcoming" onclick="window.location.href='?status=upcoming<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
@@ -1477,40 +1602,38 @@ function cloneProgram($id)
             </div>
             <div class="stat-card revenue" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
-                    <i class="fas fa-chart-line"></i>
-                    ₦<?php echo number_format($stats['total_value'] ?? 0, 0); ?>
+                    <i class="fas fa-naira-sign"></i>
+                    <?php echo number_format($stats['total_value'] ?? 0, 0); ?>
                 </div>
                 <div class="stat-label">Total Value</div>
-                <div class="stat-subtext">Includes registration fees</div>
             </div>
             <div class="stat-card fee" onclick="window.location.href='?sort=fee&order=desc<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-money-bill"></i>
                     ₦<?php echo number_format($stats['avg_fee'] ?? 0, 0); ?>
                 </div>
-                <div class="stat-label">Avg. Program Fee</div>
+                <div class="stat-label">Avg. Fee</div>
             </div>
             <div class="stat-card online" onclick="window.location.href='?program_type=online<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-globe"></i>
                     <?php echo number_format($stats['online_count'] ?? 0); ?>
                 </div>
-                <div class="stat-label">Online Programs</div>
+                <div class="stat-label">Online</div>
             </div>
             <div class="stat-card onsite" onclick="window.location.href='?program_type=onsite<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-building"></i>
                     <?php echo number_format($stats['onsite_count'] ?? 0); ?>
                 </div>
-                <div class="stat-label">Onsite Programs</div>
+                <div class="stat-label">Onsite</div>
             </div>
-
             <div class="stat-card school" onclick="window.location.href='?program_type=school<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>'">
                 <div class="stat-value">
                     <i class="fas fa-school"></i>
                     <?php echo number_format($stats['school_count'] ?? 0); ?>
                 </div>
-                <div class="stat-label">School Programs</div>
+                <div class="stat-label">School</div>
             </div>
         </div>
 
@@ -1531,8 +1654,7 @@ function cloneProgram($id)
             <a href="?program_type=onsite<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'onsite' ? 'active' : ''; ?>">
                 <i class="fas fa-building"></i> Onsite
             </a>
-            <a href="?program_type=school<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                class="quick-action-btn <?php echo $program_type === 'school' ? 'active' : ''; ?>">
+            <a href="?program_type=school<?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>" class="quick-action-btn <?php echo $program_type === 'school' ? 'active' : ''; ?>">
                 <i class="fas fa-school"></i> School
             </a>
         </div>
@@ -1542,7 +1664,7 @@ function cloneProgram($id)
             <div class="filters-header">
                 <h3><i class="fas fa-filter"></i> Filter Programs</h3>
                 <button type="button" class="filter-reset" onclick="resetFilters()">
-                    <i class="fas fa-redo"></i> Reset Filters
+                    <i class="fas fa-redo-alt"></i> Reset
                 </button>
             </div>
 
@@ -1558,7 +1680,6 @@ function cloneProgram($id)
                         </select>
                     </div>
 
-                    <!-- In the program type filter dropdown -->
                     <div class="filter-group">
                         <label for="program_type">Program Type</label>
                         <select id="program_type" name="program_type" class="form-control" onchange="this.form.submit()">
@@ -1572,7 +1693,7 @@ function cloneProgram($id)
                     <div class="filter-group">
                         <label for="filter_school">School</label>
                         <select id="filter_school" name="filter_school" class="form-control" onchange="this.form.submit()">
-                            <option value="">All Schools</option>
+                            <option value="0">All Schools</option>
                             <?php
                             $schools_sql = "SELECT id, name FROM schools ORDER BY name";
                             $schools_result = $conn->query($schools_sql);
@@ -1587,32 +1708,10 @@ function cloneProgram($id)
                     </div>
 
                     <div class="filter-group">
-                        <label for="sort">Sort By</label>
-                        <select id="sort" name="sort" class="form-control" onchange="this.form.submit()">
-                            <option value="created_at" <?php echo $sort === 'created_at' ? 'selected' : ''; ?>>Date Created</option>
-                            <option value="program_code" <?php echo $sort === 'program_code' ? 'selected' : ''; ?>>Program Code</option>
-                            <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Program Name</option>
-                            <option value="duration_weeks" <?php echo $sort === 'duration_weeks' ? 'selected' : ''; ?>>Duration</option>
-                            <option value="fee" <?php echo $sort === 'fee' ? 'selected' : ''; ?>>Program Fee</option>
-                            <option value="base_fee" <?php echo $sort === 'base_fee' ? 'selected' : ''; ?>>Base Fee</option>
-                            <option value="program_type" <?php echo $sort === 'program_type' ? 'selected' : ''; ?>>Program Type</option>
-                            <option value="status" <?php echo $sort === 'status' ? 'selected' : ''; ?>>Status</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="order">Order</label>
-                        <select id="order" name="order" class="form-control" onchange="this.form.submit()">
-                            <option value="desc" <?php echo $order === 'desc' ? 'selected' : ''; ?>>Descending</option>
-                            <option value="asc" <?php echo $order === 'asc' ? 'selected' : ''; ?>>Ascending</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-group">
                         <label for="search">Search</label>
                         <input type="text" id="search" name="search" class="form-control"
                             value="<?php echo htmlspecialchars($search); ?>"
-                            placeholder="Search by code, name, description...">
+                            placeholder="Search programs...">
                     </div>
                 </div>
 
@@ -1627,10 +1726,10 @@ function cloneProgram($id)
         <!-- View Toggle -->
         <div class="view-toggle">
             <button class="view-btn active" onclick="showGridView()">
-                <i class="fas fa-th-large"></i> Grid View
+                <i class="fas fa-th-large"></i> Grid
             </button>
             <button class="view-btn" onclick="showTableView()">
-                <i class="fas fa-table"></i> Table View
+                <i class="fas fa-table"></i> Table
             </button>
         </div>
 
@@ -1641,9 +1740,9 @@ function cloneProgram($id)
                     <div class="empty-state">
                         <i class="fas fa-graduation-cap"></i>
                         <h3>No programs found</h3>
-                        <p>No programs match your current filters. Try adjusting your search or filters.</p>
-                        <button type="button" class="btn btn-secondary" onclick="resetFilters()" style="margin-top: 1rem;">
-                            <i class="fas fa-redo"></i> Reset Filters
+                        <p>No programs match your current filters.</p>
+                        <button type="button" class="btn btn-primary" onclick="resetFilters()" style="margin-top: 0.5rem;">
+                            <i class="fas fa-redo-alt"></i> Reset Filters
                         </button>
                     </div>
                 <?php else: ?>
@@ -1652,32 +1751,32 @@ function cloneProgram($id)
                         $program_type_class = $program['program_type'];
                     ?>
                         <div class="program-card">
-                            <div class="program-header">
-                                <div class="program-badges">
-                                    <div class="program-type-badge <?php echo $program_type_class; ?>">
-                                        <?php echo strtoupper($program['program_type']); ?>
-                                    </div>
-                                    <div class="program-status status-<?php echo $program['status']; ?>">
-                                        <?php echo ucfirst($program['status']); ?>
-                                    </div>
+                            <div class="program-badges">
+                                <div class="program-type-badge <?php echo $program_type_class; ?>">
+                                    <?php echo strtoupper($program['program_type']); ?>
                                 </div>
+                                <div class="program-status status-<?php echo $program['status']; ?>">
+                                    <?php echo ucfirst($program['status']); ?>
+                                </div>
+                            </div>
+
+                            <div class="program-header">
                                 <div class="program-code"><?php echo htmlspecialchars($program['program_code']); ?></div>
                                 <h3 class="program-title"><?php echo htmlspecialchars($program['name']); ?></h3>
                             </div>
 
                             <div class="program-content">
                                 <?php if ($program['school_name']): ?>
-                                    <div style="margin-bottom: 0.5rem;">
-                                        <span style="background: #e2e8f0; color: #4b5563; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">
-                                            <i class="fas fa-school"></i> <?php echo htmlspecialchars($program['school_name']); ?>
-                                        </span>
+                                    <div class="school-badge">
+                                        <i class="fas fa-school"></i>
+                                        <?php echo htmlspecialchars($program['school_name']); ?>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if ($program['description']): ?>
-                                    <div class="program-description" title="<?php echo htmlspecialchars($program['description']); ?>">
-                                        <?php echo htmlspecialchars(substr($program['description'], 0, 150)); ?>
-                                        <?php if (strlen($program['description']) > 150): ?>...<?php endif; ?>
+                                    <div class="program-description">
+                                        <?php echo htmlspecialchars(substr($program['description'], 0, 100)); ?>
+                                        <?php if (strlen($program['description']) > 100): ?>...<?php endif; ?>
                                     </div>
                                 <?php endif; ?>
 
@@ -1685,32 +1784,36 @@ function cloneProgram($id)
                                 <div class="program-fees">
                                     <div class="fee-row">
                                         <span class="fee-label">Program Fee:</span>
-                                        <span class="fee-value">₦<?php echo number_format($program['fee'], 2); ?></span>
+                                        <span class="fee-value">₦<?php echo number_format($program['fee'], 0); ?></span>
                                     </div>
                                     <?php if (($program['registration_fee'] ?? 0) > 0): ?>
                                         <div class="fee-row">
                                             <span class="fee-label">Registration:</span>
-                                            <span class="fee-value">₦<?php echo number_format($program['registration_fee'], 2); ?></span>
+                                            <span class="fee-value">₦<?php echo number_format($program['registration_fee'], 0); ?></span>
                                         </div>
                                     <?php endif; ?>
                                     <div class="fee-row total">
                                         <span class="fee-label">Total Fee:</span>
-                                        <span class="fee-value">₦<?php echo number_format($total_fee, 2); ?></span>
+                                        <span class="fee-value">₦<?php echo number_format($total_fee, 0); ?></span>
                                     </div>
                                 </div>
 
                                 <!-- Payment Info -->
                                 <div class="program-payment-info">
-                                    <div class="payment-type" title="Payment Plan Type">
+                                    <div class="payment-type">
                                         <i class="fas fa-credit-card"></i>
                                         <span><?php echo ucfirst($program['payment_plan_type'] ?? 'full'); ?></span>
                                     </div>
                                     <?php if ($program['installment_count'] > 1): ?>
-                                        <div class="payment-type" title="Number of Installments">
+                                        <div class="payment-type">
                                             <i class="fas fa-calendar-alt"></i>
                                             <span><?php echo $program['installment_count']; ?> installments</span>
                                         </div>
                                     <?php endif; ?>
+                                    <div class="payment-type">
+                                        <i class="fas fa-clock"></i>
+                                        <span><?php echo $program['duration_weeks']; ?> weeks</span>
+                                    </div>
                                 </div>
 
                                 <!-- Program Stats -->
@@ -1738,66 +1841,50 @@ function cloneProgram($id)
                                     </div>
                                 </div>
 
-                                <!-- Additional Details -->
-                                <div class="program-details">
-                                    <div class="detail-row">
-                                        <span class="detail-label">Duration:</span>
-                                        <span class="detail-value"><?php echo $program['duration_weeks']; ?> weeks</span>
-                                    </div>
-                                    <?php if ($program['duration_mode']): ?>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Duration Mode:</span>
-                                            <span class="detail-value"><?php echo ucwords(str_replace('_', ' ', $program['duration_mode'])); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if ($program['creator_first_name']): ?>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Created By:</span>
-                                            <span class="detail-value"><?php echo htmlspecialchars($program['creator_first_name'] . ' ' . $program['creator_last_name']); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-
                                 <!-- Program Actions -->
                                 <div class="program-actions">
                                     <a href="view.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-view" title="View Details">
                                         <i class="fas fa-eye"></i>
+                                        <span class="action-text">View</span>
                                     </a>
-                                    <a href="edit.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-edit" title="Edit Program">
+                                    <a href="edit.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-edit" title="Edit">
                                         <i class="fas fa-edit"></i>
+                                        <span class="action-text">Edit</span>
                                     </a>
                                     <a href="fee_settings.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-fees" title="Fee Settings">
                                         <i class="fas fa-money-bill"></i>
+                                        <span class="action-text">Fees</span>
                                     </a>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/index.php?program_id=<?php echo $program['id']; ?>" class="btn-icon btn-courses" title="Manage Courses">
+                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/index.php?program_id=<?php echo $program['id']; ?>" class="btn-icon btn-courses" title="Courses">
                                         <i class="fas fa-book"></i>
+                                        <span class="action-text">Courses</span>
                                     </a>
                                     <?php if ($program['status'] === 'active'): ?>
-                                        <a href="?action=deactivate&id=<?php echo $program['id'];
-                                                                        echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                        <a href="?action=deactivate&id=<?php echo $program['id']; ?><?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
                                             class="btn-icon btn-deactivate" title="Deactivate"
-                                            onclick="return confirm('Deactivate this program? Current enrollments will not be affected.')">
-                                            <i class="fas fa-pause"></i>
+                                            onclick="return confirmDeactivation()">
+                                            <i class="fas fa-pause-circle"></i>
+                                            <span class="action-text">Pause</span>
                                         </a>
-                                    <?php elseif ($program['status'] === 'inactive'): ?>
-                                        <a href="?action=activate&id=<?php echo $program['id'];
-                                                                        echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                    <?php elseif ($program['status'] === 'inactive' || $program['status'] === 'upcoming'): ?>
+                                        <a href="?action=activate&id=<?php echo $program['id']; ?><?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
                                             class="btn-icon btn-activate" title="Activate"
-                                            onclick="return confirm('Activate this program?')">
-                                            <i class="fas fa-play"></i>
+                                            onclick="return confirmActivation()">
+                                            <i class="fas fa-play-circle"></i>
+                                            <span class="action-text">Activate</span>
                                         </a>
                                     <?php endif; ?>
-                                    <a href="?action=clone&id=<?php echo $program['id'];
-                                                                echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                                        class="btn-icon btn-clone" title="Clone Program"
-                                        onclick="return confirm('Create a copy of this program?')">
+                                    <a href="?action=clone&id=<?php echo $program['id']; ?><?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                        class="btn-icon btn-clone" title="Clone"
+                                        onclick="return confirmClone()">
                                         <i class="fas fa-copy"></i>
+                                        <span class="action-text">Clone</span>
                                     </a>
-                                    <a href="?action=delete&id=<?php echo $program['id'];
-                                                                echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
+                                    <a href="?action=delete&id=<?php echo $program['id']; ?><?php echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
                                         class="btn-icon btn-delete" title="Delete"
-                                        onclick="return confirm('Delete this program? This action cannot be undone and will remove all associated data.')">
-                                        <i class="fas fa-trash"></i>
+                                        onclick="return confirmDelete()">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span class="action-text">Delete</span>
                                     </a>
                                 </div>
                             </div>
@@ -1856,16 +1943,14 @@ function cloneProgram($id)
                                     Status <i class="fas fa-sort"></i>
                                 </th>
                                 <th>School</th>
-                                <th>Courses</th>
-                                <th>Payment Plan</th>
-                                <th>Created</th>
+                                <th>Stats</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($programs)): ?>
                                 <tr>
-                                    <td colspan="12" class="empty-state" style="text-align: center; padding: 2rem;">
+                                    <td colspan="10" class="empty-state">
                                         <i class="fas fa-graduation-cap"></i>
                                         <h3>No programs found</h3>
                                         <p>No programs match your current filters.</p>
@@ -1884,9 +1969,8 @@ function cloneProgram($id)
                                         </td>
                                         <td>
                                             <div style="font-weight: 500;"><?php echo htmlspecialchars($program['name']); ?></div>
-                                            <div style="font-size: 0.85rem; color: var(--gray); margin-top: 0.25rem;">
-                                                <?php echo substr($program['description'] ?? '', 0, 50); ?>
-                                                <?php if (strlen($program['description'] ?? '') > 50): ?>...<?php endif; ?>
+                                            <div style="font-size: 0.7rem; color: var(--gray); margin-top: 0.25rem;">
+                                                <?php echo substr($program['description'] ?? '', 0, 30); ?>...
                                             </div>
                                         </td>
                                         <td>
@@ -1896,10 +1980,10 @@ function cloneProgram($id)
                                         </td>
                                         <td><?php echo $program['duration_weeks']; ?> weeks</td>
                                         <td>
-                                            <div style="font-weight: 600;">₦<?php echo number_format($program['fee'], 2); ?></div>
+                                            <div style="font-weight: 600;">₦<?php echo number_format($program['fee'], 0); ?></div>
                                             <?php if (($program['registration_fee'] ?? 0) > 0): ?>
-                                                <div style="font-size: 0.85rem; color: var(--gray);">
-                                                    +₦<?php echo number_format($program['registration_fee'], 2); ?> reg
+                                                <div style="font-size: 0.7rem; color: var(--gray);">
+                                                    +₦<?php echo number_format($program['registration_fee'], 0); ?> reg
                                                 </div>
                                             <?php endif; ?>
                                         </td>
@@ -1910,71 +1994,30 @@ function cloneProgram($id)
                                         </td>
                                         <td>
                                             <?php if ($program['school_name']): ?>
-                                                <div style="font-size: 0.85rem; font-weight: 500;">
+                                                <span style="font-size: 0.8rem; font-weight: 500;">
                                                     <?php echo htmlspecialchars($program['school_name']); ?>
-                                                </div>
+                                                </span>
                                             <?php else: ?>
-                                                <span style="color: var(--gray); font-size: 0.85rem;">—</span>
+                                                <span style="color: var(--gray);">—</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <div style="font-weight: 600; color: var(--primary);">
-                                                <?php echo $program['course_count'] ?: '0'; ?>
+                                            <div style="display: flex; gap: 0.5rem; font-size: 0.75rem;">
+                                                <span title="Courses"><i class="fas fa-book"></i> <?php echo $program['course_count'] ?: '0'; ?></span>
+                                                <span title="Classes"><i class="fas fa-chalkboard"></i> <?php echo $program['class_count'] ?: '0'; ?></span>
+                                                <span title="Students"><i class="fas fa-users"></i> <?php echo $program['enrollment_count'] ?: '0'; ?></span>
                                             </div>
                                         </td>
                                         <td>
-                                            <div style="font-size: 0.85rem; font-weight: 500;">
-                                                <?php echo ucfirst($program['payment_plan_type'] ?? 'full'); ?>
-                                            </div>
-                                            <?php if ($program['installment_count'] > 1): ?>
-                                                <div style="font-size: 0.8rem; color: var(--gray);">
-                                                    <?php echo $program['installment_count']; ?> installments
-                                                </div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div><?php echo formatDate($program['created_at'], 'M d, Y'); ?></div>
-                                            <div style="font-size: 0.85rem; color: var(--gray);">
-                                                <?php echo formatDate($program['created_at'], 'h:i A'); ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                                <a href="view.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-view" title="View">
+                                            <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                                                <a href="view.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-view" title="View" style="padding: 0.3rem;">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="edit.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-edit" title="Edit">
+                                                <a href="edit.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-edit" title="Edit" style="padding: 0.3rem;">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="fee_settings.php?id=<?php echo $program['id']; ?>" class="btn-icon btn-fees" title="Fee Settings">
-                                                    <i class="fas fa-money-bill"></i>
-                                                </a>
-                                                <?php if ($program['status'] === 'active'): ?>
-                                                    <a href="?action=deactivate&id=<?php echo $program['id'];
-                                                                                    echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                                                        class="btn-icon btn-deactivate" title="Deactivate"
-                                                        onclick="return confirm('Deactivate this program?')">
-                                                        <i class="fas fa-pause"></i>
-                                                    </a>
-                                                <?php elseif ($program['status'] === 'inactive'): ?>
-                                                    <a href="?action=activate&id=<?php echo $program['id'];
-                                                                                    echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                                                        class="btn-icon btn-activate" title="Activate"
-                                                        onclick="return confirm('Activate this program?')">
-                                                        <i class="fas fa-play"></i>
-                                                    </a>
-                                                <?php endif; ?>
-                                                <a href="?action=clone&id=<?php echo $program['id'];
-                                                                            echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                                                    class="btn-icon btn-clone" title="Clone"
-                                                    onclick="return confirm('Create a copy of this program?')">
+                                                <a href="?action=clone&id=<?php echo $program['id']; ?>" class="btn-icon btn-clone" title="Clone" style="padding: 0.3rem;">
                                                     <i class="fas fa-copy"></i>
-                                                </a>
-                                                <a href="?action=delete&id=<?php echo $program['id'];
-                                                                            echo $filter_school ? '&filter_school=' . $filter_school : ''; ?>"
-                                                    class="btn-icon btn-delete" title="Delete"
-                                                    onclick="return confirm('Delete this program? This action cannot be undone.')">
-                                                    <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
                                         </td>
@@ -1991,56 +2034,51 @@ function cloneProgram($id)
         <?php if ($total_pages > 1): ?>
             <div class="pagination">
                 <div class="page-info">
-                    Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_programs); ?> of <?php echo number_format($total_programs); ?> programs
+                    Showing <?php echo (($page - 1) * $per_page) + 1; ?>-<?php echo min($page * $per_page, $total_programs); ?> of <?php echo number_format($total_programs); ?>
                 </div>
+                <div class="page-numbers">
+                    <?php
+                    $query_params = $_GET;
+                    unset($query_params['page']);
+                    $query_string = http_build_query($query_params);
+                    ?>
 
-                <?php
-                // Build query parameters for pagination
-                $query_params = $_GET;
-                unset($query_params['page']);
-                ?>
+                    <?php if ($page > 1): ?>
+                        <a href="?<?php echo $query_string; ?>&page=1" class="page-link">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?<?php echo $query_string; ?>&page=<?php echo $page - 1; ?>" class="page-link">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    <?php else: ?>
+                        <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
+                        <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
+                    <?php endif; ?>
 
-                <?php if ($page > 1): ?>
-                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => 1])); ?>" class="page-link">
-                        <i class="fas fa-angle-double-left"></i>
-                    </a>
-                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page - 1])); ?>" class="page-link">
-                        <i class="fas fa-angle-left"></i>
-                    </a>
-                <?php else: ?>
-                    <span class="page-link disabled"><i class="fas fa-angle-double-left"></i></span>
-                    <span class="page-link disabled"><i class="fas fa-angle-left"></i></span>
-                <?php endif; ?>
+                    <?php
+                    $start_page = max(1, $page - 2);
+                    $end_page = min($total_pages, $page + 2);
 
-                <?php
-                $start_page = max(1, $page - 2);
-                $end_page = min($total_pages, $page + 2);
-
-                for ($p = $start_page; $p <= $end_page; $p++):
-                    if ($p == 1 || $p == $total_pages || ($p >= $page - 2 && $p <= $page + 2)):
-                ?>
-                        <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $p])); ?>"
+                    for ($p = $start_page; $p <= $end_page; $p++):
+                    ?>
+                        <a href="?<?php echo $query_string; ?>&page=<?php echo $p; ?>"
                             class="page-link <?php echo $p == $page ? 'active' : ''; ?>">
                             <?php echo $p; ?>
                         </a>
-                    <?php
-                    elseif ($p == $start_page + 2 || $p == $end_page - 2):
-                    ?>
-                        <span class="page-link">...</span>
-                <?php endif;
-                endfor; ?>
+                    <?php endfor; ?>
 
-                <?php if ($page < $total_pages): ?>
-                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $page + 1])); ?>" class="page-link">
-                        <i class="fas fa-angle-right"></i>
-                    </a>
-                    <a href="?<?php echo http_build_query(array_merge($query_params, ['page' => $total_pages])); ?>" class="page-link">
-                        <i class="fas fa-angle-double-right"></i>
-                    </a>
-                <?php else: ?>
-                    <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
-                    <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
-                <?php endif; ?>
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?<?php echo $query_string; ?>&page=<?php echo $page + 1; ?>" class="page-link">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                        <a href="?<?php echo $query_string; ?>&page=<?php echo $total_pages; ?>" class="page-link">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    <?php else: ?>
+                        <span class="page-link disabled"><i class="fas fa-angle-right"></i></span>
+                        <span class="page-link disabled"><i class="fas fa-angle-double-right"></i></span>
+                    <?php endif; ?>
+                </div>
             </div>
         <?php endif; ?>
     </div>
@@ -2081,6 +2119,7 @@ function cloneProgram($id)
 
             url.searchParams.set('sort', column);
             url.searchParams.set('order', newOrder);
+            url.searchParams.set('page', '1');
             window.location.href = url.toString();
         }
 
@@ -2098,7 +2137,6 @@ function cloneProgram($id)
                 }
             });
 
-            // Sync both select all checkboxes
             const otherSelectAll = document.getElementById('selectAll') ? document.getElementById('selectAllTable') : document.getElementById('selectAll');
             if (otherSelectAll) {
                 otherSelectAll.checked = isChecked;
@@ -2113,7 +2151,6 @@ function cloneProgram($id)
                     row.classList.toggle('selected', this.checked);
                 }
 
-                // Update select all checkbox
                 const allCheckboxes = document.querySelectorAll('.row-selector');
                 const selectAll = document.getElementById('selectAll') || document.getElementById('selectAllTable');
                 if (selectAll) {
@@ -2123,7 +2160,23 @@ function cloneProgram($id)
             });
         });
 
-        // Confirm bulk action
+        // Confirmation dialogs
+        function confirmActivation() {
+            return confirm('✅ Activate this program?\n\nThis will make the program available for enrollment.');
+        }
+
+        function confirmDeactivation() {
+            return confirm('⏸️ Deactivate this program?\n\nThis will prevent new enrollments. Existing enrollments will not be affected.');
+        }
+
+        function confirmClone() {
+            return confirm('📋 Clone this program?\n\nA copy will be created with "(Copy)" suffix and set to inactive status.');
+        }
+
+        function confirmDelete() {
+            return confirm('⚠️ Delete this program?\n\nWARNING: This will permanently delete:\n• All program data\n• Related courses\n• Payment plans\n\nThis action CANNOT be undone!\n\nAre you absolutely sure?');
+        }
+
         function confirmBulkAction() {
             const form = document.getElementById('bulkForm');
             const bulkAction = form.bulk_action.value;
@@ -2159,20 +2212,6 @@ function cloneProgram($id)
             }, 500);
         });
 
-        // Handle URL actions (activate/deactivate/delete/clone from URL)
-        const urlParams = new URLSearchParams(window.location.search);
-        const action = urlParams.get('action');
-        const id = urlParams.get('id');
-
-        if (action && id) {
-            // Actions are already handled server-side via the functions above
-            // Remove action from URL after processing
-            const url = new URL(window.location.href);
-            url.searchParams.delete('action');
-            url.searchParams.delete('id');
-            window.history.replaceState({}, document.title, url.toString());
-        }
-
         // Export programs
         function exportPrograms() {
             const url = new URL(window.location.href);
@@ -2189,16 +2228,14 @@ function cloneProgram($id)
                 showGridView();
             }
 
-            // Auto-expand search on focus if there's a search term
             const searchInput = document.getElementById('search');
             if (searchInput && searchInput.value) {
                 searchInput.focus();
                 searchInput.select();
             }
 
-            // Add keyboard shortcuts
+            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
-                // Ctrl/Cmd + F for search
                 if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                     e.preventDefault();
                     const searchInput = document.getElementById('search');
@@ -2208,13 +2245,11 @@ function cloneProgram($id)
                     }
                 }
 
-                // Ctrl/Cmd + N for new program
                 if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                     e.preventDefault();
                     window.location.href = 'create.php';
                 }
 
-                // Escape to clear search
                 if (e.key === 'Escape') {
                     const searchInput = document.getElementById('search');
                     if (searchInput && searchInput.value) {
@@ -2224,40 +2259,35 @@ function cloneProgram($id)
                 }
             });
 
-            // Add tooltips for fee breakdown
-            document.querySelectorAll('.fee-tooltip').forEach(element => {
-                element.addEventListener('mouseenter', function() {
-                    // Tooltip is already handled via CSS
+            // Animate elements on scroll
+            const elements = document.querySelectorAll('.stat-card, .program-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
                 });
+            });
+
+            elements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.5s ease';
+                observer.observe(el);
             });
         });
 
-        // Quick filter functions
-        function filterByType(type) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('program_type', type);
-            url.searchParams.set('page', '1');
-            window.location.href = url.toString();
+        // Responsive action text
+        function updateActionText() {
+            const isMobile = window.innerWidth < 640;
+            document.querySelectorAll('.action-text').forEach(text => {
+                text.style.display = isMobile ? 'none' : 'inline';
+            });
         }
 
-        function filterByStatus(status) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('status', status);
-            url.searchParams.set('page', '1');
-            window.location.href = url.toString();
-        }
-
-        // Filter by school function
-        function filterBySchool(schoolId) {
-            const url = new URL(window.location.href);
-            if (schoolId) {
-                url.searchParams.set('filter_school', schoolId);
-            } else {
-                url.searchParams.delete('filter_school');
-            }
-            url.searchParams.set('page', '1');
-            window.location.href = url.toString();
-        }
+        window.addEventListener('load', updateActionText);
+        window.addEventListener('resize', updateActionText);
     </script>
 </body>
 

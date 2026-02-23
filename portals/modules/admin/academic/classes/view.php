@@ -151,6 +151,118 @@ if ($class['status'] === 'completed') {
 
 // Log activity
 logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'class_batches', $class_id);
+
+// Handle unenrollment action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unenroll_student') {
+    // Verify CSRF token - use validateCSRFToken instead
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        $_SESSION['error'] = 'Invalid security token. Please try again.';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    $student_id = intval($_POST['student_id']);
+
+
+    // Verify student is enrolled in this class
+    $check_sql = "SELECT e.*, u.first_name, u.last_name 
+                  FROM enrollments e 
+                  JOIN users u ON e.student_id = u.id 
+                  WHERE e.student_id = ? AND e.class_id = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param('ii', $student_id, $class_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    $enrollment = $check_result->fetch_assoc();
+
+    if (!$enrollment) {
+        $_SESSION['error'] = 'Student is not enrolled in this class.';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // 1. Delete assignment submissions
+        $delete_submissions_sql = "DELETE as FROM assignment_submissions as 
+                                   INNER JOIN assignments a ON as.assignment_id = a.id 
+                                   WHERE as.student_id = ? AND a.class_id = ?";
+        $submissions_stmt = $conn->prepare($delete_submissions_sql);
+        $submissions_stmt->bind_param('ii', $student_id, $class_id);
+        $submissions_stmt->execute();
+
+        // 2. Delete gradebook entries
+        $delete_gradebook_sql = "DELETE g FROM gradebook g 
+                                 INNER JOIN assignments a ON g.assignment_id = a.id 
+                                 WHERE g.student_id = ? AND a.class_id = ?";
+        $gradebook_stmt = $conn->prepare($delete_gradebook_sql);
+        $gradebook_stmt->bind_param('ii', $student_id, $class_id);
+        $gradebook_stmt->execute();
+
+        // 3. Delete quiz attempts
+        $delete_quiz_attempts_sql = "DELETE qa FROM quiz_attempts qa 
+                                     INNER JOIN quizzes q ON qa.quiz_id = q.id 
+                                     WHERE qa.student_id = ? AND q.class_id = ?";
+        $quiz_attempts_stmt = $conn->prepare($delete_quiz_attempts_sql);
+        $quiz_attempts_stmt->bind_param('ii', $student_id, $class_id);
+        $quiz_attempts_stmt->execute();
+
+        // 4. Delete attendance records
+        $delete_attendance_sql = "DELETE FROM attendance WHERE enrollment_id = ?";
+        $attendance_stmt = $conn->prepare($delete_attendance_sql);
+        $attendance_stmt->bind_param('i', $enrollment['id']);
+        $attendance_stmt->execute();
+
+        // 5. Delete financial status
+        $delete_financial_sql = "DELETE FROM student_financial_status WHERE student_id = ? AND class_id = ?";
+        $financial_stmt = $conn->prepare($delete_financial_sql);
+        $financial_stmt->bind_param('ii', $student_id, $class_id);
+        $financial_stmt->execute();
+
+        // 6. Delete course payments
+        $delete_payments_sql = "DELETE FROM course_payments WHERE student_id = ? AND class_id = ?";
+        $payments_stmt = $conn->prepare($delete_payments_sql);
+        $payments_stmt->bind_param('ii', $student_id, $class_id);
+        $payments_stmt->execute();
+
+        // 7. Delete discussion replies
+        $delete_replies_sql = "DELETE dr FROM discussion_replies dr 
+                               INNER JOIN discussions d ON dr.discussion_id = d.id 
+                               WHERE dr.user_id = ? AND d.class_id = ?";
+        $replies_stmt = $conn->prepare($delete_replies_sql);
+        $replies_stmt->bind_param('ii', $student_id, $class_id);
+        $replies_stmt->execute();
+
+        // 8. Delete discussions created by student
+        $delete_discussions_sql = "DELETE FROM discussions WHERE user_id = ? AND class_id = ?";
+        $discussions_stmt = $conn->prepare($delete_discussions_sql);
+        $discussions_stmt->bind_param('ii', $student_id, $class_id);
+        $discussions_stmt->execute();
+
+        // 9. Delete the enrollment
+        $delete_enrollment_sql = "DELETE FROM enrollments WHERE id = ?";
+        $enrollment_stmt = $conn->prepare($delete_enrollment_sql);
+        $enrollment_stmt->bind_param('i', $enrollment['id']);
+        $enrollment_stmt->execute();
+
+        // Commit transaction
+        $conn->commit();
+
+        // Log activity
+        logActivity($_SESSION['user_id'], 'unenroll_student', "Unenrolled student #$student_id from class #$class_id", 'enrollments', $enrollment['id']);
+
+        $_SESSION['success'] = 'Student successfully unenrolled from the class.';
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        $_SESSION['error'] = 'Error unenrolling student: ' . $e->getMessage();
+    }
+
+    header('Location: view.php?id=' . $class_id);
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1252,6 +1364,20 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 border: 1px solid #ddd;
             }
         }
+
+        /* Unenroll button specific styling */
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .student-actions .btn-danger {
+            border-color: transparent;
+        }
     </style>
 </head>
 
@@ -1419,6 +1545,13 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                     </div>
                 </div>
             </div>
+
+            <!-- Hidden Unenrollment Form - ADD THIS HERE -->
+            <form id="unenrollForm" method="POST" style="display: none;">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                <input type="hidden" name="action" value="unenroll_student">
+                <input type="hidden" name="student_id" id="unenroll_student_id" value="">
+            </form>
 
             <!-- Statistics Cards -->
             <div class="stats-grid">
@@ -1664,6 +1797,9 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                             <a href="mailto:<?php echo urlencode($student['email']); ?>" class="btn btn-secondary btn-sm">
                                                 <i class="fas fa-envelope"></i> Email
                                             </a>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmUnenroll(<?php echo $student['user_id']; ?>, '<?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>')">
+                                                <i class="fas fa-user-minus"></i> Unenroll
+                                            </button>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -1718,9 +1854,17 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['user_id']; ?>" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
+                                                    <div style="display: flex; gap: 0.25rem;">
+                                                        <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['user_id']; ?>" class="btn btn-primary btn-sm" title="View Profile">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a href="mailto:<?php echo urlencode($student['email']); ?>" class="btn btn-secondary btn-sm" title="Send Email">
+                                                            <i class="fas fa-envelope"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmUnenroll(<?php echo $student['user_id']; ?>, '<?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>')" title="Unenroll Student">
+                                                            <i class="fas fa-user-minus"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -2195,6 +2339,14 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 this.style.opacity = '1';
             });
         });
+
+        // Unenroll student functionality
+        function confirmUnenroll(studentId, studentName) {
+            if (confirm(`Are you sure you want to unenroll ${studentName} from this class?\n\nThis action will:\n• Remove the student from the class\n• Delete their submissions and grades\n• Free up a seat in the class\n\nThis action cannot be undone.`)) {
+                document.getElementById('unenroll_student_id').value = studentId;
+                document.getElementById('unenrollForm').submit();
+            }
+        }
     </script>
 </body>
 
