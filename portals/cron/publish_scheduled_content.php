@@ -140,25 +140,33 @@ echo "Published: $published_count, Failed: $failed_count\n";
 /**
  * Publish a material - FIXED VERSION
  */
+/**
+ * Publish a material - FIXED VERSION
+ */
 function publishMaterial($conn, $schedule, $content_data)
 {
     logMessage("Starting publishMaterial for: " . $schedule['title']);
 
-    // Determine file type from content data
-    $file_type = $content_data['file_type'] ?? 'document';
+    // Get values with defaults
+    $class_id = (int)$schedule['class_id'];
+    $instructor_id = (int)$schedule['instructor_id'];
+    $title = $schedule['title'] ?? '';
+    $description = $schedule['description'] ?? '';
     $file_url = $content_data['file_url'] ?? '';
+    $file_type = $content_data['file_type'] ?? 'document';
     $file_size = isset($content_data['file_size']) ? (int)$content_data['file_size'] : 0;
-    $topic = $content_data['topic'] ?? '';
     $week_number = isset($schedule['week_number']) ? (int)$schedule['week_number'] : null;
+    $topic = $content_data['topic'] ?? '';
 
-    // Handle null week_number
+    logMessage("Material data - Type: $file_type, Week: " . ($week_number ?? 'null'));
+
+    // Handle null week_number - if your DB accepts NULL, use NULL, otherwise use 0
     if ($week_number === null) {
-        $week_number = 0; // or NULL depending on your DB schema
+        $week_number = 0; // or NULL, depending on your schema
     }
 
-    logMessage("Material data - Type: $file_type, Week: $week_number");
-
-    // Insert material
+    // COUNT the placeholders: class_id, instructor_id, title, description, file_url, 
+    // file_type, file_size, week_number, topic, is_published = 10 placeholders
     $sql = "INSERT INTO materials (
                 class_id, instructor_id, title, description, 
                 file_url, file_type, file_size, week_number, topic,
@@ -170,12 +178,15 @@ function publishMaterial($conn, $schedule, $content_data)
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
+    // 9 parameters for 9 placeholders: i,i,s,s,s,s,i,i,s
+    $types = "iissssiis"; // i(1),i(2),s(3),s(4),s(5),s(6),i(7),i(8),s(9)
+
     $stmt->bind_param(
-        "iissssiss",  // i,i,s,s,s,s,i,s,s
-        $schedule['class_id'],
-        $schedule['instructor_id'],
-        $schedule['title'],
-        $schedule['description'],
+        $types,
+        $class_id,
+        $instructor_id,
+        $title,
+        $description,
         $file_url,
         $file_type,
         $file_size,
@@ -201,6 +212,9 @@ function publishMaterial($conn, $schedule, $content_data)
 /**
  * Publish an assignment - FIXED VERSION
  */
+/**
+ * Publish an assignment - FIXED VERSION with correct parameter counting
+ */
 function publishAssignment($conn, $schedule, $content_data)
 {
     logMessage("Starting publishAssignment for: " . $schedule['title']);
@@ -210,18 +224,25 @@ function publishAssignment($conn, $schedule, $content_data)
     $due_date = date('Y-m-d H:i:s', strtotime($schedule['scheduled_publish_date'] . " + $due_days days"));
 
     // Get values with defaults
+    $class_id = (int)$schedule['class_id'];
+    $instructor_id = (int)$schedule['instructor_id'];
+    $title = $schedule['title'] ?? '';
+    $description = $schedule['description'] ?? '';
     $instructions = $content_data['instructions'] ?? '';
+    $total_points = isset($content_data['total_points']) ? (float)$content_data['total_points'] : 100.00;
     $submission_type = $content_data['submission_type'] ?? 'file';
     $max_files = isset($content_data['max_files']) ? (int)$content_data['max_files'] : 1;
     $allowed_extensions = $content_data['allowed_extensions'] ?? '';
     $has_attachment = isset($content_data['has_attachment']) ? (int)$content_data['has_attachment'] : 0;
     $attachment_path = $content_data['attachment_path'] ?? '';
     $original_filename = $content_data['original_filename'] ?? '';
-    $total_points = isset($content_data['total_points']) ? (float)$content_data['total_points'] : 100;
 
-    logMessage("Assignment data - Title: {$schedule['title']}, Due: $due_date, Points: $total_points");
+    logMessage("Assignment data - Title: $title, Due: $due_date, Points: $total_points");
 
-    // Insert assignment
+    // Let's COUNT the placeholders: 
+    // class_id, instructor_id, title, description, instructions, due_date, total_points, 
+    // submission_type, max_files, allowed_extensions, has_attachment, attachment_path, 
+    // original_filename, is_published = 14 placeholders
     $sql = "INSERT INTO assignments (
                 class_id, instructor_id, title, description, instructions,
                 due_date, total_points, submission_type, max_files, allowed_extensions,
@@ -234,24 +255,26 @@ function publishAssignment($conn, $schedule, $content_data)
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
-    // IMPORTANT: Make sure parameter types match exactly
-    // i = integer, s = string, d = double, etc.
+    // Now we have 14 variables for 14 placeholders
+    // Types: i,i,s,s,s,s,d,s,i,s,i,s,s  (that's 14 characters)
+    $types = "iissssdssisiss"; // Count them: i(1),i(2),s(3),s(4),s(5),s(6),d(7),s(8),i(9),s(10),i(11),s(12),i(13),s(14)
+
     $stmt->bind_param(
-        "iissssdsssisss",  // Make sure this string matches the number and type of parameters
-        $schedule['class_id'],        // i
-        $schedule['instructor_id'],   // i
-        $schedule['title'],           // s
-        $schedule['description'],     // s
-        $instructions,                // s
-        $due_date,                    // s
-        $total_points,                // d (double/decimal)
-        $submission_type,             // s
-        $max_files,                   // i (integer)
-        $allowed_extensions,          // s
-        $has_attachment,              // i (integer)
-        $attachment_path,             // s
-        $original_filename,           // s
-        $original_filename            // s (this is for the last s in the pattern)
+        $types,
+        $class_id,
+        $instructor_id,
+        $title,
+        $description,
+        $instructions,
+        $due_date,
+        $total_points,
+        $submission_type,
+        $max_files,
+        $allowed_extensions,
+        $has_attachment,
+        $attachment_path,
+        $original_filename
+        // Note: is_published is set to 1 directly in the query, not as a parameter
     );
 
     if (!$stmt->execute()) {
