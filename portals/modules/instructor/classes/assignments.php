@@ -1652,7 +1652,7 @@ function getStatusBadge($due_date, $is_published)
                                             onclick="openEditModal(<?php echo $assignment['id']; ?>)">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a href="/../modules/instructor/assignments/view.php" class="btn btn-secondary btn-sm">
+                                        <a href="<?php echo BASE_URL; ?>modules/instructor/assignments/view.php?assignment_id=<?php echo $assignment['id']; ?>" class="btn btn-secondary btn-sm">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                         <?php if ($assignment['has_attachment'] && $assignment['attachment_path']): ?>

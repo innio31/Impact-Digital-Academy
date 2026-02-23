@@ -143,6 +143,9 @@ echo "Published: $published_count, Failed: $failed_count\n";
 /**
  * Publish a material - FIXED VERSION
  */
+/**
+ * Publish a material - FIXED to handle external links properly
+ */
 function publishMaterial($conn, $schedule, $content_data)
 {
     logMessage("Starting publishMaterial for: " . $schedule['title']);
@@ -152,34 +155,77 @@ function publishMaterial($conn, $schedule, $content_data)
     $instructor_id = (int)$schedule['instructor_id'];
     $title = $schedule['title'] ?? '';
     $description = $schedule['description'] ?? '';
-    $file_url = $content_data['file_url'] ?? '';
-    $file_type = $content_data['file_type'] ?? 'document';
-    $file_size = isset($content_data['file_size']) ? (int)$content_data['file_size'] : 0;
     $week_number = isset($schedule['week_number']) ? (int)$schedule['week_number'] : null;
     $topic = $content_data['topic'] ?? '';
 
-    logMessage("Material data - Type: $file_type, Week: " . ($week_number ?? 'null'));
+    // IMPORTANT: Check if this is an external link
+    $is_external_link = isset($content_data['is_external_link']) ? (int)$content_data['is_external_link'] : 0;
+    $file_url = '';
+    $external_url = '';
+    $file_type = $content_data['file_type'] ?? 'document';
+    $file_size = isset($content_data['file_size']) ? (int)$content_data['file_size'] : 0;
 
-    // Handle null week_number - if your DB accepts NULL, use NULL, otherwise use 0
-    if ($week_number === null) {
-        $week_number = 0; // or NULL, depending on your schema
+    if ($is_external_link == 1) {
+        // This is an external link
+        $external_url = $content_data['external_url'] ?? '';
+        $file_url = ''; // No file URL for external links
+        $file_type = $content_data['link_type'] ?? 'link'; // Use link_type if available
+
+        logMessage("Processing external link: $external_url, type: $file_type");
+    } else {
+        // This is a file upload
+        $file_url = $content_data['file_url'] ?? '';
+        $external_url = ''; // No external URL for file uploads
+        $file_type = $content_data['file_type'] ?? 'document';
+        $file_size = isset($content_data['file_size']) ? (int)$content_data['file_size'] : 0;
+
+        logMessage("Processing file upload: $file_url, type: $file_type");
     }
 
-    // COUNT the placeholders: class_id, instructor_id, title, description, file_url, 
-    // file_type, file_size, week_number, topic, is_published = 10 placeholders
+    // Handle null week_number
+    if ($week_number === null) {
+        $week_number = 0;
+    }
+
+    // Check the materials table structure to ensure we have the right columns
+    // Based on your SQL dump, materials table has: 
+    // id, class_id, instructor_id, title, description, file_url, external_url, 
+    // is_external_link, file_type, file_size, week_number, topic, is_published, 
+    // scheduled_publish_date, auto_publish, publish_date, downloads_count, views_count, 
+    // created_at, updated_at
+
+    // Insert material with proper handling of external links
     $sql = "INSERT INTO materials (
-                class_id, instructor_id, title, description, 
-                file_url, file_type, file_size, week_number, topic,
-                is_published, publish_date, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), NOW())";
+                class_id, 
+                instructor_id, 
+                title, 
+                description, 
+                file_url,
+                external_url,
+                is_external_link,
+                file_type, 
+                file_size, 
+                week_number, 
+                topic,
+                is_published, 
+                publish_date, 
+                downloads_count,
+                views_count,
+                created_at, 
+                updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), 0, 0, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
-    // 9 parameters for 9 placeholders: i,i,s,s,s,s,i,i,s
-    $types = "iissssiis"; // i(1),i(2),s(3),s(4),s(5),s(6),i(7),i(8),s(9)
+    // Count the parameters: 11 placeholders (class_id, instructor_id, title, description, 
+    // file_url, external_url, is_external_link, file_type, file_size, week_number, topic)
+    $types = "iissssisiss"; // i,i,s,s,s,s,i,s,i,i,s
+
+    logMessage("Binding with types: $types for 11 parameters");
+    logMessage("External link flag: $is_external_link");
 
     $stmt->bind_param(
         $types,
@@ -188,6 +234,8 @@ function publishMaterial($conn, $schedule, $content_data)
         $title,
         $description,
         $file_url,
+        $external_url,
+        $is_external_link,
         $file_type,
         $file_size,
         $week_number,
@@ -201,7 +249,7 @@ function publishMaterial($conn, $schedule, $content_data)
     $material_id = $stmt->insert_id;
     $stmt->close();
 
-    logMessage("Material created with ID: $material_id");
+    logMessage("Material created with ID: $material_id, is_external_link: $is_external_link");
 
     return $material_id;
 }
