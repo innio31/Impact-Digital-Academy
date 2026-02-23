@@ -27,6 +27,22 @@ $search = $_GET['search'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
+// Pagination setup
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+$offset = ($page - 1) * $per_page;
+
+// Build base query without pagination for count
+$count_sql = "SELECT COUNT(DISTINCT cb.id) as total
+FROM class_batches cb
+JOIN courses c ON cb.course_id = c.id
+JOIN programs p ON c.program_id = p.id
+LEFT JOIN users u ON cb.instructor_id = u.id
+WHERE 1=1";
+
+$count_params = [];
+$count_types = "";
+
 // Build query with filters
 $sql = "SELECT 
     cb.*,
@@ -52,53 +68,71 @@ WHERE 1=1";
 $params = [];
 $types = "";
 
-// Filter by status
-if ($status && $status !== 'all') {
-    $sql .= " AND cb.status = ?";
-    $params[] = $status;
-    $types .= "s";
+// Apply filters to both count and main queries
+function applyFilters(&$sql, &$params, &$types, $status, $program_id, $instructor_id, $search, $date_from, $date_to)
+{
+    if ($status && $status !== 'all') {
+        $sql .= " AND cb.status = ?";
+        $params[] = $status;
+        $types .= "s";
+    }
+
+    if ($program_id) {
+        $sql .= " AND p.id = ?";
+        $params[] = $program_id;
+        $types .= "i";
+    }
+
+    if ($instructor_id) {
+        $sql .= " AND cb.instructor_id = ?";
+        $params[] = $instructor_id;
+        $types .= "i";
+    }
+
+    if ($search) {
+        $sql .= " AND (cb.batch_code LIKE ? OR cb.name LIKE ? OR c.title LIKE ? OR p.name LIKE ?)";
+        $search_term = "%$search%";
+        $params[] = $search_term;
+        $params[] = $search_term;
+        $params[] = $search_term;
+        $params[] = $search_term;
+        $types .= "ssss";
+    }
+
+    if ($date_from) {
+        $sql .= " AND DATE(cb.start_date) >= ?";
+        $params[] = $date_from;
+        $types .= "s";
+    }
+
+    if ($date_to) {
+        $sql .= " AND DATE(cb.start_date) <= ?";
+        $params[] = $date_to;
+        $types .= "s";
+    }
 }
 
-// Filter by program
-if ($program_id) {
-    $sql .= " AND p.id = ?";
-    $params[] = $program_id;
-    $types .= "i";
-}
+// Apply filters to count query
+applyFilters($count_sql, $count_params, $count_types, $status, $program_id, $instructor_id, $search, $date_from, $date_to);
 
-// Filter by instructor
-if ($instructor_id) {
-    $sql .= " AND cb.instructor_id = ?";
-    $params[] = $instructor_id;
-    $types .= "i";
+// Get total count for pagination
+$count_stmt = $conn->prepare($count_sql);
+if (!empty($count_params)) {
+    $count_stmt->bind_param($count_types, ...$count_params);
 }
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_rows / $per_page);
 
-// Filter by search term
-if ($search) {
-    $sql .= " AND (cb.batch_code LIKE ? OR cb.name LIKE ? OR c.title LIKE ? OR p.name LIKE ?)";
-    $search_term = "%$search%";
-    $params[] = $search_term;
-    $params[] = $search_term;
-    $params[] = $search_term;
-    $params[] = $search_term;
-    $types .= "ssss";
-}
+// Apply filters to main query
+applyFilters($sql, $params, $types, $status, $program_id, $instructor_id, $search, $date_from, $date_to);
 
-// Filter by date range
-if ($date_from) {
-    $sql .= " AND DATE(cb.start_date) >= ?";
-    $params[] = $date_from;
-    $types .= "s";
-}
-
-if ($date_to) {
-    $sql .= " AND DATE(cb.start_date) <= ?";
-    $params[] = $date_to;
-    $types .= "s";
-}
-
-// Group by class and order by start date
-$sql .= " GROUP BY cb.id ORDER BY cb.start_date DESC, cb.created_at DESC";
+// Group by class and order by start date with pagination
+$sql .= " GROUP BY cb.id ORDER BY cb.start_date DESC, cb.created_at DESC LIMIT ? OFFSET ?";
+$params[] = $per_page;
+$params[] = $offset;
+$types .= "ii";
 
 // Prepare and execute statement
 $stmt = $conn->prepare($sql);
@@ -177,13 +211,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         $_SESSION['error'] = 'Please select at least one class.';
     }
 }
+
+// Helper function to build query string for pagination
+function buildQueryString($exclude = [])
+{
+    $params = $_GET;
+    foreach ($exclude as $key) {
+        unset($params[$key]);
+    }
+    return http_build_query($params);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Class Management - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
@@ -201,103 +245,142 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             --ongoing: #10b981;
             --completed: #3b82f6;
             --cancelled: #ef4444;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
             background-color: #f1f5f9;
-            color: var(--dark);
+            color: var(--gray-800);
             min-height: 100vh;
         }
 
         .admin-container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
+        /* Mobile-First Sidebar */
         .sidebar {
-            width: 250px;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #334155;
         }
 
         .sidebar-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: white;
+        }
+
+        .sidebar-header p {
+            display: none;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: block;
+        }
+
+        .sidebar-nav {
+            display: none;
+            max-height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav.show {
+            display: block;
         }
 
         .sidebar-nav ul {
             list-style: none;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
 
         .sidebar-nav li {
-            margin-bottom: 0.25rem;
+            margin: 0;
         }
 
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1rem;
             color: #cbd5e1;
             text-decoration: none;
             transition: all 0.3s;
+            font-size: 0.95rem;
+            border-left: 4px solid transparent;
         }
 
         .sidebar-nav a:hover,
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 4px solid var(--primary);
+            border-left-color: var(--primary);
         }
 
         .sidebar-nav i {
             width: 24px;
             margin-right: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        /* Header */
         .header {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
+            padding: 1.25rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .header h1 {
             color: var(--dark);
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
 
         .breadcrumb {
             color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
         }
 
         .breadcrumb a {
@@ -305,36 +388,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             text-decoration: none;
         }
 
-        .breadcrumb a:hover {
-            text-decoration: underline;
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
+        .header-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-left: 4px solid var(--primary);
             position: relative;
             overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-            transform: rotate(45deg) translate(30px, -30px);
         }
 
         .stat-card.scheduled {
@@ -354,44 +434,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: space-between;
         }
 
         .stat-label {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .stat-icon {
-            font-size: 1.5rem;
-            opacity: 0.5;
+            font-size: 1.25rem;
+            opacity: 0.3;
         }
 
+        /* Filters Card */
         .filters-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
+            padding: 1.25rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .filters-card h3 {
             margin-bottom: 1rem;
             color: var(--dark);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .filter-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
         }
 
         .form-group {
@@ -400,29 +490,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.75rem;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.9rem;
+            background: white;
         }
 
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .filter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
         .btn {
-            padding: 0.5rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
             border: none;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
+            text-decoration: none;
+            width: 100%;
         }
 
         .btn-primary {
@@ -459,36 +569,130 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .btn-sm {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
         }
 
+        /* Classes Table */
         .classes-table {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .table-header {
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .table-header h3 {
             color: var(--dark);
+            font-size: 1.1rem;
         }
 
-        .table-container {
+        .per-page-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .per-page-selector select {
+            padding: 0.4rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Card View for Mobile */
+        .classes-card-view {
+            display: block;
+        }
+
+        .class-card {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem;
+        }
+
+        .class-card:last-child {
+            border-bottom: none;
+        }
+
+        .class-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .class-code {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .class-name {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .class-card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .class-info-item {
+            font-size: 0.85rem;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 0.7rem;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+        }
+
+        .class-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .class-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .class-actions .btn-sm {
+            flex: 1;
+            min-width: 70px;
+        }
+
+        /* Table View for Desktop */
+        .classes-table-view {
+            display: none;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1000px;
         }
 
         thead {
@@ -501,7 +705,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             text-align: left;
             font-weight: 600;
             color: var(--dark);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -511,18 +715,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             border-bottom: 1px solid #e2e8f0;
         }
 
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
+        /* Status Badges */
         .status-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .status-scheduled {
@@ -547,9 +749,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .program-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
 
@@ -563,51 +765,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: #166534;
         }
 
-        .actions {
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: #f8fafc;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
             display: flex;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .bulk-actions-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
             flex-wrap: wrap;
         }
 
-        .checkbox-cell {
-            width: 40px;
-            text-align: center;
+        .bulk-actions select {
+            flex: 1;
+            min-width: 150px;
         }
 
-        .bulk-actions {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
+        /* Pagination */
         .pagination {
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.75rem;
             align-items: center;
             border-top: 1px solid #e2e8f0;
         }
 
         .pagination-info {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .page-numbers {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .page-link {
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.6rem;
             border: 1px solid #e2e8f0;
-            border-radius: 4px;
+            border-radius: 6px;
             color: var(--dark);
             text-decoration: none;
             transition: all 0.3s;
+            font-size: 0.85rem;
+            min-width: 32px;
+            text-align: center;
         }
 
         .page-link:hover,
@@ -617,13 +845,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             border-color: var(--primary);
         }
 
+        /* Alerts */
         .alert {
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-size: 0.9rem;
         }
 
         .alert-success {
@@ -638,96 +868,153 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             border: 1px solid #fecaca;
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 1rem;
             color: #64748b;
         }
 
         .empty-state i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
             color: #cbd5e1;
         }
 
-        .class-code {
-            font-weight: 600;
-            color: var(--dark);
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
         }
 
-        .class-name {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
+        /* Checkbox */
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
         }
 
-        .progress-bar {
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            margin-top: 0.5rem;
-            overflow: hidden;
+        .class-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--primary);
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .date-cell {
-            font-size: 0.9rem;
-        }
-
-        .date-label {
-            color: #64748b;
-            font-size: 0.8rem;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-
+        /* Tablet and Desktop Breakpoints */
+        @media (min-width: 640px) {
             .main-content {
-                margin-left: 200px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
+                padding: 1.5rem;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
             }
 
             .filter-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bulk-actions {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .bulk-actions-row {
+                flex: 1;
+            }
+
+            .pagination {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 250px;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+
+            .sidebar-header {
+                padding: 1.5rem 1.5rem 1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .sidebar-header p {
+                display: block;
+                color: #94a3b8;
+                font-size: 0.9rem;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .sidebar-nav {
+                display: block;
+            }
+
+            .sidebar-nav a {
+                padding: 0.75rem 1.5rem;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 2rem;
+            }
+
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-actions .btn {
+                flex: none;
+                width: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .filter-form {
+                grid-template-columns: repeat(4, 1fr) auto;
+            }
+
+            .filter-actions {
                 grid-template-columns: 1fr;
+                margin-top: 1.5rem;
             }
 
-            .actions {
-                flex-direction: column;
+            .classes-card-view {
+                display: none;
             }
 
-            .table-header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+            .classes-table-view {
+                display: block;
+            }
+
+            .bulk-actions {
+                padding: 1rem 1.5rem;
+            }
+
+            .pagination {
+                padding: 1rem 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .filter-form {
+                grid-template-columns: repeat(6, 1fr) auto;
             }
         }
     </style>
@@ -738,10 +1025,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2>Impact Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <div>
+                    <h2>Impact Academy</h2>
+                    <p>Admin Dashboard</p>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <nav class="sidebar-nav">
+            <nav class="sidebar-nav" id="sidebarNav">
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
                             <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -753,9 +1045,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                             <i class="fas fa-graduation-cap"></i> Academic</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php" class="active">
                             <i class="fas fa-chalkboard-teacher"></i> Classes</a></li>
-                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/schedule_builder.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                        <i class="fas fa-calendar-alt"></i> Schedule Content
-                    </a>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/announcements.php">
                             <i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/logs.php">
@@ -780,9 +1069,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     </div>
                     <h1>Class Management</h1>
                 </div>
-                <div>
+                <div class="header-actions">
                     <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Create New Class
+                        <i class="fas fa-plus"></i> Create Class
+                    </a>
+                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/schedule_builder.php" class="btn btn-secondary">
+                        <i class="fas fa-calendar-alt"></i> Schedule
                     </a>
                 </div>
             </div>
@@ -811,7 +1103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <?php echo $stats['total']; ?>
                         <i class="fas fa-chalkboard-teacher stat-icon"></i>
                     </div>
-                    <div class="stat-label">Total Classes</div>
+                    <div class="stat-label">Total</div>
                 </div>
                 <div class="stat-card scheduled">
                     <div class="stat-number">
@@ -845,12 +1137,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
             <!-- Filters -->
             <div class="filters-card">
-                <h3>Filter Classes</h3>
+                <h3>
+                    <i class="fas fa-filter"></i> Filter Classes
+                </h3>
                 <form method="GET" class="filter-form">
                     <div class="form-group">
                         <label>Status</label>
                         <select name="status" class="form-control">
-                            <option value="all" <?php echo $status === 'all' ? 'selected' : ''; ?>>All Status</option>
+                            <option value="all" <?php echo $status === 'all' ? 'selected' : ''; ?>>All</option>
                             <option value="scheduled" <?php echo $status === 'scheduled' ? 'selected' : ''; ?>>Scheduled</option>
                             <option value="ongoing" <?php echo $status === 'ongoing' ? 'selected' : ''; ?>>Ongoing</option>
                             <option value="completed" <?php echo $status === 'completed' ? 'selected' : ''; ?>>Completed</option>
@@ -864,7 +1158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                             <?php foreach ($programs as $program): ?>
                                 <option value="<?php echo $program['id']; ?>"
                                     <?php echo $program_id == $program['id'] ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($program['program_code'] . ' - ' . $program['name']); ?>
+                                    <?php echo htmlspecialchars($program['program_code']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -872,7 +1166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     <div class="form-group">
                         <label>Instructor</label>
                         <select name="instructor_id" class="form-control">
-                            <option value="">All Instructors</option>
+                            <option value="">All</option>
                             <?php foreach ($instructors as $instructor): ?>
                                 <option value="<?php echo $instructor['id']; ?>"
                                     <?php echo $instructor_id == $instructor['id'] ? 'selected' : ''; ?>>
@@ -884,20 +1178,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     <div class="form-group">
                         <label>Search</label>
                         <input type="text" name="search" class="form-control"
-                            placeholder="Batch code, class name, or course..."
+                            placeholder="Search classes..."
                             value="<?php echo htmlspecialchars($search); ?>">
                     </div>
-                    <div class="form-group">
-                        <label>From Date</label>
-                        <input type="date" name="date_from" class="form-control" value="<?php echo $date_from; ?>">
+                    <div class="filter-row">
+                        <div class="form-group">
+                            <label>From</label>
+                            <input type="date" name="date_from" class="form-control" value="<?php echo $date_from; ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>To</label>
+                            <input type="date" name="date_to" class="form-control" value="<?php echo $date_to; ?>">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>To Date</label>
-                        <input type="date" name="date_to" class="form-control" value="<?php echo $date_to; ?>">
-                    </div>
-                    <div class="form-group">
+                    <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Apply Filters
+                            <i class="fas fa-filter"></i> Apply
                         </button>
                         <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-secondary">
                             <i class="fas fa-redo"></i> Clear
@@ -906,12 +1202,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 </form>
             </div>
 
-            <!-- Classes Table -->
+            <!-- Classes List -->
             <div class="classes-table">
                 <div class="table-header">
-                    <h3>Class Batches List</h3>
-                    <div class="pagination-info">
-                        Showing <?php echo count($classes); ?> classes
+                    <h3>Class Batches</h3>
+                    <div class="per-page-selector">
+                        <label for="per_page">Show:</label>
+                        <select id="per_page" onchange="window.location.href='?<?php echo buildQueryString(['per_page', 'page']); ?>&per_page='+this.value">
+                            <option value="5" <?php echo $per_page == 5 ? 'selected' : ''; ?>>5</option>
+                            <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
+                            <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
+                            <option value="50" <?php echo $per_page == 50 ? 'selected' : ''; ?>>50</option>
+                        </select>
                     </div>
                 </div>
 
@@ -919,12 +1221,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 
                     <?php if (!empty($classes)): ?>
-                        <div class="table-container">
+                        <!-- Mobile Card View -->
+                        <div class="classes-card-view">
+                            <?php foreach ($classes as $class):
+                                $enrollment_progress = $class['max_students'] > 0
+                                    ? ($class['enrolled_students'] / $class['max_students']) * 100
+                                    : 0;
+                            ?>
+                                <div class="class-card">
+                                    <div class="class-card-header">
+                                        <div>
+                                            <input type="checkbox" name="selected_classes[]"
+                                                value="<?php echo $class['id']; ?>" class="class-checkbox">
+                                            <span class="class-code"><?php echo htmlspecialchars($class['batch_code']); ?></span>
+                                            <div class="class-name"><?php echo htmlspecialchars($class['name']); ?></div>
+                                        </div>
+                                        <span class="status-badge status-<?php echo $class['status']; ?>">
+                                            <?php echo ucfirst($class['status']); ?>
+                                        </span>
+                                    </div>
+
+                                    <div class="class-card-body">
+                                        <div class="class-info-item">
+                                            <span class="info-label">Course</span>
+                                            <span class="info-value"><?php echo htmlspecialchars($class['course_code']); ?></span>
+                                        </div>
+                                        <div class="class-info-item">
+                                            <span class="info-label">Program</span>
+                                            <span class="info-value">
+                                                <span class="program-badge badge-<?php echo $class['program_type']; ?>">
+                                                    <?php echo ucfirst($class['program_type']); ?>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="class-info-item">
+                                            <span class="info-label">Instructor</span>
+                                            <span class="info-value">
+                                                <?php if ($class['instructor_first_name']): ?>
+                                                    <?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?>
+                                                <?php else: ?>
+                                                    <span style="color: #64748b;">Not assigned</span>
+                                                <?php endif; ?>
+                                            </span>
+                                        </div>
+                                        <div class="class-info-item">
+                                            <span class="info-label">Schedule</span>
+                                            <span class="info-value">
+                                                <?php echo date('M j', strtotime($class['start_date'])); ?> -
+                                                <?php echo date('M j, Y', strtotime($class['end_date'])); ?>
+                                            </span>
+                                        </div>
+                                        <div class="class-info-item">
+                                            <span class="info-label">Enrollment</span>
+                                            <span class="info-value">
+                                                <?php echo $class['enrolled_students']; ?>/<?php echo $class['max_students']; ?>
+                                            </span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: <?php echo min($enrollment_progress, 100); ?>%;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="class-info-item">
+                                            <span class="info-label">Materials/Assign.</span>
+                                            <span class="info-value">
+                                                <?php echo $class['total_materials']; ?> / <?php echo $class['total_assignments']; ?>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="class-card-footer">
+                                        <div class="class-actions">
+                                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/view.php?id=<?php echo $class['id']; ?>"
+                                                class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class['id']; ?>"
+                                                class="btn btn-secondary btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class['id']; ?>/home.php"
+                                                class="btn btn-success btn-sm" target="_blank">
+                                                <i class="fas fa-chalkboard-teacher"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- Desktop Table View -->
+                        <div class="classes-table-view">
                             <table>
                                 <thead>
                                     <tr>
                                         <th class="checkbox-cell">
-                                            <input type="checkbox" id="selectAll">
+                                            <input type="checkbox" id="selectAll" class="class-checkbox">
                                         </th>
                                         <th>Class Batch</th>
                                         <th>Course & Program</th>
@@ -937,7 +1327,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                 </thead>
                                 <tbody>
                                     <?php foreach ($classes as $class):
-                                        // Calculate enrollment progress
                                         $enrollment_progress = $class['max_students'] > 0
                                             ? ($class['enrolled_students'] / $class['max_students']) * 100
                                             : 0;
@@ -991,7 +1380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                                 <div class="progress-bar">
                                                     <div class="progress-fill" style="width: <?php echo min($enrollment_progress, 100); ?>%;"></div>
                                                 </div>
-                                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">
+                                                <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
                                                     <?php echo $class['total_materials']; ?> materials • <?php echo $class['total_assignments']; ?> assignments
                                                 </div>
                                             </td>
@@ -1003,15 +1392,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                             <td class="actions">
                                                 <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/view.php?id=<?php echo $class['id']; ?>"
                                                     class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-eye"></i> View
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class['id']; ?>"
                                                     class="btn btn-secondary btn-sm">
-                                                    <i class="fas fa-edit"></i> Edit
+                                                    <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class['id']; ?>/home.php"
                                                     class="btn btn-success btn-sm" target="_blank">
-                                                    <i class="fas fa-chalkboard-teacher"></i> Class View
+                                                    <i class="fas fa-chalkboard-teacher"></i>
                                                 </a>
                                             </td>
                                         </tr>
@@ -1022,26 +1411,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
                         <!-- Bulk Actions -->
                         <div class="bulk-actions">
-                            <select name="bulk_action" class="form-control" style="width: 200px;">
-                                <option value="">Bulk Actions</option>
-                                <option value="scheduled">Mark as Scheduled</option>
-                                <option value="ongoing">Mark as Ongoing</option>
-                                <option value="completed">Mark as Completed</option>
-                                <option value="cancelled">Mark as Cancelled</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-play"></i> Apply
-                            </button>
-                            <span style="color: #64748b; font-size: 0.9rem;">
-                                <span id="selectedCount">0</span> classes selected
+                            <div class="bulk-actions-row">
+                                <select name="bulk_action" class="form-control">
+                                    <option value="">Bulk Actions</option>
+                                    <option value="scheduled">Mark Scheduled</option>
+                                    <option value="ongoing">Mark Ongoing</option>
+                                    <option value="completed">Mark Completed</option>
+                                    <option value="cancelled">Mark Cancelled</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">
+                                    Apply
+                                </button>
+                            </div>
+                            <span style="color: #64748b; font-size: 0.85rem;">
+                                <span id="selectedCount">0</span> selected
                             </span>
                         </div>
                     <?php else: ?>
                         <div class="empty-state">
                             <i class="fas fa-chalkboard-teacher"></i>
                             <h3>No Classes Found</h3>
-                            <p>There are no classes matching your filters.</p>
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php" class="btn btn-primary" style="margin-top: 1rem;">
+                            <p>Try adjusting your filters or create a new class.</p>
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/create.php" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Create New Class
                             </a>
                         </div>
@@ -1049,24 +1440,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 </form>
 
                 <!-- Pagination -->
-                <div class="pagination">
-                    <div class="pagination-info">
-                        Showing <?php echo count($classes); ?> of <?php echo count($classes); ?> classes
+                <?php if ($total_pages > 1): ?>
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Showing <?php echo $offset + 1; ?>-<?php echo min($offset + $per_page, $total_rows); ?> of <?php echo $total_rows; ?>
+                        </div>
+                        <div class="page-numbers">
+                            <?php if ($page > 1): ?>
+                                <a href="?<?php echo buildQueryString(['page']); ?>&page=<?php echo $page - 1; ?>" class="page-link">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php
+                            $start_page = max(1, $page - 2);
+                            $end_page = min($total_pages, $page + 2);
+
+                            if ($start_page > 1) {
+                                echo '<a href="?' . buildQueryString(['page']) . '&page=1" class="page-link">1</a>';
+                                if ($start_page > 2) {
+                                    echo '<span class="page-link">...</span>';
+                                }
+                            }
+
+                            for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                <a href="?<?php echo buildQueryString(['page']); ?>&page=<?php echo $i; ?>"
+                                    class="page-link <?php echo $i == $page ? 'active' : ''; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor;
+
+                            if ($end_page < $total_pages) {
+                                if ($end_page < $total_pages - 1) {
+                                    echo '<span class="page-link">...</span>';
+                                }
+                                echo '<a href="?' . buildQueryString(['page']) . '&page=' . $total_pages . '" class="page-link">' . $total_pages . '</a>';
+                            }
+                            ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <a href="?<?php echo buildQueryString(['page']); ?>&page=<?php echo $page + 1; ?>" class="page-link">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="page-numbers">
-                        <a href="#" class="page-link active">1</a>
-                        <a href="#" class="page-link">2</a>
-                        <a href="#" class="page-link">3</a>
-                        <a href="#" class="page-link">Next</a>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebarNav').classList.toggle('show');
+        });
+
         // Select all checkbox functionality
-        document.getElementById('selectAll').addEventListener('change', function(e) {
+        document.getElementById('selectAll')?.addEventListener('change', function(e) {
             const checkboxes = document.querySelectorAll('.class-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = e.target.checked;
@@ -1086,7 +1517,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         });
 
         // Bulk form submission confirmation
-        document.getElementById('bulkForm').addEventListener('submit', function(e) {
+        document.getElementById('bulkForm')?.addEventListener('submit', function(e) {
             const action = this.bulk_action.value;
             const selectedCount = document.querySelectorAll('.class-checkbox:checked').length;
 
@@ -1114,29 +1545,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         });
 
         // Update selected count on page load
-        document.addEventListener('DOMContentLoaded', updateSelectedCount);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSelectedCount();
 
-        // Quick search functionality
-        const searchInput = document.querySelector('input[name="search"]');
-        let searchTimer;
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const sidebar = document.querySelector('.sidebar');
+                const menuToggle = document.getElementById('menuToggle');
+                const sidebarNav = document.getElementById('sidebarNav');
 
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(() => {
-                if (this.value.length >= 3 || this.value.length === 0) {
-                    this.form.submit();
+                if (!sidebar.contains(event.target) && sidebarNav.classList.contains('show')) {
+                    sidebarNav.classList.remove('show');
                 }
-            }, 500);
+            });
         });
 
-        // Calculate and update progress bars
+        // Quick search with debounce
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let searchTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    if (this.value.length >= 2 || this.value.length === 0) {
+                        this.form.submit();
+                    }
+                }, 500);
+            });
+        }
+
+        // Animate progress bars
         document.querySelectorAll('.progress-bar').forEach(bar => {
             const fill = bar.querySelector('.progress-fill');
-            const width = fill.style.width;
-            fill.style.width = '0%';
-            setTimeout(() => {
-                fill.style.width = width;
-            }, 100);
+            if (fill) {
+                const width = fill.style.width;
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 100);
+            }
         });
     </script>
 </body>

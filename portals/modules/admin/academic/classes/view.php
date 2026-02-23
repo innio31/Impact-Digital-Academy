@@ -157,7 +157,7 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code'] . ' - ' . $class['name']); ?> - Class Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
@@ -175,103 +175,146 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             --ongoing: #10b981;
             --completed: #3b82f6;
             --cancelled: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
             background-color: #f1f5f9;
-            color: var(--dark);
+            color: var(--gray-800);
             min-height: 100vh;
         }
 
         .admin-container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
+        /* Mobile-First Sidebar */
         .sidebar {
-            width: 250px;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #334155;
         }
 
         .sidebar-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: white;
+        }
+
+        .sidebar-header p {
+            display: none;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: block;
+        }
+
+        .sidebar-nav {
+            display: none;
+            max-height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav.show {
+            display: block;
         }
 
         .sidebar-nav ul {
             list-style: none;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
 
         .sidebar-nav li {
-            margin-bottom: 0.25rem;
+            margin: 0;
         }
 
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1rem;
             color: #cbd5e1;
             text-decoration: none;
             transition: all 0.3s;
+            font-size: 0.95rem;
+            border-left: 4px solid transparent;
         }
 
         .sidebar-nav a:hover,
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 4px solid var(--primary);
+            border-left-color: var(--primary);
         }
 
         .sidebar-nav i {
             width: 24px;
             margin-right: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        /* Header */
         .header {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
+            padding: 1.25rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .header h1 {
             color: var(--dark);
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
 
         .breadcrumb {
             color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
         }
 
         .breadcrumb a {
@@ -279,74 +322,83 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             text-decoration: none;
         }
 
-        .breadcrumb a:hover {
-            text-decoration: underline;
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
+        .header-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Class Header Card */
         .class-header {
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
+            padding: 1.5rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .class-title {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .class-title h2 {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             color: var(--dark);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
         }
 
         .class-code {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             color: #64748b;
             font-weight: 500;
-        }
-
-        .class-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .meta-item {
+        .badge-container {
             display: flex;
-            flex-direction: column;
-            min-width: 150px;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
         }
 
-        .meta-label {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .program-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
-        .meta-value {
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 1.1rem;
+        .badge-onsite {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-online {
+            background: #dcfce7;
+            color: #166534;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 0.5rem 1rem;
+            padding: 0.3rem 0.75rem;
             border-radius: 20px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
         }
 
         .status-scheduled {
@@ -369,22 +421,31 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             color: #991b1b;
         }
 
-        .program-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .class-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .badge-onsite {
-            background: #e0f2fe;
-            color: #0369a1;
+        .meta-item {
+            display: flex;
+            flex-direction: column;
         }
 
-        .badge-online {
-            background: #dcfce7;
-            color: #166534;
+        .meta-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-bottom: 0.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
         .class-progress {
@@ -399,13 +460,14 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
         }
 
         .progress-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #64748b;
         }
 
         .progress-percentage {
             font-weight: 600;
             color: var(--primary);
+            font-size: 0.9rem;
         }
 
         .progress-bar {
@@ -422,23 +484,47 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             transition: width 0.3s ease;
         }
 
+        .progress-dates {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
         .class-actions {
             display: flex;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
             margin-top: 1.5rem;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
 
+        .action-row .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Buttons */
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
             border: none;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-size: 0.85rem;
+            text-decoration: none;
+            width: 100%;
         }
 
         .btn-primary {
@@ -475,23 +561,23 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
         }
 
         .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
         }
 
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
             border-top: 4px solid var(--primary);
         }
 
@@ -507,58 +593,119 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             border-top-color: var(--primary);
         }
 
-        .stat-card.submissions {
-            border-top-color: var(--warning);
-        }
-
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .stat-label {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
+        .stat-sub {
+            font-size: 0.65rem;
+            color: #64748b;
+            margin-top: 0.25rem;
         }
 
-        @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
+        /* Tab Navigation - Mobile Optimized */
+        .tab-nav {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 70px;
+            z-index: 40;
+        }
+
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn i {
+            font-size: 0.9rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
             }
         }
 
+        /* Section Cards */
         .section-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
 
         .section-header {
-            padding: 1.25rem 1.5rem;
+            padding: 1rem;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
         .section-header h3 {
             color: var(--dark);
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .section-header i {
@@ -566,23 +713,24 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
         }
 
         .section-body {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
+        /* Info Grid */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
         }
 
         .info-item {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .info-label {
-            font-size: 0.85rem;
+            font-size: 0.65rem;
             color: #64748b;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -590,43 +738,18 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
         .info-value {
             font-weight: 500;
             color: var(--dark);
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
         .text-content {
             line-height: 1.6;
             color: var(--dark);
             white-space: pre-wrap;
+            font-size: 0.9rem;
         }
 
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
+        /* Instructor Card */
         .instructor-card {
             background: #f8fafc;
             padding: 1rem;
@@ -639,112 +762,135 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 0.25rem;
+            font-size: 0.95rem;
         }
 
         .instructor-contact {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #64748b;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b;
-        }
-
-        .empty-state i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #cbd5e1;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #e2e8f0;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 2rem;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2.35rem;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            border: 2px solid white;
-        }
-
-        .timeline-item.current::before {
-            background: var(--primary);
-        }
-
-        .timeline-item.completed::before {
-            background: var(--success);
-        }
-
-        .timeline-item.cancelled::before {
-            background: var(--danger);
-        }
-
-        .timeline-date {
-            font-size: 0.85rem;
-            color: #64748b;
+            gap: 0.5rem;
             margin-bottom: 0.25rem;
         }
 
-        .timeline-content {
-            background: white;
-            padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
+        /* Tables - Mobile Optimized */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -1rem;
+            padding: 0 1rem;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Mobile Card View for Students */
+        .students-card-view {
+            display: block;
+        }
+
+        .student-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .student-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .student-info {
+            flex: 1;
+            margin-left: 0.75rem;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .student-email {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .student-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 0.75rem 0;
+            font-size: 0.8rem;
+        }
+
+        .student-detail-item span {
+            font-size: 0.65rem;
+            color: #64748b;
+            display: block;
+            margin-bottom: 0.1rem;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .student-actions .btn-sm {
+            flex: 1;
+        }
+
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
 
@@ -768,145 +914,342 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
             color: #0369a1;
         }
 
-        .student-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.875rem;
-        }
-
-        .student-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .student-name {
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .student-email {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .tab-nav {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            background: #f8fafc;
-            margin-bottom: 2rem;
-            border-radius: 10px 10px 0 0;
-            overflow: hidden;
-        }
-
-        .tab-btn {
-            padding: 1rem 1.5rem;
-            border: none;
-            background: none;
-            font-weight: 500;
-            color: #64748b;
-            cursor: pointer;
+        /* Timeline */
+        .timeline {
             position: relative;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            padding-left: 1.5rem;
         }
 
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            background: white;
-        }
-
-        .tab-btn.active::after {
+        .timeline::before {
             content: '';
             position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.8rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            border: 2px solid white;
+        }
+
+        .timeline-item.current::before {
             background: var(--primary);
         }
 
-        .tab-content {
-            display: none;
+        .timeline-item.completed::before {
+            background: var(--success);
         }
 
-        .tab-content.active {
+        .timeline-item.cancelled::before {
+            background: var(--danger);
+        }
+
+        .timeline-date {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-content {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+        }
+
+        /* Materials Card View */
+        .materials-card-view {
             display: block;
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .material-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
+        .material-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
 
+        .material-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .material-meta {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: #64748b;
+            margin: 0.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        /* Assignments Card View */
+        .assignment-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .assignment-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .assignment-due {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .assignment-stats {
+            display: flex;
+            gap: 1rem;
+            margin: 0.5rem 0;
+            font-size: 0.8rem;
+        }
+
+        /* Tablet and Desktop Breakpoints */
+        @media (min-width: 640px) {
             .main-content {
-                margin-left: 200px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .class-title {
-                flex-direction: column;
-            }
-
-            .class-actions {
-                flex-direction: column;
-            }
-
-            .class-actions .btn {
-                width: 100%;
-                justify-content: center;
+                padding: 1.5rem;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .class-meta-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .class-actions {
+                flex-direction: row;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .students-card-view {
+                display: none;
+            }
+
+            .table-container {
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 250px;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+
+            .sidebar-header {
+                padding: 1.5rem 1.5rem 1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .sidebar-header p {
+                display: block;
+                color: #94a3b8;
+                font-size: 0.9rem;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .sidebar-nav {
+                display: block;
+            }
+
+            .sidebar-nav a {
+                padding: 0.75rem 1.5rem;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 2rem;
+            }
+
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-actions .btn {
+                flex: none;
+                width: auto;
+            }
+
+            .class-title {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .class-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .class-actions {
+                flex-direction: row;
+                margin-top: 0;
+            }
+
+            .action-row {
+                flex: 1;
             }
 
             .tab-nav {
-                flex-direction: column;
+                top: 0;
             }
 
-            .tab-btn {
-                padding: 0.75rem 1rem;
-                justify-content: center;
+            .info-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .materials-card-view {
+                display: none;
+            }
+
+            .assignments-card-view {
+                display: none;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+
+            .sidebar,
+            .tab-nav,
+            .class-actions,
+            .btn,
+            .header-actions,
+            .menu-toggle {
+                display: none !important;
+            }
+
+            .main-content {
+                margin: 0;
+                padding: 1rem;
+            }
+
+            .class-header,
+            .section-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+
+            .progress-bar {
+                border: 1px solid #ddd;
             }
         }
     </style>
@@ -917,10 +1260,15 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2>Impact Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <div>
+                    <h2>Impact Academy</h2>
+                    <p>Admin Dashboard</p>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <nav class="sidebar-nav">
+            <nav class="sidebar-nav" id="sidebarNav">
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
                             <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -951,15 +1299,17 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 <div>
                     <div class="breadcrumb">
                         <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">Dashboard</a> &rsaquo;
-                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/">Academic</a> &rsaquo;
                         <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php">Classes</a> &rsaquo;
-                        Class Details
+                        <?php echo htmlspecialchars($class['batch_code']); ?>
                     </div>
                     <h1>Class Details</h1>
                 </div>
-                <div>
+                <div class="header-actions">
                     <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to List
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class_id; ?>" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit
                     </a>
                 </div>
             </div>
@@ -981,43 +1331,29 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 </div>
             <?php endif; ?>
 
-            <!-- Class Header -->
+            <!-- Class Header Card -->
             <div class="class-header">
                 <div class="class-title">
                     <div>
                         <h2><?php echo htmlspecialchars($class['name']); ?></h2>
                         <div class="class-code">
                             <?php echo htmlspecialchars($class['batch_code']); ?>
-                            <span class="program-badge badge-<?php echo $class['program_type']; ?>" style="margin-left: 1rem;">
-                                <?php echo ucfirst($class['program_type']); ?> Program
-                            </span>
-                            <span class="status-badge status-<?php echo $class['status']; ?>" style="margin-left: 0.5rem;">
-                                <?php echo ucfirst($class['status']); ?>
-                            </span>
+                            <div class="badge-container">
+                                <span class="program-badge badge-<?php echo $class['program_type']; ?>">
+                                    <?php echo ucfirst($class['program_type']); ?>
+                                </span>
+                                <span class="status-badge status-<?php echo $class['status']; ?>">
+                                    <?php echo ucfirst($class['status']); ?>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="class-actions">
-                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class_id; ?>"
-                            class="btn btn-primary">
-                            <i class="fas fa-edit"></i> Edit Class
-                        </a>
-                        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/home.php"
-                            class="btn btn-success" target="_blank">
-                            <i class="fas fa-chalkboard-teacher"></i> Instructor View
-                        </a>
-                        <?php if ($class['meeting_link']): ?>
-                            <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>"
-                                class="btn btn-warning" target="_blank">
-                                <i class="fas fa-video"></i> Join Class
-                            </a>
-                        <?php endif; ?>
                     </div>
                 </div>
 
-                <div class="class-meta">
+                <div class="class-meta-grid">
                     <div class="meta-item">
                         <div class="meta-label">Course</div>
-                        <div class="meta-value"><?php echo htmlspecialchars($class['course_code'] . ' - ' . $class['course_title']); ?></div>
+                        <div class="meta-value"><?php echo htmlspecialchars($class['course_code']); ?></div>
                     </div>
                     <div class="meta-item">
                         <div class="meta-label">Program</div>
@@ -1029,24 +1365,15 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                             <?php if ($class['instructor_first_name']): ?>
                                 <?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?>
                             <?php else: ?>
-                                <span style="color: #64748b; font-style: italic;">Not assigned</span>
+                                <span style="color: #64748b;">Not assigned</span>
                             <?php endif; ?>
                         </div>
                     </div>
                     <div class="meta-item">
                         <div class="meta-label">Duration</div>
-                        <div class="meta-value"><?php echo $class['duration_hours']; ?> hours</div>
+                        <div class="meta-value"><?php echo $class['duration_hours']; ?> hrs</div>
                     </div>
                 </div>
-
-                <?php if ($class['description']): ?>
-                    <div style="margin-top: 1.5rem;">
-                        <div class="info-label">Class Description</div>
-                        <div class="text-content" style="margin-top: 0.5rem;">
-                            <?php echo nl2br(htmlspecialchars($class['description'])); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
 
                 <!-- Class Progress -->
                 <div class="class-progress">
@@ -1057,48 +1384,62 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: <?php echo $progress_percentage; ?>%;"></div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">
-                        <div>
-                            <i class="far fa-calendar-alt"></i>
-                            <?php echo date('M j, Y', strtotime($class['start_date'])); ?>
-                        </div>
-                        <div>
-                            <i class="far fa-calendar-alt"></i>
-                            <?php echo date('M j, Y', strtotime($class['end_date'])); ?>
-                        </div>
+                    <div class="progress-dates">
+                        <div><i class="far fa-calendar-alt"></i> <?php echo date('M j, Y', strtotime($class['start_date'])); ?></div>
+                        <div><i class="far fa-calendar-alt"></i> <?php echo date('M j, Y', strtotime($class['end_date'])); ?></div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="class-actions">
+                    <div class="action-row">
+                        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/home.php" class="btn btn-success" target="_blank">
+                            <i class="fas fa-chalkboard-teacher"></i> Class View
+                        </a>
+                        <?php if ($class['meeting_link']): ?>
+                            <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" class="btn btn-warning" target="_blank">
+                                <i class="fas fa-video"></i> Join
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="action-row">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Enroll Student
+                        </a>
+                        <?php if ($class['status'] !== 'completed' && $class['status'] !== 'cancelled'): ?>
+                            <form method="POST" style="display: inline; width: 100%;">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                                <input type="hidden" name="action" value="mark_completed">
+                                <button type="submit" class="btn btn-warning" style="width: 100%;"
+                                    onclick="return confirm('Mark this class as completed? This action cannot be undone.')">
+                                    <i class="fas fa-check-circle"></i> Complete
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
 
-            <!-- Class Statistics -->
+            <!-- Statistics Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number"><?php echo $class['total_enrollments']; ?></div>
-                    <div class="stat-label">Total Enrollments</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo $class['active_enrollments']; ?> active
-                    </div>
+                    <div class="stat-label">Enrollments</div>
+                    <div class="stat-sub"><?php echo $class['active_enrollments']; ?> active</div>
                 </div>
                 <div class="stat-card enrollments">
                     <div class="stat-number"><?php echo $class['max_students']; ?></div>
-                    <div class="stat-label">Max Capacity</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo round(($class['active_enrollments'] / $class['max_students']) * 100); ?>% filled
-                    </div>
+                    <div class="stat-label">Capacity</div>
+                    <div class="stat-sub"><?php echo round(($class['active_enrollments'] / $class['max_students']) * 100); ?>% filled</div>
                 </div>
                 <div class="stat-card materials">
                     <div class="stat-number"><?php echo $class['total_materials']; ?></div>
                     <div class="stat-label">Materials</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        Course resources
-                    </div>
                 </div>
                 <div class="stat-card assignments">
                     <div class="stat-number"><?php echo $class['total_assignments']; ?></div>
                     <div class="stat-label">Assignments</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo $class['graded_submissions']; ?> graded
-                    </div>
+                    <div class="stat-sub"><?php echo $class['graded_submissions']; ?> graded</div>
                 </div>
             </div>
 
@@ -1123,221 +1464,128 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
 
             <!-- Overview Tab -->
             <div id="overview-tab" class="tab-content active">
-                <div class="content-grid">
-                    <!-- Left Column: Course & Instructor Details -->
-                    <div>
-                        <!-- Course Information -->
-                        <div class="section-card" style="margin-bottom: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-graduation-cap"></i> Course Information</h3>
-                            </div>
-                            <div class="section-body">
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <div class="info-label">Course Code</div>
-                                        <div class="info-value"><?php echo htmlspecialchars($class['course_code']); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Course Title</div>
-                                        <div class="info-value"><?php echo htmlspecialchars($class['course_title']); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Program</div>
-                                        <div class="info-value"><?php echo htmlspecialchars($class['program_name']); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Program Type</div>
-                                        <div class="info-value">
-                                            <span class="program-badge badge-<?php echo $class['program_type']; ?>">
-                                                <?php echo ucfirst($class['program_type']); ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Course Level</div>
-                                        <div class="info-value"><?php echo ucfirst($class['level']); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Duration</div>
-                                        <div class="info-value"><?php echo $class['duration_hours']; ?> hours</div>
-                                    </div>
-                                </div>
-
-                                <?php if ($class['course_description']): ?>
-                                    <div style="margin-top: 1.5rem;">
-                                        <div class="info-label">Course Description</div>
-                                        <div class="text-content" style="margin-top: 0.5rem;">
-                                            <?php echo nl2br(htmlspecialchars($class['course_description'])); ?>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <!-- Schedule Information -->
-                        <div class="section-card">
-                            <div class="section-header">
-                                <h3><i class="fas fa-calendar-alt"></i> Schedule & Meeting</h3>
-                            </div>
-                            <div class="section-body">
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <div class="info-label">Class Schedule</div>
-                                        <div class="info-value">
-                                            <?php echo $class['schedule'] ? nl2br(htmlspecialchars($class['schedule'])) : 'Not specified'; ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Meeting Link</div>
-                                        <div class="info-value">
-                                            <?php if ($class['meeting_link']): ?>
-                                                <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>"
-                                                    target="_blank" style="color: var(--primary); text-decoration: none;">
-                                                    Join Class Meeting
-                                                    <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
-                                                </a>
-                                            <?php else: ?>
-                                                <span style="color: #64748b; font-style: italic;">Not provided</span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Class Dates</div>
-                                        <div class="info-value">
-                                            <?php echo date('M j, Y', strtotime($class['start_date'])); ?> -
-                                            <?php echo date('M j, Y', strtotime($class['end_date'])); ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Days Remaining</div>
-                                        <div class="info-value">
-                                            <?php
-                                            $end_date = strtotime($class['end_date']);
-                                            $today = time();
-                                            $days_remaining = ceil(($end_date - $today) / (60 * 60 * 24));
-                                            echo $days_remaining > 0 ? $days_remaining . ' days' : 'Completed';
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Course Information -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-graduation-cap"></i> Course Information</h3>
                     </div>
-
-                    <!-- Right Column: Instructor & Quick Actions -->
-                    <div>
-                        <!-- Instructor Information -->
-                        <?php if ($class['instructor_first_name']): ?>
-                            <div class="section-card" style="margin-bottom: 1.5rem;">
-                                <div class="section-header">
-                                    <h3><i class="fas fa-user-tie"></i> Instructor Information</h3>
+                    <div class="section-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Course Code</div>
+                                <div class="info-value"><?php echo htmlspecialchars($class['course_code']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Course Title</div>
+                                <div class="info-value"><?php echo htmlspecialchars($class['course_title']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Program</div>
+                                <div class="info-value"><?php echo htmlspecialchars($class['program_name']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Program Type</div>
+                                <div class="info-value">
+                                    <span class="program-badge badge-<?php echo $class['program_type']; ?>">
+                                        <?php echo ucfirst($class['program_type']); ?>
+                                    </span>
                                 </div>
-                                <div class="section-body">
-                                    <div class="instructor-card">
-                                        <div class="instructor-name">
-                                            <?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?>
-                                        </div>
-                                        <div class="instructor-contact">
-                                            <i class="fas fa-envelope"></i>
-                                            <?php echo htmlspecialchars($class['instructor_email']); ?>
-                                        </div>
-                                        <?php if ($class['instructor_phone']): ?>
-                                            <div class="instructor-contact">
-                                                <i class="fas fa-phone"></i>
-                                                <?php echo htmlspecialchars($class['instructor_phone']); ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                        <a href="mailto:<?php echo urlencode($class['instructor_email']); ?>"
-                                            class="btn btn-secondary btn-sm">
-                                            <i class="fas fa-envelope"></i> Email Instructor
-                                        </a>
-                                        <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $class['instructor_id']; ?>"
-                                            class="btn btn-secondary btn-sm">
-                                            <i class="fas fa-eye"></i> View Profile
-                                        </a>
-                                    </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Course Level</div>
+                                <div class="info-value"><?php echo ucfirst($class['level']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Duration</div>
+                                <div class="info-value"><?php echo $class['duration_hours']; ?> hours</div>
+                            </div>
+                        </div>
+
+                        <?php if ($class['course_description']): ?>
+                            <div style="margin-top: 1rem;">
+                                <div class="info-label">Course Description</div>
+                                <div class="text-content" style="margin-top: 0.5rem;">
+                                    <?php echo nl2br(htmlspecialchars($class['course_description'])); ?>
                                 </div>
                             </div>
                         <?php endif; ?>
+                    </div>
+                </div>
 
-                        <!-- Quick Actions -->
-                        <div class="section-card" style="margin-bottom: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                            </div>
-                            <div class="section-body">
-                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/edit.php?id=<?php echo $class_id; ?>"
-                                        class="btn btn-primary" style="justify-content: center;">
-                                        <i class="fas fa-edit"></i> Edit Class Details
-                                    </a>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>"
-                                        class="btn btn-success" style="justify-content: center;">
-                                        <i class="fas fa-user-plus"></i> Enroll New Student
-                                    </a>
-                                    <?php if ($class['status'] !== 'completed' && $class['status'] !== 'cancelled'): ?>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                            <input type="hidden" name="action" value="mark_completed">
-                                            <button type="submit" class="btn btn-warning" style="width: 100%; justify-content: center;"
-                                                onclick="return confirm('Mark this class as completed? This action cannot be undone.')">
-                                                <i class="fas fa-check-circle"></i> Mark as Completed
-                                            </button>
-                                        </form>
-                                    <?php endif; ?>
-                                    <?php if ($class['status'] !== 'cancelled'): ?>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                            <input type="hidden" name="action" value="cancel_class">
-                                            <button type="submit" class="btn btn-danger" style="width: 100%; justify-content: center;"
-                                                onclick="return confirm('Cancel this class? All enrolled students will be notified.')">
-                                                <i class="fas fa-times-circle"></i> Cancel Class
-                                            </button>
-                                        </form>
-                                    <?php endif; ?>
-                                    <a href="#" onclick="window.print()" class="btn btn-secondary" style="justify-content: center;">
-                                        <i class="fas fa-print"></i> Print Class Details
-                                    </a>
+                <!-- Schedule & Meeting -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-calendar-alt"></i> Schedule & Meeting</h3>
+                    </div>
+                    <div class="section-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Schedule</div>
+                                <div class="info-value">
+                                    <?php echo $class['schedule'] ? nl2br(htmlspecialchars($class['schedule'])) : 'Not specified'; ?>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Class Stats -->
-                        <div class="section-card">
-                            <div class="section-header">
-                                <h3><i class="fas fa-chart-bar"></i> Class Statistics</h3>
+                            <div class="info-item">
+                                <div class="info-label">Meeting Link</div>
+                                <div class="info-value">
+                                    <?php if ($class['meeting_link']): ?>
+                                        <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>"
+                                            target="_blank" style="color: var(--primary); text-decoration: none; word-break: break-all;">
+                                            Join Meeting <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                                        </a>
+                                    <?php else: ?>
+                                        <span style="color: #64748b;">Not provided</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                            <div class="section-body">
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <div class="info-label">Enrollment Rate</div>
-                                        <div class="info-value">
-                                            <?php echo round(($class['active_enrollments'] / $class['max_students']) * 100); ?>%
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Assignment Rate</div>
-                                        <div class="info-value">
-                                            <?php echo $class['total_assignments'] > 0 ? round(($class['graded_submissions'] / $class['total_submissions']) * 100) : 0; ?>%
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Completion Rate</div>
-                                        <div class="info-value">
-                                            <?php echo $class['total_enrollments'] > 0 ? round(($class['completed_enrollments'] / $class['total_enrollments']) * 100) : 0; ?>%
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Class Progress</div>
-                                        <div class="info-value"><?php echo round($progress_percentage); ?>%</div>
-                                    </div>
+                            <div class="info-item">
+                                <div class="info-label">Days Remaining</div>
+                                <div class="info-value">
+                                    <?php
+                                    $end_date = strtotime($class['end_date']);
+                                    $today = time();
+                                    $days_remaining = ceil(($end_date - $today) / (60 * 60 * 24));
+                                    echo $days_remaining > 0 ? $days_remaining . ' days' : 'Completed';
+                                    ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Instructor Information -->
+                <?php if ($class['instructor_first_name']): ?>
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-tie"></i> Instructor</h3>
+                        </div>
+                        <div class="section-body">
+                            <div class="instructor-card">
+                                <div class="instructor-name">
+                                    <?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?>
+                                </div>
+                                <div class="instructor-contact">
+                                    <i class="fas fa-envelope"></i>
+                                    <?php echo htmlspecialchars($class['instructor_email']); ?>
+                                </div>
+                                <?php if ($class['instructor_phone']): ?>
+                                    <div class="instructor-contact">
+                                        <i class="fas fa-phone"></i>
+                                        <?php echo htmlspecialchars($class['instructor_phone']); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <a href="mailto:<?php echo urlencode($class['instructor_email']); ?>" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-envelope"></i> Email
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $class['instructor_id']; ?>" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Students Tab -->
@@ -1345,67 +1593,111 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 <div class="section-card">
                     <div class="section-header">
                         <h3><i class="fas fa-users"></i> Enrolled Students (<?php echo $class['total_enrollments']; ?>)</h3>
-                        <div>
-                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>"
-                                class="btn btn-primary btn-sm">
-                                <i class="fas fa-user-plus"></i> Enroll Student
-                            </a>
-                        </div>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary btn-sm">
+                            <i class="fas fa-user-plus"></i> Enroll
+                        </a>
                     </div>
                     <div class="section-body">
                         <?php if (!empty($students)): ?>
-                            <div class="table-container">
+                            <!-- Mobile Card View -->
+                            <div class="students-card-view">
+                                <?php foreach ($students as $student):
+                                    $initials = strtoupper(
+                                        substr($student['first_name'], 0, 1) .
+                                            substr($student['last_name'], 0, 1)
+                                    );
+                                ?>
+                                    <div class="student-card">
+                                        <div class="student-card-header">
+                                            <div style="display: flex; align-items: center;">
+                                                <div class="student-avatar"><?php echo $initials; ?></div>
+                                                <div class="student-info">
+                                                    <div class="student-name">
+                                                        <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>
+                                                    </div>
+                                                    <div class="student-email"><?php echo htmlspecialchars($student['email']); ?></div>
+                                                </div>
+                                            </div>
+                                            <?php
+                                            $status_class = '';
+                                            if ($student['status'] === 'active') $status_class = 'badge-success';
+                                            elseif ($student['status'] === 'completed') $status_class = 'badge-info';
+                                            elseif ($student['status'] === 'dropped') $status_class = 'badge-danger';
+                                            else $status_class = 'badge-warning';
+                                            ?>
+                                            <span class="badge <?php echo $status_class; ?>">
+                                                <?php echo ucfirst($student['status']); ?>
+                                            </span>
+                                        </div>
+
+                                        <div class="student-details">
+                                            <div class="student-detail-item">
+                                                <span>Enrolled</span>
+                                                <?php echo date('M j, Y', strtotime($student['enrollment_date'])); ?>
+                                            </div>
+                                            <?php if ($student['phone']): ?>
+                                                <div class="student-detail-item">
+                                                    <span>Phone</span>
+                                                    <?php echo htmlspecialchars($student['phone']); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if ($student['gender']): ?>
+                                                <div class="student-detail-item">
+                                                    <span>Gender</span>
+                                                    <?php echo ucfirst($student['gender']); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <?php if ($student['final_grade']): ?>
+                                                <div class="student-detail-item">
+                                                    <span>Grade</span>
+                                                    <span style="color: var(--success); font-weight: 600;">
+                                                        <?php echo $student['final_grade']; ?>
+                                                    </span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="student-actions">
+                                            <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['user_id']; ?>" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye"></i> Profile
+                                            </a>
+                                            <a href="mailto:<?php echo urlencode($student['email']); ?>" class="btn btn-secondary btn-sm">
+                                                <i class="fas fa-envelope"></i> Email
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <!-- Desktop Table View -->
+                            <div class="table-container" style="display: none;">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Student</th>
                                             <th>Contact</th>
-                                            <th>Enrollment Date</th>
+                                            <th>Enrolled</th>
                                             <th>Status</th>
-                                            <th>Completion</th>
                                             <th>Grade</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($students as $student):
-                                            $initials = strtoupper(
-                                                substr($student['first_name'], 0, 1) .
-                                                    substr($student['last_name'], 0, 1)
-                                            );
-                                        ?>
+                                        <?php foreach ($students as $student): ?>
                                             <tr>
                                                 <td>
-                                                    <div class="student-cell">
-                                                        <div class="student-avatar">
-                                                            <?php echo $initials; ?>
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <div class="student-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                                            <?php echo strtoupper(substr($student['first_name'], 0, 1) . substr($student['last_name'], 0, 1)); ?>
                                                         </div>
                                                         <div>
-                                                            <div class="student-name">
-                                                                <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>
-                                                            </div>
-                                                            <?php if ($student['gender']): ?>
-                                                                <div style="font-size: 0.8rem; color: #64748b;">
-                                                                    <?php echo ucfirst($student['gender']); ?>
-                                                                    <?php if ($student['date_of_birth']): ?>
-                                                                        • <?php echo date('Y') - date('Y', strtotime($student['date_of_birth'])); ?> years
-                                                                    <?php endif; ?>
-                                                                </div>
-                                                            <?php endif; ?>
+                                                            <div><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></div>
+                                                            <div style="font-size: 0.7rem; color: #64748b;"><?php echo htmlspecialchars($student['email']); ?></div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div class="student-email"><?php echo htmlspecialchars($student['email']); ?></div>
-                                                    <?php if ($student['phone']): ?>
-                                                        <div style="font-size: 0.85rem; color: #64748b;">
-                                                            <?php echo htmlspecialchars($student['phone']); ?>
-                                                        </div>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo date('M j, Y', strtotime($student['enrollment_date'])); ?>
-                                                </td>
+                                                <td><?php echo htmlspecialchars($student['phone'] ?? 'N/A'); ?></td>
+                                                <td><?php echo date('M j, Y', strtotime($student['enrollment_date'])); ?></td>
                                                 <td>
                                                     <?php
                                                     $status_class = '';
@@ -1419,29 +1711,15 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <?php if ($student['completion_date']): ?>
-                                                        <?php echo date('M j, Y', strtotime($student['completion_date'])); ?>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">In progress</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
                                                     <?php if ($student['final_grade']): ?>
-                                                        <span style="font-weight: bold; color: var(--success);">
-                                                            <?php echo $student['final_grade']; ?>
-                                                        </span>
+                                                        <span style="color: var(--success);"><?php echo $student['final_grade']; ?></span>
                                                     <?php else: ?>
-                                                        <span style="color: #64748b;">N/A</span>
+                                                        -
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['user_id']; ?>"
-                                                        class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-eye"></i> Profile
-                                                    </a>
-                                                    <a href="mailto:<?php echo urlencode($student['email']); ?>"
-                                                        class="btn btn-secondary btn-sm">
-                                                        <i class="fas fa-envelope"></i> Email
+                                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['user_id']; ?>" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -1453,10 +1731,9 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                             <div class="empty-state">
                                 <i class="fas fa-users"></i>
                                 <h3>No Students Enrolled</h3>
-                                <p>There are no students enrolled in this class yet.</p>
-                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>"
-                                    class="btn btn-primary" style="margin-top: 1rem;">
-                                    <i class="fas fa-user-plus"></i> Enroll First Student
+                                <p>Start by enrolling students to this class.</p>
+                                <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/enroll.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary" style="margin-top: 0.5rem;">
+                                    <i class="fas fa-user-plus"></i> Enroll Student
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -1469,23 +1746,57 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 <div class="section-card">
                     <div class="section-header">
                         <h3><i class="fas fa-book"></i> Course Materials (<?php echo $class['total_materials']; ?>)</h3>
-                        <div>
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/upload.php"
-                                class="btn btn-primary btn-sm" target="_blank">
-                                <i class="fas fa-upload"></i> Upload Material
-                            </a>
-                        </div>
+                        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/upload.php" class="btn btn-primary btn-sm" target="_blank">
+                            <i class="fas fa-upload"></i> Upload
+                        </a>
                     </div>
                     <div class="section-body">
                         <?php if (!empty($materials)): ?>
-                            <div class="table-container">
+                            <!-- Mobile Card View -->
+                            <div class="materials-card-view">
+                                <?php foreach ($materials as $material): ?>
+                                    <div class="material-card">
+                                        <div class="material-header">
+                                            <div class="material-title"><?php echo htmlspecialchars($material['title']); ?></div>
+                                            <span class="badge badge-info"><?php echo ucfirst($material['file_type']); ?></span>
+                                        </div>
+
+                                        <?php if ($material['description']): ?>
+                                            <div style="font-size: 0.8rem; color: #64748b; margin: 0.5rem 0;">
+                                                <?php echo htmlspecialchars(substr($material['description'], 0, 100)); ?>...
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="material-meta">
+                                            <?php if ($material['week_number']): ?>
+                                                <span><i class="far fa-calendar"></i> Week <?php echo $material['week_number']; ?></span>
+                                            <?php endif; ?>
+                                            <span><i class="far fa-eye"></i> <?php echo $material['downloads_count']; ?> downloads</span>
+                                            <span><i class="far fa-clock"></i> <?php echo date('M j, Y', strtotime($material['publish_date'])); ?></span>
+                                        </div>
+
+                                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                            <?php if ($material['file_url']): ?>
+                                                <a href="<?php echo BASE_URL . 'public/uploads/' . $material['file_url']; ?>" class="btn btn-primary btn-sm" target="_blank">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                            <?php endif; ?>
+                                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/manage.php" class="btn btn-secondary btn-sm" target="_blank">
+                                                <i class="fas fa-cog"></i> Manage
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <!-- Desktop Table View (hidden on mobile) -->
+                            <div class="table-container" style="display: none;">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Title</th>
                                             <th>Type</th>
                                             <th>Week</th>
-                                            <th>Topic</th>
                                             <th>Downloads</th>
                                             <th>Published</th>
                                             <th>Actions</th>
@@ -1495,41 +1806,21 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                         <?php foreach ($materials as $material): ?>
                                             <tr>
                                                 <td>
-                                                    <strong><?php echo htmlspecialchars($material['title']); ?></strong>
+                                                    <div><strong><?php echo htmlspecialchars($material['title']); ?></strong></div>
                                                     <?php if ($material['description']): ?>
-                                                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
-                                                            <?php echo htmlspecialchars(substr($material['description'], 0, 100)); ?>...
-                                                        </div>
+                                                        <div style="font-size: 0.75rem; color: #64748b;"><?php echo htmlspecialchars(substr($material['description'], 0, 50)); ?>...</div>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td>
-                                                    <span class="badge badge-info">
-                                                        <?php echo ucfirst($material['file_type']); ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <?php echo $material['week_number'] ? 'Week ' . $material['week_number'] : 'N/A'; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $material['topic'] ? htmlspecialchars($material['topic']) : 'N/A'; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $material['downloads_count']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo date('M j, Y', strtotime($material['publish_date'])); ?>
-                                                </td>
+                                                <td><span class="badge badge-info"><?php echo ucfirst($material['file_type']); ?></span></td>
+                                                <td><?php echo $material['week_number'] ? 'Week ' . $material['week_number'] : '-'; ?></td>
+                                                <td><?php echo $material['downloads_count']; ?></td>
+                                                <td><?php echo date('M j, Y', strtotime($material['publish_date'])); ?></td>
                                                 <td>
                                                     <?php if ($material['file_url']): ?>
-                                                        <a href="<?php echo BASE_URL . 'public/uploads/' . $material['file_url']; ?>"
-                                                            class="btn btn-primary btn-sm" target="_blank">
-                                                            <i class="fas fa-download"></i> Download
+                                                        <a href="<?php echo BASE_URL . 'public/uploads/' . $material['file_url']; ?>" class="btn btn-primary btn-sm" target="_blank">
+                                                            <i class="fas fa-download"></i>
                                                         </a>
                                                     <?php endif; ?>
-                                                    <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/manage.php"
-                                                        class="btn btn-secondary btn-sm" target="_blank">
-                                                        <i class="fas fa-cog"></i> Manage
-                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -1539,11 +1830,10 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                         <?php else: ?>
                             <div class="empty-state">
                                 <i class="fas fa-book"></i>
-                                <h3>No Course Materials</h3>
-                                <p>No course materials have been uploaded for this class yet.</p>
-                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/upload.php"
-                                    class="btn btn-primary" style="margin-top: 1rem;" target="_blank">
-                                    <i class="fas fa-upload"></i> Upload First Material
+                                <h3>No Materials</h3>
+                                <p>Upload course materials for students.</p>
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/materials/upload.php" class="btn btn-primary" style="margin-top: 0.5rem;" target="_blank">
+                                    <i class="fas fa-upload"></i> Upload Material
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -1556,16 +1846,51 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 <div class="section-card">
                     <div class="section-header">
                         <h3><i class="fas fa-tasks"></i> Assignments (<?php echo $class['total_assignments']; ?>)</h3>
-                        <div>
-                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/create.php"
-                                class="btn btn-primary btn-sm" target="_blank">
-                                <i class="fas fa-plus"></i> Create Assignment
-                            </a>
-                        </div>
+                        <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/create.php" class="btn btn-primary btn-sm" target="_blank">
+                            <i class="fas fa-plus"></i> Create
+                        </a>
                     </div>
                     <div class="section-body">
                         <?php if (!empty($assignments)): ?>
-                            <div class="table-container">
+                            <!-- Mobile Card View -->
+                            <div class="assignments-card-view">
+                                <?php foreach ($assignments as $assignment): ?>
+                                    <div class="assignment-card">
+                                        <div class="assignment-header">
+                                            <div class="assignment-title"><?php echo htmlspecialchars($assignment['title']); ?></div>
+                                            <?php if ($assignment['is_published']): ?>
+                                                <span class="badge badge-success">Published</span>
+                                            <?php else: ?>
+                                                <span class="badge badge-warning">Draft</span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if ($assignment['description']): ?>
+                                            <div style="font-size: 0.8rem; color: #64748b; margin: 0.5rem 0;">
+                                                <?php echo htmlspecialchars(substr($assignment['description'], 0, 100)); ?>...
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="assignment-stats">
+                                            <div><i class="far fa-clock"></i> Due: <?php echo date('M j, Y', strtotime($assignment['due_date'])); ?></div>
+                                            <div><i class="fas fa-star"></i> <?php echo $assignment['total_points']; ?> pts</div>
+                                            <div><i class="fas fa-users"></i> <?php echo $assignment['submission_count']; ?>/<?php echo $class['active_enrollments']; ?></div>
+                                        </div>
+
+                                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/submissions.php?assignment_id=<?php echo $assignment['id']; ?>" class="btn btn-primary btn-sm" target="_blank">
+                                                <i class="fas fa-eye"></i> Submissions
+                                            </a>
+                                            <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/grade.php?assignment_id=<?php echo $assignment['id']; ?>" class="btn btn-success btn-sm" target="_blank">
+                                                <i class="fas fa-check"></i> Grade
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <!-- Desktop Table View (hidden on mobile) -->
+                            <div class="table-container" style="display: none;">
                                 <table>
                                     <thead>
                                         <tr>
@@ -1573,7 +1898,6 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                             <th>Due Date</th>
                                             <th>Points</th>
                                             <th>Submissions</th>
-                                            <th>Type</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -1582,30 +1906,19 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                         <?php foreach ($assignments as $assignment): ?>
                                             <tr>
                                                 <td>
-                                                    <strong><?php echo htmlspecialchars($assignment['title']); ?></strong>
+                                                    <div><strong><?php echo htmlspecialchars($assignment['title']); ?></strong></div>
                                                     <?php if ($assignment['description']): ?>
-                                                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
-                                                            <?php echo htmlspecialchars(substr($assignment['description'], 0, 100)); ?>...
-                                                        </div>
+                                                        <div style="font-size: 0.75rem; color: #64748b;"><?php echo htmlspecialchars(substr($assignment['description'], 0, 50)); ?>...</div>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo date('M j, Y g:i A', strtotime($assignment['due_date'])); ?>
+                                                    <?php echo date('M j, Y', strtotime($assignment['due_date'])); ?>
                                                     <?php if (strtotime($assignment['due_date']) < time()): ?>
-                                                        <div class="badge badge-danger" style="margin-top: 0.25rem;">Overdue</div>
+                                                        <div class="badge badge-danger">Overdue</div>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td>
-                                                    <?php echo $assignment['total_points']; ?> pts
-                                                </td>
-                                                <td>
-                                                    <?php echo $assignment['submission_count']; ?> / <?php echo $class['active_enrollments']; ?>
-                                                </td>
-                                                <td>
-                                                    <span class="badge badge-info">
-                                                        <?php echo ucfirst(str_replace('_', ' ', $assignment['submission_type'])); ?>
-                                                    </span>
-                                                </td>
+                                                <td><?php echo $assignment['total_points']; ?></td>
+                                                <td><?php echo $assignment['submission_count']; ?>/<?php echo $class['active_enrollments']; ?></td>
                                                 <td>
                                                     <?php if ($assignment['is_published']): ?>
                                                         <span class="badge badge-success">Published</span>
@@ -1614,13 +1927,8 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/submissions.php?assignment_id=<?php echo $assignment['id']; ?>"
-                                                        class="btn btn-primary btn-sm" target="_blank">
-                                                        <i class="fas fa-eye"></i> Submissions
-                                                    </a>
-                                                    <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/grade.php?assignment_id=<?php echo $assignment['id']; ?>"
-                                                        class="btn btn-success btn-sm" target="_blank">
-                                                        <i class="fas fa-check"></i> Grade
+                                                    <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/submissions.php?assignment_id=<?php echo $assignment['id']; ?>" class="btn btn-primary btn-sm" target="_blank">
+                                                        <i class="fas fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -1632,10 +1940,9 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                             <div class="empty-state">
                                 <i class="fas fa-tasks"></i>
                                 <h3>No Assignments</h3>
-                                <p>No assignments have been created for this class yet.</p>
-                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/create.php"
-                                    class="btn btn-primary" style="margin-top: 1rem;" target="_blank">
-                                    <i class="fas fa-plus"></i> Create First Assignment
+                                <p>Create assignments for this class.</p>
+                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/assignments/create.php" class="btn btn-primary" style="margin-top: 0.5rem;" target="_blank">
+                                    <i class="fas fa-plus"></i> Create Assignment
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -1651,12 +1958,12 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                     </div>
                     <div class="section-body">
                         <div class="timeline">
-                            <div class="timeline-item <?php echo $timeline_status === 'scheduled' ? 'current' : ($timeline_status === 'completed' ? 'completed' : ''); ?>">
+                            <div class="timeline-item <?php echo $timeline_status === 'scheduled' ? 'current' : ''; ?>">
                                 <div class="timeline-date"><?php echo date('M j, Y', strtotime($class['start_date'])); ?></div>
                                 <div class="timeline-content">
                                     <strong>Class Scheduled</strong>
-                                    <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
-                                        Class was scheduled to start on this date.
+                                    <p style="margin-top: 0.25rem; color: #64748b; font-size: 0.75rem;">
+                                        Class scheduled to start
                                     </p>
                                 </div>
                             </div>
@@ -1666,8 +1973,8 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                     <div class="timeline-date">Currently</div>
                                     <div class="timeline-content">
                                         <strong>Class in Progress</strong>
-                                        <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
-                                            Class is currently ongoing. <?php echo round($progress_percentage); ?>% completed.
+                                        <p style="margin-top: 0.25rem; color: #64748b; font-size: 0.75rem;">
+                                            <?php echo round($progress_percentage); ?>% completed
                                         </p>
                                     </div>
                                 </div>
@@ -1678,9 +1985,6 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                     <div class="timeline-date"><?php echo date('M j, Y', strtotime($class['end_date'])); ?></div>
                                     <div class="timeline-content">
                                         <strong>Class Completed</strong>
-                                        <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
-                                            Class was completed on this date.
-                                        </p>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -1690,9 +1994,6 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                                     <div class="timeline-date"><?php echo date('M j, Y', strtotime($class['updated_at'])); ?></div>
                                     <div class="timeline-content">
                                         <strong>Class Cancelled</strong>
-                                        <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
-                                            Class was cancelled by administrator.
-                                        </p>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -1702,42 +2003,31 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
 
                 <!-- Recent Announcements -->
                 <?php if (!empty($announcements)): ?>
-                    <div class="section-card" style="margin-top: 1.5rem;">
+                    <div class="section-card">
                         <div class="section-header">
                             <h3><i class="fas fa-bullhorn"></i> Recent Announcements</h3>
                         </div>
                         <div class="section-body">
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                <?php foreach ($announcements as $announcement): ?>
-                                    <div class="instructor-card" style="margin-bottom: 1rem;">
-                                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                            <div>
-                                                <strong><?php echo htmlspecialchars($announcement['title']); ?></strong>
-                                                <?php if ($announcement['priority'] === 'high'): ?>
-                                                    <span class="badge badge-danger" style="margin-left: 0.5rem;">High Priority</span>
-                                                <?php elseif ($announcement['priority'] === 'medium'): ?>
-                                                    <span class="badge badge-warning" style="margin-left: 0.5rem;">Medium Priority</span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div style="font-size: 0.85rem; color: #64748b;">
-                                                <?php echo date('M j, Y', strtotime($announcement['publish_date'])); ?>
-                                            </div>
+                            <?php foreach ($announcements as $announcement): ?>
+                                <div class="instructor-card" style="margin-bottom: 0.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <strong><?php echo htmlspecialchars($announcement['title']); ?></strong>
+                                            <?php if ($announcement['priority'] === 'high'): ?>
+                                                <span class="badge badge-danger" style="margin-left: 0.25rem;">High</span>
+                                            <?php endif; ?>
                                         </div>
-                                        <?php if ($announcement['content']): ?>
-                                            <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #64748b;">
-                                                <?php echo htmlspecialchars(substr($announcement['content'], 0, 150)); ?>
-                                                <?php if (strlen($announcement['content']) > 150): ?>...<?php endif; ?>
-                                            </div>
-                                        <?php endif; ?>
+                                        <div style="font-size: 0.65rem; color: #64748b;">
+                                            <?php echo date('M j, Y', strtotime($announcement['publish_date'])); ?>
+                                        </div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div style="text-align: center; margin-top: 1rem;">
-                                <a href="<?php echo BASE_URL; ?>modules/instructor/classes/<?php echo $class_id; ?>/announcements/"
-                                    class="btn btn-secondary btn-sm" target="_blank">
-                                    <i class="fas fa-bullhorn"></i> View All Announcements
-                                </a>
-                            </div>
+                                    <?php if ($announcement['content']): ?>
+                                        <div style="margin-top: 0.25rem; font-size: 0.75rem; color: #64748b;">
+                                            <?php echo htmlspecialchars(substr($announcement['content'], 0, 100)); ?>...
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -1746,6 +2036,11 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
     </div>
 
     <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebarNav').classList.toggle('show');
+        });
+
         // Tab navigation functionality
         function showTab(tabName) {
             // Hide all tab contents
@@ -1766,21 +2061,26 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
 
             // Store active tab in sessionStorage
             sessionStorage.setItem('activeClassTab', tabName);
+
+            // Scroll to top of tab content on mobile
+            if (window.innerWidth < 768) {
+                document.getElementById(tabName + '-tab').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
 
         // Restore active tab on page load
         document.addEventListener('DOMContentLoaded', function() {
             const activeTab = sessionStorage.getItem('activeClassTab') || 'overview';
-            if (document.getElementById(activeTab + '-tab')) {
-                showTab(activeTab);
 
-                // Update tab button active state
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    if (btn.textContent.includes(getTabNameFromId(activeTab))) {
-                        btn.classList.add('active');
-                    }
-                });
-            }
+            // Find and click the appropriate tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(activeTab)) {
+                    btn.click();
+                }
+            });
 
             // Animate progress bar
             const progressFill = document.querySelector('.progress-fill');
@@ -1792,6 +2092,17 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                 }, 100);
             }
 
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const sidebar = document.querySelector('.sidebar');
+                const menuToggle = document.getElementById('menuToggle');
+                const sidebarNav = document.getElementById('sidebarNav');
+
+                if (!sidebar.contains(event.target) && sidebarNav.classList.contains('show')) {
+                    sidebarNav.classList.remove('show');
+                }
+            });
+
             // Handle form submissions (for mark completed/cancel class)
             document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -1800,9 +2111,9 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                         let confirmed = false;
 
                         if (action === 'mark_completed') {
-                            confirmed = confirm('Are you sure you want to mark this class as completed?\n\nThis will: \n• Close enrollment\n• Lock all assignments\n• Generate final grades\n\nThis action cannot be undone.');
+                            confirmed = confirm('Mark this class as completed?\n\nThis will:\n• Close enrollment\n• Lock assignments\n• Generate final grades\n\nThis action cannot be undone.');
                         } else if (action === 'cancel_class') {
-                            confirmed = confirm('Are you sure you want to cancel this class?\n\nThis will: \n• Cancel all enrollments\n• Notify all students\n• Remove class from active listings\n\nThis action cannot be undone.');
+                            confirmed = confirm('Cancel this class?\n\nThis will:\n• Cancel all enrollments\n• Notify all students\n• Remove from active listings\n\nThis action cannot be undone.');
                         }
 
                         if (!confirmed) {
@@ -1811,163 +2122,79 @@ logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'clas
                     }
                 });
             });
-
-            // Add download functionality for class report
-            const printBtn = document.querySelector('[onclick*="print"]');
-            if (printBtn) {
-                printBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Store current active tab
-                    const currentTab = sessionStorage.getItem('activeClassTab');
-
-                    // Switch to overview tab for printing
-                    showTab('overview');
-
-                    // Wait a moment for tab switch to complete
-                    setTimeout(() => {
-                        window.print();
-
-                        // Restore previous tab after printing
-                        if (currentTab) {
-                            setTimeout(() => {
-                                showTab(currentTab);
-                            }, 100);
-                        }
-                    }, 500);
-                });
-            }
         });
 
-        function getTabNameFromId(id) {
-            const tabNames = {
-                'overview': 'Overview',
-                'students': 'Students',
-                'materials': 'Materials',
-                'assignments': 'Assignments',
-                'timeline': 'Timeline'
-            };
-            return tabNames[id] || 'Overview';
-        }
+        // Responsive table switching
+        function handleResponsiveTables() {
+            const isMobile = window.innerWidth < 640;
 
-        // Handle bulk actions for students
-        function bulkAction(action) {
-            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if (checkboxes.length === 0) {
-                alert('Please select at least one student.');
-                return false;
-            }
+            // Handle students table
+            const studentsCardView = document.querySelector('.students-card-view');
+            const studentsTableView = document.querySelector('#students-tab .table-container');
 
-            const studentIds = Array.from(checkboxes).map(cb => cb.value);
-            let confirmMessage = '';
-
-            switch (action) {
-                case 'email':
-                    // Get emails for selected students
-                    const emails = Array.from(checkboxes).map(cb =>
-                        cb.closest('tr').querySelector('.student-email').textContent.trim()
-                    );
-
-                    // Open email client
-                    window.location.href = `mailto:?bcc=${emails.join(',')}&subject=Regarding%20Class%20${encodeURIComponent($class['batch_code'])}`;
-                    return true;
-
-                case 'export':
-                    confirmMessage = `Export data for ${studentIds.length} selected student(s)?`;
-                    break;
-
-                case 'certificates':
-                    confirmMessage = `Generate certificates for ${studentIds.length} selected student(s)?`;
-                    break;
-            }
-
-            if (confirmMessage && !confirm(confirmMessage)) {
-                return false;
-            }
-
-            // Submit form for server-side processing
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $class_id; ?>';
-
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = '<?php echo generateCSRFToken(); ?>';
-            form.appendChild(csrfInput);
-
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'bulk_action';
-            actionInput.value = action;
-            form.appendChild(actionInput);
-
-            studentIds.forEach(id => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'student_ids[]';
-                input.value = id;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-
-            return false;
-        }
-
-        // Search functionality for students table
-        function searchStudents() {
-            const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#students-tab tbody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
-
-        // Sort functionality for tables
-        function sortTable(tableId, columnIndex) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            const isAscending = table.getAttribute('data-sort-dir') !== 'asc';
-
-            rows.sort((a, b) => {
-                const aText = a.children[columnIndex].textContent.trim();
-                const bText = b.children[columnIndex].textContent.trim();
-
-                // Try to parse as numbers
-                const aNum = parseFloat(aText);
-                const bNum = parseFloat(bText);
-
-                if (!isNaN(aNum) && !isNaN(bNum)) {
-                    return isAscending ? aNum - bNum : bNum - aNum;
+            if (studentsCardView && studentsTableView) {
+                if (isMobile) {
+                    studentsCardView.style.display = 'block';
+                    studentsTableView.style.display = 'none';
+                } else {
+                    studentsCardView.style.display = 'none';
+                    studentsTableView.style.display = 'block';
                 }
+            }
 
-                // Compare as strings
-                return isAscending ?
-                    aText.localeCompare(bText) :
-                    bText.localeCompare(aText);
-            });
+            // Handle materials table
+            const materialsCardView = document.querySelector('.materials-card-view');
+            const materialsTableView = document.querySelector('#materials-tab .table-container');
 
-            // Clear and re-add sorted rows
-            rows.forEach(row => tbody.appendChild(row));
+            if (materialsCardView && materialsTableView) {
+                if (isMobile) {
+                    materialsCardView.style.display = 'block';
+                    materialsTableView.style.display = 'none';
+                } else {
+                    materialsCardView.style.display = 'none';
+                    materialsTableView.style.display = 'block';
+                }
+            }
 
-            // Update sort indicator
-            table.setAttribute('data-sort-dir', isAscending ? 'asc' : 'desc');
+            // Handle assignments table
+            const assignmentsCardView = document.querySelector('.assignments-card-view');
+            const assignmentsTableView = document.querySelector('#assignments-tab .table-container');
+
+            if (assignmentsCardView && assignmentsTableView) {
+                if (isMobile) {
+                    assignmentsCardView.style.display = 'block';
+                    assignmentsTableView.style.display = 'none';
+                } else {
+                    assignmentsCardView.style.display = 'none';
+                    assignmentsTableView.style.display = 'block';
+                }
+            }
         }
 
-        // Toggle student selection
-        function toggleSelectAll(source) {
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = source.checked;
+        // Run on load and resize
+        window.addEventListener('load', handleResponsiveTables);
+        window.addEventListener('resize', handleResponsiveTables);
+
+        // Search functionality for students (if needed)
+        function searchStudents() {
+            const searchTerm = document.getElementById('studentSearch')?.value.toLowerCase() || '';
+            const cards = document.querySelectorAll('.student-card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? 'block' : 'none';
             });
         }
+
+        // Touch-friendly interactions
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            btn.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        });
     </script>
 </body>
 
