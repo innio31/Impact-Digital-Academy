@@ -247,6 +247,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // Rollback transaction on error
             $conn->rollback();
+
+            // Log the specific error
+            error_log("Enrollment error: " . $e->getMessage());
+            error_log("Last SQL error: " . $conn->error);
+
             $_SESSION['error'] = "An error occurred during enrollment: " . $e->getMessage();
         }
     }
