@@ -1,5 +1,8 @@
 <?php
 // modules/admin/academic/classes/enroll.php
+// Add at the top after session start
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/enrollment_debug.log');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -113,16 +116,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success_count = 0;
             $errors = [];
 
+            // Debug: Log the class details
+            error_log("========== ENROLLMENT DEBUG START ==========");
+            error_log("Class ID: " . $class_id);
+            error_log("Class program_type: " . $class['program_type']);
+            error_log("Student IDs to enroll: " . implode(', ', $student_ids));
+
             foreach ($student_ids as $student_id) {
+                error_log("Processing student ID: " . $student_id);
+
+                // Check if student exists
+                $check_user_sql = "SELECT id, first_name, last_name FROM users WHERE id = ? AND role = 'student'";
+                $check_user_stmt = $conn->prepare($check_user_sql);
+                $check_user_stmt->bind_param('i', $student_id);
+                $check_user_stmt->execute();
+                $user_result = $check_user_stmt->get_result();
+
+                if ($user_result->num_rows === 0) {
+                    $errors[] = "Student #$student_id not found or is not a student.";
+                    error_log("Student #$student_id not found");
+                    continue;
+                }
+
+                $user_data = $user_result->fetch_assoc();
+                error_log("Found student: " . $user_data['first_name'] . " " . $user_data['last_name']);
+
                 // Check if already enrolled
-                $check_sql = "SELECT id FROM enrollments 
-                             WHERE student_id = ? AND class_id = ? AND status != 'dropped'";
+                $check_sql = "SELECT id, status FROM enrollments 
+                             WHERE student_id = ? AND class_id = ?";
                 $check_stmt = $conn->prepare($check_sql);
                 $check_stmt->bind_param('ii', $student_id, $class_id);
                 $check_stmt->execute();
+                $check_result = $check_stmt->get_result();
 
-                if ($check_stmt->get_result()->num_rows > 0) {
-                    $errors[] = "Student #$student_id is already enrolled.";
+                if ($check_result->num_rows > 0) {
+                    $existing = $check_result->fetch_assoc();
+                    $errors[] = "Student #$student_id is already enrolled in this class (Status: " . $existing['status'] . ").";
+                    error_log("Student already enrolled with status: " . $existing['status']);
                     continue;
                 }
 
@@ -130,17 +160,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $current_count = $class['current_enrollments'] + $success_count;
                 if ($current_count >= $class['max_students']) {
                     $errors[] = "Class capacity reached. Enrolled $success_count student(s).";
+                    error_log("Class capacity reached: $current_count >= " . $class['max_students']);
                     break;
                 }
-
-                // Use the original program_type from class - now that we've modified the database to accept all three values
-                $enrollment_program_type = $class['program_type'];
 
                 // Set attendance mode based on class type
                 $attendance_mode = 'virtual';
                 if ($class['program_type'] === 'onsite' || $class['program_type'] === 'school') {
                     $attendance_mode = 'physical';
                 }
+
+                // Debug: Show what we're inserting
+                error_log("Attempting to insert:");
+                error_log("student_id: $student_id (" . gettype($student_id) . ")");
+                error_log("class_id: $class_id (" . gettype($class_id) . ")");
+                error_log("program_type: " . $class['program_type'] . " (" . gettype($class['program_type']) . ")");
+                error_log("attendance_mode: $attendance_mode (" . gettype($attendance_mode) . ")");
 
                 // Insert enrollment
                 $enroll_sql = "INSERT INTO enrollments 
@@ -150,19 +185,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $enroll_stmt = $conn->prepare($enroll_sql);
                 if (!$enroll_stmt) {
-                    throw new Exception("Prepare failed: " . $conn->error);
+                    throw new Exception("Prepare failed for enrollment: " . $conn->error);
                 }
 
-                $enroll_stmt->bind_param('iiss', $student_id, $class_id, $enrollment_program_type, $attendance_mode);
+                $enroll_stmt->bind_param('iiss', $student_id, $class_id, $class['program_type'], $attendance_mode);
 
                 if (!$enroll_stmt->execute()) {
-                    throw new Exception("Failed to enroll student: " . $enroll_stmt->error);
+                    throw new Exception("Failed to enroll student: " . $enroll_stmt->error . " (Error code: " . $enroll_stmt->errno . ")");
                 }
 
                 $enrollment_id = $conn->insert_id;
+                error_log("Enrollment successful! Enrollment ID: " . $enrollment_id);
 
                 // Get program fee
-                $fee_sql = "SELECT p.fee FROM programs p
+                $fee_sql = "SELECT p.fee, p.name, p.id as program_id 
+                           FROM programs p
                            JOIN courses c ON p.id = c.program_id
                            JOIN class_batches cb ON c.id = cb.course_id
                            WHERE cb.id = ?";
@@ -173,6 +210,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $fee_data = $fee_result->fetch_assoc();
                 $program_fee = $fee_data['fee'] ?? 0.00;
 
+                error_log("Program fee retrieved: $program_fee for program: " . ($fee_data['name'] ?? 'Unknown'));
+
                 // Insert financial status
                 $financial_sql = "INSERT INTO student_financial_status 
                                  (student_id, class_id, total_fee, paid_amount, balance, 
@@ -181,15 +220,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $financial_stmt = $conn->prepare($financial_sql);
                 if (!$financial_stmt) {
-                    throw new Exception("Prepare financial failed: " . $conn->error);
+                    throw new Exception("Prepare failed for financial: " . $conn->error);
                 }
 
                 $balance = $program_fee;
                 $financial_stmt->bind_param('iidd', $student_id, $class_id, $program_fee, $balance);
 
                 if (!$financial_stmt->execute()) {
-                    throw new Exception("Failed to create financial record: " . $financial_stmt->error);
+                    throw new Exception("Failed to create financial record: " . $financial_stmt->error . " (Error code: " . $financial_stmt->errno . ")");
                 }
+
+                $financial_id = $conn->insert_id;
+                error_log("Financial status created! Financial ID: " . $financial_id);
 
                 // Log activity
                 logActivity(
@@ -201,9 +243,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
 
                 $success_count++;
+                error_log("Student $student_id successfully enrolled! Success count: $success_count");
             }
 
             $conn->commit();
+            error_log("Transaction committed. Total enrolled: $success_count");
+            error_log("========== ENROLLMENT DEBUG END ==========");
 
             if ($success_count > 0) {
                 $_SESSION['success'] = "Successfully enrolled $success_count student(s).";
@@ -213,10 +258,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!empty($errors)) {
                 $_SESSION['error'] = implode('<br>', $errors);
+                error_log("Errors: " . implode(', ', $errors));
             }
         } catch (Exception $e) {
             $conn->rollback();
-            error_log("Enrollment error: " . $e->getMessage());
+            error_log("========== ENROLLMENT ERROR ==========");
+            error_log("Exception: " . $e->getMessage());
+            error_log("File: " . $e->getFile() . " Line: " . $e->getLine());
+            error_log("Trace: " . $e->getTraceAsString());
+
+            // Get MySQL error if available
+            if (isset($conn)) {
+                error_log("MySQL errno: " . $conn->errno);
+                error_log("MySQL error: " . $conn->error);
+            }
+            error_log("========== END ERROR ==========");
+
             $_SESSION['error'] = "Enrollment failed: " . $e->getMessage();
         }
     }
