@@ -292,63 +292,84 @@ function publishAssignment($conn, $schedule, $content_data)
 /**
  * Publish a quiz and send notifications
  */
+/**
+ * Publish a quiz - FIXED VERSION
+ */
 function publishQuiz($conn, $schedule, $content_data)
 {
-    // Calculate due date if specified
+    logMessage("Starting publishQuiz for: " . $schedule['title']);
+
+    // Calculate availability dates
+    $available_from = $schedule['scheduled_publish_date'];
+    $available_to = null;
     $due_date = null;
-    if (!empty($content_data['due_days'])) {
-        $due_date = date('Y-m-d H:i:s', strtotime($schedule['scheduled_publish_date'] . " + {$content_data['due_days']} days"));
+
+    if (!empty($content_data['available_days'])) {
+        $available_to = date('Y-m-d H:i:s', strtotime($available_from . " + {$content_data['available_days']} days"));
     }
 
-    // Insert quiz
+    if (!empty($content_data['due_days'])) {
+        $due_date = date('Y-m-d H:i:s', strtotime($available_from . " + {$content_data['due_days']} days"));
+    }
+
+    // Get values with defaults
+    $class_id = (int)$schedule['class_id'];
+    $instructor_id = (int)$schedule['instructor_id'];
+    $title = $schedule['title'] ?? '';
+    $description = $schedule['description'] ?? '';
+    $instructions = $content_data['instructions'] ?? '';
+    $quiz_type = $content_data['quiz_type'] ?? 'graded';
+    $total_points = isset($content_data['total_points']) ? (float)$content_data['total_points'] : 100;
+    $time_limit = isset($content_data['time_limit']) ? (int)$content_data['time_limit'] : 0;
+    $attempts_allowed = isset($content_data['attempts_allowed']) ? (int)$content_data['attempts_allowed'] : 1;
+    $shuffle_questions = isset($content_data['shuffle_questions']) ? (int)$content_data['shuffle_questions'] : 0;
+    $shuffle_options = isset($content_data['shuffle_options']) ? (int)$content_data['shuffle_options'] : 0;
+    $show_correct_answers = isset($content_data['show_correct_answers']) ? (int)$content_data['show_correct_answers'] : 1;
+
+    // COUNT the placeholders: 15 placeholders
     $sql = "INSERT INTO quizzes (
                 class_id, instructor_id, title, description, instructions,
                 quiz_type, total_points, time_limit, attempts_allowed,
                 shuffle_questions, shuffle_options, show_correct_answers,
-                available_from, due_date, is_published, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
+                available_from, available_to, due_date, is_published,
+                created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . $conn->error);
+    }
 
-    $quiz_type = $content_data['quiz_type'] ?? 'graded';
-    $time_limit = $content_data['time_limit'] ?? 0;
-    $attempts_allowed = $content_data['attempts_allowed'] ?? 1;
-    $shuffle_questions = $content_data['shuffle_questions'] ?? 0;
-    $shuffle_options = $content_data['shuffle_options'] ?? 0;
-    $show_correct_answers = $content_data['show_correct_answers'] ?? 1;
+    // 15 parameters for 15 placeholders
+    $types = "iissssdisiiiisss"; // i,i,s,s,s,s,d,i,i,i,i,i,s,s,s
 
     $stmt->bind_param(
-        "iissssdisiiiss",
-        $schedule['class_id'],
-        $schedule['instructor_id'],
-        $schedule['title'],
-        $schedule['description'],
-        $content_data['instructions'] ?? '',
+        $types,
+        $class_id,
+        $instructor_id,
+        $title,
+        $description,
+        $instructions,
         $quiz_type,
-        $content_data['total_points'] ?? 100,
+        $total_points,
         $time_limit,
         $attempts_allowed,
         $shuffle_questions,
         $shuffle_options,
         $show_correct_answers,
-        $schedule['scheduled_publish_date'],
+        $available_from,
+        $available_to,
         $due_date
     );
 
     if (!$stmt->execute()) {
-        throw new Exception("Failed to insert quiz: " . $stmt->error);
+        throw new Exception("Execute failed: " . $stmt->error);
     }
 
     $quiz_id = $stmt->insert_id;
     $stmt->close();
 
-    // If quiz has questions in content_data, insert them
-    if (!empty($content_data['questions'])) {
-        importQuizQuestions($conn, $quiz_id, $content_data['questions']);
-    }
-
-    // Send notifications
-    sendNewQuizNotifications($conn, $quiz_id, $schedule);
+    logMessage("Quiz created with ID: $quiz_id");
 
     return $quiz_id;
 }
