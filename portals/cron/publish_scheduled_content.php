@@ -215,6 +215,9 @@ function publishMaterial($conn, $schedule, $content_data)
 /**
  * Publish an assignment - FIXED VERSION with correct parameter counting
  */
+/**
+ * Publish an assignment - COMPLETELY REVISED with proper counting
+ */
 function publishAssignment($conn, $schedule, $content_data)
 {
     logMessage("Starting publishAssignment for: " . $schedule['title']);
@@ -223,7 +226,7 @@ function publishAssignment($conn, $schedule, $content_data)
     $due_days = isset($content_data['due_days']) ? (int)$content_data['due_days'] : 7;
     $due_date = date('Y-m-d H:i:s', strtotime($schedule['scheduled_publish_date'] . " + $due_days days"));
 
-    // Get values with defaults
+    // Get all values with proper types
     $class_id = (int)$schedule['class_id'];
     $instructor_id = (int)$schedule['instructor_id'];
     $title = $schedule['title'] ?? '';
@@ -239,15 +242,30 @@ function publishAssignment($conn, $schedule, $content_data)
 
     logMessage("Assignment data - Title: $title, Due: $due_date, Points: $total_points");
 
-    // Let's COUNT the placeholders: 
-    // class_id, instructor_id, title, description, instructions, due_date, total_points, 
-    // submission_type, max_files, allowed_extensions, has_attachment, attachment_path, 
-    // original_filename, is_published = 14 placeholders
+    // FIRST, let's check the assignments table structure to ensure we have the right columns
+    // Based on your SQL dump, the assignments table has these columns:
+    // id, class_id, instructor_id, title, description, instructions, due_date, total_points, 
+    // submission_type, max_files, allowed_extensions, is_published, has_attachment, 
+    // attachment_path, original_filename, created_at, updated_at
+
+    // Count the columns we're inserting: 14 columns (excluding id, created_at, updated_at which auto-populate)
     $sql = "INSERT INTO assignments (
-                class_id, instructor_id, title, description, instructions,
-                due_date, total_points, submission_type, max_files, allowed_extensions,
-                has_attachment, attachment_path, original_filename, is_published,
-                created_at, updated_at
+                class_id, 
+                instructor_id, 
+                title, 
+                description, 
+                instructions,
+                due_date, 
+                total_points, 
+                submission_type, 
+                max_files, 
+                allowed_extensions,
+                has_attachment, 
+                attachment_path, 
+                original_filename, 
+                is_published,
+                created_at, 
+                updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
 
     $stmt = $conn->prepare($sql);
@@ -255,26 +273,49 @@ function publishAssignment($conn, $schedule, $content_data)
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
-    // Now we have 14 variables for 14 placeholders
-    // Types: i,i,s,s,s,s,d,s,i,s,i,s,s  (that's 14 characters)
-    $types = "iissssdssisiss"; // Count them: i(1),i(2),s(3),s(4),s(5),s(6),d(7),s(8),i(9),s(10),i(11),s(12),i(13),s(14)
+    // We have 14 placeholders (?) and 14 variables to bind
+    // Let's list them with their types:
+    // 1. class_id - integer (i)
+    // 2. instructor_id - integer (i)
+    // 3. title - string (s)
+    // 4. description - string (s)
+    // 5. instructions - string (s)
+    // 6. due_date - string (s)
+    // 7. total_points - double (d)
+    // 8. submission_type - string (s)
+    // 9. max_files - integer (i)
+    // 10. allowed_extensions - string (s)
+    // 11. has_attachment - integer (i)
+    // 12. attachment_path - string (s)
+    // 13. original_filename - string (s)
+    // 14. is_published - (set to 1 directly, not a placeholder)
+
+    // So we have 13 placeholders (?) that need binding (is_published is set directly to 1)
+    // Wait, I miscounted! Let me recount the placeholders in VALUES:
+    // VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
+    // That's: 1,2,3,4,5,6,7,8,9,10,11,12,13, (then 1, NOW(), NOW())
+    // So we have 13 placeholders!
+
+    $types = "iissssdssisss"; // Let's count: i(1),i(2),s(3),s(4),s(5),s(6),d(7),s(8),s(9),i(10),s(11),s(12),s(13)
+    // That's 13 characters for 13 placeholders
+
+    logMessage("Binding with types: $types for 13 parameters");
 
     $stmt->bind_param(
         $types,
-        $class_id,
-        $instructor_id,
-        $title,
-        $description,
-        $instructions,
-        $due_date,
-        $total_points,
-        $submission_type,
-        $max_files,
-        $allowed_extensions,
-        $has_attachment,
-        $attachment_path,
-        $original_filename
-        // Note: is_published is set to 1 directly in the query, not as a parameter
+        $class_id,        // i
+        $instructor_id,   // i
+        $title,           // s
+        $description,     // s
+        $instructions,    // s
+        $due_date,        // s
+        $total_points,    // d
+        $submission_type, // s
+        $max_files,       // s (changing to s since max_files might be stored as string in some cases)
+        $allowed_extensions, // s
+        $has_attachment,  // i
+        $attachment_path, // s
+        $original_filename // s
     );
 
     if (!$stmt->execute()) {
