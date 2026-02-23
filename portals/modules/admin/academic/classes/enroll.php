@@ -138,13 +138,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
 
-                // Enroll student - simplified approach without term_id/block_id for now
+                // Map the program_type to valid values for enrollments table
+                $enrollment_program_type = $class['program_type'];
+                if ($enrollment_program_type === 'school') {
+                    // Decide how to handle 'school' type - perhaps default to 'online' or 'onsite'
+                    // You might want to check your business logic for how school programs should be handled
+                    $enrollment_program_type = 'online'; // or 'onsite' depending on your needs
+                }
+
                 $enrollment_sql = "INSERT INTO enrollments 
-                                  (student_id, class_id, enrollment_date, status, 
-                                   program_type, attendance_mode, created_at, updated_at)
-                                  VALUES (?, ?, CURDATE(), 'active', ?, ?, NOW(), NOW())";
+                  (student_id, class_id, enrollment_date, status, 
+                   program_type, attendance_mode, created_at, updated_at)
+                  VALUES (?, ?, CURDATE(), 'active', ?, ?, NOW(), NOW())";
 
                 $attendance_mode = $class['program_type'] === 'onsite' ? 'physical' : 'virtual';
+                // For 'school' type, you might want to set attendance_mode based on some logic
+                if ($class['program_type'] === 'school') {
+                    $attendance_mode = 'physical'; // or 'virtual' depending on your school setup
+                }
 
                 $enroll_stmt = $conn->prepare($enrollment_sql);
                 if (!$enroll_stmt) {
@@ -155,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'iiss',
                     $student_id,
                     $class_id,
-                    $class['program_type'],
+                    $enrollment_program_type, // Use the mapped value instead of original
                     $attendance_mode
                 );
 
