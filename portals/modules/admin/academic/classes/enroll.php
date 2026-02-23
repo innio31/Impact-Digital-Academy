@@ -32,8 +32,13 @@ if (!$class_id) {
 }
 
 // Fetch class details
-$sql = "SELECT cb.*, c.title as course_title, c.course_code, p.name as program_name,
-               p.program_type, COUNT(e.id) as current_enrollments
+$sql = "SELECT cb.*, 
+               c.title as course_title, 
+               c.course_code, 
+               p.name as program_name,
+               p.program_type as program_program_type,
+               cb.program_type as class_program_type,
+               COUNT(e.id) as current_enrollments
         FROM class_batches cb
         JOIN courses c ON cb.course_id = c.id
         JOIN programs p ON c.program_id = p.id
@@ -45,6 +50,17 @@ $stmt->bind_param('i', $class_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $class = $result->fetch_assoc();
+
+// Determine which program_type to use (prefer class_batches program_type, fallback to program's)
+$program_type = !empty($class['class_program_type']) ? $class['class_program_type'] : ($class['program_program_type'] ?? 'online');
+
+// Add this to the class array for easy access
+$class['program_type'] = $program_type;
+
+// Debug log to verify
+error_log("Class program_type from class_batches: " . ($class['class_program_type'] ?? 'empty'));
+error_log("Class program_type from programs: " . ($class['program_program_type'] ?? 'empty'));
+error_log("Final program_type being used: " . $class['program_type']);
 
 if (!$class) {
     $_SESSION['error'] = 'Class not found.';
