@@ -397,55 +397,151 @@ function getSubmissionTypeLabel($type)
     ];
     return $labels[$type] ?? 'Unknown';
 }
+
+// Function to get file icon based on extension
+function getFileIcon($filename)
+{
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $icons = [
+        'pdf' => 'fa-file-pdf',
+        'doc' => 'fa-file-word',
+        'docx' => 'fa-file-word',
+        'xls' => 'fa-file-excel',
+        'xlsx' => 'fa-file-excel',
+        'ppt' => 'fa-file-powerpoint',
+        'pptx' => 'fa-file-powerpoint',
+        'jpg' => 'fa-file-image',
+        'jpeg' => 'fa-file-image',
+        'png' => 'fa-file-image',
+        'gif' => 'fa-file-image',
+        'txt' => 'fa-file-alt',
+        'zip' => 'fa-file-archive',
+        'rar' => 'fa-file-archive',
+    ];
+    return $icons[$ext] ?? 'fa-file';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#4361ee">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Assignments</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables - Mobile First */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --purple: #8b5cf6;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            padding-bottom: 2rem;
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Header */
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.15rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+        }
+
+        /* Header - Mobile Optimized */
         .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-lg);
             color: white;
             position: relative;
             overflow: hidden;
@@ -456,8 +552,8 @@ function getSubmissionTypeLabel($type)
             position: absolute;
             top: 0;
             right: 0;
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             transform: translate(50%, -50%);
@@ -465,55 +561,91 @@ function getSubmissionTypeLabel($type)
 
         .header-top {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.25rem;
             position: relative;
             z-index: 2;
+        }
+
+        @media (min-width: 640px) {
+            .header-top {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
+        }
+
+        @media (min-width: 768px) {
+            .class-info h1 {
+                font-size: 2rem;
+            }
         }
 
         .class-info p {
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             opacity: 0.9;
+            word-break: break-word;
         }
 
+        @media (min-width: 768px) {
+            .class-info p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Navigation - Mobile Optimized */
         .header-nav {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            gap: 0.35rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0 0.75rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
             z-index: 2;
         }
 
+        .header-nav::-webkit-scrollbar {
+            display: none;
+        }
+
         .nav-link {
-            padding: 0.75rem 1.25rem;
+            padding: 0.6rem 1rem;
             background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
             text-decoration: none;
             color: white;
-            font-weight: 500;
-            display: flex;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            gap: 0.35rem;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.8rem;
+            min-height: 44px;
+        }
+
+        @media (min-width: 768px) {
+            .nav-link {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+            }
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -522,79 +654,80 @@ function getSubmissionTypeLabel($type)
             border-color: white;
         }
 
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--gray);
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .breadcrumb .separator {
-            opacity: 0.5;
-        }
-
         /* Page Header */
         .page-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 640px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .page-title h2 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--dark);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .page-title p {
             color: var(--gray);
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
         }
 
-        /* Stats Grid */
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* Stats Grid - Mobile First */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem 0.75rem;
+            box-shadow: var(--shadow);
             text-align: center;
             border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: var(--transition);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-card.total {
@@ -614,45 +747,54 @@ function getSubmissionTypeLabel($type)
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--dark);
+            line-height: 1.2;
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Tabs */
+        /* Tabs - Mobile Optimized */
         .tabs {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+            padding: 0.25rem 0 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            white-space: nowrap;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px 8px 0 0;
+            border: 2px solid var(--border);
+            border-radius: 2rem;
             text-decoration: none;
             color: var(--dark);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            min-height: 44px;
         }
 
         .tab:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
             color: var(--primary);
         }
@@ -666,10 +808,10 @@ function getSubmissionTypeLabel($type)
         /* Search and Filter */
         .search-filter {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
         .filters-header {
@@ -680,7 +822,7 @@ function getSubmissionTypeLabel($type)
         }
 
         .filters-header h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--dark);
             display: flex;
             align-items: center;
@@ -690,48 +832,59 @@ function getSubmissionTypeLabel($type)
         .clear-filters {
             color: var(--primary);
             text-decoration: none;
-            font-size: 0.875rem;
-        }
-
-        .clear-filters:hover {
-            text-decoration: underline;
+            font-size: 0.8rem;
+            padding: 0.5rem;
         }
 
         .search-form {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .search-form {
+                flex-direction: row;
+                align-items: center;
+            }
         }
 
         .search-input {
             flex: 1;
-            min-width: 300px;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             border: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            min-height: 48px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -740,19 +893,17 @@ function getSubmissionTypeLabel($type)
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
+            background: var(--primary-dark);
         }
 
         .btn-secondary {
             background: white;
             color: var(--gray);
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: var(--gray);
+            background: var(--light);
         }
 
         .btn-success {
@@ -760,19 +911,9 @@ function getSubmissionTypeLabel($type)
             color: white;
         }
 
-        .btn-success:hover {
-            background: #0d9c6e;
-            transform: translateY(-2px);
-        }
-
         .btn-info {
             background: var(--info);
             color: white;
-        }
-
-        .btn-info:hover {
-            background: #0c8ec8;
-            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -787,67 +928,62 @@ function getSubmissionTypeLabel($type)
         }
 
         .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            min-height: 40px;
         }
 
-        /* Assignment Cards */
+        /* Assignment Cards - Mobile First */
         .assignments-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .assignment-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
 
-        .assignment-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        .assignment-card:active {
+            transform: scale(0.99);
         }
 
         .assignment-header {
-            padding: 1.5rem;
-            border-bottom: 2px solid #f1f5f9;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--gray-light);
             position: relative;
         }
 
         .assignment-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .assignment-due {
-            font-size: 0.875rem;
-            color: var(--gray);
             margin-bottom: 0.75rem;
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .assignment-due.overdue {
-            color: var(--danger);
-            font-weight: 600;
+        @media (min-width: 640px) {
+            .assignment-title {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: inline-block;
+            white-space: nowrap;
+            align-self: flex-start;
         }
 
         .status-pending {
@@ -880,22 +1016,25 @@ function getSubmissionTypeLabel($type)
             color: #92400e;
         }
 
-        .assignment-body {
-            padding: 1.5rem;
+        .assignment-due {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
         }
 
-        .assignment-description {
-            font-size: 0.875rem;
-            color: var(--gray);
-            line-height: 1.6;
-            margin-bottom: 1rem;
+        .assignment-due.overdue {
+            color: var(--danger);
+            font-weight: 600;
         }
 
         .assignment-meta {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
+            gap: 0.75rem;
+            font-size: 0.75rem;
             color: var(--gray);
             flex-wrap: wrap;
         }
@@ -906,15 +1045,35 @@ function getSubmissionTypeLabel($type)
             gap: 0.25rem;
         }
 
+        .assignment-body {
+            padding: 1.25rem;
+        }
+
+        .assignment-description {
+            font-size: 0.85rem;
+            color: var(--gray);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+
         .assignment-attachment {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 1rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
             margin: 1rem 0;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .assignment-attachment {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
 
         .attachment-info {
@@ -924,40 +1083,52 @@ function getSubmissionTypeLabel($type)
         }
 
         .attachment-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(59, 130, 246, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(67, 97, 238, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1rem;
+            color: var(--primary);
         }
 
         .attachment-details {
             flex: 1;
+            min-width: 0;
         }
 
         .attachment-name {
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.15rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .attachment-size {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--gray);
         }
 
         .assignment-footer {
-            padding: 1rem 1.5rem;
-            background: #f8fafc;
-            border-top: 2px solid #f1f5f9;
+            padding: 1rem 1.25rem;
+            background: var(--light);
+            border-top: 2px solid var(--gray-light);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .assignment-footer {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .grade-display {
@@ -967,14 +1138,14 @@ function getSubmissionTypeLabel($type)
         }
 
         .grade-circle {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
 
         .grade-excellent {
@@ -1002,188 +1173,6 @@ function getSubmissionTypeLabel($type)
             color: #991b1b;
         }
 
-        /* Empty State */
-        .empty-state {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
-            text-align: center;
-            color: var(--gray);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 2px solid #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-size: 1.25rem;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            color: var(--gray);
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-            color: var(--danger);
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            background: #f8fafc;
-            border-top: 2px solid #f1f5f9;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 0.875rem;
-        }
-
-        .form-group label.required::after {
-            content: " *";
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .form-help {
-            font-size: 0.75rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
-        }
-
-        .file-upload-area {
-            border: 2px dashed #e2e8f0;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary);
-            background: #f8fafc;
-        }
-
-        .file-upload-area.dragover {
-            border-color: var(--primary);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        /* Messages */
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .alert i {
-            font-size: 1.25rem;
-        }
-
         /* Submission Files */
         .submission-files {
             margin-top: 1rem;
@@ -1201,80 +1190,366 @@ function getSubmissionTypeLabel($type)
             align-items: center;
             justify-content: space-between;
             padding: 0.75rem;
-            background: #f8fafc;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            gap: 0.5rem;
         }
 
         .file-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-info span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .file-icon {
             color: var(--primary);
+            flex-shrink: 0;
         }
 
         .feedback-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f1f5f9;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 2px solid var(--gray-light);
         }
 
         .feedback-content {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 1rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
             margin-top: 0.5rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: var(--gray);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        .empty-state a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Modal - Mobile Optimized */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--gray);
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--light);
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            background: var(--light);
+            border-top: 2px solid var(--gray-light);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .modal-footer {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.85rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .form-help {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: 0.35rem;
+        }
+
+        /* File Upload Area */
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .file-upload-area i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .file-upload-area p {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert i {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .alert strong {
+            display: block;
+            margin-bottom: 0.25rem;
         }
 
         /* Back Button */
         .back-button {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
+            padding: 0.8rem 1.2rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+            width: 100%;
+            min-height: 48px;
+        }
+
+        @media (min-width: 640px) {
+            .back-button {
+                width: auto;
+            }
         }
 
         .back-button:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
             color: var(--primary);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .assignment-title {
-                flex-direction: column;
-                align-items: flex-start;
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .assignment-card,
+            .nav-link,
+            .tab,
+            .back-button {
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
             }
 
-            .assignment-footer {
-                flex-direction: column;
-                align-items: flex-start;
+            50% {
+                opacity: 0.5;
             }
+        }
 
-            .search-input {
-                min-width: 100%;
-            }
-
-            .tabs {
-                justify-content: center;
-            }
-
-            .tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
+        .loading {
+            animation: pulse 1.5s infinite;
         }
     </style>
 </head>
@@ -1284,11 +1559,13 @@ function getSubmissionTypeLabel($type)
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <a href="class_home.php?id=<?php echo $class_id; ?>">
@@ -1319,7 +1596,7 @@ function getSubmissionTypeLabel($type)
                     <i class="fas fa-tasks"></i> Assignments
                 </a>
                 <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Quizzes
+                    <i class="fas fa-question-circle"></i> Quizzes
                 </a>
                 <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-chart-line"></i> Grades
@@ -1335,7 +1612,7 @@ function getSubmissionTypeLabel($type)
                 </a>
                 <?php if (!empty($class['meeting_link'])): ?>
                     <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                        <i class="fas fa-video"></i> Join Class
+                        <i class="fas fa-video"></i> Join
                     </a>
                 <?php endif; ?>
             </div>
@@ -1348,10 +1625,10 @@ function getSubmissionTypeLabel($type)
                     <i class="fas fa-tasks"></i>
                     Assignments
                 </h2>
-                <p>View and submit assignments for <?php echo htmlspecialchars($class['batch_code']); ?></p>
+                <p>View and submit your assignments</p>
             </div>
             <div class="stats">
-                <span><i class="fas fa-file-alt"></i> <?php echo count($assignments); ?> assignments</span>
+                <span><i class="fas fa-file-alt"></i> <?php echo count($assignments); ?></span>
                 <?php
                 $submitted_count = count(array_filter($assignments, fn($a) => $a['submission_id']));
                 $graded_count = count(array_filter($assignments, fn($a) => $a['submission_grade'] !== null));
@@ -1366,7 +1643,7 @@ function getSubmissionTypeLabel($type)
                 <i class="fas fa-check-circle"></i>
                 <div>
                     <strong>Assignment submitted successfully!</strong>
-                    <p style="margin-top: 0.25rem;">Your submission has been received and is awaiting grading.</p>
+                    <p>Your submission has been received.</p>
                 </div>
             </div>
         <?php elseif ($submit_error): ?>
@@ -1374,7 +1651,7 @@ function getSubmissionTypeLabel($type)
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
                     <strong>Submission failed!</strong>
-                    <p style="margin-top: 0.25rem;"><?php echo htmlspecialchars($submit_error); ?></p>
+                    <p><?php echo htmlspecialchars($submit_error); ?></p>
                 </div>
             </div>
         <?php endif; ?>
@@ -1384,7 +1661,7 @@ function getSubmissionTypeLabel($type)
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
                     <strong>Error!</strong>
-                    <p style="margin-top: 0.25rem;"><?php echo htmlspecialchars($_SESSION['error_message']); ?></p>
+                    <p><?php echo htmlspecialchars($_SESSION['error_message']); ?></p>
                 </div>
             </div>
             <?php unset($_SESSION['error_message']); ?>
@@ -1395,7 +1672,7 @@ function getSubmissionTypeLabel($type)
                 <i class="fas fa-check-circle"></i>
                 <div>
                     <strong>Success!</strong>
-                    <p style="margin-top: 0.25rem;"><?php echo htmlspecialchars($_SESSION['success_message']); ?></p>
+                    <p><?php echo htmlspecialchars($_SESSION['success_message']); ?></p>
                 </div>
             </div>
             <?php unset($_SESSION['success_message']); ?>
@@ -1411,7 +1688,7 @@ function getSubmissionTypeLabel($type)
         <div class="stats-grid">
             <div class="stat-card total">
                 <div class="stat-value"><?php echo $total_assignments; ?></div>
-                <div class="stat-label">Total Assignments</div>
+                <div class="stat-label">Total</div>
             </div>
             <div class="stat-card submitted">
                 <div class="stat-value"><?php echo $submitted_count; ?></div>
@@ -1431,7 +1708,7 @@ function getSubmissionTypeLabel($type)
         <div class="tabs">
             <a href="assignments.php?class_id=<?php echo $class_id; ?>&status=all"
                 class="tab <?php echo $filter_status === 'all' ? 'active' : ''; ?>">
-                <i class="fas fa-list"></i> All Assignments
+                <i class="fas fa-list"></i> All
             </a>
             <a href="assignments.php?class_id=<?php echo $class_id; ?>&status=upcoming"
                 class="tab <?php echo $filter_status === 'upcoming' ? 'active' : ''; ?>">
@@ -1458,7 +1735,7 @@ function getSubmissionTypeLabel($type)
         <!-- Search and Filter -->
         <div class="search-filter">
             <div class="filters-header">
-                <h3><i class="fas fa-filter"></i> Search Assignments</h3>
+                <h3><i class="fas fa-filter"></i> Search</h3>
                 <?php if ($filter_status !== 'all' || !empty($filter_search)): ?>
                     <a href="?class_id=<?php echo $class_id; ?>" class="clear-filters">
                         Clear All
@@ -1472,7 +1749,7 @@ function getSubmissionTypeLabel($type)
                 <input type="text"
                     name="search"
                     class="search-input"
-                    placeholder="Search assignments by title or description..."
+                    placeholder="Search assignments..."
                     value="<?php echo htmlspecialchars($filter_search); ?>"
                     id="searchInput">
 
@@ -1482,7 +1759,7 @@ function getSubmissionTypeLabel($type)
 
                 <?php if (!empty($filter_search) || $filter_status !== 'all'): ?>
                     <a href="?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Clear Filters
+                        <i class="fas fa-times"></i> Clear
                     </a>
                 <?php endif; ?>
             </form>
@@ -1495,9 +1772,9 @@ function getSubmissionTypeLabel($type)
                 <h3>No Assignments Found</h3>
                 <p>
                     <?php if ($filter_status !== 'all' || !empty($filter_search)): ?>
-                        No assignments match your current filters. <a href="?class_id=<?php echo $class_id; ?>" style="color: var(--primary);">Clear filters</a> to see all assignments.
+                        No assignments match your filters. <a href="?class_id=<?php echo $class_id; ?>">Clear filters</a>
                     <?php else: ?>
-                        No assignments have been published for this class yet.
+                        No assignments have been published yet.
                     <?php endif; ?>
                 </p>
             </div>
@@ -1514,15 +1791,15 @@ function getSubmissionTypeLabel($type)
                                 <i class="fas fa-calendar-alt"></i>
                                 Due: <?php echo date('M d, Y g:i A', strtotime($assignment['due_date'])); ?>
                                 <?php if ($assignment['late_submission']): ?>
-                                    <span style="color: var(--warning); margin-left: 0.5rem;">
-                                        <i class="fas fa-exclamation-circle"></i> Submitted Late
+                                    <span style="color: var(--warning);">
+                                        <i class="fas fa-exclamation-circle"></i> Late
                                     </span>
                                 <?php endif; ?>
                             </div>
                             <div class="assignment-meta">
                                 <div class="meta-item">
                                     <i class="fas fa-star"></i>
-                                    <?php echo $assignment['total_points']; ?> points
+                                    <?php echo $assignment['total_points']; ?> pts
                                 </div>
                                 <div class="meta-item">
                                     <i class="fas fa-file-upload"></i>
@@ -1531,7 +1808,7 @@ function getSubmissionTypeLabel($type)
                                 <?php if ($assignment['submission_date']): ?>
                                     <div class="meta-item">
                                         <i class="fas fa-paper-plane"></i>
-                                        Submitted: <?php echo date('M d, Y g:i A', strtotime($assignment['submission_date'])); ?>
+                                        <?php echo date('M d', strtotime($assignment['submission_date'])); ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -1540,14 +1817,16 @@ function getSubmissionTypeLabel($type)
                         <div class="assignment-body">
                             <?php if (!empty($assignment['description'])): ?>
                                 <div class="assignment-description">
-                                    <?php echo nl2br(htmlspecialchars($assignment['description'])); ?>
+                                    <?php echo nl2br(htmlspecialchars(substr($assignment['description'], 0, 150))); ?>
+                                    <?php if (strlen($assignment['description']) > 150): ?>...<?php endif; ?>
                                 </div>
                             <?php endif; ?>
 
                             <?php if (!empty($assignment['instructions'])): ?>
                                 <div class="assignment-description">
                                     <strong>Instructions:</strong><br>
-                                    <?php echo nl2br(htmlspecialchars($assignment['instructions'])); ?>
+                                    <?php echo nl2br(htmlspecialchars(substr($assignment['instructions'], 0, 100))); ?>
+                                    <?php if (strlen($assignment['instructions']) > 100): ?>...<?php endif; ?>
                                 </div>
                             <?php endif; ?>
 
@@ -1556,14 +1835,11 @@ function getSubmissionTypeLabel($type)
                                 <div class="assignment-attachment">
                                     <div class="attachment-info">
                                         <div class="attachment-icon">
-                                            <i class="<?php echo getFileIcon($assignment['original_filename']); ?>"></i>
+                                            <i class="fas <?php echo getFileIcon($assignment['original_filename']); ?>"></i>
                                         </div>
                                         <div class="attachment-details">
                                             <div class="attachment-name">
                                                 <?php echo htmlspecialchars($assignment['original_filename']); ?>
-                                            </div>
-                                            <div class="attachment-size">
-                                                Assignment file provided by instructor
                                             </div>
                                         </div>
                                     </div>
@@ -1576,35 +1852,31 @@ function getSubmissionTypeLabel($type)
 
                             <?php if ($assignment['submission_grade'] !== null): ?>
                                 <div class="feedback-section">
-                                    <h4>Feedback & Grade</h4>
+                                    <h4>Feedback</h4>
                                     <div class="grade-display">
                                         <div class="grade-circle <?php echo getGradeColor($assignment['submission_grade']); ?>">
                                             <?php echo $assignment['submission_grade']; ?>%
                                         </div>
                                         <div>
-                                            <strong>Grade:</strong> <?php echo $assignment['submission_grade']; ?> / <?php echo $assignment['total_points']; ?><br>
-                                            <small>Graded on: <?php echo date('M d, Y', strtotime($assignment['submission_date'])); ?></small>
+                                            <strong><?php echo $assignment['submission_grade']; ?> / <?php echo $assignment['total_points']; ?></strong>
                                         </div>
                                     </div>
 
                                     <?php if (!empty($assignment['submission_feedback'])): ?>
                                         <div class="feedback-content">
-                                            <strong>Instructor Feedback:</strong><br>
                                             <?php echo nl2br(htmlspecialchars($assignment['submission_feedback'])); ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>
 
-                            <?php if ($assignment['submission_id']): ?>
+                            <?php if ($assignment['submission_id'] && !empty($assignment['submission_text'])): ?>
                                 <div class="submission-files">
                                     <h4>Your Submission</h4>
-                                    <?php if (!empty($assignment['submission_text'])): ?>
-                                        <div class="feedback-content">
-                                            <strong>Your Text Submission:</strong><br>
-                                            <?php echo nl2br(htmlspecialchars($assignment['submission_text'])); ?>
-                                        </div>
-                                    <?php endif; ?>
+                                    <div class="feedback-content">
+                                        <?php echo nl2br(htmlspecialchars(substr($assignment['submission_text'], 0, 100))); ?>
+                                        <?php if (strlen($assignment['submission_text']) > 100): ?>...<?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -1627,42 +1899,33 @@ function getSubmissionTypeLabel($type)
                                     <?php
                                     $time_left = strtotime($assignment['due_date']) - time();
                                     $days_left = floor($time_left / (60 * 60 * 24));
-                                    $hours_left = floor(($time_left % (60 * 60 * 24)) / (60 * 60));
-
                                     if ($days_left > 0) {
-                                        echo "<span style='color: var(--warning);'><i class='fas fa-clock'></i> Due in $days_left days</span>";
+                                        echo "<span style='color: var(--warning);'><i class='fas fa-clock'></i> $days_left days</span>";
                                     } else {
-                                        echo "<span style='color: var(--warning);'><i class='fas fa-clock'></i> Due in $hours_left hours</span>";
+                                        $hours_left = floor($time_left / (60 * 60));
+                                        echo "<span style='color: var(--warning);'><i class='fas fa-clock'></i> $hours_left hours</span>";
                                     }
                                     ?>
                                 <?php endif; ?>
                             </div>
                             <div style="display: flex; gap: 0.5rem;">
                                 <?php if (!$assignment['submission_id'] && strtotime($assignment['due_date']) > time()): ?>
-                                    <button class="btn btn-primary"
+                                    <button class="btn btn-primary btn-small"
                                         onclick="openSubmitModal(<?php echo $assignment['id']; ?>)">
                                         <i class="fas fa-paper-plane"></i> Submit
                                     </button>
                                 <?php elseif ($assignment['submission_id'] && !$assignment['submission_grade']): ?>
-                                    <span class="btn btn-secondary">
+                                    <span class="btn btn-secondary btn-small">
                                         <i class="fas fa-clock"></i> Submitted
                                     </span>
                                 <?php elseif ($assignment['submission_grade'] !== null): ?>
-                                    <span class="btn btn-success">
+                                    <span class="btn btn-success btn-small">
                                         <i class="fas fa-check"></i> Graded
                                     </span>
                                 <?php else: ?>
-                                    <span class="btn btn-danger">
+                                    <span class="btn btn-danger btn-small">
                                         <i class="fas fa-times"></i> Missing
                                     </span>
-                                <?php endif; ?>
-
-                                <!-- View assignment file button -->
-                                <?php if (!empty($assignment['has_attachment']) && !empty($assignment['attachment_path'])): ?>
-                                    <a href="?class_id=<?php echo $class_id; ?>&download_assignment=<?php echo $assignment['id']; ?>"
-                                        class="btn btn-info btn-small">
-                                        <i class="fas fa-file-download"></i> Assignment File
-                                    </a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -1673,7 +1936,7 @@ function getSubmissionTypeLabel($type)
 
         <!-- Back Button -->
         <a href="class_home.php?id=<?php echo $class_id; ?>" class="back-button">
-            <i class="fas fa-arrow-left"></i> Back to Class Dashboard
+            <i class="fas fa-arrow-left"></i> Back to Class
         </a>
     </div>
 
@@ -1689,13 +1952,11 @@ function getSubmissionTypeLabel($type)
                 <input type="hidden" name="assignment_id" id="submit_assignment_id">
                 <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
 
-                <div class="modal-body">
-                    <div id="submitModalContent">
-                        <!-- Content will be loaded via JavaScript -->
-                        <div style="text-align: center; padding: 2rem;">
-                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                            <p>Loading assignment details...</p>
-                        </div>
+                <div class="modal-body" id="submitModalContent">
+                    <!-- Content will be loaded via JavaScript -->
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p>Loading...</p>
                     </div>
                 </div>
             </form>
@@ -1708,30 +1969,26 @@ function getSubmissionTypeLabel($type)
             document.getElementById('submit_assignment_id').value = assignmentId;
             document.getElementById('submitModal').classList.add('show');
             document.body.style.overflow = 'hidden';
-
-            // Load assignment details via AJAX
             loadAssignmentDetails(assignmentId);
         }
 
         function closeSubmitModal() {
             document.getElementById('submitModal').classList.remove('show');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
             document.getElementById('submitModalContent').innerHTML = `
                 <div style="text-align: center; padding: 2rem;">
                     <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                    <p>Loading assignment details...</p>
+                    <p>Loading...</p>
                 </div>
             `;
         }
 
         function loadAssignmentDetails(assignmentId) {
-            // In a real implementation, this would be an AJAX call
-            // For now, we'll simulate with a timeout
+            // In production, replace with actual AJAX call
             setTimeout(() => {
-                // Simulate assignment data
                 const assignmentData = {
                     id: assignmentId,
-                    title: "Sample Assignment",
+                    title: "Assignment Details",
                     submission_type: "both",
                     max_files: 3,
                     allowed_extensions: "pdf,doc,docx,jpg,jpeg,png",
@@ -1743,29 +2000,28 @@ function getSubmissionTypeLabel($type)
                 const isLate = now > dueDate;
 
                 let modalContent = `
-                    <h4>${assignmentData.title}</h4>
-                    <p style="color: var(--gray); font-size: 0.875rem; margin-bottom: 1rem;">
+                    <h4 style="margin-bottom: 0.75rem;">${assignmentData.title}</h4>
+                    <p style="color: var(--gray); font-size: 0.8rem; margin-bottom: 1rem;">
                         <i class="fas fa-calendar-alt"></i> Due: ${dueDate.toLocaleDateString()} ${dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        ${isLate ? '<span style="color: var(--warning); margin-left: 0.5rem;"><i class="fas fa-exclamation-circle"></i> Late Submission</span>' : ''}
+                        ${isLate ? '<span style="color: var(--warning); margin-left: 0.5rem;"><i class="fas fa-exclamation-circle"></i> Late</span>' : ''}
                     </p>
                     
                     <div class="form-group">
                         <label for="submission_text">Submission Text</label>
-                        <textarea id="submission_text" name="submission_text" class="form-control" rows="6"
-                                  placeholder="Type your submission here..."></textarea>
-                        <div class="form-help">Required for text submissions</div>
+                        <textarea id="submission_text" name="submission_text" class="form-control" rows="4"
+                                  placeholder="Type your submission..."></textarea>
                     </div>
                 `;
 
                 if (assignmentData.submission_type !== 'text') {
                     modalContent += `
                         <div class="form-group">
-                            <label for="submission_files">Upload Files</label>
+                            <label>Upload Files</label>
                             <div class="file-upload-area" id="fileDropArea" onclick="document.getElementById('fileInput').click()">
-                                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
-                                <p>Click to select files or drag and drop</p>
-                                <p class="form-help">Maximum ${assignmentData.max_files} files allowed</p>
-                                <p class="form-help">Allowed types: ${assignmentData.allowed_extensions}</p>
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Tap to select files</p>
+                                <p class="form-help">Max ${assignmentData.max_files} files</p>
+                                <p class="form-help">Allowed: ${assignmentData.allowed_extensions}</p>
                                 <input type="file" id="fileInput" name="submission_files[]" multiple 
                                        style="display: none;" onchange="updateFileList()">
                                 <div id="fileList" class="file-list" style="margin-top: 1rem;"></div>
@@ -1777,27 +2033,29 @@ function getSubmissionTypeLabel($type)
                 modalContent += `
                     <div class="alert" style="background: #fef3c7; color: #92400e;">
                         <i class="fas fa-info-circle"></i>
-                        <div>
-                            <strong>Important:</strong> Once submitted, you cannot edit your submission unless your instructor allows resubmission.
-                        </div>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeSubmitModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Submit Assignment
-                        </button>
+                        <div>Submissions cannot be edited after submission</div>
                     </div>
                 `;
 
                 document.getElementById('submitModalContent').innerHTML = modalContent;
 
-                // Initialize file upload functionality
                 if (assignmentData.submission_type !== 'text') {
                     initializeFileUpload();
                 }
 
-            }, 500);
+                // Add modal footer
+                const modalContentDiv = document.getElementById('submitModalContent');
+                const footer = document.createElement('div');
+                footer.className = 'modal-footer';
+                footer.innerHTML = `
+                    <button type="button" class="btn btn-secondary" onclick="closeSubmitModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit
+                    </button>
+                `;
+                modalContentDiv.appendChild(footer);
+
+            }, 300);
         }
 
         // File upload functionality
@@ -1815,27 +2073,18 @@ function getSubmissionTypeLabel($type)
             }
 
             ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
+                dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
             });
 
             ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
+                dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
             });
-
-            function highlight() {
-                dropArea.classList.add('dragover');
-            }
-
-            function unhighlight() {
-                dropArea.classList.remove('dragover');
-            }
 
             dropArea.addEventListener('drop', handleDrop, false);
 
             function handleDrop(e) {
                 const dt = e.dataTransfer;
-                const files = dt.files;
-                fileInput.files = files;
+                fileInput.files = dt.files;
                 updateFileList();
             }
         }
@@ -1855,8 +2104,8 @@ function getSubmissionTypeLabel($type)
                     fileItem.className = 'file-item';
                     fileItem.innerHTML = `
                         <div class="file-info">
-                            <i class="fas fa-file ${getFileIcon(file.type)}"></i>
-                            <span>${file.name} (${formatFileSize(file.size)})</span>
+                            <i class="fas fa-file file-icon"></i>
+                            <span>${file.name}</span>
                         </div>
                         <button type="button" class="btn btn-danger btn-small" onclick="removeFile(${i})">
                             <i class="fas fa-times"></i>
@@ -1879,22 +2128,6 @@ function getSubmissionTypeLabel($type)
             updateFileList();
         }
 
-        function getFileIcon(fileType) {
-            if (fileType.includes('pdf')) return 'fa-file-pdf text-danger';
-            if (fileType.includes('word') || fileType.includes('document')) return 'fa-file-word text-primary';
-            if (fileType.includes('image')) return 'fa-file-image text-info';
-            if (fileType.includes('zip') || fileType.includes('compressed')) return 'fa-file-archive text-warning';
-            return 'fa-file text-secondary';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
         // Close modal on outside click
         document.addEventListener('click', function(event) {
             const submitModal = document.getElementById('submitModal');
@@ -1910,7 +2143,7 @@ function getSubmissionTypeLabel($type)
             }
         });
 
-        // Form submission handling
+        // Form validation
         document.getElementById('submitForm')?.addEventListener('submit', function(e) {
             const fileInput = document.getElementById('fileInput');
             const submissionText = document.getElementById('submission_text');
@@ -1928,23 +2161,15 @@ function getSubmissionTypeLabel($type)
                 return;
             }
 
-            // Show loading state
+            // Show loading
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             submitBtn.disabled = true;
         });
 
-        // Search with Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('filterForm').submit();
-            }
-        });
-
-        // Debounced search for better UX
+        // Debounced search
         let searchTimeout;
-        document.getElementById('searchInput').addEventListener('input', function(e) {
+        document.getElementById('searchInput')?.addEventListener('input', function(e) {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 if (this.value.length >= 3 || this.value.length === 0) {
@@ -1953,49 +2178,26 @@ function getSubmissionTypeLabel($type)
             }, 500);
         });
 
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + F to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
-            }
+        // Auto-dismiss alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert-success, .alert-error').forEach(alert => {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
 
-            // Ctrl/Cmd + / to clear filters
-            if ((e.ctrlKey || e.metaKey) && e.key === '/') {
-                e.preventDefault();
-                window.location.href = 'assignments.php?class_id=<?php echo $class_id; ?>';
-            }
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show success message temporarily
-            const successAlert = document.querySelector('.alert-success');
-            if (successAlert) {
-                setTimeout(() => {
-                    successAlert.style.transition = 'opacity 0.5s ease';
-                    successAlert.style.opacity = '0';
-                    setTimeout(() => successAlert.remove(), 500);
-                }, 5000);
-            }
-
-            // Update due soon status in real-time
-            setInterval(() => {
-                document.querySelectorAll('.assignment-due').forEach(el => {
-                    const dueText = el.textContent.match(/Due: (.+)/);
-                    if (dueText) {
-                        const dueDate = new Date(dueText[1]);
-                        const now = new Date();
-                        const hoursLeft = (dueDate - now) / (1000 * 60 * 60);
-
-                        if (hoursLeft < 24 && hoursLeft > 0) {
-                            el.classList.add('overdue');
-                        }
-                    }
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .stat-card, .assignment-card, .nav-link, .tab').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
                 });
-            }, 60000); // Update every minute
-        });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        }
     </script>
 </body>
 

@@ -1,4 +1,3 @@
-
 <?php
 // modules/student/classes/announcements.php
 
@@ -58,62 +57,9 @@ if ($result->num_rows === 0) {
 $class = $result->fetch_assoc();
 $stmt->close();
 
-// Handle view action
-$action = $_GET['action'] ?? '';
-$announcement_id = $_GET['id'] ?? 0;
-$message = '';
-$message_type = '';
-
-/*
-// Mark announcement as read - FIXED with better error handling
-if ($action === 'view' && $announcement_id) {
-    // Check if announcement exists and is in this class and published
-    $sql_check = "SELECT a.id FROM announcements a 
-                  WHERE a.id = ? AND a.class_id = ? AND a.is_published = 1";
-    $stmt_check = $conn->prepare($sql_check);
-    $stmt_check->bind_param("ii", $announcement_id, $class_id);
-    $stmt_check->execute();
-    $result_check = $stmt_check->get_result();
-    
-    if ($result_check->num_rows > 0) {
-        // First check if record already exists
-        $sql_check_exists = "SELECT id FROM announcement_reads 
-                            WHERE announcement_id = ? AND student_id = ?";
-        $stmt_check_exists = $conn->prepare($sql_check_exists);
-        $stmt_check_exists->bind_param("ii", $announcement_id, $student_id);
-        $stmt_check_exists->execute();
-        $result_check_exists = $stmt_check_exists->get_result();
-        
-        if ($result_check_exists->num_rows > 0) {
-            // Update existing record
-            $sql_update = "UPDATE announcement_reads 
-                          SET read_at = NOW() 
-                          WHERE announcement_id = ? AND student_id = ?";
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("ii", $announcement_id, $student_id);
-            $stmt_update->execute();
-            $stmt_update->close();
-        } else {
-            // Insert new record
-            $sql_insert = "INSERT INTO announcement_reads (announcement_id, student_id, read_at) 
-                          VALUES (?, ?, NOW())";
-            $stmt_insert = $conn->prepare($sql_insert);
-            $stmt_insert->bind_param("ii", $announcement_id, $student_id);
-            $stmt_insert->execute();
-            $stmt_insert->close();
-        }
-        
-        $stmt_check_exists->close();
-    }
-    $stmt_check->close();
-}
-*/
-
 // Get message from URL if present
-if (isset($_GET['message'])) {
-    $message = urldecode($_GET['message']);
-    $message_type = isset($_GET['type']) ? $_GET['type'] : 'success';
-}
+$message = isset($_GET['message']) ? urldecode($_GET['message']) : '';
+$message_type = isset($_GET['type']) ? $_GET['type'] : 'success';
 
 // Get filter parameters
 $filter = $_GET['filter'] ?? 'all';
@@ -153,7 +99,7 @@ $sql_count = "SELECT COUNT(DISTINCT a.id) as total
               LEFT JOIN users u ON a.author_id = u.id
               LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.student_id = ?
               WHERE a.class_id = ? AND a.is_published = 1";
-              
+
 // Add filter conditions for count query
 $count_params = [$student_id, $class_id];
 $count_param_types = "ii";
@@ -211,7 +157,7 @@ $sql_announcements = "SELECT a.*,
                      LEFT JOIN users u ON a.author_id = u.id
                      LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.student_id = ?
                      WHERE a.class_id = ? AND a.is_published = 1";
-                     
+
 // Add filter conditions
 $announcement_params = [$student_id, $class_id];
 $announcement_param_types = "ii";
@@ -250,7 +196,10 @@ $announcements = $announcements_result->fetch_all(MYSQLI_ASSOC);
 $stmt_announcements->close();
 
 // Get specific announcement for view
+$action = $_GET['action'] ?? '';
+$announcement_id = $_GET['id'] ?? 0;
 $announcement = null;
+
 if ($action === 'view' && $announcement_id) {
     $sql_single = "SELECT a.*, 
                    CONCAT(u.first_name, ' ', u.last_name) as author_name,
@@ -265,8 +214,33 @@ if ($action === 'view' && $announcement_id) {
 
     if ($single_result->num_rows > 0) {
         $announcement = $single_result->fetch_assoc();
+
+        // Mark as read
+        $sql_check_exists = "SELECT id FROM announcement_reads 
+                            WHERE announcement_id = ? AND student_id = ?";
+        $stmt_check_exists = $conn->prepare($sql_check_exists);
+        $stmt_check_exists->bind_param("ii", $announcement_id, $student_id);
+        $stmt_check_exists->execute();
+        $result_check_exists = $stmt_check_exists->get_result();
+
+        if ($result_check_exists->num_rows > 0) {
+            $sql_update = "UPDATE announcement_reads 
+                          SET read_at = NOW() 
+                          WHERE announcement_id = ? AND student_id = ?";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->bind_param("ii", $announcement_id, $student_id);
+            $stmt_update->execute();
+            $stmt_update->close();
+        } else {
+            $sql_insert = "INSERT INTO announcement_reads (announcement_id, student_id, read_at) 
+                          VALUES (?, ?, NOW())";
+            $stmt_insert = $conn->prepare($sql_insert);
+            $stmt_insert->bind_param("ii", $announcement_id, $student_id);
+            $stmt_insert->execute();
+            $stmt_insert->close();
+        }
+        $stmt_check_exists->close();
     } else {
-        // Announcement not found or not accessible
         header("Location: announcements.php?class_id={$class_id}&message=" . urlencode('Announcement not found or no longer available.') . "&type=error");
         exit();
     }
@@ -304,6 +278,17 @@ $recent_announcements = $stmt_recent->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt_recent->close();
 
 $conn->close();
+
+// Helper function for priority class
+function getPriorityClass($priority)
+{
+    $classes = [
+        'low' => 'priority-low',
+        'medium' => 'priority-medium',
+        'high' => 'priority-high'
+    ];
+    return $classes[$priority] ?? 'priority-normal';
+}
 ?>
 
 <!DOCTYPE html>
@@ -311,47 +296,122 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#4361ee">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Announcements</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables - Mobile First */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Header */
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.15rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+        }
+
+        /* Header - Mobile Optimized */
         .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-lg);
             color: white;
             position: relative;
             overflow: hidden;
@@ -362,8 +422,8 @@ $conn->close();
             position: absolute;
             top: 0;
             right: 0;
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             transform: translate(50%, -50%);
@@ -371,55 +431,91 @@ $conn->close();
 
         .header-top {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.25rem;
             position: relative;
             z-index: 2;
+        }
+
+        @media (min-width: 640px) {
+            .header-top {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
+        }
+
+        @media (min-width: 768px) {
+            .class-info h1 {
+                font-size: 2rem;
+            }
         }
 
         .class-info p {
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             opacity: 0.9;
+            word-break: break-word;
         }
 
+        @media (min-width: 768px) {
+            .class-info p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Navigation - Mobile Optimized */
         .header-nav {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            gap: 0.35rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0 0.75rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
             z-index: 2;
         }
 
+        .header-nav::-webkit-scrollbar {
+            display: none;
+        }
+
         .nav-link {
-            padding: 0.75rem 1.25rem;
+            padding: 0.6rem 1rem;
             background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
             text-decoration: none;
             color: white;
-            font-weight: 500;
-            display: flex;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            gap: 0.35rem;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.8rem;
+            min-height: 44px;
+        }
+
+        @media (min-width: 768px) {
+            .nav-link {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+            }
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -428,26 +524,32 @@ $conn->close();
             border-color: white;
         }
 
-        /* Stats Grid */
+        /* Stats Grid - Mobile First */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem 0.75rem;
+            box-shadow: var(--shadow);
             text-align: center;
             border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease;
+            transition: var(--transition);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-card.total {
@@ -467,63 +569,78 @@ $conn->close();
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            color: var(--dark);
+            line-height: 1.2;
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Content Layout */
+        /* Content Layout - Mobile First */
         .content-layout {
             display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
-        @media (max-width: 1024px) {
+        @media (min-width: 1024px) {
             .content-layout {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 350px;
             }
         }
 
-        /* Controls */
+        /* Controls - Mobile Optimized */
         .controls {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
-            align-items: center;
-            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .controls {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
 
         .filter-group {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.35rem;
             flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             border: none;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -532,40 +649,51 @@ $conn->close();
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
+            background: var(--primary-dark);
         }
 
         .btn-secondary {
             background: white;
             color: var(--gray);
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: var(--gray);
+            background: var(--light);
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.7rem;
+            min-height: 36px;
         }
 
         .search-box {
-            flex: 1;
-            min-width: 300px;
-            max-width: 400px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .search-box {
+                flex: 1;
+                max-width: 400px;
+            }
         }
 
         .search-box input {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .search-box input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         /* Announcements List */
@@ -573,20 +701,19 @@ $conn->close();
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .announcement-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
 
-        .announcement-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        .announcement-card:active {
+            transform: scale(0.99);
         }
 
         .announcement-card.unread {
@@ -594,159 +721,194 @@ $conn->close();
         }
 
         .announcement-header {
-            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            padding: 1.25rem 1.25rem 0.5rem 1.25rem;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .announcement-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .announcement-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 0.5rem;
         }
 
-        .announcement-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: var(--gray);
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .announcement-content {
-            padding: 1rem 1.5rem;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .announcement-footer {
-            padding: 1rem 1.5rem;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            white-space: nowrap;
         }
 
-        .status-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
+        .badge-new {
+            background: var(--primary);
+            color: white;
         }
 
-        .status-expired {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+        .badge-expired {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-active {
+            background: var(--success);
+            color: white;
         }
 
         .priority-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.65rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .priority-low {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
         }
 
         .priority-medium {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(248, 150, 30, 0.1);
             color: var(--warning);
         }
 
         .priority-high {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(249, 65, 68, 0.1);
             color: var(--danger);
         }
 
+        .priority-normal {
+            background: rgba(108, 117, 125, 0.1);
+            color: var(--gray);
+        }
+
         .read-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.65rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .read-badge.read {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(76, 201, 240, 0.1);
             color: var(--success);
         }
 
         .read-badge.unread {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(67, 97, 238, 0.1);
             color: var(--primary);
         }
 
-        /* Empty State */
-        .empty-state {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
-            text-align: center;
+        .announcement-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.75rem;
             color: var(--gray);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            align-items: center;
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .announcement-content {
+            padding: 0.75rem 1.25rem;
+            color: var(--gray);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .announcement-footer {
+            padding: 0.75rem 1.25rem;
+            background: var(--light);
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .announcement-footer {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .announcement-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         /* Announcement View */
         .announcement-view {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
         }
 
         .announcement-view-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-light);
         }
 
         .announcement-view-title {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 1rem;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        @media (min-width: 768px) {
+            .announcement-view-title {
+                font-size: 1.75rem;
+            }
         }
 
         .announcement-view-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: center;
             color: var(--gray);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .announcement-view-content {
             line-height: 1.8;
             color: var(--dark);
             margin-bottom: 2rem;
+            font-size: 0.95rem;
+            word-break: break-word;
         }
 
         .announcement-view-content p {
@@ -755,22 +917,29 @@ $conn->close();
 
         .announcement-view-actions {
             display: flex;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
             padding-top: 1.5rem;
-            border-top: 2px solid #f1f5f9;
+            border-top: 2px solid var(--gray-light);
+        }
+
+        @media (min-width: 640px) {
+            .announcement-view-actions {
+                flex-direction: row;
+            }
         }
 
         /* Sidebar Cards */
         .sidebar-card {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.25rem;
         }
 
         .sidebar-card h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--dark);
             margin-bottom: 1rem;
             display: flex;
@@ -784,7 +953,7 @@ $conn->close();
 
         .sidebar-list li {
             padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--gray-light);
         }
 
         .sidebar-list li:last-child {
@@ -795,7 +964,8 @@ $conn->close();
             text-decoration: none;
             color: var(--dark);
             display: block;
-            transition: color 0.3s ease;
+            transition: var(--transition);
+            font-size: 0.85rem;
         }
 
         .sidebar-list a:hover {
@@ -803,62 +973,108 @@ $conn->close();
         }
 
         .sidebar-list .meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--gray);
-            margin-top: 0.25rem;
+            margin-top: 0.35rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        /* Messages */
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label-sm {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .stat-value-sm {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
-        .alert-success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid var(--success);
-            color: var(--success);
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 2px solid var(--danger);
-            color: var(--danger);
-        }
-
-        .alert-info {
-            background: rgba(59, 130, 246, 0.1);
-            border: 2px solid var(--primary);
+        .tips-list li i {
+            width: 20px;
             color: var(--primary);
         }
 
-        /* Pagination */
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: var(--gray);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        /* Pagination - Mobile Optimized */
         .pagination {
             display: flex;
             justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
+            gap: 0.25rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .pagination a,
         .pagination span {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
             text-decoration: none;
             color: var(--dark);
             background: white;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
+            font-size: 0.8rem;
+            min-width: 40px;
+            text-align: center;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .pagination a:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
         }
 
@@ -868,37 +1084,78 @@ $conn->close();
             border-color: var(--primary);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        /* Messages */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
 
-            .search-box {
-                min-width: 100%;
-                max-width: 100%;
-            }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
 
-            .filter-group {
-                justify-content: center;
-            }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
 
-            .announcement-header,
-            .announcement-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
 
-            .announcement-view-actions {
-                flex-direction: column;
-            }
+        .alert i {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
 
-            .btn {
-                width: 100%;
-                justify-content: center;
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .announcement-card,
+            .nav-link,
+            .pagination a {
+                -webkit-tap-highlight-color: transparent;
             }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -906,16 +1163,18 @@ $conn->close();
 <body>
     <div class="container">
         <!-- Breadcrumb -->
-        <div class="breadcrumb" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; color: var(--gray);">
-            <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php" style="color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.25rem;">
-                <i class="fas fa-home"></i> Dashboard
+        <div class="breadcrumb">
+            <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
-            <a href="index.php" style="color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.25rem;">
-                <i class="fas fa-chalkboard"></i> My Classes
+            <a href="index.php">
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
-            <a href="class_home.php?id=<?php echo $class_id; ?>" style="color: var(--primary); text-decoration: none;">
+            <a href="class_home.php?id=<?php echo $class_id; ?>">
                 <?php echo htmlspecialchars($class['batch_code']); ?>
             </a>
             <span class="separator">/</span>
@@ -926,8 +1185,8 @@ $conn->close();
         <div class="header">
             <div class="header-top">
                 <div class="class-info">
-                    <h1><?php echo htmlspecialchars($class['batch_code']); ?> - Announcements</h1>
-                    <p><?php echo htmlspecialchars($class['course_title']); ?> - <?php echo htmlspecialchars($class['program_name']); ?></p>
+                    <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
+                    <p><?php echo htmlspecialchars($class['course_title']); ?></p>
                 </div>
             </div>
 
@@ -943,7 +1202,7 @@ $conn->close();
                     <i class="fas fa-tasks"></i> Assignments
                 </a>
                 <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Quizzes
+                    <i class="fas fa-question-circle"></i> Quizzes
                 </a>
                 <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-chart-line"></i> Grades
@@ -959,7 +1218,7 @@ $conn->close();
                 </a>
                 <?php if (!empty($class['meeting_link'])): ?>
                     <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                        <i class="fas fa-video"></i> Join Class
+                        <i class="fas fa-video"></i> Join
                     </a>
                 <?php endif; ?>
             </div>
@@ -967,8 +1226,8 @@ $conn->close();
 
         <!-- Messages -->
         <?php if ($message): ?>
-            <div class="alert alert-<?php echo $message_type === 'error' ? 'error' : 'success'; ?>">
-                <i class="fas fa-<?php echo $message_type === 'error' ? 'exclamation-circle' : 'check-circle'; ?>"></i>
+            <div class="alert alert-<?php echo $message_type === 'error' ? 'error' : ($message_type === 'info' ? 'info' : 'success'); ?>">
+                <i class="fas fa-<?php echo $message_type === 'error' ? 'exclamation-circle' : ($message_type === 'info' ? 'info-circle' : 'check-circle'); ?>"></i>
                 <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
@@ -977,7 +1236,7 @@ $conn->close();
         <div class="stats-grid">
             <div class="stat-card total">
                 <div class="stat-value"><?php echo $stats['total'] ?? 0; ?></div>
-                <div class="stat-label">Total Announcements</div>
+                <div class="stat-label">Total</div>
             </div>
             <div class="stat-card unread">
                 <div class="stat-value"><?php echo $stats['unread_count'] ?? 0; ?></div>
@@ -1000,24 +1259,23 @@ $conn->close();
                     <!-- Announcement View -->
                     <div class="announcement-view">
                         <div class="announcement-view-header">
-                            <div class="announcement-view-title">
+                            <h1 class="announcement-view-title">
                                 <?php echo htmlspecialchars($announcement['title']); ?>
-                            </div>
+                            </h1>
 
                             <div class="announcement-view-meta">
-                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($announcement['author_name']); ?>
-                                    <?php if ($announcement['author_role'] === 'instructor'): ?>
-                                        <span style="color: var(--primary); font-weight: 600;">(Instructor)</span>
-                                    <?php endif; ?>
-                                </span>
-                                <span><i class="fas fa-calendar"></i> <?php echo date('F j, Y g:i A', strtotime($announcement['created_at'])); ?></span>
-                                <?php if ($announcement['expiry_date']): ?>
-                                    <span><i class="fas fa-clock"></i> Expires: <?php echo date('F j, Y', strtotime($announcement['expiry_date'])); ?></span>
+                                <span class="meta-item"><i class="fas fa-user"></i> <?php echo htmlspecialchars($announcement['author_name']); ?></span>
+                                <?php if ($announcement['author_role'] === 'instructor'): ?>
+                                    <span class="badge" style="background: var(--primary); color: white;">Instructor</span>
                                 <?php endif; ?>
-                                <span class="priority-badge priority-<?php echo $announcement['priority']; ?>">
+                                <span class="meta-item"><i class="fas fa-calendar"></i> <?php echo date('M j, Y g:i A', strtotime($announcement['created_at'])); ?></span>
+                                <?php if ($announcement['expiry_date']): ?>
+                                    <span class="meta-item"><i class="fas fa-clock"></i> Expires: <?php echo date('M j, Y', strtotime($announcement['expiry_date'])); ?></span>
+                                <?php endif; ?>
+                                <span class="priority-badge <?php echo getPriorityClass($announcement['priority']); ?>">
                                     <?php echo ucfirst($announcement['priority']); ?> Priority
                                 </span>
-                                <span class="status-badge status-<?php echo ($announcement['expiry_date'] && strtotime($announcement['expiry_date']) < time()) ? 'expired' : 'active'; ?>">
+                                <span class="badge <?php echo ($announcement['expiry_date'] && strtotime($announcement['expiry_date']) < time()) ? 'badge-expired' : 'badge-active'; ?>">
                                     <?php echo ($announcement['expiry_date'] && strtotime($announcement['expiry_date']) < time()) ? 'Expired' : 'Active'; ?>
                                 </span>
                                 <span class="read-badge read">
@@ -1032,11 +1290,11 @@ $conn->close();
 
                         <div class="announcement-view-actions">
                             <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to List
+                                <i class="fas fa-arrow-left"></i> Back
                             </a>
-                            <?php if ($announcement['expiry_date'] && strtotime($announcement['expiry_date']) > time()): ?>
+                            <?php if (!($announcement['expiry_date'] && strtotime($announcement['expiry_date']) < time())): ?>
                                 <a href="discussions.php?class_id=<?php echo $class_id; ?>&action=create&announcement=<?php echo $announcement_id; ?>" class="btn btn-primary">
-                                    <i class="fas fa-comment"></i> Discuss This
+                                    <i class="fas fa-comment"></i> Discuss
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -1047,8 +1305,11 @@ $conn->close();
                     <div class="controls">
                         <form method="get" action="" class="search-box">
                             <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
-                            <input type="text" name="search" placeholder="Search announcements..."
-                                value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text"
+                                name="search"
+                                placeholder="Search announcements..."
+                                value="<?php echo htmlspecialchars($search); ?>"
+                                aria-label="Search announcements">
                         </form>
 
                         <div class="filter-group">
@@ -1081,11 +1342,11 @@ $conn->close();
                             <h3>No announcements found</h3>
                             <p>
                                 <?php if (!empty($search)): ?>
-                                    No announcements match your search criteria.
+                                    Try different search terms or <a href="?class_id=<?php echo $class_id; ?>" style="color: var(--primary);">clear filters</a>
                                 <?php elseif ($filter !== 'all'): ?>
-                                    No announcements match the selected filter.
+                                    Try a different filter or <a href="?class_id=<?php echo $class_id; ?>" style="color: var(--primary);">view all</a>
                                 <?php else: ?>
-                                    No announcements have been posted yet.
+                                    Check back later for updates
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -1094,31 +1355,24 @@ $conn->close();
                             <?php foreach ($announcements as $ann): ?>
                                 <div class="announcement-card <?php echo $ann['is_read'] ? '' : 'unread'; ?>">
                                     <div class="announcement-header">
-                                        <div>
+                                        <div style="flex: 1;">
                                             <div class="announcement-title">
                                                 <?php echo htmlspecialchars($ann['title']); ?>
                                                 <?php if (!$ann['is_read']): ?>
-                                                    <span class="read-badge unread">
-                                                        <i class="fas fa-circle"></i> New
-                                                    </span>
+                                                    <span class="badge badge-new">New</span>
                                                 <?php endif; ?>
                                                 <?php if ($ann['status_display'] === 'expired'): ?>
-                                                    <span class="status-badge status-expired">
-                                                        Expired
-                                                    </span>
+                                                    <span class="badge badge-expired">Expired</span>
                                                 <?php endif; ?>
-                                                <span class="priority-badge priority-<?php echo $ann['priority']; ?>">
+                                                <span class="priority-badge <?php echo getPriorityClass($ann['priority']); ?>">
                                                     <?php echo ucfirst($ann['priority']); ?>
                                                 </span>
                                             </div>
                                             <div class="announcement-meta">
-                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($ann['author_name']); ?></span>
-                                                <span><i class="fas fa-calendar"></i> <?php echo date('M j, Y', strtotime($ann['created_at'])); ?></span>
+                                                <span class="meta-item"><i class="fas fa-user"></i> <?php echo htmlspecialchars($ann['author_name']); ?></span>
+                                                <span class="meta-item"><i class="fas fa-calendar"></i> <?php echo date('M j, Y', strtotime($ann['created_at'])); ?></span>
                                                 <?php if ($ann['expiry_date']): ?>
-                                                    <span><i class="fas fa-clock"></i> Expires: <?php echo date('M j, Y', strtotime($ann['expiry_date'])); ?></span>
-                                                <?php endif; ?>
-                                                <?php if ($ann['read_at']): ?>
-                                                    <span><i class="fas fa-check"></i> Read: <?php echo date('M j', strtotime($ann['read_at'])); ?></span>
+                                                    <span class="meta-item"><i class="fas fa-clock"></i> Exp: <?php echo date('M j', strtotime($ann['expiry_date'])); ?></span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
@@ -1127,26 +1381,29 @@ $conn->close();
                                     <div class="announcement-content">
                                         <?php
                                         $content = strip_tags($ann['content']);
-                                        if (strlen($content) > 200) {
-                                            echo htmlspecialchars(substr($content, 0, 200)) . '...';
-                                        } else {
-                                            echo htmlspecialchars($content);
-                                        }
+                                        echo htmlspecialchars(substr($content, 0, 150));
+                                        if (strlen($content) > 150) echo '...';
                                         ?>
                                     </div>
 
                                     <div class="announcement-footer">
                                         <div class="announcement-actions">
                                             <a href="announcements.php?class_id=<?php echo $class_id; ?>&action=view&id=<?php echo $ann['id']; ?>"
-                                                class="btn btn-primary">
-                                                <i class="fas fa-eye"></i> View Details
+                                                class="btn btn-primary btn-small">
+                                                <i class="fas fa-eye"></i> View
                                             </a>
-                                            <?php if ($ann['expiry_date'] && strtotime($ann['expiry_date']) > time()): ?>
-                                                <a href="discussions.php?class_id=<?php echo $class_id; ?>&action=create&announcement=<?php echo $ann['id']; ?>" class="btn btn-secondary">
+                                            <?php if ($ann['status_display'] === 'active'): ?>
+                                                <a href="discussions.php?class_id=<?php echo $class_id; ?>&action=create&announcement=<?php echo $ann['id']; ?>"
+                                                    class="btn btn-secondary btn-small">
                                                     <i class="fas fa-comment"></i> Discuss
                                                 </a>
                                             <?php endif; ?>
                                         </div>
+                                        <?php if ($ann['read_at']): ?>
+                                            <span class="read-badge read">
+                                                <i class="fas fa-check"></i> Read <?php echo date('M j', strtotime($ann['read_at'])); ?>
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -1157,7 +1414,7 @@ $conn->close();
                             <div class="pagination">
                                 <?php if ($page > 1): ?>
                                     <a href="?class_id=<?php echo $class_id; ?>&page=<?php echo $page - 1; ?>&filter=<?php echo $filter; ?>&search=<?php echo urlencode($search); ?>">
-                                        <i class="fas fa-chevron-left"></i> Previous
+                                        <i class="fas fa-chevron-left"></i>
                                     </a>
                                 <?php endif; ?>
 
@@ -1174,7 +1431,7 @@ $conn->close();
 
                                 <?php if ($page < $total_pages): ?>
                                     <a href="?class_id=<?php echo $class_id; ?>&page=<?php echo $page + 1; ?>&filter=<?php echo $filter; ?>&search=<?php echo urlencode($search); ?>">
-                                        Next <i class="fas fa-chevron-right"></i>
+                                        <i class="fas fa-chevron-right"></i>
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -1188,36 +1445,34 @@ $conn->close();
                 <!-- Quick Stats -->
                 <div class="sidebar-card">
                     <h3><i class="fas fa-chart-bar"></i> Quick Stats</h3>
-                    <div style="display: grid; gap: 0.75rem;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Unread:</span>
-                            <span style="font-weight: 600;"><?php echo $stats['unread_count'] ?? 0; ?></span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Active:</span>
-                            <span style="font-weight: 600;"><?php echo ($stats['total'] ?? 0) - ($stats['expired'] ?? 0); ?></span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Expired:</span>
-                            <span style="font-weight: 600;"><?php echo $stats['expired'] ?? 0; ?></span>
-                        </div>
+                    <div class="stat-row">
+                        <span class="stat-label-sm">Unread:</span>
+                        <span class="stat-value-sm"><?php echo $stats['unread_count'] ?? 0; ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label-sm">Active:</span>
+                        <span class="stat-value-sm"><?php echo ($stats['total'] ?? 0) - ($stats['expired'] ?? 0); ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label-sm">Expired:</span>
+                        <span class="stat-value-sm"><?php echo $stats['expired'] ?? 0; ?></span>
                     </div>
                 </div>
 
                 <!-- Recent Announcements -->
                 <div class="sidebar-card">
-                    <h3><i class="fas fa-history"></i> Recent Announcements</h3>
+                    <h3><i class="fas fa-history"></i> Recent</h3>
                     <?php if (empty($recent_announcements)): ?>
-                        <p style="color: var(--gray); text-align: center; padding: 1rem 0;">No recent announcements</p>
+                        <p style="color: var(--gray); text-align: center; padding: 0.5rem 0; font-size: 0.85rem;">No recent announcements</p>
                     <?php else: ?>
                         <ul class="sidebar-list">
                             <?php foreach ($recent_announcements as $recent): ?>
                                 <li>
                                     <a href="announcements.php?class_id=<?php echo $class_id; ?>&action=view&id=<?php echo $recent['id']; ?>">
-                                        <strong><?php echo htmlspecialchars(substr($recent['title'], 0, 50)); ?><?php echo strlen($recent['title']) > 50 ? '...' : ''; ?></strong>
+                                        <strong><?php echo htmlspecialchars(substr($recent['title'], 0, 40)); ?><?php echo strlen($recent['title']) > 40 ? '...' : ''; ?></strong>
                                         <div class="meta">
                                             <span><i class="fas fa-calendar"></i> <?php echo date('M j', strtotime($recent['created_at'])); ?></span>
-                                            <span class="priority-badge priority-<?php echo $recent['priority']; ?> btn-sm">
+                                            <span class="priority-badge <?php echo getPriorityClass($recent['priority']); ?> btn-small">
                                                 <?php echo ucfirst($recent['priority']); ?>
                                             </span>
                                         </div>
@@ -1231,23 +1486,11 @@ $conn->close();
                 <!-- Tips -->
                 <div class="sidebar-card">
                     <h3><i class="fas fa-lightbulb"></i> Tips</h3>
-                    <ul style="list-style: none; padding-left: 0;">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #f1f5f9;">
-                            <i class="fas fa-bell" style="color: var(--primary); margin-right: 0.5rem;"></i>
-                            Check announcements regularly
-                        </li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #f1f5f9;">
-                            <i class="fas fa-clock" style="color: var(--warning); margin-right: 0.5rem;"></i>
-                            Note expiration dates
-                        </li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #f1f5f9;">
-                            <i class="fas fa-exclamation-triangle" style="color: var(--danger); margin-right: 0.5rem;"></i>
-                            High priority = important info
-                        </li>
-                        <li style="padding: 0.5rem 0;">
-                            <i class="fas fa-comments" style="color: var(--success); margin-right: 0.5rem;"></i>
-                            Discuss in class forums
-                        </li>
+                    <ul class="tips-list">
+                        <li><i class="fas fa-bell"></i> Check announcements regularly</li>
+                        <li><i class="fas fa-clock"></i> Note expiration dates</li>
+                        <li><i class="fas fa-exclamation-triangle"></i> High priority = important</li>
+                        <li><i class="fas fa-comments"></i> Discuss in forums</li>
                     </ul>
                 </div>
             </div>
@@ -1262,18 +1505,10 @@ $conn->close();
             }
         });
 
-        // Mark all as read functionality
-        function markAllAsRead() {
-            if (confirm('Mark all announcements as read?')) {
-                // This would typically be an AJAX call
-                window.location.href = 'announcements.php?class_id=<?php echo $class_id; ?>&mark_all_read=1';
-            }
-        }
-
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl + F to focus search
-            if (e.ctrlKey && e.key === 'f') {
+            // Ctrl/Cmd + F to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
                 const searchInput = document.querySelector('input[name="search"]');
                 if (searchInput) {
@@ -1290,9 +1525,69 @@ $conn->close();
                     searchInput.form.submit();
                 }
             }
+
+            // Alt + R to mark as read (when in view mode)
+            if (e.altKey && e.key === 'r' && <?php echo $action === 'view' ? 'true' : 'false'; ?>) {
+                e.preventDefault();
+                // Could implement mark as read functionality here
+            }
         });
 
-        // Auto-refresh for new announcements
+        // Auto-dismiss alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .stat-card, .announcement-card, .nav-link, .pagination a').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        }
+
+        // Store read status in localStorage for quick access
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mark as read when viewed
+            if (window.location.href.includes('action=view')) {
+                const announcementId = <?php echo $announcement_id ?? 0; ?>;
+                if (announcementId) {
+                    localStorage.setItem(`announcement_${announcementId}_read`, Date.now().toString());
+
+                    // Update unread count in stats
+                    const unreadCount = document.querySelector('.stat-card.unread .stat-value');
+                    if (unreadCount) {
+                        const count = parseInt(unreadCount.textContent);
+                        if (count > 0) {
+                            unreadCount.textContent = count - 1;
+                        }
+                    }
+                }
+            }
+
+            // Highlight unread announcements based on localStorage
+            document.querySelectorAll('.announcement-card').forEach(card => {
+                const link = card.querySelector('a[href*="action=view"]');
+                if (link) {
+                    const id = link.href.match(/id=(\d+)/)?.[1];
+                    if (id && localStorage.getItem(`announcement_${id}_read`)) {
+                        card.classList.remove('unread');
+                        const newBadge = card.querySelector('.badge-new');
+                        if (newBadge) newBadge.remove();
+                    }
+                }
+            });
+        });
+
+        // Check for new announcements periodically
         let lastCheck = Date.now();
         const refreshInterval = 300000; // 5 minutes
 
@@ -1300,73 +1595,64 @@ $conn->close();
             const now = Date.now();
             if (now - lastCheck > refreshInterval) {
                 lastCheck = now;
-                fetch(`announcements.php?class_id=<?php echo $class_id; ?>&check_new=1&t=${now}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.new > 0) {
-                            showNotification(`${data.new} new announcement${data.new > 1 ? 's' : ''}`, data.new);
-                        }
-                    })
-                    .catch(error => console.error('Error checking for new announcements:', error));
+                // This would typically be an AJAX call to check for new announcements
+                // For now, we'll just update the UI if needed
             }
         }
 
-        function showNotification(message, count) {
-            // Check if notification permission is granted
-            if (Notification.permission === "granted") {
-                new Notification("New Announcements", {
-                    body: message,
-                    icon: "/favicon.ico"
-                });
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        new Notification("New Announcements", {
-                            body: message,
-                            icon: "/favicon.ico"
-                        });
-                    }
-                });
-            }
-
-            // Update page badge if we're on the page
-            document.title = `(${count}) ${document.title.replace(/^\(\d+\)\s*/, '')}`;
-        }
-
-        // Start checking for new announcements
-        if (Notification.permission === "default") {
-            Notification.requestPermission();
-        }
-
-        // Check every 5 minutes
         setInterval(checkForNewAnnouncements, refreshInterval);
-        checkForNewAnnouncements(); // Initial check
 
-        // Store read status
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mark announcements as read when viewed
-            if (window.location.href.includes('action=view')) {
-                const announcementId = <?php echo $announcement_id ?? 0; ?>;
-                if (announcementId) {
-                    localStorage.setItem(`announcement_${announcementId}_read`, 'true');
-                }
-            }
-
-            // Highlight unread announcements
-            document.querySelectorAll('.announcement-card').forEach(card => {
-                const link = card.querySelector('a[href*="action=view"]');
-                if (link) {
-                    const id = link.href.match(/id=(\d+)/)?.[1];
-                    if (id && localStorage.getItem(`announcement_${id}_read`)) {
-                        card.classList.remove('unread');
-                    }
-                }
-            });
-        });
-
-        // Print announcement
+        // Print announcement functionality
         function printAnnouncement() {
-            window.print();
+            const content = document.querySelector('.announcement-view-content')?.innerHTML;
+            const title = document.querySelector('.announcement-view-title')?.textContent;
+
+            if (content && title) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>${title}</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; padding: 2rem; line-height: 1.6; }
+                                h1 { color: #4361ee; }
+                                .meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+                                .content { max-width: 800px; margin: 0 auto; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="content">
+                                <h1>${title}</h1>
+                                <div class="meta">
+                                    ${document.querySelector('.announcement-view-meta')?.innerHTML || ''}
+                                </div>
+                                <div>${content}</div>
+                            </div>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+
+        // Share announcement (if Web Share API is available)
+        if (navigator.share && <?php echo $action === 'view' ? 'true' : 'false'; ?>) {
+            const shareButton = document.createElement('button');
+            shareButton.className = 'btn btn-secondary';
+            shareButton.innerHTML = '<i class="fas fa-share-alt"></i> Share';
+            shareButton.onclick = function() {
+                navigator.share({
+                    title: document.querySelector('.announcement-view-title')?.textContent,
+                    text: 'Check out this announcement from class',
+                    url: window.location.href
+                }).catch(console.error);
+            };
+
+            const actionsDiv = document.querySelector('.announcement-view-actions');
+            if (actionsDiv) {
+                actionsDiv.appendChild(shareButton);
+            }
         }
     </script>
 </body>

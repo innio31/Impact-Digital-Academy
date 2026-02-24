@@ -334,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE e.class_id = ? AND e.status = 'active'
             GROUP BY u.id, u.first_name, u.last_name, u.email, e.enrollment_date
             ORDER BY u.last_name, u.first_name";
-        
+
         $stmt_students = $conn->prepare($sql_students);
         $stmt_students->bind_param("ii", $class_id, $class_id);
         $stmt_students->execute();
@@ -442,20 +442,20 @@ $stmt_quizzes->close();
 
 // Combine assignments and quizzes for display
 $all_assessments = array_merge(
-    array_map(function($a) { 
-        $a['type'] = 'assignment'; 
+    array_map(function ($a) {
+        $a['type'] = 'assignment';
         $a['due_date'] = $a['due_date'] ?? null;
-        return $a; 
+        return $a;
     }, $assignments),
-    array_map(function($q) { 
-        $q['type'] = 'quiz'; 
+    array_map(function ($q) {
+        $q['type'] = 'quiz';
         $q['due_date'] = $q['due_date'] ?? null;
-        return $q; 
+        return $q;
     }, $quizzes)
 );
 
 // Sort by due date
-usort($all_assessments, function($a, $b) {
+usort($all_assessments, function ($a, $b) {
     $dateA = strtotime($a['due_date'] ?? '9999-12-31');
     $dateB = strtotime($b['due_date'] ?? '9999-12-31');
     return $dateA - $dateB;
@@ -656,6 +656,19 @@ $stmt_recent->close();
 logActivity('view_gradebook', "Viewed gradebook for class: {$class['batch_code']}", 'class_batches', $class_id);
 
 $conn->close();
+
+// Helper function for time ago
+function time_ago($datetime)
+{
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+
+    if ($diff < 60) return "just now";
+    if ($diff < 3600) return floor($diff / 60) . " minutes ago";
+    if ($diff < 86400) return floor($diff / 3600) . " hours ago";
+    return date("M j", $time);
+}
 ?>
 
 <!DOCTYPE html>
@@ -663,97 +676,180 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Gradebook</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Reuse existing CSS from class_home.php with additions */
+        /* CSS Variables */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Header & Navigation - Same as class_home.php */
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Header */
         .header {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-lg);
             border-left: 6px solid var(--primary);
         }
 
         .header-top {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .header-top {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--dark);
             margin-bottom: 0.5rem;
+            word-break: break-word;
         }
 
         .class-info p {
             color: var(--gray);
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        .header-nav {
+        /* Navigation - Horizontal Scroll */
+        .nav-container {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f1f5f9;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.75rem 1.25rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: 2rem;
             text-decoration: none;
             color: var(--dark);
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .nav-link:hover {
             border-color: var(--primary);
             color: var(--primary);
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -762,26 +858,32 @@ $conn->close();
             border-color: var(--primary);
         }
 
-        /* Stats Grid */
+        /* Stats Grid - Mobile First */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem 1rem;
             text-align: center;
+            box-shadow: var(--shadow);
             border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease;
+            transition: var(--transition);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
+        .stat-card:active {
+            transform: scale(0.97);
         }
 
         .stat-card.students {
@@ -805,30 +907,74 @@ $conn->close();
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
 
-        /* Gradebook Controls */
+        .stat-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Controls - Mobile First */
         .controls {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
-            align-items: center;
-            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .controls {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .search-box {
+                flex: 1;
+                max-width: 400px;
+            }
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            min-height: 48px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .filter-group {
@@ -838,250 +984,83 @@ $conn->close();
         }
 
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
             border: none;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            min-height: 48px;
+            white-space: nowrap;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
             transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
         }
 
         .btn-secondary {
             background: white;
             color: var(--gray);
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--gray);
         }
 
         .btn-success {
-            background: var(--success);
+            background: linear-gradient(135deg, var(--success), #2a9d8f);
             color: white;
         }
 
         .btn-warning {
-            background: var(--warning);
+            background: linear-gradient(135deg, var(--warning), #f3722c);
             color: white;
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: linear-gradient(135deg, var(--danger), #e63946);
             color: white;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 300px;
-            max-width: 400px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        /* Gradebook Table */
-        .gradebook-container {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        .gradebook-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1000px;
-        }
-
-        .gradebook-table th {
-            background: #f8fafc;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid #e2e8f0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .gradebook-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .gradebook-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .student-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .student-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .student-info h4 {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.125rem;
-        }
-
-        .student-info p {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-
-        .grade-cell {
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .grade-cell input {
-            width: 80px;
-            padding: 0.5rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 0.875rem;
-        }
-
-        .grade-cell input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .grade-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .grade-a {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .grade-b {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .grade-c {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .grade-d {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .grade-f {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .percentage {
-            font-size: 0.875rem;
-            color: var(--gray);
-        }
-
-        .final-grade {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .empty-cell {
-            color: #cbd5e1;
-            font-style: italic;
-            font-size: 0.875rem;
-        }
-
-        .assessment-badge {
-            font-size: 0.6rem;
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px;
-            margin-left: 0.3rem;
-            vertical-align: middle;
-        }
-
-        .assessment-assignment {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
-        }
-
-        .assessment-quiz {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
         }
 
         /* Bulk Grade Form */
         .bulk-grade-form {
-            background: #f8fafc;
+            background: var(--light);
+            border-radius: var(--radius);
             padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--warning);
             display: none;
         }
 
         .bulk-grade-form.active {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group {
@@ -1091,7 +1070,7 @@ $conn->close();
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--dark);
         }
 
@@ -1099,11 +1078,12 @@ $conn->close();
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
+            padding: 0.9rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            min-height: 48px;
         }
 
         .form-group textarea {
@@ -1116,68 +1096,261 @@ $conn->close();
         .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .form-actions {
             display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
+            flex-direction: column;
+            gap: 0.75rem;
             margin-top: 1.5rem;
         }
 
-        /* Messages */
+        @media (min-width: 640px) {
+            .form-actions {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Alerts */
         .alert {
             padding: 1rem 1.5rem;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 2px solid var(--success);
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 2px solid var(--danger);
+            color: #721c24;
+        }
+
+        /* Gradebook Container */
+        .gradebook-container {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: var(--radius);
+        }
+
+        .gradebook-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+            /* Ensures table is scrollable on small screens */
+        }
+
+        .gradebook-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .gradebook-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .gradebook-table tbody tr:hover {
+            background: var(--light);
+        }
+
+        .student-cell {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
 
-        .alert-success {
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .student-info h4 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .student-info p {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .grade-cell {
+            text-align: center;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            min-width: 40px;
+        }
+
+        .grade-a {
             background: rgba(16, 185, 129, 0.1);
-            border: 2px solid var(--success);
             color: var(--success);
+            border: 1px solid var(--success);
         }
 
-        .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 2px solid var(--danger);
-            color: var(--danger);
-        }
-
-        .alert-info {
+        .grade-b {
             background: rgba(59, 130, 246, 0.1);
-            border: 2px solid var(--primary);
             color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
-        /* Recent Grades */
+        .grade-c {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .grade-d {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .grade-f {
+            background: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+            border: 1px solid var(--danger);
+        }
+
+        .percentage {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+        }
+
+        .empty-cell {
+            color: #cbd5e1;
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+
+        .assessment-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: 0.3rem;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .assessment-assignment {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .assessment-quiz {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .final-grade {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            font-weight: normal;
+            pointer-events: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Cards */
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
         }
 
         .card-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid var(--border);
+        }
+
+        @media (min-width: 640px) {
+            .card-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .card-header h2 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: var(--dark);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .activity-list {
@@ -1187,10 +1360,9 @@ $conn->close();
 
         .activity-item {
             display: flex;
-            align-items: flex-start;
             gap: 1rem;
             padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border);
         }
 
         .activity-item:last-child {
@@ -1200,13 +1372,13 @@ $conn->close();
         .activity-icon {
             width: 40px;
             height: 40px;
-            border-radius: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #2a9d8f);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
+            flex-shrink: 0;
         }
 
         .activity-content {
@@ -1217,105 +1389,128 @@ $conn->close();
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 0.25rem;
+            font-size: 0.95rem;
         }
 
         .activity-description {
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: var(--gray);
             margin-bottom: 0.25rem;
         }
 
         .activity-meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--gray);
             display: flex;
             gap: 1rem;
         }
 
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
+        /* Performance Summary */
+        .performance-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--dark);
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            padding: 0.5rem;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.75rem;
-            font-weight: normal;
+        @media (min-width: 640px) {
+            .performance-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+        .performance-item {
+            padding: 1rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
         }
 
-        /* Pagination */
-        .pagination {
+        .performance-item h3 {
             display: flex;
-            justify-content: center;
+            align-items: center;
             gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 1rem;
             color: var(--dark);
-            background: white;
-            border: 2px solid #e2e8f0;
         }
 
-        .pagination a:hover {
-            background: #f8fafc;
-            border-color: var(--primary);
+        .performance-item p {
+            color: var(--gray);
+            line-height: 1.6;
         }
 
-        .pagination .active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .grade-distribution {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
+        .grade-distribution span {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .nav-link {
+                -webkit-tap-highlight-color: transparent;
             }
 
-            .search-box {
-                min-width: 100%;
-                max-width: 100%;
+            .btn:active,
+            .stat-card:active,
+            .nav-link:active {
+                transform: scale(0.97);
             }
+        }
 
-            .filter-group {
-                justify-content: center;
-            }
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
-            .gradebook-table {
-                font-size: 0.875rem;
-            }
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
 
-            .gradebook-table th,
-            .gradebook-table td {
-                padding: 0.75rem 0.5rem;
-            }
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -1325,11 +1520,13 @@ $conn->close();
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/instructor/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <a href="class_home.php?id=<?php echo $class_id; ?>">
@@ -1349,7 +1546,7 @@ $conn->close();
             </div>
 
             <!-- Navigation -->
-            <div class="header-nav">
+            <div class="nav-container">
                 <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-home"></i> Home
                 </a>
@@ -1396,7 +1593,7 @@ $conn->close();
         <div class="stats-grid">
             <div class="stat-card students">
                 <div class="stat-value"><?php echo $class_stats['total_students']; ?></div>
-                <div class="stat-label">Total Students</div>
+                <div class="stat-label">Students</div>
             </div>
             <div class="stat-card assignments">
                 <div class="stat-value"><?php echo count($assignments); ?></div>
@@ -1408,18 +1605,18 @@ $conn->close();
             </div>
             <div class="stat-card pending">
                 <div class="stat-value"><?php echo $pending_count; ?></div>
-                <div class="stat-label">Need Grading</div>
+                <div class="stat-label">To Grade</div>
                 <?php if ($pending_count > 0): ?>
                     <div class="stat-link">
                         <a href="assignments.php?class_id=<?php echo $class_id; ?>&filter=pending">
-                            Grade Now <i class="fas fa-arrow-right"></i>
+                            Grade <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 <?php endif; ?>
             </div>
             <div class="stat-card average">
                 <div class="stat-value"><?php echo $class_stats['average_score']; ?>%</div>
-                <div class="stat-label">Class Average</div>
+                <div class="stat-label">Class Avg</div>
             </div>
         </div>
 
@@ -1427,31 +1624,27 @@ $conn->close();
         <div class="controls">
             <form method="get" action="" class="search-box">
                 <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
-                <input type="text" name="search" placeholder="Search students or assessments..."
+                <input type="text" name="search" placeholder="Search students..."
                     value="<?php echo htmlspecialchars($search); ?>">
             </form>
 
             <div class="filter-group">
                 <a href="?class_id=<?php echo $class_id; ?>&filter=all"
                     class="btn <?php echo $filter === 'all' ? 'btn-primary' : 'btn-secondary'; ?>">
-                    All Students
+                    All
                 </a>
                 <a href="?class_id=<?php echo $class_id; ?>&filter=ungraded"
                     class="btn <?php echo $filter === 'ungraded' ? 'btn-primary' : 'btn-secondary'; ?>">
-                    Need Grading
-                </a>
-                <a href="?class_id=<?php echo $class_id; ?>&filter=graded"
-                    class="btn <?php echo $filter === 'graded' ? 'btn-primary' : 'btn-secondary'; ?>">
-                    Graded Only
+                    Ungraded
                 </a>
 
                 <button type="button" class="btn btn-warning" id="toggleBulkGrade">
-                    <i class="fas fa-edit"></i> Bulk Grade
+                    <i class="fas fa-edit"></i> Bulk
                 </button>
 
                 <form method="post" style="display: inline;">
                     <button type="submit" name="export_grades" class="btn btn-success">
-                        <i class="fas fa-file-export"></i> Export CSV
+                        <i class="fas fa-file-export"></i> Export
                     </button>
                 </form>
             </div>
@@ -1461,20 +1654,17 @@ $conn->close();
         <div class="bulk-grade-form" id="bulkGradeForm">
             <form method="post">
                 <div class="form-group">
-                    <label>Grade All Ungraded Submissions:</label>
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
-                        <span>Default Grade:</span>
-                        <input type="number" name="default_grade" min="0" max="100" step="0.1" placeholder="0-100">
-                    </div>
+                    <label>Default Grade (leave blank to skip):</label>
+                    <input type="number" name="default_grade" min="0" max="100" step="0.1" placeholder="0-100">
                 </div>
                 <div class="form-group">
-                    <label>Default Feedback (optional):</label>
-                    <textarea name="default_feedback" placeholder="Enter feedback for all submissions..."></textarea>
+                    <label>Default Feedback:</label>
+                    <textarea name="default_feedback" placeholder="Enter feedback..."></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" id="cancelBulkGrade">Cancel</button>
                     <button type="submit" name="bulk_grade" class="btn btn-primary">
-                        <i class="fas fa-check"></i> Apply to All Ungraded
+                        Apply to Ungraded
                     </button>
                 </div>
             </form>
@@ -1486,35 +1676,34 @@ $conn->close();
                 <table class="gradebook-table">
                     <thead>
                         <tr>
-                            <th style="width: 250px;">Student</th>
+                            <th style="min-width: 200px;">Student</th>
                             <?php foreach ($all_assessments as $assessment): ?>
                                 <th class="tooltip">
-                                    <?php echo htmlspecialchars($assessment['title']); ?>
-                                    <span class="assessment-badge <?php echo $assessment['type'] === 'assignment' ? 'assessment-assignment' : 'assessment-quiz'; ?>">
-                                        <?php echo $assessment['type'] === 'assignment' ? 'A' : 'Q'; ?>
-                                    </span>
+                                    <?php
+                                    $short_title = strlen($assessment['title']) > 15 ?
+                                        substr($assessment['title'], 0, 12) . '...' :
+                                        $assessment['title'];
+                                    echo htmlspecialchars($short_title);
+                                    ?>
                                     <span class="tooltiptext">
-                                        <?php echo ucfirst($assessment['type']); ?><br>
-                                        <?php if ($assessment['due_date']): ?>
-                                            Due: <?php echo date('M d, Y', strtotime($assessment['due_date'])); ?><br>
-                                        <?php endif; ?>
-                                        Max: <?php echo $assessment['total_points']; ?> points
+                                        <?php echo htmlspecialchars($assessment['title']); ?><br>
+                                        Type: <?php echo ucfirst($assessment['type']); ?><br>
+                                        Max: <?php echo $assessment['total_points']; ?> pts
                                     </span>
                                 </th>
                             <?php endforeach; ?>
-                            <th>Total Score</th>
-                            <th>Average</th>
-                            <th>Final Grade</th>
-                            <th>Actions</th>
+                            <th style="min-width: 80px;">Total</th>
+                            <th style="min-width: 80px;">Avg</th>
+                            <th style="min-width: 80px;">Grade</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($student_grades)): ?>
                             <tr>
-                                <td colspan="<?php echo count($all_assessments) + 5; ?>" style="text-align: center; padding: 3rem;">
-                                    <div style="color: var(--gray);">
-                                        <i class="fas fa-user-graduate" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                                        <p>No students enrolled in this class yet.</p>
+                                <td colspan="<?php echo count($all_assessments) + 4; ?>" style="text-align: center; padding: 3rem;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <p>No students enrolled yet.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -1554,38 +1743,29 @@ $conn->close();
                                                     <?php echo round($grade['score'], 1); ?>/<?php echo round($grade['max'], 1); ?>
                                                 </div>
                                             <?php else: ?>
-                                                <span class="empty-cell">-</span>
+                                                <span class="empty-cell">—</span>
                                             <?php endif; ?>
                                         </td>
                                     <?php endforeach; ?>
 
                                     <td class="grade-cell">
-                                        <strong><?php echo round($data['total_score'], 1); ?>/<?php echo round($data['total_max'], 1); ?></strong>
+                                        <strong><?php echo round($data['total_score'], 1); ?></strong>
                                     </td>
 
                                     <td class="grade-cell">
-                                        <?php
-                                        $avg_class = '';
-                                        if ($data['average'] >= 90) $avg_class = 'grade-a';
-                                        elseif ($data['average'] >= 80) $avg_class = 'grade-b';
-                                        elseif ($data['average'] >= 70) $avg_class = 'grade-c';
-                                        elseif ($data['average'] >= 60) $avg_class = 'grade-d';
-                                        else $avg_class = 'grade-f';
-                                        ?>
-                                        <div class="grade-badge <?php echo $avg_class; ?>">
+                                        <div class="grade-badge <?php
+                                                                if ($data['average'] >= 90) echo 'grade-a';
+                                                                elseif ($data['average'] >= 80) echo 'grade-b';
+                                                                elseif ($data['average'] >= 70) echo 'grade-c';
+                                                                elseif ($data['average'] >= 60) echo 'grade-d';
+                                                                else echo 'grade-f';
+                                                                ?>">
                                             <?php echo round($data['average'], 1); ?>%
                                         </div>
                                     </td>
 
                                     <td class="grade-cell final-grade">
                                         <?php echo $data['final_grade']; ?>
-                                    </td>
-
-                                    <td>
-                                        <a href="assignments.php?class_id=<?php echo $class_id; ?>&student_id=<?php echo $student_id; ?>"
-                                            class="btn btn-secondary btn-sm">
-                                            <i class="fas fa-eye"></i> View Work
-                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -1598,13 +1778,13 @@ $conn->close();
         <!-- Recent Grade Updates -->
         <div class="card">
             <div class="card-header">
-                <h2><i class="fas fa-history"></i> Recent Grade Updates</h2>
+                <h2><i class="fas fa-history"></i> Recent Updates</h2>
             </div>
             <div class="activity-list">
                 <?php if (empty($recent_grades)): ?>
                     <div class="empty-state">
                         <i class="fas fa-history"></i>
-                        <p>No recent grade updates</p>
+                        <p>No recent updates</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($recent_grades as $grade): ?>
@@ -1615,22 +1795,13 @@ $conn->close();
                             <div class="activity-content">
                                 <div class="activity-title">
                                     <?php echo htmlspecialchars($grade['first_name'] . ' ' . $grade['last_name']); ?>
-                                    <span class="assessment-badge <?php echo $grade['type'] === 'assignment' ? 'assessment-assignment' : 'assessment-quiz'; ?>">
-                                        <?php echo $grade['type'] === 'assignment' ? 'Assignment' : 'Quiz'; ?>
-                                    </span>
                                 </div>
                                 <div class="activity-description">
                                     <?php echo htmlspecialchars($grade['assessment_title']); ?>:
                                     <?php echo round($grade['score'], 1); ?>/<?php echo round($grade['max_score'], 1); ?>
-                                    <?php if ($grade['grade_letter']): ?>
-                                        (<?php echo $grade['grade_letter']; ?>)
-                                    <?php endif; ?>
                                 </div>
                                 <div class="activity-meta">
                                     <span><i class="fas fa-clock"></i> <?php echo time_ago($grade['updated_at']); ?></span>
-                                    <?php if ($grade['notes']): ?>
-                                        <span><i class="fas fa-comment"></i> Has feedback</span>
-                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -1642,44 +1813,32 @@ $conn->close();
         <!-- Class Performance Summary -->
         <div class="card">
             <div class="card-header">
-                <h2><i class="fas fa-chart-bar"></i> Class Performance Summary</h2>
+                <h2><i class="fas fa-chart-bar"></i> Class Performance</h2>
             </div>
-            <div style="padding: 1rem;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h3 style="margin-bottom: 1rem; color: var(--dark); font-size: 1rem;">
-                            <i class="fas fa-trophy" style="color: var(--warning);"></i> Top Performer
-                        </h3>
-                        <p style="color: var(--gray);">
-                            <?php echo $class_stats['top_performer'] ? htmlspecialchars($class_stats['top_performer']) : 'N/A'; ?>
-                            <?php if ($class_stats['average_score'] > 0): ?>
-                                <br><small>(Average: <?php echo $class_stats['average_score']; ?>%)</small>
-                            <?php endif; ?>
-                        </p>
+            <div class="performance-grid">
+                <div class="performance-item">
+                    <h3><i class="fas fa-trophy" style="color: var(--warning);"></i> Top Performer</h3>
+                    <p>
+                        <?php echo $class_stats['top_performer'] ? htmlspecialchars($class_stats['top_performer']) : 'N/A'; ?>
+                        <br><small>Avg: <?php echo $class_stats['average_score']; ?>%</small>
+                    </p>
+                </div>
+
+                <?php if (!empty($class_stats['needs_attention'])): ?>
+                    <div class="performance-item">
+                        <h3><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Needs Help</h3>
+                        <p><?php echo implode(', ', array_map('htmlspecialchars', array_slice($class_stats['needs_attention'], 0, 3))); ?></p>
                     </div>
+                <?php endif; ?>
 
-                    <?php if (!empty($class_stats['needs_attention'])): ?>
-                        <div>
-                            <h3 style="margin-bottom: 1rem; color: var(--dark); font-size: 1rem;">
-                                <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Needs Attention
-                            </h3>
-                            <p style="color: var(--gray);">
-                                <?php echo implode(', ', array_map('htmlspecialchars', $class_stats['needs_attention'])); ?>
-                            </p>
-                        </div>
-                    <?php endif; ?>
-
-                    <div>
-                        <h3 style="margin-bottom: 1rem; color: var(--dark); font-size: 1rem;">
-                            <i class="fas fa-info-circle" style="color: var(--info);"></i> Grade Distribution
-                        </h3>
-                        <p style="color: var(--gray);">
-                            A: <?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 90)); ?><br>
-                            B: <?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 80 && $s['average'] < 90)); ?><br>
-                            C: <?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 70 && $s['average'] < 80)); ?><br>
-                            D: <?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 60 && $s['average'] < 70)); ?><br>
-                            F: <?php echo count(array_filter($student_grades, fn($s) => $s['average'] < 60)); ?>
-                        </p>
+                <div class="performance-item">
+                    <h3><i class="fas fa-chart-pie" style="color: var(--info);"></i> Grade Distribution</h3>
+                    <div class="grade-distribution">
+                        <span>A <span><?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 90)); ?></span></span>
+                        <span>B <span><?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 80 && $s['average'] < 90)); ?></span></span>
+                        <span>C <span><?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 70 && $s['average'] < 80)); ?></span></span>
+                        <span>D <span><?php echo count(array_filter($student_grades, fn($s) => $s['average'] >= 60 && $s['average'] < 70)); ?></span></span>
+                        <span>F <span><?php echo count(array_filter($student_grades, fn($s) => $s['average'] < 60)); ?></span></span>
                     </div>
                 </div>
             </div>
@@ -1688,87 +1847,66 @@ $conn->close();
 
     <script>
         // Toggle bulk grade form
-        document.getElementById('toggleBulkGrade').addEventListener('click', function() {
-            const form = document.getElementById('bulkGradeForm');
-            form.classList.toggle('active');
-            this.classList.toggle('btn-warning');
-            this.classList.toggle('btn-secondary');
-            this.innerHTML = form.classList.contains('active') ?
-                '<i class="fas fa-times"></i> Cancel' :
-                '<i class="fas fa-edit"></i> Bulk Grade';
-        });
+        const toggleBtn = document.getElementById('toggleBulkGrade');
+        const bulkForm = document.getElementById('bulkGradeForm');
+        const cancelBtn = document.getElementById('cancelBulkGrade');
 
-        document.getElementById('cancelBulkGrade').addEventListener('click', function() {
-            document.getElementById('bulkGradeForm').classList.remove('active');
-            document.getElementById('toggleBulkGrade').classList.remove('btn-secondary');
-            document.getElementById('toggleBulkGrade').classList.add('btn-warning');
-            document.getElementById('toggleBulkGrade').innerHTML = '<i class="fas fa-edit"></i> Bulk Grade';
-        });
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                bulkForm.classList.toggle('active');
+                this.classList.toggle('btn-warning');
+                this.classList.toggle('btn-secondary');
+                this.innerHTML = bulkForm.classList.contains('active') ?
+                    '<i class="fas fa-times"></i> Cancel' :
+                    '<i class="fas fa-edit"></i> Bulk';
+            });
+        }
 
-        // Auto-submit search on enter
-        document.querySelector('input[name="search"]').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                this.form.submit();
-            }
-        });
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                bulkForm.classList.remove('active');
+                toggleBtn.classList.remove('btn-secondary');
+                toggleBtn.classList.add('btn-warning');
+                toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Bulk';
+            });
+        }
 
-        // Grade validation
-        document.querySelectorAll('.grade-cell input').forEach(input => {
-            input.addEventListener('change', function() {
-                const max = this.getAttribute('max') || 100;
-                const min = this.getAttribute('min') || 0;
-                let value = parseFloat(this.value);
-
-                if (isNaN(value)) {
-                    this.value = '';
-                    return;
-                }
-
-                if (value < min) {
-                    this.value = min;
-                } else if (value > max) {
-                    this.value = max;
+        // Auto-submit search
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    this.form.submit();
                 }
             });
-        });
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl + E to export
             if (e.ctrlKey && e.key === 'e') {
                 e.preventDefault();
-                document.querySelector('button[name="export_grades"]').click();
+                document.querySelector('button[name="export_grades"]')?.click();
             }
-
-            // Ctrl + B to toggle bulk grade
             if (e.ctrlKey && e.key === 'b') {
                 e.preventDefault();
-                document.getElementById('toggleBulkGrade').click();
+                toggleBtn?.click();
             }
-
-            // Esc to close bulk grade form
-            if (e.key === 'Escape' && document.getElementById('bulkGradeForm').classList.contains('active')) {
-                document.getElementById('cancelBulkGrade').click();
+            if (e.key === 'Escape' && bulkForm?.classList.contains('active')) {
+                cancelBtn?.click();
             }
         });
 
-        // Tooltip position adjustment for table headers
-        document.querySelectorAll('.tooltip').forEach(tooltip => {
-            tooltip.addEventListener('mouseenter', function(e) {
-                const tooltipText = this.querySelector('.tooltiptext');
-                const rect = this.getBoundingClientRect();
-
-                // Adjust position if near window edges
-                if (rect.left < 100) {
-                    tooltipText.style.left = '0';
-                    tooltipText.style.marginLeft = '0';
-                } else if (rect.right > window.innerWidth - 100) {
-                    tooltipText.style.left = 'auto';
-                    tooltipText.style.right = '0';
-                    tooltipText.style.marginLeft = '0';
-                }
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .stat-card, .nav-link, .gradebook-table tr').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
             });
-        });
+        }
     </script>
 </body>
 

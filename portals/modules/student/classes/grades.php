@@ -125,6 +125,18 @@ $stmt->close();
 
 $conn->close();
 
+// Helper function for time ago
+function time_ago($datetime)
+{
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+
+    if ($diff < 60) return "just now";
+    if ($diff < 3600) return floor($diff / 60) . " min ago";
+    if ($diff < 86400) return floor($diff / 3600) . " hours ago";
+    return date("M j", $time);
+}
 
 // Function to get grade color
 function getGradeColor($grade)
@@ -151,49 +163,115 @@ function getGradeBadge($grade)
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($class['batch_code']); ?> - Grades</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title><?php echo htmlspecialchars($class['batch_code']); ?> - My Grades</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --purple: #8b5cf6;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            padding-bottom: 2rem;
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
+        }
+
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-lg);
             color: white;
             position: relative;
             overflow: hidden;
@@ -208,60 +286,77 @@ function getGradeBadge($grade)
             height: 200px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            transform: translate(50%, -50%);
+            transform: translate(30%, -30%);
         }
 
         .header-top {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .header-top {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
         }
 
         .class-info p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.9;
         }
 
-        .header-nav {
+        /* Navigation - Horizontal Scroll */
+        .nav-container {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-link {
-            padding: 0.75rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -270,79 +365,79 @@ function getGradeBadge($grade)
             border-color: white;
         }
 
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--gray);
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .breadcrumb .separator {
-            opacity: 0.5;
-        }
-
         /* Page Header */
         .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .page-title h2 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--dark);
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .page-title p {
             color: var(--gray);
-            margin-top: 0.5rem;
+            font-size: 0.95rem;
         }
 
-        /* Stats Grid */
+        .header-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .header-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Stats Grid - Mobile First */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem 1rem;
             text-align: center;
+            box-shadow: var(--shadow);
             border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: var(--transition);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .stat-card:active {
+            transform: scale(0.97);
         }
 
         .stat-card.total {
@@ -358,18 +453,18 @@ function getGradeBadge($grade)
         }
 
         .stat-card.average {
-            border-top-color: var(--purple);
+            border-top-color: var(--secondary);
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             color: var(--dark);
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -378,20 +473,34 @@ function getGradeBadge($grade)
         /* Overall Grade Section */
         .overall-grade-section {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            text-align: center;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .overall-grade-section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .overall-grade-display {
             display: flex;
+            flex-direction: column;
+            gap: 2rem;
             align-items: center;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
+        }
+
+        @media (min-width: 640px) {
+            .overall-grade-display {
+                flex-direction: row;
+                justify-content: center;
+                gap: 3rem;
+            }
         }
 
         .grade-circle {
@@ -402,8 +511,9 @@ function getGradeBadge($grade)
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 2rem;
+            font-size: 2.5rem;
             position: relative;
+            box-shadow: var(--shadow-lg);
         }
 
         .grade-circle::after {
@@ -418,35 +528,37 @@ function getGradeBadge($grade)
         .grade-circle span {
             position: relative;
             z-index: 1;
+            color: var(--dark);
         }
 
         .grade-excellent {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
         }
 
         .grade-good {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
         }
 
         .grade-average {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
         }
 
         .grade-poor {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
         }
 
         .grade-fail {
             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
         }
 
         .grade-details {
-            text-align: left;
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .grade-details {
+                text-align: left;
+            }
         }
 
         .grade-detail {
@@ -454,13 +566,13 @@ function getGradeBadge($grade)
         }
 
         .grade-detail-label {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--gray);
             margin-bottom: 0.25rem;
         }
 
         .grade-detail-value {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--dark);
         }
@@ -470,27 +582,34 @@ function getGradeBadge($grade)
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px 8px 0 0;
+            border: 2px solid var(--border);
+            border-radius: 2rem;
             text-decoration: none;
             color: var(--dark);
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .tab:hover {
-            background: #f8fafc;
             border-color: var(--primary);
             color: var(--primary);
         }
@@ -501,59 +620,87 @@ function getGradeBadge($grade)
             border-color: var(--primary);
         }
 
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         /* Grades Table */
         .grades-table-container {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .grades-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         .grades-table thead {
-            background: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
         }
 
         .grades-table th {
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             text-align: left;
             font-weight: 600;
-            color: var(--dark);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .grades-table tbody tr {
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.3s ease;
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
         }
 
         .grades-table tbody tr:hover {
-            background: #f8fafc;
+            background: var(--light);
         }
 
         .grades-table td {
-            padding: 1rem 1.5rem;
-            color: var(--dark);
+            padding: 1rem;
+            font-size: 0.9rem;
         }
 
         .assignment-title {
-            font-weight: 500;
+            font-weight: 600;
+            color: var(--dark);
         }
 
         .grade-badge {
             padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
             display: inline-block;
+            min-width: 40px;
+            text-align: center;
         }
 
         .grade-a {
@@ -583,10 +730,11 @@ function getGradeBadge($grade)
 
         .status-badge {
             padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .status-graded {
@@ -612,19 +760,19 @@ function getGradeBadge($grade)
         /* Recent Updates */
         .recent-updates {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--dark);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .updates-list {
@@ -634,65 +782,98 @@ function getGradeBadge($grade)
         }
 
         .update-item {
-            padding: 1rem;
-            border-radius: 8px;
-            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            background: var(--light);
             border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .update-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
         }
 
         .update-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .update-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .update-title {
             font-weight: 600;
             color: var(--dark);
+            font-size: 1rem;
         }
 
         .update-grade {
             font-weight: 700;
             color: var(--primary);
+            font-size: 1.1rem;
         }
 
         .update-date {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .update-feedback {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: var(--gray);
-            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--info);
         }
 
         /* Grade Legend */
         .grade-legend {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
         }
 
         .legend-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-top: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .legend-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
 
         .legend-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: var(--radius-sm);
         }
 
         .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
         .legend-a {
@@ -716,77 +897,152 @@ function getGradeBadge($grade)
         }
 
         .legend-text {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--dark);
+            line-height: 1.3;
         }
 
         /* Empty State */
         .empty-state {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
             text-align: center;
+            padding: 3rem 1.5rem;
+            background: white;
+            border-radius: var(--radius);
             color: var(--gray);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 1rem;
-            opacity: 0.5;
+            opacity: 0.3;
         }
 
         .empty-state h3 {
             color: var(--dark);
             margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .empty-state p {
+            max-width: 400px;
+            margin: 0 auto;
+            font-size: 0.95rem;
         }
 
         /* Back Button */
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: var(--transition);
             margin-top: 1rem;
+            min-height: 48px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .back-button {
+                width: auto;
+                display: inline-flex;
+            }
         }
 
         .back-button:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
             color: var(--primary);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .overall-grade-display {
-                flex-direction: column;
-                gap: 2rem;
+        .back-button i {
+            font-size: 1rem;
+        }
+
+        /* Print Button */
+        .print-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, var(--success), #2a9d8f);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            margin-left: 0;
+            min-height: 48px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .print-button {
+                width: auto;
+                margin-left: 1rem;
+                display: inline-flex;
+            }
+        }
+
+        .print-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(76, 201, 240, 0.3);
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .nav-link,
+            .tab,
+            .back-button,
+            .print-button {
+                -webkit-tap-highlight-color: transparent;
             }
 
-            .grade-details {
-                text-align: center;
+            .btn:active,
+            .stat-card:active,
+            .nav-link:active,
+            .tab:active {
+                transform: scale(0.97);
             }
+        }
 
-            .grades-table {
-                display: block;
-                overflow-x: auto;
-            }
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
-            .tabs {
-                justify-content: center;
-            }
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
 
-            .tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -796,11 +1052,13 @@ function getGradeBadge($grade)
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <a href="class_home.php?id=<?php echo $class_id; ?>">
@@ -820,7 +1078,7 @@ function getGradeBadge($grade)
             </div>
 
             <!-- Navigation -->
-            <div class="header-nav">
+            <div class="nav-container">
                 <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-home"></i> Home
                 </a>
@@ -828,26 +1086,26 @@ function getGradeBadge($grade)
                     <i class="fas fa-book"></i> Materials
                 </a>
                 <a href="assignments.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Assignments
+                    <i class="fas fa-tasks"></i> Tasks
                 </a>
                 <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Quizzes
+                    <i class="fas fa-question-circle"></i> Quizzes
                 </a>
                 <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link active">
                     <i class="fas fa-chart-line"></i> Grades
                 </a>
                 <a href="discussions.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-comments"></i> Discussions
+                    <i class="fas fa-comments"></i> Discuss
                 </a>
                 <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-bullhorn"></i> Announcements
+                    <i class="fas fa-bullhorn"></i> Updates
                 </a>
                 <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="nav-link">
                     <i class="fas fa-users"></i> Classmates
                 </a>
                 <?php if (!empty($class['meeting_link'])): ?>
                     <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                        <i class="fas fa-video"></i> Join Class
+                        <i class="fas fa-video"></i> Join
                     </a>
                 <?php endif; ?>
             </div>
@@ -858,12 +1116,12 @@ function getGradeBadge($grade)
             <div class="page-title">
                 <h2>
                     <i class="fas fa-chart-line"></i>
-                    Grades & Performance
+                    My Grades
                 </h2>
-                <p>View your grades and performance for <?php echo htmlspecialchars($class['batch_code']); ?></p>
+                <p>Track your performance in <?php echo htmlspecialchars($class['batch_code']); ?></p>
             </div>
-            <div class="stats">
-                <span><i class="fas fa-file-alt"></i> <?php echo $total_assignments; ?> assignments</span>
+            <div class="header-stats">
+                <span><i class="fas fa-file-alt"></i> <?php echo $total_assignments; ?> tasks</span>
                 <span><i class="fas fa-check-circle"></i> <?php echo $graded_count; ?> graded</span>
             </div>
         </div>
@@ -872,7 +1130,7 @@ function getGradeBadge($grade)
         <div class="stats-grid">
             <div class="stat-card total">
                 <div class="stat-value"><?php echo $total_assignments; ?></div>
-                <div class="stat-label">Total Assignments</div>
+                <div class="stat-label">Total</div>
             </div>
             <div class="stat-card submitted">
                 <div class="stat-value"><?php echo $submitted_count; ?></div>
@@ -884,13 +1142,13 @@ function getGradeBadge($grade)
             </div>
             <div class="stat-card average">
                 <div class="stat-value"><?php echo $overall_percentage; ?>%</div>
-                <div class="stat-label">Your Average</div>
+                <div class="stat-label">Average</div>
             </div>
         </div>
 
         <!-- Overall Grade Section -->
         <div class="overall-grade-section">
-            <h2>Overall Performance</h2>
+            <h2><i class="fas fa-chart-pie"></i> Overall Performance</h2>
             <div class="overall-grade-display">
                 <div class="grade-circle <?php echo getGradeColor($overall_percentage); ?>">
                     <span><?php echo calculateGradeLetter($overall_percentage); ?></span>
@@ -905,7 +1163,7 @@ function getGradeBadge($grade)
                         <div class="grade-detail-value"><?php echo round($total_points, 1); ?>/<?php echo round($total_possible, 1); ?></div>
                     </div>
                     <div class="grade-detail">
-                        <div class="grade-detail-label">Graded Assignments</div>
+                        <div class="grade-detail-label">Graded Tasks</div>
                         <div class="grade-detail-value"><?php echo $graded_assignments; ?>/<?php echo $total_assignments; ?></div>
                     </div>
                     <div class="grade-detail">
@@ -928,91 +1186,90 @@ function getGradeBadge($grade)
                 <i class="fas fa-list"></i> All Grades
             </a>
             <a href="#recent-updates" class="tab">
-                <i class="fas fa-history"></i> Recent Updates
+                <i class="fas fa-history"></i> Updates
             </a>
-            <a href="#performance" class="tab">
-                <i class="fas fa-chart-bar"></i> Grade Legend
+            <a href="#legend" class="tab">
+                <i class="fas fa-chart-bar"></i> Legend
             </a>
         </div>
 
-        <!-- All Grades Table -->
+        <!-- All Grades Tab -->
         <div id="all-grades" class="tab-content active">
             <div class="grades-table-container">
                 <?php if (empty($assignments)): ?>
                     <div class="empty-state">
                         <i class="fas fa-clipboard-list"></i>
-                        <h3>No Assignments Found</h3>
+                        <h3>No Tasks Yet</h3>
                         <p>No assignments have been published for this class yet.</p>
                     </div>
                 <?php else: ?>
-                    <table class="grades-table">
-                        <thead>
-                            <tr>
-                                <th>Assignment</th>
-                                <th>Due Date</th>
-                                <th>Total Points</th>
-                                <th>Your Score</th>
-                                <th>Grade</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($assignments as $assignment):
-                                $percentage = $assignment['submission_grade'] !== null ?
-                                    round(($assignment['submission_grade'] / $assignment['total_points']) * 100, 1) :
-                                    null;
-                                $grade_letter = $percentage !== null ? calculateGradeLetter($percentage) : null;
-
-                                // Determine status
-                                if ($assignment['submission_grade'] !== null) {
-                                    $status = 'Graded';
-                                    $status_class = 'status-graded';
-                                } elseif ($assignment['submission_id']) {
-                                    $status = 'Submitted';
-                                    $status_class = 'status-submitted';
-                                } elseif (strtotime($assignment['due_date']) < time()) {
-                                    $status = 'Missing';
-                                    $status_class = 'status-missing';
-                                } else {
-                                    $status = 'Pending';
-                                    $status_class = 'status-pending';
-                                }
-                            ?>
+                    <div class="table-container">
+                        <table class="grades-table">
+                            <thead>
                                 <tr>
-                                    <td class="assignment-title"><?php echo htmlspecialchars($assignment['title']); ?></td>
-                                    <td><?php echo date('M d, Y', strtotime($assignment['due_date'])); ?></td>
-                                    <td><?php echo $assignment['total_points']; ?></td>
-                                    <td>
-                                        <?php if ($assignment['submission_grade'] !== null): ?>
-                                            <?php echo round($assignment['submission_grade'], 1); ?>
-                                            (<?php echo $percentage; ?>%)
-                                        <?php else: ?>
-                                            -
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if ($grade_letter): ?>
-                                            <span class="grade-badge <?php echo getGradeBadge($percentage); ?>">
-                                                <?php echo $grade_letter; ?>
-                                            </span>
-                                        <?php else: ?>
-                                            -
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge <?php echo $status_class; ?>">
-                                            <?php echo $status; ?>
-                                        </span>
-                                    </td>
+                                    <th>Assignment</th>
+                                    <th>Due</th>
+                                    <th>Score</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($assignments as $assignment):
+                                    $percentage = $assignment['submission_grade'] !== null ?
+                                        round(($assignment['submission_grade'] / $assignment['total_points']) * 100, 1) :
+                                        null;
+                                    $grade_letter = $percentage !== null ? calculateGradeLetter($percentage) : null;
+
+                                    // Determine status
+                                    if ($assignment['submission_grade'] !== null) {
+                                        $status = 'Graded';
+                                        $status_class = 'status-graded';
+                                    } elseif ($assignment['submission_id']) {
+                                        $status = 'Submitted';
+                                        $status_class = 'status-submitted';
+                                    } elseif (strtotime($assignment['due_date']) < time()) {
+                                        $status = 'Missing';
+                                        $status_class = 'status-missing';
+                                    } else {
+                                        $status = 'Pending';
+                                        $status_class = 'status-pending';
+                                    }
+                                ?>
+                                    <tr>
+                                        <td class="assignment-title"><?php echo htmlspecialchars($assignment['title']); ?></td>
+                                        <td><?php echo date('M d', strtotime($assignment['due_date'])); ?></td>
+                                        <td>
+                                            <?php if ($assignment['submission_grade'] !== null): ?>
+                                                <?php echo round($assignment['submission_grade'], 1); ?>/<?php echo $assignment['total_points']; ?>
+                                            <?php else: ?>
+                                                -
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($grade_letter): ?>
+                                                <span class="grade-badge <?php echo getGradeBadge($percentage); ?>">
+                                                    <?php echo $grade_letter; ?>
+                                                </span>
+                                            <?php else: ?>
+                                                -
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge <?php echo $status_class; ?>">
+                                                <?php echo $status; ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
-        <!-- Recent Updates -->
+        <!-- Recent Updates Tab -->
         <div id="recent-updates" class="tab-content">
             <div class="recent-updates">
                 <h3 class="section-title">
@@ -1024,7 +1281,7 @@ function getGradeBadge($grade)
                     <div class="empty-state">
                         <i class="fas fa-clock"></i>
                         <h3>No Recent Updates</h3>
-                        <p>No grade updates available yet.</p>
+                        <p>Your recent graded assignments will appear here.</p>
                     </div>
                 <?php else: ?>
                     <div class="updates-list">
@@ -1041,11 +1298,12 @@ function getGradeBadge($grade)
                                 </div>
                                 <div class="update-date">
                                     <i class="far fa-clock"></i>
-                                    Submitted: <?php echo date('M d, Y g:i A', strtotime($update['submitted_at'])); ?>
+                                    <?php echo time_ago($update['submitted_at']); ?>
                                 </div>
                                 <?php if ($update['feedback']): ?>
                                     <div class="update-feedback">
-                                        <strong>Feedback:</strong> <?php echo htmlspecialchars($update['feedback']); ?>
+                                        <i class="fas fa-comment"></i>
+                                        <?php echo htmlspecialchars($update['feedback']); ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -1055,43 +1313,48 @@ function getGradeBadge($grade)
             </div>
         </div>
 
-        <!-- Grade Legend -->
-        <div id="performance" class="tab-content">
+        <!-- Legend Tab -->
+        <div id="legend" class="tab-content">
             <div class="grade-legend">
                 <h3 class="section-title">
                     <i class="fas fa-chart-bar"></i>
-                    Grade Distribution
+                    Grade Scale
                 </h3>
 
                 <div class="legend-grid">
                     <div class="legend-item">
                         <div class="legend-color legend-a"></div>
-                        <div class="legend-text">A (90-100%) - Excellent</div>
+                        <div class="legend-text">A (90-100%)<br><small>Excellent</small></div>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color legend-b"></div>
-                        <div class="legend-text">B (80-89%) - Good</div>
+                        <div class="legend-text">B (80-89%)<br><small>Good</small></div>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color legend-c"></div>
-                        <div class="legend-text">C (70-79%) - Average</div>
+                        <div class="legend-text">C (70-79%)<br><small>Average</small></div>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color legend-d"></div>
-                        <div class="legend-text">D (60-69%) - Poor</div>
+                        <div class="legend-text">D (60-69%)<br><small>Below Avg</small></div>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color legend-f"></div>
-                        <div class="legend-text">F (0-59%) - Fail</div>
+                        <div class="legend-text">F (0-59%)<br><small>Needs Work</small></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Back Button -->
-        <a href="class_home.php?id=<?php echo $class_id; ?>" class="back-button">
-            <i class="fas fa-arrow-left"></i> Back to Class Dashboard
-        </a>
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+            <a href="class_home.php?id=<?php echo $class_id; ?>" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Class
+            </a>
+            <button class="print-button" onclick="printGrades()">
+                <i class="fas fa-print"></i> Print Report
+            </button>
+        </div>
     </div>
 
     <script>
@@ -1132,20 +1395,85 @@ function getGradeBadge($grade)
                     gradeCircle.style.opacity = '1';
                 }, 300);
             }
-
-            // Add hover effect to table rows
-            document.querySelectorAll('.grades-table tbody tr').forEach(row => {
-                row.addEventListener('mouseenter', () => {
-                    row.style.backgroundColor = '#f8fafc';
-                });
-
-                row.addEventListener('mouseleave', () => {
-                    row.style.backgroundColor = '';
-                });
-            });
         });
 
-        // Add keyboard navigation
+        // Print function
+        function printGrades() {
+            const printContent = document.querySelector('.grades-table-container').innerHTML;
+            const originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title><?php echo htmlspecialchars($class['batch_code']); ?> - Grades Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+                        h1 { color: #333; margin-bottom: 10px; }
+                        h2 { color: #666; margin-bottom: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+                        th { background-color: #f5f5f5; font-weight: bold; }
+                        .grade-badge { padding: 3px 8px; border-radius: 10px; font-size: 12px; display: inline-block; }
+                        .grade-a { background: #d1fae5; color: #065f46; }
+                        .grade-b { background: #dbeafe; color: #1e40af; }
+                        .grade-c { background: #fef3c7; color: #92400e; }
+                        .grade-d { background: #fed7aa; color: #9a3412; }
+                        .grade-f { background: #fecaca; color: #991b1b; }
+                        .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 12px; }
+                        .status-graded { background: #d1fae5; color: #065f46; }
+                        .status-submitted { background: #dbeafe; color: #1e40af; }
+                        .status-pending { background: #fef3c7; color: #92400e; }
+                        .status-missing { background: #fee2e2; color: #991b1b; }
+                        .print-header { margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+                        .print-footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+                        .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0; }
+                        .summary-item { background: #f9f9f9; padding: 15px; border-radius: 5px; text-align: center; }
+                        .summary-value { font-size: 24px; font-weight: bold; color: #333; }
+                        .summary-label { font-size: 12px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h1><?php echo htmlspecialchars($class['batch_code']); ?> - Grades Report</h1>
+                        <p>Student: <?php echo $_SESSION['user_name'] ?? 'Student'; ?></p>
+                        <p>Date: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    
+                    <div class="summary">
+                        <div class="summary-item">
+                            <div class="summary-value"><?php echo $total_assignments; ?></div>
+                            <div class="summary-label">Total Tasks</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value"><?php echo $graded_count; ?></div>
+                            <div class="summary-label">Graded</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value"><?php echo $overall_percentage; ?>%</div>
+                            <div class="summary-label">Average</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value"><?php echo calculateGradeLetter($overall_percentage); ?></div>
+                            <div class="summary-label">Final Grade</div>
+                        </div>
+                    </div>
+                    
+                    ${printContent}
+                    
+                    <div class="print-footer">
+                        <p>Generated on ${new Date().toLocaleString()}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Ctrl + 1-3 to switch tabs
             if (e.ctrlKey && e.key >= '1' && e.key <= '3') {
@@ -1161,63 +1489,24 @@ function getGradeBadge($grade)
             if (e.key === 'Escape') {
                 window.location.href = 'class_home.php?id=<?php echo $class_id; ?>';
             }
+
+            // Ctrl + P to print
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                printGrades();
+            }
         });
 
-        // Print grades functionality
-        function printGrades() {
-            const printContent = document.querySelector('.grades-table-container').innerHTML;
-            const originalContent = document.body.innerHTML;
-
-            document.body.innerHTML = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title><?php echo htmlspecialchars($class['batch_code']); ?> - Grades Report</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        h1 { color: #333; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-                        th { background-color: #f5f5f5; }
-                        .grade-badge { padding: 3px 8px; border-radius: 10px; font-size: 12px; }
-                        .grade-a { background: #d1fae5; color: #065f46; }
-                        .grade-b { background: #dbeafe; color: #1e40af; }
-                        .grade-c { background: #fef3c7; color: #92400e; }
-                        .grade-d { background: #fed7aa; color: #9a3412; }
-                        .grade-f { background: #fecaca; color: #991b1b; }
-                        .print-header { margin-bottom: 30px; }
-                        .print-footer { margin-top: 30px; font-size: 12px; color: #666; }
-                    </style>
-                </head>
-                <body>
-                    <div class="print-header">
-                        <h1><?php echo htmlspecialchars($class['batch_code']); ?> - Grades Report</h1>
-                        <p>Student: <?php echo $_SESSION['user_name'] ?? 'Student'; ?></p>
-                        <p>Date: ${new Date().toLocaleDateString()}</p>
-                        <p>Overall Grade: <?php echo calculateGradeLetter($overall_percentage); ?> (<?php echo $overall_percentage; ?>%)</p>
-                    </div>
-                    ${printContent}
-                    <div class="print-footer">
-                        <p>Generated from <?php echo BASE_URL; ?></p>
-                    </div>
-                </body>
-                </html>
-            `;
-
-            window.print();
-            document.body.innerHTML = originalContent;
-            location.reload();
-        }
-
-        // Add print button if needed
-        if (document.querySelector('.grades-table-container')) {
-            const printBtn = document.createElement('button');
-            printBtn.innerHTML = '<i class="fas fa-print"></i> Print Grades';
-            printBtn.className = 'back-button';
-            printBtn.style.marginLeft = '10px';
-            printBtn.onclick = printGrades;
-
-            document.querySelector('.back-button').parentNode.appendChild(printBtn);
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.stat-card, .nav-link, .tab, .back-button, .print-button').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
         }
     </script>
 </body>

@@ -61,7 +61,7 @@ $stmt->close();
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'name';
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 20;
+$limit = 12; // Changed to 12 for better grid display on mobile
 $offset = ($page - 1) * $limit;
 
 // Build query for classmates
@@ -146,12 +146,58 @@ $result = $stmt->get_result();
 $classmates = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
+// Get company stats for filtering (optional enhancement)
+$companyStats = [];
+$companyQuery = "SELECT up.current_company, COUNT(*) as count
+                FROM enrollments e
+                JOIN users u ON e.student_id = u.id
+                LEFT JOIN user_profiles up ON u.id = up.user_id
+                WHERE e.class_id = ? AND e.status = 'active' AND e.student_id != ?
+                AND up.current_company IS NOT NULL AND up.current_company != ''
+                GROUP BY up.current_company
+                ORDER BY count DESC
+                LIMIT 5";
+$stmt = $conn->prepare($companyQuery);
+$stmt->bind_param("ii", $class_id, $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $companyStats[] = $row;
+}
+$stmt->close();
+
+// Get location stats
+$locationQuery = "SELECT up.country, COUNT(*) as count
+                 FROM enrollments e
+                 JOIN users u ON e.student_id = u.id
+                 LEFT JOIN user_profiles up ON u.id = up.user_id
+                 WHERE e.class_id = ? AND e.status = 'active' AND e.student_id != ?
+                 AND up.country IS NOT NULL AND up.country != ''
+                 GROUP BY up.country
+                 ORDER BY count DESC
+                 LIMIT 5";
+$stmt = $conn->prepare($locationQuery);
+$stmt->bind_param("ii", $class_id, $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$locationStats = [];
+while ($row = $result->fetch_assoc()) {
+    $locationStats[] = $row;
+}
+$stmt->close();
+
 // Get total pages
 $totalPages = ceil($totalClassmates / $limit);
 
 // Log activity
 logActivity('view_classmates', "Viewed classmates for class: {$class['batch_code']}", 'class_batches', $class_id);
 $conn->close();
+
+// Helper function to get initials
+function getInitials($firstName, $lastName)
+{
+    return strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+}
 ?>
 
 <!DOCTYPE html>
@@ -159,55 +205,122 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Classmates</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables - Matching class_home.php */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --purple: #8b5cf6;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            padding-bottom: 2rem;
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Main Header */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             color: white;
+            box-shadow: var(--shadow-lg);
             position: relative;
             overflow: hidden;
         }
 
-        .header::before {
+        .main-header::after {
             content: '';
             position: absolute;
             top: 0;
@@ -216,60 +329,78 @@ $conn->close();
             height: 200px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            transform: translate(50%, -50%);
+            transform: translate(30%, -30%);
         }
 
-        .header-top {
+        .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
         }
 
         .class-info p {
             font-size: 1.1rem;
             opacity: 0.9;
+            word-break: break-word;
         }
 
-        .header-nav {
+        /* Navigation - Mobile Optimized */
+        .nav-container {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-link {
-            padding: 0.75rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -278,143 +409,187 @@ $conn->close();
             border-color: white;
         }
 
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--gray);
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .breadcrumb .separator {
-            opacity: 0.5;
-        }
-
         /* Page Header */
         .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .page-title h2 {
-            font-size: 1.5rem;
-            color: var(--dark);
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title h2 i {
+            color: var(--primary);
         }
 
         .page-title p {
             color: var(--gray);
-            margin-top: 0.5rem;
+            font-size: 0.95rem;
         }
 
-        /* Search and Filter */
+        .page-stats {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 1.25rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-card.total {
+            border-top-color: var(--primary);
+        }
+
+        .stat-card.companies {
+            border-top-color: var(--success);
+        }
+
+        .stat-card.locations {
+            border-top-color: var(--warning);
+        }
+
+        .stat-card.completed {
+            border-top-color: var(--info);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Search & Filter */
         .search-filter {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
         .search-form {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+        }
+
+        @media (min-width: 640px) {
+            .search-form {
+                flex-direction: row;
+            }
         }
 
         .search-input {
             flex: 1;
-            min-width: 300px;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            -webkit-appearance: none;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--gray);
-            border: 2px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: var(--gray);
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .filter-options {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .filter-options {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .sort-wrapper {
+            display: flex;
             align-items: center;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
 
-        .sort-select {
-            padding: 0.5rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            background: white;
-            font-size: 0.875rem;
+        .sort-wrapper label {
+            font-weight: 600;
             color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .sort-select {
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            background: white;
             cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1em;
+            min-width: 180px;
         }
 
         .sort-select:focus {
@@ -422,26 +597,111 @@ $conn->close();
             border-color: var(--primary);
         }
 
-        /* Classmates Grid */
+        .result-badge {
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-badge i {
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            -webkit-tap-highlight-color: transparent;
+            min-height: 52px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--gray);
+        }
+
+        .btn-small {
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+            font-size: 0.9rem;
+        }
+
+        /* Classmates Grid - Mobile First */
         .classmates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
+        @media (min-width: 640px) {
+            .classmates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .classmates-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Classmate Card */
         .classmate-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .classmate-card:active {
+            transform: scale(0.98);
+            border-color: var(--primary);
         }
 
         .classmate-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
             border-color: var(--primary);
         }
 
@@ -449,21 +709,22 @@ $conn->close();
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .classmate-avatar {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 1.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
             flex-shrink: 0;
+            box-shadow: var(--shadow);
         }
 
         .classmate-avatar img {
@@ -475,19 +736,36 @@ $conn->close();
 
         .classmate-name {
             flex: 1;
+            min-width: 0;
         }
 
         .classmate-name h3 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: var(--dark);
             margin-bottom: 0.25rem;
+            word-break: break-word;
         }
 
         .classmate-email {
             color: var(--gray);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
             word-break: break-all;
+        }
+
+        .completed-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
         }
 
         .classmate-info {
@@ -496,57 +774,151 @@ $conn->close();
 
         .info-item {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
             color: var(--dark);
         }
 
         .info-item i {
             color: var(--primary);
-            width: 16px;
+            width: 18px;
+            margin-top: 0.2rem;
+        }
+
+        .info-content {
+            flex: 1;
+            line-height: 1.5;
         }
 
         .info-label {
-            font-weight: 500;
-            min-width: 100px;
+            font-weight: 600;
             color: var(--gray);
+            margin-right: 0.25rem;
         }
 
         .classmate-bio {
+            background: var(--light);
+            border-radius: var(--radius-sm);
             padding: 1rem;
-            background: #f8fafc;
-            border-radius: 8px;
             margin-bottom: 1rem;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: var(--dark);
             line-height: 1.6;
+            border-left: 4px solid var(--primary);
+        }
+
+        .classmate-bio i {
+            color: var(--primary);
+            margin-right: 0.25rem;
         }
 
         .classmate-social {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
             margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--gray-light);
         }
 
         .social-link {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: #f1f5f9;
+            background: var(--light);
             color: var(--gray);
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            border: 2px solid var(--border);
         }
 
         .social-link:hover {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
             transform: translateY(-2px);
+        }
+
+        .social-link:active {
+            transform: scale(0.96);
+        }
+
+        /* Quick Stats Sidebar (for larger screens) */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 3fr 1fr;
+            }
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-card h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .sidebar-card h3 i {
+            color: var(--primary);
+        }
+
+        .stat-list {
+            list-style: none;
+        }
+
+        .stat-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-list li:last-child {
+            border-bottom: none;
+        }
+
+        .stat-list .company-name,
+        .stat-list .location-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-list i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .stat-count {
+            background: var(--light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
         }
 
         /* Pagination */
@@ -556,21 +928,28 @@ $conn->close();
             align-items: center;
             gap: 0.5rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
         }
 
         .pagination-link {
-            padding: 0.5rem 1rem;
+            min-width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.75rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.95rem;
         }
 
         .pagination-link:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
         }
 
@@ -584,15 +963,22 @@ $conn->close();
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
+            background: var(--light);
+        }
+
+        .pagination-dots {
+            color: var(--gray);
+            font-weight: 600;
+            padding: 0 0.25rem;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 1.5rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin: 2rem 0;
         }
 
@@ -600,11 +986,11 @@ $conn->close();
             font-size: 3rem;
             color: var(--gray);
             margin-bottom: 1.5rem;
-            opacity: 0.5;
+            opacity: 0.3;
         }
 
         .empty-state h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--dark);
             margin-bottom: 0.5rem;
         }
@@ -613,59 +999,141 @@ $conn->close();
             color: var(--gray);
             max-width: 400px;
             margin: 0 auto 1.5rem;
+            line-height: 1.6;
         }
 
         /* Back Button */
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+            min-height: 52px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .back-button {
+                width: auto;
+            }
         }
 
         .back-button:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
             color: var(--primary);
         }
 
-        /* Stats */
-        .stats {
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            left: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
             gap: 1rem;
-            color: var(--gray);
-            font-size: 0.875rem;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+            max-width: 400px;
+            margin: 0 auto;
+            border-left: 4px solid var(--success);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .classmates-grid {
-                grid-template-columns: 1fr;
+        .toast i {
+            font-size: 1.2rem;
+            color: var(--success);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
             }
 
-            .search-input {
-                min-width: 100%;
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .classmate-card,
+            .social-link,
+            .pagination-link,
+            .back-button {
+                -webkit-tap-highlight-color: transparent;
             }
 
-            .page-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+            .btn:active,
+            .classmate-card:active,
+            .social-link:active,
+            .pagination-link:active,
+            .back-button:active {
+                transform: scale(0.98);
             }
+        }
 
-            .filter-options {
-                width: 100%;
-                justify-content: space-between;
-            }
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -675,11 +1143,13 @@ $conn->close();
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <a href="class_home.php?id=<?php echo $class_id; ?>">
@@ -689,44 +1159,41 @@ $conn->close();
             <span>Classmates</span>
         </div>
 
-        <!-- Header -->
-        <div class="header">
-            <div class="header-top">
+        <!-- Main Header -->
+        <div class="main-header">
+            <div class="header-content">
                 <div class="class-info">
                     <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
-                    <p><?php echo htmlspecialchars($class['course_title']); ?> - <?php echo htmlspecialchars($class['program_name']); ?></p>
+                    <p><?php echo htmlspecialchars($class['course_title']); ?></p>
                 </div>
             </div>
 
             <!-- Navigation -->
-            <div class="header-nav">
+            <div class="nav-container">
                 <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-home"></i> Home
+                    <i class="fas fa-home"></i><span>Home</span>
                 </a>
                 <a href="materials.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-book"></i> Materials
+                    <i class="fas fa-book"></i><span>Materials</span>
                 </a>
                 <a href="assignments.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Assignments
+                    <i class="fas fa-tasks"></i><span>Assignments</span>
                 </a>
                 <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Quizzes
+                    <i class="fas fa-question-circle"></i><span>Quizzes</span>
                 </a>
                 <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-chart-line"></i> Grades
+                    <i class="fas fa-chart-line"></i><span>Grades</span>
                 </a>
                 <a href="discussions.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-comments"></i> Discussions
-                </a>
-                <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-bullhorn"></i> Announcements
+                    <i class="fas fa-comments"></i><span>Discuss</span>
                 </a>
                 <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="nav-link active">
-                    <i class="fas fa-users"></i> Classmates
+                    <i class="fas fa-users"></i><span>Classmates</span>
                 </a>
                 <?php if (!empty($class['meeting_link'])): ?>
                     <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                        <i class="fas fa-video"></i> Join Class
+                        <i class="fas fa-video"></i><span>Join</span>
                     </a>
                 <?php endif; ?>
             </div>
@@ -737,244 +1204,363 @@ $conn->close();
             <div class="page-title">
                 <h2>
                     <i class="fas fa-users"></i>
-                    Classmates (<?php echo $totalClassmates; ?>)
+                    Classmates
                 </h2>
-                <p>Connect with your fellow students in <?php echo htmlspecialchars($class['batch_code']); ?></p>
+                <p>Connect with <?php echo $totalClassmates; ?> fellow students</p>
             </div>
-            <div class="stats">
-                <span><i class="fas fa-user-graduate"></i> Total: <?php echo $totalClassmates; ?></span>
+            <div class="page-stats">
+                <span><i class="fas fa-user-graduate"></i> <?php echo $totalClassmates; ?> total</span>
                 <?php if ($totalClassmates > 0): ?>
                     <span><i class="fas fa-chart-pie"></i> Page <?php echo $page; ?> of <?php echo $totalPages; ?></span>
                 <?php endif; ?>
             </div>
         </div>
 
+        <!-- Quick Stats Grid -->
+        <?php if (!empty($classmates)): ?>
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-value"><?php echo $totalClassmates; ?></div>
+                    <div class="stat-label">Classmates</div>
+                </div>
+                <div class="stat-card companies">
+                    <div class="stat-value"><?php echo count($companyStats); ?></div>
+                    <div class="stat-label">Companies</div>
+                </div>
+                <div class="stat-card locations">
+                    <div class="stat-value"><?php echo count($locationStats); ?></div>
+                    <div class="stat-label">Locations</div>
+                </div>
+                <div class="stat-card completed">
+                    <div class="stat-value">
+                        <?php
+                        $completed = array_filter($classmates, function ($c) {
+                            return $c['enrollment_status'] === 'completed';
+                        });
+                        echo count($completed);
+                        ?>
+                    </div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <!-- Search and Filter -->
         <div class="search-filter">
-            <form method="GET" action="" class="search-form">
+            <form method="GET" action="" class="search-form" id="searchForm">
                 <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
                 <input type="text"
                     name="search"
                     class="search-input"
-                    placeholder="Search by name, email, company, or job title..."
-                    value="<?php echo htmlspecialchars($search); ?>">
+                    placeholder="Search by name, company, or job title..."
+                    value="<?php echo htmlspecialchars($search); ?>"
+                    id="searchInput">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-search"></i> Search
                 </button>
                 <?php if (!empty($search)): ?>
-                    <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
+                    <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary btn-small">
                         <i class="fas fa-times"></i> Clear
                     </a>
                 <?php endif; ?>
             </form>
 
             <div class="filter-options">
-                <label for="sort">Sort by:</label>
-                <select id="sort" name="sort" class="sort-select" onchange="window.location.href='classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=' + this.value">
-                    <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Name (A-Z)</option>
-                    <option value="name_desc" <?php echo $sort === 'name_desc' ? 'selected' : ''; ?>>Name (Z-A)</option>
-                    <option value="enrollment_date" <?php echo $sort === 'enrollment_date' ? 'selected' : ''; ?>>Enrollment Date</option>
-                    <option value="company" <?php echo $sort === 'company' ? 'selected' : ''; ?>>Company</option>
-                </select>
-
-                <div class="stats">
-                    <?php if (!empty($search)): ?>
-                        <span><i class="fas fa-filter"></i> <?php echo $totalClassmates; ?> result(s) found</span>
-                    <?php endif; ?>
+                <div class="sort-wrapper">
+                    <label for="sort"><i class="fas fa-sort"></i> Sort:</label>
+                    <select id="sort" name="sort" class="sort-select" onchange="updateSort(this.value)">
+                        <option value="name" <?php echo $sort === 'name' ? 'selected' : ''; ?>>Name (A-Z)</option>
+                        <option value="name_desc" <?php echo $sort === 'name_desc' ? 'selected' : ''; ?>>Name (Z-A)</option>
+                        <option value="enrollment_date" <?php echo $sort === 'enrollment_date' ? 'selected' : ''; ?>>Newest First</option>
+                        <option value="company" <?php echo $sort === 'company' ? 'selected' : ''; ?>>Company</option>
+                    </select>
                 </div>
+
+                <?php if (!empty($search)): ?>
+                    <div class="result-badge">
+                        <i class="fas fa-filter"></i> <?php echo $totalClassmates; ?> result(s)
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
-        <!-- Classmates Grid -->
-        <?php if (empty($classmates)): ?>
-            <div class="empty-state">
-                <i class="fas fa-users"></i>
-                <?php if (!empty($search)): ?>
-                    <h3>No classmates found</h3>
-                    <p>No results found for "<?php echo htmlspecialchars($search); ?>". Try a different search term.</p>
-                    <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                        <i class="fas fa-times"></i> Clear Search
-                    </a>
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Classmates Grid -->
+            <div class="main-content">
+                <?php if (empty($classmates)): ?>
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <?php if (!empty($search)): ?>
+                            <h3>No classmates found</h3>
+                            <p>We couldn't find anyone matching "<?php echo htmlspecialchars($search); ?>". Try a different search term.</p>
+                            <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
+                                <i class="fas fa-times"></i> Clear Search
+                            </a>
+                        <?php else: ?>
+                            <h3>No classmates yet</h3>
+                            <p>You're currently the only active student in this class. Invite your friends to join!</p>
+                            <a href="class_home.php?id=<?php echo $class_id; ?>" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> Back to Class
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
-                    <h3>No classmates yet</h3>
-                    <p>You are currently the only active student in this class.</p>
-                    <a href="class_home.php?id=<?php echo $class_id; ?>" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Back to Class
-                    </a>
+                    <div class="classmates-grid">
+                        <?php foreach ($classmates as $classmate): ?>
+                            <div class="classmate-card">
+                                <div class="classmate-header">
+                                    <div class="classmate-avatar">
+                                        <?php if (!empty($classmate['profile_image'])): ?>
+                                            <img src="<?php echo htmlspecialchars($classmate['profile_image']); ?>"
+                                                alt="<?php echo htmlspecialchars($classmate['first_name']); ?>">
+                                        <?php else: ?>
+                                            <?php echo getInitials($classmate['first_name'], $classmate['last_name']); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="classmate-name">
+                                        <h3><?php echo htmlspecialchars($classmate['first_name'] . ' ' . $classmate['last_name']); ?></h3>
+                                        <div class="classmate-email">
+                                            <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($classmate['email']); ?>
+                                        </div>
+                                        <?php if ($classmate['enrollment_status'] === 'completed'): ?>
+                                            <div class="completed-badge">
+                                                <i class="fas fa-graduation-cap"></i> Completed
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="classmate-info">
+                                    <?php if (!empty($classmate['current_job_title']) || !empty($classmate['current_company'])): ?>
+                                        <div class="info-item">
+                                            <i class="fas fa-briefcase"></i>
+                                            <div class="info-content">
+                                                <?php if (!empty($classmate['current_job_title'])): ?>
+                                                    <span class="info-label"><?php echo htmlspecialchars($classmate['current_job_title']); ?></span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($classmate['current_company'])): ?>
+                                                    <?php if (!empty($classmate['current_job_title'])): ?>at <?php endif; ?>
+                                                <?php echo htmlspecialchars($classmate['current_company']); ?>
+                                            <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($classmate['city']) || !empty($classmate['country'])): ?>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <div class="info-content">
+                                                <?php
+                                                $locationParts = [];
+                                                if (!empty($classmate['city'])) $locationParts[] = $classmate['city'];
+                                                if (!empty($classmate['state'])) $locationParts[] = $classmate['state'];
+                                                if (!empty($classmate['country'])) $locationParts[] = $classmate['country'];
+                                                echo htmlspecialchars(implode(', ', $locationParts));
+                                                ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($classmate['experience_years']) && $classmate['experience_years'] > 0): ?>
+                                        <div class="info-item">
+                                            <i class="fas fa-clock"></i>
+                                            <div class="info-content">
+                                                <span class="info-label">Experience:</span>
+                                                <?php echo $classmate['experience_years']; ?> year(s)
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($classmate['qualifications'])): ?>
+                                        <div class="info-item">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <div class="info-content">
+                                                <?php echo htmlspecialchars($classmate['qualifications']); ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="info-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">Enrolled:</span>
+                                            <?php echo date('M d, Y', strtotime($classmate['enrollment_date'])); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php if (!empty($classmate['bio'])): ?>
+                                    <div class="classmate-bio">
+                                        <i class="fas fa-quote-left"></i>
+                                        <?php echo nl2br(htmlspecialchars(substr($classmate['bio'], 0, 150))); ?>
+                                        <?php if (strlen($classmate['bio']) > 150): ?>...<?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="classmate-social">
+                                    <?php if (!empty($classmate['linkedin_url'])): ?>
+                                        <a href="<?php echo htmlspecialchars($classmate['linkedin_url']); ?>"
+                                            target="_blank"
+                                            class="social-link"
+                                            title="LinkedIn"
+                                            onclick="showSocialToast('LinkedIn')">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($classmate['github_url'])): ?>
+                                        <a href="<?php echo htmlspecialchars($classmate['github_url']); ?>"
+                                            target="_blank"
+                                            class="social-link"
+                                            title="GitHub"
+                                            onclick="showSocialToast('GitHub')">
+                                            <i class="fab fa-github"></i>
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($classmate['website'])): ?>
+                                        <a href="<?php echo htmlspecialchars($classmate['website']); ?>"
+                                            target="_blank"
+                                            class="social-link"
+                                            title="Website"
+                                            onclick="showSocialToast('Website')">
+                                            <i class="fas fa-globe"></i>
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <a href="mailto:<?php echo htmlspecialchars($classmate['email']); ?>"
+                                        class="social-link"
+                                        title="Send Email"
+                                        onclick="showSocialToast('Email')">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Pagination -->
+                    <?php if ($totalPages > 1): ?>
+                        <div class="pagination">
+                            <!-- Previous Page -->
+                            <?php if ($page > 1): ?>
+                                <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page - 1; ?>"
+                                    class="pagination-link"
+                                    title="Previous page">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            <?php else: ?>
+                                <span class="pagination-link disabled">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            <?php endif; ?>
+
+                            <!-- Page Numbers -->
+                            <?php
+                            $startPage = max(1, $page - 2);
+                            $endPage = min($totalPages, $page + 2);
+
+                            if ($startPage > 1): ?>
+                                <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=1"
+                                    class="pagination-link">1</a>
+                                <?php if ($startPage > 2): ?>
+                                    <span class="pagination-dots">...</span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $i; ?>"
+                                    class="pagination-link <?php echo $i === $page ? 'active' : ''; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+
+                            <?php if ($endPage < $totalPages): ?>
+                                <?php if ($endPage < $totalPages - 1): ?>
+                                    <span class="pagination-dots">...</span>
+                                <?php endif; ?>
+                                <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $totalPages; ?>"
+                                    class="pagination-link"><?php echo $totalPages; ?></a>
+                            <?php endif; ?>
+
+                            <!-- Next Page -->
+                            <?php if ($page < $totalPages): ?>
+                                <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page + 1; ?>"
+                                    class="pagination-link"
+                                    title="Next page">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <?php else: ?>
+                                <span class="pagination-link disabled">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
-        <?php else: ?>
-            <div class="classmates-grid">
-                <?php foreach ($classmates as $classmate): ?>
-                    <div class="classmate-card">
-                        <div class="classmate-header">
-                            <div class="classmate-avatar">
-                                <?php if (!empty($classmate['profile_image'])): ?>
-                                    <img src="<?php echo htmlspecialchars($classmate['profile_image']); ?>"
-                                        alt="<?php echo htmlspecialchars($classmate['first_name']); ?>">
-                                <?php else: ?>
-                                    <?php echo strtoupper(substr($classmate['first_name'], 0, 1)); ?>
-                                <?php endif; ?>
-                            </div>
-                            <div class="classmate-name">
-                                <h3><?php echo htmlspecialchars($classmate['first_name'] . ' ' . $classmate['last_name']); ?></h3>
-                                <div class="classmate-email">
-                                    <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($classmate['email']); ?>
-                                </div>
-                                <?php if ($classmate['enrollment_status'] === 'completed'): ?>
-                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
-                                        <i class="fas fa-graduation-cap"></i> Completed
-                                    </span>
-                                <?php endif; ?>
-                            </div>
+
+            <!-- Sidebar (visible on larger screens) -->
+            <?php if (!empty($companyStats) || !empty($locationStats)): ?>
+                <div class="sidebar">
+                    <!-- Top Companies -->
+                    <?php if (!empty($companyStats)): ?>
+                        <div class="sidebar-card">
+                            <h3><i class="fas fa-building"></i> Top Companies</h3>
+                            <ul class="stat-list">
+                                <?php foreach ($companyStats as $company): ?>
+                                    <li>
+                                        <span class="company-name">
+                                            <i class="fas fa-briefcase"></i>
+                                            <?php echo htmlspecialchars($company['current_company']); ?>
+                                        </span>
+                                        <span class="stat-count"><?php echo $company['count']; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
+                    <?php endif; ?>
 
-                        <div class="classmate-info">
-                            <?php if (!empty($classmate['current_job_title']) || !empty($classmate['current_company'])): ?>
-                                <div class="info-item">
-                                    <i class="fas fa-briefcase"></i>
-                                    <span class="info-label">Work:</span>
-                                    <span>
-                                        <?php if (!empty($classmate['current_job_title'])): ?>
-                                            <?php echo htmlspecialchars($classmate['current_job_title']); ?>
-                                            <?php if (!empty($classmate['current_company'])): ?>
-                                                at <?php echo htmlspecialchars($classmate['current_company']); ?>
-                                            <?php endif; ?>
-                                        <?php else: ?>
-                                            <?php echo htmlspecialchars($classmate['current_company']); ?>
-                                        <?php endif; ?>
-                                    </span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if (!empty($classmate['city']) || !empty($classmate['country'])): ?>
-                                <div class="info-item">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span class="info-label">Location:</span>
-                                    <span>
-                                        <?php
-                                        $locationParts = [];
-                                        if (!empty($classmate['city'])) $locationParts[] = $classmate['city'];
-                                        if (!empty($classmate['state'])) $locationParts[] = $classmate['state'];
-                                        if (!empty($classmate['country'])) $locationParts[] = $classmate['country'];
-                                        echo htmlspecialchars(implode(', ', $locationParts));
-                                        ?>
-                                    </span>
-                                </div>
-                            <?php endif; ?>
-
-                            <?php if (!empty($classmate['experience_years']) && $classmate['experience_years'] > 0): ?>
-                                <div class="info-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="info-label">Experience:</span>
-                                    <span><?php echo $classmate['experience_years']; ?> year(s)</span>
-                                </div>
-                            <?php endif; ?>
-
-                            <div class="info-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span class="info-label">Enrolled:</span>
-                                <span><?php echo date('M d, Y', strtotime($classmate['enrollment_date'])); ?></span>
-                            </div>
+                    <!-- Locations -->
+                    <?php if (!empty($locationStats)): ?>
+                        <div class="sidebar-card">
+                            <h3><i class="fas fa-globe"></i> Locations</h3>
+                            <ul class="stat-list">
+                                <?php foreach ($locationStats as $location): ?>
+                                    <li>
+                                        <span class="location-name">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <?php echo htmlspecialchars($location['country']); ?>
+                                        </span>
+                                        <span class="stat-count"><?php echo $location['count']; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
+                    <?php endif; ?>
 
-                        <?php if (!empty($classmate['bio'])): ?>
-                            <div class="classmate-bio">
-                                <strong><i class="fas fa-quote-left"></i> About:</strong>
-                                <?php echo nl2br(htmlspecialchars(substr($classmate['bio'], 0, 200))); ?>
-                                <?php if (strlen($classmate['bio']) > 200): ?>...<?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="classmate-social">
-                            <?php if (!empty($classmate['linkedin_url'])): ?>
-                                <a href="<?php echo htmlspecialchars($classmate['linkedin_url']); ?>"
-                                    target="_blank"
-                                    class="social-link"
-                                    title="LinkedIn">
-                                    <i class="fab fa-linkedin"></i>
-                                </a>
-                            <?php endif; ?>
-
-                            <?php if (!empty($classmate['github_url'])): ?>
-                                <a href="<?php echo htmlspecialchars($classmate['github_url']); ?>"
-                                    target="_blank"
-                                    class="social-link"
-                                    title="GitHub">
-                                    <i class="fab fa-github"></i>
-                                </a>
-                            <?php endif; ?>
-
-                            <?php if (!empty($classmate['website'])): ?>
-                                <a href="<?php echo htmlspecialchars($classmate['website']); ?>"
-                                    target="_blank"
-                                    class="social-link"
-                                    title="Website">
-                                    <i class="fas fa-globe"></i>
-                                </a>
-                            <?php endif; ?>
-                        </div>
+                    <!-- Quick Tips -->
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-lightbulb"></i> Networking Tips</h3>
+                        <ul class="stat-list" style="list-style: none;">
+                            <li style="display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.75rem 0;">
+                                <i class="fas fa-handshake" style="color: var(--primary);"></i>
+                                <span>Connect on LinkedIn to grow your network</span>
+                            </li>
+                            <li style="display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.75rem 0;">
+                                <i class="fas fa-comments" style="color: var(--primary);"></i>
+                                <span>Start discussions to collaborate</span>
+                            </li>
+                            <li style="display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.75rem 0;">
+                                <i class="fas fa-users" style="color: var(--primary);"></i>
+                                <span>Form study groups for better learning</span>
+                            </li>
+                        </ul>
                     </div>
-                <?php endforeach; ?>
-            </div>
-
-            <!-- Pagination -->
-            <?php if ($totalPages > 1): ?>
-                <div class="pagination">
-                    <!-- Previous Page -->
-                    <?php if ($page > 1): ?>
-                        <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page - 1; ?>"
-                            class="pagination-link">
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </a>
-                    <?php else: ?>
-                        <span class="pagination-link disabled">
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </span>
-                    <?php endif; ?>
-
-                    <!-- Page Numbers -->
-                    <?php
-                    $startPage = max(1, $page - 2);
-                    $endPage = min($totalPages, $page + 2);
-
-                    if ($startPage > 1): ?>
-                        <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=1"
-                            class="pagination-link">1</a>
-                        <?php if ($startPage > 2): ?>
-                            <span class="pagination-link">...</span>
-                        <?php endif; ?>
-                    <?php endif; ?>
-
-                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                        <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $i; ?>"
-                            class="pagination-link <?php echo $i === $page ? 'active' : ''; ?>">
-                            <?php echo $i; ?>
-                        </a>
-                    <?php endfor; ?>
-
-                    <?php if ($endPage < $totalPages): ?>
-                        <?php if ($endPage < $totalPages - 1): ?>
-                            <span class="pagination-link">...</span>
-                        <?php endif; ?>
-                        <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $totalPages; ?>"
-                            class="pagination-link"><?php echo $totalPages; ?></a>
-                    <?php endif; ?>
-
-                    <!-- Next Page -->
-                    <?php if ($page < $totalPages): ?>
-                        <a href="classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page + 1; ?>"
-                            class="pagination-link">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </a>
-                    <?php else: ?>
-                        <span class="pagination-link disabled">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </span>
-                    <?php endif; ?>
                 </div>
             <?php endif; ?>
-        <?php endif; ?>
+        </div>
 
         <!-- Back Button -->
         <a href="class_home.php?id=<?php echo $class_id; ?>" class="back-button">
@@ -983,52 +1569,90 @@ $conn->close();
     </div>
 
     <script>
-        // Search with Enter key
-        document.querySelector('.search-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        // Update sort and submit form
+        function updateSort(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', value);
+            url.searchParams.set('page', '1'); // Reset to first page
+            window.location.href = url.toString();
+        }
+
+        // Search with debounce
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    document.getElementById('searchForm').submit();
+                }
+            }, 500);
+        });
+
+        // Show toast for social links
+        function showSocialToast(platform) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <i class="fas fa-external-link-alt"></i>
+                <div class="toast-content">
+                    <div class="toast-title">Opening ${platform}</div>
+                    <div class="toast-message">You'll be redirected to ${platform}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + F to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
                 e.preventDefault();
-                this.closest('form').submit();
+                document.getElementById('searchInput').focus();
+            }
+
+            // Ctrl/Cmd + / to clear filters
+            if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+                e.preventDefault();
+                window.location.href = 'classmates.php?class_id=<?php echo $class_id; ?>';
+            }
+
+            // Left/right arrow for pagination
+            if (e.key === 'ArrowLeft' && <?php echo $page > 1 ? 'true' : 'false'; ?>) {
+                window.location.href = 'classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page - 1; ?>';
+            }
+            if (e.key === 'ArrowRight' && <?php echo $page < $totalPages ? 'true' : 'false'; ?>) {
+                window.location.href = 'classmates.php?class_id=<?php echo $class_id; ?>&search=<?php echo urlencode($search); ?>&sort=<?php echo $sort; ?>&page=<?php echo $page + 1; ?>';
             }
         });
 
-        // Tooltip for social links
-        document.querySelectorAll('.social-link').forEach(link => {
-            link.addEventListener('mouseenter', function() {
-                const title = this.getAttribute('title');
-                if (title) {
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'tooltip';
-                    tooltip.textContent = title;
-                    tooltip.style.cssText = `
-                        position: absolute;
-                        background: var(--dark);
-                        color: white;
-                        padding: 0.25rem 0.5rem;
-                        border-radius: 4px;
-                        font-size: 0.75rem;
-                        white-space: nowrap;
-                        z-index: 1000;
-                        transform: translateY(-100%) translateX(-50%);
-                        left: 50%;
-                        top: -5px;
-                    `;
-                    this.appendChild(tooltip);
-                }
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .classmate-card, .social-link, .pagination-link, .back-button').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        }
+
+        // Lazy load images
+        if ('IntersectionObserver' in window) {
+            const images = document.querySelectorAll('.classmate-avatar img');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src || img.src;
+                        imageObserver.unobserve(img);
+                    }
+                });
             });
 
-            link.addEventListener('mouseleave', function() {
-                const tooltip = this.querySelector('.tooltip');
-                if (tooltip) {
-                    tooltip.remove();
-                }
-            });
-        });
-
-        // Export classmates list (basic implementation)
-        function exportClassmates() {
-            // This is a basic implementation - you might want to implement server-side export
-            alert('Export feature would generate a CSV file of all classmates.');
-            // In a real implementation, this would make an AJAX request to an export endpoint
+            images.forEach(img => imageObserver.observe(img));
         }
     </script>
 </body>

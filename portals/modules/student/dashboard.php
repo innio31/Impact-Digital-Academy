@@ -2244,7 +2244,7 @@ logActivity($user_id, 'student_dashboard_access', 'Student accessed dashboard', 
                 <div>
                     <strong>Assignments Due Soon!</strong> You have <?php echo $stats['assignments_due']; ?> assignment(s) due in the next 7 days.
                 </div>
-                <a href="<?php echo BASE_URL; ?>portals/modules/student/assingments/?status=upcoming_week&class_id=all&sort=due_date_asc&search=" class="btn btn-info btn-sm" style="margin-left: auto;">
+                <a href="<?php echo BASE_URL; ?>portals/modules/student/assignments/?status=upcoming_week&class_id=all&sort=due_date_asc&search=" class="btn btn-info btn-sm" style="margin-left: auto;">
                     View Assignments
                 </a>
             </div>

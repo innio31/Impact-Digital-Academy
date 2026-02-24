@@ -193,61 +193,182 @@ $stats = $stats_result->fetch_assoc();
 $stmt->close();
 $conn->close();
 
+// Helper function for file icons
+function getFileIcon($type)
+{
+    switch ($type) {
+        case 'pdf':
+            return 'fas fa-file-pdf';
+        case 'document':
+            return 'fas fa-file-word';
+        case 'presentation':
+            return 'fas fa-file-powerpoint';
+        case 'spreadsheet':
+            return 'fas fa-file-excel';
+        case 'video':
+            return 'fas fa-file-video';
+        case 'image':
+            return 'fas fa-file-image';
+        case 'audio':
+            return 'fas fa-file-audio';
+        case 'archive':
+            return 'fas fa-file-archive';
+        case 'code':
+            return 'fas fa-file-code';
+        default:
+            return 'fas fa-file';
+    }
+}
+
+// Helper function for file type labels
+function getFileTypeLabel($type)
+{
+    $labels = [
+        'pdf' => 'PDF',
+        'document' => 'Document',
+        'presentation' => 'Presentation',
+        'spreadsheet' => 'Spreadsheet',
+        'video' => 'Video',
+        'image' => 'Image',
+        'audio' => 'Audio',
+        'archive' => 'Archive',
+        'code' => 'Code',
+        'other' => 'Other'
+    ];
+    return $labels[$type] ?? ucfirst($type);
+}
+
+// Helper function for file size formatting
+function formatFileSize($bytes)
+{
+    if ($bytes === 0) return '0 Bytes';
+    $k = 1024;
+    $sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    $i = floor(log($bytes) / log($k));
+    return round($bytes / pow($k, $i), 1) . ' ' . $sizes[$i];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Learning Materials</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables - Matching class_home.php */
         :root {
-            --primary: #3b82f6;
-            --secondary: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --purple: #8b5cf6;
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            padding-bottom: 2rem;
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Main Header */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             color: white;
+            box-shadow: var(--shadow-lg);
             position: relative;
             overflow: hidden;
         }
 
-        .header::before {
+        .main-header::after {
             content: '';
             position: absolute;
             top: 0;
@@ -256,60 +377,78 @@ $conn->close();
             height: 200px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            transform: translate(50%, -50%);
+            transform: translate(30%, -30%);
         }
 
-        .header-top {
+        .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
         }
 
         .class-info p {
             font-size: 1.1rem;
             opacity: 0.9;
+            word-break: break-word;
         }
 
-        .header-nav {
+        /* Navigation - Mobile Optimized */
+        .nav-container {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
-            z-index: 2;
+            z-index: 1;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-link {
-            padding: 0.75rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-2px);
         }
 
         .nav-link.active {
@@ -318,79 +457,67 @@ $conn->close();
             border-color: white;
         }
 
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--gray);
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .breadcrumb .separator {
-            opacity: 0.5;
-        }
-
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
+        /* Page Title */
+        .page-title {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .page-title {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .page-title h2 {
-            font-size: 1.5rem;
-            color: var(--dark);
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            font-size: 1.3rem;
+            color: var(--dark);
         }
 
-        .page-title p {
+        .page-title h2 i {
+            color: var(--primary);
+        }
+
+        .page-stats {
+            display: flex;
+            gap: 1rem;
             color: var(--gray);
-            margin-top: 0.5rem;
+            font-size: 0.9rem;
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem 1rem;
             text-align: center;
+            box-shadow: var(--shadow);
             border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
         }
 
         .stat-card.total {
@@ -411,129 +538,92 @@ $conn->close();
 
         .stat-value {
             font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-weight: 800;
             color: var(--dark);
+            margin-bottom: 0.5rem;
+            line-height: 1;
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
-        /* Content Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 992px) {
-            .content-grid {
-                grid-template-columns: 2fr 1fr;
-            }
-        }
-
-        /* Search and Filter */
+        /* Search & Filter */
         .search-filter {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
         .search-form {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
             margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+        }
+
+        @media (min-width: 640px) {
+            .search-form {
+                flex-direction: row;
+            }
         }
 
         .search-input {
             flex: 1;
-            min-width: 300px;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            -webkit-appearance: none;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--gray);
-            border: 2px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: var(--gray);
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .filter-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr;
             gap: 1rem;
         }
 
-        .filter-group {
-            margin-bottom: 1rem;
+        @media (min-width: 640px) {
+            .filter-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .filter-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--dark);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
 
         .filter-select {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
             background: white;
             cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
         }
 
         .filter-select:focus {
@@ -541,12 +631,62 @@ $conn->close();
             border-color: var(--primary);
         }
 
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            -webkit-tap-highlight-color: transparent;
+            min-height: 52px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--gray);
+        }
+
+        .btn-small {
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+            font-size: 0.9rem;
+        }
+
         /* Materials List */
         .materials-list {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
         }
 
         .list-header {
@@ -555,15 +695,26 @@ $conn->close();
             align-items: center;
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid var(--gray-light);
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .list-header h2 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: var(--dark);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .list-header h2 i {
+            color: var(--primary);
+        }
+
+        .result-count {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
 
         /* Type Filters */
@@ -573,22 +724,26 @@ $conn->close();
             flex-wrap: wrap;
             margin-bottom: 1.5rem;
             padding: 1rem;
-            background: #f8fafc;
-            border-radius: 8px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .type-filter {
             padding: 0.5rem 1rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             background: white;
-            border-radius: 8px;
+            border-radius: 2rem;
             cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            transition: var(--transition);
             text-decoration: none;
             color: var(--dark);
             display: inline-flex;
             align-items: center;
+            white-space: nowrap;
+            min-height: 44px;
         }
 
         .type-filter:hover {
@@ -604,24 +759,28 @@ $conn->close();
 
         .type-filter .count {
             background: rgba(255, 255, 255, 0.2);
-            padding: 0.125rem 0.375rem;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            margin-left: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
         }
 
-        /* Material Items */
+        .type-filter.active .count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Material Items - Mobile Optimized */
         .material-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.3s ease;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: flex-start;
         }
 
-        .material-item:hover {
-            background: #f8fafc;
+        .material-item:active {
+            background: var(--light);
         }
 
         .material-item:last-child {
@@ -629,9 +788,9 @@ $conn->close();
         }
 
         .material-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -669,6 +828,21 @@ $conn->close();
             color: #ec4899;
         }
 
+        .material-icon.audio {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .material-icon.archive {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--gray);
+        }
+
+        .material-icon.code {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
         .material-icon.other {
             background: rgba(107, 114, 128, 0.1);
             color: var(--gray);
@@ -688,20 +862,31 @@ $conn->close();
             align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
+            word-break: break-word;
+        }
+
+        .week-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         .material-description {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: var(--gray);
             margin-bottom: 0.75rem;
             line-height: 1.5;
+            word-break: break-word;
         }
 
         .material-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 0.75rem;
+            gap: 0.75rem;
+            font-size: 0.8rem;
             color: var(--gray);
         }
 
@@ -711,15 +896,6 @@ $conn->close();
             gap: 0.25rem;
         }
 
-        .week-badge {
-            background: #e0e7ff;
-            color: #3730a3;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
         .material-actions {
             display: flex;
             gap: 0.5rem;
@@ -727,21 +903,73 @@ $conn->close();
         }
 
         .btn-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
+            background: white;
+            border: 2px solid var(--border);
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: var(--light);
+            border-color: var(--primary);
+        }
+
+        .btn-icon:active {
+            transform: scale(0.96);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Content Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 2fr 1fr;
+            }
         }
 
         /* Sidebar Cards */
         .sidebar-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
         }
 
@@ -751,12 +979,16 @@ $conn->close();
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #f1f5f9;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gray-light);
         }
 
-        /* Quick Stats */
+        .sidebar-card h3 i {
+            color: var(--primary);
+        }
+
+        /* Quick Stats List */
         .quick-stats-list {
             list-style: none;
         }
@@ -766,27 +998,32 @@ $conn->close();
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border);
         }
 
         .quick-stats-list li:last-child {
             border-bottom: none;
         }
 
-        .quick-stats-list .file-type {
+        .file-type {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        /* Tips */
+        .file-type i {
+            width: 20px;
+            color: var(--primary);
+        }
+
+        /* Tips List */
         .tips-list {
             list-style: none;
         }
 
         .tips-list li {
             padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
@@ -802,105 +1039,141 @@ $conn->close();
             flex-shrink: 0;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-            font-size: 1.25rem;
-        }
-
-        .empty-state p {
+        .tips-list span {
             font-size: 0.95rem;
             line-height: 1.5;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f1f5f9;
-        }
-
-        .pagination-link {
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            color: var(--dark);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .pagination-link:hover {
-            background: #f8fafc;
-            border-color: var(--primary);
-        }
-
-        .pagination-link.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
         }
 
         /* Back Button */
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+            min-height: 52px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .back-button {
+                width: auto;
+            }
         }
 
         .back-button:hover {
-            background: #f8fafc;
+            background: var(--light);
             border-color: var(--primary);
             color: var(--primary);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .material-item {
-                flex-direction: column;
-                gap: 1rem;
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            left: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+            max-width: 400px;
+            margin: 0 auto;
+            border-left: 4px solid var(--success);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+            color: var(--success);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
             }
 
-            .material-actions {
-                align-self: flex-start;
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .material-item,
+            .type-filter,
+            .back-button {
+                -webkit-tap-highlight-color: transparent;
             }
 
-            .search-input {
-                min-width: 100%;
+            .btn:active,
+            .material-item:active,
+            .type-filter:active,
+            .back-button:active {
+                transform: scale(0.98);
             }
+        }
 
-            .filter-options {
-                grid-template-columns: 1fr;
-            }
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -910,85 +1183,78 @@ $conn->close();
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <a href="class_home.php?id=<?php echo $class_id; ?>">
                 <?php echo htmlspecialchars($class['batch_code']); ?>
             </a>
             <span class="separator">/</span>
-            <span>Learning Materials</span>
+            <span>Materials</span>
         </div>
 
-        <!-- Header -->
-        <div class="header">
-            <div class="header-top">
+        <!-- Main Header -->
+        <div class="main-header">
+            <div class="header-content">
                 <div class="class-info">
                     <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
-                    <p><?php echo htmlspecialchars($class['course_title']); ?> - <?php echo htmlspecialchars($class['program_name']); ?></p>
+                    <p><?php echo htmlspecialchars($class['course_title']); ?></p>
                 </div>
             </div>
 
             <!-- Navigation -->
-            <div class="header-nav">
+            <div class="nav-container">
                 <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-home"></i> Home
+                    <i class="fas fa-home"></i><span>Home</span>
                 </a>
                 <a href="materials.php?class_id=<?php echo $class_id; ?>" class="nav-link active">
-                    <i class="fas fa-book"></i> Materials
+                    <i class="fas fa-book"></i><span>Materials</span>
                 </a>
                 <a href="assignments.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Assignments
+                    <i class="fas fa-tasks"></i><span>Assignments</span>
                 </a>
                 <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-tasks"></i> Quizzes
+                    <i class="fas fa-question-circle"></i><span>Quizzes</span>
                 </a>
                 <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-chart-line"></i> Grades
+                    <i class="fas fa-chart-line"></i><span>Grades</span>
                 </a>
                 <a href="discussions.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-comments"></i> Discussions
-                </a>
-                <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-bullhorn"></i> Announcements
-                </a>
-                <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-users"></i> Classmates
+                    <i class="fas fa-comments"></i><span>Discuss</span>
                 </a>
                 <?php if (!empty($class['meeting_link'])): ?>
                     <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                        <i class="fas fa-video"></i> Join Class
+                        <i class="fas fa-video"></i><span>Join</span>
                     </a>
                 <?php endif; ?>
             </div>
         </div>
 
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="page-title">
-                <h2>
-                    <i class="fas fa-book-open"></i>
-                    Learning Materials
-                </h2>
-                <p>Access study materials for <?php echo htmlspecialchars($class['batch_code']); ?></p>
-            </div>
-            <div class="stats">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h2>
+                <i class="fas fa-book-open"></i>
+                Learning Materials
+            </h2>
+            <div class="page-stats">
                 <span><i class="fas fa-file"></i> <?php echo count($materials); ?> files</span>
-                <?php if (count($materials) > 0): ?>
-                    <span><i class="fas fa-hdd"></i> <?php echo formatFileSize($stats['total_size']); ?> total</span>
+                <?php if ($stats['total_size'] > 0): ?>
+                    <span><i class="fas fa-hdd"></i> <?php echo formatFileSize($stats['total_size']); ?></span>
                 <?php endif; ?>
             </div>
         </div>
 
-        <!-- Stats -->
+        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card total">
                 <div class="stat-value"><?php echo $stats['total_materials']; ?></div>
-                <div class="stat-label">Total Materials</div>
+                <div class="stat-label">Materials</div>
             </div>
             <div class="stat-card size">
                 <div class="stat-value"><?php echo formatFileSize($stats['total_size']); ?></div>
@@ -996,11 +1262,11 @@ $conn->close();
             </div>
             <div class="stat-card downloads">
                 <div class="stat-value"><?php echo $stats['total_downloads']; ?></div>
-                <div class="stat-label">Total Downloads</div>
+                <div class="stat-label">Downloads</div>
             </div>
             <div class="stat-card views">
                 <div class="stat-value"><?php echo $stats['total_views']; ?></div>
-                <div class="stat-label">Total Views</div>
+                <div class="stat-label">Views</div>
             </div>
         </div>
 
@@ -1012,7 +1278,7 @@ $conn->close();
                 <input type="text"
                     name="search"
                     class="search-input"
-                    placeholder="Search materials by title, description, or topic..."
+                    placeholder="Search materials..."
                     value="<?php echo htmlspecialchars($search_term); ?>"
                     id="searchInput">
 
@@ -1021,15 +1287,15 @@ $conn->close();
                 </button>
 
                 <?php if (!empty($search_term) || $filter_week !== 'all' || $filter_type !== 'all'): ?>
-                    <a href="materials.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Clear Filters
+                    <a href="materials.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary btn-small">
+                        <i class="fas fa-times"></i> Clear
                     </a>
                 <?php endif; ?>
             </form>
 
             <div class="filter-options">
                 <div class="filter-group">
-                    <label for="week_filter"><i class="fas fa-calendar-week"></i> Filter by Week</label>
+                    <label for="week_filter"><i class="fas fa-calendar-week"></i> Week</label>
                     <select id="week_filter" name="week" class="filter-select" onchange="this.form.submit()">
                         <option value="all" <?php echo $filter_week === 'all' ? 'selected' : ''; ?>>All Weeks</option>
                         <?php foreach ($available_weeks as $week): ?>
@@ -1042,16 +1308,19 @@ $conn->close();
                 </div>
 
                 <div class="filter-group">
-                    <label for="type_filter"><i class="fas fa-filter"></i> Filter by Type</label>
+                    <label for="type_filter"><i class="fas fa-filter"></i> Type</label>
                     <select id="type_filter" name="type" class="filter-select" onchange="this.form.submit()">
                         <option value="all" <?php echo $filter_type === 'all' ? 'selected' : ''; ?>>All Types</option>
-                        <option value="pdf" <?php echo $filter_type === 'pdf' ? 'selected' : ''; ?>>PDF Documents</option>
+                        <option value="pdf" <?php echo $filter_type === 'pdf' ? 'selected' : ''; ?>>PDF</option>
                         <option value="document" <?php echo $filter_type === 'document' ? 'selected' : ''; ?>>Documents</option>
                         <option value="presentation" <?php echo $filter_type === 'presentation' ? 'selected' : ''; ?>>Presentations</option>
                         <option value="spreadsheet" <?php echo $filter_type === 'spreadsheet' ? 'selected' : ''; ?>>Spreadsheets</option>
                         <option value="video" <?php echo $filter_type === 'video' ? 'selected' : ''; ?>>Videos</option>
                         <option value="image" <?php echo $filter_type === 'image' ? 'selected' : ''; ?>>Images</option>
-                        <option value="other" <?php echo $filter_type === 'other' ? 'selected' : ''; ?>>Other Files</option>
+                        <option value="audio" <?php echo $filter_type === 'audio' ? 'selected' : ''; ?>>Audio</option>
+                        <option value="archive" <?php echo $filter_type === 'archive' ? 'selected' : ''; ?>>Archives</option>
+                        <option value="code" <?php echo $filter_type === 'code' ? 'selected' : ''; ?>>Code</option>
+                        <option value="other" <?php echo $filter_type === 'other' ? 'selected' : ''; ?>>Other</option>
                     </select>
                 </div>
             </div>
@@ -1063,17 +1332,15 @@ $conn->close();
                 <!-- Materials List -->
                 <div class="materials-list">
                     <div class="list-header">
-                        <h2><i class="fas fa-book"></i> Available Materials</h2>
-                        <span style="color: var(--gray); font-size: 0.875rem;">
-                            <?php echo count($materials); ?> material(s) found
-                        </span>
+                        <h2><i class="fas fa-file-alt"></i> Available Materials</h2>
+                        <span class="result-count"><?php echo count($materials); ?> found</span>
                     </div>
 
-                    <!-- Type Filters -->
+                    <!-- Type Filters (Horizontal Scroll) -->
                     <div class="type-filters">
                         <a href="?class_id=<?php echo $class_id; ?>&type=all&week=<?php echo $filter_week; ?>&search=<?php echo urlencode($search_term); ?>"
                             class="type-filter <?php echo $filter_type === 'all' ? 'active' : ''; ?>">
-                            All Types
+                            All
                             <?php if ($filter_type === 'all'): ?>
                                 <span class="count"><?php echo count($materials); ?></span>
                             <?php endif; ?>
@@ -1093,12 +1360,12 @@ $conn->close();
                     <?php if (empty($materials)): ?>
                         <div class="empty-state">
                             <i class="fas fa-file-search"></i>
-                            <h3>No Materials Available</h3>
+                            <h3>No Materials Found</h3>
                             <p>
                                 <?php if ($filter_type !== 'all' || $filter_week !== 'all' || !empty($search_term)): ?>
-                                    No materials match your current filters.
+                                    Try adjusting your filters or search term.
                                 <?php else: ?>
-                                    No materials have been published for this class yet. Please check back later.
+                                    No materials have been published for this class yet.
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -1124,45 +1391,33 @@ $conn->close();
                                     <?php endif; ?>
 
                                     <div class="material-meta">
-                                        <div class="meta-item">
+                                        <span class="meta-item">
                                             <i class="fas fa-user"></i>
                                             <?php echo htmlspecialchars($material['instructor_name']); ?>
-                                        </div>
-                                        <div class="meta-item">
-                                            <i class="fas fa-file"></i>
-                                            <?php echo getFileTypeLabel($material['file_type']); ?>
-                                        </div>
-                                        <div class="meta-item">
+                                        </span>
+                                        <span class="meta-item">
                                             <i class="fas fa-weight-hanging"></i>
                                             <?php echo formatFileSize($material['file_size']); ?>
-                                        </div>
-                                        <div class="meta-item">
-                                            <i class="fas fa-download"></i>
-                                            <?php echo $material['downloads_count']; ?> downloads
-                                        </div>
-                                        <div class="meta-item">
-                                            <i class="fas fa-eye"></i>
-                                            <?php echo $material['views_count']; ?> views
-                                        </div>
-                                        <div class="meta-item">
+                                        </span>
+                                        <span class="meta-item">
                                             <i class="fas fa-calendar"></i>
-                                            <?php echo date('M d, Y', strtotime($material['created_at'])); ?>
-                                        </div>
+                                            <?php echo date('M d', strtotime($material['created_at'])); ?>
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div class="material-actions">
                                     <a href="<?php echo $material['external_url']; ?>"
                                         target="_blank"
-                                        class="btn btn-primary btn-icon"
+                                        class="btn-icon"
                                         title="Preview"
                                         onclick="trackView(<?php echo $material['id']; ?>)">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <!-- <a href="?class_id=<?php echo $class_id; ?>&download=<?php echo $material['id']; ?>"
-                                        class="btn btn-secondary btn-icon"
-                                        title="Download"
-                                        onclick="showDownloadToast('<?php echo htmlspecialchars($material['title']); ?>')">
+                                       class="btn-icon"
+                                       title="Download"
+                                       onclick="showDownloadToast('<?php echo htmlspecialchars($material['title']); ?>')">
                                         <i class="fas fa-download"></i>
                                     </a> -->
                                 </div>
@@ -1176,12 +1431,10 @@ $conn->close();
             <div class="sidebar">
                 <!-- Quick Stats -->
                 <div class="sidebar-card">
-                    <h3><i class="fas fa-chart-pie"></i> Quick Stats</h3>
+                    <h3><i class="fas fa-chart-pie"></i> File Types</h3>
                     <ul class="quick-stats-list">
                         <?php if (empty($type_counts)): ?>
-                            <li style="color: var(--gray); font-style: italic;">
-                                No materials available
-                            </li>
+                            <li>No files available</li>
                         <?php else: ?>
                             <?php foreach ($type_counts as $type => $count): ?>
                                 <li>
@@ -1189,7 +1442,7 @@ $conn->close();
                                         <i class="<?php echo getFileIcon($type); ?>"></i>
                                         <?php echo getFileTypeLabel($type); ?>
                                     </span>
-                                    <span><strong><?php echo $count; ?></strong></span>
+                                    <span><?php echo $count; ?></span>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -1198,42 +1451,42 @@ $conn->close();
 
                 <!-- Class Activity -->
                 <div class="sidebar-card">
-                    <h3><i class="fas fa-chart-line"></i> Class Activity</h3>
+                    <h3><i class="fas fa-chart-line"></i> Activity</h3>
                     <ul class="quick-stats-list">
                         <li>
-                            <span><i class="fas fa-download"></i> Total Downloads</span>
-                            <span><strong><?php echo $stats['total_downloads']; ?></strong></span>
+                            <span><i class="fas fa-download"></i> Downloads</span>
+                            <span><?php echo $stats['total_downloads']; ?></span>
                         </li>
                         <li>
-                            <span><i class="fas fa-eye"></i> Total Views</span>
-                            <span><strong><?php echo $stats['total_views']; ?></strong></span>
+                            <span><i class="fas fa-eye"></i> Views</span>
+                            <span><?php echo $stats['total_views']; ?></span>
                         </li>
                         <li>
                             <span><i class="fas fa-hdd"></i> Total Size</span>
-                            <span><strong><?php echo formatFileSize($stats['total_size']); ?></strong></span>
+                            <span><?php echo formatFileSize($stats['total_size']); ?></span>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Tips -->
                 <div class="sidebar-card">
-                    <h3><i class="fas fa-lightbulb"></i> Study Tips</h3>
+                    <h3><i class="fas fa-lightbulb"></i> Tips</h3>
                     <ul class="tips-list">
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>Use filters to quickly find materials by week or type</span>
+                            <span>Preview files before downloading</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>Preview files before downloading to save data</span>
+                            <span>Download on WiFi to save data</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>Download materials when on WiFi to avoid data charges</span>
+                            <span>Use filters to find materials by week</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>Organize downloaded files by week number</span>
+                            <span>Press Ctrl+F to search this page</span>
                         </li>
                     </ul>
                 </div>
@@ -1256,56 +1509,32 @@ $conn->close();
 
         // Show download toast
         function showDownloadToast(filename) {
-            // Create toast notification
             const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: var(--success);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                animation: slideInUp 0.3s ease;
-            `;
+            toast.className = 'toast';
             toast.innerHTML = `
                 <i class="fas fa-check-circle"></i>
-                <div>
-                    <strong>Download Started</strong>
-                    <div style="font-size: 0.875rem; opacity: 0.9;">${filename}</div>
+                <div class="toast-content">
+                    <div class="toast-title">Download Started</div>
+                    <div class="toast-message">${filename}</div>
                 </div>
             `;
             document.body.appendChild(toast);
 
-            // Remove toast after 3 seconds
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Search with Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('filterForm').submit();
-            }
-        });
-
-        // Debounced search for better UX
+        // Search with debounce
         let searchTimeout;
         document.getElementById('searchInput').addEventListener('input', function(e) {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                if (this.value.length >= 3 || this.value.length === 0) {
+                if (this.value.length >= 2 || this.value.length === 0) {
                     document.getElementById('filterForm').submit();
                 }
             }, 500);
         });
 
-        // Add keyboard shortcuts
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             // Ctrl/Cmd + F to focus search
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
@@ -1320,21 +1549,17 @@ $conn->close();
             }
         });
 
-        // Add CSS animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInUp {
-                from {
-                    transform: translateY(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .material-item, .type-filter, .back-button').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        }
     </script>
 </body>
 

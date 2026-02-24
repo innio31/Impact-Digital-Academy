@@ -2186,7 +2186,7 @@ $conn->close();
                 <div class="nav-container nav-disabled">
                     <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
                     <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
-                    <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+                    <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Assignments</span></a>
                 </div>
             </div>
 
@@ -2265,7 +2265,7 @@ $conn->close();
                         <i class="fas fa-book"></i><span>Materials</span>
                     </a>
                     <a href="assignments.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-tasks"></i><span>Tasks</span>
+                        <i class="fas fa-tasks"></i><span>Assignments</span>
                     </a>
                     <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
                         <i class="fas fa-question-circle"></i><span>Quizzes</span>
@@ -2291,7 +2291,7 @@ $conn->close();
             <div class="stats-grid">
                 <div class="stat-card assignments" onclick="window.location.href='assignments.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['assignments']; ?></div>
-                    <div class="stat-label">Tasks</div>
+                    <div class="stat-label">Assignments</div>
                 </div>
                 <div class="stat-card materials" onclick="window.location.href='materials/view.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['materials']; ?></div>
@@ -2323,7 +2323,7 @@ $conn->close();
                             <?php if (empty($upcoming_assignments)): ?>
                                 <div class="empty-state">
                                     <i class="fas fa-tasks"></i>
-                                    <p>No upcoming tasks</p>
+                                    <p>No upcoming assignments</p>
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($upcoming_assignments as $assignment): ?>
@@ -2394,7 +2394,7 @@ $conn->close();
                         <div class="quick-actions-grid">
                             <a href="assignments/index.php?class_id=<?php echo $class_id; ?>" class="action-item">
                                 <div class="action-icon"><i class="fas fa-tasks"></i></div>
-                                <div class="action-label">Tasks</div>
+                                <div class="action-label">Assignments</div>
                             </a>
                             <a href="discussions/index.php?class_id=<?php echo $class_id; ?>" class="action-item">
                                 <div class="action-icon"><i class="fas fa-comments"></i></div>
