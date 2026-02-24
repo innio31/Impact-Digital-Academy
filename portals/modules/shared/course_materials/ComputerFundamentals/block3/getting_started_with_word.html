@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Microsoft Word · complete beginner's guide (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f5;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #132b40;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #ddeeff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #6d8eb0;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #103753;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📘 Microsoft Word: Comprehensive Beginner's Guide</h1>
+        <div class="subhead">complete notes · interface · ribbon · save & open · troubleshooting</div>
+
+        <!-- TABLE OF CONTENTS (identical to source) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Word</a>
+                <a href="#interface">2. Understanding the Interface</a>
+                <a href="#ribbon">3. The Ribbon in Depth</a>
+                <a href="#quick-access-toolbar">4. Quick Access Toolbar (QAT)</a>
+                <a href="#backstage-view">5. Backstage View</a>
+                <a href="#creating-documents">6. Creating Documents</a>
+                <a href="#saving-documents">7. Saving Documents</a>
+                <a href="#opening-documents">8. Opening Documents</a>
+                <a href="#practice-exercises">9. Practice Exercises</a>
+                <a href="#troubleshooting">10. Troubleshooting</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. Introduction to Microsoft Word</h2>
+            <h3>1.1 What is Microsoft Word?</h3>
+            <p>Microsoft Word is a powerful word processing application, part of Microsoft Office. It's the industry
+                standard for creating professional documents, reports, letters, resumes, and more.</p>
+            <ul>
+                <li>A word processing program developed by Microsoft</li>
+                <li>Used for creating text-based documents with rich formatting</li>
+                <li>Offers integration with other Office apps</li>
+                <li>Available on Windows, macOS, web and mobile</li>
+            </ul>
+            <h3>1.2 Versions of Microsoft Word</h3>
+            <ul>
+                <li><strong>Microsoft 365</strong> (subscription) – continuously updated</li>
+                <li><strong>Word 2021, 2019, 2016</strong> – perpetual licenses, static features</li>
+                <li><strong>Word Online</strong> – free, browser‑based</li>
+                <li><strong>Mobile apps</strong> – iOS / Android</li>
+            </ul>
+        </section>
+
+        <!-- 2. UNDERSTANDING THE WORD INTERFACE -->
+        <section id="interface">
+            <h2>🖥️ 2. Understanding the Word Interface</h2>
+            <div class="sample-box" style="font-family: monospace; line-height: 1.4;">
+                ┌─────────────────────────────────────────────────────────────────┐
+                │ Title Bar [ - □ X ] │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Quick Access Toolbar │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Ribbon Tabs (File, Home, Insert, etc.) │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Ribbon (groups & commands) │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Ruler │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Document area (cursor) │
+                │ │
+                ├─────────────────────────────────────────────────────────────────┤
+                │ Status bar Page: 1 | Words: 0 | Zoom [+] │
+                └─────────────────────────────────────────────────────────────────┘
+            </div>
+            <h4>Main components</h4>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Title Bar</td>
+                    <td>Document name & app name; window controls at right</td>
+                </tr>
+                <tr>
+                    <td>Quick Access Toolbar</td>
+                    <td>Frequently used commands (Save, Undo, Redo) – customizable</td>
+                </tr>
+                <tr>
+                    <td>Ribbon tabs</td>
+                    <td>Home, Insert, Design, Layout, References, Mailings, Review, View …</td>
+                </tr>
+                <tr>
+                    <td>Ruler</td>
+                    <td>Measure margins, indents (toggle in View tab)</td>
+                </tr>
+                <tr>
+                    <td>Document area</td>
+                    <td>Where you type</td>
+                </tr>
+                <tr>
+                    <td>Status bar</td>
+                    <td>Page number, word count, view shortcuts, zoom slider</td>
+                </tr>
+            </table>
+            <p><strong>Start screen</strong> appears when Word opens: templates, recent docs, account info.</p>
+        </section>
+
+        <!-- 3. THE RIBBON INTERFACE IN DEPTH -->
+        <section id="ribbon">
+            <h2>📑 3. The Ribbon Interface in Depth</h2>
+            <p>Tab‑based organization, contextual tabs, dialog launchers, collapsible (Ctrl+F1).</p>
+            <h3>Home tab</h3>
+            <table>
+                <tr>
+                    <th>Group</th>
+                    <th>Commands</th>
+                </tr>
+                <tr>
+                    <td>Clipboard</td>
+                    <td>Paste, Cut, Copy, Format Painter</td>
+                </tr>
+                <tr>
+                    <td>Font</td>
+                    <td>Font, size, bold, italic, underline, color, highlight</td>
+                </tr>
+                <tr>
+                    <td>Paragraph</td>
+                    <td>Bullets, numbering, alignment, line spacing, borders</td>
+                </tr>
+                <tr>
+                    <td>Styles</td>
+                    <td>Quick Styles gallery</td>
+                </tr>
+                <tr>
+                    <td>Editing</td>
+                    <td>Find, Replace, Select</td>
+                </tr>
+            </table>
+            <h3>Insert tab</h3>
+            <table>
+                <tr>
+                    <th>Group</th>
+                    <th>Commands</th>
+                </tr>
+                <tr>
+                    <td>Pages</td>
+                    <td>Cover Page, Blank Page, Page Break</td>
+                </tr>
+                <tr>
+                    <td>Tables</td>
+                    <td>Insert table, Draw table</td>
+                </tr>
+                <tr>
+                    <td>Illustrations</td>
+                    <td>Pictures, Online Pictures, Shapes, Icons, SmartArt, Chart</td>
+                </tr>
+                <tr>
+                    <td>Header & Footer</td>
+                    <td>Header, Footer, Page Number</td>
+                </tr>
+                <tr>
+                    <td>Text</td>
+                    <td>Text Box, WordArt, Drop Cap, Signature Line, Date & Time</td>
+                </tr>
+                <tr>
+                    <td>Symbols</td>
+                    <td>Equation, Symbol</td>
+                </tr>
+            </table>
+            <h3>Design tab</h3>
+            <p><strong>Document Formatting:</strong> Themes, Colors, Fonts, Effects, Paragraph Spacing.<br> <strong>Page
+                    Background:</strong> Watermark, Page Color, Page Borders.</p>
+            <h3>Layout tab</h3>
+            <p><strong>Page Setup:</strong> Margins, Orientation, Size, Columns, Breaks.<br> <strong>Paragraph:</strong>
+                Indent, Spacing. <strong>Arrange:</strong> Position, Wrap Text, Align.</p>
+            <h3>References, Mailings, Review, View tabs</h3>
+            <p>Comprehensive groups for TOC, footnotes, mail merge, proofing, tracking, document views, zoom, macros,
+                etc.</p>
+            <h4>Contextual tabs</h4>
+            <p>Table → Table Design/Layout ; Picture → Picture Format ; Chart → Chart Design/Format, etc.</p>
+            <h4>Keyboard navigation: Press <span class="kbd-shortcut">Alt</span> to show KeyTips.</h4>
+        </section>
+
+        <!-- 4. QUICK ACCESS TOOLBAR -->
+        <section id="quick-access-toolbar">
+            <h2>⚡ 4. Quick Access Toolbar (QAT)</h2>
+            <p>Small, customizable toolbar top left (default: Save, Undo, Redo). Can be moved below ribbon.</p>
+            <h4>Customizing QAT</h4>
+            <ul>
+                <li>Click drop‑down arrow → add common commands (New, Quick Print…)</li>
+                <li>Right‑click any ribbon command → "Add to Quick Access Toolbar"</li>
+                <li>"More Commands…" opens Word Options to reorder / add from full list</li>
+            </ul>
+            <p><strong>Recommended additions:</strong> Quick Print, Spelling & Grammar, Bullets, Format Painter.</p>
+        </section>
+
+        <!-- 5. BACKSTAGE VIEW -->
+        <section id="backstage-view">
+            <h2>📂 5. Backstage View (File tab)</h2>
+            <p>Click <strong>File</strong> tab or <kbd>Alt+F</kbd>. Replaces traditional File menu.</p>
+            <div class="def-grid">
+                <div class="def-item"><strong>Home</strong> – templates, recent, pinned</div>
+                <div class="def-item"><strong>New</strong> – blank doc, templates, search</div>
+                <div class="def-item"><strong>Open</strong> – recent, OneDrive, This PC, Browse</div>
+                <div class="def-item"><strong>Info</strong> – protect, inspect, manage, properties</div>
+                <div class="def-item"><strong>Save / Save As</strong> – locations, formats, copy</div>
+                <div class="def-item"><strong>Print</strong> – preview, settings, copies</div>
+                <div class="def-item"><strong>Share, Export, Close</strong></div>
+                <div class="def-item"><strong>Account</strong> – user, license, connected services</div>
+                <div class="def-item"><strong>Options</strong> – Word settings (proofing, save, advanced)</div>
+            </div>
+        </section>
+
+        <!-- 6. CREATING DOCUMENTS -->
+        <section id="creating-documents">
+            <h2>🆕 6. Creating Documents</h2>
+            <h3>Blank document</h3>
+            <ul>
+                <li>Start screen → "Blank document"</li>
+                <li><kbd>Ctrl+N</kbd></li>
+                <li>File > New > Blank document</li>
+            </ul>
+            <h3>From template</h3>
+            <ul>
+                <li>File > New → choose featured or search (resume, flyer, report, etc.) → Create</li>
+            </ul>
+            <h3>From existing document (Open as Copy)</h3>
+            <ul>
+                <li>File > Open → select file → drop‑down next to Open button → "Open as Copy"</li>
+            </ul>
+            <h4>File types & extensions</h4>
+            <table>
+                <tr>
+                    <th>Extension</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>.docx</td>
+                    <td>Standard Word document (2007+)</td>
+                </tr>
+                <tr>
+                    <td>.doc</td>
+                    <td>Legacy 97-2003</td>
+                </tr>
+                <tr>
+                    <td>.dotx</td>
+                    <td>Word template</td>
+                </tr>
+                <tr>
+                    <td>.pdf</td>
+                    <td>Portable Document Format</td>
+                </tr>
+                <tr>
+                    <td>.rtf, .txt</td>
+                    <td>Rich text / plain text</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 7. SAVING DOCUMENTS -->
+        <section id="saving-documents">
+            <h2>💾 7. Saving Documents</h2>
+            <p><strong>Save</strong> (<kbd>Ctrl+S</kbd>) updates current file. <strong>Save As</strong> (<kbd>F12</kbd>)
+                creates new copy or changes format.</p>
+            <h3>Save locations</h3>
+            <ul>
+                <li>This PC (local)</li>
+                <li>OneDrive (cloud – autosave for Microsoft 365)</li>
+                <li>Network / external drives</li>
+            </ul>
+            <h3>File naming best practices</h3>
+            <ul>
+                <li>Descriptive: "2025_Q1_Report_Final.docx"</li>
+                <li>Avoid special characters \ / : * ? " <> |</li>
+            </ul>
+            <h3>AutoRecover & AutoSave</h3>
+            <p>File > Options > Save → set AutoRecover interval (default 10 min).<br>Recover unsaved: File > Info >
+                Manage Document > Recover Unsaved Documents.</p>
+            <h4>Save as PDF / other formats</h4>
+            <p>File > Save As → choose location → in "Save as type" select PDF, Word 97-2003, etc.</p>
+        </section>
+
+        <!-- 8. OPENING DOCUMENTS -->
+        <section id="opening-documents">
+            <h2>📂 8. Opening Documents</h2>
+            <ul>
+                <li><kbd>Ctrl+O</kbd> or File > Open</li>
+                <li>From Start screen: recent list</li>
+                <li>Double‑click file in File Explorer</li>
+            </ul>
+            <h4>Open options (drop‑down next to Open button)</h4>
+            <ul>
+                <li><strong>Open</strong> – normal</li>
+                <li><strong>Open Read‑Only</strong> – view only</li>
+                <li><strong>Open as Copy</strong> – creates a copy</li>
+                <li><strong>Open and Repair</strong> – for corrupted files</li>
+            </ul>
+            <h4>Opening PDF in Word</h4>
+            <p>File > Open > select PDF > Word converts to editable document (formatting may shift).</p>
+            <h4>Protected view</h4>
+            <p>Files from internet open in Protected View; click "Enable Editing" to edit.</p>
+            <h4>View multiple documents side‑by‑side</h4>
+            <p>View tab > View Side by Side (Synchronous scrolling).</p>
+        </section>
+
+        <!-- 9. PRACTICE EXERCISES (exact from source) -->
+        <section id="practice-exercises">
+            <h2>✍️ 9. Practice Exercises</h2>
+            <h3>Exercise 1: Exploring the Interface</h3>
+            <p>Open Word, blank document. Identify title bar, QAT, ribbon tabs, ruler, status bar, zoom.
+                Minimize/restore ribbon.</p>
+            <h3>Exercise 2: Customizing Quick Access Toolbar</h3>
+            <p>Add Quick Print, Spelling & Grammar, Format Painter; move QAT below ribbon; reset to default.</p>
+            <h3>Exercise 3: Exploring Backstage View</h3>
+            <p>Go through Info, New, Open, Save As, Print, Account. Note your Word version.</p>
+            <h3>Exercise 4: Creating Documents</h3>
+            <p>Create blank (Ctrl+N). Create from "Resume" template. Use "Open as Copy" on a simple test file.</p>
+            <h3>Exercise 5: Saving Documents</h3>
+            <p>Type something; save to Desktop as "My First Document.docx". Save as PDF, then as Word 97-2003 .doc.</p>
+            <h3>Exercise 6: Opening Documents</h3>
+            <p>Open from Recent, via File Explorer, and as Read‑Only. Open a PDF and convert.</p>
+            <h3>Exercise 7: Comprehensive</h3>
+            <p>Create from event flyer template, customize, save as .docx and PDF, reopen PDF in Word, save as
+                "Converted.docx". Open both side by side.</p>
+        </section>
+
+        <!-- 10. TROUBLESHOOTING COMMON ISSUES -->
+        <section id="troubleshooting">
+            <h2>🔧 10. Troubleshooting Common Issues</h2>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Word crashed, lost document</td>
+                    <td>Reopen – Document Recovery pane should appear; File > Info > Manage Document > Recover Unsaved
+                    </td>
+                </tr>
+                <tr>
+                    <td>"File in use"</td>
+                    <td>Open Read‑Only or wait</td>
+                </tr>
+                <tr>
+                    <td>File won't open / corrupted</td>
+                    <td>Use Open and Repair</td>
+                </tr>
+                <tr>
+                    <td>Can't save, "read‑only"</td>
+                    <td>Save As with different name/location</td>
+                </tr>
+                <tr>
+                    <td>Performance slow</td>
+                    <td>Close unused docs, disable add‑ins</td>
+                </tr>
+                <tr>
+                    <td>Recent document missing</td>
+                    <td>Navigate manually; it may have been moved</td>
+                </tr>
+                <tr>
+                    <td>PDF conversion poor</td>
+                    <td>Complex layouts may shift; adjust manually</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SUMMARY CHECKLIST / KEYBOARD SHORTCUTS -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Summary Checklist – can you?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Identify all interface parts<br>☐ Navigate ribbon tabs<br>☐ Customize QAT<br>☐
+                    Use Backstage</div>
+                <div class="def-item">☐ Create doc from template<br>☐ Save in various formats<br>☐ Use Save / Save As /
+                    AutoRecover<br>☐ Open & repair files</div>
+            </div>
+            <h4 style="margin-top:1.5rem;">⌨️ Keyboard Shortcuts (reference)</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Ctrl+N</kbd> new</span>
+                <span><kbd>Ctrl+O</kbd> open</span>
+                <span><kbd>Ctrl+S</kbd> save</span>
+                <span><kbd>F12</kbd> Save As</span>
+                <span><kbd>Ctrl+P</kbd> print</span>
+                <span><kbd>Ctrl+Z</kbd> undo</span>
+                <span><kbd>Ctrl+Y</kbd> redo</span>
+                <span><kbd>Ctrl+B</kbd> bold</span>
+                <span><kbd>F7</kbd> spelling</span>
+                <span><kbd>Alt+F</kbd> backstage</span>
+            </div>
+            <p style="margin-top: 1.5rem;"><em>These comprehensive notes cover everything a beginner needs. Practice
+                    regularly with the exercises.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Microsoft Word Beginner's Guide · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>
+```

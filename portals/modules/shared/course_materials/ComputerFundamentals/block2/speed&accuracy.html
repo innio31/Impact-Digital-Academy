@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Speed & Accuracy Development · typing proficiency (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fc;
+            color: #142a3c;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 35, 55, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #123952, #1f577a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #2b5980;
+            border-left: 5px solid #2677b3;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .toc-card {
+            background: #e7f0fc;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 45, 80, 0.1), 0 8px 12px -8px #9bb5d0;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0e314a;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4a6e;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 35, 70, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d6e6ff;
+            border-color: #2677b3;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2d6a9c;
+        }
+
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 35, 55, 0.05);
+            border: 1px solid #ecf2f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #123952;
+            border-bottom: 3px solid #2677b3;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1f557b;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1d5072;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f8ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2677b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 35, 65, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #123952;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #d6e2f0;
+            background-color: #fdfdfe;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2677b3;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f7fbff;
+            border: 1px solid #cbddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e3f0fd;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f4faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+
+        .formula {
+            background: #ebf3fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>⚡ Speed & Accuracy Development · typing proficiency</h1>
+        <div class="subhead">Block 2 curriculum — deliberate practice, timed writings, error correction & software tools
+        </div>
+
+        <!-- table of contents -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#foundation">1. Deliberate practice</a>
+                <a href="#timed-writings">2. Timed writings & progressive exercises</a>
+                <a href="#error-correction">3. Minimizing & correcting errors</a>
+                <a href="#software-tools">4. Typing software & progress tracking</a>
+                <a href="#pitfalls">5. Common pitfalls</a>
+                <a href="#standards">6. Professional standards & goals</a>
+                <a href="#summary">7. Key takeaways</a>
+                <a href="#resources">8. Recommended resources</a>
+            </div>
+        </div>
+
+        <!-- 1. FOUNDATION / DELIBERATE PRACTICE -->
+        <section id="foundation">
+            <h2>🎯 1. Understanding the Foundation: Deliberate Practice</h2>
+            <h3>1.1 What is Deliberate Practice in Typing?</h3>
+            <p>Psychologist Anders Ericsson coined <strong>deliberate practice</strong>: high‑effort, feedback‑driven
+                training targeting specific weaknesses.</p>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Targeting weaknesses</td>
+                    <td>Identify specific keys/transitions with frequent errors</td>
+                    <td>Mistyping “the” as “teh”</td>
+                </tr>
+                <tr>
+                    <td>Timely feedback</td>
+                    <td>Instant error highlighting</td>
+                    <td>Real‑time correction during practice</td>
+                </tr>
+                <tr>
+                    <td>Focused repetition</td>
+                    <td>Repeat challenging sequences intentionally</td>
+                    <td>Drilling “tion”, “ing”</td>
+                </tr>
+                <tr>
+                    <td>Steady improvement</td>
+                    <td>Gradually harder exercises</td>
+                    <td>Words → complex paragraphs</td>
+                </tr>
+            </table>
+            <div class="accent-box">
+                <p>📊 <strong>Key insight</strong>: Focusing on <strong>accuracy before speed</strong> yields 19% faster
+                    long‑term speed gains (studies).</p>
+            </div>
+        </section>
+
+        <!-- 2. TIMED WRITINGS & PROGRESSIVE EXERCISES -->
+        <section id="timed-writings">
+            <h2>⏱️ 2. Timed Writings and Progressive Speed-Building</h2>
+            <h3>2.1 The Role of Timed Writings</h3>
+            <ul>
+                <li><strong>Benchmarking</strong> – baseline WPM</li>
+                <li><strong>Progress tracking</strong> – measure improvement</li>
+                <li><strong>Pressure training</strong> – simulate deadlines</li>
+                <li><strong>Stamina building</strong> – endurance for long sessions</li>
+            </ul>
+            <h3>2.2 Progressive Speed-Building Framework</h3>
+            <table>
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Focus</th>
+                    <th>Goal</th>
+                </tr>
+                <tr>
+                    <td>Foundation (weeks1-2)</td>
+                    <td>10-15 min daily</td>
+                    <td>Accuracy ≥90%</td>
+                    <td>Correct positioning</td>
+                </tr>
+                <tr>
+                    <td>Building momentum (3-4)</td>
+                    <td>15-20 min</td>
+                    <td>≥95% accuracy</td>
+                    <td>25‑30 WPM</td>
+                </tr>
+                <tr>
+                    <td>Advanced (5-8)</td>
+                    <td>20-30 min</td>
+                    <td>98% accuracy target</td>
+                    <td>40‑50+ WPM</td>
+                </tr>
+            </table>
+            <h3>2.3 Effective Practice Techniques</h3>
+            <ul>
+                <li><strong>Accuracy first</strong> – Sean Wrona (256 WPM champion): <em>“Speed is a byproduct of
+                        precision.”</em></li>
+                <li><strong>Visualization</strong> – mentally run through sentences before typing.</li>
+                <li><strong>Focused environment</strong> – distractions can cut accuracy by 20%.</li>
+                <li><strong>Consistency over intensity</strong> – 15‑30 min daily doubles speed in 4‑6 weeks.</li>
+            </ul>
+        </section>
+
+        <!-- 3. ERROR CORRECTION TECHNIQUES -->
+        <section id="error-correction">
+            <h2>🛠️ 3. Minimizing and Correcting Errors</h2>
+            <h3>3.1 Understanding Error Patterns</h3>
+            <ul>
+                <li><strong>Transposition</strong> (teh → the)</li>
+                <li><strong>Substitution</strong> – adjacent key</li>
+                <li><strong>Omission</strong> – missing letters</li>
+                <li><strong>Insertion</strong> – extra letters</li>
+                <li><strong>Rhythm errors</strong> – inconsistent pacing</li>
+            </ul>
+            <h3>3.2 Prevention Techniques</h3>
+            <p><strong>Touch typing</strong> (home row ASDF JKL;), <strong>ergonomic setup</strong>, <strong>rhythmic
+                    typing</strong>.</p>
+            <h3>3.3 Error Correction Strategies</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Immediate correction</strong><br>Stop, backspace, retype word correctly.
+                </div>
+                <div class="def-item"><strong>Word‑level drill</strong><br>“problem words” list + isolation practice.
+                </div>
+                <div class="def-item"><strong>TapFix‑style (touch)</strong><br>gesture correction on zoomed target.
+                </div>
+            </div>
+            <h3>3.4 The 80/20 Rule for Error Reduction</h3>
+            <p>Identify the 20% of keys causing 80% of errors; drill those specifically.</p>
+        </section>
+
+        <!-- 4. TYPING SOFTWARE & TRACKING -->
+        <section id="software-tools">
+            <h2>📱 4. Using Typing Software and Progress Tracking</h2>
+            <h3>4.1 Why Use Typing Software?</h3>
+            <p>Real‑time feedback, structured lessons, detailed analytics, gamification.</p>
+            <h3>4.2 Categories of Typing Tools</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Examples</th>
+                    <th>Best for</th>
+                </tr>
+                <tr>
+                    <td>Comprehensive tutors</td>
+                    <td>Typesy, KeyBlaze, TypingMaster, UltraKey</td>
+                    <td>All levels, structured</td>
+                </tr>
+                <tr>
+                    <td>Browser‑based</td>
+                    <td>Typing.com, Key Hero, TypeLift</td>
+                    <td>Quick practice, tracking</td>
+                </tr>
+                <tr>
+                    <td>Specialized</td>
+                    <td>TypeTrain, termtypr, TypeFast (mobile)</td>
+                    <td>Terminal, offline, audio</td>
+                </tr>
+                <tr>
+                    <td>Extensions</td>
+                    <td>Type Anywhere (Firefox)</td>
+                    <td>Practice on any site</td>
+                </tr>
+            </table>
+            <h3>4.3 Key Metrics to Track</h3>
+            <ul>
+                <li><span class="formula">WPM = (total chars / 5) / minutes</span></li>
+                <li><span class="formula">Accuracy % = (correct keystrokes / total) × 100</span></li>
+                <li>Error heat maps, progress over time</li>
+            </ul>
+            <h3>4.4 Setting Up an Effective Tracking System</h3>
+            <ol>
+                <li>Establish baseline (3‑min test).</li>
+                <li>Daily log: date, duration, WPM, accuracy, problem areas.</li>
+                <li>Weekly review – trends & error patterns.</li>
+                <li>Set SMART goals (e.g., 35→45 WPM in 8 weeks).</li>
+            </ol>
+            <h3>4.5 Recommended Practice Routine with Software</h3>
+            <table>
+                <tr>
+                    <th>Minutes</th>
+                    <th>Activity</th>
+                    <th>Tool example</th>
+                </tr>
+                <tr>
+                    <td>1-5</td>
+                    <td>Warm‑up simple drills</td>
+                    <td>Typing.com beginner</td>
+                </tr>
+                <tr>
+                    <td>6-15</td>
+                    <td>Focused weak‑area practice</td>
+                    <td>TypeFast custom lists</td>
+                </tr>
+                <tr>
+                    <td>16-20</td>
+                    <td>3‑min timed writing</td>
+                    <td>Key Hero / LiveChat</td>
+                </tr>
+                <tr>
+                    <td>21-25</td>
+                    <td>Review analytics, note patterns</td>
+                    <td>Typing.com heatmap</td>
+                </tr>
+                <tr>
+                    <td>26-30</td>
+                    <td>Cool‑down typing game</td>
+                    <td>Typesy games / TypeRacer</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 5. COMMON PITFALLS -->
+        <section id="pitfalls">
+            <h2>⚠️ 5. Common Pitfalls and How to Avoid Them</h2>
+            <table>
+                <tr>
+                    <th>Pitfall</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Looking at keyboard</td>
+                    <td>Cover hands / blank keyboard cover</td>
+                </tr>
+                <tr>
+                    <td>Sacrificing accuracy for speed</td>
+                    <td>“accuracy floor” 95% minimum</td>
+                </tr>
+                <tr>
+                    <td>Inconsistent practice</td>
+                    <td>15 min daily > 2h once a week</td>
+                </tr>
+                <tr>
+                    <td>Ignoring ergonomics</td>
+                    <td>Proper setup, 5‑min break every 30 min</td>
+                </tr>
+                <tr>
+                    <td>Only one type of practice</td>
+                    <td>Vary tools, texts, difficulty</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 6. PROFESSIONAL STANDARDS AND GOALS -->
+        <section id="standards">
+            <h2>📊 6. Professional Standards and Goals</h2>
+            <h3>6.1 Typing Speed Benchmarks</h3>
+            <table>
+                <tr>
+                    <th>Level</th>
+                    <th>WPM range</th>
+                    <th>Typical users</th>
+                </tr>
+                <tr>
+                    <td>Beginner</td>
+                    <td>20-30</td>
+                    <td>New learners</td>
+                </tr>
+                <tr>
+                    <td>Average office</td>
+                    <td>40-50</td>
+                    <td>Administrative</td>
+                </tr>
+                <tr>
+                    <td>Professional</td>
+                    <td>50-70</td>
+                    <td>Secretaries, data entry</td>
+                </tr>
+                <tr>
+                    <td>Expert</td>
+                    <td>70-90</td>
+                    <td>Transcriptionists, programmers</td>
+                </tr>
+                <tr>
+                    <td>Competitive</td>
+                    <td>90+</td>
+                    <td>Professional typists</td>
+                </tr>
+            </table>
+            <h3>6.2 Accuracy Standards</h3>
+            <ul>
+                <li>Personal email: 95%</li>
+                <li>Business correspondence: 98%</li>
+                <li>Legal/medical transcription: 99.5%+</li>
+                <li>Data entry: 99.9%+</li>
+            </ul>
+            <h3>6.3 Course Target Goals (Block 2)</h3>
+            <div class="mini-card">
+                <p>✅ <strong>Minimum:</strong> 35 WPM at 95% accuracy<br>
+                    ✅ <strong>Target:</strong> 40 WPM at 97% accuracy<br>
+                    ✅ <strong>Stretch:</strong> 45+ WPM at 98% accuracy</p>
+            </div>
+        </section>
+
+        <!-- 7. SUMMARY: KEY TAKEAWAYS -->
+        <section id="summary">
+            <h2>📌 7. Summary: Key Takeaways</h2>
+            <div class="def-grid">
+                <div class="def-item">🎯 Deliberate practice – targeted, feedback‑driven</div>
+                <div class="def-item">⏱️ Timed writings – benchmark & stamina</div>
+                <div class="def-item">🎯 Accuracy must precede speed</div>
+                <div class="def-item">🛠️ Immediate error correction</div>
+                <div class="def-item">📱 Software tools – track & motivate</div>
+                <div class="def-item">📅 Consistency > intensity</div>
+                <div class="def-item">📊 Track everything – data‑driven improvement</div>
+            </div>
+        </section>
+
+        <!-- 8. RECOMMENDED RESOURCES -->
+        <section id="resources">
+            <h2>🔗 8. Recommended Resources</h2>
+            <h3>Free Online Tools</h3>
+            <ul>
+                <li><strong>LiveChat Typing Test</strong> – quick, distraction‑free</li>
+                <li><strong>Typing.com</strong> – structured lessons</li>
+                <li><strong>Key Hero</strong> – detailed statistics</li>
+                <li><strong>TypeRacer</strong> – gamified competition</li>
+            </ul>
+            <h3>Browser Extensions</h3>
+            <p><strong>Type Anywhere</strong> (Firefox) – practice on any webpage</p>
+            <h3>Mobile Apps</h3>
+            <p><strong>TypeFast</strong> – full‑featured mobile trainer</p>
+            <h3>Desktop Software</h3>
+            <p><strong>Typesy</strong>, <strong>termtypr</strong> (CLI), <strong>KeyBlaze</strong></p>
+        </section>
+
+        <!-- quick reference formula card -->
+        <div class="mini-card">
+            <h4 style="margin-top:0">📐 WPM & accuracy formulas</h4>
+            <p><strong>WPM</strong> = (total characters typed ÷ 5) / time (minutes)<br>
+                <strong>Accuracy %</strong> = (correct keystrokes ÷ total keystrokes) × 100
+            </p>
+        </div>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies · Block 2 – Speed & accuracy · © 2026
+        </footer>
+
+    </div>
+</body>
+
+</html>

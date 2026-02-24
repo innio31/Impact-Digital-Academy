@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Internet Fundamentals · interactive study notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4fa;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 30, 60, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0a2f44, #1b5a7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #256b97;
+            border-left: 5px solid #1e7fb0;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents */
+        .toc-card {
+            background: #e3f0fd;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 70, 130, 0.1), 0 8px 12px -8px #8fb4d4;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b3550;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1e4970;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 30, 60, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e5ff;
+            border-color: #1e7fb0;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #1f6c9e;
+        }
+
+        /* section */
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 30, 50, 0.05);
+            border: 1px solid #e9f0f7;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #103350;
+            border-bottom: 3px solid #1e7fb0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1a4e72;
+            padding-left: 0.3rem;
+            border-left: 6px solid #70b0e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1f5275;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 40, 70, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #103350;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #d3e2f2;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1e7fb0;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .highlight-block {
+            background: #eff7ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #1e7fb0;
+        }
+
+        .accent-box {
+            background: #e2f0fa;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f4faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #4794cf;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c1d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .example-url {
+            background: #eef3f9;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            margin: 1.2rem 0;
+        }
+
+        .url-part {
+            background: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            border: 1px solid #abc0d4;
+            white-space: nowrap;
+        }
+
+        .operator-example {
+            background: #1e2b3a;
+            color: #e4f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #3b688b;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+
+        /* emoji spacing */
+        .emoji-icon {
+            font-size: 1.3rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🌐 Internet Fundamentals · comprehensive notes</h1>
+        <div class="subhead">Master URLs, search like a pro, and email with confidence</div>
+
+        <!-- table of contents (identical structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#part1">1. Understanding URLs</a>
+                <a href="#part2">2. Effective web searching</a>
+                <a href="#part3">3. Email etiquette & management</a>
+            </div>
+        </div>
+
+        <!-- PART 1 – URLS -->
+        <section id="part1">
+            <h2>🔗 1. Understanding URLs (Uniform Resource Locators)</h2>
+            <p>A URL (web address) is the unique identifier for a resource on the internet. Think of it as a digital
+                street address. Understanding its structure helps you navigate safely and identify legitimate websites.
+            </p>
+
+            <h3>1.1 The anatomy of a URL</h3>
+            <div class="example-url">
+                <code>https://www.example-inc.co.uk:443/blog/article?page=3&sort=recent#comments</code>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Example</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Scheme (protocol)</strong></td>
+                    <td>https://</td>
+                    <td>Protocol to access resource: http, https, ftp, mailto. <span class="badge">https = secure</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Subdomain</strong></td>
+                    <td>www</td>
+                    <td>Subdivision of main domain (blog, mail, shop).</td>
+                </tr>
+                <tr>
+                    <td><strong>Domain name</strong></td>
+                    <td>example-inc</td>
+                    <td>Unique human-readable name of the website.</td>
+                </tr>
+                <tr>
+                    <td><strong>Top-level domain (TLD)</strong></td>
+                    <td>.co.uk</td>
+                    <td>Suffix: .com, .org, .gov, .edu or country-code (.uk, .ca).</td>
+                </tr>
+                <tr>
+                    <td><strong>Port</strong></td>
+                    <td>:443</td>
+                    <td>Technical gate (default 80 for http, 443 for https). Rarely visible.</td>
+                </tr>
+                <tr>
+                    <td><strong>Path</strong></td>
+                    <td>/blog/article</td>
+                    <td>Specific file/directory location on server.</td>
+                </tr>
+                <tr>
+                    <td><strong>Query string (parameters)</strong></td>
+                    <td>?page=3&sort=recent</td>
+                    <td>Key=value pairs after ?, separated by &.</td>
+                </tr>
+                <tr>
+                    <td><strong>Fragment (anchor)</strong></td>
+                    <td>#comments</td>
+                    <td>Jumps to a specific section inside the page.</td>
+                </tr>
+            </table>
+
+            <h3>1.2 Why understanding URLs matters</h3>
+            <ul>
+                <li><strong>Security:</strong> Spot phishing: <span
+                        class="operator-example">http://www.amazon.security-update.com</span> → domain =
+                    security-update.com (not amazon.com).</li>
+                <li><strong>Navigation:</strong> Guess company website <code>www.[company].com</code>, support subdomain
+                    <code>support.[company].com</code>.</li>
+                <li><strong>Information:</strong> Modify path or query to browse efficiently.</li>
+            </ul>
+            <div class="highlight-block">
+                ⚡ <strong>Quick check:</strong> Always look for <strong>https://</strong> and the correct domain name
+                before entering passwords.
+            </div>
+        </section>
+
+        <!-- PART 2 – SEARCHING -->
+        <section id="part2">
+            <h2>🔎 2. Effective web searching</h2>
+
+            <h3>2.1 Fundamentals: keywords are key</h3>
+            <ul>
+                <li><strong>Be specific:</strong> “best electric cars for families 2024” instead of “car”.</li>
+                <li><strong>Unique terms:</strong> use industry jargon if relevant.</li>
+                <li><strong>Start simple, then refine.</strong></li>
+            </ul>
+
+            <h3>2.2 Advanced search operators (Google tricks)</h3>
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Purpose</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><code>" "</code> (quotes)</td>
+                    <td>exact phrase</td>
+                    <td><code>"world health organization report"</code></td>
+                </tr>
+                <tr>
+                    <td><code>-</code> (minus)</td>
+                    <td>exclude word</td>
+                    <td><code>jaguar -car</code></td>
+                </tr>
+                <tr>
+                    <td><code>site:</code></td>
+                    <td>search within site/domain</td>
+                    <td><code>site:nytimes.com climate</code> &nbsp; <code>site:.gov vaccine</code></td>
+                </tr>
+                <tr>
+                    <td><code>filetype:</code></td>
+                    <td>find specific file types (pdf, pptx)</td>
+                    <td><code>digital marketing filetype:pdf</code></td>
+                </tr>
+                <tr>
+                    <td><code>related:</code></td>
+                    <td>similar websites</td>
+                    <td><code>related:w3schools.com</code></td>
+                </tr>
+                <tr>
+                    <td><code>intitle:</code></td>
+                    <td>word in page title</td>
+                    <td><code>intitle:budget proposal</code></td>
+                </tr>
+                <tr>
+                    <td><code>inurl:</code></td>
+                    <td>word in URL</td>
+                    <td><code>inurl:contact-us</code></td>
+                </tr>
+                <tr>
+                    <td><code>*</code> (wildcard)</td>
+                    <td>unknown word</td>
+                    <td><code>a * saved is a * earned</code></td>
+                </tr>
+                <tr>
+                    <td><code>OR</code> or <code>|</code></td>
+                    <td>either term</td>
+                    <td><code>deep learning OR machine learning</code></td>
+                </tr>
+                <tr>
+                    <td><code>..</code> (number range)</td>
+                    <td>range of numbers</td>
+                    <td><code>smartphones $500..$800</code></td>
+                </tr>
+            </table>
+
+            <h3>2.3 Evaluating search results — CRAP test</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Currency:</strong> up‑to‑date? publication date?</div>
+                <div class="def-item"><strong>Reliability:</strong> reputable source? cites sources?</div>
+                <div class="def-item"><strong>Authority:</strong> who is author? (.gov .edu more reliable)</div>
+                <div class="def-item"><strong>Purpose/Point of view:</strong> bias? inform or sell?</div>
+            </div>
+            <p>Check “About Us” and domain extensions.</p>
+        </section>
+
+        <!-- PART 3 – EMAIL -->
+        <section id="part3">
+            <h2>📧 3. Email etiquette & management</h2>
+
+            <h3>3.1 Professional email etiquette</h3>
+            <h4>✏️ Before you write: subject line</h4>
+            <ul>
+                <li>❌ Bad: “Hi” , “Meeting”</li>
+                <li>✅ Good: “Project Alpha: Meeting request for March 5th”</li>
+                <li>✅ Good: “Invoice #12345 attached for processing”</li>
+            </ul>
+
+            <h4>📝 Body of the email</h4>
+            <ol>
+                <li><strong>Salutation:</strong> “Dear Mr. Smith,” / “Hello John,” – avoid “Hey”</li>
+                <li><strong>Introduction (if first contact):</strong> “My name is … from …”</li>
+                <li><strong>Be concise:</strong> short paragraphs, bullet points, state purpose first.</li>
+                <li><strong>Tone:</strong> polite, respectful, avoid sarcasm. Read aloud.</li>
+                <li><strong>Call to action:</strong> “Please review by Friday.” “Could we schedule a call?”</li>
+                <li><strong>Closing:</strong> “Sincerely,” / “Best regards,” / “Thank you,”</li>
+                <li><strong>Signature block:</strong> full name, role, school/organisation, optional phone/LinkedIn.
+                </li>
+            </ol>
+
+            <h3>3.2 Key email features and their use</h3>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>When to use</th>
+                </tr>
+                <tr>
+                    <td><strong>To</strong></td>
+                    <td>primary recipients (need to act or directly addressed)</td>
+                </tr>
+                <tr>
+                    <td><strong>Cc</strong> (carbon copy)</td>
+                    <td>people who need to know, no action required – keep informed</td>
+                </tr>
+                <tr>
+                    <td><strong>Bcc</strong> (blind carbon copy)</td>
+                    <td>privacy: large lists (newsletter) / discreetly include someone. Use carefully.</td>
+                </tr>
+                <tr>
+                    <td><strong>Reply</strong></td>
+                    <td>respond only to sender</td>
+                </tr>
+                <tr>
+                    <td><strong>Reply All</strong></td>
+                    <td>only if message is relevant to everyone on original To/Cc</td>
+                </tr>
+                <tr>
+                    <td><strong>Forward</strong></td>
+                    <td>send received email to new person + add brief intro note</td>
+                </tr>
+            </table>
+
+            <h4>📎 Attachments</h4>
+            <ul>
+                <li>Mention attachment in body (“Please find attached …”).</li>
+                <li>Keep file size under 10–25 MB; use cloud link for larger.</li>
+                <li>Use clear file names: <code>Project_Report_2024.pdf</code> not <code>document1.pdf</code>.</li>
+            </ul>
+
+            <h3>3.3 Email management for productivity</h3>
+            <div class="accent-box">
+                <strong>Inbox Zero approach (process, don't store):</strong>
+                <ul style="margin-top:0.5rem">
+                    <li>🗑️ <strong>Delete</strong> spam / trash</li>
+                    <li>⚡ <strong>Do/Reply</strong> if &lt;2 min</li>
+                    <li>↪️ <strong>Delegate</strong> – forward and move to “Waiting”</li>
+                    <li>📌 <strong>Defer</strong> – move to “To Do” folder or flag</li>
+                    <li>📁 <strong>File/Archive</strong> – keep for reference, no action</li>
+                </ul>
+            </div>
+            <ul>
+                <li><strong>Folders/labels:</strong> by project / client / topic.</li>
+                <li><strong>Filters/rules:</strong> auto‑sort newsletters, star from boss.</li>
+                <li><strong>Unsubscribe</strong> ruthlessly from lists you don't read.</li>
+                <li><strong>Schedule email time</strong> (e.g., 10am, 2pm, 4pm) – turn off notifications.</li>
+                <li><strong>Stars / flags:</strong> mark important follow‑ups.</li>
+            </ul>
+
+            <!-- extra comparison tables as in original "summary" flavour, but still inside part3? We'll add summary-like tables to stay complete -->
+            <h3>📊 Quick reference: email do’s and don’ts</h3>
+            <table>
+                <tr>
+                    <th>Do</th>
+                    <th>Don't</th>
+                </tr>
+                <tr>
+                    <td>Use descriptive subject line</td>
+                    <td>Leave subject blank or vague</td>
+                </tr>
+                <tr>
+                    <td>Greet and close politely</td>
+                    <td>Use “Hey” or no greeting</td>
+                </tr>
+                <tr>
+                    <td>Be concise, bullet points</td>
+                    <td>Write huge unbroken paragraphs</td>
+                </tr>
+                <tr>
+                    <td>Check tone & read aloud</td>
+                    <td>Use sarcasm / all caps</td>
+                </tr>
+                <tr>
+                    <td>Use Bcc for mass mailings</td>
+                    <td>Bcc to hide from primary on purpose (can seem deceptive)</td>
+                </tr>
+                <tr>
+                    <td>Reply All only when necessary</td>
+                    <td>Reply All “thanks” to 50 people</td>
+                </tr>
+            </table>
+
+            <h3>3.4 Common email acronyms</h3>
+            <div class="def-grid">
+                <span>FYI – For your information</span> <span>ASAP – As soon as possible</span>
+                <span>EOD – End of day</span> <span>IMO – In my opinion</span>
+                <span>OOO – Out of office</span> <span>Re: – regarding</span>
+            </div>
+        </section>
+
+        <!-- optional overall summary / extra tables (mimicking hardware style) -->
+        <section id="summary" style="margin-top:1rem;">
+            <h2>📋 4. Summary & comparison tables</h2>
+
+            <h3>4.1 URL component cheat sheet</h3>
+            <table>
+                <tr>
+                    <th>Part</th>
+                    <th>Example</th>
+                    <th>Remember</th>
+                </tr>
+                <tr>
+                    <td>Scheme</td>
+                    <td>https://</td>
+                    <td>secure = 's' (https)</td>
+                </tr>
+                <tr>
+                    <td>Subdomain</td>
+                    <td>www / blog</td>
+                    <td>often optional</td>
+                </tr>
+                <tr>
+                    <td>Domain</td>
+                    <td>google</td>
+                    <td>unique name</td>
+                </tr>
+                <tr>
+                    <td>TLD</td>
+                    <td>.com / .org / .co.uk</td>
+                    <td>type / country</td>
+                </tr>
+                <tr>
+                    <td>Query</td>
+                    <td>?q=search</td>
+                    <td>starts with ? , & for more</td>
+                </tr>
+                <tr>
+                    <td>Fragment</td>
+                    <td>#section2</td>
+                    <td>jump inside page</td>
+                </tr>
+            </table>
+
+            <h3>4.2 Search operator quick pick</h3>
+            <div class="highlight-block" style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+                <span class="operator-example">"exact phrase"</span>
+                <span class="operator-example">-exclude</span>
+                <span class="operator-example">site:.edu</span>
+                <span class="operator-example">filetype:pdf</span>
+                <span class="operator-example">intitle:keyword</span>
+                <span class="operator-example">inurl:contact</span>
+                <span class="operator-example">related:domain</span>
+                <span class="operator-example">$10..$50</span>
+                <span class="operator-example">OR |</span>
+            </div>
+
+            <h3>4.3 CRAP test at a glance</h3>
+            <div class="def-grid">
+                <div><strong>C</strong> currency</div>
+                <div><strong>R</strong> reliability</div>
+                <div><strong>A</strong> authority</div>
+                <div><strong>P</strong> purpose</div>
+            </div>
+
+            <h3>4.4 Email field summary</h3>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Typical use</th>
+                </tr>
+                <tr>
+                    <td>To</td>
+                    <td>action / direct</td>
+                </tr>
+                <tr>
+                    <td>Cc</td>
+                    <td>for information</td>
+                </tr>
+                <tr>
+                    <td>Bcc</td>
+                    <td>privacy / hidden copy</td>
+                </tr>
+                <tr>
+                    <td>Subject</td>
+                    <td>clear summary</td>
+                </tr>
+                <tr>
+                    <td>Attachments</td>
+                    <td>mentioned + named clearly</td>
+                </tr>
+            </table>
+
+            <hr>
+
+        </section>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies · © 2026 All rights reserved.
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

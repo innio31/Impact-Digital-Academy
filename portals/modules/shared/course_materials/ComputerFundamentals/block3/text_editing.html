@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>MS Word: text editing & formatting · complete interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f7;
+            color: #1a3244;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1d3f5b;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #0e3f61, #1f6aa2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f6390;
+            border-left: 6px solid #2b80c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #e2efff;
+            border-radius: 2.2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 8px rgba(0, 40, 70, 0.08), 0 18px 26px -14px #597e9f;
+        }
+
+        .toc-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #0b3b58;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.4rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #154d75;
+            font-weight: 520;
+            box-shadow: 0 4px 10px rgba(2, 55, 90, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cde4ff;
+            border-color: #2f7dbe;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -12px #1f5582;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.4rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 12px 25px rgba(16, 55, 90, 0.06);
+            border: 1px solid #e0effd;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0e4162;
+            border-bottom: 3px solid #2e80c5;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 640;
+            margin: 2rem 0 1rem;
+            color: #1d5a89;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 620;
+            margin: 1.5rem 0 0.5rem;
+            color: #1e5b87;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154f78;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d4e4f5;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1d6697;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f4faff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .kbd-shortcut {
+            background: #263e55;
+            color: #ecf5fc;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .drill {
+            background: #f1f7fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.6rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2370b3;
+            margin: 1.5rem 0;
+        }
+
+        .sample-box {
+            background: #f0f7ff;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c3dcf5;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c2d9f2, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2f5c83;
+            border-top: 1px dashed #bad0ec;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📝 Text Editing & Formatting in Microsoft Word</h1>
+        <div class="subhead">complete study notes · selection · cut/copy · character & paragraph · exercises</div>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction-to-text-editing">1. Introduction</a>
+                <a href="#text-selection-techniques">2. Text Selection</a>
+                <a href="#cut-copy-and-paste-operations">3. Cut, Copy, Paste</a>
+                <a href="#character-formatting">4. Character Formatting</a>
+                <a href="#paragraph-formatting">5. Paragraph Formatting</a>
+                <a href="#practical-applications-and-best-practices">6. Best Practices</a>
+                <a href="#keyboard-shortcuts-reference">7. Keyboard Shortcuts</a>
+                <a href="#exercises-and-practice-tasks">8. Exercises</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction-to-text-editing">
+            <h2>📌 1. Introduction to Text Editing & Formatting</h2>
+            <p><strong>Text editing</strong> modifies content (add, delete, move, correct). <strong>Formatting</strong>
+                changes appearance to improve readability, hierarchy, and consistency.</p>
+            <ul>
+                <li>Editing: altering words, sentences, structure.</li>
+                <li>Formatting: font, alignment, spacing, lists, etc.</li>
+            </ul>
+        </section>
+
+        <!-- 2. TEXT SELECTION TECHNIQUES -->
+        <section id="text-selection-techniques">
+            <h2>✂️ 2. Text Selection Techniques</h2>
+            <h3>Mouse selection</h3>
+            <table>
+                <tr>
+                    <th>Selection</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>Word</td>
+                    <td>Double‑click word</td>
+                </tr>
+                <tr>
+                    <td>Line</td>
+                    <td>Click in left margin (arrow cursor)</td>
+                </tr>
+                <tr>
+                    <td>Sentence</td>
+                    <td>Ctrl + click anywhere</td>
+                </tr>
+                <tr>
+                    <td>Paragraph</td>
+                    <td>Triple‑click or double‑click in left margin</td>
+                </tr>
+                <tr>
+                    <td>Multiple non‑adjacent</td>
+                    <td>Select first, hold Ctrl, select more</td>
+                </tr>
+                <tr>
+                    <td>Whole document</td>
+                    <td>Ctrl+A or triple‑click margin</td>
+                </tr>
+            </table>
+            <h3>Keyboard selection</h3>
+            <table>
+                <tr>
+                    <th>Shortcut</th>
+                    <th>Extends to</th>
+                </tr>
+                <tr>
+                    <td>Shift + → / ←</td>
+                    <td>next/previous character</td>
+                </tr>
+                <tr>
+                    <td>Ctrl + Shift + → / ←</td>
+                    <td>word right/left</td>
+                </tr>
+                <tr>
+                    <td>Shift + End / Home</td>
+                    <td>end/start of line</td>
+                </tr>
+                <tr>
+                    <td>Ctrl + Shift + End / Home</td>
+                    <td>end/start of document</td>
+                </tr>
+            </table>
+            <h4>Advanced: F8 extend mode</h4>
+            <p>Press F8 (1x = extend, 2x = word, 3x = sentence, 4x = paragraph, 5x = document). Esc to exit.</p>
+            <p><strong>Vertical (column) selection:</strong> hold Alt while dragging.</p>
+        </section>
+
+        <!-- 3. CUT, COPY, PASTE -->
+        <section id="cut-copy-and-paste-operations">
+            <h2>📋 3. Cut, Copy, and Paste Operations</h2>
+            <p><strong>Clipboard</strong> temporary storage (Office Clipboard holds up to 24 items).</p>
+            <ul>
+                <li><strong>Cut</strong> (Ctrl+X) – remove to clipboard</li>
+                <li><strong>Copy</strong> (Ctrl+C) – duplicate to clipboard</li>
+                <li><strong>Paste</strong> (Ctrl+V) – insert at cursor</li>
+            </ul>
+            <h3>Paste Options (smart tag)</h3>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Icon</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Keep Source Formatting</td>
+                    <td>(A)</td>
+                    <td>retain original appearance</td>
+                </tr>
+                <tr>
+                    <td>Merge Formatting</td>
+                    <td>brush</td>
+                    <td>adapt to destination</td>
+                </tr>
+                <tr>
+                    <td>Keep Text Only</td>
+                    <td>clipboard with 'A'</td>
+                    <td>plain text, no formatting</td>
+                </tr>
+                <tr>
+                    <td>Picture</td>
+                    <td>mountain</td>
+                    <td>paste as image</td>
+                </tr>
+            </table>
+            <p><strong>Paste Special</strong> (Alt+Ctrl+V) – embed, RTF, unformatted, etc.</p>
+        </section>
+
+        <!-- 4. CHARACTER FORMATTING -->
+        <section id="character-formatting">
+            <h2>🔤 4. Character Formatting</h2>
+            <p>Affects individual characters: font, size, style, color, effects.</p>
+            <h3>Font typefaces</h3>
+            <ul>
+                <li><strong>Serif</strong> (Times New Roman, Georgia) – printed body</li>
+                <li><strong>Sans serif</strong> (Arial, Calibri) – screens, headings</li>
+                <li><strong>Script</strong> – decorative, invitations</li>
+                <li><strong>Display</strong> – posters, impact</li>
+            </ul>
+            <h3>Font size (points)</h3>
+            <p>8-10pt footnotes, 11-12pt body, 14-16pt subheadings, 18-24pt headings, 36pt+ titles.</p>
+            <h3>Font styles & effects</h3>
+            <table>
+                <tr>
+                    <th>Style</th>
+                    <th>Shortcut</th>
+                    <th>Example / use</th>
+                </tr>
+                <tr>
+                    <td>Bold</td>
+                    <td>Ctrl+B</td>
+                    <td>strong emphasis</td>
+                </tr>
+                <tr>
+                    <td>Italic</td>
+                    <td>Ctrl+I</td>
+                    <td>titles, foreign words</td>
+                </tr>
+                <tr>
+                    <td>Underline</td>
+                    <td>Ctrl+U</td>
+                    <td>hyperlinks, sparingly</td>
+                </tr>
+                <tr>
+                    <td>Strikethrough</td>
+                    <td>–</td>
+                    <td>deletions, outdated</td>
+                </tr>
+                <tr>
+                    <td>Subscript</td>
+                    <td>Ctrl+=</td>
+                    <td>H₂O</td>
+                </tr>
+                <tr>
+                    <td>Superscript</td>
+                    <td>Ctrl+Shift++</td>
+                    <td>E=mc², 1ˢᵗ</td>
+                </tr>
+                <tr>
+                    <td>Small caps</td>
+                    <td>Ctrl+Shift+K</td>
+                    <td>acronyms, headings</td>
+                </tr>
+                <tr>
+                    <td>All caps</td>
+                    <td>Ctrl+Shift+A</td>
+                    <td>warnings (sparingly)</td>
+                </tr>
+            </table>
+            <h4>Font color & effects (shadow, outline, glow, reflection)</h4>
+            <p>Home → Font group → Text Effects (glowing A). Use color sparingly, high contrast.</p>
+            <p><strong>Clear formatting:</strong> Ctrl+Spacebar or Home → Clear Formatting (eraser).</p>
+        </section>
+
+        <!-- 5. PARAGRAPH FORMATTING -->
+        <section id="paragraph-formatting">
+            <h2>📐 5. Paragraph Formatting</h2>
+            <p>Affects whole paragraphs: alignment, indents, spacing, bullets, borders.</p>
+            <h3>Alignment</h3>
+            <table>
+                <tr>
+                    <th>Alignment</th>
+                    <th>Shortcut</th>
+                    <th>Use</th>
+                </tr>
+                <tr>
+                    <td>Left</td>
+                    <td>Ctrl+L</td>
+                    <td>body text</td>
+                </tr>
+                <tr>
+                    <td>Center</td>
+                    <td>Ctrl+E</td>
+                    <td>titles, headings</td>
+                </tr>
+                <tr>
+                    <td>Right</td>
+                    <td>Ctrl+R</td>
+                    <td>dates, signatures</td>
+                </tr>
+                <tr>
+                    <td>Justify</td>
+                    <td>Ctrl+J</td>
+                    <td>books, newspapers</td>
+                </tr>
+            </table>
+            <h3>Indents (ruler or paragraph dialog)</h3>
+            <ul>
+                <li><strong>First line</strong> – standard paragraph indent</li>
+                <li><strong>Hanging</strong> – bibliographies</li>
+                <li><strong>Left/Right indent</strong> – block quotes</li>
+            </ul>
+            <p><em>Shortcuts:</em> Ctrl+M (increase), Ctrl+Shift+M (decrease), Ctrl+T (hanging), Ctrl+Shift+T (remove
+                hanging).</p>
+            <h3>Line spacing</h3>
+            <table>
+                <tr>
+                    <th>Spacing</th>
+                    <th>Shortcut</th>
+                    <th>When</th>
+                </tr>
+                <tr>
+                    <td>Single (1.0)</td>
+                    <td>Ctrl+1</td>
+                    <td>drafts, compact</td>
+                </tr>
+                <tr>
+                    <td>1.5 lines</td>
+                    <td>Ctrl+5</td>
+                    <td>business, readability</td>
+                </tr>
+                <tr>
+                    <td>Double (2.0)</td>
+                    <td>Ctrl+2</td>
+                    <td>academic, editing</td>
+                </tr>
+            </table>
+            <p>Paragraph spacing (before/after) – use instead of blank lines. Set in Paragraph dialog.</p>
+            <h3>Bullets & numbering</h3>
+            <p>Bullets (order not important) – Ctrl+Shift+L. Numbering (sequence) – automatic when typing "1." etc.</p>
+            <p><strong>Multilevel lists:</strong> Tab to demote, Shift+Tab to promote. Customize via Define New
+                Multilevel List.</p>
+            <h3>Borders and shading</h3>
+            <p>Home → Paragraph → Borders dropdown. Add lines or background color.</p>
+        </section>
+
+        <!-- 6. PRACTICAL APPLICATIONS & BEST PRACTICES -->
+        <section id="practical-applications-and-best-practices">
+            <h2>✅ 6. Practical Applications & Best Practices</h2>
+            <ul>
+                <li><strong>Consistency:</strong> use Styles, not manual formatting.</li>
+                <li><strong>Readability:</strong> line length 50‑75 characters, 10‑12pt body, 1.15‑1.5 spacing.</li>
+                <li><strong>Typography:</strong> max 2‑3 fonts, hierarchy via size/weight, avoid ALL CAPS.</li>
+                <li><strong>Lists:</strong> parallel structure, consistent punctuation.</li>
+            </ul>
+            <h4>Troubleshooting</h4>
+            <table>
+                <tr>
+                    <th>Issue</th>
+                    <th>Likely cause / fix</th>
+                </tr>
+                <tr>
+                    <td>Extra space between paragraphs</td>
+                    <td>Use paragraph spacing instead of double Enter.</td>
+                </tr>
+                <tr>
+                    <td>Paste brings unwanted format</td>
+                    <td>Use "Keep Text Only".</td>
+                </tr>
+                <tr>
+                    <td>Bullets misaligned</td>
+                    <td>Adjust indent in ruler or paragraph dialog.</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 7. KEYBOARD SHORTCUTS REFERENCE (condensed) -->
+        <section id="keyboard-shortcuts-reference">
+            <h2>⌨️ 7. Keyboard Shortcuts Reference</h2>
+            <div class="def-grid">
+                <div class="def-item"><strong>Selection</strong><br>Ctrl+A (all)<br>Shift+→←↑↓<br>Ctrl+Shift+→/← word
+                </div>
+                <div class="def-item"><strong>Cut/Copy/Paste</strong><br>Ctrl+X / C / V<br>Ctrl+Alt+V
+                    (special)<br>Ctrl+Z / Y</div>
+                <div class="def-item"><strong>Character</strong><br>Ctrl+B,I,U<br>Ctrl+= subscript<br>Ctrl+Shift++
+                    superscript<br>Ctrl+Shift+K small caps<br>Ctrl+Space clear</div>
+                <div class="def-item"><strong>Paragraph</strong><br>Ctrl+L,E,R,J<br>Ctrl+M / Shift+M
+                    indent<br>Ctrl+1,2,5 line spacing<br>Ctrl+0 add/remove 12pt before<br>Ctrl+Shift+8 show ¶</div>
+            </div>
+        </section>
+
+        <!-- 8. EXERCISES AND PRACTICE TASKS -->
+        <section id="exercises-and-practice-tasks">
+            <h2>✍️ 8. Exercises and Practice Tasks</h2>
+            <h3>Exercise 1: Selection & cut/copy</h3>
+            <p>Type a paragraph. Select words, lines, sentences. Cut last sentence, paste to beginning. Copy first
+                sentence to end. Undo.</p>
+            <h3>Exercise 2: Character formatting</h3>
+            <p>Write "The quick brown fox jumps over the lazy dog." Make "quick brown fox" bold, "jumps" italic,
+                underline "lazy dog". Change "fox" red, "dog" blue & underlined. Write H₂O and E=mc² with
+                subscript/superscript.</p>
+            <h3>Exercise 3: Paragraph formatting</h3>
+            <p>Three paragraphs about a movie. Align left, center, right, then justify all. Set first line indent 0.5".
+                Left indent 1" for second paragraph. 1.5 line spacing, 12pt after each paragraph. Add border around
+                third paragraph, light grey shading to first.</p>
+            <h3>Exercise 4: Lists</h3>
+            <p>Create bulleted shopping list (10 items). Convert to numbered. Sub‑list under 3 items. Build multilevel
+                outline of this course (Roman numerals, letters, numbers). Make a checklist with check‑mark bullets.</p>
+            <h3>Exercise 5: Comprehensive project</h3>
+            <p>One‑page document: centered title (24pt bold small caps), byline (right italic), three sections with
+                headings (Heading 1 style). Body justified, first line indent. Bulleted list in first section, numbered
+                list in second, table in third. Add a quote (left/right indent). Footer with page number.</p>
+            <div class="mini-card">
+                <strong>✅ Summary Checklist</strong><br>
+                ☐ consistent fonts ☐ heading hierarchy ☐ proper spacing ☐ lists correct ☐ indents consistent ☐ no extra
+                blank lines ☐ alignment appropriate ☐ readable colors ☐ print preview ok
+            </div>
+        </section>
+
+        <!-- FINAL CHECKLIST & FOOTER -->
+        <hr>
+        <div class="mini-card" style="background: #ecf7fc;">
+            <p style="font-size: 1.2rem;"><strong>📌 complete notes – text editing & formatting</strong> – all content
+                from original guide. Use exercises to practice. Keyboard shortcuts and best practices included.</p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Text Editing & Formatting · © 2026
+        </footer>
+
+    </div> <!-- wrapper -->
+</body>
+
+</html>
+```

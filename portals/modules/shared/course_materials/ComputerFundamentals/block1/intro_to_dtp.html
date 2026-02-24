@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Desktop Publishing (DTP) · comprehensive interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f5f9;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(20, 30, 50, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #1e3b4f, #2c5a7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #2c5778;
+            border-left: 5px solid #2b7fc2;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e8f0fe;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 60, 130, 0.1), 0 8px 12px -8px #a0bbd8;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2d4b;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4970;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 30, 60, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d4e3ff;
+            border-color: #2b7fc2;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2f6ea2;
+        }
+
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 30, 50, 0.05);
+            border: 1px solid #eef3f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #113355;
+            border-bottom: 3px solid #2b7fc2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1d4a72;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1f4b6e;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul, ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f7ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2a7fca;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 30, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #113355;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #dbe5f0;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2b7fc2;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f9fcff;
+            border: 1px solid #cdddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            font-size: 1rem;
+        }
+
+        .accent-box {
+            background: #e5eff9;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f6faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        /* comparison fancy */
+        .comp-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .comp-col {
+            flex: 1 1 220px;
+            background: #f2f9ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid #b9d1ec;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+
+        .emph-note {
+            background: #fffae0;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            border-left: 5px solid #f4b836;
+            margin: 1.2rem 0;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <h1>📘 Desktop Publishing (DTP) · comprehensive introduction</h1>
+    <div class="subhead">WYSIWYG · layout · typography · from concept to print</div>
+
+    <!-- table of contents (identical to original structure) -->
+    <div class="toc-card" id="table-of-contents">
+        <div class="toc-title">📋 Table of contents</div>
+        <div class="toc-grid">
+            <a href="#introduction">1. What is DTP?</a>
+            <a href="#dtp-vs-word">2. DTP vs Word Processing</a>
+            <a href="#workflow">3. DTP Workflow (Plan, Create, Publish)</a>
+            <a href="#software">4. Common DTP Software</a>
+        </div>
+    </div>
+
+    <!-- 1. INTRODUCTION (What is Desktop Publishing?) -->
+    <section id="introduction">
+        <h2>🔹 1. What is Desktop Publishing (DTP)?</h2>
+        <p><strong>Desktop Publishing (DTP)</strong> is the process of using specialized software on a personal computer to combine text and images in order to create documents that are ready for publication, either in print or digitally. The core concept that revolutionized the field is <strong>WYSIWYG ("What You See Is What You Get")</strong>, which allows designers to see on their screen exactly how the final printed page will look, complete with graphics, fonts, and layout. Before DTP, this process was done manually with paste-up boards and was extremely labor‑intensive.</p>
+        <p>The term "Desktop Publishing" was coined in 1986 by Paul Brainerd, president of Aldus Corporation (now part of Adobe), when they released the groundbreaking software PageMaker. The goal of DTP is to produce high-quality, visually appealing documents suitable for professional printing or electronic distribution. It represents a convergence of graphic design, typography, and printing technology, all brought to the desktop computer.</p>
+        <div class="emph-note">
+            ✨ <strong>WYSIWYG</strong> (What You See Is What You Get) — the screen shows exactly the printed result, with fonts, images and layout.
+        </div>
+    </section>
+
+    <!-- 2. DTP vs WORD PROCESSING -->
+    <section id="dtp-vs-word">
+        <h2>📄 2. DTP vs. Word Processing</h2>
+        <p>A common point of confusion for beginners is the difference between a word processor (like Microsoft Word) and a DTP application (like CorelDRAW or InDesign). While their functions overlap, their primary purposes are distinct.</p>
+        <table>
+            <thead>
+                <tr><th>Feature</th><th>Word Processing (e.g., MS Word)</th><th>Desktop Publishing (e.g., InDesign)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Primary Purpose</strong></td><td>Creating and editing <strong>text-based documents</strong> like letters, reports, and memos.</td><td>Designing complex <strong>page layouts</strong> for professional publications.</td></tr>
+                <tr><td><strong>Document Focus</strong></td><td>Linear documents with a focus on text flow from page to page.</td><td>Multi-page, multi-layered documents with a focus on visual design.</td></tr>
+                <tr><td><strong>Design Control</strong></td><td>Limited control over precise layout. Images and text boxes can "slip" as content is added.</td><td><strong>Absolute and precise control</strong> over the placement of every element on a page.</td></tr>
+                <tr><td><strong>Text Handling</strong></td><td>Excellent for writing, editing, and structuring large amounts of text (e.g., with spell check and track changes).</td><td>Text is typically placed in <strong>frames</strong> that can be precisely moved, rotated, and linked. Fine-tuning typography (kerning, leading) down to 0.1 of a point is possible.</td></tr>
+                <tr><td><strong>Frame-Based</strong></td><td>Primarily page-based. Text boxes are an add-on feature with limitations.</td><td><strong>Frame-based</strong> at its core. Every element—text, image, graphic—exists within a frame that can be manipulated independently.</td></tr>
+                <tr><td><strong>Output</strong></td><td>Primarily for in-house printing or digital sharing.</td><td>Primarily for <strong>professional printing</strong>, with support for color separations, bleeds, and high-resolution output.</td></tr>
+                <tr><td><strong>Cost</strong></td><td>Generally inexpensive (often part of an office suite).</td><td>Can be very expensive for professional-grade software.</td></tr>
+                <tr><td><strong>Examples</strong></td><td>Microsoft Word, Google Docs, LibreOffice Writer.</td><td>Adobe InDesign, CorelDRAW, QuarkXPress, Scribus.</td></tr>
+            </tbody>
+        </table>
+        <div class="accent-box">
+            💡 <em>In essence, you use a word processor to <strong>write the content</strong>, and a DTP application to <strong>design the publication</strong>.</em>
+        </div>
+    </section>
+
+    <!-- 3. THE DTP WORKFLOW : PLAN, CREATE, PUBLISH -->
+    <section id="workflow">
+        <h2>⚙️ 3. The DTP Workflow: Plan, Create, Publish</h2>
+        <p>The DTP process is typically broken down into three main phases: Pre-press, Production (or Design), and Post-press. For a simpler learning model, we can think of it as <strong>Plan, Create, and Publish</strong>.</p>
+
+        <h3>A. Pre-Press (Plan)</h3>
+        <p>This is the foundational stage where all planning happens before opening any software.</p>
+        <ul>
+            <li><strong>Define the Project:</strong> What is the goal? Is it a brochure, a newsletter, a business card? Who is the target audience?</li>
+            <li><strong>Content Gathering:</strong> Collect all the text, images, logos, and other assets that will be used.</li>
+            <li><strong>Concept and Thumbnails:</strong> Sketch rough layout ideas (thumbnails) to visualize the design. Determine the color scheme and typography.</li>
+            <li><strong>Specifications:</strong> Decide on the final output. Will it be printed (requiring CMYK color mode and high resolution) or digital (RGB color mode)?</li>
+        </ul>
+
+        <h3>B. Production / Design (Create)</h3>
+        <p>This is the hands-on stage where the design comes to life in the DTP software.</p>
+        <ul>
+            <li><strong>Setup:</strong> Create a new document with the correct page size, margins, columns, and bleeds.</li>
+            <li><strong>Layout:</strong> Create and arrange frames for all content. Place text and import images into their respective frames.</li>
+            <li><strong>Design & Refinement:</strong> Apply styles, adjust typography, manipulate images, and add graphic elements (shapes, lines, colors). This is where you fine-tune the visual hierarchy and balance.</li>
+            <li><strong>Review and Proofing:</strong> Review the document for errors. For professional work, this may involve printing proofs and checking colors.</li>
+        </ul>
+
+        <h3>C. Post-Press (Publish)</h3>
+        <p>The final stage, focused on outputting the completed document.</p>
+        <ul>
+            <li><strong>Pre-Flight Check:</strong> A final check to ensure all fonts are included, images are linked correctly, and color modes are appropriate.</li>
+            <li><strong>File Export:</strong> Create the final output file. For print, this is almost always a high-resolution <strong>PDF</strong>. For digital, it could be an interactive PDF, images (JPEG/PNG), or an EPUB.</li>
+            <li><strong>Printing or Distribution:</strong> Send the file to a commercial printer or distribute it digitally.</li>
+        </ul>
+        <div class="mini-card">
+            📌 <strong>Quick summary:</strong> Pre-press (plan) → Production (design) → Post-press (publish)
+        </div>
+    </section>
+
+    <!-- 4. INTRODUCTION TO COMMON DTP SOFTWARE -->
+    <section id="software">
+        <h2>🖥️ 4. Introduction to Common DTP Software</h2>
+        <p>The software used for DTP can be categorized into professional industry‑standard tools and more accessible, often web‑based, alternatives.</p>
+
+        <table>
+            <thead>
+                <tr><th>Software</th><th>Type</th><th>Primary Use</th><th>Key Features</th><th>Ideal User</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>CorelDRAW</strong></td>
+                    <td>Professional Vector-Based</td>
+                    <td>All-in-one graphic design and page layout.</td>
+                    <td>Powerful vector illustration tools, flexible page layout, good for logos, signage, and single-page designs. Available as a one-time purchase.</td>
+                    <td>Graphic designers, sign-makers, and those who need both illustration and layout in one suite.</td>
+                </tr>
+                <tr>
+                    <td><strong>Adobe InDesign</strong></td>
+                    <td>Professional Page Layout</td>
+                    <td>Industry standard for multi-page publications.</td>
+                    <td>Superior typography, seamless integration with Photoshop/Illustrator, powerful long-document features (master pages, indexing), and interactive PDF/ebook export.</td>
+                    <td>Professional publication designers for magazines, books, newspapers, and brochures.</td>
+                </tr>
+                <tr>
+                    <td><strong>Canva</strong></td>
+                    <td>Web-Based / Template-Driven</td>
+                    <td>Easy, drag-and-drop graphic design for non-designers.</td>
+                    <td>Thousands of customizable templates, intuitive interface, vast library of stock photos and elements, real-time collaboration, and AI-powered design tools.</td>
+                    <td>Small business owners, social media managers, marketers, and anyone needing quick, professional-looking content.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Other noteworthy DTP tools</h3>
+        <div class="def-grid">
+            <div class="def-item"><strong>QuarkXPress</strong> – veteran professional layout (still used in publishing)</div>
+            <div class="def-item"><strong>Scribus</strong> – free / open‑source DTP for professional layout</div>
+            <div class="def-item"><strong>Affinity Publisher</strong> – affordable professional alternative to InDesign</div>
+            <div class="def-item"><strong>Microsoft Publisher</strong> – entry‑level, often included in business suites</div>
+        </div>
+
+        <hr>
+
+        <div class="highlight-block">
+            <p><strong>✨ By understanding these core concepts, you are now ready to begin your journey into the practical world of Desktop Publishing.</strong> Whether you plan to design a simple flyer in Canva or a 200‑page magazine in InDesign, the planning principles and DTP mindset remain the same.</p>
+        </div>
+    </section>
+
+    <!-- optional extra: acronyms & summary card -->
+    <section style="background: #f5faff;">
+        <h2>📌 quick reference</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+            <div style="flex: 1; min-width: 200px;">
+                <h4>common DTP terms</h4>
+                <ul style="column-count: 2;">
+                    <li>WYSIWYG</li><li>bleed</li><li>slug</li><li>CMYK / RGB</li><li>master page</li>
+                    <li>frame</li><li>kerning</li><li>leading</li><li>tracking</li><li>preflight</li>
+                </ul>
+            </div>
+            <div style="flex: 2;">
+                <h4>file formats for output</h4>
+                <table style="margin:0; width:auto;">
+                    <tr><th>print</th><td>PDF/X‑1a, hi‑res TIFF, EPS (legacy)</td></tr>
+                    <tr><th>digital</th><td>interactive PDF, EPUB, JPEG, PNG, HTML</td></tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Desktop Publishing & Secretarial Studies · © 2026 All rights reserved. <br> 
+        based on original notes – comprehensive & interactive
+    </footer>
+</div> <!-- end wrapper -->
+</body>
+</html>

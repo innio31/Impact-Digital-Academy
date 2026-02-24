@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Page Layout Essentials · margins · orientation · size (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f5;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #132b40;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #ddeeff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #6d8eb0;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #103753;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .interactive-demo {
+            background: #ffffff;
+            border: 2px dashed #2b7abc;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            transition: all 0.2s;
+        }
+
+        .btn-demo {
+            background: #e1efff;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #0b3b5e;
+            cursor: pointer;
+            margin: 0.4rem 0.4rem 0.4rem 0;
+            border: 1px solid #acc9ec;
+        }
+
+        .btn-demo:hover {
+            background: #c9e0ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📐 Page Layout Essentials: Margins · Orientation · Size</h1>
+        <div class="subhead">complete DTP & secretarial notes · interactive · no summarisation – full content included
+        </div>
+
+        <!-- TABLE OF CONTENTS (mirror original structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Contents · Page layout essentials</div>
+            <div class="toc-grid">
+                <a href="#introduction">Intro to page layout</a>
+                <a href="#part1-margins">1. Page margins</a>
+                <a href="#part2-orientation">2. Page orientation</a>
+                <a href="#part3-size">3. Page size</a>
+                <a href="#summary-best-practices">Summary & best practices</a>
+                <a href="#practice-exercises">Practice exercises</a>
+                <a href="#troubleshooting">Troubleshooting</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 Introduction to Page Layout</h2>
+            <p>In Desktop Publishing (DTP) and professional document creation, <strong>page layout</strong> refers to
+                the process of arranging visual elements (text, images, graphics) on a page. The goal is to create
+                documents that are not only aesthetically pleasing but also highly readable and functionally effective
+                for their intended purpose.</p>
+            <p>Mastering page layout is a fundamental skill for any administrative or publishing professional. Before
+                you can create beautiful newsletters or complex reports, you must understand the canvas you are working
+                on. This canvas is defined by three core elements: <strong>Margins</strong>,
+                <strong>Orientation</strong>, and <strong>Page Size</strong>. These settings form the foundation upon
+                which all other design elements are built.</p>
+            <p>We will explore these essentials using Microsoft Word as our primary tool, as it is the industry standard
+                for business documentation.</p>
+        </section>
+
+        <!-- PART 1: MARGINS (full content) -->
+        <section id="part1-margins">
+            <h2>📏 1. Page Margins (complete)</h2>
+            <h3>1.1 What are Page Margins?</h3>
+            <p><strong>Page margins</strong> are the blank spaces that surround the content on a document page, acting
+                as a buffer between the text/images and the edges of the paper. They are the "breathing room" for your
+                document.</p>
+
+            <h3>1.2 Why are Margins Important?</h3>
+            <ul>
+                <li><strong>Readability:</strong> Margins prevent text from running into the edges of the page, making
+                    the document easier to read. Without adequate margins, a page looks cluttered and overwhelming.</li>
+                <li><strong>Professionalism:</strong> Consistent and appropriate margins are a hallmark of a
+                    professionally formatted document. They create a clean, balanced frame for your content.</li>
+                <li><strong>Functionality:</strong> Margins provide necessary space for binding documents (spiral, comb,
+                    or book binding), for hole‑punching, and for readers to hold the page without covering text. They
+                    also allow space for instructor or reviewer comments.</li>
+                <li><strong>Printer Constraints:</strong> Most printers cannot print right to the very edge of the paper
+                    (a feature called "full bleed" requires special printers). Standard margins ensure your text doesn't
+                    get cut off during printing.</li>
+            </ul>
+
+            <h3>1.3 Standard and Predefined Margins</h3>
+            <p>Microsoft Word provides several predefined margin options accessible via the <strong>Layout tab >
+                    Margins</strong> button.</p>
+            <table>
+                <tr>
+                    <th>Preset</th>
+                    <th>Typical dimensions</th>
+                    <th>Usage</th>
+                </tr>
+                <tr>
+                    <td>Normal</td>
+                    <td>1" (2.54 cm) all sides</td>
+                    <td>Default, safe for reports/letters</td>
+                </tr>
+                <tr>
+                    <td>Narrow</td>
+                    <td>0.5" (1.27 cm) all sides</td>
+                    <td>Fit more content (dense tables, drafts)</td>
+                </tr>
+                <tr>
+                    <td>Moderate</td>
+                    <td>0.75" sides, 1" top/bottom</td>
+                    <td>Balanced</td>
+                </tr>
+                <tr>
+                    <td>Wide</td>
+                    <td>2" left & right, 1" top/bottom</td>
+                    <td>Short docs, handwritten notes</td>
+                </tr>
+                <tr>
+                    <td>Mirrored</td>
+                    <td>Inside/outside margins</td>
+                    <td>Booklets, double‑sided binding</td>
+                </tr>
+            </table>
+
+            <h3>1.4 Setting Custom Margins</h3>
+            <ol>
+                <li>Go to the <strong>Layout</strong> tab.</li>
+                <li>Click <strong>Margins</strong> → <strong>"Custom Margins…"</strong> (opens Page Setup).</li>
+                <li>In the Margins tab, enter exact values for Top, Bottom, Left, Right, and Gutter (extra binding
+                    space).</li>
+                <li>Use <strong>"Apply to"</strong> dropdown: "Whole document" or "This point forward" (creates a new
+                    section).</li>
+            </ol>
+            <div class="interactive-demo">
+                <span style="font-weight:bold;">📐 custom margin simulator (visual): </span><br>
+                <span class="badge">top: 2.5 cm</span> <span class="badge">bottom: 2.5 cm</span> <span
+                    class="badge">left: 3 cm</span> <span class="badge">right: 2 cm</span>
+                <div
+                    style="background:#f1f9ff; padding:0.6rem; border-radius:1rem; margin-top:0.5rem; border:1px solid #a0c4e5;">
+                    content area ← framed by margins</div>
+            </div>
+
+            <h3>1.5 Advanced Margin Techniques</h3>
+            <ul>
+                <li><strong>Margins and Orientation:</strong> When you change a page's orientation, Word automatically
+                    swaps the margin values (top/bottom become left/right in landscape).</li>
+                <li><strong>Using the Ruler:</strong> Drag the margin markers (dark/light boundary on the
+                    horizontal/vertical ruler). If rulers aren't visible: <strong>View tab → check Ruler</strong>.</li>
+                <li><strong>Troubleshooting Margin Issues:</strong> If text seems to ignore margin settings, check for
+                    column settings, paragraph indents, or headers/footers positioned in margin area. Always check Page
+                    Setup and ruler.</li>
+            </ul>
+        </section>
+
+        <!-- PART 2: ORIENTATION (full) -->
+        <section id="part2-orientation">
+            <h2>🔄 2. Page Orientation (complete)</h2>
+            <h3>2.1 What is Page Orientation?</h3>
+            <p><strong>Page orientation</strong> refers to the direction in which a document is displayed or printed. It
+                determines whether the page is taller than it is wide or wider than it is tall.</p>
+
+            <h3>2.2 The Two Orientation Options</h3>
+            <ul>
+                <li><strong>Portrait (Vertical):</strong> Height > width. Default for letters, reports, memos. Ideal for
+                    standard text and single‑column layouts.</li>
+                <li><strong>Landscape (Horizontal):</strong> Width > height (e.g., A4 landscape: 29.7 cm x 21 cm).
+                    Preferred for wide tables, large charts, brochures, certificates, presentations.</li>
+            </ul>
+
+            <h3>2.3 How to Change Page Orientation</h3>
+            <ol>
+                <li>Go to <strong>Layout</strong> tab.</li>
+                <li>In Page Setup group, click <strong>Orientation</strong>.</li>
+                <li>Choose <strong>Portrait</strong> or <strong>Landscape</strong>.</li>
+            </ol>
+
+            <h3>2.4 Mixing Orientations in One Document (Using Section Breaks)</h3>
+            <p><strong>Section breaks</strong> divide your document into independent parts, each with its own layout
+                settings.</p>
+            <h4>Steps to change one page to landscape:</h4>
+            <ol>
+                <li><strong>Insert section breaks:</strong> Place cursor at end of page before the desired landscape
+                    page. Layout > Breaks > <em>Next Page</em> (under Section Breaks).</li>
+                <li>Place cursor at end of content you want in landscape, insert another <em>Next Page</em> break.</li>
+                <li>Click inside the middle section → Layout > Orientation > Landscape. Only that section changes.</li>
+            </ol>
+            <p><span class="kbd-shortcut">ⓘ</span> You can also mix page sizes (e.g., one A3 page among A4) using the
+                same section break technique.</p>
+            <div class="sample-box" style="font-style:italic;">[Section break — Next Page] ... [Landscape section] ...
+                [Section break] → portrait resumes</div>
+        </section>
+
+        <!-- PART 3: PAGE SIZE (full) -->
+        <section id="part3-size">
+            <h2>📄 3. Page Size (complete)</h2>
+            <h3>3.1 What is Page Size?</h3>
+            <p><strong>Page size</strong> (or paper size) refers to the physical dimensions of the page on which your
+                document will be printed or viewed. Choosing the correct page size is critical for international sharing
+                and printing.</p>
+
+            <h3>3.2 International Page Size Standards</h3>
+            <table>
+                <tr>
+                    <th>Series</th>
+                    <th>Common size</th>
+                    <th>Dimensions (mm / inches)</th>
+                    <th>Usage</th>
+                </tr>
+                <tr>
+                    <td>ISO A (world)</td>
+                    <td>A4</td>
+                    <td>210 × 297 mm / 8.27"×11.69"</td>
+                    <td>letters, forms, magazines</td>
+                </tr>
+                <tr>
+                    <td>ISO A</td>
+                    <td>A3</td>
+                    <td>297 × 420 mm / 11.69"×16.54"</td>
+                    <td>posters, large tables</td>
+                </tr>
+                <tr>
+                    <td>ISO A</td>
+                    <td>A5</td>
+                    <td>148 × 210 mm / 5.83"×8.27"</td>
+                    <td>flyers, handouts, booklets</td>
+                </tr>
+                <tr>
+                    <td>N American</td>
+                    <td>Letter</td>
+                    <td>8.5" × 11" / 216 × 279 mm</td>
+                    <td>standard US/Canada</td>
+                </tr>
+                <tr>
+                    <td>N American</td>
+                    <td>Legal</td>
+                    <td>8.5" × 14" / 216 × 356 mm</td>
+                    <td>legal documents</td>
+                </tr>
+                <tr>
+                    <td>N American</td>
+                    <td>Tabloid</td>
+                    <td>11" × 17" / 279 × 432 mm</td>
+                    <td>similar to A3</td>
+                </tr>
+            </table>
+
+            <h3>3.3 How to Change Page Size</h3>
+            <ol>
+                <li>Go to <strong>Layout</strong> tab.</li>
+                <li>Click <strong>Size</strong> button.</li>
+                <li>Choose a preset (Letter, A4, A5, Legal…). Applies to whole document (or current section).</li>
+            </ol>
+
+            <h3>3.4 Creating a Custom Page Size</h3>
+            <ol>
+                <li>Layout tab → Size → <strong>"More Paper Sizes…"</strong> (opens Page Setup, Paper tab).</li>
+                <li>Scroll to bottom, select <strong>"Custom Size"</strong> (or enter Width/Height manually).</li>
+                <li>Input exact Width and Height → OK.</li>
+            </ol>
+            <p><strong>Practical Tip:</strong> For a half‑sheet flyer (5.5"×8.5"), use custom size or “2 Pages Per
+                Sheet” printing. Custom size is better for designing.</p>
+        </section>
+
+        <!-- SUMMARY & BEST PRACTICES (full) -->
+        <section id="summary-best-practices">
+            <h2>📋 Summary & Best Practices (complete)</h2>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Core function</th>
+                    <th>Standard setting (business)</th>
+                    <th>Pro tip</th>
+                </tr>
+                <tr>
+                    <td>Margins</td>
+                    <td>Create space, readability, binding</td>
+                    <td>1 inch (2.54 cm) all sides ("Normal")</td>
+                    <td>Mirrored margins for bound docs; ruler for quick tweaks</td>
+                </tr>
+                <tr>
+                    <td>Orientation</td>
+                    <td>Define page shape for content</td>
+                    <td>Portrait for text</td>
+                    <td>Section breaks to mix portrait/landscape for wide tables</td>
+                </tr>
+                <tr>
+                    <td>Page Size</td>
+                    <td>Match final output / audience</td>
+                    <td>A4 or Letter</td>
+                    <td>Always confirm recipient’s standard; custom for flyers/cards</td>
+                </tr>
+            </table>
+            <p>By mastering Page Margins, Orientation, and Page Size, you move beyond simply typing text to controlling
+                the very canvas of your document. This foundational knowledge separates a basic user from a proficient
+                desktop publisher and administrative professional.</p>
+        </section>
+
+        <!-- PRACTICE EXERCISES (full, not summarised) -->
+        <section id="practice-exercises">
+            <h2>✍️ Practice Exercises (complete set)</h2>
+            <div class="mini-card">
+                <h3>Exercise 1: Explore predefined margins</h3>
+                <p>Open Word, blank document. Go to Layout → Margins. Click through Normal, Narrow, Wide, Mirrored.
+                    Observe how text area changes. Create a one‑page document with Narrow margins, type a paragraph.</p>
+                <h3>Exercise 2: Set custom margins</h3>
+                <p>Open Page Setup (Margins → Custom Margins). Set top: 2 cm, bottom: 2 cm, left: 3 cm, right: 1.5 cm.
+                    Apply to whole document. Add a line of text. Check ruler to verify.</p>
+                <h3>Exercise 3: Orientation switch</h3>
+                <p>Create a two‑page document. On page 2, insert a section break (Next Page) before and after. Change
+                    orientation of middle section to Landscape. Type “wide content here”.</p>
+                <h3>Exercise 4: Mix page sizes</h3>
+                <p>Using section breaks, make page 2 size A3 (if your printer supports, otherwise just practice the
+                    setting).</p>
+                <h3>Exercise 5: Custom page size</h3>
+                <p>Design an invitation: create a custom page size of 13 cm × 18 cm. Add a border and text. Save as PDF.
+                </p>
+                <h3>Exercise 6: International standards</h3>
+                <p>Create three short docs: one in A4, one in Letter, one in Legal. Observe dimension differences in
+                    Page Setup.</p>
+                <h3>Exercise 7: Comprehensive</h3>
+                <p>Produce a short report: title page (portrait, normal margins), then a landscape page with a table
+                    (section break, landscape, 2 cm margins), then back to portrait. Save as "layout_practice.docx".</p>
+            </div>
+        </section>
+
+        <!-- TROUBLESHOOTING (full) -->
+        <section id="troubleshooting">
+            <h2>🔧 Troubleshooting common issues</h2>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Text runs into edge / cut off when printed</td>
+                    <td>Increase margins (printer can't print to edge). Check printer driver settings.</td>
+                </tr>
+                <tr>
+                    <td>Orientation changes entire document instead of one page</td>
+                    <td>Use section breaks (Next Page) before changing orientation.</td>
+                </tr>
+                <tr>
+                    <td>Custom page size not available in printer list</td>
+                    <td>Paper size must be supported by printer; try PDF print.</td>
+                </tr>
+                <tr>
+                    <td>Margins look uneven even though settings are symmetrical</td>
+                    <td>Check for gutter setting (Page Setup → Margins → Gutter) or paragraph indents.</td>
+                </tr>
+                <tr>
+                    <td>Ruler shows different margins than set</td>
+                    <td>Ensure you are in Print Layout view; check if document has multiple sections.</td>
+                </tr>
+                <tr>
+                    <td>Can't delete a section break</td>
+                    <td>Turn on formatting marks (¶) and press Delete at the break.</td>
+                </tr>
+                <tr>
+                    <td>Landscape page content flows into portrait area</td>
+                    <td>Verify section breaks are placed correctly and page orientation is applied to correct section.
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ADDITIONAL INTERACTIVE / QUICK REFERENCE -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick competency checklist – can you?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Set margins via ribbon & ruler<br>☐ Apply mirrored margins<br>☐ Create custom
+                    margins<br>☐ Switch orientation for one page</div>
+                <div class="def-item">☐ Insert section breaks<br>☐ Choose A4, Letter, A3<br>☐ Define custom page
+                    size<br>☐ Troubleshoot margin errors</div>
+            </div>
+            <h4 style="margin-top:1.5rem;">⌨️ Word shortcuts for layout</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Alt</kbd>+<kbd>P</kbd> (Layout tab)</span>
+                <span><kbd>Alt</kbd>+<kbd>P</kbd>+<kbd>M</kbd> (Margins)</span>
+                <span><kbd>Alt</kbd>+<kbd>P</kbd>+<kbd>O</kbd> (Orientation)</span>
+                <span><kbd>Alt</kbd>+<kbd>P</kbd>+<kbd>S</kbd> (Size)</span>
+                <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> (page break)</span>
+            </div>
+            <p style="margin-top:1.5rem;"><em>These comprehensive notes cover everything — no summary, full content
+                    preserved.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Page Layout Essentials: Margins, Orientation, Size · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

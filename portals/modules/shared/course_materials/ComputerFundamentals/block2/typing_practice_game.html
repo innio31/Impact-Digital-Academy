@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>⚡ TYPING RACER · fun speed & accuracy game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(145deg, #0d281f 0%, #1b4d3e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .game-wrapper {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 3.5rem;
+            padding: 2rem 2rem 2.5rem;
+            box-shadow: 0 40px 60px -10px #041b14, 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
+
+        /* header area – lively dashboard */
+        .header-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f3e7;
+            border-radius: 200px;
+            padding: 1rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 12px 0 #0f382b, 0 8px 20px #00000030;
+            border: 2px solid #fce3b1;
+        }
+
+        .game-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-title h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #154f3a, #226b4f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .live-badge {
+            background: #ffb347;
+            color: #1d3b2b;
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            border: 2px solid white;
+            box-shadow: 0 4px 0 #a85e00;
+        }
+
+        .stat-panel {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 0 #c5a268;
+            font-weight: 600;
+            border: 1px solid #ebb65e;
+        }
+
+        .stat-item span {
+            font-size: 1.2rem;
+            background: #265f48;
+            color: white;
+            border-radius: 40px;
+            padding: 0.1rem 0.9rem;
+        }
+
+        .timer {
+            background: #3b2c0f;
+            color: #fff1c1;
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding: 0.1rem 1rem;
+            border-radius: 3rem;
+            font-family: monospace;
+            letter-spacing: 2px;
+            border: 2px solid #ffd966;
+        }
+
+        /* main game card */
+        .game-card {
+            background: #fff9ed;
+            border-radius: 3rem;
+            padding: 2.2rem;
+            box-shadow: 0 25px 0 #1c5f44, 0 20px 30px #00000040;
+            border: 3px solid #fedb9f;
+            margin-bottom: 2rem;
+        }
+
+        .quote-box {
+            background: #143523;
+            border-radius: 2.5rem;
+            padding: 1.5rem 2rem;
+            box-shadow: inset 0 -5px 0 #3f785b, 0 10px 15px #00000030;
+        }
+
+        .target-text {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #f7ffcf;
+            text-shadow: 2px 2px 0 #1a573b;
+            line-height: 1.4;
+            word-break: break-word;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .input-area {
+            margin-top: 2rem;
+        }
+
+        .typing-input {
+            width: 100%;
+            background: #f2e7d5;
+            border: 5px solid #b5925a;
+            border-radius: 3rem;
+            padding: 1.5rem 2rem;
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1b4e32;
+            outline: none;
+            box-shadow: inset 0 6px 0 #937545, 0 12px 18px -8px #0a2d1d;
+            transition: all 0.1s;
+        }
+
+        .typing-input:focus {
+            border-color: #ffb85b;
+            background: #fff9e6;
+            box-shadow: inset 0 6px 0 #c9a351, 0 15px 25px -8px #04180e;
+        }
+
+        .feedback-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #2f4f3a;
+            border-radius: 60px;
+            padding: 0.7rem 1.6rem;
+            border: 2px solid #fbe093;
+        }
+
+        .dot {
+            width: 18px;
+            height: 18px;
+            background: #5effb2;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #a5ffcf;
+            animation: pulse 1.5s infinite;
+        }
+
+        .correctness-badge {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffeeb5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: #ffc164;
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem 2rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #202e1a;
+            box-shadow: 0 8px 0 #8f632b, 0 5px 15px #00000040;
+            cursor: pointer;
+            transition: 0.07s;
+            border: 2px solid #ffeaaf;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #7b5220;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #685432;
+            pointer-events: none;
+        }
+
+        .reset-btn {
+            background: #afe4d0;
+            box-shadow: 0 8px 0 #53856e;
+            border-color: #cdffd8;
+        }
+
+        /* results panel — super lively */
+        .results-panel {
+            background: #fffaec;
+            border-radius: 3rem;
+            padding: 1.8rem;
+            border: 4px solid #fed98f;
+            box-shadow: 0 15px 0 #1b684b, 0 15px 25px black;
+            margin-top: 2rem;
+            transition: 0.2s;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #234f38;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .result-card {
+            background: #3f755b;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            color: white;
+            box-shadow: inset 0 -5px 0 #194430, 0 6px 0 #15462f;
+            border: 2px solid #ffd78b;
+            text-align: center;
+        }
+
+        .result-card .value {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            text-shadow: 3px 3px 0 #1d4d32;
+        }
+
+        .result-card .label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .share-praise {
+            font-size: 1.4rem;
+            margin-top: 1.2rem;
+            background: #f5cf8b;
+            border-radius: 3rem;
+            padding: 0.8rem 1.5rem;
+            color: #1d452f;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.2);
+                background: #cdff9e;
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .target-text {
+                font-size: 1.5rem;
+            }
+
+            .typing-input {
+                font-size: 1.5rem;
+                padding: 1rem;
+            }
+
+            .header-stats {
+                flex-direction: column;
+                align-items: start;
+                gap: 0.8rem;
+                border-radius: 3rem;
+            }
+        }
+
+        .mistake-char {
+            background: #ffb0a0;
+            border-radius: 6px;
+            color: #6b1a00;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-wrapper">
+        <!-- TOP DASHBOARD -->
+        <div class="header-stats">
+            <div class="game-title">
+                <h1>⚡ KEY RACER</h1>
+                <span class="live-badge">LIVE</span>
+            </div>
+            <div class="stat-panel">
+                <div class="stat-item">⏱️ Time <span id="timerDisplay">01:00</span></div>
+                <div class="stat-item">⚡ WPM <span id="liveWpm">0</span></div>
+                <div class="stat-item">🎯 Acc <span id="liveAcc">100%</span></div>
+            </div>
+        </div>
+
+        <!-- MAIN GAME CARD -->
+        <div class="game-card">
+            <div class="quote-box">
+                <div class="target-text" id="targetPhrase">
+                    The quick brown fox jumps over the lazy dog.
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" class="typing-input" id="userInput" placeholder="start typing here..." autofocus>
+            </div>
+
+            <div class="feedback-row">
+                <div class="live-indicator">
+                    <span class="dot"></span>
+                    <span class="correctness-badge" id="matchIndicator">✨ type it!</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn" id="resetBtn">🔄 new quote</button>
+                    <button class="btn reset-btn" id="newGameBtn">🌟 fresh start</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS + SPEED/ACC REPORT (fun & lively) -->
+        <div class="results-panel" id="resultsPanel">
+            <div class="results-title">
+                📋 YOUR TYPING REPORT
+                <span style="font-size: 1.2rem; background: #eebb55; padding:0.2rem 1rem; border-radius: 40px;">game
+                    over</span>
+            </div>
+            <div class="stats-grid" id="resultStats">
+                <div class="result-card"><span class="value" id="finalWpm">0</span> <span class="label">WPM</span></div>
+                <div class="result-card"><span class="value" id="finalAccuracy">0%</span> <span
+                        class="label">accuracy</span></div>
+                <div class="result-card"><span class="value" id="finalTime">0</span> <span class="label">seconds</span>
+                </div>
+                <div class="result-card"><span class="value" id="finalErrors">0</span> <span class="label">errors</span>
+                </div>
+            </div>
+            <div class="share-praise" id="praiseMessage">
+                🎉 awesome! now beat that score.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // -------------------- GAME STATE --------------------
+            const quotes = [
+                "The quick brown fox jumps over the lazy dog.",
+                "Typing is a superpower in the digital world.",
+                "Accuracy first, speed will follow naturally.",
+                "Practice makes perfect, keep typing every day.",
+                "Programming is thinking about thinking.",
+                "Stay curious, keep learning, and have fun.",
+                "Desktop publishing creates beautiful documents.",
+                "Business correspondence must be clear and concise.",
+                "Touch typing saves hours of work each week.",
+                "The secret of getting ahead is getting started."
+            ];
+
+            let targetText = quotes[0];            // current phrase
+            let startTime = null;
+            let timerInterval = null;
+            let gameActive = false;
+            let gameFinished = false;               // true after timer ends or completed early?
+
+            // DOM elements
+            const targetPhraseEl = document.getElementById('targetPhrase');
+            const userInputEl = document.getElementById('userInput');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const liveWpmEl = document.getElementById('liveWpm');
+            const liveAccEl = document.getElementById('liveAcc');
+            const matchIndicator = document.getElementById('matchIndicator');
+            const resetBtn = document.getElementById('resetBtn');
+            const newGameBtn = document.getElementById('newGameBtn');
+            const resultsPanel = document.getElementById('resultsPanel');
+            const finalWpm = document.getElementById('finalWpm');
+            const finalAccuracy = document.getElementById('finalAccuracy');
+            const finalTime = document.getElementById('finalTime');
+            const finalErrors = document.getElementById('finalErrors');
+            const praiseMessage = document.getElementById('praiseMessage');
+
+            // stats
+            let totalKeystrokes = 0;
+            let correctKeystrokes = 0;
+            let elapsedSeconds = 0;
+            let timerLimit = 60; // 1 minute game
+
+            // ---------- helper: reset to new phrase (game not started) ----------
+            function pickRandomQuote() {
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                targetText = quotes[randomIndex];
+                targetPhraseEl.innerText = targetText;
+            }
+
+            function resetGame(keepQuote = false) {
+                // stop timer
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                gameActive = false;
+                gameFinished = false;
+                startTime = null;
+                elapsedSeconds = 0;
+                timerDisplay.innerText = '01:00';
+                liveWpmEl.innerText = '0';
+                liveAccEl.innerText = '100%';
+                matchIndicator.innerText = '✨ type it!';
+                matchIndicator.style.color = '#ffeeb5';
+                // reset input
+                userInputEl.value = '';
+                userInputEl.disabled = false;
+                userInputEl.focus();
+                totalKeystrokes = 0;
+                correctKeystrokes = 0;
+
+                if (!keepQuote) {
+                    pickRandomQuote();
+                } else {
+                    targetPhraseEl.innerText = targetText; // ensure same quote
+                }
+
+                // reset result panel to "game in progress" maybe hide values or show zeros
+                finalWpm.innerText = '0';
+                finalAccuracy.innerText = '0%';
+                finalTime.innerText = '0';
+                finalErrors.innerText = '0';
+                praiseMessage.innerHTML = '⌨️ start typing – your report will appear after 60 seconds.';
+            }
+
+            // update timer + finish game when time's up
+            function startTimer() {
+                if (timerInterval) clearInterval(timerInterval);
+                startTime = Date.now() - elapsedSeconds * 1000; // resume logic
+
+                timerInterval = setInterval(() => {
+                    if (!gameActive && !gameFinished) return; // not started or finished
+
+                    const now = Date.now();
+                    const totalElapsed = Math.floor((now - startTime) / 1000);
+                    if (totalElapsed >= timerLimit && gameActive) {
+                        // GAME OVER (time up)
+                        elapsedSeconds = timerLimit;
+                        timerDisplay.innerText = formatTime(timerLimit);
+                        gameActive = false;
+                        gameFinished = true;
+                        userInputEl.disabled = true;
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = null;
+                        calculateAndShowReport();
+                    } else if (gameActive) {
+                        elapsedSeconds = totalElapsed;
+                        timerDisplay.innerText = formatTime(timerLimit - elapsedSeconds);
+                        // live WPM update (gross)
+                        updateLiveWpmAndAcc();
+                    } else {
+                        // update timer if game inactive but we still might show countdown ?
+                    }
+                }, 200);
+            }
+
+            function formatTime(sec) {
+                if (sec < 0) sec = 0;
+                const mins = Math.floor(sec / 60);
+                const seconds = sec % 60;
+                return `${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            // compute live WPM based on current correct chars
+            function updateLiveWpmAndAcc() {
+                if (!gameActive || elapsedSeconds <= 0) return;
+                const minutes = elapsedSeconds / 60;
+                // standard: wpm = (correct chars / 5) / minutes
+                const grossWpm = Math.round((correctKeystrokes / 5) / minutes);
+                liveWpmEl.innerText = grossWpm > 0 ? grossWpm : 0;
+
+                const acc = totalKeystrokes === 0 ? 100 : Math.round((correctKeystrokes / totalKeystrokes) * 100);
+                liveAccEl.innerText = acc + '%';
+            }
+
+            // final report calculation
+            function calculateAndShowReport() {
+                const minutes = elapsedSeconds / 60;
+                const grossWpm = Math.round((correctKeystrokes / 5) / minutes) || 0;
+                const acc = totalKeystrokes === 0 ? 100 : Math.round((correctKeystrokes / totalKeystrokes) * 100);
+                const errors = totalKeystrokes - correctKeystrokes;
+
+                finalWpm.innerText = grossWpm;
+                finalAccuracy.innerText = acc + '%';
+                finalTime.innerText = elapsedSeconds;
+                finalErrors.innerText = errors;
+
+                let praise = '';
+                if (acc >= 98 && grossWpm >= 60) praise = '🏆 LEGEND! flawless speed typing!';
+                else if (acc >= 95 && grossWpm >= 40) praise = '🚀 pro level – incredible!';
+                else if (acc >= 90) praise = '🎯 solid accuracy, now boost speed!';
+                else if (grossWpm >= 50) praise = '⚡ fast but a bit messy – slow down for accuracy.';
+                else praise = '💪 keep practicing – every minute makes you better!';
+
+                praiseMessage.innerHTML = `📢 ${praise}  (${correctKeystrokes} correct / ${totalKeystrokes} total)`;
+            }
+
+            // input event: compare text, update keystrokes, detect finish if user completes exact phrase
+            function handleTyping(e) {
+                const inputVal = userInputEl.value;
+                if (!gameActive && !gameFinished && inputVal.length > 0) {
+                    // first keystroke: start game
+                    gameActive = true;
+                    gameFinished = false;
+                    elapsedSeconds = 0;
+                    startTimer();
+                }
+
+                if (!gameActive || gameFinished) return; // ignore after game over
+
+                // update keystroke counters
+                const target = targetText;
+                totalKeystrokes = inputVal.length;
+
+                // count correct (position-based)
+                let correct = 0;
+                for (let i = 0; i < inputVal.length; i++) {
+                    if (i < target.length && inputVal[i] === target[i]) correct++;
+                }
+                correctKeystrokes = correct;
+
+                // realtime indicator
+                if (inputVal === target) {
+                    matchIndicator.innerText = '✅ PERFECT! keep going...';
+                    matchIndicator.style.color = '#b6ffb6';
+                } else if (inputVal.length > target.length) {
+                    matchIndicator.innerText = '⚠️ too long';
+                } else if (inputVal.length > 0 && correct === inputVal.length) {
+                    matchIndicator.innerText = '✔️ all correct so far';
+                } else {
+                    matchIndicator.innerText = '⌨️ keep typing...';
+                }
+
+                // check if finished early (exact full match)
+                if (inputVal === target) {
+                    // user completed the entire phrase before time -> instant success? optional stop
+                    // We'll consider it finished early : stop game, show report
+                    if (gameActive) {
+                        gameActive = false;
+                        gameFinished = true;
+                        userInputEl.disabled = true;
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = null;
+                        // set elapsed to whatever (at least 1 sec to avoid zero)
+                        if (elapsedSeconds < 1) elapsedSeconds = 1;
+                        timerDisplay.innerText = formatTime(timerLimit - elapsedSeconds);
+                        calculateAndShowReport();
+                    }
+                }
+
+                updateLiveWpmAndAcc();
+            }
+
+            // reset with new random phrase
+            function fullReset() {
+                resetGame(false);
+            }
+
+            // new game but keep same quote? (fresh start keep current quote)
+            function freshStart() {
+                resetGame(true); // keep same targetText
+            }
+
+            // on page load
+            function init() {
+                resetGame(false);
+                userInputEl.addEventListener('input', handleTyping);
+                resetBtn.addEventListener('click', () => { fullReset(); });
+                newGameBtn.addEventListener('click', () => { freshStart(); });
+                resultsPanel.style.display = 'block'; // always visible
+
+                // prevent copy paste cheating? not needed.
+            }
+
+            init();
+        })();
+    </script>
+</body>
+
+</html>

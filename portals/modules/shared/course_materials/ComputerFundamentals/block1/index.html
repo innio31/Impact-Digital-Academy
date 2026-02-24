@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 1 · fundamentals of computing & DTP · course hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f6fc;
+            color: #152b3a;
+            line-height: 1.5;
+            padding: 1rem;
+        }
+
+        .main-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem 2.5rem 1.8rem 1.8rem;
+            box-shadow: 0 30px 45px -20px rgba(0, 30, 60, 0.3);
+            overflow: hidden;
+            padding: 2.2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(140deg, #083358, #1f5f8f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-block {
+            display: inline-block;
+            background: #ddeeff;
+            color: #0a395a;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .subhead {
+            font-size: 1.35rem;
+            color: #24638b;
+            border-left: 7px solid #1e7eb0;
+            padding-left: 1.5rem;
+            margin: 0.8rem 0 2rem 0;
+            font-weight: 400;
+            background: #f1f8ff;
+            padding: 1rem 1.5rem;
+            border-radius: 2rem;
+        }
+
+        /* objective cards */
+        .objective-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 2.5rem 0 2rem;
+        }
+
+        .objective-item {
+            flex: 1 1 220px;
+            background: #ecf5fe;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 4px solid #317cb0;
+            box-shadow: 0 10px 15px -12px #1c3f60;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .objective-item span {
+            font-size: 1.6rem;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin: 2.5rem 0 2rem;
+        }
+
+        .topic-card {
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.6rem 1.5rem;
+            box-shadow: 0 15px 28px -16px #1d3f60;
+            border: 1px solid #d7e5f5;
+            transition: 0.15s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topic-card:hover {
+            border-color: #1f7eb0;
+            box-shadow: 0 22px 32px -18px #0f4b73;
+            transform: translateY(-3px);
+        }
+
+        .topic-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .topic-title {
+            font-size: 1.8rem;
+            font-weight: 650;
+            color: #113e5e;
+            border-bottom: 3px solid #b3d6f0;
+            padding-bottom: 0.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topic-desc {
+            color: #1d405b;
+            margin: 0.5rem 0 1rem;
+            font-weight: 450;
+        }
+
+        .module-links {
+            list-style: none;
+            margin: 0.8rem 0 0.8rem;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .module-links li {
+            margin: 0.7rem 0;
+            padding-left: 0.2rem;
+        }
+
+        .module-links a {
+            text-decoration: none;
+            background: #e9f2fc;
+            color: #103f62;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: 0.15s;
+            width: 100%;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .module-links a:hover {
+            background: #cbe2fd;
+            border-color: #1f7eb0;
+            transform: scale(1.01);
+            box-shadow: 0 6px 12px -8px #0f4870;
+        }
+
+        .btn-sm {
+            background: white;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0b3a5a;
+            border: 1px solid #bbd5f0;
+            margin-left: 0.6rem;
+        }
+
+        .footer-links {
+            margin-top: 2.5rem;
+            border-top: 2px dashed #b3cde0;
+            padding: 2rem 0.5rem 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links small {
+            color: #4a688b;
+        }
+
+        .pill {
+            background: #dbeafe;
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            font-size: 0.9rem;
+            color: #074072;
+            display: inline-block;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c1daf5, #ffffff);
+            margin: 1.8rem 0;
+        }
+
+        .quote-note {
+            background: #f6f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            border-left: 8px solid #1e7eb0;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <!-- header with block identification -->
+        <h1>
+            🧩 Block 1: Fundamentals of Computing
+            <span class="badge-block">& introduction to DTP</span>
+        </h1>
+        <div class="subhead">
+            📌 hardware · software · file management · desktop publishing · internet · cloud · digital citizenship
+        </div>
+
+        <!-- learning objectives (exactly as provided) -->
+        <div style="margin: 2rem 0 0.5rem;">
+            <h2
+                style="font-size: 1.9rem; font-weight: 660; color: #113a57; display: flex; align-items: center; gap: 0.7rem; border-bottom: 2px solid #aac9ec; padding-bottom: 0.3rem;">
+                🎯 Learning objectives
+            </h2>
+        </div>
+        <div class="objective-grid">
+            <div class="objective-item"><span>🔹</span>Identify & describe core hardware & software components</div>
+            <div class="objective-item"><span>🔹</span>Navigate & manage files/folders effectively (Windows/macOS)</div>
+            <div class="objective-item"><span>🔹</span>Understand DTP principles & its role in business</div>
+            <div class="objective-item"><span>🔹</span>Use internet responsibly: research, communication, cloud tools
+            </div>
+        </div>
+
+        <!-- main topic grid – each card corresponds to a content area -->
+        <div class="topic-grid">
+
+            <!-- 1. HARDWARE -->
+            <div class="topic-card">
+                <div class="topic-icon">🖥️</div>
+                <div class="topic-title">Computer Hardware</div>
+                <div class="topic-desc">CPU, RAM, storage, I/O devices, and how they work together.</div>
+                <ul class="module-links">
+                    <li><a href="computer_hardware.html">🔧 CPU, memory & storage · full interactive notes</a></li>
+                    <li><a href="computer_hardware.html#input-devices">🖱️ Input devices (keyboard, mouse, touch)</a>
+                    </li>
+                    <li><a href="computer_hardware.html#output-devices">🖨️ Output devices (monitor, printer, audio)</a>
+                    </li>
+                    <li><a href="computer_hardware.html#summary">📊 comparison tables & acronyms</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">CPU · RAM · HDD · SSD · I/O</span></div>
+            </div>
+
+            <!-- 2. SOFTWARE -->
+            <div class="topic-card">
+                <div class="topic-icon">💿</div>
+                <div class="topic-title">Computer Software</div>
+                <div class="topic-desc">Operating systems, system software, and essential applications.</div>
+                <ul class="module-links">
+                    <li><a href="computer_software.html">⚙️ system software, OS, drivers, utilities</a></li>
+                    <li><a href="computer_software.html#application-sw">📱 application software (word, excel, browser,
+                            DTP)</a></li>
+                    <li><a href="computer_software.html#sw-licensing">📋 licensing models & summary tables</a></li>
+                    <li><a href="computer_software.html#operating-systems">🧠 operating systems deep dive</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">OS · drivers · utilities · office suites</span>
+                </div>
+            </div>
+
+            <!-- 3. FILE & FOLDER MANAGEMENT -->
+            <div class="topic-card">
+                <div class="topic-icon">📁</div>
+                <div class="topic-title">File & Folder Management</div>
+                <div class="topic-desc">Create, name, move, copy, delete, organise. Paths & extensions.</div>
+                <ul class="module-links">
+                    <li><a href="file_management.html">🗂️ complete file management guide</a></li>
+                    <li><a href="file_management.html#naming">🏷️ naming conventions & best practices</a></li>
+                    <li><a href="file_management.html#moving-copying">📋 moving, copying, shortcuts</a></li>
+                    <li><a href="file_management.html#file-paths">📍 understanding file paths (absolute/relative)</a>
+                    </li>
+                    <li><a href="file_management.html#file-extensions">🔖 file extensions explained</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">NTFS · APFS · rename · backup 3-2-1</span></div>
+            </div>
+
+            <!-- 4. INTRODUCTION TO DTP -->
+            <div class="topic-card">
+                <div class="topic-icon">📘</div>
+                <div class="topic-title">Desktop Publishing (DTP)</div>
+                <div class="topic-desc">What is DTP? DTP vs word processing, workflow, popular software.</div>
+                <ul class="module-links">
+                    <li><a href="intro_to_dtp.html">📘 comprehensive DTP introduction</a></li>
+                    <li><a href="intro_to_dtp.html#dtp-vs-word">📄 DTP vs word processing (comparison)</a></li>
+                    <li><a href="intro_to_dtp.html#workflow">⚙️ workflow: plan → create → publish</a></li>
+                    <li><a href="intro_to_dtp.html#software">🖥️ CorelDRAW · InDesign · Canva overview</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">WYSIWYG · layout · frames · pre‑press</span></div>
+            </div>
+
+            <!-- 5. INTERNET FUNDAMENTALS -->
+            <div class="topic-card">
+                <div class="topic-icon">🌐</div>
+                <div class="topic-title">Internet Fundamentals</div>
+                <div class="topic-desc">URL structure, advanced search, email etiquette & management.</div>
+                <ul class="module-links">
+                    <li><a href="internet_fundamentals.html#part1">🔗 understanding URLs (anatomy + security)</a></li>
+                    <li><a href="internet_fundamentals.html#part2">🔎 advanced search operators & CRAP test</a></li>
+                    <li><a href="internet_fundamentals.html#part3">📧 professional email, folders, filters</a></li>
+                    <li><a href="internet_fundamentals.html#summary">📋 quick reference tables</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">http · domain · site: · bcc · inbox zero</span>
+                </div>
+            </div>
+
+            <!-- 6. CLOUD COMPUTING -->
+            <div class="topic-card">
+                <div class="topic-icon">☁️</div>
+                <div class="topic-title">Cloud Computing</div>
+                <div class="topic-desc">Cloud concepts, storage (Google Drive, OneDrive), online collaboration.</div>
+                <ul class="module-links">
+                    <li><a href="cloud_computing.html">☁️ introduction to cloud computing (full notes)</a></li>
+                    <li><a href="cloud_computing.html#service-models">📦 IaaS · PaaS · SaaS explained</a></li>
+                    <li><a href="cloud_computing.html#google-drive">🔹 Google Drive deep dive</a></li>
+                    <li><a href="cloud_computing.html#onedrive">🔹 Microsoft OneDrive deep dive</a></li>
+                    <li><a href="cloud_computing.html#coauthoring">🤝 real‑time co‑authoring & version history</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">cloud storage · sync · sharing ·
+                        collaboration</span></div>
+            </div>
+
+            <!-- 7. DIGITAL CITIZENSHIP & SECURITY -->
+            <div class="topic-card">
+                <div class="topic-icon">🛡️</div>
+                <div class="topic-title">Digital Citizenship & Security</div>
+                <div class="topic-desc">Internet safety, password management, protecting personal info.</div>
+                <ul class="module-links">
+                    <li><a href="digital_citizenship.html">🔐 full guide: digital citizenship & security</a></li>
+                    <li><a href="digital_citizenship.html#internet-safety">🌐 internet safety (phishing, malware)</a>
+                    </li>
+                    <li><a href="digital_citizenship.html#password-management">🔑 password managers & MFA</a></li>
+                    <li><a href="digital_citizenship.html#protecting-personal-info">🆔 PII · social engineering ·
+                            privacy</a></li>
+                </ul>
+                <div style="margin-top: 0.8rem;"><span class="pill">phishing · 2FA · password manager · PII</span></div>
+            </div>
+        </div>
+
+        <!-- summary / tools row -->
+        <hr>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
+            <div style="min-width: 200px;">
+                <h3 style="color: #123f60; font-weight: 600; margin-bottom: 0.5rem;">📂 quick access</h3>
+                <ul style="list-style: none;">
+                    <li><a href="computer_hardware.html" style="text-decoration: none;">🖥️ hardware</a></li>
+                    <li><a href="computer_software.html" style="text-decoration: none;">💿 software</a></li>
+                    <li><a href="file_management.html" style="text-decoration: none;">📁 file management</a></li>
+                    <li><a href="intro_to_dtp.html" style="text-decoration: none;">📘 DTP</a></li>
+                    <li><a href="internet_fundamentals.html" style="text-decoration: none;">🌐 internet</a></li>
+                    <li><a href="cloud_computing.html" style="text-decoration: none;">☁️ cloud</a></li>
+                    <li><a href="digital_citizenship.html" style="text-decoration: none;">🛡️ digital citizenship</a>
+                    </li>
+                </ul>
+            </div>
+            <div style="max-width: 600px;">
+                <div class="quote-note">
+                    <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">💡 <strong>Block 1 at a glance</strong></p>
+                    <p>This block gives you a solid foundation in how computers work, how to manage files, design
+                        publications, use the internet smartly, and stay safe online. Each interactive note contains all
+                        original content, tables, and examples – no summarisation, just complete lessons.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer with course info -->
+        <div class="footer-links">
+            <small>Desktop Publishing & Secretarial Studies · © 2026 All rights reserved.</small>
+            <span class="pill">7 topics · 7 interactive notes · v2.0</span>
+        </div>
+
+        <!-- tiny legend: all files exactly match the content you provided -->
+        <div
+            style="margin-top: 1rem; font-size: 0.9rem; color: #4f6d8c; background: #ecf3fb; padding: 0.8rem 1.5rem; border-radius: 3rem;">
+            ⚡ central landing page for Block 1 · links to: computer_hardware.html, computer_software.html,
+            file_management.html, intro_to_dtp.html, internet_fundamentals.html, cloud_computing.html,
+            digital_citizenship.html
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Professional Business Communication · interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            color: #1d2f44;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.2rem 2.2rem 2rem 2rem;
+            box-shadow: 0 25px 40px -18px #1f3a5f;
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #113355, #235b8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.3rem;
+            color: #245e8a;
+            border-left: 5px solid #2e7ab3;
+            padding-left: 1.4rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e3edfc;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 5px rgba(0, 40, 70, 0.08), 0 12px 18px -12px #8faac9;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0b2f4a;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #194b73;
+            font-weight: 500;
+            box-shadow: 0 3px 8px rgba(0, 45, 80, 0.08);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cfe2fc;
+            border-color: #2e6fa8;
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px -8px #1a4f7a;
+        }
+
+        section {
+            scroll-margin-top: 1.8rem;
+            margin: 3.2rem 0 2.8rem;
+            background: #ffffff;
+            border-radius: 2.2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 6px 16px rgba(12, 45, 70, 0.05);
+            border: 1px solid #eaf1fc;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f3b5a;
+            border-bottom: 3px solid #2b76b9;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.7rem;
+            font-weight: 640;
+            margin: 2rem 0 0.9rem;
+            color: #1d5278;
+            border-left: 7px solid #7fb6e8;
+            padding-left: 1.2rem;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            font-weight: 620;
+            margin: 1.5rem 0 0.5rem;
+            color: #1f5780;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.7rem 0 1.2rem 2rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f4f9ff;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 7px solid #2e7ab3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.4rem;
+            overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0, 40, 70, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #123f60;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #dae5f2;
+            background: #fdfdfe;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1b6392;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f6faff;
+            border: 1px solid #cde0f2;
+            border-radius: 1.6rem;
+            padding: 1.3rem 1.6rem;
+            margin: 1.5rem 0;
+        }
+
+        .accent-box {
+            background: #e0effc;
+            padding: 1.3rem 1.8rem;
+            border-radius: 1.8rem;
+            font-weight: 500;
+            border-left: 4px solid #1d74b3;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f2f9ff;
+            padding: 1rem 1.2rem;
+            border-radius: 1.2rem;
+            border-bottom: 4px solid #4884c0;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .pill {
+            background: white;
+            border-radius: 40px;
+            padding: 0.3rem 1.3rem;
+            font-weight: 500;
+            color: #0b3e62;
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.03);
+            border: 1px solid #bbd5f2;
+        }
+
+        .drill {
+            background: #f4fafe;
+            border-radius: 1.4rem;
+            padding: 0.9rem 1.4rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            border-left: 5px solid #2677b3;
+            margin: 1rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c2d7f0, transparent);
+            margin: 2.5rem 0;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            font-size: 0.98rem;
+            color: #3c6180;
+            border-top: 1px dashed #b4cbe5;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📬 Professional Business Communication</h1>
+        <div class="subhead">Block 2 · clear writing & email netiquette</div>
+
+        <!-- table of contents (mirroring the original note structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Contents</div>
+            <div class="toc-grid">
+                <a href="#part1-principles">1. Principles: 3 Cs & 7 Cs</a>
+                <a href="#clarity">1.1 Clarity</a>
+                <a href="#conciseness">1.2 Conciseness</a>
+                <a href="#completeness">1.3 Completeness</a>
+                <a href="#seven-cs">1.4 7 Cs table</a>
+                <a href="#practical-techniques">1.5 Practical techniques</a>
+                <a href="#part2-netiquette">2. Netiquette for emails</a>
+                <a href="#before-write">2.1 Before you write</a>
+                <a href="#crafting-email">2.2 Crafting the email</a>
+                <a href="#recipients-threads">2.3 Recipients & threads</a>
+                <a href="#final-checks">2.4 Final checks</a>
+            </div>
+        </div>
+
+        <!-- PART 1: PRINCIPLES OF CLEAR, CONCISE, PROFESSIONAL WRITING -->
+        <section id="part1-principles">
+            <h2>📌 Part 1: Principles of clear, concise & professional writing</h2>
+            <p>Effective business writing demonstrates clear thinking and builds credibility. It is purpose‑driven:
+                inform, persuade, instruct. All communication should rest on the <strong>3 Cs</strong> and ideally the
+                <strong>7 Cs</strong>.</p>
+        </section>
+
+        <!-- Clarity -->
+        <section id="clarity">
+            <h2>🔹 1.1 Clarity</h2>
+            <p>A clear message leaves no doubt. The reader immediately understands purpose.</p>
+            <ul>
+                <li><strong>Know your purpose & audience:</strong> what matters to them? Tone and content follow.</li>
+                <li><strong>Get to the point:</strong> state the main idea early; do not bury the ask.</li>
+                <li><strong>Structure for understanding:</strong> subheadings, short paragraphs, topic sentences.</li>
+                <li><strong>Precise language:</strong> avoid vague terms, jargon, clichés. Say “we will try to solve”
+                    not “endeavour to obtain a resolution”.</li>
+            </ul>
+            <div class="accent-box">💡 <strong>Example:</strong> “We need the Q3 report by Friday 5 PM” instead of “We
+                might need that report soon.”</div>
+        </section>
+
+        <!-- Conciseness -->
+        <section id="conciseness">
+            <h2>🔹 1.2 Conciseness</h2>
+            <p>Respect the reader’s time – use fewest words without cutting essentials.</p>
+            <ul>
+                <li>Stick to main points; delete fluff.</li>
+                <li>One idea per sentence, one topic per paragraph.</li>
+                <li>Omit redundancies (<em>past history, end result</em>) and wordy phrases: replace “due to the fact
+                    that” with “because”.</li>
+                <li>Provide depth as an option: summary first, details attached.</li>
+            </ul>
+            <div class="drill">✂️ wordy → concise: “at this point in time” → “now”<br>“in the event that” → “if”</div>
+        </section>
+
+        <!-- Completeness -->
+        <section id="completeness">
+            <h2>🔹 1.3 Completeness</h2>
+            <p>Include everything the reader needs to act. Leaving details out forces follow‑up and erodes trust.</p>
+            <ul>
+                <li>Answer the 5 Ws: Who? What? When? Where? Why? (+ How?)</li>
+                <li>Anticipate reader questions: give information needed to move forward.</li>
+                <li>Actionable information: specify who does what by when.</li>
+            </ul>
+            <div class="mini-card"><strong>Example complete request:</strong> “Alex, please draft the agenda for
+                Monday’s 10 AM stakeholder meeting and share it by Friday COB. Include the budget update from Teresa.”
+            </div>
+        </section>
+
+        <!-- 7 Cs table -->
+        <section id="seven-cs">
+            <h2>🔹 1.4 The 7 Cs of professional writing</h2>
+            <table>
+                <tr>
+                    <th>Principle</th>
+                    <th>Definition</th>
+                    <th>Key question</th>
+                </tr>
+                <tr>
+                    <td>Clear</td>
+                    <td>Easy to understand, single purpose</td>
+                    <td>Is main point obvious?</td>
+                </tr>
+                <tr>
+                    <td>Concise</td>
+                    <td>Brief, only necessary info</td>
+                    <td>Can I cut any sentences?</td>
+                </tr>
+                <tr>
+                    <td>Concrete</td>
+                    <td>Specific, definite, vivid</td>
+                    <td>Are facts & figures precise?</td>
+                </tr>
+                <tr>
+                    <td>Correct</td>
+                    <td>Accurate grammar, spelling, data</td>
+                    <td>Any errors? Info verified?</td>
+                </tr>
+                <tr>
+                    <td>Coherent</td>
+                    <td>Logical flow, smooth transitions</td>
+                    <td>Do ideas connect logically?</td>
+                </tr>
+                <tr>
+                    <td>Complete</td>
+                    <td>All relevant information present</td>
+                    <td>Did I answer all questions?</td>
+                </tr>
+                <tr>
+                    <td>Courteous</td>
+                    <td>Reader‑focused, respectful, open</td>
+                    <td>Is tone professional and helpful?</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Practical techniques -->
+        <section id="practical-techniques">
+            <h2>🔹 1.5 Practical techniques</h2>
+            <h3>Active voice preferred</h3>
+            <p>“John submitted the report” (active) vs “The report was submitted by John” (passive).</p>
+            <h3>Choose words carefully</h3>
+            <ul>
+                <li><strong>Strong verbs:</strong> “recommended” not “made a recommendation”.</li>
+                <li><strong>Short words:</strong> “use” not “utilize”; “begin” not “commence”.</li>
+                <li><strong>Avoid clichés:</strong> “low‑hanging fruit”, “ballpark figure” – they lack impact.</li>
+            </ul>
+            <h3>Formatting for readability</h3>
+            <p>Bullet points, numbered lists, bold, white space help guide the eye.</p>
+            <div class="pill-list">
+                <span class="pill">active voice</span>
+                <span class="pill">strong verbs</span>
+                <span class="pill">short words</span>
+                <span class="pill">no buzzwords</span>
+            </div>
+        </section>
+
+        <!-- divider before part 2 -->
+        <hr>
+
+        <!-- PART 2: NETIQUETTE FOR PROFESSIONAL EMAILS -->
+        <section id="part2-netiquette">
+            <h2>📧 Part 2: Netiquette for professional emails</h2>
+            <p>Internet etiquette – professional standards for respectful, effective email communication. Every email
+                represents you and your company.</p>
+        </section>
+
+        <!-- Before you write -->
+        <section id="before-write">
+            <h2>🔹 2.1 Before you write</h2>
+            <ul>
+                <li><strong>Professional email address:</strong> first.last@domain, avoid nicknames.</li>
+                <li><strong>Know audience & context:</strong> formality differs for client vs colleague.</li>
+            </ul>
+        </section>
+
+        <!-- Crafting the email -->
+        <section id="crafting-email">
+            <h2>🔹 2.2 Crafting the email – structure & content</h2>
+
+            <h3>📌 Subject line</h3>
+            <ul>
+                <li>Always include one, be clear & specific: “Meeting rescheduled to Friday 3 PM” not “Hi”.</li>
+            </ul>
+
+            <h3>📌 Salutation</h3>
+            <ul>
+                <li>Always open with greeting: “Hello [Name]”, “Dear Mr. Smith”.</li>
+                <li>Introduce yourself if first contact.</li>
+            </ul>
+
+            <h3>📌 Email body</h3>
+            <ul>
+                <li><strong>Get to the point quickly</strong> – first two sentences.</li>
+                <li><strong>Concise yet complete</strong> – short paragraphs, bullet points.</li>
+                <li><strong>Tone:</strong> polite (please/thank you). No sarcasm/humor, NO ALL CAPS.</li>
+                <li><strong>Proper grammar & punctuation:</strong> proofread; no emojis / “LOL” / “BRB”.</li>
+            </ul>
+
+            <h3>📌 Closing & signature</h3>
+            <ul>
+                <li>Professional closing: “Sincerely”, “Best regards”, “Thank you”.</li>
+                <li>Signature block: full name, title, company, phone, website.</li>
+            </ul>
+
+            <div class="mini-card">
+                <strong>Example good email:</strong><br>
+                <strong>Subject:</strong> Question about Q3 forecast – by Friday?<br>
+                Hi Pat,<br>
+                Could you send the Q3 forecast numbers by Friday noon? We need them for the board pack.<br>
+                Thanks,<br>
+                Alex Taylor | Analyst | FinCorp | +1 555‑1234
+            </div>
+        </section>
+
+        <!-- Recipients and threads -->
+        <section id="recipients-threads">
+            <h2>🔹 2.3 Managing recipients & threads</h2>
+            <ul>
+                <li><strong>To:</strong> people who must act. <strong>CC:</strong> people who need to know, no action.
+                </li>
+                <li><strong>BCC:</strong> use to protect privacy (large lists) or discreetly include someone.</li>
+                <li><strong>Reply All sparingly:</strong> only if everyone truly needs your reply. “Thanks” not for all.
+                </li>
+                <li><strong>Threads:</strong> keep recipient list tight; update subject if topic drifts.</li>
+            </ul>
+        </section>
+
+        <!-- Final checks -->
+        <section id="final-checks">
+            <h2>🔹 2.4 Final checks and sending</h2>
+            <ul>
+                <li><strong>Proofread</strong> aloud – spelling, grammar, tone.</li>
+                <li><strong>Check “To” field</strong> – avoid autofill mistakes.</li>
+                <li><strong>Attachments:</strong> did you actually attach the file?</li>
+                <li><strong>Never send when emotional</strong> – draft, save, re‑read later.</li>
+                <li><strong>Respond promptly</strong> – within 24h; if delayed, acknowledge and set expectation.</li>
+            </ul>
+
+            <div class="accent-box">
+                ⚠️ Warning signs in emails: unclear subject, missing greeting, rambling sentences, typos, missing
+                attachment. Always double‑check.
+            </div>
+        </section>
+
+        <!-- additional summary grid: key reminders -->
+        <div class="def-grid" style="margin-top:2rem;">
+            <div class="def-item"><strong>3 Cs</strong><br>Clear · Concise · Complete</div>
+            <div class="def-item"><strong>7 Cs</strong><br>+ Concrete, Correct, Coherent, Courteous</div>
+            <div class="def-item"><strong>Active voice</strong><br>“We will deliver” not “It will be delivered”</div>
+            <div class="def-item"><strong>Email essentials</strong><br>subject · greeting · body · closing · signature
+            </div>
+        </div>
+
+        <!-- quick reference appendix (like original style) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">📎 Quick reference – netiquette rules</h4>
+            <div class="pill-list">
+                <span class="pill">professional address</span>
+                <span class="pill">clear subject</span>
+                <span class="pill">greeting & closing</span>
+                <span class="pill">concise body</span>
+                <span class="pill">check tone</span>
+                <span class="pill">proofread</span>
+                <span class="pill">BCC wisely</span>
+                <span class="pill">no reply‑all storms</span>
+            </div>
+            <div class="drill" style="margin-top:0.8rem;">✉️ daily mantra: “Is this clear? Is it kind? Is it necessary?”
+            </div>
+        </div>
+
+        <footer>
+            Block 2 · Professional Business Communication · © 2026 all rights reserved
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

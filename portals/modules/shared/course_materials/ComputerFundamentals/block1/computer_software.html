@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Computer Software · operating systems & applications · interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fb;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0b2842, #1f4b7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #2c5778;
+            border-left: 5px solid #2b7fc2;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e8f0fe;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 60, 130, 0.1), 0 8px 12px -8px #a0bbd8;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2d4b;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4970;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 30, 60, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d4e3ff;
+            border-color: #2b7fc2;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2f6ea2;
+        }
+
+        /* section styles */
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 30, 50, 0.05);
+            border: 1px solid #eef3f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #113355;
+            border-bottom: 3px solid #2b7fc2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1d4a72;
+            padding-left: 0.3rem;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1f4b6e;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f7ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2a7fca;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 30, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #113355;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #dbe5f0;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2b7fc2;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f9fcff;
+            border: 1px solid #cdddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e5eff9;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f6faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        /* comparison fancy */
+        .comp-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .comp-col {
+            flex: 1 1 220px;
+            background: #f2f9ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid #b9d1ec;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>💿 Computer Software: OS & Applications</h1>
+        <div class="subhead">system software · operating systems · utility · application types · licensing</div>
+
+        <!-- TABLE OF CONTENTS (identical structure, all internal links) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#intro-software">1. Introduction to Software</a>
+                <a href="#system-software">2. System software</a>
+                <a href="#operating-systems">3. Operating systems (core)</a>
+                <a href="#os-classifications">4. OS classifications</a>
+                <a href="#other-system-sw">5. Drivers, utilities, firmware</a>
+                <a href="#application-sw">6. Application software</a>
+                <a href="#sw-licensing">7. Licensing & summary tables</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION TO SOFTWARE -->
+        <section id="intro-software">
+            <h2>🔹 1. Introduction to Computer Software</h2>
+            <p><strong>Computer software</strong> is a collection of data, programs, instructions, and procedures that
+                tell a computer what to do. It is the intangible component, contrasting with physical hardware. Without
+                software, hardware is inert. Software is broadly classified into <strong>system software</strong> and
+                <strong>application software</strong>.</p>
+            <div class="highlight-block">
+                <p>⚙️ <strong>System software</strong> manages hardware and provides a platform for applications.<br>
+                    🧩 <strong>Application software</strong> helps users perform specific tasks.</p>
+            </div>
+        </section>
+
+        <!-- 2. SYSTEM SOFTWARE (overview) -->
+        <section id="system-software">
+            <h2>⚙️ 2. System Software</h2>
+            <p>System software operates, controls, and extends the computer’s processing capabilities. It acts as an
+                intermediary between hardware and application software, handling internal machine details. Usually runs
+                “invisible” in the background.</p>
+            <h3>Main sub‑categories:</h3>
+            <ul>
+                <li>Operating systems</li>
+                <li>Device drivers</li>
+                <li>Utility software</li>
+                <li>Firmware</li>
+                <li>Programming language translators</li>
+            </ul>
+        </section>
+
+        <!-- 3. OPERATING SYSTEMS (core) -->
+        <section id="operating-systems">
+            <h2>🧠 3. Operating Systems (OS)</h2>
+            <p><strong>Definition:</strong> The most fundamental system software, first program loaded (boot program).
+                Manages all other programs and hardware resources.</p>
+            <h3>3.1 Core functions of an OS</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Process management</strong> – CPU scheduling, creation/termination,
+                    multitasking.</div>
+                <div class="def-item"><strong>Memory management</strong> – RAM allocation, virtual memory.</div>
+                <div class="def-item"><strong>File system management</strong> – directories, read/write, permissions.
+                </div>
+                <div class="def-item"><strong>Device management</strong> – communication via device drivers.</div>
+                <div class="def-item"><strong>Security/access control</strong> – authentication, file permissions.</div>
+                <div class="def-item"><strong>User interface</strong> – CLI, GUI (WIMP).</div>
+                <div class="def-item"><strong>Network management</strong> – connections, protocols.</div>
+            </div>
+
+            <h3>3.2 Examples of popular OS</h3>
+            <ul>
+                <li><strong>Microsoft Windows</strong> (Windows 10, 11, Server) – dominant in business PCs.</li>
+                <li><strong>macOS</strong> – Apple’s GUI OS for Mac.</li>
+                <li><strong>Linux</strong> (Ubuntu, Fedora, Debian) – open‑source, servers, desktops.</li>
+                <li><strong>Android</strong> – Google’s mobile OS (Linux‑based).</li>
+                <li><strong>iOS</strong> – Apple’s mobile OS for iPhone/iPad.</li>
+            </ul>
+        </section>
+
+        <!-- 4. OS CLASSIFICATIONS -->
+        <section id="os-classifications">
+            <h2>📌 4. OS Classifications</h2>
+            <h3>By user & processing model</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Single‑user, single‑tasking</td>
+                    <td>One user, one task at a time</td>
+                    <td>MS‑DOS, early Windows</td>
+                </tr>
+                <tr>
+                    <td>Single‑user, multi‑tasking</td>
+                    <td>One user, multiple concurrent apps</td>
+                    <td>Windows/macOS/Linux (desktop)</td>
+                </tr>
+                <tr>
+                    <td>Multi‑user OS</td>
+                    <td>Multiple users simultaneous (remote terminals)</td>
+                    <td>UNIX, Windows Server, Linux servers</td>
+                </tr>
+                <tr>
+                    <td>Real‑time OS (RTOS)</td>
+                    <td>Strict timing, embedded systems</td>
+                    <td>VxWorks, FreeRTOS, QNX</td>
+                </tr>
+            </table>
+            <h3>By function & interaction</h3>
+            <ul>
+                <li><strong>Batch OS:</strong> jobs grouped, processed sequentially (early mainframes).</li>
+                <li><strong>Time‑sharing OS:</strong> CPU time shared among multiple users (Multics, UNIX).</li>
+                <li><strong>Distributed OS:</strong> group of distinct computers appears as one (cloud clusters).</li>
+                <li><strong>Network OS (NOS):</strong> server‑centric, manages data/users/groups (Windows Server, Novell
+                    NetWare).</li>
+            </ul>
+        </section>
+
+        <!-- 5. OTHER SYSTEM SOFTWARE (drivers, utilities, firmware, translators) -->
+        <section id="other-system-sw">
+            <h2>🛠️ 5. Other System Software</h2>
+
+            <h3>5.1 Device drivers</h3>
+            <p>Specialized programs that allow the OS to communicate with hardware (printer, GPU, keyboard).</p>
+
+            <h3>5.2 Utility software</h3>
+            <p>Maintain, manage, and tune the computer.</p>
+            <table>
+                <tr>
+                    <th>Utility</th>
+                    <th>Function</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Antivirus</td>
+                    <td>Scan/remove malware</td>
+                    <td>Norton, Windows Defender</td>
+                </tr>
+                <tr>
+                    <td>Disk cleanup</td>
+                    <td>Remove temporary files</td>
+                    <td>Windows Disk Cleanup</td>
+                </tr>
+                <tr>
+                    <td>Defragmentation</td>
+                    <td>Rearrange fragmented HDD data</td>
+                    <td>Windows Defrag</td>
+                </tr>
+                <tr>
+                    <td>Backup software</td>
+                    <td>Copy data for safety</td>
+                    <td>File History, Time Machine</td>
+                </tr>
+                <tr>
+                    <td>File compression</td>
+                    <td>Reduce file size</td>
+                    <td>WinZip, 7‑Zip</td>
+                </tr>
+            </table>
+
+            <h3>5.3 Firmware</h3>
+            <p>Software embedded into hardware ROM (BIOS/UEFI on motherboard, software inside microwave). Provides
+                low‑level control.</p>
+
+            <h3>5.4 Programming language translators</h3>
+            <p>Convert high‑level code to machine language: compilers, interpreters, assemblers.</p>
+        </section>
+
+        <!-- 6. APPLICATION SOFTWARE -->
+        <section id="application-sw">
+            <h2>📱 6. Application Software</h2>
+            <p>Programs designed for end‑users to perform specific tasks (word processing, browsing, gaming).</p>
+            <h3>6.1 Key features</h3>
+            <ul>
+                <li>Direct user interaction via UI</li>
+                <li>Tailored functionality</li>
+                <li>Customization options</li>
+                <li>Create/modify data</li>
+            </ul>
+
+            <h3>6.2 Common types & examples</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Purpose</th>
+                    <th>Examples</th>
+                </tr>
+                <tr>
+                    <td>Word processing</td>
+                    <td>Create/edit text documents</td>
+                    <td>MS Word, Google Docs, Writer</td>
+                </tr>
+                <tr>
+                    <td>Spreadsheet</td>
+                    <td>Organise/analyse tabular data</td>
+                    <td>Excel, Sheets, Numbers</td>
+                </tr>
+                <tr>
+                    <td>Presentation</td>
+                    <td>Slide shows for talks</td>
+                    <td>PowerPoint, Keynote, Prezi</td>
+                </tr>
+                <tr>
+                    <td>Database</td>
+                    <td>Manage structured data</td>
+                    <td>MS Access, MySQL, FileMaker</td>
+                </tr>
+                <tr>
+                    <td>Web browser</td>
+                    <td>Access WWW</td>
+                    <td>Chrome, Firefox, Edge, Safari</td>
+                </tr>
+                <tr>
+                    <td>Email client</td>
+                    <td>Send/receive email</td>
+                    <td>Outlook, Thunderbird, Gmail</td>
+                </tr>
+                <tr>
+                    <td>Graphics/multimedia</td>
+                    <td>Edit images/audio/video</td>
+                    <td>Photoshop, CorelDRAW, VLC</td>
+                </tr>
+                <tr>
+                    <td>Desktop publishing</td>
+                    <td>Page layout (flyers, brochures)</td>
+                    <td><strong>CorelDRAW</strong>, InDesign, Publisher</td>
+                </tr>
+                <tr>
+                    <td>Communication/collab</td>
+                    <td>Teamwork, messaging</td>
+                    <td>Teams, Slack, Zoom, Discord</td>
+                </tr>
+                <tr>
+                    <td>Enterprise software</td>
+                    <td>Organisation‑wide needs (ERP, CRM)</td>
+                    <td>SAP, Salesforce</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 7. SOFTWARE LICENSING & SUMMARY TABLES -->
+        <section id="sw-licensing">
+            <h2>📊 7. Licensing & Comparison Tables</h2>
+
+            <h3>7.1 Software licensing models</h3>
+            <div class="comp-row">
+                <div class="comp-col"><strong>Proprietary</strong><br>Source code secret; license to use object code.
+                    (Windows, Photoshop)</div>
+                <div class="comp-col"><strong>Open source</strong><br>Source code public; can modify/redistribute.
+                    (Linux, Firefox, LibreOffice)</div>
+                <div class="comp-col"><strong>Freeware</strong><br>Free to use, but no modification/sale. (Adobe Reader,
+                    Skype)</div>
+                <div class="comp-col"><strong>Shareware</strong><br>Free trial, payment for full version. (WinZip, many
+                    game demos)</div>
+            </div>
+
+            <h3>7.2 System vs Application software</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>System software</th>
+                    <th>Application software</th>
+                </tr>
+                <tr>
+                    <td>Purpose</td>
+                    <td>Run hardware & platform</td>
+                    <td>Perform user tasks</td>
+                </tr>
+                <tr>
+                    <td>Background/foreground</td>
+                    <td>Runs in background</td>
+                    <td>Direct user interaction</td>
+                </tr>
+                <tr>
+                    <td>Examples</td>
+                    <td>OS, drivers, utilities</td>
+                    <td>Word, Excel, browser</td>
+                </tr>
+                <tr>
+                    <td>Development</td>
+                    <td>Low‑level, hardware‑oriented</td>
+                    <td>High‑level, user‑centric</td>
+                </tr>
+            </table>
+
+            <h3>7.3 Common software acronyms</h3>
+            <div class="def-grid">
+                <span>OS</span> <span>BIOS</span> <span>UEFI</span> <span>API</span> <span>GUI</span> <span>CLI</span>
+                <span>RTOS</span> <span>ERP</span> <span>CRM</span> <span>EULA</span> <span>DTP</span>
+            </div>
+
+            <h3>7.4 Popular OS by device type</h3>
+            <table>
+                <tr>
+                    <th>Device</th>
+                    <th>Dominant OS</th>
+                    <th>Alternatives</th>
+                </tr>
+                <tr>
+                    <td>Desktop/laptop</td>
+                    <td>Windows, macOS</td>
+                    <td>Linux (Ubuntu, Fedora)</td>
+                </tr>
+                <tr>
+                    <td>Server</td>
+                    <td>Linux (CentOS, Ubuntu Server)</td>
+                    <td>Windows Server, UNIX</td>
+                </tr>
+                <tr>
+                    <td>Smartphone</td>
+                    <td>Android, iOS</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>Embedded / IoT</td>
+                    <td>RTOS (FreeRTOS), embedded Linux</td>
+                    <td>Zephyr, QNX</td>
+                </tr>
+            </table>
+
+            <h3>7.5 Memory & storage hierarchy (reminder)</h3>
+            <div class="mini-card">
+                <code>CPU registers → cache (L1/L2/L3) → RAM (volatile) → SSD / HDD (non‑volatile) → cloud/tape</code>
+            </div>
+
+            <hr>
+
+            <p><strong>Conclusion:</strong> System software (OS, drivers) provides the foundation; application software
+                uses that platform to accomplish user tasks. Both are essential for a functional computer system.</p>
+
+        </section>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies | © 2026 All rights reserved.
+        </footer>
+
+    </div> <!-- .wrapper -->
+</body>
+
+</html>

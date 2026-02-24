@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Introduction to Cloud Computing · interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f5fa;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 30, 60, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0b2842, #1f4b7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #2c5778;
+            border-left: 5px solid #2b7fc2;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e8f0fe;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 60, 130, 0.1), 0 8px 12px -8px #a0bbd8;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2d4b;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4970;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 30, 60, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d4e3ff;
+            border-color: #2b7fc2;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2f6ea2;
+        }
+
+        /* section styles */
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 30, 50, 0.05);
+            border: 1px solid #eef3f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #113355;
+            border-bottom: 3px solid #2b7fc2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1d4a72;
+            padding-left: 0.3rem;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1f4b6e;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f7ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2a7fca;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 30, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #113355;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #dbe5f0;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2b7fc2;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f9fcff;
+            border: 1px solid #cdddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e5eff9;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f6faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .comp-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .comp-col {
+            flex: 1 1 220px;
+            background: #f2f9ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid #b9d1ec;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>☁️ Introduction to Cloud Computing</h1>
+        <div class="subhead">Desktop Publishing & Secretarial Studies · Block 1: Fundamentals of Computing</div>
+
+        <!-- Table of contents -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#part1">Part 1: Understanding Cloud Computing</a>
+                <a href="#what-is-cloud">1.1 What is Cloud Computing?</a>
+                <a href="#characteristics">1.2 Essential Characteristics</a>
+                <a href="#service-models">1.3 Cloud Service Models</a>
+                <a href="#deployment-models">1.4 Cloud Deployment Models</a>
+                <a href="#drivers">1.5 Key Drivers for Cloud Adoption</a>
+                <a href="#part2">Part 2: Cloud Storage in Practice</a>
+                <a href="#google-drive">2.1 Google Drive Deep Dive</a>
+                <a href="#onedrive">2.2 Microsoft OneDrive Deep Dive</a>
+                <a href="#part3">Part 3: Online Collaboration Tools</a>
+                <a href="#coauthoring">3.1 Real‑Time Co‑Authoring</a>
+                <a href="#commenting">3.2 Commenting & Task Assignment</a>
+                <a href="#version-history">3.3 Version History & Recovery</a>
+                <a href="#integrated-comms">3.4 Integrated Communication</a>
+                <a href="#summary">Summary</a>
+            </div>
+        </div>
+
+        <!-- PART 1 -->
+        <section id="part1">
+            <h2>📌 Part 1: Understanding Cloud Computing</h2>
+
+            <article id="what-is-cloud">
+                <h3>1.1 What is Cloud Computing?</h3>
+                <p>Imagine if, instead of keeping all your files and software on your computer's hard drive, you could
+                    access them from anywhere, using any device with an internet connection. That is the essence of
+                    cloud computing. It is like renting computing power and storage from a massive data center instead
+                    of owning and maintaining everything yourself.</p>
+                <p>Formally defined by the <strong>National Institute of Standards and Technology (NIST)</strong>, cloud
+                    computing is a model for enabling ubiquitous, convenient, on-demand network access to a shared pool
+                    of configurable computing resources (e.g., networks, servers, storage, applications, and services)
+                    that can be rapidly provisioned and released with minimal management effort or service provider
+                    interaction.</p>
+                <p>In simple terms, the "cloud" refers to servers that are accessed over the internet, and the software
+                    and databases that run on those servers.</p>
+            </article>
+
+            <article id="characteristics">
+                <h3>1.2 Essential Characteristics of Cloud Computing</h3>
+                <div class="highlight-block">
+                    <ol>
+                        <li><strong>On-Demand Self-Service:</strong> Provision capabilities automatically without human
+                            interaction.</li>
+                        <li><strong>Broad Network Access:</strong> Available over the network via mobiles, laptops,
+                            workstations.</li>
+                        <li><strong>Resource Pooling:</strong> Multi‑tenant model, dynamically assigned resources.</li>
+                        <li><strong>Rapid Elasticity:</strong> Scale rapidly outward/inward according to demand.</li>
+                        <li><strong>Measured Service:</strong> Metering capability – pay only for what you use.</li>
+                    </ol>
+                </div>
+            </article>
+
+            <article id="service-models">
+                <h3>1.3 Cloud Service Models ("Spend as You Grow")</h3>
+                <div class="comp-row">
+                    <div class="comp-col"><strong>IaaS</strong> (Infrastructure as a Service)<br>Virtual servers,
+                        storage, networks. You manage OS/apps/data.<br><em>Examples: AWS, Azure, Google Compute
+                            Engine</em></div>
+                    <div class="comp-col"><strong>PaaS</strong> (Platform as a Service)<br>Develop apps without managing
+                        infrastructure. Provider handles OS, middleware.<br><em>Examples: Google App Engine, Salesforce,
+                            AWS Elastic Beanstalk</em></div>
+                    <div class="comp-col"><strong>SaaS</strong> (Software as a Service)<br>Ready‑to‑use software over
+                        internet. Provider manages everything.<br><em>Examples: Google Drive, Microsoft 365, Gmail</em>
+                    </div>
+                </div>
+            </article>
+
+            <article id="deployment-models">
+                <h3>1.4 Cloud Deployment Models</h3>
+                <ul>
+                    <li><strong>Public cloud:</strong> Owned by third‑party provider, shared hardware.</li>
+                    <li><strong>Private cloud:</strong> Exclusive use by one organisation (on‑site or hosted).</li>
+                    <li><strong>Hybrid cloud:</strong> Combines private and public for flexibility.</li>
+                </ul>
+            </article>
+
+            <article id="drivers">
+                <h3>1.5 Key Drivers for Cloud Adoption</h3>
+                <div class="def-grid">
+                    <div class="def-item">💰 Cost‑Efficiency – pay as you go, no large upfront costs</div>
+                    <div class="def-item">📈 Agility & Scalability – up/down with demand</div>
+                    <div class="def-item">🌍 Accessibility – anywhere, any device</div>
+                    <div class="def-item">🛡️ Business Continuity – redundant backups</div>
+                    <div class="def-item">⚡ Automatic Updates – provider handles security/software</div>
+                </div>
+            </article>
+        </section>
+
+        <!-- PART 2 -->
+        <section id="part2">
+            <h2>💾 Part 2: Cloud Storage in Practice</h2>
+
+            <article id="google-drive">
+                <h3>2.1 Google Drive: A Deep Dive</h3>
+                <p><strong>Key Features:</strong> 15 GB free storage (shared with Gmail/Photos). Integrated with Google
+                    Docs, Sheets, Slides, Forms. Powerful search (incl. Gemini AI deep search for Workspace). Organise
+                    with folders, labels, stars.</p>
+                <h4>Practical How‑Tos</h4>
+                <ul>
+                    <li><strong>Uploading:</strong> Click <code>+ New</code> → File/folder upload, or drag & drop.</li>
+                    <li><strong>Sharing & permissions:</strong> Right‑click → Share → add email → choose
+                        Viewer/Commenter/Editor. For meetings, “Anyone with the link” (view only), then restrict later.
+                    </li>
+                    <li><strong>Working offline:</strong> Install Google Docs Offline extension → Drive settings →
+                        enable offline. Changes sync when online.</li>
+                    <li><strong>Convert PDFs:</strong> Right‑click PDF → Open with → Google Docs → becomes editable
+                        text.</li>
+                    <li><strong>Transfer ownership:</strong> Share → dropdown next to collaborator → Transfer ownership
+                        (helps free quota).</li>
+                </ul>
+            </article>
+
+            <article id="onedrive">
+                <h3>2.2 Microsoft OneDrive: A Deep Dive</h3>
+                <p><strong>Key Features:</strong> Deep Windows/Microsoft 365 integration. Sync folder – local changes
+                    mirror to cloud. Mobile app scans documents/whiteboards/business cards to PDF. Version history.
+                    Copilot (AI) can summarise/compare files.</p>
+                <h4>Practical How‑Tos</h4>
+                <ul>
+                    <li><strong>Upload:</strong> onedrive.live.com → Upload (files/folders) or drag & drop.</li>
+                    <li><strong>Share:</strong> Right‑click → Share → set edit/view → send email or copy link. Manage
+                        access via details pane (info icon).</li>
+                    <li><strong>Sync to computer:</strong> Install OneDrive desktop → sign in → choose folders to sync
+                        (work offline).</li>
+                    <li><strong>Mobile scan:</strong> Open app → tap + / Camera → Scan → capture document → save as PDF.
+                    </li>
+                </ul>
+            </article>
+        </section>
+
+        <!-- PART 3 -->
+        <section id="part3">
+            <h2>🤝 Part 3: Online Collaboration Tools</h2>
+
+            <article id="coauthoring">
+                <h3>3.1 Real‑Time Co‑Authoring</h3>
+                <p>Multiple people edit the same document simultaneously. Cursors and selections are visible in
+                    different colours. Available in Google Docs & Word Online. Eliminates version‑email ping‑pong.</p>
+            </article>
+
+            <article id="commenting">
+                <h3>3.2 Commenting and Task Assignment</h3>
+                <p>Attach comments to specific words/cells. Use <code>@mention</code> (e.g. @jane.doe@email.com) to
+                    assign a task – the person receives a notification and can check it off. Threaded discussions keep
+                    context.</p>
+            </article>
+
+            <article id="version-history">
+                <h3>3.3 Version History and File Recovery</h3>
+                <p><strong>Google Drive:</strong> File → Version history → See version history → preview/restore.<br>
+                    <strong>OneDrive:</strong> Right‑click file → Version history → view/restore/download previous
+                    versions. Essential for auditing & recovery.
+                </p>
+            </article>
+
+            <article id="integrated-comms">
+                <h3>3.4 Integrated Communication</h3>
+                <p><strong>Google Workspace:</strong> Google Meet / Chat inside Docs, Sheets.<br>
+                    <strong>Microsoft 365:</strong> OneDrive/SharePoint files appear directly in Microsoft Teams
+                    channels and chats, enabling seamless collaboration without leaving Teams.
+                </p>
+            </article>
+
+            <div class="accent-box" id="summary">
+                <strong>📌 Summary:</strong> Cloud computing shifts from device‑centric to data‑centric work. Mastering
+                Drive & OneDrive gives you efficiency, collaboration, and anywhere access.
+            </div>
+        </section>
+
+        <!-- EXTRA TABLES (as in original style, but cloud oriented) -->
+        <section>
+            <h2>📋 Comparison & reference tables</h2>
+
+            <h3>Service models overview</h3>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>You manage</th>
+                    <th>Provider manages</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>IaaS</td>
+                    <td>Apps, data, runtime, OS</td>
+                    <td>Virtualisation, servers, networking</td>
+                    <td>Amazon EC2</td>
+                </tr>
+                <tr>
+                    <td>PaaS</td>
+                    <td>Applications, data</td>
+                    <td>OS, middleware, runtime, infrastructure</td>
+                    <td>Google App Engine</td>
+                </tr>
+                <tr>
+                    <td>SaaS</td>
+                    <td>Configuration & usage</td>
+                    <td>Everything else (app, data, platform, hardware)</td>
+                    <td>Google Drive, Office 365</td>
+                </tr>
+            </table>
+
+            <h3>Drive vs OneDrive quick comparison</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Google Drive</th>
+                    <th>Microsoft OneDrive</th>
+                </tr>
+                <tr>
+                    <td>Free storage</td>
+                    <td>15 GB (shared)</td>
+                    <td>5 GB (personal), more with M365</td>
+                </tr>
+                <tr>
+                    <td>Native apps</td>
+                    <td>Docs, Sheets, Slides</td>
+                    <td>Word, Excel, PowerPoint (desktop/web)</td>
+                </tr>
+                <tr>
+                    <td>AI assistance</td>
+                    <td>Gemini (Deep Search)</td>
+                    <td>Copilot (summaries, comparisons)</td>
+                </tr>
+                <tr>
+                    <td>Mobile scan</td>
+                    <td>Google Drive (scan via app)</td>
+                    <td>OneDrive scan to PDF</td>
+                </tr>
+                <tr>
+                    <td>Offline</td>
+                    <td>Chrome extension + settings</td>
+                    <td>Sync folder (native)</td>
+                </tr>
+            </table>
+
+            <h3>Common cloud acronyms</h3>
+            <div class="def-grid">
+                <span>IaaS</span> <span>PaaS</span> <span>SaaS</span> <span>NIST</span> <span>SLA</span>
+                <span>API</span> <span>AWS</span> <span>Azure</span> <span>GCP</span> <span>VM</span> <span>CDN</span>
+                <span>SDK</span>
+            </div>
+        </section>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies | © 2026 All rights reserved.
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

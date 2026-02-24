@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>File & Folder Management · interactive guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f5f9;
+            color: #1e2e3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 25px 45px -18px rgba(0, 30, 50, 0.3);
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0b2a3e, #1b5270);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.25rem;
+            color: #2a5775;
+            border-left: 6px solid #1f7ab0;
+            padding-left: 1.4rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents (fancy card) */
+        .toc-card {
+            background: #e6f0fa;
+            border-radius: 2.2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 5px rgba(0, 50, 80, 0.08), 0 10px 18px -12px #2f5d84;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #10334d;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.3rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1d4d74;
+            font-weight: 520;
+            box-shadow: 0 3px 10px rgba(0, 40, 60, 0.1);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cfe2ff;
+            border-color: #1f7ab0;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -14px #1d5b88;
+        }
+
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3.2rem 0 2.8rem;
+            background: #ffffff;
+            border-radius: 2.2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 8px 22px rgba(0, 40, 60, 0.06);
+            border: 1px solid #e2ecf5;
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            font-weight: 680;
+            color: #0a3147;
+            border-bottom: 4px solid #1f7ab0;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.7rem;
+            font-weight: 630;
+            margin: 2rem 0 0.8rem;
+            color: #154b70;
+            border-left: 8px solid #79b6e3;
+            padding-left: 1.2rem;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            font-weight: 620;
+            margin: 1.6rem 0 0.3rem;
+            color: #1a4f73;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 16px rgba(0, 40, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #0f3c5c;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #d3e2f0;
+            background-color: #fcfdff;
+        }
+
+        .badge {
+            background: #1f7ab0;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .highlight-block {
+            background: #edf5fd;
+            border-radius: 1.8rem;
+            padding: 1.6rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #1f7ab0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #f4fafd;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #7fb4da;
+            font-weight: 500;
+        }
+
+        .accent-box {
+            background: #e2f0fa;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1.6rem;
+            font-weight: 500;
+        }
+
+        .mini-card {
+            background: #f2f8ff;
+            border: 1px solid #c6ddf5;
+            border-radius: 1.6rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bdd3ec, transparent);
+            margin: 2.5rem 0;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #3d6182;
+            border-top: 1px dashed #b8cee7;
+            padding-top: 2rem;
+        }
+
+        kbd {
+            background: #eef4fa;
+            border-radius: 6px;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid #b1c8e0;
+            font-family: monospace;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📁 File & Folder Management · complete guide</h1>
+        <div class="subhead">master organization · naming · paths · backup · interactive notes</div>
+
+        <!-- table of contents (all anchor links) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction</a>
+                <a href="#file-systems">2. File systems</a>
+                <a href="#creating">3. Creating files/folders</a>
+                <a href="#naming">4. Naming conventions</a>
+                <a href="#saving">5. Saving files</a>
+                <a href="#moving-copying">6. Moving & copying</a>
+                <a href="#deleting">7. Deleting & recovery</a>
+                <a href="#organizing">8. Organizing strategies</a>
+                <a href="#file-paths">9. File paths</a>
+                <a href="#file-extensions">10. File extensions</a>
+                <a href="#advanced">11. Advanced techniques</a>
+                <a href="#troubleshooting">12. Troubleshooting & best practices</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>🔹 1. Introduction to File Management</h2>
+            <h3>What is File Management?</h3>
+            <p>File management is the process of creating, organizing, storing, and maintaining digital files and
+                folders in a structured manner. It is a fundamental skill for computer users, essential for
+                productivity, data security, and efficient workflow.</p>
+            <h3>Importance of Effective File Management</h3>
+            <ul>
+                <li><strong>Time Efficiency</strong>: Quickly locate files when needed</li>
+                <li><strong>Data Security</strong>: Protect sensitive information and prevent data loss</li>
+                <li><strong>Collaboration</strong>: Share and work with others seamlessly</li>
+                <li><strong>System Performance</strong>: Organized files help maintain computer speed</li>
+                <li><strong>Professionalism</strong>: Demonstrates organizational skills in workplace</li>
+                <li><strong>Backup and Recovery</strong>: Easier to backup and restore organized data</li>
+            </ul>
+        </section>
+
+        <!-- 2. FILE SYSTEMS -->
+        <section id="file-systems">
+            <h2>💽 2. Understanding File Systems</h2>
+            <h3>What is a File System?</h3>
+            <p>A file system is the method and structure that an operating system uses to name, store, and organize
+                files on a storage device.</p>
+            <h3>Common File Systems by OS</h3>
+            <table>
+                <tr>
+                    <th>OS</th>
+                    <th>File system</th>
+                    <th>Characteristics</th>
+                </tr>
+                <tr>
+                    <td>Windows</td>
+                    <td>NTFS</td>
+                    <td>Large files, encryption, permissions</td>
+                </tr>
+                <tr>
+                    <td>Windows</td>
+                    <td>FAT32</td>
+                    <td>Compatible, 4GB file size limit</td>
+                </tr>
+                <tr>
+                    <td>Windows</td>
+                    <td>exFAT</td>
+                    <td>No file size limit, flash drives</td>
+                </tr>
+                <tr>
+                    <td>macOS</td>
+                    <td>APFS</td>
+                    <td>Optimized for SSDs, snapshots</td>
+                </tr>
+                <tr>
+                    <td>macOS</td>
+                    <td>HFS+</td>
+                    <td>Older Mac file system</td>
+                </tr>
+                <tr>
+                    <td>Linux</td>
+                    <td>ext4</td>
+                    <td>Journaling, large files</td>
+                </tr>
+            </table>
+            <h3>Hierarchy of Storage</h3>
+            <div class="accent-box">
+                <pre style="background: none; font-family: monospace; margin:0;">Computer/This PC
+ ├── Drives (C:\, D:\)
+ │   ├── Folders
+ │   │   ├── Subfolders
+ │   │   └── Files
+ │   └── Files
+ └── External drives / Network</pre>
+            </div>
+        </section>
+
+        <!-- 3. CREATING FILES AND FOLDERS -->
+        <section id="creating">
+            <h2>🆕 3. Creating Files & Folders</h2>
+            <h3>Creating Folders (Windows)</h3>
+            <ul>
+                <li><strong>Right‑click</strong> → New → Folder</li>
+                <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> (File Explorer)</li>
+                <li>Home tab → New folder</li>
+            </ul>
+            <h3>Creating Folders (macOS)</h3>
+            <ul>
+                <li>Right‑click → New Folder</li>
+                <li><kbd>Shift</kbd>+<kbd>Command</kbd>+<kbd>N</kbd></li>
+                <li>File → New Folder</li>
+            </ul>
+            <h3>Creating Files</h3>
+            <ul>
+                <li>Inside an app: <kbd>Ctrl+S</kbd> / <kbd>Command+S</kbd> → Save As</li>
+                <li>Right‑click → New → [File type] (Text, Word, etc.)</li>
+                <li>Copy + paste existing → rename</li>
+            </ul>
+        </section>
+
+        <!-- 4. NAMING CONVENTIONS -->
+        <section id="naming">
+            <h2>🏷️ 4. Naming Conventions & Best Practices</h2>
+            <h3>Characters to AVOID</h3>
+            <table>
+                <tr>
+                    <th>Character</th>
+                    <th>Reason</th>
+                </tr>
+                <tr>
+                    <td>/ \ : * ? " &lt; &gt; |</td>
+                    <td>Reserved by OS</td>
+                </tr>
+                <tr>
+                    <td>. (period)</td>
+                    <td>Only before extension</td>
+                </tr>
+                <tr>
+                    <td>space</td>
+                    <td>Use underscore/hyphen instead</td>
+                </tr>
+                <tr>
+                    <td>! @ # $ % ^ &amp;</td>
+                    <td>Compatibility issues</td>
+                </tr>
+            </table>
+            <h3>Best practices</h3>
+            <ul>
+                <li>Be descriptive: <code>2025-02-24_Sales_Report_FINAL.xlsx</code></li>
+                <li>Use dates: YYYY-MM-DD (for sorting)</li>
+                <li>Version: <code>Report_v2.3.docx</code></li>
+                <li>Lead with keyword: <code>Invoice_2025-02_ABC.pdf</code></li>
+            </ul>
+            <div class="highlight-block">
+                ✅ Good: <code>2025_Q1_Budget.xlsx</code> ❌ Bad: <code>final (3).xlsx</code>
+            </div>
+        </section>
+
+        <!-- 5. SAVING FILES -->
+        <section id="saving">
+            <h2>💾 5. Saving Files</h2>
+            <h3>Save vs Save As</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Use</th>
+                </tr>
+                <tr>
+                    <td>Save</td>
+                    <td>Update existing file</td>
+                </tr>
+                <tr>
+                    <td>Save As</td>
+                    <td>Create new version / change location</td>
+                </tr>
+            </table>
+            <p><kbd>Ctrl+S</kbd> (Windows) / <kbd>Command+S</kbd> (macOS). <kbd>F12</kbd> (Save As in MS Office).</p>
+            <ul>
+                <li>Save frequently (every 5–10 min)</li>
+                <li>Name immediately, not “Untitled”</li>
+                <li>Choose proper folder, not just Desktop</li>
+            </ul>
+        </section>
+
+        <!-- 6. MOVING AND COPYING -->
+        <section id="moving-copying">
+            <h2>📋 6. Moving & Copying</h2>
+            <h3>Move vs Copy</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td>Copy</td>
+                    <td>Duplicate; original stays</td>
+                </tr>
+                <tr>
+                    <td>Move</td>
+                    <td>Relocated; original removed</td>
+                </tr>
+            </table>
+            <h3>Drag & drop modifiers</h3>
+            <ul>
+                <li>Same drive: move; different drive: copy (Windows)</li>
+                <li><kbd>Ctrl</kbd> drag = copy (Win); <kbd>Shift</kbd> = move; <kbd>Alt</kbd> = shortcut</li>
+                <li>macOS: <kbd>Option</kbd> drag = copy</li>
+            </ul>
+            <h3>Cut / Copy / Paste</h3>
+            <ul>
+                <li>Windows: <kbd>Ctrl+X</kbd> / <kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd></li>
+                <li>macOS: <kbd>Command+X</kbd> / <kbd>Command+C</kbd> / <kbd>Command+V</kbd>; after copy,
+                    <kbd>Command+Option+V</kbd> = move</li>
+            </ul>
+            <h3>Select multiple</h3>
+            <ul>
+                <li>Adjacent: click + <kbd>Shift</kbd> click</li>
+                <li>Non‑adjacent: <kbd>Ctrl</kbd> (Win) / <kbd>Command</kbd> (mac) + click</li>
+                <li>All: <kbd>Ctrl+A</kbd> / <kbd>Command+A</kbd></li>
+            </ul>
+        </section>
+
+        <!-- 7. DELETING AND RECOVERY -->
+        <section id="deleting">
+            <h2>🗑️ 7. Deleting & Recovery</h2>
+            <h3>Temporary deletion</h3>
+            <ul>
+                <li><kbd>Delete</kbd> (Win) / <kbd>Command+Delete</kbd> (mac) → Recycle Bin / Trash</li>
+            </ul>
+            <h3>Permanent deletion</h3>
+            <ul>
+                <li><kbd>Shift+Delete</kbd> (Win) / <kbd>Command+Option+Delete</kbd> (mac) – bypass trash</li>
+            </ul>
+            <h3>Recovery</h3>
+            <ul>
+                <li>Open Recycle Bin/Trash → Restore / Put Back</li>
+                <li>Previous versions (Win) / Time Machine (mac)</li>
+                <li>Recovery software: Recuva, Disk Drill, etc.</li>
+            </ul>
+            <div class="mini-card">⚠️ <strong>3-2-1 backup rule</strong>: 3 copies, 2 media, 1 off‑site.</div>
+        </section>
+
+        <!-- 8. ORGANIZING STRATEGIES -->
+        <section id="organizing">
+            <h2>🗂️ 8. Organizing Strategies</h2>
+            <h3>Common patterns</h3>
+            <ul>
+                <li><strong>By category</strong>: Work / Personal / Projects</li>
+                <li><strong>By date</strong>: 2025 / Q1 / January</li>
+                <li><strong>By project</strong>: ClientA / Contracts, Designs</li>
+                <li><strong>By status</strong>: Drafts / Final / Archive</li>
+            </ul>
+            <h3>Example folder structure (professional)</h3>
+            <div class="accent-box">
+                <pre>Documents/
+ ├─ 01_Admin/
+ ├─ 02_Projects/
+ │   ├─ Active/
+ │   └─ Completed/
+ ├─ 03_Finance/
+ └─ 04_Clients/</pre>
+            </div>
+            <p>➕ Use tags, color labels, shortcuts. Weekly cleanup recommended.</p>
+        </section>
+
+        <!-- 9. FILE PATHS -->
+        <section id="file-paths">
+            <h2>📍 9. Understanding File Paths</h2>
+            <h3>Absolute path</h3>
+            <p><code>C:\Users\John\Documents\report.docx</code>
+                (Windows)<br><code>/Users/john/Documents/report.docx</code> (macOS/Linux)</p>
+            <h3>Relative path</h3>
+            <p><code>..\..\Images\logo.png</code> (go up two levels)<br><code>./Reports/2025.pdf</code> (current folder)
+            </p>
+            <table>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td>\ (Win) / / (macOS)</td>
+                    <td>separator</td>
+                </tr>
+                <tr>
+                    <td>.</td>
+                    <td>current directory</td>
+                </tr>
+                <tr>
+                    <td>..</td>
+                    <td>parent directory</td>
+                </tr>
+                <tr>
+                    <td>~</td>
+                    <td>home (macOS/Linux)</td>
+                </tr>
+            </table>
+            <p>Network UNC: <code>\\Server\Share\file.txt</code></p>
+        </section>
+
+        <!-- 10. FILE EXTENSIONS EXPLAINED -->
+        <section id="file-extensions">
+            <h2>🔖 10. File Extensions Explained</h2>
+            <h3>Common extensions by type</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Extensions</th>
+                </tr>
+                <tr>
+                    <td>Document</td>
+                    <td>.txt .docx .pdf .odt .pages</td>
+                </tr>
+                <tr>
+                    <td>Spreadsheet</td>
+                    <td>.xlsx .ods .csv .numbers</td>
+                </tr>
+                <tr>
+                    <td>Image</td>
+                    <td>.jpg .png .gif .svg .psd .webp</td>
+                </tr>
+                <tr>
+                    <td>Audio</td>
+                    <td>.mp3 .wav .flac .aac .m4a</td>
+                </tr>
+                <tr>
+                    <td>Video</td>
+                    <td>.mp4 .avi .mov .mkv .webm</td>
+                </tr>
+                <tr>
+                    <td>Archive</td>
+                    <td>.zip .rar .7z .tar .gz</td>
+                </tr>
+                <tr>
+                    <td>Executable</td>
+                    <td>.exe .msi .app .deb .sh</td>
+                </tr>
+            </table>
+            <h4>How to show extensions</h4>
+            <ul>
+                <li>Windows File Explorer → View → check "File name extensions"</li>
+                <li>macOS Finder → Preferences → Advanced → "Show all filename extensions"</li>
+            </ul>
+            <p class="highlight-block">⚠️ Changing extension does NOT convert file format; use proper software.</p>
+            <h4>Change file association</h4>
+            <ul>
+                <li>Win: right‑click → Open with → choose app → "Always use"</li>
+                <li>macOS: Get Info → Open with → Change All</li>
+            </ul>
+        </section>
+
+        <!-- 11. ADVANCED FILE MANAGEMENT -->
+        <section id="advanced">
+            <h2>⚙️ 11. Advanced Techniques</h2>
+            <h3>Batch rename</h3>
+            <ul>
+                <li>Windows: select multiple → right‑click Rename → base name</li>
+                <li>PowerShell: <code>dir *.jpg | rename-item -NewName {"prefix_"+$_.name}</code></li>
+                <li>macOS terminal: <code>for f in *.jpg; do mv "$f" "prefix_$f"; done</code></li>
+            </ul>
+            <h3>Search operators</h3>
+            <table>
+                <tr>
+                    <th>Windows</th>
+                    <th>macOS</th>
+                </tr>
+                <tr>
+                    <td>type:.pdf size:>10MB</td>
+                    <td>kind:pdf size:>10MB</td>
+                </tr>
+                <tr>
+                    <td>date:today name:*report*</td>
+                    <td>date:today name:report</td>
+                </tr>
+            </table>
+            <h3>Compression / zip</h3>
+            <ul>
+                <li>Win: right‑click → Send to → Compressed folder</li>
+                <li>macOS: right‑click → Compress items</li>
+                <li>7‑Zip, Advanced Renamer, rsync, FreeFileSync</li>
+            </ul>
+            <h3>Automation</h3>
+            <ul>
+                <li>Windows Task Scheduler, macOS Automator</li>
+            </ul>
+        </section>
+
+        <!-- 12. TROUBLESHOOTING & BEST PRACTICES -->
+        <section id="troubleshooting">
+            <h2>🛠️ 12. Troubleshooting & Best Practices</h2>
+            <h3>Common problems & solutions</h3>
+            <ul>
+                <li><strong>File in use / can't delete</strong> – close apps, restart, use Safe Mode, or <kbd>del
+                        /f</kbd> (admin cmd)</li>
+                <li><strong>Path too long</strong> – use shorter names, enable long path support (Windows) or \\?\
+                    prefix</li>
+                <li><strong>Wrong file association</strong> – Open with → correct app, set default</li>
+                <li><strong>Accidental deletion</strong> – Recycle Bin, previous versions, recovery software</li>
+            </ul>
+            <h3>Daily / weekly / monthly habits</h3>
+            <div class="def-grid">
+                <div class="def-item">✅ Daily: Save often, clean Desktop</div>
+                <div class="def-item">✅ Weekly: Sort Downloads, check disk space</div>
+                <div class="def-item">✅ Monthly: Archive projects, full backup</div>
+            </div>
+            <h3>Backup 3-2-1 rule</h3>
+            <p><strong>3</strong> copies, <strong>2</strong> different media, <strong>1</strong> off‑site.</p>
+            <h3>Glossary (short)</h3>
+            <ul>
+                <li><strong>File</strong> – digital container</li>
+                <li><strong>Folder/directory</strong> – container for files</li>
+                <li><strong>Path</strong> – location address</li>
+                <li><strong>Extension</strong> – suffix indicating type</li>
+                <li><strong>Metadata</strong> – data about file (author, date)</li>
+            </ul>
+            <h3>Recommended tools</h3>
+            <p>Free: 7‑Zip, Everything (Win), FreeFileSync, PDF24, Duplicate Cleaner. Cloud: Google Drive, Dropbox.</p>
+        </section>
+
+        <!-- end matter -->
+        <footer>
+            Desktop Publishing & Secretarial Studies | © 2026 All rights reserved. <br> Last revision: February 2025
+        </footer>
+    </div>
+</body>
+
+</html>

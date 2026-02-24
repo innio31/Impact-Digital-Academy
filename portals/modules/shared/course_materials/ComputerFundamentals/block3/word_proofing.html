@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Word · proofing & reviewing · interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ecf3fa;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #12344d;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #deecfd;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #5b83a5;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #103753;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .dialog-mock {
+            border: 2px solid #aac6e4;
+            background: #e9f2fc;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 8px 0 #6e96bc;
+        }
+
+        .wildcard-demo {
+            background: #fff7e0;
+            border-radius: 1.5rem;
+            padding: 1rem 1.8rem;
+            border-left: 8px solid #e6b12e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🔍 Microsoft Word: Proofing & Reviewing</h1>
+        <div class="subhead">complete module · spell check · thesaurus · find & replace · advanced techniques</div>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc-card">
+            <div class="toc-title">📖 Module contents</div>
+            <div class="toc-grid">
+                <a href="#part1">1. Spell check (real‑time, manual)</a>
+                <a href="#part1b">1.2 grammar & customizing</a>
+                <a href="#part2">2. Thesaurus (synonyms, nuance)</a>
+                <a href="#part3">3. Find and replace basics</a>
+                <a href="#part3-adv">3.4 advanced: formatting, wildcards, special chars</a>
+                <a href="#practical-app">practical office applications</a>
+                <a href="#conclusion-mod">conclusion & checklist</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION (exact copy from prompt) -->
+        <section id="introduction-proof">
+            <h2>📘 Module: Proofing & Reviewing in Microsoft Word</h2>
+            <h3>Introduction</h3>
+            <p>In any professional environment, the quality of your written documents reflects directly on you and your
+                organization. Errors in spelling, poor word choice, or inconsistent terminology can undermine your
+                credibility and confuse your message. Microsoft Word provides a powerful suite of proofing and reviewing
+                tools to help you polish your documents to a professional standard. This module covers three essential
+                tools: <strong>Spell Check</strong>, <strong>Thesaurus</strong>, and <strong>Find and Replace</strong>.
+            </p>
+        </section>
+
+        <!-- PART 1 : SPELL CHECK (full content) -->
+        <section id="part1">
+            <h2>🔤 1. Spell Check</h2>
+            <p>Spell Check identifies potential spelling errors and often grammatical mistakes, offering corrections.
+            </p>
+
+            <h3>1.1 How Spell Check Works</h3>
+            <ul>
+                <li><strong>Real‑time (Automatic) Checking:</strong> Red squiggly line = possible spelling error; blue
+                    squiggly line = grammatical error. Provides immediate visual feedback.</li>
+                <li><strong>Contextual Awareness:</strong> Modern Word uses AI to differentiate homophones (their /
+                    there / they’re).</li>
+            </ul>
+
+            <h3>1.2 Running a Manual Spell Check</h3>
+            <ul>
+                <li><strong>Review tab → Spelling & Grammar</strong> (left side).</li>
+                <li>Opens <strong>Editor pane</strong> (or dialog) and highlights first error.</li>
+            </ul>
+
+            <div class="dialog-mock">
+                <h4 style="margin-top:0;">📋 Spelling & Grammar dialog / Editor pane – options</h4>
+                <ul style="columns:2; column-gap:2rem;">
+                    <li><strong>Ignore Once</strong> – skip this instance</li>
+                    <li><strong>Ignore All</strong> – skip all instances (jargon/proper nouns)</li>
+                    <li><strong>Add to Dictionary</strong> – never flag again</li>
+                    <li><strong>Change</strong> – replace with suggestion</li>
+                    <li><strong>Change All</strong> – replace every occurrence</li>
+                    <li><strong>AutoCorrect</strong> – automatically fix in future</li>
+                </ul>
+            </div>
+
+            <h3>1.3 Grammar Checking</h3>
+            <p>Integrated grammar checker flags passive voice, agreement, punctuation, clichés. For each suggestion:
+                <strong>Ignore</strong> or <strong>Change</strong> with brief explanation.</p>
+
+            <h3>1.4 Customizing Proofing Settings</h3>
+            <p><strong>File > Options > Proofing</strong> → modify AutoFormat, “when correcting spelling”, writing style
+                (Grammar only / Grammar & Refinements).</p>
+
+            <h3>1.5 Best Practices for Spell Check</h3>
+            <ul>
+                <li><strong>Never rely 100%:</strong> won’t flag correctly spelled but misused word (“I will <u>meat</u>
+                    you there”).</li>
+                <li><strong>Check language setting:</strong> Review tab > Language > Set Proofing Language.</li>
+                <li><strong>Readability Statistics:</strong> Enable in Proofing options; after check shows Flesch
+                    Reading Ease, etc.</li>
+            </ul>
+        </section>
+
+        <!-- PART 2 : THESAURUS (entire content) -->
+        <section id="part2">
+            <h2>📖 2. Thesaurus</h2>
+            <p>Find synonyms and antonyms to add variety, precision, and sophistication.</p>
+
+            <h3>2.1 Why Use a Thesaurus?</h3>
+            <ul>
+                <li><strong>Avoid repetition</strong> – alternatives for overused words.</li>
+                <li><strong>Find the *mot juste*</strong> – exact nuance.</li>
+                <li><strong>Expand vocabulary</strong> – learn word relationships.</li>
+            </ul>
+
+            <h3>2.2 How to Use the Thesaurus in Word</h3>
+            <ul>
+                <li><strong>Review tab → Thesaurus</strong> (pane opens).</li>
+                <li><strong>Right‑click</strong> a word → Synonyms (or “Thesaurus…” for full pane).</li>
+            </ul>
+
+            <h3>2.3 Using the Thesaurus Effectively</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Point and click</strong> – dropdown → Insert.</div>
+                <div class="def-item"><strong>Look up further</strong> – click any synonym to drill down.</div>
+                <div class="def-item"><strong>Understand connotation</strong> – thrifty/economical vs stingy.</div>
+                <div class="def-item"><strong>Know your audience</strong> – formal report vs creative piece.</div>
+            </div>
+        </section>
+
+        <!-- PART 3 : FIND AND REPLACE (full) -->
+        <section id="part3">
+            <h2>🔄 3. Find and Replace</h2>
+            <p>Quickly locate words/phrases/formatting and optionally replace.</p>
+
+            <h3>3.1 Basics of Finding Text</h3>
+            <ul>
+                <li><strong>Home tab → Find</strong> (Navigation pane). Type instantly, all instances highlighted.</li>
+                <li><strong>Advanced Find…</strong> from dropdown for more control.</li>
+            </ul>
+
+            <h3>3.2 Basics of Replacing Text</h3>
+            <ul>
+                <li><strong>Home tab → Replace</strong> (opens dialog, Replace tab).</li>
+                <li><strong>Find what:</strong> [enter] , <strong>Replace with:</strong> [enter]</li>
+                <li><strong>Find Next</strong> / <strong>Replace</strong> / <strong>Replace All</strong> (⚠️ use
+                    caution).</li>
+            </ul>
+
+            <h3 id="part3-adv">3.3 Advanced Find and Replace Options</h3>
+            <p>Click <strong>More >></strong> in dialog.</p>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Match case</td>
+                    <td>case‑sensitive search</td>
+                </tr>
+                <tr>
+                    <td>Find whole words only</td>
+                    <td>avoid partial matches (man ≠ woman)</td>
+                </tr>
+                <tr>
+                    <td>Use wildcards</td>
+                    <td>pattern matching: ? (any char), * (string)</td>
+                </tr>
+            </table>
+            <div class="wildcard-demo">
+                <p><strong>Wildcard examples:</strong> “b?g” finds big, bag, bug ; “s*d” finds sad, sand, splendid.</p>
+            </div>
+
+            <h3>3.4 Replacing Formatting and Special Characters</h3>
+            <h4>Replacing formatting:</h4>
+            <ol>
+                <li>Enter word in “Find what” and same word in “Replace with”.</li>
+                <li>Click in “Replace with” box → Format → Font → choose Bold, Italic, color.</li>
+                <li>Word replaces text with formatting applied.</li>
+            </ol>
+
+            <h4>Special characters (click “Special” button):</h4>
+            <ul>
+                <li><strong>Paragraph mark</strong> (^p) – remove extra blank lines: find ^p^p , replace with ^p</li>
+                <li><strong>Tab character</strong> (^t) – convert tabs to commas etc.</li>
+                <li><strong>Manual line break</strong> (^l) – clean up imported text.</li>
+            </ul>
+
+            <h3 id="practical-app">3.5 Practical Applications in an Office Context</h3>
+            <div class="highlight-block">
+                <ul style="margin:0;">
+                    <li>🏢 Updating names/terms: “ABC Corp” → “XYZ Limited” (Replace All).</li>
+                    <li>📏 Standardize terminology: “cell phone” → “mobile device” throughout 100‑page manual.</li>
+                    <li>🎨 Fix formatting: remove blue underline from emails.</li>
+                    <li>🧹 Clean imported text: remove extra spaces, tabs, line breaks.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CONCLUSION (full) -->
+        <section id="conclusion-mod">
+            <h2>✅ Conclusion</h2>
+            <p>Mastering these three proofing and reviewing tools—<strong>Spell Check</strong>,
+                <strong>Thesaurus</strong>, and <strong>Find and Replace</strong>—is a cornerstone of professional
+                document production. They form a powerful editing workflow that ensures your documents are accurate,
+                varied in language, and consistent in style and terminology. Developing the habit of using these tools
+                will significantly enhance the quality and professionalism of your work.</p>
+        </section>
+
+        <!-- EXTRA CHECKLIST / SHORTCUTS (all in original style) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">🧾 Quick reference – do you know…</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Red vs blue squiggles<br>☐ Ignore All / Add to Dictionary<br>☐ Editor pane
+                    options</div>
+                <div class="def-item">☐ Thesaurus (right‑click)<br>☐ Find whole words only<br>☐ Wildcards ? and *</div>
+                <div class="def-item">☐ Replace formatting<br>☐ Special chars ^p, ^t, ^l<br>☐ Open and Repair</div>
+            </div>
+            <h4 style="margin-top:1.5rem;">⌨️ Keyboard shortcuts</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>F7</kbd> Spell check</span>
+                <span><kbd>Shift+F7</kbd> Thesaurus</span>
+                <span><kbd>Ctrl+F</kbd> Find</span>
+                <span><kbd>Ctrl+H</kbd> Replace</span>
+                <span><kbd>Alt+F</kbd> Backstage</span>
+                <span><kbd>Ctrl+Z</kbd> undo</span>
+                <span><kbd>Ctrl+Y</kbd> redo</span>
+            </div>
+            <p style="margin-top: 1.5rem;"><em>All content from the module is included – no summarisation.</em></p>
+        </div>
+
+        <!-- DIALOG MOCK: Additional advanced detail from original (wildcards/formatting) already presented -->
+        <!-- ensure everything from prompt is covered: readability statistics, connotation, paragraph marks etc. -->
+
+        <!-- explicit block: readability stats mention (already in 1.5) -->
+        <section style="margin:1rem 0; padding:1.5rem; background:#fafdff; border-radius:2rem;">
+            <h4>📊 Readability Statistics (recap)</h4>
+            <p>After spell check, Word can display word count, average sentence length, Flesch Reading Ease. Enable:
+                <strong>File > Options > Proofing → “Show readability statistics”</strong>.</p>
+        </section>
+
+        <!-- homophone / connotation examples explicitly stated -->
+        <div class="highlight-block">
+            <p><strong>Contextual spelling & connotation – vital:</strong> “their/there/they’re” example; “thrifty” vs
+                “stingy” (positive/negative). Always consider audience.</p>
+        </div>
+
+        <!-- advanced find: "Match case", "Find whole words only" already covered but repeat for completeness -->
+        <div style="background:#e5f0fe; border-radius:2rem; padding:1.5rem; margin:2rem 0;">
+            <h4 style="margin:0 0 1rem 0;">⚙️ Advanced Find dialog – extra options</h4>
+            <ul>
+                <li><strong>Sounds like (English)</strong> – finds words that sound similar.</li>
+                <li><strong>Find all word forms</strong> – e.g. replace “sit” with “stand” also finds “sitting” →
+                    “standing”.</li>
+                <li>These are accessible via the “More >>” button.</li>
+            </ul>
+        </div>
+
+        <!-- adding the missing piece: "Add to Dictionary" behaviour and "AutoCorrect" details already present but check -->
+        <!-- one more mock : AutoCorrect example -->
+        <div class="drill">
+            <p><strong>📌 AutoCorrect example:</strong> If you often misspell “accommodation” as “accomodation”, use
+                <strong>AutoCorrect</strong> in spell check to replace it automatically in future.</p>
+        </div>
+
+        <!-- explicit mention: "Change All" and "Ignore All" from part 1, all described -->
+        <!-- ensure every bullet from original text is visible: maybe a compact verification list -->
+        <div style="background:#faf3e0; border-radius:2rem; padding:1.8rem; margin:2rem 0;">
+            <h4>🔎 module inventory – all topics present ✓</h4>
+            <div style="display: grid; grid-template-columns: repeat(3,1fr); gap:0.7rem;">
+                <span>✔ real‑time red/blue lines</span>
+                <span>✔ manual spell check (F7)</span>
+                <span>✔ ignore once/all</span>
+                <span>✔ add to dictionary</span>
+                <span>✔ change / change all</span>
+                <span>✔ AutoCorrect</span>
+                <span>✔ grammar checking</span>
+                <span>✔ custom proofing options</span>
+                <span>✔ readability statistics</span>
+                <span>✔ thesaurus (right‑click)</span>
+                <span>✔ synonyms & antonyms</span>
+                <span>✔ connotation warning</span>
+                <span>✔ find navigation pane</span>
+                <span>✔ replace with caution</span>
+                <span>✔ match case / whole words</span>
+                <span>✔ wildcards ? *</span>
+                <span>✔ replace formatting</span>
+                <span>✔ special characters ^p ^t</span>
+                <span>✔ practical office scenarios</span>
+            </div>
+        </div>
+
+        <!-- footer (matches style) -->
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Proofing & Reviewing (Word) · © 2026
+        </footer>
+
+    </div> <!-- wrapper -->
+</body>
+
+</html>

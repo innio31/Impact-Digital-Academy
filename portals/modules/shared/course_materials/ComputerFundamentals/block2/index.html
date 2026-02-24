@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 2 · typing proficiency & professional communication · hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eff4fa;
+            color: #142b3b;
+            line-height: 1.5;
+            padding: 1.2rem;
+        }
+
+        .hub-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.8rem 2.8rem 2rem 2rem;
+            box-shadow: 0 30px 50px -18px #173e5c;
+            overflow: hidden;
+            padding: 2.2rem 2.2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0e3f60, #216795);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-block {
+            background: #e2edfe;
+            color: #0f3d5c;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.4rem 2rem;
+            border-radius: 60px;
+            border: 1px solid #70b0e0;
+        }
+
+        .sub-lead {
+            font-size: 1.4rem;
+            color: #236191;
+            border-left: 8px solid #1f7ab6;
+            padding-left: 1.8rem;
+            margin: 0.8rem 0 2rem 0;
+            background: #f0f7ff;
+            border-radius: 2rem;
+            padding: 1.2rem 1.8rem;
+            font-weight: 400;
+        }
+
+        /* objective cards */
+        .objective-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .objective-item {
+            flex: 1 1 210px;
+            background: #ebf4fe;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 5px solid #297bb3;
+            box-shadow: 0 12px 18px -16px #183e5a;
+            font-weight: 550;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .objective-item span {
+            font-size: 1.8rem;
+        }
+
+        /* topic grid – 6 topics + practice extra */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0 2rem;
+        }
+
+        .topic-card {
+            background: #ffffff;
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 18px 28px -20px #19415f;
+            border: 1px solid #d1e3f7;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topic-card:hover {
+            border-color: #2c7fba;
+            box-shadow: 0 22px 36px -20px #0d446b;
+            transform: translateY(-4px);
+        }
+
+        .topic-icon {
+            font-size: 2.6rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .topic-title {
+            font-size: 1.9rem;
+            font-weight: 680;
+            color: #113e60;
+            border-bottom: 3px solid #bad2f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .topic-desc {
+            color: #1b4363;
+            margin-bottom: 1.2rem;
+            font-weight: 460;
+        }
+
+        .module-links {
+            list-style: none;
+            margin: 0 0 0.8rem;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .module-links li {
+            margin: 0.8rem 0;
+        }
+
+        .module-links a {
+            text-decoration: none;
+            background: #eaf3fd;
+            color: #114166;
+            padding: 0.6rem 1.3rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: 0.1s;
+            width: 100%;
+            word-break: break-word;
+            line-height: 1.3;
+            font-size: 0.98rem;
+        }
+
+        .module-links a:hover {
+            background: #cde2fe;
+            border-color: #2879b3;
+            box-shadow: 0 5px 10px -6px #1d5380;
+        }
+
+        .pill-tag {
+            background: #dcebfa;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-size: 0.85rem;
+            color: #064478;
+            display: inline-block;
+            margin-top: 0.4rem;
+        }
+
+        .pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+        }
+
+        /* extra practice & activities row */
+        .activities-panel {
+            background: #f6faff;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0 1.5rem;
+            border: 2px solid #d7e9ff;
+            box-shadow: inset 0 2px 6px #c0d8f0, 0 14px 18px -18px #193e5e;
+        }
+
+        .activities-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #154d73;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 1.6rem;
+            padding: 1.3rem;
+            border-left: 6px solid #277ab5;
+            box-shadow: 0 5px 14px #d7e5f5;
+        }
+
+        .activity-card strong {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #0f3b58;
+        }
+
+        .assessment-box {
+            background: #1b5079;
+            color: white;
+            border-radius: 1.8rem;
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .assessment-box h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #ffc857;
+            border-radius: 3rem;
+            padding: 0.8rem 2rem;
+            font-weight: 700;
+            color: #113e5a;
+            text-decoration: none;
+            border: 2px solid #feda9b;
+            box-shadow: 0 7px 0 #a56e20;
+            transition: 0.07s;
+            display: inline-block;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #8b5717;
+        }
+
+        .btn-light {
+            background: #eef5fc;
+            box-shadow: 0 7px 0 #577ea0;
+            color: #02223b;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b5d2f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .footer-note {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            color: #3a6185;
+            border-top: 2px dashed #b3ceec;
+            padding-top: 1.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hub-container">
+        <!-- block 2 header -->
+        <h1>
+            ⌨️ Block 2: Typing Proficiency & Professional Communication
+            <span class="badge-block">35–40 WPM · netiquette · formats</span>
+        </h1>
+        <div class="sub-lead">
+            📌 touch typing foundation · speed & accuracy · business writing · correspondence · admin tasks
+        </div>
+
+        <!-- learning objectives grid (exact copy from prompt) -->
+        <div style="margin-bottom: 0.8rem;">
+            <h2 style="font-size: 2rem; color: #134a6f; border-bottom: 4px solid #317cb2; padding-bottom: 0.3rem;">🎯
+                Learning objectives</h2>
+        </div>
+        <div class="objective-grid">
+            <div class="objective-item"><span>🔹</span>Develop accurate touch‑typing skills with proper finger placement
+                & posture.</div>
+            <div class="objective-item"><span>🔹</span>Achieve a minimum typing speed of 35‑40 WPM with high accuracy.
+            </div>
+            <div class="objective-item"><span>🔹</span>Understand & apply principles of professional business
+                communication.</div>
+            <div class="objective-item"><span>🔹</span>Master standard formats for various types of business
+                correspondence.</div>
+        </div>
+
+        <!-- TOPICS: 6 core topic cards (each matches given topics) -->
+        <div class="topic-grid">
+            <!-- 1. Touch typing foundation -->
+            <div class="topic-card">
+                <div class="topic-icon">🖐️</div>
+                <div class="topic-title">Touch typing foundation</div>
+                <div class="topic-desc">Home row, finger placement, drills, ergonomics, muscle memory.</div>
+                <ul class="module-links">
+                    <li><a href="touch_typing.html">⌨️ complete touch typing guide (home row, reaches)</a></li>
+                    <li><a href="touch_typing.html#home-row">🏠 home row position & bumps (F + J)</a></li>
+                    <li><a href="touch_typing.html#finger-placement">🖐️ correct finger placement / territories</a></li>
+                    <li><a href="touch_typing.html#top-row">⏫ top row · bottom row drills</a></li>
+                    <li><a href="touch_typing.html#number-symbol">🔣 number & symbol keys</a></li>
+                    <li><a href="touch_typing.html#ergonomics">🧘 ergonomics & wellness (20‑20‑20)</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">home row ASDF JKL;</span>
+                    <span class="pill-tag">finger reaches</span>
+                    <span class="pill-tag">drills</span>
+                </div>
+            </div>
+
+            <!-- 2. Speed & accuracy development -->
+            <div class="topic-card">
+                <div class="topic-icon">⚡</div>
+                <div class="topic-title">Speed & accuracy</div>
+                <div class="topic-desc">Timed writings, progressive exercises, error correction, tracking tools.</div>
+                <ul class="module-links">
+                    <li><a href="speed&accuracy.html">⏱️ speed & accuracy complete notes</a></li>
+                    <li><a href="speed&accuracy.html#timed-writings">📝 timed writings & progressive framework</a></li>
+                    <li><a href="speed&accuracy.html#error-correction">🛠️ minimizing errors (80/20 rule)</a></li>
+                    <li><a href="speed&accuracy.html#software-tools">📊 typing software / WPM tracking</a></li>
+                    <li><a href="speed&accuracy.html#standards">📈 professional standards & goals</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">WPM · accuracy ≥95%</span>
+                    <span class="pill-tag">metronome drill</span>
+                    <span class="pill-tag">keybr/typing.com</span>
+                </div>
+            </div>
+
+            <!-- 3. Professional business communication -->
+            <div class="topic-card">
+                <div class="topic-icon">📬</div>
+                <div class="topic-title">Professional communication</div>
+                <div class="topic-desc">7 Cs, clear/concise writing, netiquette, tone, reader focus.</div>
+                <ul class="module-links">
+                    <li><a href="professional_business_communication.html">📧 principles: 3 Cs & 7 Cs (clarity,
+                            conciseness, completeness)</a></li>
+                    <li><a href="professional_business_communication.html#clarity">🔹 clarity · conciseness · concrete
+                            language</a></li>
+                    <li><a href="professional_business_communication.html#part2-netiquette">🌐 netiquette for
+                            professional emails</a></li>
+                    <li><a href="professional_business_communication.html#crafting-email">✍️ email structure: subject,
+                            salutation, body, signature</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">7 Cs</span>
+                    <span class="pill-tag">active voice</span>
+                    <span class="pill-tag">email tone</span>
+                </div>
+            </div>
+
+            <!-- 4. Business correspondence formats -->
+            <div class="topic-card">
+                <div class="topic-icon">✉️</div>
+                <div class="topic-title">Correspondence formats</div>
+                <div class="topic-desc">Full block letters, memos, professional email structure.</div>
+                <ul class="module-links">
+                    <li><a href="business_correspondence.html">📋 complete business correspondence notes</a></li>
+                    <li><a href="business_correspondence.html#business-letters">📌 full block letter format (examples +
+                            anatomy)</a></li>
+                    <li><a href="business_correspondence.html#memos">📄 internal memoranda (standard memo format)</a>
+                    </li>
+                    <li><a href="business_correspondence.html#emails">📧 professional email structure & templates</a>
+                    </li>
+                    <li><a href="business_correspondence.html#comparison">🔍 comparison: letter vs memo vs email</a>
+                    </li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">full block</span>
+                    <span class="pill-tag">memo header</span>
+                    <span class="pill-tag">subject line</span>
+                </div>
+            </div>
+
+            <!-- 5. Introduction to administrative tasks -->
+            <div class="topic-card">
+                <div class="topic-icon">📞</div>
+                <div class="topic-title">Administrative tasks</div>
+                <div class="topic-desc">Telephone message taking, calendar management, message slips.</div>
+                <ul class="module-links">
+                    <li><a href="intro_administrative_tasks.html">🗓️ complete guide: phone & calendar</a></li>
+                    <li><a href="intro_administrative_tasks.html#anatomy-message">📞 perfect message slip (7 key
+                            elements)</a></li>
+                    <li><a href="intro_administrative_tasks.html#step-by-step-call">🎧 step‑by‑step call handling</a>
+                    </li>
+                    <li><a href="intro_administrative_tasks.html#scenarios">🤯 difficult caller scenarios</a></li>
+                    <li><a href="intro_administrative_tasks.html#scheduling-process">📅 calendar scheduling &
+                            gatekeeping</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">message slip</span>
+                    <span class="pill-tag">action required</span>
+                    <span class="pill-tag">buffer time</span>
+                </div>
+            </div>
+
+            <!-- 6. EXTRA: interactive typing game / practice -->
+            <div class="topic-card" style="background: #f9f2e5; border: 2px solid #efc48c;">
+                <div class="topic-icon">🎮</div>
+                <div class="topic-title">Typing Racer · practice zone</div>
+                <div class="topic-desc">Lively game to build speed & accuracy – live WPM, accuracy, error report.</div>
+                <ul class="module-links">
+                    <li><a href="typing_practice_game.html" style="background:#ffeec2;">⚡ start typing racer (60‑sec
+                            challenge)</a></li>
+                    <li><a href="typing_practice_game.html" style="background:#ffeec2;">📊 instant report: WPM, accuracy
+                            %, errors</a></li>
+                </ul>
+                <div style="margin-top: 0.4rem;"><span class="pill-tag" style="background:#ffd79c;">fun · game‑based ·
+                        progress</span></div>
+            </div>
+        </div>
+
+        <!-- ACTIVITIES & DAILY PRACTICE (exactly as listed) -->
+        <div class="activities-panel">
+            <div class="activities-title">🏋️ daily practice & activities</div>
+            <div class="activities-grid">
+                <div class="activity-card"><strong>⌨️ daily drills</strong> 45–60 min structured typing + timed
+                    exercises with progress tracking (WPM/acc).</div>
+                <div class="activity-card"><strong>🎧 transcribe & format</strong> short audio message → correctly
+                    formatted email.</div>
+                <div class="activity-card"><strong>📞 role‑play</strong> simulate phone call, record detailed message
+                    slip.</div>
+                <div class="activity-card"><strong>✍️ workshop</strong> critique & revise poorly written emails to be
+                    professional.</div>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT SECTION (exact from prompt) -->
+        <div class="assessment-box">
+            <div>
+                <h3>📋 assessment block 2</h3>
+                <p style="font-size: 1.2rem; opacity: 0.9;">timed typing test (3‑min & 5‑min) · formal letter + memo
+                    from notes</p>
+            </div>
+            <div class="button-group">
+                <a href="#" class="btn">📊 typing test simulator</a>
+                <a href="#" class="btn btn-light">📝 practical assignment</a>
+            </div>
+        </div>
+
+        <!-- divider + extra resources / quick ref -->
+        <hr>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
+            <div>
+                <h3 style="color: #16496b;">📂 quick topic access</h3>
+                <ul style="list-style: none; columns: 2; column-gap: 2rem;">
+                    <li><a href="touch_typing.html" style="text-decoration: none;">🔹 touch typing</a></li>
+                    <li><a href="speed&accuracy.html" style="text-decoration: none;">🔹 speed & accuracy</a></li>
+                    <li><a href="professional_business_communication.html" style="text-decoration: none;">🔹
+                            professional comm</a></li>
+                    <li><a href="business_correspondence.html" style="text-decoration: none;">🔹 correspondence
+                            formats</a></li>
+                    <li><a href="intro_administrative_tasks.html" style="text-decoration: none;">🔹 admin tasks</a></li>
+                    <li><a href="typing_practice_game.html" style="text-decoration: none;">🔹 typing game</a></li>
+                </ul>
+            </div>
+            <div style="max-width: 400px;">
+                <div style="background: #e3f0fc; border-radius: 2rem; padding: 1.3rem 2rem;">
+                    <p style="font-weight: 600;">📌 block 2 at a glance</p>
+                    <p>Typing mastery (home row → 40 WPM) + professional writing + real‑world admin tasks. Each link
+                        opens full interactive notes with all original content.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer with course info -->
+        <div class="footer-note">
+            <small>Desktop Publishing & Secretarial Studies · Block 2 · © 2026</small>
+            <span class="badge-block" style="background: #dbeafe;">6 core topics · 1 practice game · v1.0</span>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

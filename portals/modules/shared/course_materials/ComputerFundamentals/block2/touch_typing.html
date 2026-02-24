@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Touch typing · foundation guide (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2f5f9;
+            color: #152b3c;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 25, 45, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #103450, #1e4b70);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #28587c;
+            border-left: 5px solid #1f7ab0;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e7f0fc;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 45, 85, 0.1), 0 8px 12px -8px #9fb7d3;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0e314a;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4a6e;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 35, 70, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d6e6ff;
+            border-color: #2677b3;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2d6a9c;
+        }
+
+        /* section styling */
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 35, 55, 0.05);
+            border: 1px solid #ecf2f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #123952;
+            border-bottom: 3px solid #2677b3;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1f557b;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1d5072;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f8ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2677b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 35, 65, 0.08);
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #123952;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #d6e2f0;
+            background-color: #fdfdfe;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2677b3;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f7fbff;
+            border: 1px solid #cbddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e3f0fd;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f4faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        .keyboard-diagram {
+            background: #eef3f9;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border: 1px dashed #3d7eb0;
+        }
+
+        .finger-card {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: #e1edf9;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .finger-tag {
+            background: white;
+            border-radius: 40px;
+            padding: 0.3rem 1.2rem;
+            font-weight: 600;
+            color: #104267;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+
+        .drill {
+            background: #f6fafe;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            border-left: 4px solid #2677b3;
+            margin: 0.8rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>⌨️ Comprehensive Guide to Touch Typing Foundation</h1>
+
+        <!-- table of contents -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction</a>
+                <a href="#home-row">2. Home row position</a>
+                <a href="#finger-placement">3. Correct finger placement</a>
+                <a href="#keyboard-geography">4. Keyboard geography</a>
+                <a href="#top-row">5. Top row drills</a>
+                <a href="#bottom-row">6. Bottom row drills</a>
+                <a href="#number-symbol">7. Number & symbol keys</a>
+                <a href="#muscle-memory">8. Developing muscle memory</a>
+                <a href="#rhythm-speed">9. Rhythm & speed</a>
+                <a href="#ergonomics">10. Ergonomics & wellness</a>
+                <a href="#practice-routines">11. Practice routines & tracking</a>
+                <a href="#common-mistakes">12. Common mistakes</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>🔹 1. Introduction to Touch Typing</h2>
+            <h3>What is Touch Typing?</h3>
+            <p>Touch typing is the ability to type without looking at the keyboard, using muscle memory and tactile
+                feedback — especially the bumps on <strong>F</strong> and <strong>J</strong>.</p>
+            <h3>Why Touch Typing Matters in the Modern Workplace</h3>
+            <table>
+                <tr>
+                    <th>Benefit</th>
+                    <th>Impact</th>
+                </tr>
+                <tr>
+                    <td>Speed</td>
+                    <td>60+ WPM saves hours weekly</td>
+                </tr>
+                <tr>
+                    <td>Accuracy</td>
+                    <td>Fewer errors, less correction</td>
+                </tr>
+                <tr>
+                    <td>Mental focus</td>
+                    <td>Brain concentrates on content, not keys</td>
+                </tr>
+                <tr>
+                    <td>Neck/Back health</td>
+                    <td>Looking at screen reduces strain</td>
+                </tr>
+                <tr>
+                    <td>Professional image</td>
+                    <td>Fast, flawless minutes & documents</td>
+                </tr>
+            </table>
+            <h3>The Science Behind Touch Typing</h3>
+            <p>Procedural memory: repeated finger movements create neural pathways, making finger “know where to go”
+                without conscious thought.</p>
+        </section>
+
+        <!-- 2. HOME ROW -->
+        <section id="home-row">
+            <h2>🏠 2. The Home Row Position</h2>
+            <h3>Understanding the Home Row</h3>
+            <div class="keyboard-diagram">A S D F     J K L ;</div>
+            <p><strong>Left hand:</strong> A(pinky) S(ring) D(middle) F(index) — <strong>Right hand:</strong> J(index)
+                K(middle) L(ring) ;(pinky)</p>
+            <p><span class="badge">bumps</span> F and J have raised indicators to find home row without looking.</p>
+            <h3>Hand and Wrist Posture</h3>
+            <ul>
+                <li>Wrists floating, straight, not resting on desk while typing</li>
+                <li>Fingers curved gently, parallel to keyboard slope</li>
+            </ul>
+            <h3>Common Home Row Mistakes</h3>
+            <table>
+                <tr>
+                    <th>Mistake</th>
+                    <th>Correction</th>
+                </tr>
+                <tr>
+                    <td>Resting wrists on desk</td>
+                    <td>Float wrists, use armrests only for arms</td>
+                </tr>
+                <tr>
+                    <td>Hands too far left/right</td>
+                    <td>Align body with B key</td>
+                </tr>
+                <tr>
+                    <td>Looking at hands</td>
+                    <td>Use cloth or blank keyboard</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 3. FINGER PLACEMENT -->
+        <section id="finger-placement">
+            <h2>🖐️ 3. Correct Finger Placement</h2>
+            <h3>Division of Labor</h3>
+            <div class="finger-card">
+                <span class="finger-tag">Left pinky: A, Q, Z, Shift</span>
+                <span class="finger-tag">Left ring: S, W, X</span>
+                <span class="finger-tag">Left middle: D, E, C</span>
+                <span class="finger-tag">Left index: F, R, V, B, G, T</span>
+                <span class="finger-tag">Right index: J, U, M, Y, H, N</span>
+                <span class="finger-tag">Right middle: K, I, ,</span>
+                <span class="finger-tag">Right ring: L, O, .</span>
+                <span class="finger-tag">Right pinky: ;, P, /, ', Shift, Enter, Backspace</span>
+            </div>
+            <h4>The "Reach" Concept</h4>
+            <p>Reach with correct finger, then immediately return to home row.</p>
+            <h4>Visual finger territories</h4>
+            <div class="keyboard-diagram" style="font-size:1.0rem; line-height:1.8">
+                Q W E R T Y U I O P<br>
+                A S D F G H J K L ;<br>
+                Z X C V B N M , . /
+            </div>
+        </section>
+
+        <!-- 4. KEYBOARD GEOGRAPHY -->
+        <section id="keyboard-geography">
+            <h2>🗺️ 4. Keyboard Geography</h2>
+            <h3>Five Rows & Modifier Keys</h3>
+            <ul>
+                <li><strong>Number row:</strong> 1 2 3 4 5 6 7 8 9 0 - =</li>
+                <li><strong>Top row:</strong> Q W E R T Y U I O P [ ] \</li>
+                <li><strong>Home row:</strong> A S D F G H J K L ; '</li>
+                <li><strong>Bottom row:</strong> Z X C V B N M , . /</li>
+            </ul>
+            <p><strong>Shift / Enter / Backspace:</strong> opposite pinky for Shift; right pinky for Enter/Backspace.
+            </p>
+        </section>
+
+        <!-- 5. TOP ROW DRILLS -->
+        <section id="top-row">
+            <h2>⏫ 5. Top Row Drills</h2>
+            <h3>Top Row Finger Assignments</h3>
+            <p>Q(left pinky) W(ring) E(middle) R(index) T(index) Y(index) U(index) I(middle) O(ring) P(pinky)</p>
+            <div class="drill">Single repetition: qqq qqq www www eee eee rrr rrr ttt ttt yyy yyy uuu uuu iii iii ooo
+                ooo ppp ppp</div>
+            <div class="drill">Top row words: try, you, were, tree, quiet, write, type, quote, power, upper</div>
+            <div class="drill">Sentence: "The quick brown fox jumps over the lazy dog"</div>
+        </section>
+
+        <!-- 6. BOTTOM ROW DRILLS -->
+        <section id="bottom-row">
+            <h2>⏬ 6. Bottom Row Drills</h2>
+            <h3>Bottom Row Finger Assignments</h3>
+            <p>Z(pinky) X(ring) C(middle) V(index) B(index) N(index) M(index) ,(middle) .(ring) /(pinky)</p>
+            <div class="drill">zzz xxx ccc vvv bbb nnn mmm ,,, ... ///</div>
+            <div class="drill">Pairs: zx cv vb nm ,. ./</div>
+            <div class="drill">Bottom words: cab, van, ban, man, can, zoo, box, mix, vex, zen</div>
+            <div class="drill">Challenge: "The zebra grazed by the bamboo"</div>
+        </section>
+
+        <!-- 7. NUMBER & SYMBOL KEYS -->
+        <section id="number-symbol">
+            <h2>🔢 7. Number and Symbol Keys</h2>
+            <h3>Number row + Shift symbols</h3>
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Finger</th>
+                    <th>Symbol</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>left pinky</td>
+                    <td>!</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>left ring</td>
+                    <td>@</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>left middle</td>
+                    <td>#</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>left index</td>
+                    <td>$</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>left index</td>
+                    <td>%</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>left index</td>
+                    <td>^</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>right index</td>
+                    <td>&</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>right middle</td>
+                    <td>*</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>right ring</td>
+                    <td>(</td>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>right pinky</td>
+                    <td>)</td>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td>right pinky</td>
+                    <td>_</td>
+                </tr>
+                <tr>
+                    <td>=</td>
+                    <td>right pinky</td>
+                    <td>+</td>
+                </tr>
+            </table>
+            <div class="drill">Drills: 123 456 789 150 !@ #$ %^ &* () _+</div>
+            <div class="drill">Real: Invoice #INV-2025-001, Total: $1,234.56</div>
+        </section>
+
+        <!-- 8. MUSCLE MEMORY -->
+        <section id="muscle-memory">
+            <h2>🧠 8. Developing Muscle Memory</h2>
+            <h3>Three Stages: Cognitive → Associative → Autonomous</h3>
+            <ul>
+                <li><strong>Repetition with variation</strong></li>
+                <li><strong>Mental rehearsal:</strong> visualize finger movements</li>
+                <li><strong>Overlearning</strong> after mastery</li>
+            </ul>
+            <h4>Barriers & solutions</h4>
+            <p>Inconsistent practice → daily 10-15 min. Looking → cover hands.</p>
+        </section>
+
+        <!-- 9. RHYTHM AND SPEED -->
+        <section id="rhythm-speed">
+            <h2>⏱️ 9. Building Rhythm and Speed</h2>
+            <p><strong>Accuracy first</strong> — speed follows.</p>
+            <h3>Metronome practice</h3>
+            <p>Start at 60 BPM (one key per beat), increase to 120.</p>
+            <h3>Speed milestones</h3>
+            <table>
+                <tr>
+                    <th>WPM</th>
+                    <th>Level</th>
+                </tr>
+                <tr>
+                    <td>0-20</td>
+                    <td>beginner</td>
+                </tr>
+                <tr>
+                    <td>20-40</td>
+                    <td>basic proficiency</td>
+                </tr>
+                <tr>
+                    <td>40-60</td>
+                    <td>professional</td>
+                </tr>
+                <tr>
+                    <td>60-80</td>
+                    <td>advanced</td>
+                </tr>
+                <tr>
+                    <td>80+</td>
+                    <td>expert</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 10. ERGONOMICS -->
+        <section id="ergonomics">
+            <h2>🧘 10. Ergonomics and Workplace Wellness</h2>
+            <h3>Ideal workstation setup</h3>
+            <ul>
+                <li>Feet flat, knees 90°</li>
+                <li>Forearms parallel to floor, wrists straight</li>
+                <li>Monitor top at eye level</li>
+            </ul>
+            <h3>20-20-20 rule + stretches</h3>
+            <p>Every 20 min look 20 feet away for 20 sec. Stretch wrists, fingers, shoulders.</p>
+            <div class="accent-box">
+                ⚠️ Warning signs: numbness, pain, weakness – stop and consult.
+            </div>
+        </section>
+
+        <!-- 11. PRACTICE ROUTINES -->
+        <section id="practice-routines">
+            <h2>📅 11. Practice Routines and Progress Tracking</h2>
+            <h3>30-minute session structure</h3>
+            <ol>
+                <li>5 min warm-up (home row, basic)</li>
+                <li>10 min focused drill (weak area)</li>
+                <li>10 min timed writing</li>
+                <li>5 min cool-down & error review</li>
+            </ol>
+            <h3>Weekly schedule snapshot</h3>
+            <table>
+                <tr>
+                    <th>Week</th>
+                    <th>Focus</th>
+                </tr>
+                <tr>
+                    <td>1-2</td>
+                    <td>Home row mastery</td>
+                </tr>
+                <tr>
+                    <td>3-4</td>
+                    <td>Top row + intro bottom</td>
+                </tr>
+                <tr>
+                    <td>5-6</td>
+                    <td>Bottom row + numbers</td>
+                </tr>
+                <tr>
+                    <td>7-8</td>
+                    <td>Numbers, symbols, Shift</td>
+                </tr>
+            </table>
+            <p>Use typingclub.com, keybr.com, 10fastfingers.com</p>
+        </section>
+
+        <!-- 12. COMMON MISTAKES -->
+        <section id="common-mistakes">
+            <h2>⚠️ 12. Common Mistakes and Troubleshooting</h2>
+            <h3>Finger drift & pinky weakness</h3>
+            <ul>
+                <li><strong>Drift left:</strong> check F and J bumps often</li>
+                <li><strong>Pinky:</strong> use isolated exercises (aqa aza ;p;)</li>
+            </ul>
+            <h3>Error patterns by finger</h3>
+            <p>Left index: R/T, V/B, B/N (cross). Right index: U/I, M/N, Y/U.</p>
+            <h3>Specific problems</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Looking at keyboard</strong><br>Use cover / blank stickers</div>
+                <div class="def-item"><strong>Pain or fatigue</strong><br>Check ergonomics, stretch</div>
+                <div class="def-item"><strong>Hitting two keys</strong><br>Slow down, curve fingers</div>
+            </div>
+            <h3>Progress expectations</h3>
+            <table>
+                <tr>
+                    <th>Time</th>
+                    <th>Realistic WPM</th>
+                </tr>
+                <tr>
+                    <td>1 week</td>
+                    <td>10-15</td>
+                </tr>
+                <tr>
+                    <td>1 month</td>
+                    <td>20-30</td>
+                </tr>
+                <tr>
+                    <td>2 months</td>
+                    <td>30-40</td>
+                </tr>
+                <tr>
+                    <td>3 months</td>
+                    <td>40-50</td>
+                </tr>
+                <tr>
+                    <td>6 months</td>
+                    <td>50-60</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- quick reference appendix -->
+        <div class="mini-card">
+            <h4 style="margin-top:0">📌 Quick reference — home row & reaches</h4>
+            <div class="def-grid">
+                <span>Home: A S D F J K L ;</span>
+                <span>Top: Q W E R T Y U I O P</span>
+                <span>Bottom: Z X C V B N M , . /</span>
+                <span>Number: 1 2 3 4 5 6 7 8 9 0 - =</span>
+            </div>
+            <div class="drill" style="margin-top:0.5rem;">Daily warm-up: asdf jkl; qwert yuiop zxcv bnm, . The quick
+                brown fox jumps over the lazy dog</div>
+        </div>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies · © 2026 All rights reserved.
+        </footer>
+    </div>
+</body>
+
+</html>

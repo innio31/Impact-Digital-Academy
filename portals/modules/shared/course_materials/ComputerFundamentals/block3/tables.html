@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Microsoft Word · working with tables (complete interactive guide)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f5;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #132b40;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #ddeeff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #6d8eb0;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #103753;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .example-table {
+            background: #ffffff;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .example-table td,
+        .example-table th {
+            border: 1px solid #8bbde9;
+            padding: 8px;
+            background: white;
+        }
+
+        .mock-ribbon {
+            background: #e2eefc;
+            border-radius: 40px;
+            padding: 0.4rem 1.2rem;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .step-badge {
+            background: #2b7abc;
+            color: white;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📋 Microsoft Word: Comprehensive Guide to Tables</h1>
+        <div class="subhead">create · modify · format · advanced layout · best practices</div>
+
+        <!-- TABLE OF CONTENTS (identical in style, full coverage) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">Intro & uses of tables</a>
+                <a href="#part1">1. Creating a table</a>
+                <a href="#part2">2. Inserting / deleting</a>
+                <a href="#part3">3. Formatting & styles</a>
+                <a href="#part4">4. Advanced management</a>
+                <a href="#part5">5. Best practices</a>
+                <a href="#exercises-tables">Practice exercises</a>
+                <a href="#troubleshooting-tables">Troubleshooting</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 Introduction: What is a Table and Why Use It?</h2>
+            <p>A table is a powerful tool used to organize information into a grid of rows and columns. The intersection
+                of a row and a column is called a <strong>cell</strong>. Tables are essential in business and academic
+                documents for presenting data clearly and concisely. Instead of describing complex lists in paragraphs,
+                a table allows the reader to quickly compare and understand information.</p>
+            <h3>Common Uses for Tables:</h3>
+            <ul>
+                <li>Financial data (budgets, invoices, expenses)</li>
+                <li>Schedules and timelines (project plans, class timetables)</li>
+                <li>Contact lists (names, phone numbers, email addresses)</li>
+                <li>Product specifications and comparisons</li>
+                <li>Forms and applications</li>
+                <li>Organizing content in reports and proposals</li>
+            </ul>
+            <p>This guide will teach you how to create, modify, and format tables like a professional.</p>
+        </section>
+
+        <!-- PART 1 CREATING A TABLE -->
+        <section id="part1">
+            <h2>🔨 Part 1: Creating a Table</h2>
+            <p>Microsoft Word offers several ways to create a table. The method you choose depends on the complexity and
+                size of the table you need.</p>
+
+            <h3>Method 1: Using the Table Grid (Quick Method)</h3>
+            <p>Best for: small, simple tables.</p>
+            <ul>
+                <li>Click <strong>Insert</strong> tab → <strong>Table</strong> button.</li>
+                <li>Drag over the grid to highlight columns/rows (e.g., 4x3).</li>
+                <li>Click to insert.</li>
+            </ul>
+            <div class="sample-box" style="font-family:inherit; background:#deecfb;">
+                ⚡ <strong>Live example:</strong> Imagine a 4×2 table inserted instantly.
+            </div>
+
+            <h3>Method 2: Using the "Insert Table" Dialog Box (Precise)</h3>
+            <ul>
+                <li>Insert → Table → <strong>Insert Table…</strong></li>
+                <li>Set number of columns & rows.</li>
+                <li>Choose AutoFit behaviour: fixed width, auto to contents, or window.</li>
+            </ul>
+
+            <h3>Method 3: Drawing a Table (Custom)</h3>
+            <ul>
+                <li>Insert → Table → <strong>Draw Table</strong> (pencil icon).</li>
+                <li>Drag to draw outer boundary, then draw lines for rows/columns.</li>
+                <li>Use <strong>Eraser</strong> (Table Design tab) to remove lines.</li>
+            </ul>
+
+            <h3>Method 4: Converting Text to Table</h3>
+            <ul>
+                <li>Prepare text separated by tabs, commas, or paragraphs.</li>
+                <li>Select text → Insert → Table → <strong>Convert Text to Table…</strong></li>
+                <li>Verify separator and click OK.</li>
+            </ul>
+            <div class="mini-card">
+                <p><span class="badge">✍️ example</span>
+                    <code>Product[TAB]Price[TAB]Qty[ENTER]Apple[TAB]0.5[TAB]20</code> becomes a 3‑column table.</p>
+            </div>
+        </section>
+
+        <!-- PART 2 INSERTING / DELETING -->
+        <section id="part2">
+            <h2>➕ Part 2: Inserting and Deleting Elements</h2>
+            <h3>How to Select Parts of a Table (Crucial First Step)</h3>
+            <ul>
+                <li><strong>Select a cell:</strong> hover lower-left corner → black arrow click.</li>
+                <li><strong>Select a row:</strong> click left of the row (outside table).</li>
+                <li><strong>Select a column:</strong> click top border (black down arrow).</li>
+                <li><strong>Entire table:</strong> click the square with arrows (top‑left corner).</li>
+            </ul>
+
+            <h4>Inserting Rows and Columns</h4>
+            <ul>
+                <li><strong>Context menu:</strong> right‑click selected row/column → Insert → choose
+                    left/right/above/below.</li>
+                <li><strong>Ribbon (Layout tab):</strong> "Rows & Columns" buttons.</li>
+            </ul>
+
+            <h4>Inserting Cells</h4>
+            <ul>
+                <li>Right‑click a cell → Insert → Insert Cells… → shift right/down.</li>
+            </ul>
+
+            <h4>Deleting Rows, Columns, or Entire Table</h4>
+            <div class="highlight-block" style="border-left-color:#c00;">
+                <strong>⚠️ Crucial Warning:</strong> Pressing <kbd>Delete</kbd> only removes text inside cells, not the
+                structure. To delete structure: right‑click selection → <strong>Delete Rows</strong> / <strong>Delete
+                    Columns</strong> / <strong>Delete Table</strong>. Or use Layout tab → Delete.
+            </div>
+        </section>
+
+        <!-- PART 3 FORMATTING -->
+        <section id="part3">
+            <h2>🎨 Part 3: Formatting Tables for a Professional Look</h2>
+
+            <h3>1. Using Table Styles (Fastest)</h3>
+            <ul>
+                <li>Click inside table → <strong>Table Design</strong> tab.</li>
+                <li>Hover gallery for preview; click a style.</li>
+                <li>Table Style Options: Header Row, Banded Rows, etc.</li>
+            </ul>
+
+            <h3>2. Manual Formatting</h3>
+            <h4>A. Borders and Shading</h4>
+            <ul>
+                <li><strong>Borders:</strong> select cells → Table Design → Borders → choose which lines to show/hide.
+                </li>
+                <li><strong>Line style/weight/color:</strong> pick first, then apply with Borders.</li>
+                <li><strong>Shading:</strong> select cells → Shading button (paint can).</li>
+            </ul>
+
+            <h4>B. Text Alignment</h4>
+            <ul>
+                <li>Select cells → <strong>Layout</strong> tab → Alignment group (9 options: top/center/bottom +
+                    left/center/right).</li>
+            </ul>
+
+            <h4>C. Cell Margins and Direction</h4>
+            <ul>
+                <li><strong>Cell Margins:</strong> Layout → Cell Margins → increase breathing space.</li>
+                <li><strong>Text Direction:</strong> Layout → Text Direction (vertical / rotated).</li>
+            </ul>
+
+            <div class="sample-box" style="background:#ffffff;">
+                <p style="font-weight:bold;">📐 sample aligned table</p>
+                <table class="example-table" style="width:80%;">
+                    <tr>
+                        <th style="background:#deecfb;">Product</th>
+                        <th style="background:#deecfb;">Price</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Laptop</td>
+                        <td style="text-align:right;">$999</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left;">Mouse</td>
+                        <td style="text-align:right;">$25</td>
+                    </tr>
+                </table>
+                <p><em>Text left-aligned, numbers right-aligned.</em></p>
+            </div>
+        </section>
+
+        <!-- PART 4 ADVANCED MANAGEMENT -->
+        <section id="part4">
+            <h2>⚙️ Part 4: Advanced Table Management</h2>
+
+            <h3>Merging and Splitting Cells</h3>
+            <ul>
+                <li><strong>Merge:</strong> select cells → right‑click → Merge Cells (or Layout → Merge).</li>
+                <li><strong>Split:</strong> click inside cell → right‑click → Split Cells → choose columns/rows.</li>
+                <li><strong>Split Table:</strong> place cursor in row that should become first row of new table → Layout
+                    → Split Table.</li>
+            </ul>
+
+            <h3>Controlling Page Breaks in Long Tables</h3>
+            <ul>
+                <li>Select table → right‑click → Table Properties → Row tab → <strong>uncheck</strong> “Allow row to
+                    break across pages”.</li>
+            </ul>
+
+            <h3>Repeating Header Rows on Subsequent Pages</h3>
+            <ul>
+                <li>Select header row(s) → Table Properties → Row → check “Repeat as header row at top of each page”.
+                </li>
+            </ul>
+
+            <h3>Sorting Data in a Table</h3>
+            <ul>
+                <li>Click inside table → Layout → <strong>Sort</strong> button.</li>
+                <li>Choose column, type (text/number/date), order. Set “My list has Header row”.</li>
+            </ul>
+            <div class="def-grid">
+                <div class="def-item"><strong>Before sort:</strong> Banana, Apple, Cherry</div>
+                <div class="def-item"><strong>After ascending:</strong> Apple, Banana, Cherry</div>
+            </div>
+
+            <h3>Performing Simple Calculations (Formulas)</h3>
+            <ul>
+                <li>Click in cell (e.g., end of column) → Layout → <strong>Formula</strong>.</li>
+                <li>Word may suggest =SUM(ABOVE) or =AVERAGE(LEFT). Press OK.</li>
+            </ul>
+            <table style="width:40%;">
+                <tr>
+                    <th>Item</th>
+                    <th>Cost</th>
+                </tr>
+                <tr>
+                    <td>Rent</td>
+                    <td>1200</td>
+                </tr>
+                <tr>
+                    <td>Electricity</td>
+                    <td>250</td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><em>use =SUM(ABOVE)</em></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- PART 5 BEST PRACTICES -->
+        <section id="part5">
+            <h2>✅ Part 5: Best Practices for Data Presentation</h2>
+            <ul>
+                <li><strong>Keep it simple:</strong> avoid excessive borders & colours. Subtle banding is professional.
+                </li>
+                <li><strong>Use Headers:</strong> bold + slight shading. Provides context.</li>
+                <li><strong>Align Data Appropriately:</strong> text left/justify, numbers right (makes comparison
+                    easier).</li>
+                <li><strong>Consistent Formatting:</strong> same font, size, currency format within column.</li>
+                <li><strong>Don't Overcrowd:</strong> adjust cell margins for breathing room.</li>
+                <li><strong>Consider Readability:</strong> for wide tables, change page orientation to Landscape (Layout
+                    → Orientation → Landscape).</li>
+            </ul>
+        </section>
+
+        <!-- PRACTICE EXERCISES (FULL) -->
+        <section id="exercises-tables">
+            <h2>✍️ Practice Exercises – Tables</h2>
+
+            <h3>Exercise 1: Create a table (multiple methods)</h3>
+            <ul>
+                <li>Insert a 5×3 table using the grid. Insert a 6×4 table using Insert Table dialog (fixed column
+                    width).</li>
+                <li>Draw a small 3×2 table with pencil, then erase a line.</li>
+                <li>Type the following with tabs and convert to table:<br>
+                    <code>Name[TAB]Department[TAB]City[ENTER]Anna[TAB]Sales[TAB]Berlin[ENTER]Ben[TAB]IT[TAB]Munich</code>
+                </li>
+            </ul>
+
+            <h3>Exercise 2: Insert & delete</h3>
+            <ul>
+                <li>Create a 4×4 table. Add a row above row 2, add a column to the right of column 3.</li>
+                <li>Delete the third column. Merge the top row cells to create a title cell.</li>
+                <li>Split the first cell of the second row into two columns.</li>
+            </ul>
+
+            <h3>Exercise 3: Formatting</h3>
+            <ul>
+                <li>Apply a built-in table style (e.g., Grid Table 5 Dark).</li>
+                <li>Change borders: outer border blue, 1½ pt; remove inner vertical borders.</li>
+                <li>Add shading to header row (light blue).</li>
+                <li>Align column of numbers to the right.</li>
+            </ul>
+
+            <h3>Exercise 4: Advanced layout</h3>
+            <ul>
+                <li>Create a 5-row budget table: Item, Cost, Qty, Subtotal. Use formula to calculate Subtotal (= cost *
+                    qty) manually (you can type the result, but try =PRODUCT(LEFT) if comfortable).</li>
+                <li>Sort the table alphabetically by Item.</li>
+                <li>Set header row to repeat on next page (insert enough rows to see effect).</li>
+                <li>Split the table after the third row.</li>
+            </ul>
+
+            <h3>Exercise 5: Comprehensive challenge</h3>
+            <ul>
+                <li>Design a weekly timetable (5 days × 6 periods). Merge cells for lunch break. Style with banded rows.
+                    Ensure it's easy to read. Save and reopen.</li>
+            </ul>
+        </section>
+
+        <!-- TROUBLESHOOTING TABLES -->
+        <section id="troubleshooting-tables">
+            <h2>🔧 Troubleshooting Common Table Issues</h2>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Table won't fit on page / runs off margin</td>
+                    <td>Resize columns: drag border, or use Layout → AutoFit → AutoFit Window / Fixed. Change page
+                        orientation to Landscape.</td>
+                </tr>
+                <tr>
+                    <td>Row breaks across pages (mid‑row split)</td>
+                    <td>Select table → Properties → Row → uncheck "Allow row to break across pages".</td>
+                </tr>
+                <tr>
+                    <td>Header row doesn't repeat</td>
+                    <td>Select header row(s) → Properties → Row → check "Repeat as header row". Must include first row
+                        of table.</td>
+                </tr>
+                <tr>
+                    <td>Can't delete table (Delete key only removes text)</td>
+                    <td>Select entire table (handle) → right‑click → Delete Table. Or Layout → Delete → Delete Table.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Text inside cell not vertically centered</td>
+                    <td>Select cells → Layout → Alignment → choose e.g., Align Center Left.</td>
+                </tr>
+                <tr>
+                    <td>Borders not printing / showing</td>
+                    <td>Check borders are applied (Table Design → Borders → All Borders). Ensure no white shading. Print
+                        preview.</td>
+                </tr>
+                <tr>
+                    <td>Formula shows { } or doesn't update</td>
+                    <td>Right‑click field → Update Field. For new calculation, re-insert formula.</td>
+                </tr>
+                <tr>
+                    <td>Column width changes when typing</td>
+                    <td>Use fixed column width: Table Properties → Column → Preferred width, or AutoFit → Fixed Column
+                        Width.</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- QUICK REFERENCE & SHORTCUTS -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Summary checklist – can you?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Create via grid / dialog / draw / convert text<br>☐ Insert rows/columns
+                    anywhere<br>☐ Merge/split cells & split table</div>
+                <div class="def-item">☐ Apply table styles & custom borders<br>☐ Repeat header rows & control
+                    breaks<br>☐ Sort data & use simple formulas</div>
+            </div>
+            <h4 style="margin-top:1.5rem;">⌨️ Keyboard shortcuts (tables)</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Tab</kbd> next cell</span>
+                <span><kbd>Shift+Tab</kbd> previous cell</span>
+                <span><kbd>Alt+Home/End</kbd> to first/last cell in row</span>
+                <span><kbd>Ctrl+Shift+Enter</kbd> split table</span>
+                <span><kbd>Ctrl+Shift+F8</kbd> extend selection</span>
+            </div>
+            <p style="margin-top: 1.5rem;"><em>Master these techniques to transform raw data into professional
+                    tables.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Microsoft Word: Tables in depth · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

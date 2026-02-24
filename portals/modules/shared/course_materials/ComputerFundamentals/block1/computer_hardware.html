@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Computer Hardware Fundamentals · interactive notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fb;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem 2rem 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0b2842, #1f4b7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #2c5778;
+            border-left: 5px solid #2b7fc2;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents card */
+        .toc-card {
+            background: #e8f0fe;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 4px rgba(0, 60, 130, 0.1), 0 8px 12px -8px #a0bbd8;
+        }
+
+        .toc-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2d4b;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f4970;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 30, 60, 0.08);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d4e3ff;
+            border-color: #2b7fc2;
+            transform: scale(1.02);
+            box-shadow: 0 10px 18px -10px #2f6ea2;
+        }
+
+        /* section styles */
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 30, 50, 0.05);
+            border: 1px solid #eef3f9;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #113355;
+            border-bottom: 3px solid #2b7fc2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 620;
+            margin: 1.8rem 0 0.8rem;
+            color: #1d4a72;
+            padding-left: 0.3rem;
+            border-left: 6px solid #7bb3e0;
+            padding-left: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.3rem;
+            color: #1f4b6e;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f2f7ff;
+            border-radius: 1.6rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2a7fca;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 30, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #113355;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #dbe5f0;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #2b7fc2;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f9fcff;
+            border: 1px solid #cdddec;
+            border-radius: 1.4rem;
+            padding: 1.3rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e5eff9;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f6faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 3px solid #5f9ed6;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c5d9f0, transparent);
+            margin: 2rem 0;
+        }
+
+        /* comparison fancy */
+        .comp-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .comp-col {
+            flex: 1 1 220px;
+            background: #f2f9ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid #b9d1ec;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #4a6b89;
+            border-top: 1px dashed #aac2db;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🖥️ Computer Hardware Fundamentals</h1>
+
+        <!-- Table of contents (identical to original, all links) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction</a>
+                <a href="#cpu">2. CPU (central processing unit)</a>
+                <a href="#ram">3. Memory (RAM)</a>
+                <a href="#storage">4. Storage (HDD, SSD)</a>
+                <a href="#input-devices">5. Input devices</a>
+                <a href="#output-devices">6. Output devices</a>
+                <a href="#summary">7. Summary & tables</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>🔹 1. Introduction to Computer Hardware</h2>
+            <h3>What is Computer Hardware?</h3>
+            <p>Computer hardware refers to the physical, tangible components that make up a computer system. Unlike
+                software, which consists of instructions and data that tell the hardware what to do, hardware can be
+                seen and touched.</p>
+
+            <h3>The Von Neumann Architecture</h3>
+            <p>Most modern computers are based on the Von Neumann architecture, which consists of four main components:
+            </p>
+            <ul>
+                <li><strong>Processing Unit (CPU):</strong> Executes instructions</li>
+                <li><strong>Memory Unit (RAM):</strong> Temporarily stores data and instructions</li>
+                <li><strong>Storage:</strong> Permanently saves data</li>
+                <li><strong>Input/Output Devices:</strong> Facilitates communication with the outside world</li>
+            </ul>
+
+            <h3>The Information Processing Cycle</h3>
+            <div class="accent-box">
+                <ol>
+                    <li><strong>Input:</strong> Data enters the computer</li>
+                    <li><strong>Processing:</strong> Data is manipulated/calculated</li>
+                    <li><strong>Storage:</strong> Data is saved temporarily or permanently</li>
+                    <li><strong>Output:</strong> Results are presented to the user</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2. CPU -->
+        <section id="cpu">
+            <h2>⚙️ 2. The Central Processing Unit (CPU)</h2>
+            <h3>2.1 What is the CPU?</h3>
+            <p>The Central Processing Unit, often called the "brain" of the computer, is responsible for executing
+                instructions from programs. It performs all arithmetic, logical, control, and input/output operations.
+            </p>
+
+            <h3>2.2 Components of CPU</h3>
+            <h4>a) Control Unit (CU)</h4>
+            <ul>
+                <li><strong>Function:</strong> Directs the operation of the processor</li>
+                <li><strong>Responsibilities:</strong> Fetches instructions from memory; decodes instructions; controls
+                    data flow; generates timing and control signals</li>
+            </ul>
+            <h4>b) Arithmetic Logic Unit (ALU)</h4>
+            <ul>
+                <li><strong>Function:</strong> Performs all arithmetic and logical operations</li>
+                <li>Arithmetic: addition, subtraction, multiplication, division</li>
+                <li>Logical: comparisons (greater than, less than, equal to), AND, OR, NOT</li>
+                <li>Bit manipulation: shifting, rotating bits</li>
+            </ul>
+            <h4>c) Registers</h4>
+            <p><strong>Definition:</strong> Small, high-speed storage locations within the CPU</p>
+            <ul>
+                <li><strong>MAR:</strong> Holds address of memory location to access</li>
+                <li><strong>MBR/MDR:</strong> Holds data being transferred</li>
+                <li><strong>PC (Program Counter):</strong> Holds address of next instruction</li>
+                <li><strong>IR (Instruction Register):</strong> Holds current instruction</li>
+                <li><strong>ACC (Accumulator):</strong> Stores intermediate arithmetic results</li>
+            </ul>
+
+            <h3>2.3 CPU Performance Factors</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Clock speed:</strong> cycles/sec (GHz), 2-5 GHz modern</div>
+                <div class="def-item"><strong>Core count:</strong> single, dual, quad, hexa, octa, many‑core</div>
+                <div class="def-item"><strong>Cache:</strong> L1 (fastest), L2, L3 (shared)</div>
+                <div class="def-item"><strong>Word size:</strong> 32‑bit / 64‑bit</div>
+                <div class="def-item"><strong>ISA:</strong> CISC (Intel, AMD) vs RISC (ARM, Apple M)</div>
+            </div>
+
+            <h3>2.4 CPU Technologies</h3>
+            <ul>
+                <li><strong>Hyper-Threading / SMT:</strong> one physical core → two logical cores</li>
+                <li><strong>Turbo Boost / Precision Boost:</strong> automatic overclock when needed</li>
+                <li><strong>Thermal Design Power (TDP):</strong> max heat (watts), affects cooling</li>
+            </ul>
+
+            <h3>2.5 CPU Manufacturers</h3>
+            <ul>
+                <li><strong>Intel:</strong> Core i3, i5, i7, i9; Xeon</li>
+                <li><strong>AMD:</strong> Ryzen 3/5/7/9, Threadripper, EPYC</li>
+                <li><strong>Apple:</strong> M1, M2, M3 (ARM-based)</li>
+                <li><strong>ARM:</strong> mobile / embedded</li>
+            </ul>
+
+            <h3>2.6 CPU Cooling Methods</h3>
+            <ul>
+                <li><strong>Air cooling:</strong> heat sink + fan</li>
+                <li><strong>Liquid cooling:</strong> AIO or custom loop</li>
+                <li><strong>Passive cooling:</strong> no fans, only heat sinks</li>
+            </ul>
+        </section>
+
+        <!-- 3. RAM -->
+        <section id="ram">
+            <h2>🧠 3. Memory (RAM)</h2>
+            <h3>3.1 What is RAM?</h3>
+            <p>Random Access Memory is the computer's primary volatile memory where data and instructions are
+                temporarily stored for quick access by the CPU.</p>
+
+            <h3>3.2 Key Characteristics</h3>
+            <ul>
+                <li><strong>Volatility:</strong> data lost when power off</li>
+                <li><strong>Speed:</strong> faster than storage, slower than CPU cache (nanoseconds)</li>
+                <li><strong>Random access:</strong> any location directly accessible</li>
+            </ul>
+
+            <h3>3.3 Types of RAM</h3>
+            <ul>
+                <li><strong>DRAM (Dynamic RAM):</strong> needs refresh, main memory</li>
+                <li><strong>SRAM (Static RAM):</strong> no refresh, cache memory</li>
+                <li><strong>SDRAM:</strong> synchronized with CPU clock</li>
+                <li><strong>DDR SDRAM generations:</strong> DDR1 to DDR5 (speeds, voltage table)</li>
+            </ul>
+            <table>
+                <tr>
+                    <th>Generation</th>
+                    <th>Transfer rate</th>
+                    <th>Voltage</th>
+                    <th>Common speeds</th>
+                </tr>
+                <tr>
+                    <td>DDR1</td>
+                    <td>200-400 MT/s</td>
+                    <td>2.5V</td>
+                    <td>obsolete</td>
+                </tr>
+                <tr>
+                    <td>DDR2</td>
+                    <td>400-800 MT/s</td>
+                    <td>1.8V</td>
+                    <td>legacy</td>
+                </tr>
+                <tr>
+                    <td>DDR3</td>
+                    <td>800-2133 MT/s</td>
+                    <td>1.5V</td>
+                    <td>older computers</td>
+                </tr>
+                <tr>
+                    <td>DDR4</td>
+                    <td>1600-3200 MT/s</td>
+                    <td>1.2V</td>
+                    <td>current standard</td>
+                </tr>
+                <tr>
+                    <td>DDR5</td>
+                    <td>4800-6400 MT/s</td>
+                    <td>1.1V</td>
+                    <td>latest</td>
+                </tr>
+            </table>
+
+            <h3>3.4 RAM Modules</h3>
+            <p><strong>Form factors:</strong> DIMM (desktop), SO-DIMM (laptop). <strong>Packaging:</strong> single/dual
+                sided, single/dual rank.</p>
+
+            <h3>3.5 RAM Performance Factors</h3>
+            <ul>
+                <li><strong>Capacity:</strong> 8GB min, 16GB rec, 32-128GB pro, servers TB</li>
+                <li><strong>Speed (MT/s):</strong> e.g., DDR4-3200</li>
+                <li><strong>Latency (CAS):</strong> CL numbers, e.g., 16-18-18-36</li>
+                <li><strong>Multi-channel:</strong> dual/triple/quad increases bandwidth</li>
+            </ul>
+
+            <h3>3.6 Virtual Memory</h3>
+            <p>Using hard drive space as “fake” RAM (page file / swap). Much slower than physical RAM.</p>
+
+            <h3>3.7 How RAM Works with CPU</h3>
+            <ol>
+                <li>CPU requests address</li>
+                <li>Memory controller sends address to RAM</li>
+                <li>RAM retrieves data</li>
+                <li>Data travels to CPU</li>
+                <li>CPU stores in cache</li>
+            </ol>
+        </section>
+
+        <!-- 4. STORAGE -->
+        <section id="storage">
+            <h2>💾 4. Storage Devices (HDD, SSD)</h2>
+            <h3>4.1 Overview</h3>
+            <p>Non‑volatile, holds OS, apps, files.</p>
+
+            <h3>4.2 Hard Disk Drive (HDD)</h3>
+            <p><strong>Components:</strong> platters, spindle motor, read/write heads, actuator arm, controller board.
+            </p>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td>Platters</td>
+                    <td>magnetic disks</td>
+                </tr>
+                <tr>
+                    <td>Spindle motor</td>
+                    <td>spins platters (5400-15000 RPM)</td>
+                </tr>
+                <tr>
+                    <td>Read/Write heads</td>
+                    <td>float nanometers above</td>
+                </tr>
+                <tr>
+                    <td>Actuator arm</td>
+                    <td>moves heads</td>
+                </tr>
+                <tr>
+                    <td>Controller board</td>
+                    <td>manages operations</td>
+                </tr>
+            </table>
+            <p><strong>Performance:</strong> RPM, seek time (4-15 ms), latency, data density.</p>
+            <p><strong>Advantages:</strong> low cost/GB, high capacity, archival. <strong>Disadvantages:</strong>
+                mechanical, slow, noise, fragmentation.</p>
+
+            <h3>4.3 Solid State Drive (SSD)</h3>
+            <p><strong>NAND types:</strong> SLC, MLC, TLC, QLC, PLC (bits/cell, endurance, speed, cost).</p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Bits/cell</th>
+                    <th>Endurance</th>
+                    <th>Speed</th>
+                    <th>Cost</th>
+                    <th>Use</th>
+                </tr>
+                <tr>
+                    <td>SLC</td>
+                    <td>1</td>
+                    <td>highest</td>
+                    <td>fastest</td>
+                    <td>highest</td>
+                    <td>enterprise</td>
+                </tr>
+                <tr>
+                    <td>MLC</td>
+                    <td>2</td>
+                    <td>high</td>
+                    <td>fast</td>
+                    <td>high</td>
+                    <td>enthusiast</td>
+                </tr>
+                <tr>
+                    <td>TLC</td>
+                    <td>3</td>
+                    <td>medium</td>
+                    <td>medium</td>
+                    <td>medium</td>
+                    <td>consumer</td>
+                </tr>
+                <tr>
+                    <td>QLC</td>
+                    <td>4</td>
+                    <td>low</td>
+                    <td>slower writes</td>
+                    <td>low</td>
+                    <td>budget</td>
+                </tr>
+                <tr>
+                    <td>PLC</td>
+                    <td>5</td>
+                    <td>very low</td>
+                    <td>slowest</td>
+                    <td>lowest</td>
+                    <td>future</td>
+                </tr>
+            </table>
+            <p><strong>Form factors:</strong> 2.5" SATA, M.2 (2230,2242,2260,2280), mSATA, U.2, AIC.</p>
+            <p><strong>Interfaces:</strong> SATA (up to 600 MB/s), NVMe/PCIe (3.0/4.0/5.0 up to 10,000+ MB/s).</p>
+            <p><strong>Controller:</strong> wear leveling, garbage collection, TRIM, ECC.</p>
+
+            <h3>4.4 Hybrid Drives (SSHD)</h3>
+            <p>Small SSD cache + large HDD.</p>
+
+            <h3>4.5 RAID levels</h3>
+            <table>
+                <tr>
+                    <th>Level</th>
+                    <th>Name</th>
+                    <th>Min drives</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>RAID 0</td>
+                    <td>striping</td>
+                    <td>2</td>
+                    <td>no redundancy, performance</td>
+                </tr>
+                <tr>
+                    <td>RAID 1</td>
+                    <td>mirroring</td>
+                    <td>2</td>
+                    <td>exact copy</td>
+                </tr>
+                <tr>
+                    <td>RAID 5</td>
+                    <td>striping+parity</td>
+                    <td>3</td>
+                    <td>balance</td>
+                </tr>
+                <tr>
+                    <td>RAID 6</td>
+                    <td>dual parity</td>
+                    <td>4</td>
+                    <td>survive two failures</td>
+                </tr>
+                <tr>
+                    <td>RAID 10</td>
+                    <td>mirror+strip</td>
+                    <td>4</td>
+                    <td>performance+protection</td>
+                </tr>
+            </table>
+
+            <h3>4.6 External storage interfaces</h3>
+            <p>USB, Thunderbolt, eSATA, FireWire, NAS.</p>
+
+            <h3>4.7 Storage comparison table</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>HDD</th>
+                    <th>SATA SSD</th>
+                    <th>NVMe SSD</th>
+                </tr>
+                <tr>
+                    <td>Seq. read</td>
+                    <td>150-200 MB/s</td>
+                    <td>500-550 MB/s</td>
+                    <td>3500-10000+ MB/s</td>
+                </tr>
+                <tr>
+                    <td>Random 4K</td>
+                    <td>0.5-2 MB/s</td>
+                    <td>50-80 MB/s</td>
+                    <td>200-800 MB/s</td>
+                </tr>
+                <tr>
+                    <td>IOPS</td>
+                    <td>~100</td>
+                    <td>~90k</td>
+                    <td>~500k+</td>
+                </tr>
+                <tr>
+                    <td>Power active</td>
+                    <td>6-10W</td>
+                    <td>2-4W</td>
+                    <td>3-7W</td>
+                </tr>
+                <tr>
+                    <td>Shock resistance</td>
+                    <td>low</td>
+                    <td>high</td>
+                    <td>high</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 5. INPUT DEVICES -->
+        <section id="input-devices">
+            <h2>🖱️ 5. Input Devices</h2>
+            <h3>5.1 Keyboard</h3>
+            <p><strong>Types:</strong> membrane, mechanical (linear, tactile, clicky), scissor‑switch, ergonomic,
+                virtual.</p>
+            <p><strong>Switch tech:</strong> linear (smooth), tactile (bump), clicky (bump+click).</p>
+            <p><strong>Layouts:</strong> ANSI, ISO, JIS; QWERTY, AZERTY, QWERTZ, Dvorak. Connectors: PS/2, USB,
+                Bluetooth, RF.</p>
+
+            <h3>5.2 Mouse</h3>
+            <p><strong>Types:</strong> mechanical, optical, laser, trackball, vertical.</p>
+            <p><strong>Specs:</strong> DPI (up to 25k+), polling rate (125‑1000 Hz), IPS, acceleration.</p>
+            <p><strong>Buttons:</strong> left/right, scroll, forward/back, DPI switch, adjustable weight.</p>
+
+            <h3>5.3 Monitor (as input – touchscreen)</h3>
+            <p>Capacitive, resistive, infrared, multi‑touch.</p>
+
+            <h3>5.4 Other input devices</h3>
+            <p><strong>Scanners:</strong> flatbed, sheet‑fed, handheld, drum. Resolution (DPI), color depth, speed.</p>
+            <p><strong>Digital cameras:</strong> webcams, document cameras.</p>
+            <p><strong>Microphones:</strong> dynamic, condenser, lavalier, USB; polar patterns (cardioid,
+                omnidirectional, bi‑directional).</p>
+            <p><strong>Graphic tablets:</strong> pen tablet, pen display, pressure sensitivity, tilt.</p>
+            <p><strong>Biometric:</strong> fingerprint, facial, iris, voice.</p>
+            <p><strong>Game controllers:</strong> joystick, gamepad, steering wheel, motion.</p>
+        </section>
+
+        <!-- 6. OUTPUT DEVICES -->
+        <section id="output-devices">
+            <h2>🖨️ 6. Output Devices</h2>
+            <h3>6.1 Monitor (Display)</h3>
+            <p><strong>Technologies:</strong> CRT, LCD (TN, IPS, VA), LED (edge‑lit, full‑array), OLED, QLED.</p>
+            <p><strong>Specifications:</strong> resolution (HD, FHD, 2K, 4K, 5K, 8K, ultrawide), refresh rate
+                (60‑360Hz), response time, panel size, color gamut, brightness (nits), contrast ratio.</p>
+            <table>
+                <tr>
+                    <th>Connector</th>
+                    <th>Max resolution</th>
+                    <th>Audio</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>VGA</td>
+                    <td>2048x1536</td>
+                    <td>no</td>
+                    <td>analog legacy</td>
+                </tr>
+                <tr>
+                    <td>DVI</td>
+                    <td>2560x1600</td>
+                    <td>no</td>
+                    <td>digital</td>
+                </tr>
+                <tr>
+                    <td>HDMI</td>
+                    <td>4K‑10K</td>
+                    <td>yes</td>
+                    <td>consumer</td>
+                </tr>
+                <tr>
+                    <td>DisplayPort</td>
+                    <td>8K‑16K</td>
+                    <td>yes</td>
+                    <td>PC, daisy‑chain</td>
+                </tr>
+                <tr>
+                    <td>USB‑C</td>
+                    <td>depends</td>
+                    <td>yes</td>
+                    <td>single cable</td>
+                </tr>
+                <tr>
+                    <td>Thunderbolt</td>
+                    <td>8K+</td>
+                    <td>yes</td>
+                    <td>high bandwidth</td>
+                </tr>
+            </table>
+
+            <h3>6.2 Printer</h3>
+            <p><strong>Inkjet:</strong> thermal/piezoelectric, dye/pigment ink. <strong>Laser:</strong> charging,
+                writing, developing, transferring, fusing. <strong>LED printer, thermal, 3D printer (FDM, SLA, SLS),
+                    plotter.</strong></p>
+            <p><strong>Specs:</strong> DPI, PPM, duty cycle, connectivity, paper handling.</p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Technology</th>
+                    <th>Use case</th>
+                </tr>
+                <tr>
+                    <td>All‑in‑One</td>
+                    <td>inkjet/laser</td>
+                    <td>home/small office</td>
+                </tr>
+                <tr>
+                    <td>Photo printer</td>
+                    <td>inkjet (6+ colors)</td>
+                    <td>photography</td>
+                </tr>
+                <tr>
+                    <td>Workgroup</td>
+                    <td>high‑speed laser</td>
+                    <td>office</td>
+                </tr>
+                <tr>
+                    <td>Portable</td>
+                    <td>thermal/inkjet</td>
+                    <td>mobile</td>
+                </tr>
+            </table>
+
+            <h3>6.3 Audio Output</h3>
+            <p><strong>Speakers:</strong> passive/active, 2.0, 2.1, 5.1/7.1, soundbar. Frequency response, power,
+                impedance.</p>
+            <p><strong>Headphones:</strong> over‑ear, on‑ear, in‑ear, open/closed‑back; dynamic, planar magnetic,
+                electrostatic, bone conduction; impedance, sensitivity.</p>
+
+            <h3>6.4 Other Output Devices</h3>
+            <p><strong>Projectors:</strong> DLP, LCD (3LCD), LCoS; lumens, contrast, throw ratio, lamp life.</p>
+            <p><strong>Haptic devices:</strong> vibration, force feedback.</p>
+        </section>
+
+        <!-- 7. SUMMARY AND TABLES -->
+        <section id="summary">
+            <h2>📊 7. Summary and Comparison Tables</h2>
+
+            <h3>7.1 CPU Comparison by Use Case</h3>
+            <table>
+                <tr>
+                    <th>Use case</th>
+                    <th>Cores</th>
+                    <th>Clock</th>
+                    <th>Cache</th>
+                    <th>Recommendation</th>
+                </tr>
+                <tr>
+                    <td>Office/Web</td>
+                    <td>2-4</td>
+                    <td>2-4 GHz</td>
+                    <td>4-8MB</td>
+                    <td>i3/Ryzen 3</td>
+                </tr>
+                <tr>
+                    <td>Content creation</td>
+                    <td>6-8</td>
+                    <td>3-5 GHz</td>
+                    <td>12-24MB</td>
+                    <td>i5/i7, Ryzen 5/7</td>
+                </tr>
+                <tr>
+                    <td>Gaming</td>
+                    <td>6-8</td>
+                    <td>4-5+ GHz</td>
+                    <td>16-32MB</td>
+                    <td>i5/i7, Ryzen 5/7</td>
+                </tr>
+                <tr>
+                    <td>Professional</td>
+                    <td>8-16+</td>
+                    <td>3-4 GHz</td>
+                    <td>32-64MB</td>
+                    <td>i9, Ryzen 9, Threadripper</td>
+                </tr>
+                <tr>
+                    <td>Server</td>
+                    <td>16-64+</td>
+                    <td>2-3 GHz</td>
+                    <td>large shared</td>
+                    <td>Xeon, EPYC</td>
+                </tr>
+            </table>
+
+            <h3>7.2 Memory vs Storage Comparison</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>RAM</th>
+                    <th>Storage (HDD/SSD)</th>
+                </tr>
+                <tr>
+                    <td>Volatility</td>
+                    <td>volatile</td>
+                    <td>non‑volatile</td>
+                </tr>
+                <tr>
+                    <td>Speed</td>
+                    <td>nanoseconds</td>
+                    <td>ms (HDD) / µs (SSD)</td>
+                </tr>
+                <tr>
+                    <td>Capacity</td>
+                    <td>4‑128GB</td>
+                    <td>128GB‑20TB</td>
+                </tr>
+                <tr>
+                    <td>Cost per GB</td>
+                    <td>$3‑8</td>
+                    <td>$0.03‑0.30</td>
+                </tr>
+                <tr>
+                    <td>Purpose</td>
+                    <td>active programs</td>
+                    <td>files, OS</td>
+                </tr>
+            </table>
+
+            <h3>7.3 Storage Hierarchy by Speed</h3>
+            <div class="mini-card">
+                <code>CPU registers (fastest) → L1/L2/L3 cache → RAM → NVMe SSD → SATA SSD → SSHD → 10/15k HDD → 7200 HDD → 5400 HDD → cloud (slowest)</code>
+            </div>
+
+            <h3>7.4 Input Device Comparison</h3>
+            <table>
+                <tr>
+                    <th>Device</th>
+                    <th>Best for</th>
+                    <th>Precision</th>
+                    <th>Speed</th>
+                    <th>Ergonomics</th>
+                </tr>
+                <tr>
+                    <td>Keyboard</td>
+                    <td>text entry</td>
+                    <td>high</td>
+                    <td>very high</td>
+                    <td>variable</td>
+                </tr>
+                <tr>
+                    <td>Mouse</td>
+                    <td>navigation</td>
+                    <td>high</td>
+                    <td>high</td>
+                    <td>variable</td>
+                </tr>
+                <tr>
+                    <td>Touchscreen</td>
+                    <td>direct</td>
+                    <td>medium</td>
+                    <td>medium</td>
+                    <td>fatigue possible</td>
+                </tr>
+                <tr>
+                    <td>Graphics tablet</td>
+                    <td>drawing</td>
+                    <td>very high</td>
+                    <td>medium</td>
+                    <td>good for artists</td>
+                </tr>
+            </table>
+
+            <h3>7.5 Output Device Comparison</h3>
+            <table>
+                <tr>
+                    <th>Device</th>
+                    <th>Best for</th>
+                    <th>Quality</th>
+                    <th>Cost</th>
+                    <th>Use case</th>
+                </tr>
+                <tr>
+                    <td>IPS monitor</td>
+                    <td>color work</td>
+                    <td>excellent</td>
+                    <td>$$</td>
+                    <td>design</td>
+                </tr>
+                <tr>
+                    <td>TN monitor</td>
+                    <td>gaming</td>
+                    <td>good</td>
+                    <td>$</td>
+                    <td>budget gaming</td>
+                </tr>
+                <tr>
+                    <td>OLED</td>
+                    <td>entertainment</td>
+                    <td>outstanding</td>
+                    <td>$$$</td>
+                    <td>HDR/movies</td>
+                </tr>
+                <tr>
+                    <td>Laser printer</td>
+                    <td>text</td>
+                    <td>excellent</td>
+                    <td>$$</td>
+                    <td>office</td>
+                </tr>
+                <tr>
+                    <td>Inkjet printer</td>
+                    <td>photos</td>
+                    <td>excellent</td>
+                    <td>$</td>
+                    <td>home/photo</td>
+                </tr>
+            </table>
+
+            <h3>7.6 Common Hardware Acronyms</h3>
+            <div class="def-grid">
+                <span>CPU</span> <span>RAM</span> <span>HDD</span> <span>SSD</span> <span>USB</span> <span>HDMI</span>
+                <span>DPI</span> <span>RPM</span> <span>NVMe</span> <span>SATA</span> <span>PCIe</span>
+                <span>BIOS</span> <span>UEFI</span>
+            </div>
+
+            <hr>
+
+        </section>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies | © 2026 All rights reserved.
+        </footer>
+    </div>
+</body>
+
+</html>

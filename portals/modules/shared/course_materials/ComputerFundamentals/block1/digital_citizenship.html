@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Digital Citizenship & Security · interactive guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            color: #132b41;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem 2.5rem 1.8rem 1.8rem;
+            box-shadow: 0 20px 40px -12px rgba(1, 30, 50, 0.25);
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0f3b5e, #256ba0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #1f5a88;
+            border-left: 6px solid #1e7eb0;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents */
+        .toc-card {
+            background: #e4f0fc;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 6px rgba(0, 70, 120, 0.1), 0 10px 18px -10px #7f9fbf;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #083358;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1e4770;
+            font-weight: 520;
+            box-shadow: 0 3px 8px rgba(0, 30, 70, 0.1);
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d2e6ff;
+            border-color: #1f6ea0;
+            transform: scale(1.01);
+            box-shadow: 0 10px 18px -10px #146094;
+        }
+
+        section {
+            scroll-margin-top: 1.5rem;
+            margin: 3.2rem 0 2.5rem;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 4px 20px rgba(0, 30, 60, 0.05);
+            border: 1px solid #deecf7;
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            font-weight: 670;
+            color: #0a344f;
+            border-bottom: 4px solid #287bb5;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 630;
+            margin: 1.8rem 0 0.8rem;
+            color: #1b537c;
+            border-left: 7px solid #7fb6e3;
+            padding-left: 1.1rem;
+        }
+
+        h4 {
+            font-size: 1.35rem;
+            font-weight: 620;
+            margin: 1.5rem 0 0.2rem;
+            color: #1f5680;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        .highlight-block {
+            background: #f1f7ff;
+            border-radius: 1.8rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 7px solid #277fc2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 30, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #0f3d62;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 0.9rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid #cbddec;
+            background-color: #fdfdfd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1f6fa5;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .mini-card {
+            background: #f5faff;
+            border: 1px solid #c2d8f0;
+            border-radius: 1.6rem;
+            padding: 1.3rem 1.5rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .accent-box {
+            background: #e7f0fb;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.4rem;
+            font-weight: 500;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #f5faff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            border-bottom: 4px solid #5890c5;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b9d3f0, transparent);
+            margin: 2.2rem 0;
+        }
+
+        .comp-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .comp-col {
+            flex: 1 1 220px;
+            background: #f3f9ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid #b3ceec;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.98rem;
+            color: #3a6382;
+            border-top: 1px dashed #a0bedb;
+            padding-top: 2rem;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .pill-list span {
+            background: #e0ecf9;
+            color: #043753;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .warning-note {
+            background: #fff6e0;
+            border-left: 7px solid #e68a2e;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🛡️ Digital Citizenship & Security</h1>
+        <div class="subhead">responsible · ethical · safe · always learning</div>
+
+        <!-- exact table of contents -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">📋 Table of contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">🔹 Introduction</a>
+                <a href="#internet-safety">🌐 1. Internet Safety</a>
+                <a href="#password-management">🔐 2. Password Management</a>
+                <a href="#protecting-personal-info">🆔 3. Protecting Personal Information</a>
+                <a href="#conclusion">📌 Conclusion</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <section id="introduction">
+            <h2>🔰 Introduction: What is Digital Citizenship?</h2>
+            <p>In today's interconnected world, being a citizen isn't just about the country you live in; it's also
+                about your presence and actions in the digital world. <strong>Digital Citizenship</strong> refers to the
+                responsible, ethical, and safe use of technology by anyone who uses computers, the internet, and digital
+                devices.</p>
+            <div class="highlight-block">
+                <p><strong>A good digital citizen is someone who:</strong></p>
+                <ul>
+                    <li>💬 Communicates respectfully with others online.</li>
+                    <li>🔒 Protects their own private information and respects the privacy of others.</li>
+                    <li>🤔 Thinks critically about the information they find and share.</li>
+                    <li>👣 Understands their digital footprint and its long-term impact.</li>
+                    <li>⚖️ Stands up against cyberbullying and other harmful online behaviors.</li>
+                </ul>
+            </div>
+            <p>This note will focus on the foundational pillar of digital citizenship: <strong>Security and
+                    Privacy</strong>.</p>
+        </section>
+
+        <!-- MODULE 1 : INTERNET SAFETY -->
+        <section id="internet-safety">
+            <h2>🌐 1. Internet Safety – Navigating the Online World Safely</h2>
+            <p>The internet is a powerful tool for learning, connecting, and working, but it also has its dangers.
+                Internet safety is about minimizing the risks and knowing how to protect yourself.</p>
+
+            <h3>1.1 Understanding the Threats: Common Online Dangers</h3>
+            <ul>
+                <li><strong>Phishing:</strong> Attackers disguise as legitimate institutions via email/text/phone to
+                    trick you into revealing sensitive information.
+                    <div class="mini-card"><span class="badge">🚩 signs</span> Generic greetings, urgent language,
+                        suspicious links, poor grammar, requests for personal info.</div>
+                </li>
+                <li><strong>Malware (Malicious Software):</strong>
+                    <ul>
+                        <li><strong>Viruses:</strong> infect files and spread.</li>
+                        <li><strong>Trojan Horses:</strong> disguise as legitimate programs.</li>
+                        <li><strong>Ransomware:</strong> locks files and demands payment.</li>
+                        <li><strong>Spyware:</strong> secretly monitors activity.</li>
+                    </ul>
+                </li>
+                <li><strong>Cyberbullying:</strong> electronic communication to bully, often anonymously and 24/7.</li>
+                <li><strong>Online Predators:</strong> exploit vulnerable people (often minors).</li>
+                <li><strong>Unsecured Wi-Fi Networks:</strong> hackers on same public network intercept data.</li>
+                <li><strong>Social Engineering:</strong> manipulating people into divulging confidential info ("hacking
+                    the human").</li>
+            </ul>
+
+            <h3>1.2 Best Practices for Internet Safety</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Be Skeptical</strong> — too good to be true? verify through official
+                    channels.</div>
+                <div class="def-item"><strong>Verify before you click</strong> — hover over links to see real URL.</div>
+                <div class="def-item"><strong>Keep software updated</strong> — automatic updates = critical patches.
+                </div>
+                <div class="def-item"><strong>Use a firewall</strong> — block unauthorized access.</div>
+                <div class="def-item"><strong>Antivirus / anti-malware</strong> — reputable + regular scans (Windows
+                    Defender).</div>
+                <div class="def-item"><strong>Download carefully</strong> — only from official/trusted sites.</div>
+                <div class="def-item"><strong>Log out</strong> — especially on shared/public computers.</div>
+                <div class="def-item"><strong>Secure home network</strong> — change default router password, use
+                    WPA2/WPA3.</div>
+            </div>
+        </section>
+
+        <!-- MODULE 2 : PASSWORD MANAGEMENT -->
+        <section id="password-management">
+            <h2>🔐 2. Password Management – The First Line of Defense</h2>
+            <p>Your passwords are the keys to your digital life. A weak or reused password is like using the same key
+                for your house, your car, and your bank vault, and then leaving it under the doormat.</p>
+
+            <h3>2.1 The Anatomy of a Strong Password</h3>
+            <p><strong>Characteristics (the "long and complex" rule):</strong></p>
+            <ul>
+                <li><strong>Length:</strong> at least 12‑15 characters.</li>
+                <li><strong>Complexity:</strong> mix uppercase, lowercase, numbers, symbols (!@#$%).</li>
+            </ul>
+            <div class="comp-row">
+                <div class="comp-col"><strong>❌ Weak:</strong> <code>John1985</code> (personal, short, only
+                    letters+numbers)</div>
+                <div class="comp-col"><strong>✅ Stronger:</strong> <code>Il!k3t0R3@dB0ok$</code> (phrase "I like to read
+                    books" with substitutions)</div>
+            </div>
+
+            <h3>2.2 The Golden Rule: Never Reuse Passwords</h3>
+            <p>Using the same password for multiple accounts is a huge risk — <strong>credential stuffing</strong>
+                attacks try stolen credentials on many sites.</p>
+
+            <h3>2.3 The Solution: Password Managers</h3>
+            <div class="accent-box">
+                <p><strong>🔐 Password manager = encrypted vault</strong> storing all your login credentials.</p>
+                <ul>
+                    <li><strong>One master password</strong> (very strong) unlocks the vault.</li>
+                    <li>Generates strong random passwords for new accounts.</li>
+                    <li>Auto-fills logins — protects against keyloggers and phishing.</li>
+                    <li>Popular: Bitwarden (free/open), 1Password, Keeper, browser built‑ins.</li>
+                </ul>
+            </div>
+
+            <h3>2.4 Adding an Extra Layer: Multi‑Factor Authentication (MFA / 2FA)</h3>
+            <p>Requires two or more:</p>
+            <ul>
+                <li><strong>Something you know</strong> (password)</li>
+                <li><strong>Something you have</strong> (phone, hardware token, authenticator app)</li>
+                <li><strong>Something you are</strong> (fingerprint, face ID)</li>
+            </ul>
+            <div class="warning-note">
+                ⚠️ <strong>Enable MFA on every account that offers it</strong> — especially email, banking, social
+                media.
+            </div>
+        </section>
+
+        <!-- MODULE 3 : PROTECTING PERSONAL INFORMATION -->
+        <section id="protecting-personal-info">
+            <h2>🆔 3. Protecting Personal Information – Guarding Your Digital Identity</h2>
+            <p>Your personal information is valuable — criminals use it for identity theft, fraud, and more.</p>
+
+            <h3>3.1 What is Personal Information (Personally Identifiable Information - PII)?</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>Direct identifiers:</strong> full name, address, email, phone, SSN,
+                    passport, driver's license</div>
+                <div class="def-item"><strong>Indirect identifiers:</strong> DOB, place of birth, mother's maiden name,
+                    medical/financial data, biometrics</div>
+            </div>
+
+            <h3>3.2 How Your Information is Collected</h3>
+            <ul>
+                <li><strong>Openly:</strong> forms, account sign‑ups, purchases.</li>
+                <li><strong>Covertly:</strong> tracking cookies, analytics, data brokers.</li>
+                <li><strong>Deception:</strong> phishing scams, fake surveys, malicious apps.</li>
+            </ul>
+
+            <h3>3.3 Strategies to Protect Your Personal Information</h3>
+            <table>
+                <tr>
+                    <th>Practice</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>📋 "Need to know" sharing</td>
+                    <td>Before giving info, ask: do they really need it?</td>
+                </tr>
+                <tr>
+                    <td>⚙️ Privacy settings</td>
+                    <td>Regularly review social media privacy; limit public visibility.</td>
+                </tr>
+                <tr>
+                    <td>📡 Public Wi‑Fi caution</td>
+                    <td>Avoid sensitive logins; use a VPN (encrypts traffic).</td>
+                </tr>
+                <tr>
+                    <td>📄 Shred documents</td>
+                    <td>Shred bills/statements with PII before disposal.</td>
+                </tr>
+                <tr>
+                    <td>📱 Oversharing on social media</td>
+                    <td>Photos of tickets, IDs reveal too much. Criminals use OSINT.</td>
+                </tr>
+                <tr>
+                    <td>🔒 Secure devices</td>
+                    <td>Use passcode / biometric lock on all devices.</td>
+                </tr>
+                <tr>
+                    <td>🎮 Quizzes and apps</td>
+                    <td>Only use official app stores; check permissions (why does a flashlight need contacts?)</td>
+                </tr>
+            </table>
+
+            <h3>3.4 Quick‑glance: PII examples</h3>
+            <div class="pill-list">
+                <span>Full name</span> <span>Home address</span> <span>Email</span> <span>SSN</span>
+                <span>Passport</span> <span>DOB</span> <span>Mother's maiden name</span> <span>Credit card</span>
+                <span>Biometrics</span>
+            </div>
+        </section>
+
+        <!-- CONCLUSION -->
+        <section id="conclusion">
+            <h2>📌 Conclusion: The Ongoing Practice of Digital Citizenship</h2>
+            <div class="highlight-block">
+                <p>Digital citizenship and security are not one-time tasks but an ongoing practice. The digital
+                    landscape is constantly evolving, and so are the threats. By cultivating a mindset of skepticism,
+                    adopting strong security habits (like using a password manager and MFA), and being mindful of the
+                    information you share, you can confidently and safely navigate the digital world, protecting both
+                    yourself and your future. <strong>A secure digital life empowers you to be a more effective and
+                        responsible digital citizen.</strong></p>
+            </div>
+
+            <h3>📚 Quick reference: Core habits</h3>
+            <div class="comp-row">
+                <div class="comp-col">✅ Think before you click</div>
+                <div class="comp-col">✅ Unique passwords + password manager</div>
+                <div class="comp-col">✅ Turn on MFA wherever possible</div>
+                <div class="comp-col">✅ Keep software updated</div>
+                <div class="comp-col">✅ Limit oversharing</div>
+            </div>
+
+            <hr>
+            <div class="def-grid" style="grid-template-columns: repeat(4,1fr); text-align:center;">
+                <span>🔐 #CyberAware</span> <span>👥 DigitalCitizen</span> <span>🛡️ PrivacyMatters</span> <span>🌐
+                    StaySafeOnline</span>
+            </div>
+        </section>
+
+        <footer>
+            Desktop Publishing & Secretarial Studies | © 2026 All rights reserved. <br>
+            ⚡ complete guide: digital citizenship & security — all content included
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Printing guide · preview · settings · clean printout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f5;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #132b40;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #ddeeff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #6d8eb0;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #103753;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .diagram-box {
+            background: #eaf3fc;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid #abc9e5;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin: 0.6rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🖨️ Comprehensive Guide: Printing Documents · Previewing & Adjusting Settings for a Clean Printout</h1>
+        <div class="subhead">complete reference · preview · settings · applications · troubleshooting · professional
+            tips</div>
+
+        <!-- table of contents (identical to source structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Printing</a>
+                <a href="#workflow">2. Print Workflow</a>
+                <a href="#print-preview">3. Print Preview</a>
+                <a href="#print-settings">4. Essential Settings</a>
+                <a href="#application-guides">5. App‑Specific Guides</a>
+                <a href="#troubleshooting">6. Troubleshooting</a>
+                <a href="#professional-printing">7. Professional vs Desktop</a>
+                <a href="#eco-friendly">8. Eco‑friendly & cost‑effective</a>
+                <a href="#advanced-techniques">9. Advanced techniques</a>
+                <a href="#glossary">10. Glossary</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. Introduction to Document Printing</h2>
+            <h3>1.1 The Importance of Proper Print Setup</h3>
+            <p>Physical documents remain essential for contracts, reports, presentations, legal records, marketing
+                materials, and academic submissions. A clean, professional printout reflects attention to detail,
+                professionalism, respect for the reader, and quality of work.</p>
+            <h3>1.2 Evolution of Printing Technology</h3>
+            <table>
+                <tr>
+                    <th>Era</th>
+                    <th>Technology</th>
+                    <th>Characteristics</th>
+                </tr>
+                <tr>
+                    <td>1980s</td>
+                    <td>Dot Matrix</td>
+                    <td>Low quality, noisy, continuous paper</td>
+                </tr>
+                <tr>
+                    <td>1990s</td>
+                    <td>Inkjet</td>
+                    <td>Affordable color, better quality</td>
+                </tr>
+                <tr>
+                    <td>2000s</td>
+                    <td>Laser</td>
+                    <td>Fast, high-quality text, lower cost per page</td>
+                </tr>
+                <tr>
+                    <td>2010s+</td>
+                    <td>Multifunction</td>
+                    <td>Print, scan, copy, fax – all in one</td>
+                </tr>
+                <tr>
+                    <td>Present</td>
+                    <td>Cloud/AI-enabled</td>
+                    <td>Mobile printing, voice commands, predictive maintenance</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 2. WORKFLOW -->
+        <section id="workflow">
+            <h2>⚙️ 2. Understanding the Print Workflow</h2>
+            <div class="sample-box">
+                Document Creation → Print Command → Driver Processing → Printer Queue → Physical Printing
+            </div>
+            <h4>Key Components</h4>
+            <ul>
+                <li><strong>Software:</strong> Application, printer driver, OS print spooler</li>
+                <li><strong>Hardware:</strong> Printer, connection (USB/WiFi), consumables</li>
+            </ul>
+            <h4>Print Path Diagram</h4>
+            <div class="diagram-box">
+                ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+                │ Document │───▶│ Print Driver│───▶│ Print Spool │───▶│ Printer │
+                │ Creation │ │ │ │ │ │ │
+                └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘
+                │ │ │ │
+                ▼ ▼ ▼ ▼
+                Formatting Language Queue Output
+                Applied Conversion Management Physical
+            </div>
+        </section>
+
+        <!-- 3. PRINT PREVIEW -->
+        <section id="print-preview">
+            <h2>🔍 3. Print Preview: Your Most Important Tool</h2>
+            <p><strong>Print preview</strong> shows exactly how your document will appear, catching formatting errors
+                before wasting paper.</p>
+            <h4>Access in common apps</h4>
+            <table>
+                <tr>
+                    <th>Application</th>
+                    <th>Shortcut / Path</th>
+                </tr>
+                <tr>
+                    <td>Word</td>
+                    <td>File → Print (Ctrl+F2) or Ctrl+P → preview pane</td>
+                </tr>
+                <tr>
+                    <td>Excel</td>
+                    <td>File → Print ; Page Break Preview (View tab)</td>
+                </tr>
+                <tr>
+                    <td>PowerPoint</td>
+                    <td>File → Print (handouts/slides/notes)</td>
+                </tr>
+                <tr>
+                    <td>CorelDRAW</td>
+                    <td>File → Print Preview (Ctrl+Shift+P)</td>
+                </tr>
+                <tr>
+                    <td>Adobe Acrobat</td>
+                    <td>File → Print (preview each page)</td>
+                </tr>
+                <tr>
+                    <td>Web browser</td>
+                    <td>Ctrl+P (print preview)</td>
+                </tr>
+            </table>
+            <h4>What to check in preview</h4>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Check</th>
+                    <th>Common issues</th>
+                </tr>
+                <tr>
+                    <td>Margins</td>
+                    <td>Content too close to edge</td>
+                    <td>Text cut off</td>
+                </tr>
+                <tr>
+                    <td>Page breaks</td>
+                    <td>Logical breaks</td>
+                    <td>Widows/orphans</td>
+                </tr>
+                <tr>
+                    <td>Headers/footers</td>
+                    <td>Page numbers, dates</td>
+                    <td>Missing on first page</td>
+                </tr>
+                <tr>
+                    <td>Images</td>
+                    <td>Visibility, placement</td>
+                    <td>Pixelated, overflow</td>
+                </tr>
+                <tr>
+                    <td>Colors</td>
+                    <td>Contrast, grayscale</td>
+                    <td>Light text invisible</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 4. ESSENTIAL PRINT SETTINGS -->
+        <section id="print-settings">
+            <h2>⚙️ 4. Essential Print Settings Explained</h2>
+            <h3>4.1 Comprehensive Print Settings Matrix</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Setting</th>
+                    <th>Purpose</th>
+                    <th>Recommendation</th>
+                </tr>
+                <tr>
+                    <td>Copies</td>
+                    <td>Number</td>
+                    <td>Duplicate printing</td>
+                    <td>1 for final</td>
+                </tr>
+                <tr>
+                    <td>Printer</td>
+                    <td>Select device</td>
+                    <td>Output destination</td>
+                    <td>Match doc type</td>
+                </tr>
+                <tr>
+                    <td>Page range</td>
+                    <td>All, current, custom</td>
+                    <td>Specific pages</td>
+                    <td>Save paper</td>
+                </tr>
+                <tr>
+                    <td>Orientation</td>
+                    <td>Portrait/Landscape</td>
+                    <td>Page direction</td>
+                    <td>Text: portrait; wide tables: landscape</td>
+                </tr>
+                <tr>
+                    <td>Paper size</td>
+                    <td>A4, Letter, Legal</td>
+                    <td>Match paper</td>
+                    <td>Country standard</td>
+                </tr>
+                <tr>
+                    <td>Margins</td>
+                    <td>Normal, narrow, wide</td>
+                    <td>Space around content</td>
+                    <td>Normal for most</td>
+                </tr>
+                <tr>
+                    <td>Scaling</td>
+                    <td>Fit to page, shrink</td>
+                    <td>Adjust document size</td>
+                    <td>Fit incorrectly formatted</td>
+                </tr>
+                <tr>
+                    <td>Color</td>
+                    <td>Color / Grayscale / B&W</td>
+                    <td>Ink usage</td>
+                    <td>Draft: B&W</td>
+                </tr>
+                <tr>
+                    <td>Quality</td>
+                    <td>Draft, normal, best</td>
+                    <td>Resolution vs speed</td>
+                    <td>Final: high</td>
+                </tr>
+                <tr>
+                    <td>Duplex</td>
+                    <td>None / flip on long/short</td>
+                    <td>Two-sided printing</td>
+                    <td>Save paper</td>
+                </tr>
+                <tr>
+                    <td>Collate</td>
+                    <td>On/Off</td>
+                    <td>Order of copies</td>
+                    <td>On for multi-page</td>
+                </tr>
+            </table>
+
+            <h4>4.2.4 Paper size standards</h4>
+            <table>
+                <tr>
+                    <th>Size</th>
+                    <th>mm</th>
+                    <th>inches</th>
+                    <th>Use</th>
+                </tr>
+                <tr>
+                    <td>A4</td>
+                    <td>210x297</td>
+                    <td>8.27x11.69</td>
+                    <td>International</td>
+                </tr>
+                <tr>
+                    <td>Letter</td>
+                    <td>216x279</td>
+                    <td>8.5x11</td>
+                    <td>US, Canada</td>
+                </tr>
+                <tr>
+                    <td>Legal</td>
+                    <td>216x356</td>
+                    <td>8.5x14</td>
+                    <td>US legal</td>
+                </tr>
+                <tr>
+                    <td>A3</td>
+                    <td>297x420</td>
+                    <td>11.69x16.54</td>
+                    <td>Posters, tables</td>
+                </tr>
+            </table>
+
+            <h4>4.2.6 Print quality (DPI)</h4>
+            <table>
+                <tr>
+                    <th>Quality</th>
+                    <th>DPI</th>
+                    <th>Best for</th>
+                </tr>
+                <tr>
+                    <td>Draft</td>
+                    <td>150-300</td>
+                    <td>Proofreading</td>
+                </tr>
+                <tr>
+                    <td>Normal</td>
+                    <td>300-600</td>
+                    <td>Everyday</td>
+                </tr>
+                <tr>
+                    <td>Best</td>
+                    <td>600-1200+</td>
+                    <td>Photos, final</td>
+                </tr>
+            </table>
+
+            <h4>4.2.7 Duplex types</h4>
+            <div class="diagram-box">
+                Flip on Long Edge (book style): Flip on Short Edge (notepad style):
+                ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐
+                │ 1 │ │ 2 │ │ 1 │ │ 2 │
+                └─────┘ └─────┘ └─────┘ └─────┘
+                ↑ ↓
+            </div>
+
+            <h4>4.3.1 Page scaling options</h4>
+            <ul>
+                <li>Fit to paper, shrink to fit, multiple pages per sheet, booklet, poster (tile)</li>
+            </ul>
+        </section>
+
+        <!-- 5. APPLICATION GUIDES -->
+        <section id="application-guides">
+            <h2>📱 5. Application-Specific Printing Guides</h2>
+
+            <h3>5.1 Microsoft Word</h3>
+            <ul>
+                <li><strong>Envelopes:</strong> Mailings → Envelopes</li>
+                <li><strong>Labels:</strong> Mailings → Labels → select vendor</li>
+                <li><strong>Booklet:</strong> File → Print → booklet layout, flip on short edge</li>
+                <li>Hidden text: File→Options→Display→Print hidden text</li>
+            </ul>
+
+            <h3>5.2 Microsoft Excel</h3>
+            <ul>
+                <li>Set print area: Page Layout → Print Area</li>
+                <li>Repeat headers: Page Layout → Print Titles → rows to repeat</li>
+                <li>Gridlines: Page Layout → Sheet Options → Print under Gridlines</li>
+                <li>Page breaks: View → Page Break Preview → drag</li>
+            </ul>
+
+            <h3>5.3 Microsoft PowerPoint</h3>
+            <table>
+                <tr>
+                    <th>Print what</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Slides</td>
+                    <td>Full page per slide</td>
+                </tr>
+                <tr>
+                    <td>Handouts</td>
+                    <td>Multiple slides per page (1,2,3,4,6,9)</td>
+                </tr>
+                <tr>
+                    <td>Notes Pages</td>
+                    <td>Slide + speaker notes</td>
+                </tr>
+                <tr>
+                    <td>Outline View</td>
+                    <td>Text outline only</td>
+                </tr>
+            </table>
+
+            <h3>5.4 CorelDRAW</h3>
+            <ul>
+                <li>Print preview: Ctrl+Shift+P – comprehensive marks: crop, registration, calibration</li>
+                <li>Separations: CMYK plates, trapping, bleed (standard 3mm)</li>
+            </ul>
+
+            <h3>5.5 Adobe Acrobat</h3>
+            <ul>
+                <li>Booklet: File→Print→Page Sizing→Booklet</li>
+                <li>Comments: Print comments / markup</li>
+            </ul>
+        </section>
+
+        <!-- 6. TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <h2>🔧 6. Troubleshooting Common Printing Problems</h2>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Quick fix</th>
+                </tr>
+                <tr>
+                    <td>Nothing prints</td>
+                    <td>Check power, paper, queue, set as default</td>
+                </tr>
+                <tr>
+                    <td>Blank pages</td>
+                    <td>Check ink/toner, document content</td>
+                </tr>
+                <tr>
+                    <td>Garbled text</td>
+                    <td>Reinstall driver, update firmware</td>
+                </tr>
+                <tr>
+                    <td>Slow printing</td>
+                    <td>Lower quality, simplify graphics</td>
+                </tr>
+                <tr>
+                    <td>Paper jam</td>
+                    <td>Clear jam, check paper type/guides</td>
+                </tr>
+                <tr>
+                    <td>Wrong colors</td>
+                    <td>Check ink levels, color mode (CMYK vs RGB)</td>
+                </tr>
+                <tr>
+                    <td>Cut off edges</td>
+                    <td>Match paper size, reduce margins</td>
+                </tr>
+                <tr>
+                    <td>Smudging</td>
+                    <td>Allow drying, use correct paper</td>
+                </tr>
+                <tr>
+                    <td>Lines/stripes</td>
+                    <td>Clean print head (inkjet) / drum (laser)</td>
+                </tr>
+            </table>
+            <h4>6.2 Detailed diagnosis</h4>
+            <div class="sample-box">
+                Step 1: physical connections & paper<br>
+                Step 2: print queue (clear stuck jobs)<br>
+                Step 3: test page from printer properties<br>
+                Step 4: run head cleaning / alignment
+            </div>
+            <h4>Maintenance checklist</h4>
+            <ul>
+                <li>Daily: check paper, clear jams</li>
+                <li>Weekly: clean exterior, test page</li>
+                <li>Monthly: head cleaning, driver updates</li>
+            </ul>
+        </section>
+
+        <!-- 7. PROFESSIONAL PRINTING VS DESKTOP -->
+        <section id="professional-printing">
+            <h2>🏢 7. Professional Printing vs. Desktop Printing</h2>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Desktop</th>
+                    <th>Professional</th>
+                </tr>
+                <tr>
+                    <td>Volume</td>
+                    <td>Low (1-100)</td>
+                    <td>High (100-10k+)</td>
+                </tr>
+                <tr>
+                    <td>Cost/page</td>
+                    <td>High</td>
+                    <td>Low</td>
+                </tr>
+                <tr>
+                    <td>Color accuracy</td>
+                    <td>Variable</td>
+                    <td>Pantone, precise</td>
+                </tr>
+                <tr>
+                    <td>Finishing</td>
+                    <td>Staples</td>
+                    <td>Binding, laminating, foil</td>
+                </tr>
+                <tr>
+                    <td>File prep</td>
+                    <td>Minimal</td>
+                    <td>Prepress: bleed, crop marks, CMYK</td>
+                </tr>
+            </table>
+            <h4>Preflight checklist for professional printing</h4>
+            <ul>
+                <li>☐ Bleed 3mm, safety margin 5mm inside trim</li>
+                <li>☐ Fonts embedded/outlined, images 300 DPI</li>
+                <li>☐ Color mode CMYK, crop marks included</li>
+                <li>☐ File format: PDF/X-1a or PDF/X-4</li>
+            </ul>
+            <div class="diagram-box">
+                Safety margin
+                ┌─────────────┐
+                Trim Line ──┼─────────────┼──
+                │ Live Area │
+                Trim Line ──┼─────────────┼──
+                └─────────────┘
+                └─ Bleed 3mm ──┘
+            </div>
+        </section>
+
+        <!-- 8. ECO-FRIENDLY & COST-EFFECTIVE -->
+        <section id="eco-friendly">
+            <h2>🌿 8. Eco-Friendly and Cost-Effective Printing</h2>
+            <ul>
+                <li>Always preview before printing</li>
+                <li>Print multiple pages per sheet (2-up, 4-up)</li>
+                <li>Use duplex (two-sided)</li>
+                <li>Draft mode saves up to 50% ink</li>
+                <li>Eco fonts (Ecofont, Garamond) reduce toner use</li>
+            </ul>
+            <h4>Cost per page formula</h4>
+            <div class="drill">(Toner cost ÷ page yield) + (Paper cost ÷ sheets per ream)</div>
+            <h4>The 5 R's of green printing</h4>
+            <p>Rethink, Reduce, Reuse, Recycle, Refill</p>
+        </section>
+
+        <!-- 9. ADVANCED TECHNIQUES -->
+        <section id="advanced-techniques">
+            <h2>🚀 9. Advanced Printing Techniques</h2>
+            <h4>Follow‑me printing / secure pull printing</h4>
+            <p>User prints → job held → authenticate at any printer → release.</p>
+            <h4>Mobile printing</h4>
+            <ul>
+                <li>Android: Mopria / manufacturer app → share → print</li>
+                <li>iOS: AirPrint → share icon → print</li>
+            </ul>
+            <h4>Batch printing</h4>
+            <p>Select multiple files in Explorer → right‑click → Print. Or use Print Conductor.</p>
+            <h4>Secure print (PIN)</h4>
+            <p>Set in printer properties → secure print / PIN print → enter PIN at device.</p>
+        </section>
+
+        <!-- 10. GLOSSARY -->
+        <section id="glossary">
+            <h2>📖 10. Glossary of Printing Terms</h2>
+            <div class="def-grid">
+                <div class="def-item"><strong>Bleed</strong> – area beyond trim for edge‑to‑edge</div>
+                <div class="def-item"><strong>CMYK</strong> – Cyan, Magenta, Yellow, Black</div>
+                <div class="def-item"><strong>Collate</strong> – assemble copies in order</div>
+                <div class="def-item"><strong>DPI</strong> – dots per inch, resolution</div>
+                <div class="def-item"><strong>Duplex</strong> – two-sided printing</div>
+                <div class="def-item"><strong>Grayscale</strong> – shades of gray</div>
+                <div class="def-item"><strong>N‑up</strong> – multiple pages per sheet</div>
+                <div class="def-item"><strong>Pantone</strong> – standardized color matching</div>
+                <div class="def-item"><strong>PostScript</strong> – page description language</div>
+                <div class="def-item"><strong>Preflight</strong> – check files before printing</div>
+                <div class="def-item"><strong>RIP</strong> – raster image processor</div>
+                <div class="def-item"><strong>Toner</strong> – powder for laser printers</div>
+                <div class="def-item"><strong>Trapping</strong> – overlap colors for registration</div>
+            </div>
+        </section>
+
+        <!-- Appendices as mini cards -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">📋 Appendix A: Quick Reference – Print Checklist</h4>
+            <div class="checklist-item">☐ Preview document</div>
+            <div class="checklist-item">☐ Check page count & margins</div>
+            <div class="checklist-item">☐ Select correct printer & paper size</div>
+            <div class="checklist-item">☐ Choose orientation, color, quality</div>
+            <div class="checklist-item">☐ Set duplex, collate, copies</div>
+            <div class="checklist-item">☐ Print test page for important jobs</div>
+        </div>
+
+        <div class="mini-card">
+            <h4>⌨️ Keyboard shortcuts</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:1rem;">
+                <span><kbd>Ctrl+P</kbd> print</span>
+                <span><kbd>Ctrl+F2</kbd> print preview (Word)</span>
+                <span><kbd>Ctrl+Shift+P</kbd> CorelDRAW preview</span>
+                <span><kbd>F12</kbd> Save As</span>
+            </div>
+        </div>
+
+        <footer>
+            🖨️ Comprehensive Printing Guide · preview · settings · troubleshooting · professional · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

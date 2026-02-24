@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Word · inserting objects (images, shapes, smartart)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e3eef9;
+            color: #17334d;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #10344b;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0f3f5c, #226188);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f6190;
+            border-left: 6px solid #2d7ec9;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* table of contents – interactive */
+        .toc-card {
+            background: #ddeeff;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 40, 70, 0.1), 0 16px 24px -14px #3a6e97;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #123d58;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #11446b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 45, 85, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #d0e6ff;
+            border-color: #2b78b8;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #195382;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 55, 90, 0.06);
+            border: 1px solid #deecfb;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0c3d5e;
+            border-bottom: 3px solid #2b7abc;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1f5582;
+            border-left: 8px solid #8bbde9;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1d5985;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f1f9ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2b7abc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1c6292;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f3f9ff;
+            border: 1px solid #cde1f5;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .drill {
+            background: #f2f8fe;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #2272b3;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bed4f0, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1f7fd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #c5dcf2;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        /* interactive object cards – simulate shapes/SmartArt */
+        .shape-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .shape-item {
+            background: #e9f2fc;
+            width: 130px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-weight: 500;
+            color: #12426b;
+            box-shadow: 0 12px 25px -14px #1a5280;
+            transition: all 0.2s;
+            border: 2px solid white;
+            cursor: pointer;
+        }
+
+        .shape-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            background: #c6e0ff;
+            border-color: #2070b0;
+        }
+
+        .smartart-mini {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: #ebf3fa;
+            padding: 1rem;
+            border-radius: 3rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .smartart-mini span {
+            background: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-left: 6px solid #2070b0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📷 Microsoft Word: Inserting Objects</h1>
+        <div class="subhead">images · shapes · smartart — complete interactive notes</div>
+
+        <!-- TABLE OF CONTENTS (identical structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 object contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">📌 introduction</a>
+                <a href="#working-with-images">🖼️ 1. images</a>
+                <a href="#formatting-images">🎨 1.2 formatting images</a>
+                <a href="#working-with-shapes">🔷 2. shapes</a>
+                <a href="#formatting-shapes">⚙️ 2.2 formatting shapes</a>
+                <a href="#working-with-smartart">📊 3. smartart</a>
+                <a href="#smartart-customization">✨ 3.4 customizing smartart</a>
+                <a href="#best-practices">✅ best practices</a>
+                <a href="#practice-lab">✍️ practice lab</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION (exact from source) -->
+        <section id="introduction">
+            <h2>📘 Introduction</h2>
+            <p>Enhancing your Word documents with visual elements is key to professional desktop publishing. This note
+                covers the three primary object types you will use: <strong>Images</strong>, <strong>Shapes</strong>,
+                and <strong>SmartArt</strong>. Mastering these tools will allow you to create engaging reports, flyers,
+                and business materials that communicate ideas more effectively than text alone.</p>
+        </section>
+
+        <!-- 1. WORKING WITH IMAGES (full content) -->
+        <section id="working-with-images">
+            <h2>🖼️ 1. Working with Images</h2>
+            <p>Adding images can transform a text-heavy document into a visually appealing piece. Word provides a range
+                of tools to insert and modify pictures.</p>
+
+            <h3>1.1 How to Insert an Image</h3>
+            <ol>
+                <li>Place your cursor in the document where you want the image.</li>
+                <li>Go to the <strong>Insert</strong> tab on the Ribbon.</li>
+                <li>In the <strong>Illustrations</strong> group, click the <strong>Pictures</strong> button.</li>
+                <li>You will have two main choices:
+                    <ul>
+                        <li><strong>This Device:</strong> Allows you to select an image file from your computer.</li>
+                        <li><strong>Stock Images:</strong> Opens a library of royalty‑free photos, icons, and cutout
+                            people provided by Microsoft.</li>
+                    </ul>
+                </li>
+                <li>Select the desired image and click <strong>Insert</strong>.</li>
+            </ol>
+
+            <div class="highlight-block" id="formatting-images">
+                <h4 style="margin:0 0 1rem 0;">📸 demo insertion (simulated)</h4>
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <span class="badge">this device</span>
+                    <span class="badge">stock images</span>
+                    <span class="badge">online pictures</span>
+                </div>
+                <p style="margin-top:1rem;"><em>Click would open file picker — imagine you selected “mountain.jpg”.</em>
+                </p>
+            </div>
+
+            <h3>1.2 Formatting Images</h3>
+            <p>Once an image is selected, the <strong>Picture Format</strong> tab appears on the Ribbon, offering
+                extensive formatting options.</p>
+            <ul>
+                <li><strong>Picture Styles:</strong> The <strong>Picture Styles</strong> group offers a gallery of
+                    pre-designed frames, borders, and effects (like shadows and reflections). You can hover over an
+                    option to preview its effect on your image.</li>
+                <li><strong>Adjusting the Image:</strong>
+                    <ul>
+                        <li><strong>Remove Background:</strong> Use this tool to automatically or manually remove parts
+                            of the image you don't want.</li>
+                        <li><strong>Corrections:</strong> Adjust the sharpness, brightness, and contrast of your image.
+                        </li>
+                        <li><strong>Color:</strong> Change the color saturation, tone, or recolor the image entirely to
+                            match your document's theme.</li>
+                    </ul>
+                </li>
+                <li><strong>Arranging and Layout:</strong>
+                    <ul>
+                        <li><strong>Position:</strong> Quickly sets the image's location on the page.</li>
+                        <li><strong>Wrap Text:</strong> This is a crucial feature that controls how text flows around
+                            your image. Options include <strong>Square</strong>, <strong>Tight</strong>, <strong>Behind
+                                Text</strong>, and <strong>In Front of Text</strong>. Using this tool correctly is
+                            fundamental to professional layout.</li>
+                        <li><strong>Align and Rotate:</strong> Precisely align images with margins or other objects, or
+                            manually rotate the image using the handle at the top.</li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- interactive sample -->
+            <div class="sample-box" style="display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:space-around;">
+                <span class="kbd-shortcut">⬜ square</span>
+                <span class="kbd-shortcut">🔒 tight</span>
+                <span class="kbd-shortcut">🔲 behind text</span>
+                <span class="kbd-shortcut">⬆️ in front</span>
+            </div>
+        </section>
+
+        <!-- 2. SHAPES (full content) -->
+        <section id="working-with-shapes">
+            <h2>🔷 2. Working with Shapes</h2>
+            <p>Shapes (like lines, rectangles, arrows, and callouts) are drawing objects that are part of your Word
+                document. They can be used to create simple diagrams, highlight information, or add decorative elements.
+            </p>
+
+            <h3>2.1 How to Insert a Shape</h3>
+            <ol>
+                <li>On the <strong>Insert</strong> tab, in the <strong>Illustrations</strong> group, click the
+                    <strong>Shapes</strong> button.</li>
+                <li>A dropdown menu will display various categories of shapes: Lines, Rectangles, Basic Shapes, Block
+                    Arrows, Flowchart, Callouts, and Stars.</li>
+                <li>Click on the desired shape.</li>
+                <li>Your cursor will turn into a crosshair. Click and drag on the document to draw the shape. To create
+                    a perfect square or circle, hold down the <strong>Shift</strong> key while you drag.</li>
+            </ol>
+            <!-- interactive shape demo -->
+            <div class="shape-demo">
+                <div class="shape-item" style="border-radius: 20px;">📐 rectangle</div>
+                <div class="shape-item" style="border-radius: 50%;">⚪ circle</div>
+                <div class="shape-item" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);">🔺 triangle</div>
+                <div class="shape-item" style="border-radius: 30px 0 30px 0;">⬟ arrow</div>
+            </div>
+
+            <h3 id="formatting-shapes">2.2 Formatting Shapes</h3>
+            <p>Selecting a shape reveals the <strong>Shape Format</strong> tab.</p>
+            <ul>
+                <li><strong>Inserting and Editing Shapes:</strong>
+                    <ul>
+                        <li>You can insert more shapes directly from the <strong>Insert Shapes</strong> group on this
+                            tab.</li>
+                        <li>To change an existing shape to a different one, click <strong>Edit Shape</strong> >
+                            <strong>Change Shape</strong> and make a new selection.</li>
+                    </ul>
+                </li>
+                <li><strong>Applying Styles:</strong>
+                    <ul>
+                        <li>The <strong>Shape Styles</strong> group provides a gallery of pre-set styles. You can also
+                            manually customize the <strong>Shape Fill</strong>, <strong>Shape Outline</strong>, and
+                            <strong>Shape Effects</strong> (like shadow, glow, or 3‑D).</li>
+                    </ul>
+                </li>
+                <li><strong>Adding Text to a Shape:</strong>
+                    <ul>
+                        <li>Simply click inside the shape and start typing. The text will become part of the shape and
+                            move with it.</li>
+                    </ul>
+                </li>
+                <li><strong>Arranging and Grouping:</strong>
+                    <ul>
+                        <li>Use the <strong>Arrange</strong> group to bring shapes forward or send them backward.</li>
+                        <li><strong>Grouping:</strong> If you have multiple shapes that you want to move or format as
+                            one unit (e.g., a complex diagram), select all of them (hold <strong>Ctrl</strong> and click
+                            each one), then click <strong>Group</strong> in the <strong>Arrange</strong> group.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="mini-card">
+                <p><span class="badge">✏️ tip</span> double‑click any shape to add text – try “label”</p>
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <span class="kbd-shortcut">fill</span>
+                    <span class="kbd-shortcut">outline</span>
+                    <span class="kbd-shortcut">effects</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SMARTART (full content) -->
+        <section id="working-with-smartart">
+            <h2>📊 3. Working with SmartArt</h2>
+            <p>SmartArt is a powerful tool that allows you to create professional-quality diagrams and visuals to
+                represent information. It goes beyond simple shapes by combining text and graphics in pre-designed
+                layouts.</p>
+
+            <h3>3.1 Why Use SmartArt?</h3>
+            <p>SmartArt is ideal for communicating complex ideas quickly. It can turn a bulleted list into a memorable
+                visual, helping readers retain information better. Whether you need an organizational chart, a process
+                flow, or a cycle diagram, SmartArt provides a professional starting point.</p>
+
+            <h3>3.2 How to Insert SmartArt</h3>
+            <ol>
+                <li>Go to the <strong>Insert</strong> tab and, in the <strong>Illustrations</strong> group, click the
+                    <strong>SmartArt</strong> button.</li>
+                <li>A dialog box will open, categorizing the different types of SmartArt graphics:
+                    <ul>
+                        <li><strong>List:</strong> For showing non-sequential or grouped information.</li>
+                        <li><strong>Process:</strong> For illustrating a sequence of steps or a timeline.</li>
+                        <li><strong>Cycle:</strong> For a continual or repeating process.</li>
+                        <li><strong>Hierarchy:</strong> Classic for creating organizational charts.</li>
+                        <li><strong>Relationship:</strong> To show connections between elements.</li>
+                        <li><strong>Matrix:</strong> For showing components in relation to a whole.</li>
+                        <li><strong>Pyramid:</strong> For illustrating proportional or hierarchical relationships.</li>
+                    </ul>
+                </li>
+                <li>Browse the categories, select a graphic that suits your purpose, and click <strong>OK</strong>.</li>
+            </ol>
+
+            <div class="smartart-mini">
+                <span>📋 list</span> <span>⚙️ process</span> <span>🔄 cycle</span> <span>🏢 hierarchy</span> <span>🔗
+                    relationship</span>
+            </div>
+
+            <h3>3.3 Adding and Editing Content</h3>
+            <p>Once inserted, you can add your information in two ways:</p>
+            <ol>
+                <li><strong>Directly in the Graphic:</strong> Click on the <code>[Text]</code> placeholders in each
+                    shape and type your content.</li>
+                <li><strong>Using the Text Pane:</strong> Click the small arrow on the left side of the SmartArt frame
+                    to open a text pane. You can type and manage your content here in an outline format, which is
+                    especially useful for complex diagrams with many elements.</li>
+            </ol>
+
+            <h3 id="smartart-customization">3.4 Customizing SmartArt</h3>
+            <p>Select the SmartArt graphic to reveal the <strong>SmartArt Tools</strong> contextual tabs, which contain
+                two main tabs: <strong>Design</strong> and <strong>Format</strong>.</p>
+            <ul>
+                <li><strong>The Design Tab:</strong>
+                    <ul>
+                        <li><strong>Layouts:</strong> You can change the entire structure of your diagram by selecting a
+                            new layout from the <strong>Layouts</strong> group. Your text will remain intact.</li>
+                        <li><strong>Styles:</strong> The <strong>SmartArt Styles</strong> group offers a gallery of
+                            pre-set effects, including 3‑D and subtle shading options.</li>
+                        <li><strong>Colors:</strong> Click the <strong>Change Colors</strong> button to apply different
+                            color schemes to your graphic, helping it match your document's theme.</li>
+                        <li><strong>Add Shape:</strong> Use the <strong>Create Graphic</strong> group to add more shapes
+                            to your diagram if the default number isn't enough.</li>
+                    </ul>
+                </li>
+                <li><strong>The Format Tab:</strong>
+                    <ul>
+                        <li>This tab allows you to fine-tune individual shapes within the SmartArt graphic, similar to
+                            formatting a regular shape. You can modify the <strong>Shape Fill</strong>, <strong>Shape
+                                Outline</strong>, and <strong>Shape Effects</strong> for a single element to make it
+                            stand out.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="highlight-block">
+                <p>🎨 <strong>try it:</strong> imagine changing the color theme to “gradient range” — your diagram
+                    updates instantly.</p>
+            </div>
+        </section>
+
+        <!-- 4. SUMMARY / BEST PRACTICES (exact) -->
+        <section id="best-practices">
+            <h2>✅ Summary: Best Practices</h2>
+            <ul>
+                <li><strong>Alignment:</strong> Always use the alignment tools (<strong>Format > Align</strong>) to
+                    ensure your objects are neatly arranged in relation to the page or to each other.</li>
+                <li><strong>Consistency:</strong> Use a consistent style, color scheme, and effect for all objects
+                    within a document to maintain a professional look.</li>
+                <li><strong>Purpose:</strong> Choose the right tool for the job. Use <strong>Images</strong> for
+                    realism, <strong>Shapes</strong> for custom diagrams and annotations, and <strong>SmartArt</strong>
+                    for pre-designed, professional representations of lists, processes, and hierarchies.</li>
+                <li><strong>Text Wrapping:</strong> Master the <strong>Wrap Text</strong> feature to seamlessly
+                    integrate your images and objects with the surrounding text.</li>
+            </ul>
+            <!-- interactive checklist -->
+            <div class="def-grid" style="margin-top:2rem;">
+                <div class="def-item">☐ alignment (distribute / align)</div>
+                <div class="def-item">☐ consistent color theme</div>
+                <div class="def-item">☐ right tool: image / shape / smartart</div>
+                <div class="def-item">☐ wrap text → square / tight</div>
+            </div>
+        </section>
+
+        <!-- 5. PRACTICE LAB (full from source) -->
+        <section id="practice-lab">
+            <h2>✍️ Practice exercises (inserting objects)</h2>
+            <h3>Exercise 1: Insert an image</h3>
+            <p>Open blank document, Insert tab > Pictures > This Device (simulate). Apply a soft edge rectangle style.
+                Change text wrapping to “tight”.</p>
+            <h3>Exercise 2: Create and format shapes</h3>
+            <p>Draw a rounded rectangle, fill with gradient, add text “important”. Duplicate shape, group both, then
+                ungroup.</p>
+            <h3>Exercise 3: Build SmartArt</h3>
+            <p>Insert a Cycle diagram (Insert > SmartArt > Cycle). Type four phases: Plan, Do, Check, Act. Change colors
+                to “colorful range”, apply 3‑D style.</p>
+            <h3>Exercise 4: Combine objects</h3>
+            <p>Insert an image, then on top add a callout shape (from Shapes) that points to a detail. Group image +
+                callout.</p>
+            <h3>Exercise 5: Comprehensive</h3>
+            <p>Create a flyer: background shape (rectangle with light fill), image on right, SmartArt process on left.
+                Align and distribute objects. Save as PDF.</p>
+        </section>
+
+        <!-- troubleshooting / quick reference -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">⌨️ object shortcuts & tips</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Alt + N</kbd> insert tab</span>
+                <span><kbd>Shift + drag</kbd> keep ratio</span>
+                <span><kbd>Ctrl + click</kbd> multi‑select</span>
+                <span><kbd>Ctrl + G</kbd> group</span>
+                <span><kbd>Ctrl + Shift + G</kbd> ungroup</span>
+                <span><kbd>right‑click</kbd> format autoshape</span>
+            </div>
+            <p style="margin-top:1.2rem;"><em>These comprehensive notes cover everything about inserting objects — no
+                    step omitted.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing · Inserting objects: images, shapes, SmartArt · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>
