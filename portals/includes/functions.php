@@ -3068,3 +3068,56 @@ function getStudentGPAReport($student_id)
 
     return $report;
 }
+
+/**
+ * Scheduled task to update grades for missed assignments/quizzes
+ * This should be run daily via cron job
+ */
+function autoUpdateMissedGrades()
+{
+    $conn = getDBConnection();
+
+    // Get all assignments that are past due date
+    $sql = "SELECT DISTINCT a.class_id 
+            FROM assignments a
+            WHERE a.due_date < NOW() 
+            AND a.is_published = 1
+            UNION
+            SELECT DISTINCT q.class_id 
+            FROM quizzes q
+            WHERE q.due_date < NOW() 
+            AND q.is_published = 1";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        error_log("autoUpdateMissedGrades query failed: " . $conn->error);
+        return 0;
+    }
+
+    $class_ids = [];
+    while ($row = $result->fetch_assoc()) {
+        $class_ids[] = $row['class_id'];
+    }
+
+    $updated_total = 0;
+    foreach ($class_ids as $class_id) {
+        // Make sure updateGradebookWithMissedItems exists
+        if (function_exists('updateGradebookWithMissedItems')) {
+            $updated = updateGradebookWithMissedItems($class_id);
+            $updated_total += $updated;
+        } else {
+            error_log("updateGradebookWithMissedItems function not found");
+        }
+    }
+
+    // Log the activity
+    if (function_exists('logActivity')) {
+        logActivity(
+            'auto_grade_update',
+            "Auto-updated missed grades: {$updated_total} entries added/updated"
+        );
+    }
+
+    return $updated_total;
+}

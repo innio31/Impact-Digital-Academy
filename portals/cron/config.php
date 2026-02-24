@@ -46,3 +46,7 @@ function releaseLock()
 
 // Register shutdown function to release lock
 register_shutdown_function('releaseLock');
+
+// Cron job security key - generate a random string
+// You can generate one at: https://www.random.org/strings/
+define('CRON_SECRET_KEY', 'Impact2026'); // REPLACE THIS WITH A REAL RANDOM KEY

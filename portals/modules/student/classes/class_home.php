@@ -340,7 +340,7 @@ $conn->close();
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Class Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -363,6 +363,8 @@ $conn->close();
             --radius: 12px;
             --radius-sm: 8px;
             --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
         }
 
         /* Reset & Base Styles */
@@ -373,55 +375,80 @@ $conn->close();
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            line-height: 1.6;
+            line-height: 1.5;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
 
-        /* Breadcrumb */
+        /* Breadcrumb - Mobile Optimized */
         .breadcrumb {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            font-size: 14px;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
             color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
         }
 
         .breadcrumb a {
             color: var(--primary);
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
             transition: var(--transition);
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
         }
 
         .breadcrumb a:hover {
-            background: var(--gray-light);
-            color: var(--primary-dark);
+            background: white;
+            border-color: var(--primary);
         }
 
         .breadcrumb .separator {
             opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
         }
 
         /* Payment Status Card */
         .payment-card {
             background: white;
             border-radius: var(--radius);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow-lg);
             border-left: 5px solid var(--primary);
             position: relative;
@@ -438,40 +465,43 @@ $conn->close();
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             opacity: 0.05;
             border-radius: 50%;
-            transform: translate(50%, -50%);
+            transform: translate(30%, -30%);
         }
 
         .payment-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid var(--gray-light);
         }
 
         .payment-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 24px;
+            gap: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--dark);
         }
 
         .payment-title i {
             color: var(--primary);
-            font-size: 28px;
+            font-size: 1.5rem;
         }
 
         .payment-badge {
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 14px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: var(--shadow);
+            white-space: nowrap;
         }
 
         .badge-paid {
@@ -494,41 +524,54 @@ $conn->close();
             color: white;
         }
 
-        /* Payment Grid */
+        /* Payment Grid - Mobile First */
         .payment-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .payment-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .payment-item {
             background: var(--light);
             border-radius: var(--radius-sm);
-            padding: 20px;
+            padding: 1rem;
             border-left: 4px solid var(--primary);
             transition: var(--transition);
         }
 
         .payment-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow);
         }
 
         .payment-label {
-            font-size: 12px;
+            font-size: 0.7rem;
             color: var(--gray);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
 
         .payment-value {
-            font-size: 28px;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--dark);
             line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .payment-value small {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--gray);
         }
 
         .payment-value.paid {
@@ -547,28 +590,25 @@ $conn->close();
         .payment-message {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             border-radius: var(--radius-sm);
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
             border-left: 4px solid var(--info);
         }
 
         .payment-message h3 {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
             color: var(--dark);
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-
-        .payment-message h3 i {
-            color: var(--info);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
         }
 
         .payment-message p {
             color: var(--dark);
-            margin-bottom: 8px;
-            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+            font-size: 0.95rem;
         }
 
         .payment-message strong {
@@ -578,23 +618,46 @@ $conn->close();
         /* Payment Actions */
         .payment-actions {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .payment-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px 28px;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.2rem;
             border-radius: var(--radius-sm);
             font-weight: 600;
             text-decoration: none;
             transition: var(--transition);
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.95rem;
             box-shadow: var(--shadow);
+            -webkit-tap-highlight-color: transparent;
+            min-height: 48px;
+            /* Better touch target */
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .btn {
+                width: auto;
+                min-width: 180px;
+            }
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -603,7 +666,7 @@ $conn->close();
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
         }
 
@@ -616,25 +679,21 @@ $conn->close();
         .btn-secondary:hover {
             background: var(--light);
             border-color: var(--gray);
-            transform: translateY(-3px);
         }
 
         .btn-success {
             background: linear-gradient(135deg, var(--success) 0%, #2a9d8f 100%);
             color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(76, 201, 240, 0.3);
+            opacity: 0.8;
+            cursor: not-allowed;
         }
 
         /* Countdown Styles */
         .countdown-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: var(--radius);
-            padding: 40px;
-            margin-bottom: 30px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1.5rem;
             color: white;
             text-align: center;
             box-shadow: var(--shadow-lg);
@@ -655,50 +714,59 @@ $conn->close();
         }
 
         .countdown-title {
-            font-size: 32px;
+            font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .countdown-description {
-            font-size: 18px;
+            font-size: 1rem;
             opacity: 0.9;
-            margin-bottom: 30px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
 
         .countdown-timer {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .countdown-timer {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
         }
 
         .countdown-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 25px;
+            padding: 1.25rem;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border-radius: var(--radius-sm);
-            min-width: 120px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .countdown-value {
-            font-size: 48px;
+            font-size: 2rem;
             font-weight: 900;
-            margin-bottom: 5px;
+            margin-bottom: 0.25rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        @media (min-width: 768px) {
+            .countdown-value {
+                font-size: 3rem;
+            }
+        }
+
         .countdown-label {
-            font-size: 14px;
+            font-size: 0.8rem;
             opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -708,8 +776,8 @@ $conn->close();
         .grace-info {
             background: linear-gradient(135deg, #f8961e 0%, #f3722c 100%);
             border-radius: var(--radius-sm);
-            padding: 25px;
-            margin: 30px auto;
+            padding: 1.5rem;
+            margin: 1.5rem auto;
             color: white;
             max-width: 800px;
             box-shadow: var(--shadow);
@@ -718,62 +786,72 @@ $conn->close();
         .grace-info h3 {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 20px;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
         }
 
         .grace-info p {
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
             opacity: 0.9;
+            line-height: 1.5;
         }
 
         /* Tips Grid */
         .tips-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .tips-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .tips-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .tip-card {
             background: white;
             border-radius: var(--radius-sm);
-            padding: 25px;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
             border-top: 4px solid var(--primary);
             transition: var(--transition);
         }
 
         .tip-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
         }
 
         .tip-card h3 {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
             color: var(--dark);
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .tip-card h3 i {
-            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
         }
 
         .tip-card p {
             color: var(--gray);
-            line-height: 1.6;
+            line-height: 1.5;
+            font-size: 0.95rem;
         }
 
         /* Main Header */
         .main-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border-radius: var(--radius);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             color: white;
             box-shadow: var(--shadow-lg);
             position: relative;
@@ -794,31 +872,39 @@ $conn->close();
 
         .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
             position: relative;
             z-index: 1;
-            flex-wrap: wrap;
-            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .class-info h1 {
-            font-size: 36px;
+            font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
         }
 
         .class-info p {
-            font-size: 18px;
+            font-size: 1.1rem;
             opacity: 0.9;
+            word-break: break-word;
         }
 
         .status-badge {
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 14px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
             font-weight: 700;
             text-transform: uppercase;
             background: rgba(255, 255, 255, 0.2);
@@ -826,7 +912,14 @@ $conn->close();
             border: 2px solid rgba(255, 255, 255, 0.3);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .status-badge {
+                align-self: flex-start;
+            }
         }
 
         .status-active {
@@ -845,36 +938,44 @@ $conn->close();
             background: rgba(239, 68, 68, 0.3);
         }
 
-        /* Navigation */
+        /* Navigation - Mobile Optimized */
         .nav-container {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            padding-top: 25px;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             position: relative;
             z-index: 1;
         }
 
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
         .nav-link {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px 24px;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-sm);
+            border-radius: 2rem;
             text-decoration: none;
             color: white;
             font-weight: 600;
             transition: var(--transition);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            min-height: 48px;
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: white;
-            transform: translateY(-3px);
         }
 
         .nav-link.active {
@@ -883,7 +984,7 @@ $conn->close();
             border-color: white;
         }
 
-        .nav-disabled {
+        .nav-disabled .nav-link {
             opacity: 0.6;
             pointer-events: none;
         }
@@ -891,15 +992,21 @@ $conn->close();
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
             border-radius: var(--radius-sm);
-            padding: 25px;
+            padding: 1.5rem 1rem;
             text-align: center;
             box-shadow: var(--shadow);
             transition: var(--transition);
@@ -908,9 +1015,8 @@ $conn->close();
             overflow: hidden;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+        .stat-card:active {
+            transform: scale(0.97);
         }
 
         .stat-card.assignments {
@@ -930,52 +1036,48 @@ $conn->close();
         }
 
         .stat-value {
-            font-size: 42px;
+            font-size: 2rem;
             font-weight: 800;
             color: var(--dark);
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
             line-height: 1;
         }
 
         .stat-label {
-            font-size: 14px;
+            font-size: 0.8rem;
             color: var(--gray);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
         .stat-link {
-            margin-top: 15px;
+            margin-top: 0.75rem;
         }
 
         .stat-link a {
             color: var(--primary);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 0.8rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.25rem;
             transition: var(--transition);
-        }
-
-        .stat-link a:hover {
-            color: var(--primary-dark);
-            gap: 10px;
+            padding: 0.5rem;
         }
 
         /* Main Content Layout */
         .main-content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
-        @media (max-width: 992px) {
+        @media (min-width: 1024px) {
             .main-content {
-                grid-template-columns: 1fr;
+                grid-template-columns: 2fr 1fr;
             }
         }
 
@@ -983,25 +1085,33 @@ $conn->close();
         .content-card {
             background: white;
             border-radius: var(--radius);
-            padding: 25px;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
         }
 
         .card-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid var(--gray-light);
+        }
+
+        @media (min-width: 640px) {
+            .card-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .card-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 20px;
+            gap: 0.75rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--dark);
         }
@@ -1014,13 +1124,13 @@ $conn->close();
         .list-item {
             display: flex;
             align-items: flex-start;
-            gap: 15px;
-            padding: 20px;
+            gap: 1rem;
+            padding: 1.25rem;
             border-bottom: 1px solid var(--border);
             transition: var(--transition);
         }
 
-        .list-item:hover {
+        .list-item:active {
             background: var(--light);
         }
 
@@ -1030,58 +1140,76 @@ $conn->close();
 
         .list-content {
             flex: 1;
+            min-width: 0;
+            /* Prevents overflow */
         }
 
         .item-title {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .item-title {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
         }
 
         .item-title span:first-child {
             font-weight: 600;
             color: var(--dark);
-            flex: 1;
+            word-break: break-word;
         }
 
         .item-title span:last-child {
-            font-size: 14px;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--primary);
             background: var(--gray-light);
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+            align-self: flex-start;
         }
 
         .item-meta {
             display: flex;
-            gap: 20px;
-            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
             color: var(--gray);
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
         }
 
         .item-meta span {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.25rem;
         }
 
         .item-description {
-            font-size: 14px;
+            font-size: 0.9rem;
             color: var(--gray);
             line-height: 1.5;
+            word-break: break-word;
         }
 
         /* Quick Actions */
         .quick-actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .quick-actions-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .action-item {
@@ -1089,7 +1217,7 @@ $conn->close();
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1.25rem 0.75rem;
             background: white;
             border-radius: var(--radius-sm);
             text-decoration: none;
@@ -1097,43 +1225,43 @@ $conn->close();
             transition: var(--transition);
             border: 2px solid var(--border);
             text-align: center;
+            min-height: 100px;
         }
 
-        .action-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
+        .action-item:active {
+            background: var(--light);
+            transform: scale(0.96);
         }
 
         .action-icon {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border-radius: var(--radius-sm);
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 1.5rem;
             color: white;
-            margin-bottom: 15px;
+            margin-bottom: 0.75rem;
         }
 
         .action-label {
-            font-size: 14px;
+            font-size: 0.8rem;
             font-weight: 600;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         /* Progress Bar */
         .progress-container {
-            margin: 20px 0;
+            margin: 1rem 0;
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
             color: var(--dark);
         }
 
@@ -1154,46 +1282,59 @@ $conn->close();
         /* Classmates Grid */
         .classmates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .classmates-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 640px) {
+            .classmates-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
         }
 
         .classmate-card {
             text-align: center;
-            padding: 15px;
+            padding: 1rem;
             background: var(--light);
             border-radius: var(--radius-sm);
             transition: var(--transition);
         }
 
-        .classmate-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
+        .classmate-card:active {
+            transform: scale(0.96);
         }
 
         .classmate-avatar {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin: 0 auto 10px;
+            margin: 0 auto 0.75rem;
         }
 
         .classmate-name {
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 5px;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
         .classmate-title {
-            font-size: 12px;
+            font-size: 0.7rem;
             color: var(--gray);
             white-space: nowrap;
             overflow: hidden;
@@ -1203,12 +1344,19 @@ $conn->close();
         /* Financial Alerts */
         .financial-alert {
             display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 25px;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
             border-radius: var(--radius-sm);
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
+        }
+
+        @media (min-width: 640px) {
+            .financial-alert {
+                flex-direction: row;
+                align-items: flex-start;
+            }
         }
 
         .financial-alert.warning {
@@ -1227,13 +1375,13 @@ $conn->close();
         }
 
         .alert-icon {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 1.2rem;
             flex-shrink: 0;
         }
 
@@ -1257,273 +1405,130 @@ $conn->close();
         }
 
         .alert-content h4 {
-            font-size: 18px;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
             color: var(--dark);
         }
 
         .alert-content p {
             color: var(--dark);
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
 
         .alert-actions {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 480px) {
+            .alert-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
         }
 
         /* Empty States */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 2.5rem 1rem;
             color: var(--gray);
         }
 
         .empty-state i {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 1rem;
             opacity: 0.3;
         }
 
         .empty-state p {
-            font-size: 16px;
+            font-size: 1rem;
             max-width: 400px;
             margin: 0 auto;
+            line-height: 1.5;
         }
 
         /* Class Details */
         .class-details {
             background: white;
             border-radius: var(--radius);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
         }
 
         .details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .detail-item {
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
 
         .detail-label {
-            font-size: 12px;
+            font-size: 0.8rem;
             color: var(--gray);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
             font-weight: 600;
         }
 
         .detail-value {
-            font-size: 16px;
+            font-size: 1rem;
             color: var(--dark);
             font-weight: 500;
             line-height: 1.5;
+            word-break: break-word;
         }
 
         .detail-value a {
             color: var(--primary);
             text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .detail-value a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
+            word-break: break-word;
         }
 
         /* Notification */
         .notification {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            left: 1rem;
+            right: 1rem;
             background: white;
-            padding: 20px;
+            padding: 1.25rem;
             border-radius: var(--radius-sm);
             box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 1rem;
             z-index: 1000;
-            animation: slideIn 0.3s ease;
+            animation: slideUp 0.3s ease;
             max-width: 400px;
+            margin: 0 auto;
         }
 
-        @keyframes slideIn {
+        @keyframes slideUp {
             from {
-                transform: translateX(100%);
+                transform: translateY(100%);
                 opacity: 0;
             }
 
             to {
-                transform: translateX(0);
+                transform: translateY(0);
                 opacity: 1;
             }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .payment-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .countdown-timer {
-                gap: 10px;
-            }
-
-            .countdown-item {
-                min-width: 80px;
-                padding: 15px;
-            }
-
-            .countdown-value {
-                font-size: 32px;
-            }
-
-            .payment-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .main-header {
-                padding: 20px;
-            }
-
-            .class-info h1 {
-                font-size: 28px;
-            }
-
-            .nav-container {
-                justify-content: center;
-            }
-
-            .nav-link {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .main-content {
-                gap: 20px;
-            }
-
-            .quick-actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .classmates-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .countdown-timer {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .countdown-item {
-                width: 100%;
-                max-width: 200px;
-            }
-
-            .quick-actions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .classmates-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .payment-title {
-                font-size: 20px;
-            }
-
-            .payment-badge {
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--gray-light);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-
-        /* Accessibility */
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* Focus Styles */
-        :focus {
-            outline: 3px solid rgba(67, 97, 238, 0.3);
-            outline-offset: 2px;
-        }
-
-        :focus:not(:focus-visible) {
-            outline: none;
-        }
-
-        :focus-visible {
-            outline: 3px solid rgba(67, 97, 238, 0.3);
-            outline-offset: 2px;
-        }
-
-        /* Selection */
-        ::selection {
-            background: rgba(67, 97, 238, 0.3);
-            color: var(--dark);
         }
 
         /* Loading Animation */
@@ -1542,6 +1547,52 @@ $conn->close();
         .loading {
             animation: pulse 2s infinite;
         }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn,
+            .stat-card,
+            .class-card,
+            .action-item,
+            .classmate-card {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .btn:active,
+            .stat-card:active,
+            .class-card:active,
+            .action-item:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        :focus {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 3px solid rgba(67, 97, 238, 0.3);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 
@@ -1550,11 +1601,13 @@ $conn->close();
         <!-- Breadcrumb -->
         <div class="breadcrumb">
             <a href="<?php echo BASE_URL; ?>modules/student/dashboard.php">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i>
+                <span class="visually-hidden">Dashboard</span>
             </a>
             <span class="separator">/</span>
             <a href="index.php">
-                <i class="fas fa-chalkboard"></i> My Classes
+                <i class="fas fa-chalkboard"></i>
+                <span class="visually-hidden">My Classes</span>
             </a>
             <span class="separator">/</span>
             <span><?php echo htmlspecialchars($class['batch_code']); ?></span>
@@ -1564,7 +1617,7 @@ $conn->close();
         <div class="payment-card">
             <div class="payment-header">
                 <h2 class="payment-title">
-                    <i class="fas fa-credit-card"></i> Course Payment Status
+                    <i class="fas fa-credit-card"></i> Payment Status
                 </h2>
                 <span class="payment-badge 
                     <?php
@@ -1589,12 +1642,12 @@ $conn->close();
                 </div>
 
                 <div class="payment-item">
-                    <div class="payment-label">Amount Paid</div>
+                    <div class="payment-label">Paid</div>
                     <div class="payment-value paid">₦<?php echo number_format($payment_status['paid_amount'] ?? 0, 2); ?></div>
                 </div>
 
                 <div class="payment-item">
-                    <div class="payment-label">Balance Due</div>
+                    <div class="payment-label">Balance</div>
                     <div class="payment-value 
                         <?php
                         if ($has_paid) echo 'paid';
@@ -1606,46 +1659,39 @@ $conn->close();
                 </div>
 
                 <div class="payment-item">
-                    <div class="payment-label">Payment Deadline</div>
+                    <div class="payment-label">Deadline</div>
                     <div class="payment-value">
-                        <?php echo $grace_end_date->format('F j, Y'); ?>
+                        <?php echo $grace_end_date->format('M j'); ?>
                         <?php if ($is_grace_period): ?>
-                            <br><small>(<?php echo $grace_days_remaining; ?> day(s) remaining)</small>
+                            <br><small><?php echo $grace_days_remaining; ?>d</small>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
 
             <div class="payment-message">
-                <h3><i class="fas fa-info-circle"></i> Important Information</h3>
+                <h3><i class="fas fa-info-circle"></i> Important</h3>
                 <p><?php echo $payment_message; ?></p>
-
-                <?php if ($is_grace_period): ?>
-                    <p><strong>Grace Period:</strong> You have a 7-day grace period from the class start date to make payment. During this period, you can access the course materials.</p>
-                    <p><strong>After Grace Period:</strong> If payment is not made within the grace period, your access to course materials will be restricted until payment is completed.</p>
-                <?php elseif ($grace_period_expired): ?>
-                    <p><strong>Important:</strong> Your grace period has ended. You must make payment immediately to regain access to this course.</p>
-                <?php endif; ?>
             </div>
 
             <div class="payment-actions">
                 <?php if (!$has_paid && $course_fee > 0): ?>
                     <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                        <i class="fas fa-credit-card"></i> Make Payment Now
+                        <i class="fas fa-credit-card"></i> Pay Now
                     </a>
                 <?php endif; ?>
 
                 <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                    <i class="fas fa-file-invoice"></i> View Invoices
+                    <i class="fas fa-file-invoice"></i> Invoices
                 </a>
 
                 <a href="<?php echo BASE_URL; ?>modules/student/finance/payment_history.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                    <i class="fas fa-history"></i> Payment History
+                    <i class="fas fa-history"></i> History
                 </a>
 
                 <?php if ($has_paid): ?>
                     <button class="btn btn-success" disabled>
-                        <i class="fas fa-check-circle"></i> Payment Complete
+                        <i class="fas fa-check-circle"></i> Paid
                     </button>
                 <?php endif; ?>
             </div>
@@ -1655,10 +1701,9 @@ $conn->close();
             <?php if (!$is_class_date_accessible): ?>
                 <!-- Countdown Section -->
                 <div class="countdown-container">
-                    <h1 class="countdown-title">Class Starts Soon!</h1>
+                    <h1 class="countdown-title">Starts Soon!</h1>
                     <p class="countdown-description">
-                        Your class will begin on <?php echo date('F j, Y', strtotime($class['start_date'])); ?>.
-                        Access will be granted 2 days before the start date.
+                        <?php echo date('M j', strtotime($class['start_date'])); ?>
                     </p>
                     <div class="countdown-timer">
                         <div class="countdown-item">
@@ -1671,46 +1716,11 @@ $conn->close();
                         </div>
                         <div class="countdown-item">
                             <div class="countdown-value" id="minutes">00</div>
-                            <div class="countdown-label">Minutes</div>
+                            <div class="countdown-label">Mins</div>
                         </div>
                         <div class="countdown-item">
                             <div class="countdown-value" id="seconds">00</div>
-                            <div class="countdown-label">Seconds</div>
-                        </div>
-                    </div>
-
-                    <?php if (!$has_paid && $course_fee > 0): ?>
-                        <div class="grace-info">
-                            <h3><i class="fas fa-clock"></i> Payment Reminder</h3>
-                            <p>While waiting for the class to start, you can make your payment now to secure your spot.</p>
-                            <p>The grace period will begin when the class starts on <?php echo date('F j, Y', strtotime($class['start_date'])); ?>.</p>
-                        </div>
-                    <?php endif; ?>
-
-                    <p class="countdown-description">
-                        Please use this time to prepare for your class. The course materials will be available once the countdown reaches zero.
-                    </p>
-                </div>
-
-                <!-- Preparation Tips -->
-                <div class="content-card">
-                    <h2 class="card-title"><i class="fas fa-lightbulb"></i> Preparation Tips</h2>
-                    <div class="tips-grid">
-                        <div class="tip-card">
-                            <h3><i class="fas fa-book"></i> Review Prerequisites</h3>
-                            <p>Make sure you have the necessary background knowledge for this course. Review any prerequisite materials provided.</p>
-                        </div>
-                        <div class="tip-card">
-                            <h3><i class="fas fa-desktop"></i> Check Your Setup</h3>
-                            <p>Test your computer, internet connection, and any required software to ensure you're ready for the first session.</p>
-                        </div>
-                        <div class="tip-card">
-                            <h3><i class="fas fa-calendar-alt"></i> Plan Your Schedule</h3>
-                            <p>Block out time in your calendar for classes, study sessions, and assignment work.</p>
-                        </div>
-                        <div class="tip-card">
-                            <h3><i class="fas fa-question-circle"></i> Prepare Questions</h3>
-                            <p>Think about what you want to learn and prepare questions for your instructor.</p>
+                            <div class="countdown-label">Secs</div>
                         </div>
                     </div>
                 </div>
@@ -1723,150 +1733,40 @@ $conn->close();
                             <p><?php echo htmlspecialchars($class['course_title']); ?></p>
                         </div>
                         <span class="status-badge status-upcoming">
-                            <i class="fas fa-clock"></i> Starts in <?php echo $days_remaining; ?> days
+                            <i class="fas fa-clock"></i> <?php echo $days_remaining; ?>d
                         </span>
                     </div>
 
                     <!-- Navigation -->
                     <div class="nav-container nav-disabled">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-book"></i> Materials
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-tasks"></i> Assignments
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-comments"></i> Discussions
-                        </a>
+                        <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-comments"></i><span>Discuss</span></a>
                         <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                    <i class="fas fa-bullhorn"></i> Announcements
-                </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-users"></i> Classmates
+                            <i class="fas fa-bullhorn"></i><span>Updates</span>
                         </a>
                     </div>
-                </div>
-
-                <!-- Class Details -->
-                <div class="class-details">
-                    <h2 class="card-title"><i class="fas fa-info-circle"></i> Class Information</h2>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">Instructor</div>
-                            <div class="detail-value"><?php echo htmlspecialchars($class['instructor_name']); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Program</div>
-                            <div class="detail-value"><?php echo htmlspecialchars($class['program_name']); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Start Date</div>
-                            <div class="detail-value"><?php echo date('F j, Y', strtotime($class['start_date'])); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">End Date</div>
-                            <div class="detail-value"><?php echo date('F j, Y', strtotime($class['end_date'])); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Schedule</div>
-                            <div class="detail-value">
-                                <?php
-                                if (!empty($class['schedule'])) {
-                                    echo htmlspecialchars($class['schedule']);
-                                } else {
-                                    echo 'To be announced';
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Course Code</div>
-                            <div class="detail-value"><?php echo htmlspecialchars($class['course_code']); ?></div>
-                        </div>
-                    </div>
-
-                    <?php if (!empty($class['course_description'])): ?>
-                        <div class="detail-item" style="margin-top: 30px;">
-                            <div class="detail-label">Course Description</div>
-                            <div class="detail-value" style="line-height: 1.8; padding: 15px; background: var(--light); border-radius: var(--radius-sm);">
-                                <?php echo nl2br(htmlspecialchars($class['course_description'])); ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
                 </div>
 
             <?php elseif ($is_class_date_accessible && !$is_payment_accessible): ?>
                 <!-- Payment Required Section -->
                 <div class="countdown-container" style="background: linear-gradient(135deg, #f94144 0%, #e63946 100%);">
                     <h1 class="countdown-title">
-                        <i class="fas fa-exclamation-triangle"></i> Payment Required
+                        <i class="fas fa-exclamation-triangle"></i> Payment
                     </h1>
 
                     <?php if ($grace_period_expired): ?>
-                        <p class="countdown-description">
-                            Your grace period has ended. You must make payment to continue accessing this course.
-                        </p>
+                        <p class="countdown-description">Access restricted</p>
                     <?php else: ?>
-                        <p class="countdown-description">
-                            You are in the grace period. You have <?php echo $grace_days_remaining; ?> day(s) to make payment before access is restricted.
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (!$grace_period_expired): ?>
+                        <p class="countdown-description"><?php echo $grace_days_remaining; ?>d left</p>
                         <div class="countdown-timer">
                             <div class="countdown-item">
                                 <div class="countdown-value" id="grace-days"><?php echo $grace_days_remaining; ?></div>
-                                <div class="countdown-label">Days Remaining</div>
+                                <div class="countdown-label">Days</div>
                             </div>
                         </div>
                     <?php endif; ?>
-                </div>
-
-                <!-- Payment Information -->
-                <div class="payment-card">
-                    <div class="payment-grid">
-                        <div class="payment-item">
-                            <div class="payment-label">Course Fee</div>
-                            <div class="payment-value">₦<?php echo number_format($course_fee, 2); ?></div>
-                        </div>
-                        <div class="payment-item">
-                            <div class="payment-label">Amount Paid</div>
-                            <div class="payment-value paid">₦<?php echo number_format($payment_status['paid_amount'] ?? 0, 2); ?></div>
-                        </div>
-                        <div class="payment-item">
-                            <div class="payment-label">Balance Due</div>
-                            <div class="payment-value overdue">₦<?php echo number_format($payment_status['balance'] ?? $course_fee, 2); ?></div>
-                        </div>
-                        <div class="payment-item">
-                            <div class="payment-label">Payment Status</div>
-                            <div class="payment-value <?php echo $grace_period_expired ? 'overdue' : 'pending'; ?>">
-                                <?php echo $grace_period_expired ? 'Overdue' : 'Grace Period'; ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php if (!$grace_period_expired): ?>
-                        <div class="payment-message">
-                            <h3><i class="fas fa-clock"></i> Payment Deadline</h3>
-                            <p>Payment due by: <?php echo $grace_end_date->format('F j, Y'); ?></p>
-                            <p>You have <?php echo $grace_days_remaining; ?> day(s) to complete your payment.</p>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="payment-actions">
-                        <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                            <i class="fas fa-credit-card"></i> Make Payment Now
-                        </a>
-                        <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                            <i class="fas fa-file-invoice"></i> View Invoices
-                        </a>
-                        <a href="<?php echo BASE_URL; ?>modules/student/finance/payment_history.php" class="btn btn-secondary">
-                            <i class="fas fa-history"></i> Payment History
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Class Header -->
@@ -1878,95 +1778,43 @@ $conn->close();
                         </div>
                         <span class="status-badge status-payment">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <?php if ($grace_period_expired): ?>
-                                Payment Required
-                            <?php else: ?>
-                                Grace Period: <?php echo $grace_days_remaining; ?> day(s)
-                            <?php endif; ?>
+                            <?php echo $grace_period_expired ? 'Overdue' : $grace_days_remaining . 'd'; ?>
                         </span>
                     </div>
 
                     <!-- Navigation -->
                     <div class="nav-container nav-disabled">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-book"></i> Materials
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-tasks"></i> Assignments
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-comments"></i> Discussions
-                        </a>
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-users"></i> Classmates
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Class Details -->
-                <div class="class-details">
-                    <h2 class="card-title"><i class="fas fa-info-circle"></i> Course Information</h2>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">Instructor</div>
-                            <div class="detail-value"><?php echo htmlspecialchars($class['instructor_name']); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Program</div>
-                            <div class="detail-value"><?php echo htmlspecialchars($class['program_name']); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Start Date</div>
-                            <div class="detail-value"><?php echo date('F j, Y', strtotime($class['start_date'])); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Course Fee</div>
-                            <div class="detail-value">₦<?php echo number_format($course_fee, 2); ?></div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Current Status</div>
-                            <div class="detail-value">
-                                <?php if ($grace_period_expired): ?>
-                                    <span style="color: var(--danger); font-weight: bold;">
-                                        <i class="fas fa-ban"></i> Access Restricted
-                                    </span>
-                                <?php else: ?>
-                                    <span style="color: var(--warning); font-weight: bold;">
-                                        <i class="fas fa-clock"></i> Grace Period Active
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Payment Deadline</div>
-                            <div class="detail-value">
-                                <?php echo $grace_end_date->format('F j, Y'); ?>
-                                <?php if (!$grace_period_expired): ?>
-                                    <br><small style="color: var(--warning);">(<?php echo $grace_days_remaining; ?> day(s) remaining)</small>
-                                <?php else: ?>
-                                    <br><small style="color: var(--danger);">(Deadline passed)</small>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="detail-item" style="margin-top: 30px;">
-                        <div class="detail-label">Important Notice</div>
-                        <div class="detail-value" style="padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-radius: var(--radius-sm); border-left: 5px solid var(--warning);">
-                            <i class="fas fa-exclamation-circle" style="color: var(--warning); margin-right: 10px;"></i>
-                            <?php if ($grace_period_expired): ?>
-                                <strong>Your access to course materials has been restricted.</strong> Please complete your payment to regain access to all course features, including materials, assignments, and discussions.
-                            <?php else: ?>
-                                <strong>This is a paid course.</strong> You are currently in the grace period. Full access will be granted once payment is completed. Please make payment before the deadline to avoid access restrictions.
-                            <?php endif; ?>
-                        </div>
+                        <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+                        <a href="#" class="nav-link"><i class="fas fa-comments"></i><span>Discuss</span></a>
                     </div>
                 </div>
 
             <?php endif; ?>
+
+            <!-- Class Details (always visible) -->
+            <div class="class-details">
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> Class Info</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Instructor</div>
+                        <div class="detail-value"><?php echo htmlspecialchars($class['instructor_name']); ?></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Program</div>
+                        <div class="detail-value"><?php echo htmlspecialchars($class['program_name']); ?></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Start Date</div>
+                        <div class="detail-value"><?php echo date('M j, Y', strtotime($class['start_date'])); ?></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Course Code</div>
+                        <div class="detail-value"><?php echo htmlspecialchars($class['course_code']); ?></div>
+                    </div>
+                </div>
+            </div>
 
         <?php else: ?>
             <!-- Regular Class Dashboard -->
@@ -1974,66 +1822,49 @@ $conn->close();
             <!-- Financial Alerts -->
             <?php if (!$has_paid && $is_grace_period): ?>
                 <div class="financial-alert warning">
-                    <div class="alert-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
+                    <div class="alert-icon"><i class="fas fa-clock"></i></div>
                     <div class="alert-content">
-                        <h4>Grace Period Active</h4>
-                        <p>You have <?php echo $grace_days_remaining; ?> day(s) remaining to make payment for this course.</p>
+                        <h4>Grace Period</h4>
+                        <p><?php echo $grace_days_remaining; ?> day(s) left to pay</p>
                         <div class="alert-actions">
                             <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
                                 <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                                <i class="fas fa-file-invoice"></i> View Invoice
                             </a>
                         </div>
                     </div>
                 </div>
             <?php elseif ($class['is_suspended']): ?>
                 <div class="financial-alert danger">
-                    <div class="alert-icon">
-                        <i class="fas fa-ban"></i>
-                    </div>
+                    <div class="alert-icon"><i class="fas fa-ban"></i></div>
                     <div class="alert-content">
-                        <h4>Account Suspended</h4>
-                        <p>Your access to this class has been suspended due to outstanding payments. Please clear your balance to regain access.</p>
+                        <h4>Suspended</h4>
+                        <p>Payment required to continue</p>
                         <div class="alert-actions">
                             <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                                <i class="fas fa-credit-card"></i> Make Payment
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                                <i class="fas fa-file-invoice"></i> View Invoices
+                                <i class="fas fa-credit-card"></i> Pay Now
                             </a>
                         </div>
                     </div>
                 </div>
             <?php elseif ($class['balance'] > 0 && !$class['is_cleared']): ?>
                 <div class="financial-alert warning">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
+                    <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
                     <div class="alert-content">
-                        <h4>Outstanding Balance: ₦<?php echo number_format($class['balance'], 2); ?></h4>
-                        <p>Next payment due: <?php echo date('M d, Y', strtotime($class['next_payment_due'])); ?></p>
+                        <h4>Balance: ₦<?php echo number_format($class['balance'], 2); ?></h4>
+                        <p>Due: <?php echo date('M d', strtotime($class['next_payment_due'])); ?></p>
                         <div class="alert-actions">
                             <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
                                 <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                                <i class="fas fa-file-invoice"></i> View Invoices
                             </a>
                         </div>
                     </div>
                 </div>
             <?php elseif ($class['is_cleared'] || $has_paid): ?>
                 <div class="financial-alert success">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
+                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
                     <div class="alert-content">
-                        <h4>Payment Status: <?php echo $has_paid ? 'Paid' : 'Financially Cleared'; ?></h4>
-                        <p>All fees for this class have been paid. You have full access to all course materials.</p>
+                        <h4>Payment Complete</h4>
+                        <p>Full access granted</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -2047,11 +1878,8 @@ $conn->close();
                     </div>
                     <span class="status-badge status-<?php echo $class['enrollment_status']; ?>">
                         <?php echo ucfirst($class['enrollment_status']); ?>
-                        <?php if ($class['final_grade']): ?>
-                            | Grade: <?php echo $class['final_grade']; ?>
-                        <?php endif; ?>
                         <?php if (!$has_paid && $is_grace_period): ?>
-                            | Grace: <?php echo $grace_days_remaining; ?> days
+                            | <?php echo $grace_days_remaining; ?>d
                         <?php endif; ?>
                     </span>
                 </div>
@@ -2059,29 +1887,29 @@ $conn->close();
                 <!-- Navigation -->
                 <div class="nav-container">
                     <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link active">
-                        <i class="fas fa-home"></i> Home
+                        <i class="fas fa-home"></i><span>Home</span>
                     </a>
                     <a href="materials.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-book"></i> Materials
+                        <i class="fas fa-book"></i><span>Materials</span>
                     </a>
                     <a href="assignments.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-tasks"></i> Assignments
+                        <i class="fas fa-tasks"></i><span>Tasks</span>
                     </a>
                     <a href="quizzes/quizzes.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-question-circle"></i> Quizzes
+                        <i class="fas fa-question-circle"></i><span>Quizzes</span>
                     </a>
                     <a href="grades.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-chart-line"></i> Grades
+                        <i class="fas fa-chart-line"></i><span>Grades</span>
                     </a>
                     <a href="discussions.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-comments"></i> Discussions
+                        <i class="fas fa-comments"></i><span>Discuss</span>
                     </a>
                     <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                        <i class="fas fa-users"></i> Classmates
+                        <i class="fas fa-users"></i><span>Classmates</span>
                     </a>
                     <?php if (!empty($class['meeting_link'])): ?>
                         <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="nav-link">
-                            <i class="fas fa-video"></i> Join Class
+                            <i class="fas fa-video"></i><span>Join</span>
                         </a>
                     <?php endif; ?>
                 </div>
@@ -2089,41 +1917,21 @@ $conn->close();
 
             <!-- Stats -->
             <div class="stats-grid">
-                <div class="stat-card assignments">
+                <div class="stat-card assignments" onclick="window.location.href='assignments.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['assignments']; ?></div>
-                    <div class="stat-label">Assignments</div>
-                    <div class="stat-link">
-                        <a href="assignments.php?class_id=<?php echo $class_id; ?>">
-                            View Assignments <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                    <div class="stat-label">Tasks</div>
                 </div>
-                <div class="stat-card materials">
+                <div class="stat-card materials" onclick="window.location.href='materials/view.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['materials']; ?></div>
                     <div class="stat-label">Materials</div>
-                    <div class="stat-link">
-                        <a href="materials/view.php?class_id=<?php echo $class_id; ?>">
-                            View Materials <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
                 </div>
-                <div class="stat-card announcements">
+                <div class="stat-card announcements" onclick="window.location.href='announcements.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['announcements']; ?></div>
-                    <div class="stat-label">Announcements</div>
-                    <div class="stat-link">
-                        <a href="<?php echo BASE_URL; ?>modules/student/classes/announcements.php?class_id=<?php echo $class_id; ?>">
-                            View Announcements <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                    <div class="stat-label">Updates</div>
                 </div>
-                <div class="stat-card discussions">
+                <div class="stat-card discussions" onclick="window.location.href='discussions/index.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['discussions']; ?></div>
                     <div class="stat-label">Discussions</div>
-                    <div class="stat-link">
-                        <a href="discussions/index.php?class_id=<?php echo $class_id; ?>">
-                            Join Discussions <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
                 </div>
             </div>
 
@@ -2133,41 +1941,35 @@ $conn->close();
                     <!-- Upcoming Assignments -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-calendar-alt"></i> Upcoming Assignments</h2>
+                            <h2 class="card-title"><i class="fas fa-calendar-alt"></i> Upcoming</h2>
                             <a href="assignments/index.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                                <i class="fas fa-list"></i> View All
+                                <i class="fas fa-list"></i> All
                             </a>
                         </div>
                         <div class="card-body">
                             <?php if (empty($upcoming_assignments)): ?>
                                 <div class="empty-state">
                                     <i class="fas fa-tasks"></i>
-                                    <p>No upcoming assignments</p>
+                                    <p>No upcoming tasks</p>
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($upcoming_assignments as $assignment): ?>
-                                    <div class="list-item">
+                                    <div class="list-item" onclick="window.location.href='assignments/view.php?id=<?php echo $assignment['id']; ?>'">
                                         <div class="list-content">
                                             <div class="item-title">
                                                 <span><?php echo htmlspecialchars($assignment['title']); ?></span>
                                                 <span><?php echo $assignment['total_points']; ?> pts</span>
                                             </div>
                                             <div class="item-meta">
-                                                <span><i class="fas fa-clock"></i> Due: <?php echo date('M d, Y', strtotime($assignment['due_date'])); ?></span>
+                                                <span><i class="fas fa-clock"></i> <?php echo date('M d', strtotime($assignment['due_date'])); ?></span>
                                                 <span>
                                                     <?php if ($assignment['submission_count'] > 0): ?>
-                                                        <i class="fas fa-check-circle" style="color: var(--success);"></i> Submitted
+                                                        <i class="fas fa-check-circle" style="color: var(--success);"></i> Done
                                                     <?php else: ?>
-                                                        <i class="fas fa-clock" style="color: var(--warning);"></i> Not Submitted
+                                                        <i class="fas fa-hourglass-half" style="color: var(--warning);"></i> Pending
                                                     <?php endif; ?>
                                                 </span>
                                             </div>
-                                            <?php if ($assignment['description']): ?>
-                                                <div class="item-description">
-                                                    <?php echo htmlspecialchars(substr($assignment['description'], 0, 100)); ?>
-                                                    <?php if (strlen($assignment['description']) > 100): ?>...<?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -2178,20 +1980,20 @@ $conn->close();
                     <!-- Recent Materials -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-book"></i> Recent Materials</h2>
+                            <h2 class="card-title"><i class="fas fa-book"></i> New Materials</h2>
                             <a href="materials/view.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                                <i class="fas fa-eye"></i> View All
+                                <i class="fas fa-eye"></i> All
                             </a>
                         </div>
                         <div class="card-body">
                             <?php if (empty($recent_materials)): ?>
                                 <div class="empty-state">
                                     <i class="fas fa-book"></i>
-                                    <p>No materials available yet</p>
+                                    <p>No materials yet</p>
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($recent_materials as $material): ?>
-                                    <div class="list-item">
+                                    <div class="list-item" onclick="window.location.href='materials/view.php?id=<?php echo $material['id']; ?>'">
                                         <div class="list-content">
                                             <div class="item-title">
                                                 <span><?php echo htmlspecialchars($material['title']); ?></span>
@@ -2201,53 +2003,6 @@ $conn->close();
                                                 <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($material['instructor_name']); ?></span>
                                                 <span><i class="fas fa-calendar"></i> <?php echo date('M d', strtotime($material['created_at'])); ?></span>
                                             </div>
-                                            <?php if ($material['description']): ?>
-                                                <div class="item-description">
-                                                    <?php echo htmlspecialchars(substr($material['description'], 0, 100)); ?>
-                                                    <?php if (strlen($material['description']) > 100): ?>...<?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- My Grades -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-chart-line"></i> My Recent Grades</h2>
-                            <a href="grades/index.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                                <i class="fas fa-chart-bar"></i> View All
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <?php if (empty($my_grades)): ?>
-                                <div class="empty-state">
-                                    <i class="fas fa-chart-line"></i>
-                                    <p>No grades available yet</p>
-                                </div>
-                            <?php else: ?>
-                                <?php foreach ($my_grades as $grade): ?>
-                                    <div class="list-item">
-                                        <div class="list-content">
-                                            <div class="item-title">
-                                                <span><?php echo htmlspecialchars($grade['title']); ?></span>
-                                                <span class="payment-badge" style="background: var(--success); padding: 4px 12px; font-size: 12px;">
-                                                    <?php echo $grade['grade']; ?>/<?php echo $grade['total_points']; ?>
-                                                </span>
-                                            </div>
-                                            <div class="item-meta">
-                                                <span><i class="fas fa-calendar"></i> Due: <?php echo date('M d, Y', strtotime($grade['due_date'])); ?></span>
-                                                <span><i class="fas fa-check-circle"></i> Submitted: <?php echo date('M d', strtotime($grade['submitted_at'])); ?></span>
-                                            </div>
-                                            <?php if ($grade['feedback']): ?>
-                                                <div class="item-description">
-                                                    <strong>Feedback:</strong> <?php echo htmlspecialchars(substr($grade['feedback'], 0, 150)); ?>
-                                                    <?php if (strlen($grade['feedback']) > 150): ?>...<?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -2261,76 +2016,35 @@ $conn->close();
                     <!-- Quick Actions -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h2>
+                            <h2 class="card-title"><i class="fas fa-bolt"></i> Quick</h2>
                         </div>
                         <div class="quick-actions-grid">
                             <a href="assignments/index.php?class_id=<?php echo $class_id; ?>" class="action-item">
-                                <div class="action-icon">
-                                    <i class="fas fa-tasks"></i>
-                                </div>
-                                <div class="action-label">View Assignments</div>
+                                <div class="action-icon"><i class="fas fa-tasks"></i></div>
+                                <div class="action-label">Tasks</div>
                             </a>
                             <a href="discussions/index.php?class_id=<?php echo $class_id; ?>" class="action-item">
-                                <div class="action-icon">
-                                    <i class="fas fa-comments"></i>
-                                </div>
-                                <div class="action-label">Join Discussion</div>
+                                <div class="action-icon"><i class="fas fa-comments"></i></div>
+                                <div class="action-label">Discuss</div>
                             </a>
                             <a href="materials/view.php?class_id=<?php echo $class_id; ?>" class="action-item">
-                                <div class="action-icon">
-                                    <i class="fas fa-book-open"></i>
-                                </div>
-                                <div class="action-label">Study Materials</div>
+                                <div class="action-icon"><i class="fas fa-book-open"></i></div>
+                                <div class="action-label">Materials</div>
                             </a>
                             <?php if (!empty($class['meeting_link'])): ?>
                                 <a href="<?php echo htmlspecialchars($class['meeting_link']); ?>" target="_blank" class="action-item">
-                                    <div class="action-icon">
-                                        <i class="fas fa-video"></i>
-                                    </div>
-                                    <div class="action-label">Join Live Class</div>
+                                    <div class="action-icon"><i class="fas fa-video"></i></div>
+                                    <div class="action-label">Join Live</div>
                                 </a>
                             <?php endif; ?>
-                            <?php if (!$has_paid || $class['balance'] > 0): ?>
-                                <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="action-item">
-                                    <div class="action-icon">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                    <div class="action-label">Make Payment</div>
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- Class Progress -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-chart-pie"></i> Class Progress</h2>
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-label">
-                                <span>Assignments Submitted</span>
-                                <span>
-                                    <?php
-                                    $total_assigned = $stats['assignments'];
-                                    $submitted = 0;
-                                    foreach ($upcoming_assignments as $assignment) {
-                                        if ($assignment['submission_count'] > 0) $submitted++;
-                                    }
-                                    echo $submitted . '/' . $total_assigned;
-                                    ?>
-                                </span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: <?php echo $total_assigned > 0 ? ($submitted / $total_assigned * 100) : 0; ?>%"></div>
-                            </div>
                         </div>
                     </div>
 
                     <!-- Recent Announcements -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h2 class="card-title"><i class="fas fa-bullhorn"></i> Recent Announcements</h2>
-                            <a href="<?php echo BASE_URL; ?>modules/student/classes/announcements.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
+                            <h2 class="card-title"><i class="fas fa-bullhorn"></i> Announcements</h2>
+                            <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
                                 <i class="fas fa-list"></i> All
                             </a>
                         </div>
@@ -2338,24 +2052,18 @@ $conn->close();
                             <?php if (empty($recent_announcements)): ?>
                                 <div class="empty-state">
                                     <i class="fas fa-bullhorn"></i>
-                                    <p>No announcements yet</p>
+                                    <p>No announcements</p>
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($recent_announcements as $announcement): ?>
-                                    <div class="list-item">
+                                    <div class="list-item" onclick="window.location.href='announcements/view.php?id=<?php echo $announcement['id']; ?>'">
                                         <div class="list-content">
                                             <div class="item-title">
                                                 <span><?php echo htmlspecialchars($announcement['title']); ?></span>
-                                                <span style="font-size: 12px;">
-                                                    <?php echo date('M d', strtotime($announcement['created_at'])); ?>
-                                                </span>
+                                                <span><?php echo date('M d', strtotime($announcement['created_at'])); ?></span>
                                             </div>
                                             <div class="item-meta">
                                                 <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($announcement['author_name']); ?></span>
-                                            </div>
-                                            <div class="item-description">
-                                                <?php echo htmlspecialchars(substr($announcement['content'], 0, 100)); ?>
-                                                <?php if (strlen($announcement['content']) > 100): ?>...<?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -2369,7 +2077,7 @@ $conn->close();
                         <div class="card-header">
                             <h2 class="card-title"><i class="fas fa-users"></i> Classmates (<?php echo $stats['classmates']; ?>)</h2>
                             <a href="classmates.php?class_id=<?php echo $class_id; ?>" class="btn btn-primary">
-                                <i class="fas fa-users"></i> View All
+                                <i class="fas fa-users"></i> All
                             </a>
                         </div>
                         <div class="classmates-grid">
@@ -2379,7 +2087,7 @@ $conn->close();
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($classmates as $classmate): ?>
-                                    <div class="classmate-card">
+                                    <div class="classmate-card" onclick="window.location.href='profile.php?id=<?php echo $classmate['id']; ?>'">
                                         <div class="classmate-avatar">
                                             <?php echo strtoupper(substr($classmate['first_name'], 0, 1)); ?>
                                         </div>
@@ -2403,7 +2111,7 @@ $conn->close();
 
     <script>
         <?php if (!$is_class_accessible && !$is_class_date_accessible): ?>
-            // Countdown Timer for class starting
+            // Countdown Timer
             function updateCountdown() {
                 const startDate = new Date('<?php echo $class['start_date']; ?>');
                 const twoDaysBefore = new Date(startDate);
@@ -2422,7 +2130,7 @@ $conn->close();
                 const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('days').textContent = days;
                 document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
                 document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
                 document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
@@ -2431,8 +2139,8 @@ $conn->close();
             updateCountdown();
             setInterval(updateCountdown, 1000);
 
-        <?php elseif (!$is_class_accessible && $is_class_date_accessible && !$is_payment_accessible): ?>
-            // Grace period countdown for payment
+        <?php elseif (!$is_class_accessible && $is_class_date_accessible && !$is_payment_accessible && !$grace_period_expired): ?>
+            // Grace period countdown
             function updateGraceCountdown() {
                 const graceEndDate = new Date('<?php echo $grace_end_date->format('Y-m-d H:i:s'); ?>');
                 const now = new Date();
@@ -2444,37 +2152,30 @@ $conn->close();
                 }
 
                 const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
                 const graceDaysEl = document.getElementById('grace-days');
                 if (graceDaysEl) {
-                    graceDaysEl.textContent = days.toString().padStart(2, '0');
+                    graceDaysEl.textContent = days;
                 }
             }
 
             updateGraceCountdown();
-            setInterval(updateGraceCountdown, 1000);
-
+            setInterval(updateGraceCountdown, 1000 * 60 * 60); // Update every hour
         <?php endif; ?>
 
-        // Common notification function
+        // Notification function
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = 'notification';
 
-            const icon = type === 'info' ? 'fa-info-circle' :
-                type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            const bgColor = type === 'info' ? 'var(--primary)' :
-                type === 'success' ? 'var(--success)' : 'var(--warning)';
+            const icon = type === 'info' ? 'fa-info-circle' : type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const bgColor = type === 'info' ? 'var(--primary)' : type === 'success' ? 'var(--success)' : 'var(--warning)';
 
             notification.innerHTML = `
                 <i class="fas ${icon}" style="color: ${bgColor}; font-size: 24px;"></i>
                 <div style="flex: 1;">
                     <strong>${message}</strong>
                 </div>
-                <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: var(--gray);">
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: var(--gray); padding: 0.5rem;">
                     <i class="fas fa-times"></i>
                 </button>
             `;
@@ -2502,41 +2203,35 @@ $conn->close();
                 .then(response => response.json())
                 .then(data => {
                     if (data.paid) {
-                        showNotification('Payment confirmed! Your status has been updated.', 'success');
-                        setTimeout(() => location.reload(), 3000);
+                        showNotification('Payment confirmed!', 'success');
+                        setTimeout(() => location.reload(), 2000);
                     }
                 })
-                .catch(err => console.error('Payment check failed:', err));
+                .catch(() => {});
         }, 30000);
 
-        // Add smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+        // Touch-friendly enhancements
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.btn, .stat-card, .list-item, .action-item, .classmate-card').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.8';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'h') {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Add loading states to buttons
-        document.querySelectorAll('.btn-primary').forEach(button => {
-            button.addEventListener('click', function() {
-                if (!this.hasAttribute('disabled')) {
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                    this.setAttribute('disabled', 'true');
-
-                    // Reset after 5 seconds if still on same page
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        this.removeAttribute('disabled');
-                    }, 5000);
-                }
-            });
+                window.location.href = 'index.php';
+            }
+            if (e.key === 'Escape') {
+                const notification = document.querySelector('.notification');
+                if (notification) notification.remove();
+            }
         });
     </script>
 </body>

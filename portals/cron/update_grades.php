@@ -6,8 +6,8 @@
  */
 
 // Load the main configuration and functions
-require_once dirname(__DIR__) . '/config/config.php';
-require_once dirname(__DIR__) . '/includes/functions.php';
+require_once dirname(__DIR__) . 'config.php';
+require_once dirname(__DIR__) . '/../includes/functions.php';
 
 // Prevent direct browser access - only allow CLI or authorized cron
 if (php_sapi_name() !== 'cli' && (!isset($_GET['cron_key']) || $_GET['cron_key'] !== CRON_SECRET_KEY)) {
