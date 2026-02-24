@@ -2742,3 +2742,329 @@ function sendGradeNotification($student_id, $assignment_id, $grade, $conn)
 
     return $notif_result || $email_result;
 }
+// Add this to your functions.php file in the grading functions section
+
+/**
+ * Calculate student's GPA for a specific class, including missed assignments/quizzes as zeros
+ * 
+ * @param int $student_id Student ID
+ * @param int $class_id Class ID
+ * @return array GPA details including overall GPA, completed items, total items, etc.
+ */
+function calculateStudentGPA($student_id, $class_id)
+{
+    $conn = getDBConnection();
+
+    // Get all graded items (assignments and quizzes) for this class
+    $sql = "SELECT 
+                'assignment' as item_type,
+                a.id as item_id,
+                a.title as item_title,
+                a.total_points as max_score,
+                COALESCE(ag.score, 0) as score,
+                CASE WHEN ag.id IS NULL THEN 0 ELSE 1 END as submitted,
+                a.due_date
+            FROM assignments a
+            LEFT JOIN assignment_submissions ag ON a.id = ag.assignment_id 
+                AND ag.student_id = ? AND ag.status IN ('submitted', 'graded')
+            WHERE a.class_id = ? AND a.is_published = 1
+            
+            UNION ALL
+            
+            SELECT 
+                'quiz' as item_type,
+                q.id as item_id,
+                q.title as item_title,
+                q.total_points as max_score,
+                COALESCE(qa.total_score, 0) as score,
+                CASE WHEN qa.id IS NULL THEN 0 ELSE 1 END as submitted,
+                q.due_date
+            FROM quizzes q
+            LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id 
+                AND qa.student_id = ? AND qa.status = 'graded'
+            WHERE q.class_id = ? AND q.is_published = 1
+            
+            ORDER BY due_date ASC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iiii", $student_id, $class_id, $student_id, $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $items = [];
+    $total_points_possible = 0;
+    $total_points_earned = 0;
+    $completed_count = 0;
+    $missed_count = 0;
+
+    while ($row = $result->fetch_assoc()) {
+        $items[] = $row;
+        $total_points_possible += $row['max_score'];
+        $total_points_earned += $row['score'];
+
+        if ($row['submitted']) {
+            $completed_count++;
+        } else {
+            $missed_count++;
+        }
+    }
+
+    // Calculate percentage
+    $percentage = ($total_points_possible > 0)
+        ? ($total_points_earned / $total_points_possible) * 100
+        : 0;
+
+    // Calculate GPA (4.0 scale)
+    $gpa = convertPercentageToGPA($percentage);
+
+    return [
+        'student_id' => $student_id,
+        'class_id' => $class_id,
+        'total_items' => count($items),
+        'completed_items' => $completed_count,
+        'missed_items' => $missed_count,
+        'total_points_possible' => $total_points_possible,
+        'total_points_earned' => $total_points_earned,
+        'percentage' => round($percentage, 2),
+        'gpa' => $gpa,
+        'grade_letter' => calculateGradeLetter($percentage),
+        'items' => $items
+    ];
+}
+
+/**
+ * Convert percentage to GPA on 4.0 scale
+ */
+function convertPercentageToGPA($percentage)
+{
+    if ($percentage >= 93) return 4.0;
+    if ($percentage >= 90) return 3.7;
+    if ($percentage >= 87) return 3.3;
+    if ($percentage >= 83) return 3.0;
+    if ($percentage >= 80) return 2.7;
+    if ($percentage >= 77) return 2.3;
+    if ($percentage >= 73) return 2.0;
+    if ($percentage >= 70) return 1.7;
+    if ($percentage >= 67) return 1.3;
+    if ($percentage >= 63) return 1.0;
+    if ($percentage >= 60) return 0.7;
+    return 0.0;
+}
+
+/**
+ * Calculate student's cumulative GPA across all enrolled classes
+ */
+function calculateCumulativeGPA($student_id)
+{
+    $conn = getDBConnection();
+
+    // Get all classes the student is enrolled in
+    $sql = "SELECT class_id FROM enrollments 
+            WHERE student_id = ? AND status IN ('active', 'completed')";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $total_gpa = 0;
+    $class_count = 0;
+    $class_details = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $gpa_data = calculateStudentGPA($student_id, $row['class_id']);
+        $class_details[] = $gpa_data;
+        $total_gpa += $gpa_data['gpa'];
+        $class_count++;
+    }
+
+    $cumulative_gpa = ($class_count > 0) ? $total_gpa / $class_count : 0;
+
+    return [
+        'student_id' => $student_id,
+        'classes_taken' => $class_count,
+        'cumulative_gpa' => round($cumulative_gpa, 2),
+        'class_details' => $class_details
+    ];
+}
+
+/**
+ * Update gradebook entries for missed assignments/quizzes (grade as zero)
+ * This ensures all items are properly recorded in the gradebook
+ */
+function updateGradebookWithMissedItems($class_id = null)
+{
+    $conn = getDBConnection();
+
+    $where_clause = "";
+    $params = [];
+    $types = "";
+
+    if ($class_id) {
+        $where_clause = "WHERE e.class_id = ?";
+        $params[] = $class_id;
+        $types = "i";
+    }
+
+    // Get all enrolled students
+    $sql = "SELECT e.student_id, e.class_id, e.enrollment_id 
+            FROM enrollments e
+            $where_clause
+            AND e.status IN ('active', 'completed')";
+
+    $stmt = $conn->prepare($sql);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $enrollments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    $updated_count = 0;
+
+    foreach ($enrollments as $enrollment) {
+        $student_id = $enrollment['student_id'];
+        $class_id = $enrollment['class_id'];
+
+        // Get all assignments for this class
+        $assignments_sql = "SELECT id, title, total_points FROM assignments 
+                           WHERE class_id = ? AND is_published = 1";
+        $stmt = $conn->prepare($assignments_sql);
+        $stmt->bind_param("i", $class_id);
+        $stmt->execute();
+        $assignments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($assignments as $assignment) {
+            // Check if grade exists in gradebook
+            $check_sql = "SELECT id FROM gradebook 
+                         WHERE student_id = ? AND assignment_id = ?";
+            $check_stmt = $conn->prepare($check_sql);
+            $check_stmt->bind_param("ii", $student_id, $assignment['id']);
+            $check_stmt->execute();
+            $exists = $check_stmt->get_result()->fetch_assoc();
+
+            if (!$exists) {
+                // Insert zero grade for missed assignment
+                $insert_sql = "INSERT INTO gradebook 
+                              (enrollment_id, assignment_id, student_id, score, max_score, 
+                               percentage, grade_letter, weight, published, created_at)
+                              SELECT ?, ?, ?, ?, ?, 0, 'F', 1, 1, NOW()
+                              WHERE NOT EXISTS (
+                                  SELECT 1 FROM gradebook 
+                                  WHERE student_id = ? AND assignment_id = ?
+                              )";
+
+                $insert_stmt = $conn->prepare($insert_sql);
+                $score = 0;
+                $max_score = $assignment['total_points'];
+                $percentage = 0;
+
+                $insert_stmt->bind_param(
+                    "iiidii",
+                    $enrollment['enrollment_id'],
+                    $assignment['id'],
+                    $student_id,
+                    $score,
+                    $max_score,
+                    $student_id,
+                    $assignment['id']
+                );
+
+                if ($insert_stmt->execute()) {
+                    $updated_count++;
+                }
+            }
+        }
+
+        // Similar logic for quizzes
+        $quizzes_sql = "SELECT id, title, total_points FROM quizzes 
+                       WHERE class_id = ? AND is_published = 1";
+        $stmt = $conn->prepare($quizzes_sql);
+        $stmt->bind_param("i", $class_id);
+        $stmt->execute();
+        $quizzes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($quizzes as $quiz) {
+            // Check if quiz attempt exists and is graded
+            $attempt_sql = "SELECT id, total_score FROM quiz_attempts 
+                           WHERE student_id = ? AND quiz_id = ? AND status = 'graded'";
+            $attempt_stmt = $conn->prepare($attempt_sql);
+            $attempt_stmt->bind_param("ii", $student_id, $quiz['id']);
+            $attempt_stmt->execute();
+            $attempt = $attempt_stmt->get_result()->fetch_assoc();
+
+            if (!$attempt) {
+                // No attempt or not graded - insert zero
+                $insert_sql = "INSERT INTO gradebook 
+                              (enrollment_id, assignment_id, student_id, score, max_score, 
+                               percentage, grade_letter, weight, published, created_at)
+                              SELECT ?, NULL, ?, 0, ?, 0, 'F', 1, 1, NOW()
+                              WHERE NOT EXISTS (
+                                  SELECT 1 FROM gradebook 
+                                  WHERE student_id = ? AND assignment_id IS NULL 
+                                  AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+                              )";
+
+                $insert_stmt = $conn->prepare($insert_sql);
+                $max_score = $quiz['total_points'];
+
+                $insert_stmt->bind_param(
+                    "iiii",
+                    $enrollment['enrollment_id'],
+                    $student_id,
+                    $max_score,
+                    $student_id
+                );
+
+                if ($insert_stmt->execute()) {
+                    $updated_count++;
+                }
+            }
+        }
+    }
+
+    return $updated_count;
+}
+
+/**
+ * Get comprehensive GPA report for a student
+ */
+function getStudentGPAReport($student_id)
+{
+    $conn = getDBConnection();
+
+    // Get cumulative GPA
+    $cumulative = calculateCumulativeGPA($student_id);
+
+    // Get detailed class information
+    $sql = "SELECT 
+                e.class_id,
+                cb.batch_code,
+                c.title as course_title,
+                c.course_code,
+                e.status as enrollment_status,
+                e.enrollment_date
+            FROM enrollments e
+            JOIN class_batches cb ON e.class_id = cb.id
+            JOIN courses c ON cb.course_id = c.id
+            WHERE e.student_id = ? AND e.status IN ('active', 'completed')
+            ORDER BY e.enrollment_date DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $classes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    $report = [
+        'student_id' => $student_id,
+        'cumulative_gpa' => $cumulative['cumulative_gpa'],
+        'classes_taken' => $cumulative['classes_taken'],
+        'classes' => []
+    ];
+
+    foreach ($classes as $class) {
+        $gpa_data = calculateStudentGPA($student_id, $class['class_id']);
+        $report['classes'][] = array_merge($class, $gpa_data);
+    }
+
+    return $report;
+}
