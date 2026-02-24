@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Microsoft Excel · Complete Guide to Creating Charts (Full Notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eaf2e5;
+            color: #1d3a2b;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1b4d2b;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #1c6e3c, #2a8b5a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #2d7a4b;
+            border-left: 6px solid #3aa56a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #dcf0e3;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 70, 30, 0.1), 0 16px 24px -14px #467a5a;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #155e34;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #176e38;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 40, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #c2f0d4;
+            border-color: #1f8f4c;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1b6d3c;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 70, 30, 0.06);
+            border: 1px solid #d2f0de;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0e552d;
+            border-bottom: 3px solid #2e9b5a;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1d723f;
+            border-left: 8px solid #8fdfb0;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1f7a43;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #edf9f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #279556;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 70, 30, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1f7042;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c6ecce;
+            background: #f9fffc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #228544;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #effaf3;
+            border: 1px solid #bdeacb;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #e1f5e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #49b870;
+        }
+
+        .drill {
+            background: #effaf3;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #299354;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bfecce, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e754a;
+            border-top: 1px dashed #b1e2bf;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1fdf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #bde2cc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #285e3a;
+            color: #f0fff5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .chart-sketch {
+            background: #f0f9f3;
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.4;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            border: 1px solid #a8dbb8;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📊 Comprehensive Guide to Creating Charts in Microsoft Excel</h1>
+        <div class="subhead">complete notes · all elements · chart types · step-by-step · exercises</div>
+
+        <!-- TABLE OF CONTENTS (all 11 sections) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Charts</a>
+                <a href="#chart-elements">2. Understanding Chart Elements</a>
+                <a href="#selecting-data">3. Selecting Data for Charts</a>
+                <a href="#chart-types">4. Basic Chart Types</a>
+                <a href="#creating-charts">5. Creating Your First Chart</a>
+                <a href="#chart-titles">6. Adding and Formatting Chart Titles</a>
+                <a href="#chart-labels">7. Working with Chart Labels</a>
+                <a href="#formatting">8. Chart Formatting and Customization</a>
+                <a href="#best-practices">9. Best Practices and Tips</a>
+                <a href="#troubleshooting">10. Troubleshooting Common Issues</a>
+                <a href="#exercises">11. Practice Exercises</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION TO CHARTS -->
+        <section id="introduction">
+            <h2>📌 1. Introduction to Charts</h2>
+            <h3>What are Charts?</h3>
+            <p>Charts are visual representations of numerical data that help users understand patterns, trends, and
+                relationships that might not be immediately apparent from raw data tables. Microsoft Excel offers a wide
+                variety of chart types to suit different data visualization needs.</p>
+
+            <h3>Why Use Charts?</h3>
+            <ul>
+                <li><strong>Quick Data Interpretation</strong>: Visual patterns are processed 60,000 times faster than
+                    text</li>
+                <li><strong>Professional Presentations</strong>: Charts add credibility and clarity to reports</li>
+                <li><strong>Trend Identification</strong>: Spot patterns, cycles, and outliers instantly</li>
+                <li><strong>Comparative Analysis</strong>: Easily compare multiple data series</li>
+                <li><strong>Decision Making</strong>: Support business decisions with clear visual evidence</li>
+            </ul>
+
+            <h3>When to Use Charts?</h3>
+            <ul>
+                <li>Monthly/Quarterly sales reports</li>
+                <li>Financial performance reviews</li>
+                <li>Survey result presentations</li>
+                <li>Academic research papers</li>
+                <li>Business proposals</li>
+                <li>Inventory analysis</li>
+                <li>Market trend analysis</li>
+                <li>Budget presentations</li>
+            </ul>
+        </section>
+
+        <!-- 2. UNDERSTANDING CHART ELEMENTS (complete with table and visual guide) -->
+        <section id="chart-elements">
+            <h2>🧩 2. Understanding Chart Elements</h2>
+            <p>Before creating charts, it's essential to understand the components that make up a chart:</p>
+
+            <h3>Primary Chart Elements</h3>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Chart Area</strong></td>
+                    <td>The entire chart and all its elements</td>
+                    <td>The whole white background containing everything</td>
+                </tr>
+                <tr>
+                    <td><strong>Plot Area</strong></td>
+                    <td>The region where data is plotted</td>
+                    <td>The area containing bars, lines, or pie slices</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Series</strong></td>
+                    <td>Related data points plotted in a chart</td>
+                    <td>Sales figures for 2023</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Points</strong></td>
+                    <td>Individual values plotted in a chart</td>
+                    <td>March sales: $45,000</td>
+                </tr>
+                <tr>
+                    <td><strong>Horizontal (Category) Axis</strong></td>
+                    <td>Axis showing categories (X-axis)</td>
+                    <td>Months: Jan, Feb, Mar...</td>
+                </tr>
+                <tr>
+                    <td><strong>Vertical (Value) Axis</strong></td>
+                    <td>Axis showing numerical values (Y-axis)</td>
+                    <td>$0, $10,000, $20,000...</td>
+                </tr>
+                <tr>
+                    <td><strong>Legend</strong></td>
+                    <td>Key identifying data series</td>
+                    <td>Different colors for different years</td>
+                </tr>
+                <tr>
+                    <td><strong>Gridlines</strong></td>
+                    <td>Lines extending from axes across plot area</td>
+                    <td>Horizontal lines for easy value reading</td>
+                </tr>
+                <tr>
+                    <td><strong>Chart Title</strong></td>
+                    <td>Descriptive title of the chart</td>
+                    <td>"2024 Sales Performance"</td>
+                </tr>
+                <tr>
+                    <td><strong>Axis Titles</strong></td>
+                    <td>Labels describing axes</td>
+                    <td>"Months" and "Revenue ($)"</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Labels</strong></td>
+                    <td>Actual values displayed on data points</td>
+                    <td>$45,000 displayed on a bar</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Table</strong></td>
+                    <td>Grid showing chart data below the chart</td>
+                    <td>Original data displayed beneath</td>
+                </tr>
+            </table>
+
+            <h3>Visual Guide to Chart Elements</h3>
+            <div class="chart-sketch">
+                CHART TITLE "Quarterly Sales 2024"
+                ┌─────────────────────────────────────────────────────┐
+                │ Legend [■ 2023 ■ 2024] │
+                │ │
+                Y-axis│ $60,000 ┼ ║ │
+                Title │ │ ║ █████ │
+                "Revenue"│ $50,000 ┼ █████ █████ │
+                │ │ █████ █████ █████ │
+                │ $40,000 ┼ █████ █████ █████ █████ │
+                │ │ █████ █████ █████ █████ │
+                │ $30,000 ┼ █████ █████ █████ █████ Plot │
+                │ │ █████ █████ █████ █████ Area │
+                │ $20,000 ┼ █████ █████ █████ █████ │
+                │ │ █████ █████ █████ █████ │
+                │ $10,000 ┼ █████ █████ █████ █████ │
+                │ └──────────────────────────────────┘
+                │ Q1 Q2 Q3 Q4
+                │ └────── X-Axis Title ─────┘
+                └────────────────── "Fiscal Quarters" ────────────────
+            </div>
+        </section>
+
+        <!-- 3. SELECTING DATA FOR CHARTS (complete) -->
+        <section id="selecting-data">
+            <h2>🎯 3. Selecting Data for Charts</h2>
+
+            <h3>Data Organization Principles</h3>
+            <h4>Rule 1: Keep Data Organized</h4>
+            <div class="sample-box">
+                ✅ GOOD DATA STRUCTURE:
+                A B C D
+                1 | Month | Sales | Target | Region |
+                2 | January | $45,000 | $50,000 | North |
+                3 | February| $52,000 | $50,000 | North |
+                4 | March | $48,000 | $50,000 | South |
+
+                ❌ POOR DATA STRUCTURE:
+                A B C D
+                1 | January Sales: $45,000 (North) Target: $50,000 |
+                2 | February Sales: $52,000 (North) Target: $50,000 |
+            </div>
+
+            <h4>Rule 2: Use Clear Headers</h4>
+            <ul>
+                <li>First row should contain descriptive headers</li>
+                <li>Headers become automatic labels in charts</li>
+                <li>Avoid merged cells in header rows</li>
+            </ul>
+
+            <h4>Rule 3: No Blank Rows or Columns</h4>
+            <ul>
+                <li>Blank rows/columns interrupt data series</li>
+                <li>Excel may misinterpret data ranges</li>
+                <li>Remove empty rows between data</li>
+            </ul>
+
+            <h3>Methods for Selecting Data</h3>
+            <h4>Method 1: Simple Selection (Adjacent Data)</h4>
+            <ol>
+                <li>Click and drag from top-left cell to bottom-right cell</li>
+                <li>Include headers for automatic labeling</li>
+                <li>Example: Select A1:C13 for monthly data with headers</li>
+            </ol>
+
+            <h4>Method 2: Non-Adjacent Selection</h4>
+            <ol>
+                <li>Select first range (e.g., A1:A13 for months)</li>
+                <li>Hold <kbd>Ctrl</kbd> key</li>
+                <li>Select second range (e.g., C1:C13 for target data)</li>
+                <li>Release <kbd>Ctrl</kbd> key</li>
+                <li>Insert chart</li>
+            </ol>
+
+            <h4>Method 3: Using the Select Data Source Dialog</h4>
+            <ol>
+                <li>Create empty chart first</li>
+                <li>Right-click chart > <strong>Select Data</strong></li>
+                <li>Click <strong>Add</strong> to add series</li>
+                <li>Specify:
+                    <ul>
+                        <li><strong>Series Name</strong>: Cell with series name</li>
+                        <li><strong>Series Values</strong>: Range containing data</li>
+                        <li><strong>Horizontal Axis Labels</strong>: Range for category labels</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Keyboard Shortcuts for Data Selection</h3>
+            <table>
+                <tr>
+                    <th>Shortcut</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + A</kbd></td>
+                    <td>Select entire data region</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Space</kbd></td>
+                    <td>Select entire column</td>
+                </tr>
+                <tr>
+                    <td><kbd>Shift + Space</kbd></td>
+                    <td>Select entire row</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Shift + ↓</kbd></td>
+                    <td>Select down to last data cell</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Shift + →</kbd></td>
+                    <td>Select right to last data cell</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Click</kbd></td>
+                    <td>Add non-adjacent cells to selection</td>
+                </tr>
+            </table>
+
+            <h3>Dynamic Data Selection Using Tables</h3>
+            <p>Convert data to an Excel Table for automatic chart updating:</p>
+            <ol>
+                <li>Select your data range</li>
+                <li>Press <kbd>Ctrl + T</kbd> or go to <strong>Insert > Table</strong></li>
+                <li>Ensure "My table has headers" is checked</li>
+                <li>Create chart from table</li>
+                <li>Add new data - chart updates automatically!</li>
+            </ol>
+        </section>
+
+        <!-- 4. BASIC CHART TYPES (complete with all subtypes and decision tree) -->
+        <section id="chart-types">
+            <h2>📊 4. Basic Chart Types</h2>
+
+            <h3>Column Charts</h3>
+            <p><strong>Best for</strong>: Comparing values across categories, showing changes over time (limited
+                periods)</p>
+
+            <h4>Vertical Column Chart (Clustered)</h4>
+            <div class="chart-sketch">
+                ┌─ Sales by Quarter ─┐
+                │ ███ Q1 ███ Q2 │
+                80│ ███ ███ │
+                │ ███ ███ │
+                60│ ███ ███ ███ Q3│
+                │ ███ ███ ███ │
+                40│ ███ ███ ███ │
+                │ ███ ███ ███ │
+                20│ ███ ███ ███ │
+                └───┬───────┬───────┬─┘
+                North South East
+            </div>
+
+            <p><strong>When to use</strong>:</p>
+            <ul>
+                <li>Compare sales across regions</li>
+                <li>Show monthly performance</li>
+                <li>Display survey responses by category</li>
+                <li>Compare before/after scenarios</li>
+            </ul>
+
+            <p><strong>Subtypes</strong>:</p>
+            <ol>
+                <li><strong>Clustered Column</strong>: Compare multiple series across categories</li>
+                <li><strong>Stacked Column</strong>: Show part-to-whole relationships</li>
+                <li><strong>100% Stacked Column</strong>: Show percentage contribution</li>
+            </ol>
+
+            <h4>Creating a Column Chart</h4>
+            <div class="sample-box">
+                Data Setup:
+                A B C
+                1 | Product | Sales 2023 | Sales 2024 |
+                2 | Laptops | $45,000 | $52,000 |
+                3 | Tablets | $28,000 | $35,000 |
+                4 | Phones | $67,000 | $71,000 |
+
+                Steps:
+                1. Select A1:C4
+                2. Go to Insert > Charts > Column Chart
+                3. Choose "Clustered Column"
+            </div>
+
+            <h3>Bar Charts</h3>
+            <p><strong>Best for</strong>: Comparing many categories, displaying rankings, when category names are long
+            </p>
+
+            <h4>Horizontal Bar Chart</h4>
+            <div class="chart-sketch">
+                Sales by Product Category
+                Electronics ████████████ 78%
+                ───────────────
+                Furniture ██████████ 65%
+                ───────────────
+                Clothing ███████ 42%
+                ───────────────
+                Books ████ 25%
+            </div>
+
+            <p><strong>When to use</strong>:</p>
+            <ul>
+                <li>Ranking items (top to bottom)</li>
+                <li>Comparing long category names</li>
+                <li>Showing survey results</li>
+                <li>Displaying project timelines (Gantt charts)</li>
+            </ul>
+
+            <p><strong>Advantages over Column Charts</strong>:</p>
+            <ul>
+                <li>Easier to read long labels</li>
+                <li>Better for displaying many categories (10+)</li>
+                <li>Natural for ranking data</li>
+            </ul>
+
+            <h3>Line Charts</h3>
+            <p><strong>Best for</strong>: Showing trends over time, continuous data, multiple data series comparison</p>
+
+            <h4>Line Chart Example</h4>
+            <div class="chart-sketch">
+                ┌─ Revenue Trend 2024 ─┐
+                80│ ╱─╲ Actual
+                │ ╱ ╲ ─── Projected
+                60│ ╱ ╲___
+                │ ╱ ╲
+                40│ ╱ ╲
+                │ ╲
+                20└──────────────────────┘
+                Jan Mar May Jul Sep
+            </div>
+
+            <p><strong>When to use</strong>:</p>
+            <ul>
+                <li>Stock price movements</li>
+                <li>Temperature changes</li>
+                <li>Population growth</li>
+                <li>Monthly sales trends</li>
+                <li>Website traffic over time</li>
+            </ul>
+
+            <p><strong>Subtypes</strong>:</p>
+            <ol>
+                <li><strong>Line with Markers</strong>: Emphasize individual data points</li>
+                <li><strong>Stacked Line</strong>: Show cumulative trends</li>
+                <li><strong>100% Stacked Line</strong>: Show percentage trends</li>
+            </ol>
+
+            <h4>Creating a Line Chart</h4>
+            <div class="sample-box">
+                Data Setup:
+                A B C D
+                1 | Month | 2022 | 2023 | 2024 |
+                2 | Jan | 45 | 52 | 58 |
+                3 | Feb | 48 | 55 | 62 |
+                4 | Mar | 52 | 58 | 67 |
+
+                Steps:
+                1. Select A1:D13
+                2. Go to Insert > Charts > Line Chart
+                3. Choose "Line with Markers"
+            </div>
+
+            <h3>Pie Charts</h3>
+            <p><strong>Best for</strong>: Showing proportions, percentages, part-to-whole relationships (limited to
+                small datasets)</p>
+
+            <h4>Pie Chart Example</h4>
+            <div class="chart-sketch">
+                Market Share 2024
+                ██ Company A 45%
+                ████████ Company B 30%
+                ████████████ Company C 25%
+
+                ╱───╲
+                ╱ ██ ╲
+                ╱ ████ ╲
+                ╱ ██████ ╲
+                ╲ ██████ ╱
+                ╲ ████ ╱
+                ╲ ██ ╱
+                ╲───╱
+            </div>
+
+            <p><strong>Critical Rules for Pie Charts</strong>:</p>
+            <ul>
+                <li>Maximum 5-7 slices (more becomes unreadable)</li>
+                <li>Slices should sum to 100%</li>
+                <li>Consider "Other" category for small slices</li>
+                <li>Sort slices from largest to smallest</li>
+                <li>Avoid 3D effects (distorts proportions)</li>
+            </ul>
+
+            <p><strong>When to use</strong>:</p>
+            <ul>
+                <li>Budget allocation</li>
+                <li>Market share distribution</li>
+                <li>Survey response percentages</li>
+                <li>Demographic composition</li>
+                <li>Expense categories</li>
+            </ul>
+
+            <p><strong>Subtypes</strong>:</p>
+            <ol>
+                <li><strong>Pie</strong>: Standard pie chart</li>
+                <li><strong>Exploded Pie</strong>: Pull out one or more slices</li>
+                <li><strong>Pie of Pie</strong>: Break one slice into sub-categories</li>
+                <li><strong>Bar of Pie</strong>: Show details in a bar chart</li>
+            </ol>
+
+            <h4>Creating a Pie Chart</h4>
+            <div class="sample-box">
+                Data Setup:
+                A B
+                1 | Expense | Amount |
+                2 | Rent | $2,500 |
+                3 | Utilities | $450 |
+                4 | Supplies | $800 |
+                5 | Marketing | $1,200 |
+                6 | Salaries | $5,000 |
+
+                Steps:
+                1. Select A1:B6
+                2. Go to Insert > Charts > Pie Chart
+                3. Choose "2-D Pie"
+                4. Optional: Pull out a slice by clicking and dragging
+            </div>
+
+            <h3>Choosing the Right Chart Type</h3>
+            <table>
+                <tr>
+                    <th>Data Relationship</th>
+                    <th>Best Chart Type</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Comparison</strong></td>
+                    <td>Column or Bar</td>
+                    <td>Compare sales across regions</td>
+                </tr>
+                <tr>
+                    <td><strong>Trend over time</strong></td>
+                    <td>Line</td>
+                    <td>Monthly revenue for 5 years</td>
+                </tr>
+                <tr>
+                    <td><strong>Part to whole</strong></td>
+                    <td>Pie or Stacked Column</td>
+                    <td>Budget allocation by department</td>
+                </tr>
+                <tr>
+                    <td><strong>Correlation</strong></td>
+                    <td>Scatter (advanced)</td>
+                    <td>Advertising spend vs sales</td>
+                </tr>
+                <tr>
+                    <td><strong>Distribution</strong></td>
+                    <td>Column Histogram</td>
+                    <td>Age distribution of customers</td>
+                </tr>
+                <tr>
+                    <td><strong>Ranking</strong></td>
+                    <td>Bar</td>
+                    <td>Top 10 products by sales</td>
+                </tr>
+            </table>
+
+            <h3>Quick Reference Decision Tree</h3>
+            <div class="sample-box">
+                START HERE
+                │
+                ├─► How many variables?
+                │ │
+                │ ├─► One variable ──► Pie (if parts of whole)
+                │ │ Bar (if ranking)
+                │ │
+                │ ├─► Two variables ──► Column (comparison)
+                │ │ Line (trend over time)
+                │ │
+                │ └─► Three+ variables ──► Clustered Column
+                │ Stacked Column
+                │ Line with multiple series
+                │
+                └─► What's the goal?
+                │
+                ├─► Show change ──► Line
+                │
+                ├─► Show parts ──► Pie or Stacked Column
+                │
+                ├─► Compare items ──► Column or Bar
+                │
+                └─► Show relationship ──► Scatter (advanced)
+            </div>
+        </section>
+
+        <!-- 5. CREATING YOUR FIRST CHART (complete with all methods) -->
+        <section id="creating-charts">
+            <h2>⚙️ 5. Creating Your First Chart</h2>
+
+            <h3>Step-by-Step Chart Creation</h3>
+
+            <h4>Method 1: Quick Chart with Recommended Charts</h4>
+            <p><strong>Scenario</strong>: You have monthly sales data and want to create an appropriate chart.</p>
+            <div class="sample-box">
+                Sample Data:
+                A B
+                1 | Month | Sales |
+                2 | January | 45000 |
+                3 | February| 52000 |
+                4 | March | 48000 |
+                5 | April | 55000 |
+                6 | May | 59000 |
+                7 | June | 62000 |
+            </div>
+
+            <p><strong>Steps</strong>:</p>
+            <ol>
+                <li>Select cells A1:B7</li>
+                <li>Go to <strong>Insert</strong> tab on the Ribbon</li>
+                <li>Click <strong>Recommended Charts</strong></li>
+                <li>Excel displays previews of suitable chart types</li>
+                <li>Click on a preview to see larger view</li>
+                <li>Select the chart you want (e.g., "Clustered Column")</li>
+                <li>Click <strong>OK</strong></li>
+            </ol>
+
+            <h4>Method 2: Direct Chart Insertion</h4>
+            <ol>
+                <li>Select your data range (A1:B7)</li>
+                <li>Go to <strong>Insert</strong> tab</li>
+                <li>In <strong>Charts</strong> group, click the chart type icon</li>
+                <li>Select specific subtype from dropdown</li>
+                <li>Chart appears immediately on worksheet</li>
+            </ol>
+
+            <h4>Method 3: Keyboard Shortcut Method</h4>
+            <ol>
+                <li>Select your data range (A1:B7)</li>
+                <li>Press <kbd>Alt + F1</kbd> for instant chart on same sheet</li>
+                <li>OR press <kbd>F11</kbd> for chart on new sheet</li>
+            </ol>
+
+            <h3>Moving and Resizing Charts</h3>
+
+            <h4>Move Chart Within Worksheet</h4>
+            <ul>
+                <li>Click chart border (cursor becomes 4-headed arrow)</li>
+                <li>Drag to new location</li>
+                <li>Hold <kbd>Alt</kbd> while dragging to snap to cell grid</li>
+            </ul>
+
+            <h4>Resize Chart</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Click and drag any corner handle (maintains proportions)</li>
+                <li>OR drag side handles (stretches in one direction)</li>
+            </ol>
+
+            <h4>Move Chart to Separate Sheet</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Go to <strong>Chart Design</strong> tab</li>
+                <li>Click <strong>Move Chart</strong></li>
+                <li>Select <strong>New sheet</strong> option</li>
+                <li>Name the sheet (e.g., "Sales Chart")</li>
+                <li>Click <strong>OK</strong></li>
+            </ol>
+
+            <h3>Chart Templates</h3>
+            <p>Save frequently used chart formats as templates:</p>
+            <ol>
+                <li>Create and format a chart exactly as desired</li>
+                <li>Right-click the chart</li>
+                <li>Select <strong>Save as Template</strong></li>
+                <li>Name the template (e.g., "Monthly Sales Report")</li>
+                <li>Click <strong>Save</strong></li>
+            </ol>
+
+            <p><strong>Using Templates</strong>:</p>
+            <ul>
+                <li>Go to <strong>Insert > Recommended Charts > All Charts > Templates</strong></li>
+                <li>Select your template</li>
+                <li>Click <strong>OK</strong></li>
+            </ul>
+        </section>
+
+        <!-- 6. ADDING AND FORMATTING CHART TITLES (complete) -->
+        <section id="chart-titles">
+            <h2>🏷️ 6. Adding and Formatting Chart Titles</h2>
+
+            <h3>Types of Titles</h3>
+            <ol>
+                <li><strong>Chart Title</strong>: Main title describing entire chart</li>
+                <li><strong>Axis Titles</strong>: Labels for horizontal and vertical axes</li>
+                <li><strong>Secondary Axis Titles</strong>: When using secondary axis</li>
+            </ol>
+
+            <h3>Adding a Chart Title</h3>
+
+            <h4>Method 1: Quick Add</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Click the <strong>Chart Elements</strong> button (+) at top-right of chart</li>
+                <li>Check <strong>Chart Title</strong> box</li>
+                <li>Click on the default title text</li>
+                <li>Type your title</li>
+            </ol>
+
+            <h4>Method 2: Using Ribbon</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Go to <strong>Chart Design</strong> tab</li>
+                <li>Click <strong>Add Chart Element</strong> > <strong>Chart Title</strong></li>
+                <li>Choose position:
+                    <ul>
+                        <li><strong>Above Chart</strong> (centered above plot area)</li>
+                        <li><strong>Centered Overlay</strong> (title overlays chart)</li>
+                    </ul>
+                </li>
+                <li>Type your title</li>
+            </ol>
+
+            <h4>Method 3: Double-Click</h4>
+            <ol>
+                <li>Double-click anywhere near top of chart</li>
+                <li>Start typing to replace "Chart Title"</li>
+                <li>Press Enter when done</li>
+            </ol>
+
+            <h3>Writing Effective Chart Titles</h3>
+            <p><strong>Formula for Good Titles</strong>: [What] + [When] + [Where] + [Measurement Unit]</p>
+
+            <table>
+                <tr>
+                    <th>Poor Title</th>
+                    <th>Effective Title</th>
+                </tr>
+                <tr>
+                    <td>"Sales"</td>
+                    <td>"Quarterly Sales by Region 2024 (in $USD)"</td>
+                </tr>
+                <tr>
+                    <td>"Revenue"</td>
+                    <td>"Monthly Revenue Growth: January-June 2024"</td>
+                </tr>
+                <tr>
+                    <td>"Chart 1"</td>
+                    <td>"Market Share Distribution by Company - 2024"</td>
+                </tr>
+                <tr>
+                    <td>"Data"</td>
+                    <td>"Customer Satisfaction Ratings by Department (1-5 Scale)"</td>
+                </tr>
+            </table>
+
+            <h3>Formatting Chart Titles</h3>
+
+            <h4>Font Formatting</h4>
+            <ol>
+                <li>Right-click the title</li>
+                <li>Select <strong>Format Chart Title</strong></li>
+                <li>Use formatting options:
+                    <ul>
+                        <li><strong>Fill</strong>: Background color</li>
+                        <li><strong>Border</strong>: Outline style and color</li>
+                        <li><strong>Font</strong>: Size, color, style (bold, italic)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p><strong>OR</strong> use Home tab:</p>
+            <ol>
+                <li>Select title text</li>
+                <li>Use standard font formatting tools:
+                    <ul>
+                        <li>Font size (recommend 14-18pt for main title)</li>
+                        <li>Bold for emphasis</li>
+                        <li>Color to match theme</li>
+                        <li>Alignment</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Title Positioning</h4>
+            <ol>
+                <li>Click title to select</li>
+                <li>Drag to desired position</li>
+                <li>OR use alignment options in <strong>Format</strong> tab</li>
+            </ol>
+
+            <h3>Adding Axis Titles</h3>
+
+            <h4>Steps to Add Axis Titles</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Click <strong>Chart Elements</strong> button (+)</li>
+                <li>Check <strong>Axis Titles</strong></li>
+                <li>Default titles appear:
+                    <ul>
+                        <li>"Axis Title" for horizontal axis</li>
+                        <li>"Axis Title" for vertical axis</li>
+                    </ul>
+                </li>
+                <li>Click each and type descriptive labels</li>
+            </ol>
+
+            <h4>Examples of Good Axis Titles</h4>
+            <p><strong>Vertical Axis (Values)</strong>:</p>
+            <ul>
+                <li>"Revenue ($ USD)"</li>
+                <li>"Number of Customers"</li>
+                <li>"Temperature (°C)"</li>
+                <li>"Percentage (%)"</li>
+                <li>"Sales Volume (Units)"</li>
+            </ul>
+
+            <p><strong>Horizontal Axis (Categories)</strong>:</p>
+            <ul>
+                <li>"Fiscal Quarter"</li>
+                <li>"Month (2024)"</li>
+                <li>"Product Category"</li>
+                <li>"Department"</li>
+                <li>"Age Group"</li>
+            </ul>
+
+            <h3>Advanced Title Formatting</h3>
+
+            <h4>Add a Subtitle</h4>
+            <p>Create a two-line title:</p>
+            <ol>
+                <li>Type main title</li>
+                <li>Press <kbd>Alt + Enter</kbd> to create line break</li>
+                <li>Type subtitle</li>
+                <li>Format subtitle smaller or different color</li>
+            </ol>
+
+            <h4>Dynamic Titles Using Cell References</h4>
+            <p>Make chart title update automatically:</p>
+            <ol>
+                <li>Click chart title</li>
+                <li>Type <code>=</code> in formula bar</li>
+                <li>Click cell containing title text</li>
+                <li>Press Enter</li>
+                <li>Chart title now linked to cell</li>
+            </ol>
+
+            <p>Example:
+            <ul>
+                <li>Cell A1 contains "Sales Report 2024"</li>
+                <li>Chart title =Sheet1!$A$1</li>
+                <li>Change A1, chart updates automatically</li>
+            </ul>
+            </p>
+        </section>
+
+        <!-- 7. WORKING WITH CHART LABELS (complete) -->
+        <section id="chart-labels">
+            <h2>🔖 7. Working with Chart Labels</h2>
+
+            <h3>Types of Labels</h3>
+            <ol>
+                <li><strong>Data Labels</strong>: Show actual values on data points</li>
+                <li><strong>Axis Labels</strong>: Category names on horizontal axis</li>
+                <li><strong>Legend</strong>: Identifies data series</li>
+                <li><strong>Data Table</strong>: Shows underlying data</li>
+            </ol>
+
+            <h3>Data Labels</h3>
+
+            <h4>Adding Data Labels</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Click <strong>Chart Elements</strong> button (+)</li>
+                <li>Check <strong>Data Labels</strong></li>
+                <li>Choose position:
+                    <ul>
+                        <li><strong>Center</strong> (on data points)</li>
+                        <li><strong>Inside End</strong> (inside top of bars)</li>
+                        <li><strong>Inside Base</strong> (inside bottom)</li>
+                        <li><strong>Outside End</strong> (outside top of bars)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Customizing Data Labels</h4>
+            <p>Right-click data labels > <strong>Format Data Labels</strong></p>
+
+            <p><strong>Label Options</strong>:</p>
+            <ul>
+                <li><strong>Value</strong>: Show actual number</li>
+                <li><strong>Percentage</strong>: Show as % (pie charts)</li>
+                <li><strong>Category Name</strong>: Show category with value</li>
+                <li><strong>Series Name</strong>: Show series identification</li>
+                <li><strong>Leader Lines</strong>: Connect labels to points</li>
+                <li><strong>Number Format</strong>: Currency, percentage, decimals</li>
+            </ul>
+
+            <h4>Advanced Label Formatting</h4>
+
+            <p><strong>Format Individual Label</strong>:</p>
+            <ol>
+                <li>Click once to select all labels</li>
+                <li>Click again on specific label</li>
+                <li>Format independently</li>
+            </ol>
+
+            <p><strong>Label Position Examples</strong>:</p>
+            <div class="sample-box">
+                Column Chart: Line Chart:
+                80┌─ 80 80┌─ ●80
+                60│ 60 60│ ●60
+                40│ 40 40│ ●40
+                20│ 20 20│ ●20
+                └────── └──────────────
+                Outside End Above (Line charts)
+            </div>
+
+            <h3>Legend Customization</h3>
+
+            <h4>Position Legend</h4>
+            <ol>
+                <li>Click chart</li>
+                <li>Click <strong>Chart Elements</strong> button (+)</li>
+                <li>Hover over <strong>Legend</strong> arrow</li>
+                <li>Choose position:
+                    <ul>
+                        <li>Right (default)</li>
+                        <li>Top</li>
+                        <li>Left</li>
+                        <li>Bottom</li>
+                        <li>Overlay options</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Format Legend</h4>
+            <ol>
+                <li>Right-click legend</li>
+                <li>Select <strong>Format Legend</strong></li>
+                <li>Options:
+                    <ul>
+                        <li><strong>Fill</strong> (background)</li>
+                        <li><strong>Border</strong> (outline)</li>
+                        <li><strong>Font</strong> (size, color)</li>
+                        <li><strong>Legend Entries</strong> (order, remove items)</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Remove Unnecessary Legend Items</h4>
+            <p>If only one data series, legend may be redundant:</p>
+            <ol>
+                <li>Click legend to select</li>
+                <li>Press Delete key</li>
+                <li>OR uncheck Legend in Chart Elements</li>
+            </ol>
+
+            <h3>Axis Labels</h3>
+
+            <h4>Adjusting Horizontal Axis Labels</h4>
+            <p><strong>If labels are too long</strong>:</p>
+            <ol>
+                <li>Right-click horizontal axis</li>
+                <li>Select <strong>Format Axis</strong></li>
+                <li>Under <strong>Size & Properties</strong>:
+                    <ul>
+                        <li>Change <strong>Text direction</strong></li>
+                        <li>Or <strong>Specify interval unit</strong></li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p><strong>Options</strong>:</p>
+            <ul>
+                <li><strong>Rotate text</strong>: -45° or 90° for long labels</li>
+                <li><strong>Multi-line</strong>: Text wraps automatically</li>
+                <li><strong>Skip labels</strong>: Show every nth label</li>
+            </ul>
+
+            <h4>Format Axis Labels</h4>
+            <ol>
+                <li>Right-click axis labels</li>
+                <li>Select <strong>Format Axis</strong></li>
+                <li><strong>Number</strong> tab:
+                    <ul>
+                        <li>Currency, Date, Percentage formats</li>
+                        <li>Decimal places</li>
+                    </ul>
+                </li>
+                <li><strong>Font</strong> options:
+                    <ul>
+                        <li>Size, color, style</li>
+                        <li>Alignment</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Data Tables</h3>
+            <p>Add data table to show exact values below chart:</p>
+            <ol>
+                <li>Select chart</li>
+                <li>Click <strong>Chart Elements</strong> button (+)</li>
+                <li>Check <strong>Data Table</strong></li>
+                <li>Choose with or without legend keys</li>
+            </ol>
+
+            <p><strong>Pros of Data Tables</strong>:</p>
+            <ul>
+                <li>Shows exact values</li>
+                <li>Replaces need for axis</li>
+                <li>Good for printed reports</li>
+            </ul>
+
+            <p><strong>Cons</strong>:</p>
+            <ul>
+                <li>Takes up space</li>
+                <li>Can make chart crowded</li>
+                <li>Not for large datasets</li>
+            </ul>
+
+            <h3>Label Best Practices</h3>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Do</th>
+                    <th>Don't</th>
+                </tr>
+                <tr>
+                    <td><strong>Data Labels</strong></td>
+                    <td>Use for small datasets</td>
+                    <td>Use for 20+ data points</td>
+                </tr>
+                <tr>
+                    <td><strong>Legend</strong></td>
+                    <td>Place at top or bottom</td>
+                    <td>Use 3D effects</td>
+                </tr>
+                <tr>
+                    <td><strong>Axis Labels</strong></td>
+                    <td>Rotate long labels</td>
+                    <td>Crowd horizontal axis</td>
+                </tr>
+                <tr>
+                    <td><strong>Numbers</strong></td>
+                    <td>Format consistently</td>
+                    <td>Mix formats (e.g., $ and %)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 8. CHART FORMATTING AND CUSTOMIZATION (complete) -->
+        <section id="formatting">
+            <h2>🎨 8. Chart Formatting and Customization</h2>
+
+            <h3>Chart Styles</h3>
+
+            <h4>Apply Quick Styles</h4>
+            <ol>
+                <li>Select chart</li>
+                <li>Go to <strong>Chart Design</strong> tab</li>
+                <li>Browse <strong>Chart Styles</strong> gallery</li>
+                <li>Click to apply</li>
+            </ol>
+
+            <p><strong>Style Categories</strong>:</p>
+            <ul>
+                <li><strong>Monochrome</strong>: Professional, clean</li>
+                <li><strong>Colorful</strong>: Engaging presentations</li>
+                <li><strong>Professional</strong>: Dark backgrounds</li>
+                <li><strong>Minimal</strong>: Simple, elegant</li>
+            </ul>
+
+            <h3>Color Customization</h3>
+
+            <h4>Change Individual Series Color</h4>
+            <ol>
+                <li>Click on data series (bars/lines)</li>
+                <li>Go to <strong>Format</strong> tab</li>
+                <li>Click <strong>Shape Fill</strong></li>
+                <li>Choose color</li>
+            </ol>
+
+            <p><strong>OR</strong></p>
+            <ol>
+                <li>Right-click data series</li>
+                <li>Select <strong>Fill</strong></li>
+                <li>Choose color</li>
+            </ol>
+
+            <h4>Color Schemes</h4>
+
+            <p><strong>For Column/Bar Charts</strong>:</p>
+            <ul>
+                <li>Use contrasting colors for different series</li>
+                <li>Use shades of same color for related data</li>
+                <li>Avoid red/green for colorblind viewers</li>
+            </ul>
+
+            <p><strong>For Line Charts</strong>:</p>
+            <ul>
+                <li>Use distinct colors for each line</li>
+                <li>Thicker lines (2-3pt) for main series</li>
+                <li>Dashed lines for projections</li>
+            </ul>
+
+            <p><strong>For Pie Charts</strong>:</p>
+            <ul>
+                <li>Use contrasting colors for slices</li>
+                <li>Avoid similar shades</li>
+                <li>Explode important slice</li>
+            </ul>
+
+            <h3>Gridlines Formatting</h3>
+
+            <h4>Adjust Gridlines</h4>
+            <ol>
+                <li>Right-click gridlines</li>
+                <li>Select <strong>Format Gridlines</strong></li>
+                <li>Options:
+                    <ul>
+                        <li><strong>Line style</strong>: Solid, dashed</li>
+                        <li><strong>Color</strong>: Light gray (default)</li>
+                        <li><strong>Width</strong>: Thinner for minor gridlines</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Best Practices</h4>
+            <ul>
+                <li>Major gridlines: Solid, light gray</li>
+                <li>Minor gridlines: Dashed, very light</li>
+                <li>Remove if chart is simple</li>
+            </ul>
+
+            <h3>Axis Formatting</h3>
+
+            <h4>Scale Adjustment</h4>
+            <ol>
+                <li>Right-click vertical axis</li>
+                <li>Select <strong>Format Axis</strong></li>
+                <li>Under <strong>Axis Options</strong>:
+                    <ul>
+                        <li><strong>Minimum</strong>: Override automatic</li>
+                        <li><strong>Maximum</strong>: Set appropriate top</li>
+                        <li><strong>Major unit</strong>: Gridline interval</li>
+                        <li><strong>Display units</strong>: Thousands, Millions</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p><strong>Example - Sales in Millions</strong>:</p>
+            <div class="sample-box">
+                Before: 1,500,000 2,000,000 2,500,000
+                After: 1.5M 2.0M 2.5M
+            </div>
+
+            <h4>Number Format on Axis</h4>
+            <ol>
+                <li>Right-click axis</li>
+                <li>Select <strong>Format Axis</strong></li>
+                <li>Click <strong>Number</strong> category</li>
+                <li>Choose format:
+                    <ul>
+                        <li>Currency ($)</li>
+                        <li>Percentage (%)</li>
+                        <li>Date</li>
+                        <li>Custom</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Adding Trendlines</h3>
+            <p>Show patterns and predictions:</p>
+            <ol>
+                <li>Right-click data series</li>
+                <li>Select <strong>Add Trendline</strong></li>
+                <li>Choose type:
+                    <ul>
+                        <li><strong>Linear</strong>: Straight line trend</li>
+                        <li><strong>Exponential</strong>: Growth/decay</li>
+                        <li><strong>Moving Average</strong>: Smooth fluctuations</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Chart Background</h3>
+
+            <h4>Format Plot Area</h4>
+            <ol>
+                <li>Right-click plot area (area with bars/lines)</li>
+                <li>Select <strong>Format Plot Area</strong></li>
+                <li>Choose:
+                    <ul>
+                        <li><strong>Fill</strong>: Color or gradient</li>
+                        <li><strong>Border</strong>: Outline</li>
+                        <li><strong>Effects</strong>: Shadow, glow</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>Format Chart Area</h4>
+            <ol>
+                <li>Right-click outer chart area</li>
+                <li>Select <strong>Format Chart Area</strong></li>
+                <li>Similar options as plot area</li>
+                <li>Consider company colors/themes</li>
+            </ol>
+
+            <h3>Font Consistency</h3>
+            <p><strong>Recommended Fonts</strong>:</p>
+            <ul>
+                <li>Titles: Arial, Calibri, Segoe UI (14-18pt)</li>
+                <li>Axis labels: Same font (10-12pt)</li>
+                <li>Legend: Same font (10-12pt)</li>
+                <li>Data labels: Same font (9-11pt)</li>
+            </ul>
+
+            <h3>Save as Template</h3>
+            <ol>
+                <li>Format chart completely</li>
+                <li>Right-click chart</li>
+                <li>Select <strong>Save as Template</strong></li>
+                <li>Name descriptively (e.g., "Company_Report_2024")</li>
+                <li>Click <strong>Save</strong></li>
+            </ol>
+        </section>
+
+        <!-- 9. BEST PRACTICES AND TIPS (complete) -->
+        <section id="best-practices">
+            <h2>✅ 9. Best Practices and Tips</h2>
+
+            <h3>Design Principles</h3>
+
+            <h4>The 5-Second Rule</h4>
+            <p>A viewer should understand the main message within 5 seconds:</p>
+            <ul>
+                <li>Clear title</li>
+                <li>Obvious data representation</li>
+                <li>No clutter</li>
+                <li>Appropriate chart type</li>
+            </ul>
+
+            <h4>Data-Ink Ratio</h4>
+            <p>Maximize data ink, minimize non-data ink:</p>
+            <ul>
+                <li>Remove unnecessary gridlines</li>
+                <li>Avoid 3D effects (distorts data)</li>
+                <li>Remove borders if not needed</li>
+                <li>Use light colors for non-data elements</li>
+            </ul>
+
+            <h4>Color Psychology</h4>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Meaning/Use</th>
+                </tr>
+                <tr>
+                    <td><strong>Blue</strong></td>
+                    <td>Trust, professional, default</td>
+                </tr>
+                <tr>
+                    <td><strong>Green</strong></td>
+                    <td>Growth, profit, positive</td>
+                </tr>
+                <tr>
+                    <td><strong>Red</strong></td>
+                    <td>Decline, loss, attention</td>
+                </tr>
+                <tr>
+                    <td><strong>Orange</strong></td>
+                    <td>Warning, moderate</td>
+                </tr>
+                <tr>
+                    <td><strong>Purple</strong></td>
+                    <td>Premium, luxury</td>
+                </tr>
+                <tr>
+                    <td><strong>Gray</strong></td>
+                    <td>Neutral, background</td>
+                </tr>
+            </table>
+
+            <h3>Chart Type-Specific Tips</h3>
+
+            <h4>Column Charts</h4>
+            <ul>
+                <li>Start Y-axis at zero (always!)</li>
+                <li>Sort categories logically</li>
+                <li>Use gap width 50-150%</li>
+                <li>Maximum 12 columns per chart</li>
+            </ul>
+
+            <h4>Bar Charts</h4>
+            <ul>
+                <li>Sort from largest to smallest</li>
+                <li>Keep category names horizontal</li>
+                <li>Use for 5-20 categories</li>
+                <li>Place labels directly on bars if possible</li>
+            </ul>
+
+            <h4>Line Charts</h4>
+            <ul>
+                <li>Minimum 4 data points</li>
+                <li>Maximum 5-6 lines per chart</li>
+                <li>Use markers for individual points</li>
+                <li>Label lines directly (not legend)</li>
+            </ul>
+
+            <h4>Pie Charts</h4>
+            <ul>
+                <li>Maximum 5-7 slices</li>
+                <li>Order slices clockwise (largest first)</li>
+                <li>Use "Other" category for small slices</li>
+                <li>Avoid 3D and exploded (except for emphasis)</li>
+            </ul>
+
+            <h3>Common Mistakes to Avoid</h3>
+
+            <div class="sample-box">
+                ❌ MISTAKE: Non-zero Y-axis
+                ┌─
+                45┤ ███
+                40┤ ███
+                └───
+                Looks like huge growth!
+
+                ✅ CORRECT: Zero-based Y-axis
+                ┌─
+                80┤
+                60┤
+                40┤ ███
+                20┤ ███ ███
+                0└────────
+                Shows real proportion!
+            </div>
+
+            <table>
+                <tr>
+                    <th>Mistake</th>
+                    <th>Why It's Wrong</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td><strong>3D charts</strong></td>
+                    <td>Distorts proportions</td>
+                    <td>Use 2D charts</td>
+                </tr>
+                <tr>
+                    <td><strong>Too many colors</strong></td>
+                    <td>Confusing</td>
+                    <td>Use consistent palette</td>
+                </tr>
+                <tr>
+                    <td><strong>Missing title</strong></td>
+                    <td>No context</td>
+                    <td>Always add title</td>
+                </tr>
+                <tr>
+                    <td><strong>Truncated Y-axis</strong></td>
+                    <td>Exaggerates differences</td>
+                    <td>Start at zero</td>
+                </tr>
+                <tr>
+                    <td><strong>Dual axes</strong></td>
+                    <td>Misleading comparison</td>
+                    <td>Use separate charts</td>
+                </tr>
+                <tr>
+                    <td><strong>Overcrowding</strong></td>
+                    <td>Unreadable</td>
+                    <td>Filter data, use summary</td>
+                </tr>
+            </table>
+
+            <h3>Accessibility Considerations</h3>
+
+            <p><strong>For Colorblind Viewers</strong> (8% of men):</p>
+            <ul>
+                <li>Use patterns/textures with colors</li>
+                <li>Avoid red/green combinations</li>
+                <li>Test in grayscale</li>
+                <li>Use high contrast</li>
+            </ul>
+
+            <p><strong>For Presentations</strong>:</p>
+            <ul>
+                <li>Minimum font size: 20pt for titles</li>
+                <li>High contrast colors</li>
+                <li>Simple, clear message</li>
+                <li>One main point per chart</li>
+            </ul>
+
+            <h3>Data Preparation Tips</h3>
+            <ol>
+                <li><strong>Clean data first</strong>: Remove blanks, errors</li>
+                <li><strong>Sort meaningfully</strong>: Chronological or logical order</li>
+                <li><strong>Use consistent units</strong>: All same scale</li>
+                <li><strong>Summarize if needed</strong>: Group small categories</li>
+                <li><strong>Check totals</strong>: For pie charts, sum to 100%</li>
+            </ol>
+
+            <h3>Quick Formatting Checklist</h3>
+            <p>Before finalizing any chart:</p>
+            <div class="def-grid">
+                <div class="def-item">☐ Is the chart type appropriate for data?</div>
+                <div class="def-item">☐ Does the title clearly state the message?</div>
+                <div class="def-item">☐ Are axes clearly labeled?</div>
+                <div class="def-item">☐ Is the Y-axis starting at zero? (for column/bar)</div>
+                <div class="def-item">☐ Are colors consistent and meaningful?</div>
+                <div class="def-item">☐ Is the legend necessary? Positioned well?</div>
+                <div class="def-item">☐ Are numbers formatted consistently?</div>
+                <div class="def-item">☐ Is the chart free of clutter?</div>
+                <div class="def-item">☐ Can it be understood in 5 seconds?</div>
+                <div class="def-item">☐ Is it accessible to all viewers?</div>
+            </div>
+        </section>
+
+        <!-- 10. TROUBLESHOOTING COMMON ISSUES (complete) -->
+        <section id="troubleshooting">
+            <h2>🔧 10. Troubleshooting Common Issues</h2>
+
+            <h3>Problem: Chart Shows Wrong Data</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Incorrect values displayed</li>
+                <li>Missing categories</li>
+                <li>Wrong series</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>Check data range</strong>:
+                    <ul>
+                        <li>Right-click chart</li>
+                        <li>Select <strong>Select Data</strong></li>
+                        <li>Verify ranges in left and right boxes</li>
+                        <li>Click <strong>Switch Row/Column</strong> if needed</li>
+                    </ul>
+                </li>
+                <li><strong>Hidden rows</strong>:
+                    <ul>
+                        <li>Excel excludes hidden rows</li>
+                        <li>Unhide rows: Select surrounding rows, right-click > Unhide</li>
+                    </ul>
+                </li>
+                <li><strong>Empty cells</strong>:
+                    <ul>
+                        <li>Excel treats blanks as zero</li>
+                        <li>Fill blanks with #N/A to ignore</li>
+                        <li>Or use consistent data</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Problem: Chart Too Crowded</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Axis labels overlapping</li>
+                <li>Data unreadable</li>
+                <li>Chart looks messy</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>For axis labels</strong>:
+                    <ul>
+                        <li>Right-click axis > Format Axis</li>
+                        <li>Under <strong>Size & Properties</strong>, change Text direction</li>
+                        <li>Or specify interval: Under <strong>Axis Options</strong>, set Label Interval to 2 (show
+                            every 2nd)</li>
+                    </ul>
+                </li>
+                <li><strong>For too much data</strong>:
+                    <ul>
+                        <li>Create PivotChart summary</li>
+                        <li>Filter to top 10 items</li>
+                        <li>Use combo chart</li>
+                    </ul>
+                </li>
+                <li><strong>Increase size</strong>:
+                    <ul>
+                        <li>Drag corners to enlarge</li>
+                        <li>Move to separate sheet</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Problem: Missing Data Series</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Some data not showing</li>
+                <li>Legend shows but no bars/lines</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>Check selection</strong>:
+                    <ul>
+                        <li>Right-click > Select Data</li>
+                        <li>Click each series, verify range</li>
+                    </ul>
+                </li>
+                <li><strong>Check for #N/A</strong>:
+                    <ul>
+                        <li>Excel ignores #N/A in line charts</li>
+                        <li>Replace zeros with =NA() if should be blank</li>
+                    </ul>
+                </li>
+                <li><strong>Mixed data types</strong>:
+                    <ul>
+                        <li>Ensure all numbers, not text</li>
+                        <li>Use VALUE() function to convert</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Problem: Date Axis Issues</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Dates not in order</li>
+                <li>Too many date labels</li>
+                <li>Wrong date format</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>Set as text axis</strong>:
+                    <ul>
+                        <li>Right-click horizontal axis</li>
+                        <li>Select <strong>Format Axis</strong></li>
+                        <li>Under <strong>Axis Type</strong>, select <strong>Text axis</strong></li>
+                    </ul>
+                </li>
+                <li><strong>Fix date order</strong>:
+                    <ul>
+                        <li>Sort data chronologically</li>
+                        <li>Ensure consistent date format</li>
+                    </ul>
+                </li>
+                <li><strong>Reduce date labels</strong>:
+                    <ul>
+                        <li>Under <strong>Format Axis</strong> > <strong>Labels</strong></li>
+                        <li>Set <strong>Interval</strong> to automatic or custom</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Problem: Percentage Display</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Wrong percentages in pie</li>
+                <li>Decimals showing</li>
+                <li>Format incorrect</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>For pie chart percentages</strong>:
+                    <ul>
+                        <li>Right-click data labels</li>
+                        <li>Select <strong>Format Data Labels</strong></li>
+                        <li>Check <strong>Percentage</strong>, uncheck <strong>Value</strong></li>
+                        <li>Set decimal places to 0 or 1</li>
+                    </ul>
+                </li>
+                <li><strong>For axis as percentage</strong>:
+                    <ul>
+                        <li>Right-click axis</li>
+                        <li>Select <strong>Format Axis</strong></li>
+                        <li>Click <strong>Number</strong> > <strong>Percentage</strong></li>
+                        <li>Set decimal places</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Problem: Legend Problems</h3>
+            <p><strong>Symptoms</strong>:</p>
+            <ul>
+                <li>Legend shows "Series1", "Series2"</li>
+                <li>Wrong legend order</li>
+                <li>Legend too large</li>
+            </ul>
+
+            <p><strong>Solutions</strong>:</p>
+            <ol>
+                <li><strong>Fix series names</strong>:
+                    <ul>
+                        <li>Right-click > Select Data</li>
+                        <li>Click each series</li>
+                        <li>Edit <strong>Series name</strong> to cell reference</li>
+                    </ul>
+                </li>
+                <li><strong>Reorder legend</strong>:
+                    <ul>
+                        <li>In Select Data dialog</li>
+                        <li>Use up/down arrows to reorder</li>
+                        <li>(Note: Excel 2016+ may have limited reorder)</li>
+                    </ul>
+                </li>
+                <li><strong>Resize legend</strong>:
+                    <ul>
+                        <li>Click legend to select</li>
+                        <li>Drag corners to resize</li>
+                        <li>Or delete if not needed</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Quick Fix Reference Table</h3>
+            <table>
+                <tr>
+                    <th>Issue</th>
+                    <th>Quick Fix</th>
+                </tr>
+                <tr>
+                    <td>Wrong chart type</td>
+                    <td>Right-click > Change Chart Type</td>
+                </tr>
+                <tr>
+                    <td>Colors wrong</td>
+                    <td>Format tab > Shape Fill</td>
+                </tr>
+                <tr>
+                    <td>Numbers as text</td>
+                    <td>Select column > Data tab > Text to Columns</td>
+                </tr>
+                <tr>
+                    <td>Chart too small</td>
+                    <td>Drag corners or move to new sheet</td>
+                </tr>
+                <tr>
+                    <td>Gridlines too dark</td>
+                    <td>Format Gridlines > Light gray, thin line</td>
+                </tr>
+                <tr>
+                    <td>Title missing</td>
+                    <td>Chart Elements (+) > Chart Title</td>
+                </tr>
+                <tr>
+                    <td>Data labels crowded</td>
+                    <td>Format Data Labels > Outside End or Best Fit</td>
+                </tr>
+                <tr>
+                    <td>Y-axis starting above zero</td>
+                    <td>Format Axis > Minimum > 0</td>
+                </tr>
+                <tr>
+                    <td>Dates not showing right</td>
+                    <td>Format Axis > Text axis</td>
+                </tr>
+                <tr>
+                    <td>Legend overlapping</td>
+                    <td>Move legend to top or bottom</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 11. PRACTICE EXERCISES (all 7 exercises, complete with all details) -->
+        <section id="exercises">
+            <h2>✍️ 11. Practice Exercises</h2>
+
+            <h3>Exercise 1: Basic Column Chart</h3>
+            <p><strong>Scenario</strong>: You're an administrative assistant creating a quarterly sales report.</p>
+            <div class="sample-box">
+                Data:
+                Quarter Sales 2024
+                Q1 $45,000
+                Q2 $52,000
+                Q3 $58,000
+                Q4 $63,000
+            </div>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li>Create a clustered column chart</li>
+                <li>Add chart title "Quarterly Sales 2024"</li>
+                <li>Add Y-axis title "Revenue ($)"</li>
+                <li>Add data labels showing values</li>
+                <li>Format Y-axis as currency with no decimals</li>
+                <li>Change column color to blue</li>
+                <li>Position chart below the data</li>
+            </ol>
+            <p><strong>Expected Result</strong>: Professional column chart showing quarterly growth</p>
+
+            <h3>Exercise 2: Multiple Series Comparison</h3>
+            <p><strong>Scenario</strong>: Compare actual vs target sales for first half of year.</p>
+            <div class="sample-box">
+                Data:
+                Month Actual Target
+                Jan $45,000 $50,000
+                Feb $52,000 $50,000
+                Mar $48,000 $50,000
+                Apr $55,000 $55,000
+                May $59,000 $55,000
+                Jun $62,000 $60,000
+            </div>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li>Create clustered column chart with both series</li>
+                <li>Title: "H1 2024 Sales: Actual vs Target"</li>
+                <li>Format Actual as blue, Target as orange (dashed outline)</li>
+                <li>Add legend at bottom</li>
+                <li>Add data labels only for Actual</li>
+                <li>Set Y-axis minimum to 40,000</li>
+                <li>Add horizontal axis title "Month"</li>
+                <li>Create a copy and change to line chart for comparison</li>
+            </ol>
+
+            <h3>Exercise 3: Pie Chart Distribution</h3>
+            <p><strong>Scenario</strong>: Show departmental budget allocation.</p>
+            <div class="sample-box">
+                Data:
+                Department Budget
+                Marketing $25,000
+                Operations $40,000
+                IT $15,000
+                HR $12,000
+                Admin $8,000
+            </div>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li>Create a pie chart</li>
+                <li>Title: "2024 Budget Allocation by Department"</li>
+                <li>Show percentage data labels</li>
+                <li>Explode the largest slice (Operations)</li>
+                <li>Change colors to a professional palette</li>
+                <li>Move legend to right side</li>
+                <li>Add a callout for the smallest slice</li>
+            </ol>
+
+            <h3>Exercise 4: Line Chart Trend Analysis</h3>
+            <p><strong>Scenario</strong>: Show website traffic trends.</p>
+            <div class="sample-box">
+                Data:
+                Week Visitors
+                Week 1 1,200
+                Week 2 1,450
+                Week 3 1,380
+                Week 4 1,600
+                Week 5 1,750
+                Week 6 1,820
+                Week 7 1,680
+                Week 8 1,900
+            </div>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li>Create a line chart with markers</li>
+                <li>Title: "Weekly Website Visitors - Q1 2024"</li>
+                <li>Add data labels above markers</li>
+                <li>Add a linear trendline (dashed)</li>
+                <li>Format Y-axis to show thousands (1.2K, 1.4K)</li>
+                <li>Add gridlines (light gray, dotted)</li>
+                <li>Highlight the peak week (Week 8) with a different marker</li>
+            </ol>
+
+            <h3>Exercise 5: Combination Exercise</h3>
+            <p><strong>Scenario</strong>: Create a complete dashboard for a small business.</p>
+            <p><strong>Data Tables</strong>:</p>
+            <div class="sample-box">
+                Table 1: Monthly Sales
+                Month Product A Product B Product C
+                Jan 12,000 8,000 5,000
+                Feb 15,000 9,000 6,500
+                Mar 14,000 10,000 7,000
+                Apr 18,000 11,000 7,500
+                May 20,000 12,000 8,000
+                Jun 22,000 13,000 9,000
+
+                Table 2: Expense Categories
+                Category Amount
+                Rent 6,000
+                Salaries 15,000
+                Marketing 3,500
+                Supplies 1,200
+                Utilities 800
+            </div>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li><strong>Chart 1 (Column)</strong>:
+                    <ul>
+                        <li>Stacked column chart of monthly sales by product</li>
+                        <li>Title: "Monthly Sales by Product Category"</li>
+                        <li>Show data labels as values</li>
+                        <li>Legend at bottom</li>
+                    </ul>
+                </li>
+                <li><strong>Chart 2 (Pie)</strong>:
+                    <ul>
+                        <li>Pie chart of expenses</li>
+                        <li>Title: "Monthly Expense Distribution"</li>
+                        <li>Show percentages</li>
+                        <li>Create "Pie of Pie" to show details of small expenses</li>
+                    </ul>
+                </li>
+                <li><strong>Chart 3 (Line)</strong>:
+                    <ul>
+                        <li>Line chart showing total sales trend</li>
+                        <li>Add trendline</li>
+                        <li>Title: "Overall Sales Trend"</li>
+                    </ul>
+                </li>
+                <li><strong>Formatting</strong>:
+                    <ul>
+                        <li>Consistent font (Arial)</li>
+                        <li>Professional color scheme (blues and greens)</li>
+                        <li>All charts aligned neatly</li>
+                        <li>Add a main title "Q2 2024 Business Dashboard"</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Exercise 6: Troubleshooting Practice</h3>
+            <p><strong>Scenario</strong>: You receive a poorly formatted chart and must fix it.</p>
+            <div class="sample-box">
+                Problem Chart Data:
+                Month 2023 Sales 2024 Sales
+                Jan 45000 52000
+                Feb 48000 (blank cell)
+                Mar 48000 55000
+                Apr 55000 59000
+                May 62000 (blank cell)
+                Jun 59000 65000
+            </div>
+            <p><strong>Current Chart Issues</strong>:</p>
+            <ul>
+                <li>Y-axis starts at 40,000</li>
+                <li>Missing data shows as zero (gaps)</li>
+                <li>Legend shows "Series1", "Series2"</li>
+                <li>Title missing</li>
+                <li>Gridlines too dark</li>
+                <li>Colors are default and clash</li>
+                <li>Horizontal axis labels overlapping</li>
+            </ul>
+            <p><strong>Tasks</strong>:</p>
+            <ol>
+                <li>Fix data range to exclude blank cells properly</li>
+                <li>Start Y-axis at zero</li>
+                <li>Add proper series names (use row 1)</li>
+                <li>Add title "Sales Comparison: 2023 vs 2024"</li>
+                <li>Lighten gridlines to light gray</li>
+                <li>Change colors to professional palette</li>
+                <li>Fix axis label orientation</li>
+                <li>Add data labels only for 2024</li>
+                <li>Save as template "Sales_Comparison"</li>
+            </ol>
+
+            <h3>Exercise 7: Real-World Project</h3>
+            <p><strong>Scenario</strong>: Create a presentation-quality chart for a board meeting.</p>
+            <p><strong>Company Background</strong>:</p>
+            <ul>
+                <li>Tech startup with 3 years of data</li>
+                <li>Need to show investor-ready growth chart</li>
+            </ul>
+            <div class="sample-box">
+                Data:
+                Year Revenue Profit Employees
+                2022 $500,000 $50,000 8
+                2023 $1,200,000 $180,000 15
+                2024 $2,500,000 $450,000 25
+                2025 $4,000,000 $800,000 35
+            </div>
+            <p><strong>Requirements</strong>:</p>
+            <ol>
+                <li>Create a combo chart:
+                    <ul>
+                        <li>Columns for Revenue (primary axis)</li>
+                        <li>Line for Profit (secondary axis)</li>
+                        <li>Show Employees as data labels</li>
+                    </ul>
+                </li>
+                <li>Format professionally:
+                    <ul>
+                        <li>Company colors: Dark blue and green</li>
+                        <li>Title: "Company Growth Trajectory 2022-2025"</li>
+                        <li>Subtitle: "Revenue, Profit & Team Expansion"</li>
+                        <li>Data labels in millions (e.g., $2.5M)</li>
+                        <li>Professional gridlines (light, minimal)</li>
+                    </ul>
+                </li>
+                <li>Add annotations:
+                    <ul>
+                        <li>Arrow pointing to 2024 growth</li>
+                        <li>Text box: "Major funding round"</li>
+                    </ul>
+                </li>
+                <li>Prepare for printing:
+                    <ul>
+                        <li>Fit to one page</li>
+                        <li>High contrast for black/white printing</li>
+                        <li>All text readable at 100%</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <!-- APPENDICES (all included) -->
+        <div class="mini-card">
+            <h3>📚 Appendices</h3>
+
+            <h4>Appendix A: Keyboard Shortcuts Summary</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Alt + F1</kbd> chart on sheet</span>
+                <span><kbd>F11</kbd> chart new sheet</span>
+                <span><kbd>Ctrl + 1</kbd> format element</span>
+                <span><kbd>Delete</kbd> remove element</span>
+                <span><kbd>Ctrl + Z</kbd> undo</span>
+                <span><kbd>Ctrl + Y</kbd> redo</span>
+                <span><kbd>Ctrl + C</kbd> copy chart</span>
+                <span><kbd>Ctrl + V</kbd> paste chart</span>
+                <span><kbd>Arrow keys</kbd> nudge</span>
+                <span><kbd>Ctrl + Click</kbd> multi-select</span>
+            </div>
+
+            <h4>Appendix B: Chart Type Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Data Type</th>
+                    <th>Best Chart</th>
+                    <th>Alternative</th>
+                </tr>
+                <tr>
+                    <td>Time series (10+ points)</td>
+                    <td>Line</td>
+                    <td>Column (if few points)</td>
+                </tr>
+                <tr>
+                    <td>Comparisons</td>
+                    <td>Column</td>
+                    <td>Bar (if many categories)</td>
+                </tr>
+                <tr>
+                    <td>Part to whole</td>
+                    <td>Pie</td>
+                    <td>Stacked column</td>
+                </tr>
+                <tr>
+                    <td>Relationship</td>
+                    <td>Scatter</td>
+                    <td>Bubble (3 variables)</td>
+                </tr>
+                <tr>
+                    <td>Distribution</td>
+                    <td>Histogram</td>
+                    <td>Box plot</td>
+                </tr>
+                <tr>
+                    <td>Ranking</td>
+                    <td>Bar</td>
+                    <td>Column</td>
+                </tr>
+                <tr>
+                    <td>Deviation</td>
+                    <td>Column</td>
+                    <td>Line with markers</td>
+                </tr>
+            </table>
+
+            <h4>Appendix C: Glossary of Terms</h4>
+            <div class="def-grid">
+                <div class="def-item"><strong>Axis</strong> – Line bordering plot area for measurement</div>
+                <div class="def-item"><strong>Data Point</strong> – Individual value plotted</div>
+                <div class="def-item"><strong>Data Series</strong> – Related data points</div>
+                <div class="def-item"><strong>Gridlines</strong> – Lines extending from axes</div>
+                <div class="def-item"><strong>Legend</strong> – Key identifying series</div>
+                <div class="def-item"><strong>Plot Area</strong> – Area where data is plotted</div>
+                <div class="def-item"><strong>Trendline</strong> – Line showing pattern/direction</div>
+                <div class="def-item"><strong>Marker</strong> – Symbol marking data point</div>
+                <div class="def-item"><strong>Gap Width</strong> – Space between columns/bars</div>
+                <div class="def-item"><strong>Explode</strong> – Pull out pie slice for emphasis</div>
+            </div>
+
+            <h4>Appendix D: Resources for Further Learning</h4>
+            <p><strong>Microsoft Official Resources</strong>:</p>
+            <ul>
+                <li>Microsoft Support: support.microsoft.com/excel</li>
+                <li>Excel Video Training: support.microsoft.com/excel-video-training</li>
+                <li>Excel Templates: templates.office.com</li>
+            </ul>
+            <p><strong>Practice Datasets</strong>:</p>
+            <ul>
+                <li>Kaggle: kaggle.com/datasets</li>
+                <li>Data.gov: data.gov (public data)</li>
+                <li>Excel Sample Data: Built-in (File > New > Sample data)</li>
+            </ul>
+            <p><strong>Recommended Books</strong>:</p>
+            <ul>
+                <li>"Storytelling with Data" by Cole Nussbaumer Knaflic</li>
+                <li>"The Visual Display of Quantitative Information" by Edward Tufte</li>
+                <li>"Excel Dashboards & Reports" by Michael Alexander</li>
+            </ul>
+
+            <p><em>This comprehensive guide provides everything needed to master basic chart creation in Excel. Practice
+                    regularly with real data, experiment with different chart types, and always consider your audience
+                    when designing charts. Remember: The best chart is one that communicates clearly and honestly.</em>
+            </p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Microsoft Excel: Complete Chart Guide · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

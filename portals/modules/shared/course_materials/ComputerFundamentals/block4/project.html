@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Excel mastery · capstone project – complete practical guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e1efe8;
+            color: #173e2c;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1a4f32;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #146b38, #2b8b54);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #267548;
+            border-left: 6px solid #36a86b;
+            padding-left: 1.5rem;
+            margin-bottom: 1.8rem;
+            font-weight: 390;
+        }
+
+        .banner-project {
+            background: #daf1e2;
+            border-radius: 2rem;
+            padding: 2rem 2.5rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 2px 6px rgba(0, 70, 30, 0.08), 0 20px 26px -14px #2f7a4d;
+            border: 1px solid #ade3c2;
+        }
+
+        .banner-project p {
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: #238b4a;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .step-container {
+            counter-reset: step-counter;
+            margin: 2.5rem 0;
+        }
+
+        .step-card {
+            background: #f4fbf7;
+            border-radius: 2rem;
+            padding: 1.8rem 2.2rem;
+            margin-bottom: 1.8rem;
+            border-left: 8px solid #309e5b;
+            box-shadow: 0 8px 18px rgba(0, 50, 20, 0.04);
+            position: relative;
+            counter-increment: step-counter;
+        }
+
+        .step-card::before {
+            content: "step " counter(step-counter);
+            font-weight: 650;
+            font-size: 1.1rem;
+            background: #1e8142;
+            color: white;
+            padding: 0.15rem 1.5rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .step-card h3 {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #115e30;
+            margin: 0.2rem 0 1.2rem;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .tool-badge {
+            background: #e5f3ea;
+            border-radius: 2rem;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid #aedbbc;
+            box-shadow: 0 2px 10px rgba(0, 60, 20, 0.05);
+        }
+
+        .tool-badge strong {
+            color: #1b6f3b;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        ul.checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.checklist li {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        ul.checklist li::before {
+            content: "✓";
+            color: #1f9e4c;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 70, 30, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width:700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1f7042;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c6ecce;
+            background: #f9fffc;
+        }
+
+        .highlight-block {
+            background: #e1f5e8;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 8px solid #279556;
+        }
+
+        .mini-card {
+            background: #effaf3;
+            border: 1px solid #bdeacb;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 1.8rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #1b6838;
+            color: #f0fff5;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c0eace, transparent);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e754a;
+            border-top: 1px dashed #b1e2bf;
+            padding-top: 2rem;
+        }
+
+        .btn-download {
+            background: #1b8142;
+            color: white;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px -10px #1b8142;
+            transition: 0.15s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1.2rem;
+        }
+
+        .btn-download:hover {
+            background: #136b34;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📁 EXCEL MASTERY · CAPSTONE PROJECT</h1>
+        <div class="subhead">“office administrator · complete practical workbook” — all 6 lessons integrated</div>
+
+        <!-- project intro banner -->
+        <div class="banner-project">
+            <span class="section-tag">📌 SCENARIO · small business dashboard</span>
+            <p style="font-size: 1.6rem; font-weight: 600; color: #0c542c;">You are an office assistant at <em>GreenLeaf
+                    Supplies</em>.</p>
+            <p>Build a complete monthly performance dashboard using everything you learned: <strong>getting started,
+                    data management, formulas, charts, worksheet formatting, and page setup</strong>. This step‑by‑step
+                guide walks you through the whole process — just like a real‑world task.</p>
+        </div>
+
+        <!-- quick navigation (capsule summary) -->
+        <div class="mini-card" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-around;">
+            <span>🔹 <strong>step 1</strong> – structure & data entry</span>
+            <span>🔹 <strong>step 2</strong> – sort & filter</span>
+            <span>🔹 <strong>step 3</strong> – formulas & functions</span>
+            <span>🔹 <strong>step 4</strong> – format like a pro</span>
+            <span>🔹 <strong>step 5</strong> – build charts</span>
+            <span>🔹 <strong>step 6</strong> – page setup & print</span>
+        </div>
+
+        <!-- main step-by-step guide -->
+        <div class="step-container">
+
+            <!-- STEP 1 – getting started + workbook structure -->
+            <div class="step-card">
+                <h3>📒 1. Set up workbook, worksheets & enter raw data</h3>
+                <p><span class="kbd-shortcut">Ctrl+N</span> new · <span class="kbd-shortcut">Ctrl+T</span> table · <span
+                        class="kbd-shortcut">F2</span> edit</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>📄 1.1 create workbook</strong>
+                        <ul style="margin-top:0.8rem;">
+                            <li>Open Excel → blank workbook</li>
+                            <li>Rename <strong>Sheet1</strong> → <code>SalesData</code> (double‑click tab)</li>
+                            <li>Add three more sheets: <code>Products</code>, <code>Dashboard</code>,
+                                <code>PrintReport</code> (click ➕)</li>
+                            <li>Save as: <kbd>Ctrl+S</kbd> → <strong>GreenLeaf_Dashboard.xlsx</strong></li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>📋 1.2 build core tables</strong>
+                        <p><strong>SalesData</strong> (A1:F…):</p>
+                        <pre style="background: white; border-radius:1rem; padding:0.5rem;">Date       |Product  |Qty|UnitPrice|Region |Salesperson
+2024-05-01 |Laptop   |2  |850      |North  |Adams
+2024-05-01 |Mouse    |5  |22       |South  |Baker
+… add 12+ rows (varied)</pre>
+                        <p><em>tip: use <kbd>Ctrl+Enter</kbd> to fill repeated items.</em></p>
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    ✅ after step 1: you have a structured workbook with named sheets and at least 15–20 raw transaction
+                    rows. Practise <kbd>Ctrl+PageUp/Down</kbd> to navigate.
+                </div>
+            </div>
+
+            <!-- STEP 2 – sort & filter (data management) -->
+            <div class="step-card">
+                <h3>🔀 2. Sort & filter – manage the list</h3>
+                <p><span class="kbd-shortcut">Ctrl+Shift+L</span> toggle filter · <span
+                        class="kbd-shortcut">Alt+A+S</span> sort dialog</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>🔽 2.1 apply filters</strong>
+                        <ul>
+                            <li>Select any cell in SalesData</li>
+                            <li><kbd>Ctrl+Shift+L</kbd> → dropdown arrows appear</li>
+                            <li>Filter Region = "North" → view only north sales</li>
+                            <li>Filter Qty > 3 (number filter → greater than)</li>
+                            <li>Clear filter <kbd>Alt+D+F+F</kbd> (or clear from dropdown)</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>🔤 2.2 multi‑level sort</strong>
+                        <ul>
+                            <li>Click any cell → <strong>Data > Sort</strong></li>
+                            <li>Add level: first by <strong>Region</strong> (A to Z)</li>
+                            <li>Then by <strong>Salesperson</strong> (A to Z)</li>
+                            <li>Then by <strong>Date</strong> (oldest to newest)</li>
+                            <li>Observe how data reorganizes</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>💡 <strong>office application</strong>: prepare a regional report sorted by salesperson — exactly
+                    what a manager needs.</p>
+            </div>
+
+            <!-- STEP 3 – formulas & functions (SUM, AVERAGE, IF, etc) -->
+            <div class="step-card">
+                <h3>🧮 3. Add calculated fields & summary formulas</h3>
+                <p><span class="kbd-shortcut">Alt+=</span> AutoSum · <span class="kbd-shortcut">F4</span> absolute
+                    reference</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>➕ 3.1 extend table with formula</strong>
+                        <p>In SalesData, insert column <strong>TotalSale</strong> (G1). Formula: <code>=C2*D2</code>
+                            (Qty * UnitPrice). Double‑click fill handle to copy.</p>
+                        <p>Add column <strong>Commission</strong> (H1): <code>=IF(G2>1000, G2*0.05, G2*0.03)</code> → 5%
+                            if >1000 else 3%.</p>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>📊 3.2 summary on Dashboard sheet</strong>
+                        <ul>
+                            <li>Go to <code>Dashboard</code></li>
+                            <li>Total sales: <code>=SUM(SalesData!G:G)</code></li>
+                            <li>Avg transaction: <code>=AVERAGE(SalesData!G:G)</code></li>
+                            <li>Max sale: <code>=MAX(SalesData!G:G)</code></li>
+                            <li>Min sale: <code>=MIN(SalesData!G:G)</code></li>
+                            <li>Number of orders: <code>=COUNTA(SalesData!A:A)-1</code> (ignore header)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    ⚡ absolute reference practice: in <strong>Products</strong> sheet create a tax calculation with a
+                    fixed cell $B$1 (tax rate). Use <kbd>F4</kbd> to toggle.
+                </div>
+            </div>
+
+            <!-- STEP 4 – worksheet formatting (fonts, numbers, borders, fills) -->
+            <div class="step-card">
+                <h3>🎨 4. professional worksheet formatting</h3>
+                <p><span class="kbd-shortcut">Ctrl+1</span> format cells · <span
+                        class="kbd-shortcut">Ctrl+Shift+$</span> currency · <span class="kbd-shortcut">Ctrl+B</span>
+                    bold</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>🔢 4.1 number formats</strong>
+                        <ul>
+                            <li>Select SalesData!D:D (UnitPrice) → <kbd>Ctrl+Shift+$</kbd></li>
+                            <li>Select G:H → currency, 2 decimals</li>
+                            <li>Date column → <kbd>Ctrl+Shift+#</kbd> (short date)</li>
+                            <li>Dashboard numbers → currency / percentage as needed</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>🎨 4.2 fonts, fills, borders</strong>
+                        <ul>
+                            <li>Headers: bold, fill color (light green), font size 12</li>
+                            <li>Use <strong>Format painter</strong> across sheets</li>
+                            <li>Add borders: Home > Borders > All borders</li>
+                            <li>Alternating row color (conditional): <code>=MOD(ROW(),2)=0</code> light gray fill</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>📌 <strong>bonus</strong>: use cell styles (good/bad/neutral) to highlight commission >200.</p>
+            </div>
+
+            <!-- STEP 5 – charts (all types from charts.html) -->
+            <div class="step-card">
+                <h3>📊 5. create meaningful charts</h3>
+                <p><span class="kbd-shortcut">Alt+F1</span> instant chart · <span class="kbd-shortcut">F11</span> new
+                    sheet chart</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>📈 5.1 column chart – sales by region</strong>
+                        <ul>
+                            <li>On Dashboard, build small summary: region, total sales</li>
+                            <li>Select data → Insert > Clustered Column</li>
+                            <li>Add title "Sales by Region", data labels</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>🥧 5.2 pie – product share</strong>
+                        <ul>
+                            <li>Pivot or SUMIF to get sales per product</li>
+                            <li>Insert > Pie (max 5 slices, group small as "other")</li>
+                            <li>Add percentages, explode main slice</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>📉 5.3 line – daily trend</strong>
+                        <ul>
+                            <li>Create pivot or daily totals</li>
+                            <li>Insert line with markers; add trendline</li>
+                            <li>Label axes: "Date", "Revenue"</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>✨ move charts to Dashboard sheet and align neatly.</p>
+            </div>
+
+            <!-- STEP 6 – page setup / print area / margins / page breaks -->
+            <div class="step-card">
+                <h3>🖨️ 6. finalize with page setup & print preview</h3>
+                <p><span class="kbd-shortcut">Ctrl+P</span> print preview · <span class="kbd-shortcut">Alt+P</span> page
+                    layout tab</p>
+                <div class="step-grid">
+                    <div class="tool-badge">
+                        <strong>📄 6.1 set print area</strong>
+                        <ul>
+                            <li>Go to <strong>PrintReport</strong> sheet</li>
+                            <li>Select range A1:G25 (summary + chart)</li>
+                            <li>Page Layout > Print Area > Set Print Area</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>📐 6.2 margins & centering</strong>
+                        <ul>
+                            <li>Page Layout > Margins > Custom Margins</li>
+                            <li>Check: Horizontally, Vertically</li>
+                            <li>Set top/bottom 1 inch for formal report</li>
+                        </ul>
+                    </div>
+                    <div class="tool-badge">
+                        <strong>🔍 6.3 page break preview</strong>
+                        <ul>
+                            <li>View > Page Break Preview (or bottom‑right icon)</li>
+                            <li>Drag blue dashed line to keep tables together</li>
+                            <li>Insert manual break if needed (Page Layout > Breaks)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    🖨️ final test: press <kbd>Ctrl+P</kbd> – check that only the print area appears, margins are
+                    balanced, and no column is cut off.
+                </div>
+            </div>
+        </div> <!-- step-container -->
+
+        <!-- consolidation table – all skills in action -->
+        <h2 style="margin-top:3rem; font-size:2rem;">📋 capstone checklist · what you practiced</h2>
+        <table>
+            <tr>
+                <th>excel topic</th>
+                <th>done in project</th>
+                <th>shortcut / key</th>
+            </tr>
+            <tr>
+                <td>workbook & sheets</td>
+                <td>named sheets, navigation</td>
+                <td>Ctrl+PageUp/Down</td>
+            </tr>
+            <tr>
+                <td>data entry</td>
+                <td>transaction list, Ctrl+Enter fill</td>
+                <td>Ctrl+Enter / F2</td>
+            </tr>
+            <tr>
+                <td>sort & filter</td>
+                <td>region filter, multi‑level sort</td>
+                <td>Ctrl+Shift+L / Alt+A+S</td>
+            </tr>
+            <tr>
+                <td>formulas & functions</td>
+                <td>SUM, AVERAGE, IF, MIN, MAX, relative/absolute</td>
+                <td>Alt+= / F4</td>
+            </tr>
+            <tr>
+                <td>formatting</td>
+                <td>currency, borders, fills, format painter, conditional</td>
+                <td>Ctrl+1 / Ctrl+Shift+$</td>
+            </tr>
+            <tr>
+                <td>charts</td>
+                <td>column, pie, line, titles, labels</td>
+                <td>Alt+F1 / F11</td>
+            </tr>
+            <tr>
+                <td>page setup</td>
+                <td>print area, margins, page break preview</td>
+                <td>Ctrl+P / Alt+P</td>
+            </tr>
+        </table>
+
+        <!-- integration of extra tips from all lessons -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">⚡ pro tips – taken from the six guides</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 1.8rem;">
+                <div>
+                    <p><span class="kbd-shortcut">Ctrl+T</span> table (dynamic ranges)</p>
+                    <p><span class="kbd-shortcut">Ctrl+Shift+L</span> filter toggle</p>
+                    <p><span class="kbd-shortcut">Alt+F1</span> embedded chart</p>
+                </div>
+                <div>
+                    <p><span class="kbd-shortcut">F4</span> repeat / absolute ref</p>
+                    <p><span class="kbd-shortcut">Ctrl+`</span> show formulas</p>
+                    <p><span class="kbd-shortcut">Alt+P, S, A</span> set print area</p>
+                </div>
+                <div>
+                    <p>🐾 <strong>troubleshooting</strong> — ##### widen col ; #NAME? check spelling ; #DIV/0! IFERROR
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- download / save simulation -->
+        <div style="text-align: center;">
+            <p style="font-size:1.3rem;">✅ you have now built a complete Excel business dashboard from scratch.</p>
+            <a href="#" class="btn-download"
+                onclick="alert('In a real class you would save as GreenLeaf_Dashboard.xlsx. All steps completed!')">📥
+                simulate finish & save</a>
+        </div>
+
+        <hr>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Excel capstone · integrates all 6 modules · © 2026<br>
+            <span style="opacity:0.7;">getting started · data management · formulas & functions · formatting · charts ·
+                page setup</span>
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

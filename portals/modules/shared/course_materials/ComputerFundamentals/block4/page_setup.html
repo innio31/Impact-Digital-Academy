@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Excel · Page setup, print areas, margins & page breaks (complete notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0e5;
+            color: #1d3a2b;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1b4d2b;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #1c6e3c, #2a8b5a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #2d7a4b;
+            border-left: 6px solid #3aa56a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #dcf0e3;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 70, 30, 0.1), 0 16px 24px -14px #467a5a;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #155e34;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #176e38;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 40, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #c2f0d4;
+            border-color: #1f8f4c;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1b6d3c;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 70, 30, 0.06);
+            border: 1px solid #d2f0de;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0e552d;
+            border-bottom: 3px solid #2e9b5a;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1d723f;
+            border-left: 8px solid #8fdfb0;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1f7a43;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #edf9f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #279556;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 70, 30, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1f7042;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c6ecce;
+            background: #f9fffc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #228544;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #effaf3;
+            border: 1px solid #bdeacb;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #e1f5e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #49b870;
+        }
+
+        .drill {
+            background: #effaf3;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #299354;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bfecce, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e754a;
+            border-top: 1px dashed #b1e2bf;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1fdf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #bde2cc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #285e3a;
+            color: #f0fff5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        /* illustration style */
+        .print-illus {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            background: #e7f5ea;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .print-illus pre {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 40, 0, 0.1);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🖨️ Introduction to Page Setup: Print Areas, Margins & Page Breaks</h1>
+        <div class="subhead">Complete guide · setting print areas · adjusting margins · page break preview ·
+            professional printing</div>
+
+        <!-- TABLE OF CONTENTS (mirror structure) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction-why">Why Page Setup Matters</a>
+                <a href="#print-areas">1. Setting Print Areas</a>
+                <a href="#margins">2. Adjusting Margins</a>
+                <a href="#page-break-preview">3. Page Break Preview</a>
+                <a href="#summary-checklist">Summary Checklist</a>
+                <a href="#practical-examples">Practical Examples</a>
+                <a href="#keyboard-shortcuts">Shortcuts & quick ref</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION: WHY PAGE SETUP MATTERS (exact text) -->
+        <section id="introduction-why">
+            <h2>📌 Introduction: Why Page Setup Matters</h2>
+            <p>Creating a well-organized spreadsheet is only half the battle. In a professional environment, data is
+                often shared on paper or as a PDF. A poorly formatted printout can be difficult to read, unprofessional,
+                and can even lead to misinterpretation of data.</p>
+            <p>Think of Page Setup as the "dressing up" phase for your data. It ensures that your digital worksheet
+                translates cleanly and effectively to a physical page. By mastering these settings, you control exactly
+                how your data is presented, saving paper, time, and ensuring clarity.</p>
+        </section>
+
+        <!-- PART 1: SETTING PRINT AREAS (full original) -->
+        <section id="print-areas">
+            <h2>📄 1. Setting Print Areas</h2>
+            <p>Often, you don't need to print an entire worksheet. You might only need a specific table, a summary
+                section, or a chart. The <strong>Print Area</strong> feature allows you to define exactly which cells
+                Excel should print, ignoring everything else on the sheet.</p>
+
+            <h3>1.1. What is a Print Area?</h3>
+            <p>A print area is one or more ranges of cells that you designate to be printed. When you set a print area,
+                Excel will only print that selection. You can set a single contiguous area or multiple non-contiguous
+                areas (each will print on its own page).</p>
+
+            <h3>1.2. How to Set a Print Area (Step-by-Step)</h3>
+            <ol>
+                <li><strong>Select the cells</strong> you want to print. To select multiple areas, hold down the
+                    <kbd>Ctrl</kbd> key while dragging your mouse over different ranges (e.g., select
+                    <code>A1:C10</code>, then hold <kbd>Ctrl</kbd> and select <code>A15:C20</code>).
+                </li>
+                <li>Go to the <strong>Page Layout</strong> tab on the Ribbon.</li>
+                <li>In the <strong>Page Setup</strong> group, click <strong>Print Area</strong>.</li>
+                <li>Select <strong>Set Print Area</strong> from the dropdown menu.</li>
+                <li>You will notice a faint grey line appears around your selected cells, defining the print area. When
+                    you go to <strong>File > Print</strong> (or press <kbd>Ctrl + P</kbd>), only this defined area will
+                    appear in the print preview.</li>
+            </ol>
+
+            <h3>1.3. Modifying a Print Area</h3>
+            <ul>
+                <li><strong>Adding to the Print Area:</strong> Select the new cells you want to add. Go to <strong>Page
+                        Layout > Print Area > Add to Print Area</strong>. This will create multiple print areas, and
+                    each will print on a separate page.</li>
+                <li><strong>Clearing a Print Area:</strong> To remove the print area and allow the entire sheet to be
+                    printed again, go to <strong>Page Layout > Print Area > Clear Print Area</strong>.</li>
+            </ul>
+
+            <h3>1.4. Practical Example: Printing Only an Invoice Summary</h3>
+            <div class="highlight-block">
+                <p>Imagine a worksheet contains a year's worth of transaction data, but the invoice summary is only in
+                    columns A through G, rows 1 through 50. By setting <code>A1:G50</code> as the print area, you ensure
+                    that only the invoice summary is printed, not the thousands of rows of raw data below it.</p>
+            </div>
+        </section>
+
+        <!-- PART 2: ADJUSTING MARGINS (exact original) -->
+        <section id="margins">
+            <h2>📐 2. Adjusting Margins</h2>
+            <p>Margins are the blank spaces at the edges of the printed page. They are crucial for ensuring that your
+                data isn't cut off by the printer and that the printed document looks balanced and professional. Proper
+                margins also allow for binding or hole-punching.</p>
+
+            <h3>2.1. What are Margins?</h3>
+            <p>Margins define the space between the edge of the paper and the printed content. Excel has settings for
+                the <strong>Top</strong>, <strong>Bottom</strong>, <strong>Left</strong>, and <strong>Right</strong>
+                margins. There is also a separate setting for the <strong>Header</strong> and <strong>Footer</strong>
+                margins, which is the distance from the page edge to the header/footer text.</p>
+
+            <h3>2.2. How to Adjust Margins</h3>
+            <p><strong>Method A: Using the Preset Margins (Quickest)</strong></p>
+            <ol>
+                <li>Go to the <strong>Page Layout</strong> tab.</li>
+                <li>Click the <strong>Margins</strong> button in the Page Setup group.</li>
+                <li>You'll see a dropdown with common presets: <strong>Normal</strong>, <strong>Wide</strong>, and
+                    <strong>Narrow</strong>.
+                    <ul>
+                        <li><strong>Normal:</strong> The default setting.</li>
+                        <li><strong>Wide:</strong> Offers more white space, good for documents that will be handled or
+                            bound.</li>
+                        <li><strong>Narrow:</strong> Maximizes the printable area, good for fitting large tables onto a
+                            single page.</li>
+                    </ul>
+                </li>
+                <li>Click on a preset to apply it instantly.</li>
+            </ol>
+
+            <p><strong>Method B: Using Custom Margins (For Precise Control)</strong></p>
+            <ol>
+                <li>Go to the <strong>Page Layout</strong> tab.</li>
+                <li>Click the <strong>Margins</strong> button.</li>
+                <li>Select <strong>Custom Margins...</strong> at the bottom of the dropdown menu. This opens the
+                    <strong>Page Setup</strong> dialog box.
+                </li>
+                <li>In the <strong>Margins</strong> tab, you can manually enter the exact measurement (in inches or
+                    centimeters) for the Top, Bottom, Left, and Right margins.</li>
+                <li>You can also use the up/down arrows to adjust them.</li>
+                <li>An extremely useful option here is <strong>Horizontally</strong> and <strong>Vertically</strong>
+                    under "Center on page".
+                    <ul>
+                        <li>Check <strong>Horizontally</strong> to center your data between the left and right margins.
+                        </li>
+                        <li>Check <strong>Vertically</strong> to center it between the top and bottom margins. This
+                            makes small tables look much more professional on a page.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>2.3. Practical Example: Creating a Formal Report</h3>
+            <div class="highlight-block">
+                <p>You are creating a report for a board meeting. You want a classic, formal look. You would open
+                    <strong>Custom Margins</strong>, set all margins (Top, Bottom, Left, Right) to <strong>1
+                        inch</strong>, and check <strong>Horizontally</strong> to ensure the table is centered on the
+                    page.
+                </p>
+            </div>
+        </section>
+
+        <!-- PART 3: PAGE BREAK PREVIEW (full original) -->
+        <section id="page-break-preview">
+            <h2>🔍 3. Using Page Break Preview for Printing</h2>
+            <p>This is one of the most powerful tools for controlling how multi-page documents print. <strong>Page Break
+                    Preview</strong> is a view mode in Excel that shows you exactly where pages will break when printed,
+                overlaid on your worksheet data. It allows you to see, at a glance, what will be on Page 1, Page 2, and
+                so on.</p>
+
+            <h3>3.1. What are Page Breaks?</h3>
+            <p>A page break is the point where one page ends and the next begins. Excel inserts automatic page breaks
+                based on the paper size, margins, and scale settings. However, these automatic breaks can often occur in
+                awkward places, splitting a table of data in half.</p>
+
+            <h3>3.2. How to Access and Use Page Break Preview</h3>
+            <ol>
+                <li>Go to the <strong>View</strong> tab on the Ribbon.</li>
+                <li>In the Workbook Views group, click <strong>Page Break Preview</strong>.</li>
+                <li>Alternatively, you can click the small <strong>Page Break Preview icon</strong> (a sheet with a blue
+                    page) in the status bar at the bottom-right corner of your Excel window.</li>
+            </ol>
+            <p>Once in this view, your worksheet will look different:</p>
+            <ul>
+                <li><strong>Page Numbers:</strong> Light grey watermarks will indicate "Page 1," "Page 2," etc.</li>
+                <li><strong>Blue Lines (Dashed & Solid):</strong> These lines represent the page breaks.
+                    <ul>
+                        <li><strong>Dashed blue lines</strong> are automatic page breaks inserted by Excel.</li>
+                        <li><strong>Solid blue lines</strong> are manual page breaks that you have inserted or adjusted.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>3.3. How to Adjust Page Breaks (Drag and Drop)</h3>
+            <p>This is the key feature of Page Break Preview. You can simply click and drag these blue lines to change
+                where a page breaks.</p>
+            <ol>
+                <li><strong>To move a page break:</strong> Hover your cursor over a blue line until it turns into a
+                    double-headed arrow (<code>↕</code> or <code>↔</code>). Click and drag the line to the new desired
+                    location (e.g., between two rows so a table isn't split).</li>
+                <li><strong>To insert a new manual page break:</strong> Select a cell. Then, go to the <strong>Page
+                        Layout</strong> tab > <strong>Breaks</strong> > <strong>Insert Page Break</strong>. A solid blue
+                    line will appear above and to the left of the selected cell.
+                    <ul>
+                        <li><em>Tip:</em> To insert a vertical page break only, select a cell in column A and insert the
+                            break. To insert a horizontal page break only, select a cell in row 1 and insert the break.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>To remove a manual page break:</strong> Drag the solid blue line off the screen, or select a
+                    cell adjacent to the break, go to <strong>Page Layout > Breaks > Remove Page Break</strong>.</li>
+            </ol>
+
+            <h3>3.4. Practical Example: Preventing a Table from Being Split</h3>
+            <div class="highlight-block">
+                <p>You have a table from rows 1 to 50. In the default view, you see that the automatic page break is set
+                    between rows 42 and 43. This would print the last 8 rows of your table on Page 2 alone. To fix this:
+                </p>
+                <ol>
+                    <li>Switch to <strong>Page Break Preview</strong>.</li>
+                    <li>Find the horizontal blue dashed line between rows 42 and 43.</li>
+                    <li>Click and drag that line down to between rows 50 and 51. Now, the entire 50-row table will print
+                        on Page 1, and any content below it will start on Page 2.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- SUMMARY CHECKLIST (exact copy) -->
+        <section id="summary-checklist">
+            <h2>✅ Summary Checklist: Preparing to Print</h2>
+            <p>Before clicking the Print button, use this quick checklist to ensure professional results:</p>
+            <ol>
+                <li><strong>Check Print Preview:</strong> Always start here (<code>File > Print</code> or <kbd>Ctrl +
+                        P</kbd>). It gives you a bird's-eye view of your document.</li>
+                <li><strong>Define the Print Area:</strong> Have you set a specific area to print, or do you want the
+                    whole sheet?</li>
+                <li><strong>Adjust Margins:</strong> Are the margins appropriate? Use presets for speed or custom
+                    margins for precision. Consider centering the data.</li>
+                <li><strong>Manage Page Breaks:</strong> Switch to <strong>Page Break Preview</strong>. Are your page
+                    breaks in logical places? Drag them to ensure tables and key data aren't awkwardly split across
+                    pages.</li>
+                <li><strong>Check Scaling Options (Optional but Useful):</strong> In the <code>Page Layout</code> tab,
+                    the <strong>Scale to Fit</strong> group lets you force your data to fit on a specific number of
+                    pages (e.g., "Fit Sheet on One Page"). Use this with caution, as shrinking data too much can make it
+                    unreadable.</li>
+            </ol>
+            <p>By mastering these three core concepts—<strong>Print Areas, Margins, and Page Breaks</strong>—you move
+                from simply printing data to professionally presenting information. This attention to detail is a
+                hallmark of effective office administration and desktop publishing.</p>
+        </section>
+
+        <!-- EXTRA QUICK REF / SHORTCUTS (like original beginner's guide style) -->
+        <div class="mini-card" id="keyboard-shortcuts">
+            <h4 style="margin-top:0;">⌨️ Keyboard Shortcuts & quick actions</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 2rem;">
+                <span><kbd>Ctrl+P</kbd> Print / Print Preview</span>
+                <span><kbd>Alt+P</kbd> Page Layout tab</span>
+                <span><kbd>Alt+P, S, A</kbd> Set print area</span>
+                <span><kbd>Alt+P, S, C</kbd> Clear print area</span>
+                <span><kbd>Alt+P, M</kbd> Margins dropdown</span>
+                <span><kbd>Alt+P, B, I</kbd> Insert page break</span>
+                <span><kbd>Alt+P, B, R</kbd> Remove page break</span>
+                <span><kbd>Ctrl+F2</kbd> Print Preview (some versions)</span>
+            </div>
+            <p style="margin-top:1.2rem;">💡 <strong>Page Break Preview</strong> icon on status bar (bottom right):
+                sheet with blue page.</p>
+        </div>
+
+        <!-- all original practical examples repeated / consolidated? they are inside each section. But we also add a quick visual -->
+        <div class="print-illus">
+            <pre>┌───────────────────┐
+│  Page 1 (A1:G50) │  ← print area set
+│  invoice summary │
+└───────────────────┘
+   (rest of sheet ignored)</pre>
+            <pre> margins: 1" all around
+➕ centered horizontally</pre>
+        </div>
+
+        <!-- FOOTER exactly as style -->
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Microsoft Excel · Page Setup deep dive · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>
