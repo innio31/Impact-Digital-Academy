@@ -193,51 +193,6 @@ $stats = $stats_result->fetch_assoc();
 $stmt->close();
 $conn->close();
 
-// Helper function for file icons
-function getFileIcon($type)
-{
-    switch ($type) {
-        case 'pdf':
-            return 'fas fa-file-pdf';
-        case 'document':
-            return 'fas fa-file-word';
-        case 'presentation':
-            return 'fas fa-file-powerpoint';
-        case 'spreadsheet':
-            return 'fas fa-file-excel';
-        case 'video':
-            return 'fas fa-file-video';
-        case 'image':
-            return 'fas fa-file-image';
-        case 'audio':
-            return 'fas fa-file-audio';
-        case 'archive':
-            return 'fas fa-file-archive';
-        case 'code':
-            return 'fas fa-file-code';
-        default:
-            return 'fas fa-file';
-    }
-}
-
-// Helper function for file type labels
-function getFileTypeLabel($type)
-{
-    $labels = [
-        'pdf' => 'PDF',
-        'document' => 'Document',
-        'presentation' => 'Presentation',
-        'spreadsheet' => 'Spreadsheet',
-        'video' => 'Video',
-        'image' => 'Image',
-        'audio' => 'Audio',
-        'archive' => 'Archive',
-        'code' => 'Code',
-        'other' => 'Other'
-    ];
-    return $labels[$type] ?? ucfirst($type);
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
