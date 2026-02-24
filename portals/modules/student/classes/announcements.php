@@ -302,6 +302,7 @@ function getPriorityClass($priority)
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Announcements</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/images/favicon.ico">
     <style>
         /* CSS Variables - Mobile First */
         :root {
