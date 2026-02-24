@@ -125,19 +125,6 @@ $stmt->close();
 
 $conn->close();
 
-// Helper function for time ago
-function time_ago($datetime)
-{
-    $time = strtotime($datetime);
-    $now = time();
-    $diff = $now - $time;
-
-    if ($diff < 60) return "just now";
-    if ($diff < 3600) return floor($diff / 60) . " min ago";
-    if ($diff < 86400) return floor($diff / 3600) . " hours ago";
-    return date("M j", $time);
-}
-
 // Function to get grade color
 function getGradeColor($grade)
 {

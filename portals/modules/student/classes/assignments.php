@@ -397,29 +397,6 @@ function getSubmissionTypeLabel($type)
     ];
     return $labels[$type] ?? 'Unknown';
 }
-
-// Function to get file icon based on extension
-function getFileIcon($filename)
-{
-    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-    $icons = [
-        'pdf' => 'fa-file-pdf',
-        'doc' => 'fa-file-word',
-        'docx' => 'fa-file-word',
-        'xls' => 'fa-file-excel',
-        'xlsx' => 'fa-file-excel',
-        'ppt' => 'fa-file-powerpoint',
-        'pptx' => 'fa-file-powerpoint',
-        'jpg' => 'fa-file-image',
-        'jpeg' => 'fa-file-image',
-        'png' => 'fa-file-image',
-        'gif' => 'fa-file-image',
-        'txt' => 'fa-file-alt',
-        'zip' => 'fa-file-archive',
-        'rar' => 'fa-file-archive',
-    ];
-    return $icons[$ext] ?? 'fa-file';
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
