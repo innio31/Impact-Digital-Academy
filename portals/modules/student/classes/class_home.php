@@ -114,6 +114,7 @@ $grace_period_expired = false;
 $is_grace_period = false;
 $grace_days_remaining = 0;
 $payment_message = '';
+$payment_summary = ''; // Short status for alert
 
 // Check if class has started or starts within 2 days
 $class_start_date = new DateTime($class['start_date']);
@@ -139,12 +140,20 @@ if ($current_date >= $two_days_before) {
     $days_remaining = $interval->days;
 }
 
-// Check payment-based accessibility
-if ($course_fee > 0) {
+// Determine payment status and set summary/message
+if ($course_fee == 0) {
+    // Free course
+    $is_payment_accessible = true;
+    $has_paid = true;
+    $payment_summary = "Free Course - No payment required";
+    $payment_message = "This is a free course. No payment is required for access.";
+} else {
+    // Paid course
     if ($payment_status && $payment_status['balance'] <= 0) {
         $is_payment_accessible = true;
         $has_paid = true;
-        $payment_message = "Payment Status: <strong>Paid</strong> - You have full access to this course.";
+        $payment_summary = "Payment Complete - Full access granted";
+        $payment_message = "Your payment is complete. Thank you! You have full access to all course materials.";
     } else {
         // Check if in grace period
         if ($current_date <= $grace_end_date) {
@@ -153,19 +162,16 @@ if ($course_fee > 0) {
             $is_grace_period = true;
             $grace_interval = $current_date->diff($grace_end_date);
             $grace_days_remaining = $grace_interval->days;
-            $payment_message = "Payment Status: <strong>Pending</strong> - You are in the grace period. You have {$grace_days_remaining} day(s) to make payment.";
+            $payment_summary = "Payment pending - Grace period active";
+            $payment_message = "You are in the grace period. You have {$grace_days_remaining} day(s) to make payment before access is restricted.";
         } else {
             $is_payment_accessible = false;
             $has_paid = false;
             $grace_period_expired = true;
-            $payment_message = "Payment Status: <strong>Overdue</strong> - Grace period has ended. Payment required to access this course.";
+            $payment_summary = "Payment overdue - Access restricted";
+            $payment_message = "Your grace period has ended. Payment is required to access this course.";
         }
     }
-} else {
-    // Free course - no payment check needed
-    $is_payment_accessible = true;
-    $has_paid = true;
-    $payment_message = "Payment Status: <strong>Free Course</strong> - No payment required.";
 }
 
 // Final accessibility check
@@ -343,6 +349,420 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($class['batch_code']); ?> - Class Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f94144;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+            --safe-bottom: env(safe-area-inset-bottom, 0);
+            --safe-top: env(safe-area-inset-top, 0);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.5;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
+        }
+
+        /* Breadcrumb - Mobile Optimized */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0.25rem 0;
+        }
+
+        .breadcrumb::-webkit-scrollbar {
+            display: none;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            background: white;
+            border-color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.5;
+            margin: 0 0.25rem;
+        }
+
+        .breadcrumb span {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Payment Alert - Compact */
+        .payment-alert {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid transparent;
+            flex-wrap: wrap;
+        }
+
+        .payment-alert.success {
+            border-left-color: var(--success);
+            background: linear-gradient(to right, white, #f0fdf4);
+        }
+
+        .payment-alert.warning {
+            border-left-color: var(--warning);
+            background: linear-gradient(to right, white, #fffbeb);
+        }
+
+        .payment-alert.danger {
+            border-left-color: var(--danger);
+            background: linear-gradient(to right, white, #fef2f2);
+        }
+
+        .payment-alert.info {
+            border-left-color: var(--info);
+            background: linear-gradient(to right, white, #eff6ff);
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .payment-alert.success .payment-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .payment-alert.warning .payment-icon {
+            background: var(--warning);
+            color: white;
+        }
+
+        .payment-alert.danger .payment-icon {
+            background: var(--danger);
+            color: white;
+        }
+
+        .payment-alert.info .payment-icon {
+            background: var(--info);
+            color: white;
+        }
+
+        .payment-summary {
+            flex: 1;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .payment-summary small {
+            font-weight: normal;
+            color: var(--gray);
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.2rem;
+        }
+
+        .payment-details-btn {
+            background: none;
+            border: 2px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 44px;
+            white-space: nowrap;
+        }
+
+        .payment-details-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .modal-header h2 i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .modal-close:hover {
+            background: var(--light);
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Payment Grid inside Modal */
+        .modal-payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .modal-payment-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .modal-payment-item {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .modal-payment-label {
+            font-size: 0.7rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .modal-payment-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .modal-payment-value.paid {
+            color: var(--success);
+        }
+
+        .modal-payment-value.pending {
+            color: var(--warning);
+        }
+
+        .modal-payment-value.overdue {
+            color: var(--danger);
+        }
+
+        .modal-message {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--info);
+        }
+
+        .modal-message p {
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .modal-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow);
+            -webkit-tap-highlight-color: transparent;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            border-color: var(--gray);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #2a9d8f 100%);
+            color: white;
+        }
+    </style>
+    <!-- Include the full CSS from previous version here -->
     <style>
         /* CSS Variables */
         :root {
@@ -1613,93 +2033,106 @@ $conn->close();
             <span><?php echo htmlspecialchars($class['batch_code']); ?></span>
         </div>
 
-        <!-- Payment Status Card -->
-        <div class="payment-card">
-            <div class="payment-header">
-                <h2 class="payment-title">
-                    <i class="fas fa-credit-card"></i> Payment Status
-                </h2>
-                <span class="payment-badge 
-                    <?php
-                    if ($has_paid) echo 'badge-paid';
-                    elseif ($grace_period_expired) echo 'badge-overdue';
-                    elseif ($is_grace_period) echo 'badge-pending';
-                    else echo 'badge-free';
-                    ?>">
-                    <?php
-                    if ($has_paid) echo 'Paid';
-                    elseif ($grace_period_expired) echo 'Overdue';
-                    elseif ($is_grace_period) echo 'Pending';
-                    else echo 'Free';
-                    ?>
-                </span>
+        <!-- Compact Payment Alert -->
+        <?php
+        $alert_class = 'success';
+        $icon = 'fa-check-circle';
+        if ($grace_period_expired) {
+            $alert_class = 'danger';
+            $icon = 'fa-exclamation-triangle';
+        } elseif ($is_grace_period) {
+            $alert_class = 'warning';
+            $icon = 'fa-clock';
+        } elseif ($has_paid) {
+            $alert_class = 'success';
+            $icon = 'fa-check-circle';
+        } else {
+            $alert_class = 'info';
+            $icon = 'fa-info-circle';
+        }
+        ?>
+        <div class="payment-alert <?php echo $alert_class; ?>">
+            <div class="payment-icon">
+                <i class="fas <?php echo $icon; ?>"></i>
             </div>
+            <div class="payment-summary">
+                <?php echo $payment_summary; ?>
+                <?php if ($is_grace_period): ?>
+                    <small><?php echo $grace_days_remaining; ?> day(s) remaining in grace period</small>
+                <?php elseif ($grace_period_expired): ?>
+                    <small>Access restricted until payment</small>
+                <?php endif; ?>
+            </div>
+            <button class="payment-details-btn" onclick="openPaymentModal()">
+                <i class="fas fa-credit-card"></i> Details
+            </button>
+        </div>
 
-            <div class="payment-grid">
-                <div class="payment-item">
-                    <div class="payment-label">Course Fee</div>
-                    <div class="payment-value">₦<?php echo number_format($course_fee, 2); ?></div>
+        <!-- Payment Details Modal -->
+        <div class="modal-overlay" id="paymentModal" onclick="if(event.target === this) closePaymentModal()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-credit-card"></i> Payment Details</h2>
+                    <button class="modal-close" onclick="closePaymentModal()">&times;</button>
                 </div>
-
-                <div class="payment-item">
-                    <div class="payment-label">Paid</div>
-                    <div class="payment-value paid">₦<?php echo number_format($payment_status['paid_amount'] ?? 0, 2); ?></div>
-                </div>
-
-                <div class="payment-item">
-                    <div class="payment-label">Balance</div>
-                    <div class="payment-value 
-                        <?php
-                        if ($has_paid) echo 'paid';
-                        elseif ($grace_period_expired) echo 'overdue';
-                        else echo 'pending';
-                        ?>">
-                        ₦<?php echo number_format($payment_status['balance'] ?? $course_fee, 2); ?>
+                <div class="modal-body">
+                    <div class="modal-payment-grid">
+                        <div class="modal-payment-item">
+                            <div class="modal-payment-label">Course Fee</div>
+                            <div class="modal-payment-value">₦<?php echo number_format($course_fee, 2); ?></div>
+                        </div>
+                        <div class="modal-payment-item">
+                            <div class="modal-payment-label">Amount Paid</div>
+                            <div class="modal-payment-value paid">₦<?php echo number_format($payment_status['paid_amount'] ?? 0, 2); ?></div>
+                        </div>
+                        <div class="modal-payment-item">
+                            <div class="modal-payment-label">Balance</div>
+                            <div class="modal-payment-value <?php echo ($payment_status['balance'] ?? $course_fee) > 0 ? 'pending' : 'paid'; ?>">
+                                ₦<?php echo number_format($payment_status['balance'] ?? $course_fee, 2); ?>
+                            </div>
+                        </div>
+                        <div class="modal-payment-item">
+                            <div class="modal-payment-label">Deadline</div>
+                            <div class="modal-payment-value">
+                                <?php echo $grace_end_date->format('M j, Y'); ?>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="payment-item">
-                    <div class="payment-label">Deadline</div>
-                    <div class="payment-value">
-                        <?php echo $grace_end_date->format('M j'); ?>
+                    <div class="modal-message">
+                        <p><?php echo $payment_message; ?></p>
                         <?php if ($is_grace_period): ?>
-                            <br><small><?php echo $grace_days_remaining; ?>d</small>
+                            <p><strong>Grace Period:</strong> You have <?php echo $grace_days_remaining; ?> day(s) remaining to make payment.</p>
+                        <?php elseif ($grace_period_expired): ?>
+                            <p><strong>Access Restricted:</strong> Please complete payment to regain access.</p>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="modal-actions">
+                        <?php if (!$has_paid && $course_fee > 0): ?>
+                            <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Make Payment Now
+                            </a>
+                        <?php endif; ?>
+                        <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
+                            <i class="fas fa-file-invoice"></i> View Invoices
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/student/finance/payment_history.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
+                            <i class="fas fa-history"></i> Payment History
+                        </a>
+                        <?php if ($has_paid): ?>
+                            <button class="btn btn-success" disabled>
+                                <i class="fas fa-check-circle"></i> Payment Complete
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
-
-            <div class="payment-message">
-                <h3><i class="fas fa-info-circle"></i> Important</h3>
-                <p><?php echo $payment_message; ?></p>
-            </div>
-
-            <div class="payment-actions">
-                <?php if (!$has_paid && $course_fee > 0): ?>
-                    <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                        <i class="fas fa-credit-card"></i> Pay Now
-                    </a>
-                <?php endif; ?>
-
-                <a href="<?php echo BASE_URL; ?>modules/student/finance/invoices/?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                    <i class="fas fa-file-invoice"></i> Invoices
-                </a>
-
-                <a href="<?php echo BASE_URL; ?>modules/student/finance/payment_history.php?class_id=<?php echo $class_id; ?>" class="btn btn-secondary">
-                    <i class="fas fa-history"></i> History
-                </a>
-
-                <?php if ($has_paid): ?>
-                    <button class="btn btn-success" disabled>
-                        <i class="fas fa-check-circle"></i> Paid
-                    </button>
-                <?php endif; ?>
             </div>
         </div>
 
         <?php if (!$is_class_accessible): ?>
             <?php if (!$is_class_date_accessible): ?>
-                <!-- Countdown Section -->
+                <!-- Countdown Section (same as before) -->
                 <div class="countdown-container">
                     <h1 class="countdown-title">Starts Soon!</h1>
                     <p class="countdown-description">
@@ -1724,78 +2157,42 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-
-                <!-- Class Header -->
-                <div class="main-header">
-                    <div class="header-content">
-                        <div class="class-info">
-                            <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
-                            <p><?php echo htmlspecialchars($class['course_title']); ?></p>
-                        </div>
-                        <span class="status-badge status-upcoming">
-                            <i class="fas fa-clock"></i> <?php echo $days_remaining; ?>d
-                        </span>
-                    </div>
-
-                    <!-- Navigation -->
-                    <div class="nav-container nav-disabled">
-                        <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-comments"></i><span>Discuss</span></a>
-                        <a href="announcements.php?class_id=<?php echo $class_id; ?>" class="nav-link">
-                            <i class="fas fa-bullhorn"></i><span>Updates</span>
-                        </a>
-                    </div>
-                </div>
-
             <?php elseif ($is_class_date_accessible && !$is_payment_accessible): ?>
-                <!-- Payment Required Section -->
+                <!-- Payment Required Section (same as before) -->
                 <div class="countdown-container" style="background: linear-gradient(135deg, #f94144 0%, #e63946 100%);">
                     <h1 class="countdown-title">
-                        <i class="fas fa-exclamation-triangle"></i> Payment
+                        <i class="fas fa-exclamation-triangle"></i> Payment Required
                     </h1>
-
                     <?php if ($grace_period_expired): ?>
-                        <p class="countdown-description">Access restricted</p>
+                        <p class="countdown-description">Access restricted - payment overdue</p>
                     <?php else: ?>
-                        <p class="countdown-description"><?php echo $grace_days_remaining; ?>d left</p>
-                        <div class="countdown-timer">
-                            <div class="countdown-item">
-                                <div class="countdown-value" id="grace-days"><?php echo $grace_days_remaining; ?></div>
-                                <div class="countdown-label">Days</div>
-                            </div>
-                        </div>
+                        <p class="countdown-description"><?php echo $grace_days_remaining; ?> days left in grace period</p>
                     <?php endif; ?>
                 </div>
-
-                <!-- Class Header -->
-                <div class="main-header" style="background: linear-gradient(135deg, #f94144 0%, #e63946 100%);">
-                    <div class="header-content">
-                        <div class="class-info">
-                            <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
-                            <p><?php echo htmlspecialchars($class['course_title']); ?></p>
-                        </div>
-                        <span class="status-badge status-payment">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <?php echo $grace_period_expired ? 'Overdue' : $grace_days_remaining . 'd'; ?>
-                        </span>
-                    </div>
-
-                    <!-- Navigation -->
-                    <div class="nav-container nav-disabled">
-                        <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
-                        <a href="#" class="nav-link"><i class="fas fa-comments"></i><span>Discuss</span></a>
-                    </div>
-                </div>
-
             <?php endif; ?>
+
+            <!-- Class Header (simplified for non-accessible) -->
+            <div class="main-header" style="background: linear-gradient(135deg, var(--gray) 0%, #4a5568 100%);">
+                <div class="header-content">
+                    <div class="class-info">
+                        <h1><?php echo htmlspecialchars($class['batch_code']); ?></h1>
+                        <p><?php echo htmlspecialchars($class['course_title']); ?></p>
+                    </div>
+                    <span class="status-badge status-upcoming">
+                        <i class="fas fa-lock"></i> Locked
+                    </span>
+                </div>
+                <!-- Minimal navigation -->
+                <div class="nav-container nav-disabled">
+                    <a href="#" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
+                    <a href="#" class="nav-link"><i class="fas fa-book"></i><span>Materials</span></a>
+                    <a href="#" class="nav-link"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+                </div>
+            </div>
 
             <!-- Class Details (always visible) -->
             <div class="class-details">
-                <h2 class="card-title"><i class="fas fa-info-circle"></i> Class Info</h2>
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> Class Information</h2>
                 <div class="details-grid">
                     <div class="detail-item">
                         <div class="detail-label">Instructor</div>
@@ -1817,19 +2214,18 @@ $conn->close();
             </div>
 
         <?php else: ?>
-            <!-- Regular Class Dashboard -->
-
-            <!-- Financial Alerts -->
-            <?php if (!$has_paid && $is_grace_period): ?>
+            <!-- Regular Class Dashboard (same as previous version) -->
+            <!-- Financial Alerts (if any, but now compact) -->
+            <?php if ($is_grace_period): ?>
                 <div class="financial-alert warning">
                     <div class="alert-icon"><i class="fas fa-clock"></i></div>
                     <div class="alert-content">
-                        <h4>Grace Period</h4>
-                        <p><?php echo $grace_days_remaining; ?> day(s) left to pay</p>
+                        <h4>Grace Period Active</h4>
+                        <p><?php echo $grace_days_remaining; ?> day(s) remaining to make payment.</p>
                         <div class="alert-actions">
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                                <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
+                            <button onclick="openPaymentModal()" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> View Details
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1837,34 +2233,13 @@ $conn->close();
                 <div class="financial-alert danger">
                     <div class="alert-icon"><i class="fas fa-ban"></i></div>
                     <div class="alert-content">
-                        <h4>Suspended</h4>
-                        <p>Payment required to continue</p>
+                        <h4>Account Suspended</h4>
+                        <p>Please clear outstanding balance.</p>
                         <div class="alert-actions">
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                                <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
+                            <button onclick="openPaymentModal()" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Resolve
+                            </button>
                         </div>
-                    </div>
-                </div>
-            <?php elseif ($class['balance'] > 0 && !$class['is_cleared']): ?>
-                <div class="financial-alert warning">
-                    <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Balance: ₦<?php echo number_format($class['balance'], 2); ?></h4>
-                        <p>Due: <?php echo date('M d', strtotime($class['next_payment_due'])); ?></p>
-                        <div class="alert-actions">
-                            <a href="<?php echo BASE_URL; ?>modules/student/finance/payments/make_payment.php?class_id=<?php echo $class_id; ?>&course_id=<?php echo $class['course_id']; ?>" class="btn btn-primary">
-                                <i class="fas fa-credit-card"></i> Pay Now
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <?php elseif ($class['is_cleared'] || $has_paid): ?>
-                <div class="financial-alert success">
-                    <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="alert-content">
-                        <h4>Payment Complete</h4>
-                        <p>Full access granted</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -1878,13 +2253,10 @@ $conn->close();
                     </div>
                     <span class="status-badge status-<?php echo $class['enrollment_status']; ?>">
                         <?php echo ucfirst($class['enrollment_status']); ?>
-                        <?php if (!$has_paid && $is_grace_period): ?>
-                            | <?php echo $grace_days_remaining; ?>d
-                        <?php endif; ?>
                     </span>
                 </div>
 
-                <!-- Navigation -->
+                <!-- Navigation (same as previous) -->
                 <div class="nav-container">
                     <a href="class_home.php?id=<?php echo $class_id; ?>" class="nav-link active">
                         <i class="fas fa-home"></i><span>Home</span>
@@ -1915,7 +2287,7 @@ $conn->close();
                 </div>
             </div>
 
-            <!-- Stats -->
+            <!-- Stats Grid (same as previous) -->
             <div class="stats-grid">
                 <div class="stat-card assignments" onclick="window.location.href='assignments.php?class_id=<?php echo $class_id; ?>'">
                     <div class="stat-value"><?php echo $stats['assignments']; ?></div>
@@ -1935,6 +2307,7 @@ $conn->close();
                 </div>
             </div>
 
+            <!-- Main Content (same as previous) -->
             <div class="main-content">
                 <!-- Left Column -->
                 <div class="left-column">
@@ -2110,8 +2483,26 @@ $conn->close();
     </div>
 
     <script>
+        // Modal functions
+        function openPaymentModal() {
+            document.getElementById('paymentModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePaymentModal();
+            }
+        });
+
         <?php if (!$is_class_accessible && !$is_class_date_accessible): ?>
-            // Countdown Timer
+            // Countdown Timer (same as before)
             function updateCountdown() {
                 const startDate = new Date('<?php echo $class['start_date']; ?>');
                 const twoDaysBefore = new Date(startDate);
@@ -2138,51 +2529,7 @@ $conn->close();
 
             updateCountdown();
             setInterval(updateCountdown, 1000);
-
-        <?php elseif (!$is_class_accessible && $is_class_date_accessible && !$is_payment_accessible && !$grace_period_expired): ?>
-            // Grace period countdown
-            function updateGraceCountdown() {
-                const graceEndDate = new Date('<?php echo $grace_end_date->format('Y-m-d H:i:s'); ?>');
-                const now = new Date();
-                const timeDiff = graceEndDate - now;
-
-                if (timeDiff <= 0) {
-                    location.reload();
-                    return;
-                }
-
-                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                const graceDaysEl = document.getElementById('grace-days');
-                if (graceDaysEl) {
-                    graceDaysEl.textContent = days;
-                }
-            }
-
-            updateGraceCountdown();
-            setInterval(updateGraceCountdown, 1000 * 60 * 60); // Update every hour
         <?php endif; ?>
-
-        // Notification function
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-
-            const icon = type === 'info' ? 'fa-info-circle' : type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            const bgColor = type === 'info' ? 'var(--primary)' : type === 'success' ? 'var(--success)' : 'var(--warning)';
-
-            notification.innerHTML = `
-                <i class="fas ${icon}" style="color: ${bgColor}; font-size: 24px;"></i>
-                <div style="flex: 1;">
-                    <strong>${message}</strong>
-                </div>
-                <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: var(--gray); padding: 0.5rem;">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 5000);
-        }
 
         // Auto-refresh when countdown reaches zero
         setInterval(() => {
@@ -2197,13 +2544,13 @@ $conn->close();
             <?php endif; ?>
         }, 30000);
 
-        // Payment status check
+        // Payment status check (optional, can be kept)
         setInterval(() => {
             fetch('<?php echo BASE_URL; ?>modules/student/finance/check_payment_status.php?class_id=<?php echo $class_id; ?>')
                 .then(response => response.json())
                 .then(data => {
                     if (data.paid) {
-                        showNotification('Payment confirmed!', 'success');
+                        // Optionally show a notification and reload
                         setTimeout(() => location.reload(), 2000);
                     }
                 })
@@ -2221,18 +2568,6 @@ $conn->close();
                 });
             });
         }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'h') {
-                e.preventDefault();
-                window.location.href = 'index.php';
-            }
-            if (e.key === 'Escape') {
-                const notification = document.querySelector('.notification');
-                if (notification) notification.remove();
-            }
-        });
     </script>
 </body>
 

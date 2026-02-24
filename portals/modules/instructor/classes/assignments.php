@@ -365,11 +365,20 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
             }
         }
 
-        // Delete assignment (or soft delete by setting is_published to 0)
-        $delete_sql = "UPDATE assignments SET is_published = 0 WHERE id = ? AND instructor_id = ?";
+        // CHANGE THIS: Hard delete instead of soft delete
+        $delete_sql = "DELETE FROM assignments WHERE id = ? AND instructor_id = ?";
         $delete_stmt = $conn->prepare($delete_sql);
         $delete_stmt->bind_param("ii", $assignment_id, $instructor_id);
-        $delete_stmt->execute();
+
+        if ($delete_stmt->execute()) {
+            // Also delete related submissions if you want to clean up
+            $delete_submissions = "DELETE FROM assignment_submissions WHERE assignment_id = ?";
+            $sub_stmt = $conn->prepare($delete_submissions);
+            $sub_stmt->bind_param("i", $assignment_id);
+            $sub_stmt->execute();
+            $sub_stmt->close();
+        }
+
         $delete_stmt->close();
 
         // Log activity
