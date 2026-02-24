@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 3 · Microsoft Word & Desktop Publishing · hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef4fb;
+            color: #132b3c;
+            line-height: 1.5;
+            padding: 1.2rem;
+        }
+
+        .hub-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.8rem 2.8rem 2rem 2rem;
+            box-shadow: 0 30px 50px -18px #1d3d5a;
+            overflow: hidden;
+            padding: 2.2rem 2.2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0e3f60, #216795);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-block {
+            background: #e2edfe;
+            color: #0f3d5c;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.4rem 2rem;
+            border-radius: 60px;
+            border: 1px solid #70b0e0;
+        }
+
+        .sub-lead {
+            font-size: 1.4rem;
+            color: #236191;
+            border-left: 8px solid #1f7ab6;
+            padding-left: 1.8rem;
+            margin: 0.8rem 0 2rem 0;
+            background: #f0f7ff;
+            border-radius: 2rem;
+            padding: 1.2rem 1.8rem;
+            font-weight: 400;
+        }
+
+        .objective-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .objective-item {
+            flex: 1 1 210px;
+            background: #ebf4fe;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 5px solid #297bb3;
+            box-shadow: 0 12px 18px -16px #183e5a;
+            font-weight: 550;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .objective-item span {
+            font-size: 1.8rem;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0 2rem;
+        }
+
+        .topic-card {
+            background: #ffffff;
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 18px 28px -20px #19415f;
+            border: 1px solid #d1e3f7;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topic-card:hover {
+            border-color: #2c7fba;
+            box-shadow: 0 22px 36px -20px #0d446b;
+            transform: translateY(-4px);
+        }
+
+        .topic-icon {
+            font-size: 2.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .topic-title {
+            font-size: 2rem;
+            font-weight: 680;
+            color: #113e60;
+            border-bottom: 3px solid #bad2f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-desc {
+            color: #1b4363;
+            margin-bottom: 1.2rem;
+            font-weight: 460;
+            font-size: 1rem;
+        }
+
+        .module-links {
+            list-style: none;
+            margin: 0 0 0.8rem;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .module-links li {
+            margin: 0.8rem 0;
+        }
+
+        .module-links a {
+            text-decoration: none;
+            background: #eaf3fd;
+            color: #114166;
+            padding: 0.6rem 1.3rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            transition: 0.1s;
+            width: 100%;
+            word-break: break-word;
+            line-height: 1.3;
+            font-size: 0.98rem;
+        }
+
+        .module-links a:hover {
+            background: #cde2fe;
+            border-color: #2879b3;
+            box-shadow: 0 5px 10px -6px #1d5380;
+        }
+
+        .pill-tag {
+            background: #dcebfa;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-size: 0.85rem;
+            color: #064478;
+            display: inline-block;
+            margin-top: 0.4rem;
+        }
+
+        .pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+        }
+
+        .activities-panel {
+            background: #f6faff;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0 1.5rem;
+            border: 2px solid #d7e9ff;
+            box-shadow: inset 0 2px 6px #c0d8f0, 0 14px 18px -18px #193e5e;
+        }
+
+        .activities-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #154d73;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 1.6rem;
+            padding: 1.3rem;
+            border-left: 6px solid #277ab5;
+            box-shadow: 0 5px 14px #d7e5f5;
+        }
+
+        .activity-card strong {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #0f3b58;
+        }
+
+        .assessment-box {
+            background: #1b5079;
+            color: white;
+            border-radius: 1.8rem;
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .assessment-box h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #ffc857;
+            border-radius: 3rem;
+            padding: 0.8rem 2rem;
+            font-weight: 700;
+            color: #113e5a;
+            text-decoration: none;
+            border: 2px solid #feda9b;
+            box-shadow: 0 7px 0 #a56e20;
+            transition: 0.07s;
+            display: inline-block;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #8b5717;
+        }
+
+        .btn-light {
+            background: #eef5fc;
+            box-shadow: 0 7px 0 #577ea0;
+            color: #02223b;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b5d2f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .footer-note {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            color: #3a6185;
+            border-top: 2px dashed #b3ceec;
+            padding-top: 1.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hub-container">
+        <!-- block 3 header -->
+        <h1>
+            📘 Block 3: Microsoft Word & Desktop Publishing
+            <span class="badge-block">documents · formatting · professional output</span>
+        </h1>
+        <div class="sub-lead">
+            📌 complete Word proficiency · page layout · objects · tables · proofing · integrated project
+        </div>
+
+        <!-- learning objectives -->
+        <div style="margin-bottom: 0.8rem;">
+            <h2 style="font-size: 2rem; color: #134a6f; border-bottom: 4px solid #317cb2; padding-bottom: 0.3rem;">🎯
+                Learning objectives</h2>
+        </div>
+        <div class="objective-grid">
+            <div class="objective-item"><span>🔹</span>Navigate Word interface & ribbon with confidence</div>
+            <div class="objective-item"><span>🔹</span>Apply advanced text editing & formatting techniques</div>
+            <div class="objective-item"><span>🔹</span>Master page layout: margins, orientation, size, sections</div>
+            <div class="objective-item"><span>🔹</span>Insert & format tables, images, shapes, SmartArt</div>
+            <div class="objective-item"><span>🔹</span>Use proofing tools & review features professionally</div>
+            <div class="objective-item"><span>🔹</span>Produce a complete business report (integrated project)</div>
+        </div>
+
+        <!-- TOPIC GRID : 7 core modules (6 previous + 1 practical project) -->
+        <div class="topic-grid">
+            <!-- 1. Getting started with Word -->
+            <div class="topic-card">
+                <div class="topic-icon">🚀</div>
+                <div class="topic-title">Getting started</div>
+                <div class="topic-desc">Interface, ribbon, backstage, save/open, QAT, troubleshooting.</div>
+                <ul class="module-links">
+                    <li><a href="getting_started_with_word.html">📘 complete beginner's guide (interface, ribbon,
+                            QAT)</a></li>
+                    <li><a href="getting_started_with_word.html#interface">🖥️ understanding the interface</a></li>
+                    <li><a href="getting_started_with_word.html#ribbon">📑 ribbon in depth (tabs & groups)</a></li>
+                    <li><a href="getting_started_with_word.html#backstage-view">📂 backstage view (file tab)</a></li>
+                    <li><a href="getting_started_with_word.html#creating-documents">🆕 creating / saving / opening</a>
+                    </li>
+                    <li><a href="getting_started_with_word.html#troubleshooting">🔧 troubleshooting common issues</a>
+                    </li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">ribbon</span>
+                    <span class="pill-tag">QAT</span>
+                    <span class="pill-tag">backstage</span>
+                    <span class="pill-tag">file mgmt</span>
+                </div>
+            </div>
+
+            <!-- 2. Text editing & formatting -->
+            <div class="topic-card">
+                <div class="topic-icon">✍️</div>
+                <div class="topic-title">Text editing & formatting</div>
+                <div class="topic-desc">Selecting, cut/copy/paste, character/paragraph formatting, styles.</div>
+                <ul class="module-links">
+                    <li><a href="text_editing.html">📝 complete text editing & formatting notes</a></li>
+                    <li><a href="text_editing.html#text-selection-techniques">✂️ selection techniques
+                            (mouse/keyboard)</a></li>
+                    <li><a href="text_editing.html#cut-copy-and-paste-operations">📋 cut, copy & paste options</a></li>
+                    <li><a href="text_editing.html#character-formatting">🔤 character formatting (font, effects)</a>
+                    </li>
+                    <li><a href="text_editing.html#paragraph-formatting">📐 paragraph alignment, indents, spacing</a>
+                    </li>
+                    <li><a href="text_editing.html#keyboard-shortcuts-reference">⌨️ shortcuts reference</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">bold/italic</span>
+                    <span class="pill-tag">indents</span>
+                    <span class="pill-tag">bullets</span>
+                    <span class="pill-tag">clear formatting</span>
+                </div>
+            </div>
+
+            <!-- 3. Page layout essentials -->
+            <div class="topic-card">
+                <div class="topic-icon">📐</div>
+                <div class="topic-title">Page layout essentials</div>
+                <div class="topic-desc">Margins, orientation, size, columns, section breaks, best practices.</div>
+                <ul class="module-links">
+                    <li><a href="page_layout.html">📏 page layout complete guide</a></li>
+                    <li><a href="page_layout.html#part1-margins">📏 margins (standard, custom, mirror)</a></li>
+                    <li><a href="page_layout.html#part2-orientation">🔄 orientation & mixing (section breaks)</a></li>
+                    <li><a href="page_layout.html#part3-size">📄 page size (A4, letter, custom)</a></li>
+                    <li><a href="page_layout.html#summary-best-practices">✅ summary & best practices</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">margins</span>
+                    <span class="pill-tag">landscape</span>
+                    <span class="pill-tag">section break</span>
+                    <span class="pill-tag">paper size</span>
+                </div>
+            </div>
+
+            <!-- 4. Inserting objects (images, shapes, smartart) -->
+            <div class="topic-card">
+                <div class="topic-icon">🖼️</div>
+                <div class="topic-title">Inserting objects</div>
+                <div class="topic-desc">Images, shapes, SmartArt – formatting, grouping, text wrap.</div>
+                <ul class="module-links">
+                    <li><a href="inserting_objects.html">📷 complete inserting objects notes</a></li>
+                    <li><a href="inserting_objects.html#working-with-images">🖼️ working with images (styles, wrap)</a>
+                    </li>
+                    <li><a href="inserting_objects.html#working-with-shapes">🔷 shapes (draw, format, group)</a></li>
+                    <li><a href="inserting_objects.html#working-with-smartart">📊 SmartArt (insert, customize)</a></li>
+                    <li><a href="inserting_objects.html#best-practices">✅ best practices alignment/consistency</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">text wrap</span>
+                    <span class="pill-tag">grouping</span>
+                    <span class="pill-tag">smartart styles</span>
+                    <span class="pill-tag">picture effects</span>
+                </div>
+            </div>
+
+            <!-- 5. Tables (complete) -->
+            <div class="topic-card">
+                <div class="topic-icon">📊</div>
+                <div class="topic-title">Working with tables</div>
+                <div class="topic-desc">Create, modify, format, advanced layout, sort, formulas.</div>
+                <ul class="module-links">
+                    <li><a href="tables.html">📋 comprehensive guide to tables</a></li>
+                    <li><a href="tables.html#part1">🔨 creating tables (grid, draw, convert)</a></li>
+                    <li><a href="tables.html#part2">➕ inserting/deleting rows/columns</a></li>
+                    <li><a href="tables.html#part3">🎨 formatting & table styles</a></li>
+                    <li><a href="tables.html#part4">⚙️ advanced: merge, split, repeat header</a></li>
+                    <li><a href="tables.html#exercises-tables">✍️ table exercises</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">merge cells</span>
+                    <span class="pill-tag">sort</span>
+                    <span class="pill-tag">formula</span>
+                    <span class="pill-tag">banded rows</span>
+                </div>
+            </div>
+
+            <!-- 6. Proofing & reviewing -->
+            <div class="topic-card">
+                <div class="topic-icon">🔍</div>
+                <div class="topic-title">Proofing & reviewing</div>
+                <div class="topic-desc">Spell check, grammar, thesaurus, find & replace (advanced).</div>
+                <ul class="module-links">
+                    <li><a href="word_proofing.html">🔎 proofing & reviewing complete module</a></li>
+                    <li><a href="word_proofing.html#part1">🔤 spell check (real‑time / manual / options)</a></li>
+                    <li><a href="word_proofing.html#part2">📖 thesaurus (synonyms, nuance)</a></li>
+                    <li><a href="word_proofing.html#part3">🔄 find & replace basics + advanced</a></li>
+                    <li><a href="word_proofing.html#part3-adv">⚙️ replace formatting, wildcards, special chars</a></li>
+                </ul>
+                <div class="pill-container">
+                    <span class="pill-tag">F7</span>
+                    <span class="pill-tag">Ctrl+H</span>
+                    <span class="pill-tag">wildcards</span>
+                    <span class="pill-tag">readability</span>
+                </div>
+            </div>
+
+            <!-- 7. Practical project (integrated assignment) -->
+            <div class="topic-card" style="background: #f9f2e5; border: 2px solid #efc48c;">
+                <div class="topic-icon">🗂️</div>
+                <div class="topic-title">Practical project · annual report</div>
+                <div class="topic-desc">Step‑by‑step integrated assignment – apply all skills.</div>
+                <ul class="module-links">
+                    <li><a href="practical_project.html" style="background:#ffeec2;">📋 full practical assignment (10
+                            steps)</a></li>
+                    <li><a href="practical_project.html#step1" style="background:#ffeec2;">📁 document setup &
+                            margins</a></li>
+                    <li><a href="practical_project.html#step4" style="background:#ffeec2;">📊 table + objects</a></li>
+                    <li><a href="practical_project.html#step6" style="background:#ffeec2;">🔍 proofing &
+                            find/replace</a></li>
+                    <li><a href="practical_project.html#step10" style="background:#ffeec2;">💾 export to PDF</a></li>
+                </ul>
+                <div style="margin-top: 0.4rem;">
+                    <span class="pill-tag" style="background:#ffd79c;">📌 final project</span>
+                    <span class="pill-tag" style="background:#ffd79c;">evaluation checklist</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HANDS-ON ACTIVITIES & WORKSHOPS (like Block 2) -->
+        <div class="activities-panel">
+            <div class="activities-title">🧪 hands‑on practice · block 3</div>
+            <div class="activities-grid">
+                <div class="activity-card"><strong>📝 formatting workshop</strong> take raw text → apply headings,
+                    styles, multi‑level lists, table of contents (practice).</div>
+                <div class="activity-card"><strong>🖼️ object lab</strong> create a flyer with shapes, image, SmartArt
+                    cycle, group & align.</div>
+                <div class="activity-card"><strong>🔎 proofing drill</strong> intentionally misspelled document → run
+                    F7, thesaurus, replace formatting.</div>
+                <div class="activity-card"><strong>📐 layout challenge</strong> mix portrait/landscape, insert section
+                    breaks, set custom margins.</div>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT BLOCK 3 (summative) -->
+        <div class="assessment-box">
+            <div>
+                <h3>📋 block 3 assessment</h3>
+                <p style="font-size: 1.2rem; opacity: 0.9;">timed practical exam · create a full report + PDF export</p>
+            </div>
+            <div class="button-group">
+                <a href="practical_project.html" class="btn">📋 go to project</a>
+                <a href="practical_project.html#evaluation-checklist" class="btn btn-light">✅ evaluation rubric</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- quick access footer links -->
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
+            <div>
+                <h3 style="color: #16496b;">📂 all block 3 modules</h3>
+                <ul style="list-style: none; columns: 2; column-gap: 2rem;">
+                    <li><a href="getting_started_with_word.html" style="text-decoration: none;">🔹 getting started</a>
+                    </li>
+                    <li><a href="text_editing.html" style="text-decoration: none;">🔹 text editing</a></li>
+                    <li><a href="page_layout.html" style="text-decoration: none;">🔹 page layout</a></li>
+                    <li><a href="inserting_objects.html" style="text-decoration: none;">🔹 inserting objects</a></li>
+                    <li><a href="tables.html" style="text-decoration: none;">🔹 tables</a></li>
+                    <li><a href="word_proofing.html" style="text-decoration: none;">🔹 proofing</a></li>
+                    <li><a href="practical_project.html" style="text-decoration: none;">🔹 practical project</a></li>
+                </ul>
+            </div>
+            <div style="max-width: 400px;">
+                <div style="background: #e3f0fc; border-radius: 2rem; padding: 1.3rem 2rem;">
+                    <p style="font-weight: 600;">📘 block 3 at a glance</p>
+                    <p>6 in‑depth Word modules + integrated project. Each link opens the full interactive notes with all
+                        original content preserved. Use the project to build a professional portfolio piece.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer-note">
+            <small>Desktop Publishing & Secretarial Studies · Block 3: Microsoft Word & DTP · © 2026</small>
+            <span class="badge-block" style="background: #dbeafe;">7 core topics · integrated project · v1.0</span>
+        </div>
+
+    </div> <!-- hub-container -->
+</body>
+
+</html>

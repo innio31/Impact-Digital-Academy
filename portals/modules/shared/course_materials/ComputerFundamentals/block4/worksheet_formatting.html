@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Microsoft Excel · worksheet formatting (complete guide)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e6f0ea;
+            color: #173e2a;
+            line-height: 1.5;
+            padding: 1rem;
+        }
+
+        .wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.2rem;
+            box-shadow: 0 25px 40px -15px #1f5436;
+            overflow: hidden;
+            padding: 2rem 1.5rem 2rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 750;
+            background: linear-gradient(155deg, #1b6e3c, #2b8b4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.3rem;
+            color: #237a45;
+            border-left: 6px solid #34a56e;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 380;
+        }
+
+        .toc-card {
+            background: #daf0e2;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.5rem;
+            box-shadow: inset 0 1px 5px rgba(28, 94, 44, 0.1), 0 16px 22px -12px #2b7042;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 680;
+            color: #1f603a;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.8rem 1.2rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #196f3a;
+            font-weight: 530;
+            box-shadow: 0 4px 12px rgba(30, 90, 40, 0.08);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.96rem;
+        }
+
+        .toc-grid a:hover {
+            background: #c5eed6;
+            border-color: #269c53;
+            transform: scale(1.02);
+            box-shadow: 0 12px 20px -12px #1f7e41;
+        }
+
+        section {
+            scroll-margin-top: 1.8rem;
+            margin: 2.8rem 0 2.2rem;
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem 2rem;
+            box-shadow: 0 8px 18px rgba(28, 78, 40, 0.04);
+            border: 1px solid #cef0dc;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 720;
+            color: #0f592b;
+            border-bottom: 3px solid #299e58;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 620;
+            margin: 2rem 0 1rem;
+            color: #1d773f;
+            border-left: 8px solid #8bdfb0;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.4rem;
+            color: #238048;
+        }
+
+        p,
+        li {
+            margin: 0.6rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #ebf7f0;
+            border-radius: 2rem;
+            padding: 1.6rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #239e52;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(20, 75, 35, 0.07);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1d7842;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #c0eace;
+            background: #fafffd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #228544;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #e2f5e8;
+            padding: 1.1rem 1.3rem;
+            border-radius: 1.3rem;
+            border-bottom: 4px solid #47b86c;
+        }
+
+        .sample-box {
+            background: #effdf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #b4e1c8;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #245f36;
+            color: #f0fff5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bfeace, transparent);
+            margin: 2.5rem 0;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #1d6637;
+            border-top: 1px dashed #a8debb;
+            padding-top: 2rem;
+        }
+
+        .mini-card {
+            background: #ecf8f1;
+            border: 1px solid #b7e6ca;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            margin: 2.2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📗 Microsoft Excel: comprehensive worksheet formatting</h1>
+        <div class="subhead">cell styling · numbers · fonts · borders · fills · advanced · exercises</div>
+
+        <!-- table of contents (all topics) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 complete guide · contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to formatting</a>
+                <a href="#cell-formatting-fundamentals">2. Cell formatting fundamentals</a>
+                <a href="#number-formatting">3. Number formatting</a>
+                <a href="#font-formatting">4. Font formatting</a>
+                <a href="#alignment-options">5. Alignment options</a>
+                <a href="#borders-gridlines">6. Borders & gridlines</a>
+                <a href="#fill-colors-patterns">7. Fill colors & patterns</a>
+                <a href="#row-height-column-width">8. Row height & column width</a>
+                <a href="#advanced-formatting">9. Advanced formatting</a>
+                <a href="#best-practices">10. Best practices & tips</a>
+                <a href="#troubleshooting">11. Troubleshooting</a>
+                <a href="#practice-exercises">12. Practice exercises</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. Introduction to worksheet formatting</h2>
+            <h3>What is worksheet formatting?</h3>
+            <p>Worksheet formatting means visually enhancing data — changing appearance of cells, rows, columns to
+                improve readability, emphasize important figures, and build professional reports.</p>
+            <ul>
+                <li><strong>Enhanced readability</strong> – easier to scan</li>
+                <li><strong>Professional appearance</strong> – business‑ready</li>
+                <li><strong>Data visualization</strong> – highlight trends</li>
+                <li><strong>Error reduction</strong> – less mistakes</li>
+                <li><strong>Efficient communication</strong> – show hierarchy</li>
+            </ul>
+            <h3>Formatting workflow</h3>
+            <ol>
+                <li>Plan the purpose</li>
+                <li>Enter raw data first</li>
+                <li>Apply formatting after</li>
+                <li>Review consistency</li>
+                <li>Fine‑tune</li>
+            </ol>
+        </section>
+
+        <!-- 2. CELL FORMATTING FUNDAMENTALS -->
+        <section id="cell-formatting-fundamentals">
+            <h2>🧱 2. Cell formatting fundamentals</h2>
+            <h3>Access formatting options</h3>
+            <p><span class="badge">Home tab</span> Font, Alignment, Number groups. <br><strong>Format Cells
+                    dialog:</strong> <kbd class="kbd-shortcut">Ctrl+1</kbd> or right‑click → Format Cells (6 tabs:
+                Number, Alignment, Font, Border, Fill, Protection).</p>
+            <h3>Selecting cells</h3>
+            <table>
+                <tr>
+                    <th>Selection</th>
+                    <th>Method</th>
+                </tr>
+                <tr>
+                    <td>Single cell</td>
+                    <td>click</td>
+                </tr>
+                <tr>
+                    <td>Range</td>
+                    <td>drag or Shift+click</td>
+                </tr>
+                <tr>
+                    <td>Entire row/col</td>
+                    <td>click row number/col letter</td>
+                </tr>
+                <tr>
+                    <td>Non‑adjacent</td>
+                    <td>Ctrl + click ranges</td>
+                </tr>
+                <tr>
+                    <td>All cells</td>
+                    <td>triangle or <kbd>Ctrl+A</kbd> twice</td>
+                </tr>
+            </table>
+            <h3>Copy formats</h3>
+            <p><strong>Format painter:</strong> select formatted cell → click painter → drag over target. Double‑click
+                for multiple uses. <br><strong>Paste special:</strong> copy → right‑click → Paste Special → Formats
+                (<kbd>Ctrl+Alt+V</kbd>, then T).</p>
+        </section>
+
+        <!-- 3. NUMBER FORMATTING (detailed) -->
+        <section id="number-formatting">
+            <h2>#️⃣ 3. Number formatting</h2>
+            <p>Change appearance without altering value.</p>
+            <div class="def-grid">
+                <div class="def-item"><strong>General</strong> – default</div>
+                <div class="def-item"><strong>Number</strong> – decimals, separators, negatives</div>
+                <div class="def-item"><strong>Currency</strong> – symbol, decimals</div>
+                <div class="def-item"><strong>Accounting</strong> – align $ and 0 as –</div>
+                <div class="def-item"><strong>Date</strong> – serial numbers formatted</div>
+                <div class="def-item"><strong>Time</strong> – fractional day</div>
+                <div class="def-item"><strong>Percentage</strong> – ×100 + %</div>
+                <div class="def-item"><strong>Fraction</strong> – up to 2 digits, halves …</div>
+                <div class="def-item"><strong>Scientific</strong> – 1.23E+04</div>
+                <div class="def-item"><strong>Text</strong> – exact, leading zeros kept</div>
+                <div class="def-item"><strong>Special</strong> – zip, phone, SSN</div>
+                <div class="def-item"><strong>Custom</strong> – codes like 0 "units"</div>
+            </div>
+            <h3>Date & time examples</h3>
+            <table>
+                <tr>
+                    <th>Format</th>
+                    <th>Display (15 Jan 2024, 2:30 PM)</th>
+                </tr>
+                <tr>
+                    <td>*Wednesday, January 15, 2024</td>
+                    <td>Wednesday, January 15, 2024</td>
+                </tr>
+                <tr>
+                    <td>dd-mmm-yy</td>
+                    <td>15-Jan-24</td>
+                </tr>
+                <tr>
+                    <td>mmm-yy</td>
+                    <td>Jan-24</td>
+                </tr>
+                <tr>
+                    <td>hh:mm AM/PM</td>
+                    <td>02:30 PM</td>
+                </tr>
+                <tr>
+                    <td>hh:mm:ss</td>
+                    <td>14:30:45</td>
+                </tr>
+            </table>
+            <h3>Custom format codes</h3>
+            <p><code>0</code> digit placeholder, <code>#</code> no leading zero, <code>?</code> space for alignment.
+                <br> Examples: <code>0 "units"</code> → 25 units; <code>[Green]↑ 0%;[Red]↓ 0%</code> conditional. <br>
+                Structure: <code>positive;negative;zero;text</code>.
+            </p>
+        </section>
+
+        <!-- 4. FONT FORMATTING -->
+        <section id="font-formatting">
+            <h2>✍️ 4. Font formatting</h2>
+            <p>Choose font, size, style, color, effects.</p>
+            <ul>
+                <li><strong>Fonts:</strong> Calibri (default), Arial, Times New Roman, Cambria, Verdana</li>
+                <li><strong>Size:</strong> 8–72 pt; body 11–12 pt, headings 14–24 pt</li>
+                <li><strong>Styles:</strong> Bold <kbd>Ctrl+B</kbd>, Italic <kbd>Ctrl+I</kbd>, Underline
+                    <kbd>Ctrl+U</kbd>, Double underline, Strikethrough
+                </li>
+                <li><strong>Color:</strong> theme colors / standard / RGB custom</li>
+                <li><strong>Effects:</strong> Superscript <kbd>Ctrl+Shift+=</kbd>, Subscript <kbd>Ctrl+=</kbd></li>
+            </ul>
+        </section>
+
+        <!-- 5. ALIGNMENT OPTIONS -->
+        <section id="alignment-options">
+            <h2>⚖️ 5. Alignment options</h2>
+            <h3>Horizontal</h3>
+            <p>Left, Center, Right, Justify, Fill, Center Across Selection (better than merge).</p>
+            <h3>Vertical</h3>
+            <p>Top, Middle, Bottom.</p>
+            <h3>Text control</h3>
+            <p><strong>Wrap text</strong> – multi‑line; <strong>Shrink to fit</strong> – reduce font; <strong>Merge
+                    cells</strong> – combine (use sparingly).</p>
+            <h3>Orientation & indent</h3>
+            <p>Rotate text (degrees), increase/decrease indent (<kbd>Alt+H+6</kbd>, <kbd>Alt+H+5</kbd>).</p>
+            <div class="sample-box">
+                Standard | Rotated | Vertical | Stacked
+            </div>
+        </section>
+
+        <!-- 6. BORDERS AND GRIDLINES -->
+        <section id="borders-gridlines">
+            <h2>🔲 6. Borders and gridlines</h2>
+            <p><strong>Gridlines:</strong> on‑screen only (can be printed via Page Layout).
+                <br><strong>Borders:</strong> added to cells, always print.
+            </p>
+            <h3>Add borders</h3>
+            <ul>
+                <li>Home → Borders dropdown (quick)</li>
+                <li>Draw borders (pencil) or Draw Border Grid</li>
+                <li>Format Cells → Border tab: line style, color, presets (Outline, Inside, None)</li>
+            </ul>
+            <p>Border examples: single, double, dashed, thick outside, combination.</p>
+        </section>
+
+        <!-- 7. FILL COLORS AND PATTERNS -->
+        <section id="fill-colors-patterns">
+            <h2>🎨 7. Fill colors & patterns</h2>
+            <p>Solid fill (theme, standard, custom RGB). <strong>Gradient fills:</strong> two‑color, shading styles.
+                <strong>Patterns:</strong> dots, stripes, grid (pattern color + style).
+            </p>
+            <h3>Color meaning guide</h3>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Use</th>
+                </tr>
+                <tr>
+                    <td>Green</td>
+                    <td>positive, good</td>
+                </tr>
+                <tr>
+                    <td>Red</td>
+                    <td>negative, alert</td>
+                </tr>
+                <tr>
+                    <td>Yellow</td>
+                    <td>warning</td>
+                </tr>
+                <tr>
+                    <td>Blue</td>
+                    <td>neutral, headers</td>
+                </tr>
+                <tr>
+                    <td>Gray</td>
+                    <td>totals, background</td>
+                </tr>
+            </table>
+            <h3>Alternating rows (zebra stripes)</h3>
+            <p>Format as Table, or conditional formatting: <code>=MOD(ROW(),2)=0</code>.</p>
+        </section>
+
+        <!-- 8. ROW HEIGHT & COLUMN WIDTH -->
+        <section id="row-height-column-width">
+            <h2>📏 8. Row height & column width</h2>
+            <p>Default column width: 8.43 characters; row height: 15 points. <br>Drag boundaries, double‑click to
+                auto‑fit. <br>Ribbon: Home → Format → Row Height / Column Width, AutoFit, Hide/Unhide.</p>
+            <p>Shortcuts: <kbd>Alt+H+O+I</kbd> auto‑fit column, <kbd>Ctrl+0</kbd> hide column, <kbd>Ctrl+9</kbd> hide
+                row, <kbd>Ctrl+Shift+0</kbd> unhide column.</p>
+        </section>
+
+        <!-- 9. ADVANCED FORMATTING TECHNIQUES (conditional, styles, themes, tables, printing) -->
+        <section id="advanced-formatting">
+            <h2>⚙️ 9. Advanced formatting</h2>
+            <h3>Conditional formatting</h3>
+            <p>Home → Conditional Formatting: Highlight Cell Rules, Top/Bottom, Data Bars, Color Scales, Icon Sets, New
+                Rule (using formulas).</p>
+            <ul>
+                <li><strong>Data bars</strong> – gradient / solid, show bar only</li>
+                <li><strong>Color scales</strong> – 2‑color / 3‑color</li>
+                <li><strong>Icon sets</strong> – directional, shapes, ratings</li>
+                <li><strong>Formula rule</strong> e.g. <code>=ISBLANK(A1)</code> , <code>=MOD(ROW(),2)=0</code></li>
+            </ul>
+            <h3>Cell styles & themes</h3>
+            <p><strong>Cell Styles:</strong> predefined (Good/Bad, Heading, Total, etc.) – create custom via New Cell
+                Style. <br><strong>Themes:</strong> Page Layout → Themes (colors, fonts, effects).</p>
+            <h3>Format as table</h3>
+            <p><kbd>Ctrl+T</kbd> → table styles, banded rows, total row, structured references.</p>
+            <h3>Print formatting</h3>
+            <p>Page Layout: Print Titles, Breaks, Scale to Fit, Print Area. Page Break Preview.</p>
+        </section>
+
+        <!-- 10. BEST PRACTICES AND TIPS -->
+        <section id="best-practices">
+            <h2>✅ 10. Best practices & tips</h2>
+            <div class="mini-card">
+                <h4>Formatting standards template</h4>
+                <p><strong>Headers:</strong> Calibri 14pt bold, dark blue fill, white text, bottom double border.<br>
+                    <strong>Sub‑headers:</strong> 12pt bold, light blue fill.<br>
+                    <strong>Data cells:</strong> 11pt regular, alternating white/light gray.<br>
+                    <strong>Totals:</strong> 12pt bold, top double border.
+                </p>
+                <h4>Time‑savers</h4>
+                <p><kbd>F4</kbd> repeats last action. <kbd>Ctrl+Shift+$</kbd> currency, <kbd>Ctrl+Shift+%</kbd> percent,
+                    <kbd>Ctrl+Shift+#</kbd> date.
+                </p>
+                <h4>checklist</h4>
+                <ul>
+                    <li>☐ data fully visible</li>
+                    <li>☐ column widths consistent</li>
+                    <li>☐ numbers formatted uniformly</li>
+                    <li>☐ print preview checked</li>
+                    <li>☐ headers repeat on each page</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 11. TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <h2>🔧 11. Troubleshooting common issues</h2>
+            <table>
+                <tr>
+                    <th>Issue</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>##### in cell</td>
+                    <td>widen column or fix negative date</td>
+                </tr>
+                <tr>
+                    <td>dates show as numbers</td>
+                    <td>apply Date format</td>
+                </tr>
+                <tr>
+                    <td>leading zeros missing</td>
+                    <td>pre‑format as Text or use '001</td>
+                </tr>
+                <tr>
+                    <td>numbers not adding</td>
+                    <td>text‑format numbers → convert</td>
+                </tr>
+                <tr>
+                    <td>format painter not working</td>
+                    <td>double‑click for multiple areas, check protection</td>
+                </tr>
+                <tr>
+                    <td>conditional formatting ignored</td>
+                    <td>check rule order, stop if true, range</td>
+                </tr>
+                <tr>
+                    <td>print preview different</td>
+                    <td>set print area, adjust page breaks</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 12. PRACTICE EXERCISES (full) -->
+        <section id="practice-exercises">
+            <h2>📝 12. Practice exercises</h2>
+            <h3>Exercise 1: basic formatting</h3>
+            <p>Employee directory: ID (text 5 digits), Name, Dept, Hire Date (dd‑mmm‑yyyy), Salary (currency). Apply
+                headers bold, fill, alternating rows, borders, adjust widths.</p>
+            <h3>Exercise 2: financial report</h3>
+            <p>Budget vs actual: category, budget, actual, variance, % of budget. Format currency, conditional
+                formatting (positive variance green, negative red), percentage, total row.</p>
+            <h3>Exercise 3: date & time formats</h3>
+            <p>Project timeline: task, start/end date (14‑Mar‑2024), duration, start/end time (1:30 PM). Use weekday
+                custom format, highlight >30 days.</p>
+            <h3>Exercise 4: conditional formatting challenge</h3>
+            <p>Sales rep data: Q1–Q4, total, target. Apply data bars, color scales on total, icon sets (✓ if >=target, ⚠
+                if ≥90%, ✗ below). Highlight top per region, cells <35k.< /p>
+                    <h3>Exercise 5: comprehensive invoice</h3>
+                    <p>Build invoice: header, customer, line items with Item#, description, quantity, unit price,
+                        discount %, net price, total. Calculate subtotal, tax, shipping, total due. Use borders,
+                        currency, conditional formatting for discount>0, custom styles, print area, footer. Save as
+                        template.</p>
+        </section>
+
+        <!-- summary card with shortcuts -->
+        <div class="mini-card">
+            <h4>⌨️ essential shortcuts for formatting</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.8rem;">
+                <span><kbd>Ctrl+1</kbd> Format cells</span>
+                <span><kbd>Ctrl+B</kbd> bold</span>
+                <span><kbd>Ctrl+I</kbd> italic</span>
+                <span><kbd>Ctrl+U</kbd> underline</span>
+                <span><kbd>Ctrl+5</kbd> strikethrough</span>
+                <span><kbd>Ctrl+Shift+$</kbd> currency</span>
+                <span><kbd>Ctrl+Shift+%</kbd> percent</span>
+                <span><kbd>Ctrl+Shift+#</kbd> date</span>
+                <span><kbd>Ctrl+Shift+@</kbd> time</span>
+                <span><kbd>Ctrl+Shift+&</kbd> outline border</span>
+                <span><kbd>Ctrl+Shift_</kbd> remove borders</span>
+                <span><kbd>Alt+H+H</kbd> fill color</span>
+                <span><kbd>F4</kbd> repeat last</span>
+            </div>
+            <p style="margin-top: 1.2rem;">Complete guide — all original topics included, mobile responsive.</p>
+        </div>
+
+        <footer>
+            📘 Microsoft Excel · comprehensive worksheet formatting notes · all sections · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

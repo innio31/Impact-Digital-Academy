@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Microsoft Excel · complete beginner's guide (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eaf2e5;
+            color: #1d3a2b;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1b4d2b;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #1c6e3c, #2a8b5a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #2d7a4b;
+            border-left: 6px solid #3aa56a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #dcf0e3;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 70, 30, 0.1), 0 16px 24px -14px #467a5a;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #155e34;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #176e38;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 40, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #c2f0d4;
+            border-color: #1f8f4c;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1b6d3c;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 70, 30, 0.06);
+            border: 1px solid #d2f0de;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0e552d;
+            border-bottom: 3px solid #2e9b5a;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1d723f;
+            border-left: 8px solid #8fdfb0;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1f7a43;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #edf9f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #279556;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 70, 30, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1f7042;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c6ecce;
+            background: #f9fffc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #228544;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #effaf3;
+            border: 1px solid #bdeacb;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #e1f5e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #49b870;
+        }
+
+        .drill {
+            background: #effaf3;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #299354;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bfecce, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e754a;
+            border-top: 1px dashed #b1e2bf;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1fdf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #bde2cc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #285e3a;
+            color: #f0fff5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📗 Microsoft Excel: Comprehensive Beginner's Guide</h1>
+        <div class="subhead">complete notes · workbook · worksheets · navigation · data entry & shortcuts</div>
+
+        <!-- TABLE OF CONTENTS (matches original structure, all topics preserved) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Table of Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Excel</a>
+                <a href="#workbooks-worksheets">2. Workbooks & Worksheets</a>
+                <a href="#columns-rows-cells">3. Columns, Rows, Cells</a>
+                <a href="#navigating">4. Navigating the Worksheet</a>
+                <a href="#data-entry">5. Data Entry and Editing</a>
+                <a href="#formatting-basics">6. Formatting Basics</a>
+                <a href="#formulas-functions">7. Formulas & Functions</a>
+                <a href="#charts-visuals">8. Charts & Visuals</a>
+                <a href="#practice-exercises">9. Practice Exercises</a>
+                <a href="#troubleshooting">10. Troubleshooting</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. Introduction to Microsoft Excel</h2>
+            <h3>1.1 What is Microsoft Excel?</h3>
+            <p>Microsoft Excel is a powerful spreadsheet application, part of the Microsoft 365 suite. It is renowned
+                for numerical calculations, organizing data, creating charts, and building graphical dashboards. The
+                meaningful information produced by Excel is essential for both personal and business decision‑making –
+                from tracking personal expenses and creating budgets to calculating company sales and managing product
+                inventory.</p>
+            <ul>
+                <li>A spreadsheet program developed by Microsoft</li>
+                <li>Used for calculations, data analysis, and visualization</li>
+                <li>Integrates with other Office apps</li>
+                <li>Available on Windows, macOS, web and mobile</li>
+            </ul>
+            <h3>1.2 Versions of Microsoft Excel</h3>
+            <ul>
+                <li><strong>Microsoft 365</strong> (subscription) – continuously updated</li>
+                <li><strong>Excel 2021, 2019, 2016</strong> – perpetual licenses, static features</li>
+                <li><strong>Excel Online</strong> – free, browser‑based</li>
+                <li><strong>Mobile apps</strong> – iOS / Android</li>
+            </ul>
+        </section>
+
+        <!-- 2. WORKBOOKS AND WORKSHEETS -->
+        <section id="workbooks-worksheets">
+            <h2>📔 2. Workbooks and Worksheets: The Foundation</h2>
+            <div class="sample-box" style="font-family: monospace; line-height: 1.5;">
+                ┌─────────────────────────────────────────────────────────────┐
+                │ Workbook (your file .xlsx) │
+                │ ┌───────────────────────────────────────────────────────┐ │
+                │ │ Sheet1 │ Sheet2 │ Sheet3 │ + │ │
+                │ └───────────────────────────────────────────────────────┘ │
+                │ A grid of cells, charts, and data. │
+                └─────────────────────────────────────────────────────────────┘
+            </div>
+            <h3>2.1 What is an Excel Workbook?</h3>
+            <p>An <strong>Excel workbook</strong> is the actual file you create and save on your computer. Think of it
+                as a digital notebook or a binder. Just like a binder can hold many pages, an Excel workbook can contain
+                many individual pages. The file extension for an Excel workbook is <code>.xlsx</code>. When you start
+                Excel and select "Blank Workbook," you are creating a new, empty file to work in.</p>
+            <ul>
+                <li>Primary container for all your data and analysis</li>
+                <li>Can hold one or more worksheets, chart sheets, and macro sheets</li>
+                <li>Save via <strong>File > Save As</strong> (choose location, name, click Save)</li>
+            </ul>
+            <h3>2.2 What is a Worksheet?</h3>
+            <p>A <strong>worksheet</strong> (often just called a "sheet") is a single page or tab inside the workbook.
+                It is the grid‑like space where you enter and manipulate data. A workbook can initially have one or more
+                worksheets, and you can add more as needed.</p>
+            <ul>
+                <li><strong>Default names:</strong> "Sheet1", "Sheet2", "Sheet3" …</li>
+                <li><strong>Worksheet tabs:</strong> located at the bottom‑left; click to switch</li>
+                <li><strong>Renaming:</strong> double‑click a tab and type a new name (e.g., "Sales Data")</li>
+                <li><strong>Adding a new sheet:</strong> click the <code>+</code> icon to the right of the last tab</li>
+                <li><strong>Navigate between sheets:</strong> <span class="kbd-shortcut">Ctrl+PageUp</span> (next) /
+                    <span class="kbd-shortcut">Ctrl+PageDown</span> (previous)</li>
+            </ul>
+        </section>
+
+        <!-- 3. UNDERSTANDING WORKSHEET STRUCTURE: COLUMNS, ROWS, CELLS -->
+        <section id="columns-rows-cells">
+            <h2>📊 3. Columns, Rows, and Cells</h2>
+            <p>A worksheet is a massive grid defined by columns and rows.</p>
+            <ul>
+                <li><strong>Columns</strong> run vertically, identified by <strong>letters</strong> at the top (A, B, C,
+                    … Z, AA, … XFD). Modern Excel has <strong>16,384 columns</strong>.</li>
+                <li><strong>Rows</strong> run horizontally, identified by <strong>numbers</strong> on the left (1, 2, 3
+                    … 1,048,576). Excel provides <strong>1,048,576 rows</strong>.</li>
+            </ul>
+            <h3>The Cell: Basic Unit</h3>
+            <p>A <strong>cell</strong> is the intersection of a column and a row – where you enter data. Every cell has
+                a unique address (cell reference): column letter + row number. Example: <strong>B10</strong> is column
+                B, row 10. The very last cell in a worksheet is <strong>XFD1048576</strong>.</p>
+            <table>
+                <tr>
+                    <th>Term</th>
+                    <th>Example</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td>Cell address</td>
+                    <td>C5</td>
+                    <td>Column C, row 5</td>
+                </tr>
+                <tr>
+                    <td>Active cell</td>
+                    <td>(dark border)</td>
+                    <td>Selected cell, ready for data entry</td>
+                </tr>
+                <tr>
+                    <td>Name Box</td>
+                    <td>shows "C5"</td>
+                    <td>Displays active cell address</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 4. NAVIGATING THE WORKSHEET (detailed table, exactly as source) -->
+        <section id="navigating">
+            <h2>🧭 4. Navigating the Worksheet</h2>
+            <p>Efficient navigation is key. Here are primary methods:</p>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>Mouse</strong></td>
+                    <td>Click any cell; use scroll bars</td>
+                    <td>General, visible area</td>
+                </tr>
+                <tr>
+                    <td><strong>Arrow keys</strong></td>
+                    <td>← → ↑ ↓ move one cell</td>
+                    <td>Precise cell‑by‑cell</td>
+                </tr>
+                <tr>
+                    <td><strong>Name Box</strong></td>
+                    <td>Type address (e.g., IV500) → Enter</td>
+                    <td>Jump instantly to far cell</td>
+                </tr>
+                <tr>
+                    <td><strong>Go To</strong> (<kbd>Ctrl+G</kbd> or F5)</td>
+                    <td>Enter reference (e.g., AA15000)</td>
+                    <td>Jump + special selections</td>
+                </tr>
+                <tr>
+                    <td><strong>Ctrl + Arrow key</strong></td>
+                    <td><kbd>Ctrl+↓</kbd> jumps to edge of data</td>
+                    <td>Move across large datasets</td>
+                </tr>
+                <tr>
+                    <td><strong>Ctrl+Home</strong></td>
+                    <td>Go to cell A1</td>
+                    <td>Start of sheet</td>
+                </tr>
+                <tr>
+                    <td><strong>Ctrl+End</strong></td>
+                    <td>Last used cell</td>
+                    <td>Find data end</td>
+                </tr>
+                <tr>
+                    <td><strong>Find</strong> (<kbd>Ctrl+F</kbd>)</td>
+                    <td>Search content, not address</td>
+                    <td>Find specific text/value</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 5. DATA ENTRY AND EDITING (with Ctrl+Enter deep explanation) -->
+        <section id="data-entry">
+            <h2>⌨️ 5. Data Entry and Editing</h2>
+            <h3>5.1 The Active Cell</h3>
+            <p>Before entering data, select a cell. The <strong>active cell</strong> has a dark border; its address
+                appears in the Name Box. Only one cell is active at a time.</p>
+            <h3>5.2 Entering Data</h3>
+            <ol>
+                <li>Click a cell (or navigate to it).</li>
+                <li>Type – content appears in the cell and the <strong>Formula Bar</strong>.</li>
+                <li>Commit data by:
+                    <ul>
+                        <li><kbd>Enter</kbd> – saves and moves down</li>
+                        <li><kbd>Tab</kbd> – saves and moves right</li>
+                        <li>Arrow keys – saves and moves that direction</li>
+                        <li>✔ (check) in Formula Bar – saves, stays in same cell</li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>5.3 Editing Existing Data</h3>
+            <ul>
+                <li><strong>Replace:</strong> click cell, type new content (overwrites).</li>
+                <li><strong>Edit directly in cell:</strong> double‑click the cell or press <kbd>F2</kbd> – cursor
+                    appears inside.</li>
+                <li><strong>Edit in Formula Bar:</strong> select cell, then click inside the Formula Bar.</li>
+            </ul>
+            <h3>5.4 Powerful shortcut: Ctrl+Enter</h3>
+            <div class="highlight-block">
+                <p><span class="kbd-shortcut">Ctrl+Enter</span> saves data to the selected cell(s) and <strong>keeps the
+                        cell(s) selected</strong>. Unlike plain <kbd>Enter</kbd>, selection does not move.</p>
+                <ul>
+                    <li><strong>Filling non‑adjacent cells:</strong> select multiple cells (hold <kbd>Ctrl</kbd> while
+                        clicking), type a value (e.g., "Paid"), press <kbd>Ctrl+Enter</kbd> → fills all.</li>
+                    <li><strong>Editing formulas without losing selection:</strong> select range, type new formula,
+                        <kbd>Ctrl+Enter</kbd> applies to all, formatting preserved.</li>
+                    <li><strong>"What‑if" analysis:</strong> test numbers in a cell, press <kbd>Ctrl+Enter</kbd> to
+                        commit and stay in same cell for next test.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 6. FORMATTING BASICS (expanded, covers essential) -->
+        <section id="formatting-basics">
+            <h2>🎨 6. Formatting Basics</h2>
+            <p>Make data presentable and readable. Use the <strong>Home tab</strong> groups: Font, Alignment, Number,
+                Styles.</p>
+            <table>
+                <tr>
+                    <th>Format</th>
+                    <th>How to apply</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Bold / Italic / Underline</td>
+                    <td>Select cells → click B/I/U or <kbd>Ctrl+B</kbd>, <kbd>Ctrl+I</kbd>, <kbd>Ctrl+U</kbd></td>
+                    <td><strong>Sales</strong>, <em>Q1</em>, <u>Total</u></td>
+                </tr>
+                <tr>
+                    <td>Number formats</td>
+                    <td>Home > Number dropdown: Currency, Percentage, Date,…</td>
+                    <td>€45.00, 75%, 14-Mar</td>
+                </tr>
+                <tr>
+                    <td>Cell borders & fill</td>
+                    <td>Font group borders / fill color</td>
+                    <td>Thick border, light blue background</td>
+                </tr>
+                <tr>
+                    <td>Wrap text & merge</td>
+                    <td>Alignment group: Wrap Text, Merge & Center</td>
+                    <td>Long text wraps; title across columns</td>
+                </tr>
+            </table>
+            <p><strong>Format Painter:</strong> copy formatting from one cell to another. Select cell with desired
+                format → click Format Painter (Home tab) → click target cell.</p>
+        </section>
+
+        <!-- 7. FORMULAS & FUNCTIONS (core intro) -->
+        <section id="formulas-functions">
+            <h2>🧮 7. Formulas & Functions</h2>
+            <p>All formulas begin with <code>=</code>. They perform calculations using cell references, numbers, and
+                functions.</p>
+            <ul>
+                <li><strong>Example formula:</strong> <code>=A1+B1</code> adds values in A1 and B1.</li>
+                <li><strong>Common functions:</strong> SUM, AVERAGE, COUNT, MAX, MIN, IF.</li>
+            </ul>
+            <div class="def-grid">
+                <div class="def-item"><strong>=SUM(C2:C10)</strong> – total of numbers in C2:C10</div>
+                <div class="def-item"><strong>=AVERAGE(B2:B8)</strong> – average of values</div>
+                <div class="def-item"><strong>=COUNT(A1:A100)</strong> – counts numeric cells</div>
+                <div class="def-item"><strong>=MAX(D5:D20)</strong> – largest number</div>
+            </div>
+            <h4>AutoSum (Alt+=)</h4>
+            <p>Quickly sum a column/row: select cell below/right, click AutoSum (Home tab) or press <kbd>Alt+=</kbd>.
+            </p>
+            <h4>Relative vs Absolute reference</h4>
+            <p><code>A1</code> (relative) changes when copied; <code>$A$1</code> (absolute) stays fixed. Use F4 to
+                toggle.</p>
+        </section>
+
+        <!-- 8. CHARTS & VISUALS -->
+        <section id="charts-visuals">
+            <h2>📈 8. Charts & Visuals</h2>
+            <p>Visualize data with a few clicks. Select data range → Insert tab → choose chart type (Column, Line, Pie,
+                Bar).</p>
+            <ul>
+                <li><strong>Recommended charts:</strong> Excel suggests based on data.</li>
+                <li><strong>Chart elements:</strong> titles, legend, data labels, gridlines – customize via + button.
+                </li>
+                <li><strong>Quick analysis:</strong> select data, click Quick Analysis icon (bottom right) for charts,
+                    formatting.</li>
+            </ul>
+            <div class="sample-box" style="font-style:italic; text-align:center;">
+                ── example: highlight A1:B5 → Insert > Clustered Column – instantly bar chart
+            </div>
+        </section>
+
+        <!-- 9. PRACTICE EXERCISES (complete list, exactly from source but adapted to Excel) -->
+        <section id="practice-exercises">
+            <h2>✍️ 9. Practice Exercises</h2>
+            <h3>Exercise 1: Exploring the Interface</h3>
+            <p>Open Excel, blank workbook. Identify title bar, Quick Access Toolbar, ribbon tabs, Name Box, Formula Bar,
+                sheet tabs, status bar, zoom. Collapse/expand ribbon.</p>
+            <h3>Exercise 2: Workbooks & Worksheets</h3>
+            <p>Rename Sheet1 to "Sales". Add a new sheet (click +). Colour the tab (right‑click → Tab Color). Move
+                between sheets using Ctrl+PageUp/Down.</p>
+            <h3>Exercise 3: Navigating</h3>
+            <p>Use Name Box to jump to XFD100. Press Ctrl+Home to return. Use Go To (F5) to go to AA500. Enter any value
+                there.</p>
+            <h3>Exercise 4: Data Entry and Ctrl+Enter</h3>
+            <p>Select non‑adjacent cells (A1, C3, E5) by holding Ctrl. Type "test" and press Ctrl+Enter. Observe all
+                selected cells filled. Now select range B2:B6, type "=ROW()" and press Ctrl+Enter – each cell shows its
+                row number and stays selected.</p>
+            <h3>Exercise 5: Formatting</h3>
+            <p>Enter monthly names in row 1. Apply bold, fill color, wrap text. Format as table: Home > Format as Table.
+                Practice Format Painter.</p>
+            <h3>Exercise 6: Formulas and Functions</h3>
+            <p>Enter numbers 10,20,30,40,50 in A1:A5. In A6 use =SUM(A1:A5). In A7 use =AVERAGE(A1:A5). In B1 enter
+                =A1*2 and copy down (fill handle).</p>
+            <h3>Exercise 7: Create a Chart</h3>
+            <p>Use the data from exercise 6, select A1:A5, insert a column chart. Add title and data labels.</p>
+            <h3>Exercise 8: Comprehensive</h3>
+            <p>Build a small expense table: Date, Category, Amount. Fill 5 rows. Calculate total amount. Format as
+                currency. Create a pie chart showing category shares. Save workbook as "Expense_Tracker.xlsx".</p>
+        </section>
+
+        <!-- 10. TROUBLESHOOTING COMMON ISSUES -->
+        <section id="troubleshooting">
+            <h2>🔧 10. Troubleshooting Common Issues</h2>
+            <table>
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Excel crashed, lost unsaved work</td>
+                    <td>Reopen – Document Recovery may appear; File > Info > Manage Workbook > Recover Unsaved Workbooks
+                    </td>
+                </tr>
+                <tr>
+                    <td>File is read‑only</td>
+                    <td>Save As with different name/location, or check file permissions</td>
+                </tr>
+                <tr>
+                    <td>Cell shows #####</td>
+                    <td>Column too narrow – double‑click column header border to auto‑fit</td>
+                </tr>
+                <tr>
+                    <td>Formula not calculating (shows text)</td>
+                    <td>Cell formatted as Text; reformat to General and re‑enter formula</td>
+                </tr>
+                <tr>
+                    <td>Accidental overwrite</td>
+                    <td>Press Ctrl+Z (undo) immediately</td>
+                </tr>
+                <tr>
+                    <td>File won't open / corrupted</td>
+                    <td>File > Open > select file > drop‑down next to Open button > Open and Repair</td>
+                </tr>
+                <tr>
+                    <td>Numbers stored as text</td>
+                    <td>Multiply by 1 (paste special) or use Text to Columns (Data tab)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SUMMARY CHECKLIST / SHORTCUTS -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Summary Checklist – can you?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Identify workbook vs worksheet<br>☐ Navigate using Name Box / Go To<br>☐ Use
+                    Ctrl+Enter for batch entry<br>☐ Create simple formulas</div>
+                <div class="def-item">☐ Apply formatting (bold, currency)<br>☐ Insert a chart<br>☐ Save workbook as
+                    .xlsx / PDF<br>☐ Recover unsaved workbook</div>
+            </div>
+            <h4 style="margin-top:1.5rem;">⌨️ Keyboard Shortcuts (reference)</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.5rem;">
+                <span><kbd>Ctrl+N</kbd> new</span>
+                <span><kbd>Ctrl+O</kbd> open</span>
+                <span><kbd>Ctrl+S</kbd> save</span>
+                <span><kbd>F12</kbd> Save As</span>
+                <span><kbd>Ctrl+P</kbd> print</span>
+                <span><kbd>Ctrl+Z</kbd> undo</span>
+                <span><kbd>Ctrl+Y</kbd> redo</span>
+                <span><kbd>Ctrl+B</kbd> bold</span>
+                <span><kbd>Ctrl+Home</kbd> to A1</span>
+                <span><kbd>Ctrl+End</kbd> last cell</span>
+                <span><kbd>Alt+=</kbd> AutoSum</span>
+                <span><kbd>F4</kbd> repeat / toggle absolute</span>
+                <span><kbd>Ctrl+Enter</kbd> fill & stay</span>
+            </div>
+            <p style="margin-top: 1.5rem;"><em>These comprehensive notes cover everything a beginner needs. Practice
+                    regularly with the exercises.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Microsoft Excel Beginner's Guide · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Word · practical assignment (integrated project) · step by step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9f0f5;
+            color: #1c2d3f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #132b40;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #0b3b5e, #1f6390);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1f5d8b;
+            border-left: 6px solid #2880c0;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .project-banner {
+            background: linear-gradient(115deg, #d2e7ff, #f5faff);
+            border-radius: 2rem;
+            padding: 2rem 2.5rem;
+            margin: 2rem 0 3rem;
+            border: 1px solid #b8d6f5;
+            box-shadow: 0 12px 28px -16px #1f5280;
+        }
+
+        .step-container {
+            counter-reset: step-counter;
+            margin: 2.5rem 0;
+        }
+
+        .step-block {
+            counter-increment: step-counter;
+            background: #f6fbfe;
+            border-radius: 2rem;
+            padding: 1.8rem 2.2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2b7abc;
+            box-shadow: 0 8px 18px -12px #173f61;
+            transition: 0.1s ease;
+            position: relative;
+        }
+
+        .step-block:hover {
+            background: #f0f8ff;
+            border-left-width: 10px;
+        }
+
+        .step-block::before {
+            content: "📌 step " counter(step-counter);
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: #1c6292;
+            color: white;
+            padding: 0.2rem 2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .step-title {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #0c3d5e;
+            margin: 0.5rem 0 1.2rem 0;
+            border-bottom: 2px dashed #8db5dc;
+            padding-bottom: 0.6rem;
+        }
+
+        .instruction-box {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.3rem 2rem;
+            margin: 1.2rem 0;
+            border: 1px solid #cfe2fc;
+        }
+
+        .checklist-badge {
+            background: #e5f0fa;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #103753;
+            display: inline-block;
+            margin: 0.5rem 0.5rem 0 0;
+            border: 1px solid #a6c6ec;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 50, 85, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #154b73;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d0e1f2;
+            background: #fbfeff;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ecf5ff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #4c8dc7;
+        }
+
+        .kbd-shortcut {
+            background: #2d3f52;
+            color: #f0f9ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .highlight-block {
+            background: #fffbe6;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #f5b342;
+        }
+
+        .btn-demo {
+            background: #e1efff;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #0b3b5e;
+            cursor: default;
+            margin: 0.4rem 0.4rem 0.4rem 0;
+            border: 1px solid #acc9ec;
+        }
+
+        .btn-demo:hover {
+            background: #c9e0ff;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #346180;
+            border-top: 1px dashed #b7cfec;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>📋 Microsoft Word · practical assignment (integrated project)</h1>
+        <div class="subhead">build a complete report · step‑by‑step guide · apply all modules</div>
+
+        <!-- project introduction card -->
+        <div class="project-banner">
+            <h2
+                style="color: #0a314b; border-bottom: 2px solid #1f6da0; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                🧾
+                final project: “annual sales report 2026”</h2>
+            <p style="font-size: 1.2rem;">You will create a <strong>multi‑page business document</strong> that combines
+                everything you learned: <span class="badge">interface & navigation</span> <span class="badge">text
+                    editing & formatting</span>
+                <span class="badge">page layout</span> <span class="badge">tables</span> <span class="badge">inserting
+                    objects</span>
+                <span class="badge">proofing tools</span>. Follow the steps in order – each builds on the previous one.
+            </p>
+            <p>⏱️ <em>estimated time: 2–3 hours · final file: "YourName_Report.docx" & PDF</em></p>
+        </div>
+
+        <!-- quick navigation to steps (visual only) -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin: 1rem 0 2.5rem;">
+            <span class="btn-demo">📌 step 1</span> <span class="btn-demo">📌 step 2</span> <span class="btn-demo">📌
+                step 3</span>
+            <span class="btn-demo">📌 step 4</span> <span class="btn-demo">📌 step 5</span> <span class="btn-demo">📌
+                step 6</span>
+            <span class="btn-demo">📌 step 7</span> <span class="btn-demo">📌 step 8</span> <span class="btn-demo">📌
+                step 9</span>
+            <span class="btn-demo">📌 step 10</span>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="step-container">
+            <div class="step-block">
+                <div class="step-title">📁 1. document setup & page layout</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> create a new document, set correct margins, orientation, and size.</p>
+                    <ul>
+                        <li>Open Word → <strong>Blank document</strong> (or <kbd>Ctrl+N</kbd>).</li>
+                        <li>Go to <strong>Layout → Margins → Custom Margins…</strong>
+                            <ul>
+                                <li>Top: 2.5 cm, Bottom: 2.5 cm, Left: 3 cm, Right: 2.5 cm (allow binding).</li>
+                                <li>Apply to <strong>Whole document</strong>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Orientation:</strong> Portrait.</li>
+                        <li><strong>Size:</strong> A4 (or Letter if you're in US/Canada).</li>
+                        <li><span class="checklist-badge">☑️ save immediately as "Sales_Report_2026.docx"</span></li>
+                    </ul>
+                </div>
+                <div style="background:#e4f0fa; border-radius: 1.2rem; padding:0.8rem 1.5rem;">
+                    💡 <strong>tip:</strong> enable the ruler (<kbd>Alt+W</kbd> then <kbd>R</kbd>) to check margins
+                    later.
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step-block">
+                <div class="step-title">📝 2. title page & text formatting</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> create a professional title page using character/paragraph formatting.
+                    </p>
+                    <ol>
+                        <li>At the top of page 1, type <strong>“Annual Sales Report”</strong> (without quotes).</li>
+                        <li>Select the text → apply:
+                            <ul>
+                                <li>Font: <strong>Georgia</strong> or <strong>Times New Roman</strong>, size <strong>36
+                                        pt</strong>, <strong>Bold</strong>, <strong>Small caps</strong>
+                                    (<kbd>Ctrl+Shift+K</kbd>).
+                                </li>
+                                <li>Center alignment (<kbd>Ctrl+E</kbd>).</li>
+                            </ul>
+                        </li>
+                        <li>Press <kbd>Enter</kbd> twice, type <strong>“Prepared for:”</strong> (size 14 pt, regular).
+                        </li>
+                        <li>Press <kbd>Enter</kbd>, type <strong>“Board of Directors”</strong> (size 16 pt, italic).
+                        </li>
+                        <li>Skip a line, type <strong>“Prepared by: [Your Name]”</strong> (size 14 pt, align right).
+                        </li>
+                        <li>Skip to bottom of page (use <kbd>Ctrl+End</kbd> then <kbd>Enter</kbd> several times or
+                            paragraph
+                            spacing), type <strong>“March 2026”</strong> (size 14 pt, center).</li>
+                    </ol>
+                </div>
+                <div class="def-grid" style="margin-top:0;">
+                    <div class="def-item"><kbd>Ctrl+E</kbd> center · <kbd>Ctrl+R</kbd> right · <kbd>Ctrl+L</kbd> left
+                    </div>
+                    <div class="def-item"><kbd>Ctrl+Shift+K</kbd> small caps · <kbd>Ctrl+B</kbd> bold</div>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step-block">
+                <div class="step-title">📑 3. headings, styles & page break</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> use styles for consistency and insert a page break.</p>
+                    <ul>
+                        <li>Go to end of title page → <strong>Layout → Breaks → Page</strong> (or
+                            <kbd>Ctrl+Enter</kbd>).
+                        </li>
+                        <li>On page 2, type <strong>“Executive Summary”</strong> → apply <strong>Heading 1</strong>
+                            style
+                            (Home tab → Styles). Modify if needed: size 20 pt, bold, dark blue.</li>
+                        <li>Write 2‑3 sentences about the report (fake content: “Total sales increased 15% …”).</li>
+                        <li>Next, type <strong>“Regional Performance”</strong> → apply <strong>Heading 1</strong> again.
+                        </li>
+                        <li>Below that, type <strong>“North Region”</strong> → apply <strong>Heading 2</strong> (size 16
+                            pt,
+                            italic).</li>
+                        <li>Type a short paragraph for North.</li>
+                    </ul>
+                </div>
+                <div class="highlight-block">
+                    ✅ <strong>checkpoint:</strong> your document has at least two pages and consistent headings.
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step-block">
+                <div class="step-title">📊 4. insert & format a table</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> present quarterly sales data in a professional table.</p>
+                    <ol>
+                        <li>Under the “Regional Performance” section, create a <strong>5×4 table</strong> (Insert →
+                            Table →
+                            drag).</li>
+                        <li>Fill with sample data:
+                            <table style="width:80%; margin:1rem 0; background:white;">
+                                <tr>
+                                    <th>Region</th>
+                                    <th>Q1</th>
+                                    <th>Q2</th>
+                                    <th>Q3</th>
+                                </tr>
+                                <tr>
+                                    <td>North</td>
+                                    <td>120,000</td>
+                                    <td>135,000</td>
+                                    <td>150,000</td>
+                                </tr>
+                                <tr>
+                                    <td>South</td>
+                                    <td>95,000</td>
+                                    <td>102,000</td>
+                                    <td>118,000</td>
+                                </tr>
+                                <tr>
+                                    <td>West</td>
+                                    <td>210,000</td>
+                                    <td>225,000</td>
+                                    <td>248,000</td>
+                                </tr>
+                            </table>
+                        </li>
+                        <li>Select the table → <strong>Table Design</strong> → choose a style (e.g., <strong>Grid Table
+                                5
+                                Dark – Accent 1</strong>).</li>
+                        <li>In <strong>Layout</strong> tab: align numbers to the right (select column →
+                            <kbd>Ctrl+R</kbd>),
+                            headers bold, center.</li>
+                        <li>Add a new row at bottom, merge cells, type <strong>“Total growth: +18%”</strong> (italic).
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div class="step-block">
+                <div class="step-title">🖼️ 5. insert objects: image & smartart</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> add a relevant image and a SmartArt diagram.</p>
+                    <ul>
+                        <li>Place cursor below the table → <kbd>Enter</kbd> twice.</li>
+                        <li><strong>Insert → Pictures → Stock Images</strong> (or use a local image if you have). Search
+                            “sales” or “chart” and insert one. (Alternatively, use <strong>Icons</strong>.)</li>
+                        <li>Resize image proportionally (drag corner). Apply a <strong>Picture Style</strong> from
+                            Picture
+                            Format tab (e.g., soft edge rectangle).</li>
+                        <li>Set <strong>Wrap Text → Square</strong>; position to the right of text.</li>
+                        <li>Below, insert a <strong>SmartArt</strong> (Insert → SmartArt → Process → “Basic Timeline” or
+                            “Cycle”). Type 3‑4 steps: “Plan → Execute → Review → Improve”.</li>
+                        <li>Change colors via <strong>SmartArt Design → Change Colors</strong> and apply a 3‑D style.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- STEP 6 -->
+            <div class="step-block">
+                <div class="step-title">🔍 6. proofing tools: spell check, thesaurus, find/replace</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> polish the document with professional language.</p>
+                    <ul>
+                        <li>Run <strong>Spelling & Grammar</strong> (<kbd>F7</kbd>). Fix any errors. Add a proper noun
+                            to
+                            dictionary if needed.</li>
+                        <li>Right‑click a common word (e.g., “increase”) → <strong>Synonyms</strong> → replace with
+                            “expand” or “grow”.</li>
+                        <li>Use <strong>Find and Replace</strong> (<kbd>Ctrl+H</kbd>): replace every “North” with
+                            “Northern Region” (but only in one section? use Find Next wisely). Practice <strong>Replace
+                                All</strong> after checking.</li>
+                        <li>Extra: Replace formatting – change all instances of a word to bold + dark red (place cursor
+                            in
+                            “Replace with” → Format → Font → choose Bold & color).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- STEP 7 -->
+            <div class="step-block">
+                <div class="step-title">📐 7. advanced layout: sections & mixed orientation</div>
+                <div class="instruction-box">
+                    <p><strong>🎯 goal:</strong> insert a landscape page to display a wide chart or table.</p>
+                    <ol>
+                        <li>Place cursor after the SmartArt (end of page 3).</li>
+                        <li><strong>Layout → Breaks → Next Page</strong> (section break).</li>
+                        <li>On new page, <strong>Orientation → Landscape</strong> (only that section changes).</li>
+                        <li>Insert a sample table with many columns, or copy a placeholder: “Wide financial overview”.
+                        </li>
+                        <li>After the landscape content, insert another <strong>Next Page</strong> break, set
+                            orientation
+                            back to Portrait.</li>
+                    </ol>
+                    <p><span class="badge">ⓘ note</span> you now have portrait, landscape, portrait sections.</p>
+                </div>
+            </div>
+
+            <!-- STEP 8 -->
+            <div class="step-block">
+                <div class="step-title">📌 8. headers, footers & page numbers</div>
+                <div class="instruction-box">
+                    <ul>
+                        <li>Double‑click top of page 2 (or any after title page).</li>
+                        <li>Check “Different First Page” (Options group) – so title page has no header.</li>
+                        <li>In header (regular section), type <strong>“Annual Sales Report 2026”</strong> align left,
+                            and
+                            maybe date right.</li>
+                        <li>Go to footer → Insert → Page Number → “Bottom of Page” → choose plain number 2.</li>
+                        <li>In footer, also add document path? optional.</li>
+                        <li>Close header/footer.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- STEP 9 -->
+            <div class="step-block">
+                <div class="step-title">🔎 9. final review & print preview</div>
+                <div class="instruction-box">
+                    <ul>
+                        <li>Press <kbd>Ctrl+Home</kbd> to go to start.</li>
+                        <li>Use the navigation pane (View → Navigation Pane) to jump between headings.</li>
+                        <li>Check that all headings are consistent, no blank pages, image placement ok.</li>
+                        <li><strong>File → Print</strong> (<kbd>Ctrl+P</kbd>) – examine print preview: ensure no content
+                            cut off, margins correct, page numbers visible. If needed, tweak margins or scaling.</li>
+                        <li>Verify that the landscape page prints correctly.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- STEP 10 -->
+            <div class="step-block">
+                <div class="step-title">💾 10. save & export as PDF</div>
+                <div class="instruction-box">
+                    <ul>
+                        <li>Final save: <kbd>Ctrl+S</kbd> (ensure filename includes your name e.g.
+                            “Alex_SalesReport.docx”).
+                        </li>
+                        <li><strong>File → Export → Create PDF/XPS</strong>. Click Options to ensure “Document” and not
+                            “Document showing markup”.</li>
+                        <li>Publish PDF and open it to verify everything looks correct.</li>
+                        <li>Submit both .docx and .pdf as required.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- evaluation checklist (rubric style) -->
+        <div class="project-banner" style="background: #ecf5fa; margin-top: 3rem;">
+            <h3 style="color: #103753;">📋 evaluation checklist – instructor use / self‑check</h3>
+            <div class="def-grid">
+                <div class="def-item"><strong>☐ page layout</strong> – custom margins, A4/Letter, orientation</div>
+                <div class="def-item"><strong>☐ title page</strong> – formatting (small caps, alignment, name)</div>
+                <div class="def-item"><strong>☐ headings</strong> – style consistency (Heading 1, 2)</div>
+                <div class="def-item"><strong>☐ table</strong> – proper style, alignment, formula / merged cell</div>
+                <div class="def-item"><strong>☐ objects</strong> – image with wrap, SmartArt with custom colours</div>
+                <div class="def-item"><strong>☐ proofing</strong> – no spelling errors, synonym used, replace
+                    demonstrated
+                </div>
+                <div class="def-item"><strong>☐ sections</strong> – landscape page with section breaks</div>
+                <div class="def-item"><strong>☐ header/footer</strong> – different first page, page numbers</div>
+                <div class="def-item"><strong>☐ print preview</strong> – verified clean printout</div>
+                <div class="def-item"><strong>☐ final files</strong> – .docx and .pdf saved</div>
+            </div>
+        </div>
+
+        <!-- keyboard shortcuts recap -->
+        <div class="mini-card" style="margin: 2.5rem 0;">
+            <h4 style="margin-top:0;">⌨️ shortcut cheatsheet for this project</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 1.2rem;">
+                <span><kbd>Ctrl+N</kbd> new</span>
+                <span><kbd>Ctrl+S</kbd> save</span>
+                <span><kbd>Ctrl+P</kbd> print preview</span>
+                <span><kbd>Ctrl+Enter</kbd> page break</span>
+                <span><kbd>Ctrl+E</kbd> center</span>
+                <span><kbd>Ctrl+R</kbd> right align</span>
+                <span><kbd>Ctrl+Shift+K</kbd> small caps</span>
+                <span><kbd>F7</kbd> spell check</span>
+                <span><kbd>Shift+F7</kbd> thesaurus</span>
+                <span><kbd>Ctrl+H</kbd> replace</span>
+                <span><kbd>Alt+W,R</kbd> show ruler</span>
+            </div>
+        </div>
+
+        <!-- final reminder -->
+        <div style="background:#dbeafe; border-radius: 2rem; padding: 1.5rem; text-align: center;">
+            <p style="font-size: 1.3rem;">✅ <strong>project completed</strong> — you have used every major Word skill in
+                a
+                realistic workflow.</p>
+            <p style="margin-top: 0.5rem;">📤 submit your two files (docx + pdf) according to your instructor's
+                directions.
+            </p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · integrated practical assignment · Word · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

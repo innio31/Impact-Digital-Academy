@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Excel · Data management – sorting & filtering (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e5eff0;
+            color: #153e3b;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #1b5f5a;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #146b5a, #1f9e80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #1b7f6b;
+            border-left: 6px solid #30b396;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #d5f0ec;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(0, 80, 70, 0.1), 0 16px 24px -14px #2c7a6b;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #0f5e50;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #0d6b57;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 60, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #c2f0e1;
+            border-color: #1f8f6f;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1b6d55;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(17, 70, 50, 0.06);
+            border: 1px solid #cef0e5;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0e5e4a;
+            border-bottom: 3px solid #2e9b7a;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1d7257;
+            border-left: 8px solid #8fdfc0;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #1f7a5a;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #e4f7f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #27956f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(1, 70, 50, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #1f7055;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c6ecd9;
+            background: #f9fffd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #1f8f6f;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #effaf5;
+            border: 1px solid #bdeacf;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #e1f5ea;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #49b889;
+        }
+
+        .drill {
+            background: #effaf5;
+            border-radius: 1.4rem;
+            padding: 1rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            border-left: 5px solid #299363;
+            margin: 1.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #bfecd6, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e7559;
+            border-top: 1px dashed #b1e2c4;
+            padding-top: 2.2rem;
+        }
+
+        .sample-box {
+            background: #f1fdf9;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #bde2cc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #1f7059;
+            color: #f0fff7;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .img-placeholder {
+            background: #e0f2ea;
+            border: 2px dashed #3db389;
+            border-radius: 1.8rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            font-style: italic;
+            color: #2a6b52;
+            margin: 1.8rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📊 Excel: Data Management Basics – Sorting & Filtering</h1>
+        <div class="subhead">complete notes · spreadsheet fundamentals · interactive reference</div>
+
+        <!-- Table of contents (exact mirror of topics) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 Contents</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Why sort & filter?</a>
+                <a href="#prepare-data">2. Preparing your data</a>
+                <a href="#sorting">3. Sorting data</a>
+                <a href="#filtering">4. Filtering data</a>
+                <a href="#practical-apps">5. Office applications</a>
+                <a href="#checklist">6. Summary checklist</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. Introduction: Why Sort and Filter?</h2>
+            <p>In a business environment, you will often work with lists of data—customer names, product inventories,
+                employee records, or sales transactions. A raw, unsorted list can be difficult to analyze. Imagine
+                trying to find the highest-selling product in a list of 1,000 unsorted items, or trying to find all
+                clients in a specific city.</p>
+            <p>This is where Excel's <strong>Sorting</strong> and <strong>Filtering</strong> tools become essential.
+                They are the foundational tools for turning raw data into useful information.</p>
+            <ul>
+                <li><strong>Sorting</strong> rearranges the order of your data based on the values in one or more
+                    columns. This helps you see a list alphabetically, from highest to lowest value, or by date.</li>
+                <li><strong>Filtering</strong> temporarily hides all the rows in a list that do <strong>not</strong>
+                    meet the criteria you specify. This allows you to focus on a specific subset of your data, like
+                    "only sales from the East region" or "only products with less than 10 items in stock."</li>
+            </ul>
+        </section>
+
+        <!-- 2. PREPARING DATA -->
+        <section id="prepare-data">
+            <h2>🧹 2. Preparing Your Data for Sorting and Filtering</h2>
+            <p>Before you start sorting and filtering, it’s crucial that your data is well-structured. Excel works best
+                with data organized in a <strong>list format</strong> or <strong>table</strong>.</p>
+            <h3>Characteristics of a Well-Structured Data List:</h3>
+            <ul>
+                <li><strong>Column Headers (Fields):</strong> The first row of your list should contain unique,
+                    descriptive headers for each column (e.g., "Last Name," "Sales Amount," "City"). This row will not
+                    be included in the data being sorted.</li>
+                <li><strong>No Blank Rows or Columns:</strong> A blank row within your data will cause Excel to think
+                    your list ends there. This will prevent it from sorting or filtering the data below the blank row.
+                </li>
+                <li><strong>Consistent Data in Columns:</strong> Each column should contain one type of data. For
+                    example, a "Date" column should only contain dates, not a mix of dates and text. A "Price" column
+                    should only contain numbers.</li>
+            </ul>
+            <div class="highlight-block">
+                <p><span class="kbd-shortcut">⭐ The Best Practice: Convert to an Excel Table</span><br>The most powerful
+                    way to manage data for sorting and filtering is to convert your range of data into an <strong>Excel
+                        Table</strong>.</p>
+                <ul>
+                    <li><strong>How to do it:</strong> Select any cell within your data range. Go to the
+                        <code>Insert</code> tab on the Ribbon and click <code>Table</code> (or press <kbd>Ctrl+T</kbd>).
+                        Ensure the "My table has headers" box is checked.
+                    </li>
+                    <li><strong>Benefits:</strong> When you convert to a Table, filter dropdown arrows are automatically
+                        added to every header. The table also expands automatically when you add new data, keeping all
+                        formatting and formulas consistent.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. SORTING DATA (full details) -->
+        <section id="sorting">
+            <h2>🔤 3. Sorting Data</h2>
+            <p>Sorting allows you to reorganize your rows based on the values in a column.</p>
+
+            <h3>3.1. Simple Single-Column Sort</h3>
+            <p>This is the quickest way to sort by one column.</p>
+            <ol>
+                <li>Select any single cell within the column you want to sort by.</li>
+                <li>Go to the <code>Data</code> tab on the Ribbon.</li>
+                <li>In the <code>Sort & Filter</code> group, click:
+                    <ul>
+                        <li><strong>Sort A to Z (A-Z):</strong> Sorts text alphabetically, numbers from smallest to
+                            largest, or dates from oldest to newest.</li>
+                        <li><strong>Sort Z to A (Z-A):</strong> Sorts text in reverse alphabetical order, numbers from
+                            largest to smallest, or dates from newest to oldest.</li>
+                    </ul>
+                </li>
+                <li><em>Note:</em> You can also right-click on a cell, hover over <code>Sort</code>, and choose your
+                    option.</li>
+            </ol>
+
+            <h3>3.2. Multi-Level (Custom) Sort</h3>
+            <p>Often, a single sort is not enough. For example, you might want to sort a customer list first by
+                <strong>State</strong> (alphabetically), and then within each state, sort by <strong>Last Name</strong>
+                (alphabetically). This requires a multi-level sort.
+            </p>
+            <ol>
+                <li>Select any single cell within your data range (or table).</li>
+                <li>Go to the <code>Data</code> tab and click the <code>Sort</code> button (the icon with A-Z and a
+                    small arrow). The Sort dialog box will appear.</li>
+                <li><strong>First Level (Sort by):</strong> In the first row, under "Column," choose the primary column
+                    to sort by (e.g., "State"). Under "Sort On," choose "Cell Values." Under "Order," choose "A to Z."
+                </li>
+                <li><strong>Add a Level:</strong> Click the <code>Add Level</code> button.</li>
+                <li><strong>Second Level (Then by):</strong> In the new row, choose the secondary column (e.g., "Last
+                    Name"). Again, "Sort On" should be "Cell Values," and "Order" should be "A to Z."</li>
+                <li>You can add more levels as needed (e.g., then by "First Name").</li>
+                <li><strong>Important:</strong> Ensure the "My data has headers" box at the top right of the dialog is
+                    checked.</li>
+                <li>Click <code>OK</code>.</li>
+            </ol>
+            <div class="img-placeholder">
+                🖼️ [Insert Image: Sort dialog box showing a two-level sort by State, then by Last Name]
+            </div>
+
+            <h3>3.3. Sorting by Cell Format</h3>
+            <p>Excel also allows you to sort based on cell color, font color, or conditional formatting icons. This is
+                useful if you've color-coded high-priority tasks and want to group them.</p>
+            <ol>
+                <li>Open the <code>Sort</code> dialog box.</li>
+                <li>Choose your column.</li>
+                <li>In the "Sort On" dropdown, select <code>Cell Color</code>, <code>Font Color</code>, or
+                    <code>Conditional Formatting Icon</code>.
+                </li>
+                <li>Specify the color and where to place those colored cells (e.g., "On Top").</li>
+            </ol>
+        </section>
+
+        <!-- 4. FILTERING DATA (all types + clear) -->
+        <section id="filtering">
+            <h2>🎯 4. Filtering Data</h2>
+            <p>Filtering is a temporary way to view only the records you are interested in.</p>
+
+            <h3>4.1. Applying a Filter</h3>
+            <ol>
+                <li>Select any cell within your data range.</li>
+                <li>Go to the <code>Data</code> tab and click the <code>Filter</code> button (it looks like a funnel).
+                    <em>Alternatively, if your data is in a Table, the filters are already there.</em>
+                </li>
+                <li>Small dropdown arrows will appear in each of your header cells.</li>
+                <li>Click the dropdown arrow for the column you want to filter.</li>
+            </ol>
+
+            <h3>4.2. Types of Filters</h3>
+            <p>Once you click a dropdown arrow, a filtering menu appears. The options change depending on data type.</p>
+
+            <h4>a) Text Filters</h4>
+            <ul>
+                <li><strong>Select/Deselect Items:</strong> Simply check or uncheck boxes next to specific items. e.g.,
+                    to see only customers from "London" and "Manchester", uncheck "Select All", then check only those
+                    two.</li>
+                <li><strong>Text Filters Submenu:</strong> Hover over <code>Text Filters</code> for:
+                    <ul>
+                        <li>Equals / Does Not Equal…</li>
+                        <li>Begins With / Ends With…</li>
+                        <li>Contains / Does Not Contain…</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4>b) Number Filters</h4>
+            <ul>
+                <li>The check/uncheck method works here too.</li>
+                <li><strong>Number Filters submenu:</strong> Equals, Greater Than, Less Than, Between…, Top 10…, Above
+                    Average / Below Average.</li>
+            </ul>
+
+            <h4>c) Date Filters</h4>
+            <ul>
+                <li>Excel groups dates hierarchically (by Year, then Month, Day).</li>
+                <li><strong>Date Filters submenu</strong> includes dynamic options:
+                    <ul>
+                        <li>Tomorrow, Today, Yesterday</li>
+                        <li>Next Week, This Week, Last Week</li>
+                        <li>Next Month, This Month, Last Month</li>
+                        <li>Next Quarter, This Quarter, Last Quarter</li>
+                        <li>Next Year, This Year, Last Year</li>
+                        <li>Year to Date</li>
+                        <li><strong>All Dates in the Period</strong> – filter by, e.g., all records from March,
+                            regardless of year.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>4.3. Clearing a Filter</h3>
+            <p>When a column is filtered, its dropdown arrow shows a funnel icon. To remove a filter from a single
+                column, open that column's dropdown menu and click <code>Clear Filter from [Column Name]</code>. To
+                clear all filters from the entire sheet, go to the <code>Data</code> tab and click the
+                <code>Clear</code> button.
+            </p>
+        </section>
+
+        <!-- 5. PRACTICAL APPLICATIONS IN OFFICE ADMINISTRATION -->
+        <section id="practical-apps">
+            <h2>💼 5. Practical Applications in Office Administration</h2>
+            <p>Here’s how an administrative professional might use these skills in a real-world scenario:</p>
+            <div class="def-grid">
+                <div class="def-item">
+                    <strong>📋 Event Planning</strong><br>
+                    Guest list with Name, Company, City, Dietary, RSVP.<br>
+                    ➜ Filter RSVP = "Confirmed"<br>
+                    ➜ Filter Dietary = "Vegetarian"<br>
+                    ➜ Sort by City for seating.
+                </div>
+                <div class="def-item">
+                    <strong>📦 Inventory Management</strong><br>
+                    Product, Category, Stock, Reorder Level.<br>
+                    ➜ Filter Category = "Office Supplies"<br>
+                    ➜ Number filter: Stock ≤ Reorder Level → instant reorder report.
+                </div>
+                <div class="def-item">
+                    <strong>💰 Invoice Tracking</strong><br>
+                    Client, Date, Due Date, Amount, Status.<br>
+                    ➜ Filter Status ≠ "Paid"<br>
+                    ➜ Sort by Due Date oldest first → prioritize follow‑ups.
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. SUMMARY CHECKLIST (exactly from original) -->
+        <section id="checklist">
+            <h2>✅ 6. Summary Checklist</h2>
+            <div class="mini-card">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1rem;">
+                    <div class="def-item">☐ <strong>Data Structure:</strong> clean list with headers, no blank
+                        rows/columns?</div>
+                    <div class="def-item">☐ <strong>Pro Tip:</strong> Converted to Excel Table (<kbd>Ctrl+T</kbd>)?
+                    </div>
+                    <div class="def-item">☐ <strong>Sorting:</strong> simple A–Z or multi‑level custom sort?</div>
+                    <div class="def-item">☐ <strong>Filtering:</strong> temporary hide to focus on group (e.g. Sales >
+                        $500)?</div>
+                    <div class="def-item">☐ <strong>Clear Filters:</strong> remember to clear after use → see full
+                        dataset again.</div>
+                </div>
+                <p style="margin-top:1.8rem; font-style:italic;">Mastering these basic sorting and filtering techniques
+                    will dramatically increase your efficiency and accuracy when handling any type of data in an office
+                    environment.</p>
+            </div>
+        </section>
+
+        <!-- SHORTCUTS & REFERENCE CARD (bonus but contains all extra info) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">⌨️ Essential shortcuts – sorting & filtering</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.8rem 1.8rem;">
+                <span><kbd>Ctrl+T</kbd> create table</span>
+                <span><kbd>Ctrl+Shift+L</kbd> toggle filter</span>
+                <span><kbd>Alt+↓</kbd> open filter menu</span>
+                <span><kbd>Alt+A+S</kbd> open sort dialog</span>
+                <span><kbd>Ctrl+Z</kbd> undo</span>
+                <span><kbd>Ctrl+Y</kbd> redo</span>
+            </div>
+            <h4 style="margin-top:1.5rem;">📘 Block 4: Spreadsheet fundamentals – complete</h4>
+            <p>All contents from original study notes are included: Introduction, preparing data, sorting (single,
+                multi‑level, by format), filtering (text, number, date), clearing filters, real‑world office
+                applications, and checklist.</p>
+        </div>
+
+        <footer>
+            📁 Desktop Publishing & Secretarial Studies · Data Management (Sort & Filter) · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

@@ -186,25 +186,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     try {
         // 1. Delete assignment submissions
-        $delete_submissions_sql = "DELETE as FROM assignment_submissions as 
-                                   INNER JOIN assignments a ON as.assignment_id = a.id 
-                                   WHERE as.student_id = ? AND a.class_id = ?";
+        $delete_submissions_sql = "DELETE assignment_submissions 
+                               FROM assignment_submissions 
+                               INNER JOIN assignments ON assignment_submissions.assignment_id = assignments.id 
+                               WHERE assignment_submissions.student_id = ? AND assignments.class_id = ?";
         $submissions_stmt = $conn->prepare($delete_submissions_sql);
         $submissions_stmt->bind_param('ii', $student_id, $class_id);
         $submissions_stmt->execute();
 
         // 2. Delete gradebook entries
-        $delete_gradebook_sql = "DELETE g FROM gradebook g 
-                                 INNER JOIN assignments a ON g.assignment_id = a.id 
-                                 WHERE g.student_id = ? AND a.class_id = ?";
+        $delete_gradebook_sql = "DELETE gradebook 
+                             FROM gradebook 
+                             INNER JOIN assignments ON gradebook.assignment_id = assignments.id 
+                             WHERE gradebook.student_id = ? AND assignments.class_id = ?";
         $gradebook_stmt = $conn->prepare($delete_gradebook_sql);
         $gradebook_stmt->bind_param('ii', $student_id, $class_id);
         $gradebook_stmt->execute();
 
         // 3. Delete quiz attempts
-        $delete_quiz_attempts_sql = "DELETE qa FROM quiz_attempts qa 
-                                     INNER JOIN quizzes q ON qa.quiz_id = q.id 
-                                     WHERE qa.student_id = ? AND q.class_id = ?";
+        $delete_quiz_attempts_sql = "DELETE quiz_attempts 
+                                 FROM quiz_attempts 
+                                 INNER JOIN quizzes ON quiz_attempts.quiz_id = quizzes.id 
+                                 WHERE quiz_attempts.student_id = ? AND quizzes.class_id = ?";
         $quiz_attempts_stmt = $conn->prepare($delete_quiz_attempts_sql);
         $quiz_attempts_stmt->bind_param('ii', $student_id, $class_id);
         $quiz_attempts_stmt->execute();
@@ -228,9 +231,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $payments_stmt->execute();
 
         // 7. Delete discussion replies
-        $delete_replies_sql = "DELETE dr FROM discussion_replies dr 
-                               INNER JOIN discussions d ON dr.discussion_id = d.id 
-                               WHERE dr.user_id = ? AND d.class_id = ?";
+        $delete_replies_sql = "DELETE discussion_replies 
+                           FROM discussion_replies 
+                           INNER JOIN discussions ON discussion_replies.discussion_id = discussions.id 
+                           WHERE discussion_replies.user_id = ? AND discussions.class_id = ?";
         $replies_stmt = $conn->prepare($delete_replies_sql);
         $replies_stmt->bind_param('ii', $student_id, $class_id);
         $replies_stmt->execute();
