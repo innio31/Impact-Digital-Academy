@@ -117,6 +117,173 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll_student'])) {
     }
 }
 
+// Handle unenrollment action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unenroll_student') {
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        $_SESSION['error'] = 'Invalid security token. Please try again.';
+        header('Location: view.php?id=' . $program_id);
+        exit();
+    }
+
+    $student_id = intval($_POST['student_id']);
+
+    // Verify student is enrolled in this program
+    $check_sql = "SELECT a.id as application_id, a.user_id, u.first_name, u.last_name, a.status
+                  FROM applications a
+                  JOIN users u ON a.user_id = u.id
+                  WHERE a.user_id = ? AND a.program_id = ? AND a.applying_as = 'student' AND a.status = 'approved'";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param('ii', $student_id, $program_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    $enrollment = $check_result->fetch_assoc();
+
+    if (!$enrollment) {
+        $_SESSION['error'] = 'Student is not enrolled in this program.';
+        header('Location: view.php?id=' . $program_id);
+        exit();
+    }
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Get all class IDs for this program
+        $class_ids_sql = "SELECT cb.id 
+                         FROM class_batches cb
+                         JOIN courses c ON cb.course_id = c.id
+                         WHERE c.program_id = ?";
+        $class_ids_stmt = $conn->prepare($class_ids_sql);
+        $class_ids_stmt->bind_param('i', $program_id);
+        $class_ids_stmt->execute();
+        $class_ids_result = $class_ids_stmt->get_result();
+        $class_ids = [];
+        while ($row = $class_ids_result->fetch_assoc()) {
+            $class_ids[] = $row['id'];
+        }
+        $class_ids_stmt->close();
+
+        // Get all enrollment IDs for this student in these classes
+        if (!empty($class_ids)) {
+            $class_ids_str = implode(',', $class_ids);
+
+            // 1. Get enrollment IDs for attendance and gradebook
+            $enrollment_ids_sql = "SELECT id FROM enrollments WHERE student_id = ? AND class_id IN ($class_ids_str)";
+            $enrollment_ids_stmt = $conn->prepare($enrollment_ids_sql);
+            $enrollment_ids_stmt->bind_param('i', $student_id);
+            $enrollment_ids_stmt->execute();
+            $enrollment_ids_result = $enrollment_ids_stmt->get_result();
+            $enrollment_ids = [];
+            while ($row = $enrollment_ids_result->fetch_assoc()) {
+                $enrollment_ids[] = $row['id'];
+            }
+            $enrollment_ids_stmt->close();
+
+            // 2. Delete assignment submissions
+            $delete_submissions_sql = "DELETE assignment_submissions 
+                                       FROM assignment_submissions 
+                                       INNER JOIN assignments ON assignment_submissions.assignment_id = assignments.id 
+                                       WHERE assignment_submissions.student_id = ? AND assignments.class_id IN ($class_ids_str)";
+            $submissions_stmt = $conn->prepare($delete_submissions_sql);
+            $submissions_stmt->bind_param('i', $student_id);
+            $submissions_stmt->execute();
+            $submissions_stmt->close();
+
+            // 3. Delete gradebook entries
+            $delete_gradebook_sql = "DELETE gradebook 
+                                     FROM gradebook 
+                                     WHERE student_id = ? AND enrollment_id IN (SELECT id FROM enrollments WHERE student_id = ? AND class_id IN ($class_ids_str))";
+            $gradebook_stmt = $conn->prepare($delete_gradebook_sql);
+            $gradebook_stmt->bind_param('ii', $student_id, $student_id);
+            $gradebook_stmt->execute();
+            $gradebook_stmt->close();
+
+            // 4. Delete quiz attempts
+            $delete_quiz_attempts_sql = "DELETE quiz_attempts 
+                                         FROM quiz_attempts 
+                                         INNER JOIN quizzes ON quiz_attempts.quiz_id = quizzes.id 
+                                         WHERE quiz_attempts.student_id = ? AND quizzes.class_id IN ($class_ids_str)";
+            $quiz_attempts_stmt = $conn->prepare($delete_quiz_attempts_sql);
+            $quiz_attempts_stmt->bind_param('i', $student_id);
+            $quiz_attempts_stmt->execute();
+            $quiz_attempts_stmt->close();
+
+            // 5. Delete attendance records
+            if (!empty($enrollment_ids)) {
+                $enrollment_ids_str = implode(',', $enrollment_ids);
+                $delete_attendance_sql = "DELETE FROM attendance WHERE enrollment_id IN ($enrollment_ids_str)";
+                $attendance_stmt = $conn->prepare($delete_attendance_sql);
+                $attendance_stmt->execute();
+                $attendance_stmt->close();
+            }
+
+            // 6. Delete course payments
+            $delete_payments_sql = "DELETE FROM course_payments WHERE student_id = ? AND class_id IN ($class_ids_str)";
+            $payments_stmt = $conn->prepare($delete_payments_sql);
+            $payments_stmt->bind_param('i', $student_id);
+            $payments_stmt->execute();
+            $payments_stmt->close();
+
+            // 7. Delete student financial status records
+            $delete_financial_sql = "DELETE FROM student_financial_status WHERE student_id = ? AND class_id IN ($class_ids_str)";
+            $financial_stmt = $conn->prepare($delete_financial_sql);
+            $financial_stmt->bind_param('i', $student_id);
+            $financial_stmt->execute();
+            $financial_stmt->close();
+
+            // 8. Delete enrollments
+            $delete_enrollments_sql = "DELETE FROM enrollments WHERE student_id = ? AND class_id IN ($class_ids_str)";
+            $enrollments_stmt = $conn->prepare($delete_enrollments_sql);
+            $enrollments_stmt->bind_param('i', $student_id);
+            $enrollments_stmt->execute();
+            $enrollments_stmt->close();
+        }
+
+        // 9. Delete registration fee payments
+        $delete_reg_payments_sql = "DELETE FROM registration_fee_payments WHERE student_id = ? AND program_id = ?";
+        $reg_payments_stmt = $conn->prepare($delete_reg_payments_sql);
+        $reg_payments_stmt->bind_param('ii', $student_id, $program_id);
+        $reg_payments_stmt->execute();
+        $reg_payments_stmt->close();
+
+        // 10. Delete fee waivers
+        $delete_waivers_sql = "DELETE FROM fee_waivers WHERE student_id = ? AND program_id = ?";
+        $waivers_stmt = $conn->prepare($delete_waivers_sql);
+        $waivers_stmt->bind_param('ii', $student_id, $program_id);
+        $waivers_stmt->execute();
+        $waivers_stmt->close();
+
+        // 11. Delete or update the application
+        $update_application_sql = "UPDATE applications SET 
+                                   status = 'rejected', 
+                                   reviewed_by = ?,
+                                   reviewed_at = NOW(),
+                                   review_notes = 'Unenrolled from program by admin'
+                                   WHERE id = ?";
+        $app_update_stmt = $conn->prepare($update_application_sql);
+        $admin_id = $_SESSION['user_id'];
+        $app_update_stmt->bind_param('ii', $admin_id, $enrollment['application_id']);
+        $app_update_stmt->execute();
+        $app_update_stmt->close();
+
+        // Commit transaction
+        $conn->commit();
+
+        // Log activity
+        logActivity($_SESSION['user_id'], 'unenroll_student', "Unenrolled student #$student_id from program #$program_id", 'programs', $program_id);
+
+        $_SESSION['success'] = "Student {$enrollment['first_name']} {$enrollment['last_name']} has been successfully unenrolled from the program.";
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        $_SESSION['error'] = 'Error unenrolling student: ' . $e->getMessage();
+    }
+
+    header('Location: view.php?id=' . $program_id);
+    exit();
+}
+
 // Fetch program details
 $sql = "SELECT p.*, 
                COUNT(DISTINCT c.id) as course_count,
@@ -210,14 +377,14 @@ $applications = $applications_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 // Fetch current students enrolled in this program
 $enrolled_students_sql = "SELECT u.id, u.first_name, u.last_name, u.email, u.phone,
                                  a.status, a.created_at as enrollment_date,
-                                 a.registration_fee_paid
+                                 a.registration_fee_paid, a.id as application_id
                           FROM applications a
                           JOIN users u ON a.user_id = u.id
                           WHERE a.program_id = ? 
                           AND a.applying_as = 'student'
                           AND a.status = 'approved'
                           ORDER BY a.created_at DESC
-                          LIMIT 10";
+                          LIMIT 50"; // Increased limit to show more students
 
 $enrolled_stmt = $conn->prepare($enrolled_students_sql);
 $enrolled_stmt->bind_param("i", $program_id);
@@ -520,6 +687,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--light-gray);
+            margin-bottom: 2rem;
         }
 
         .section-header {
@@ -629,6 +797,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             border-radius: 8px;
             margin-bottom: 1rem;
             transition: all 0.3s ease;
+            background: white;
         }
 
         .student-item:hover,
@@ -646,6 +815,8 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .student-name,
@@ -695,7 +866,13 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
         .student-actions {
             display: flex;
             gap: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .student-actions .btn-sm {
+            flex: 1;
+            min-width: 100px;
         }
 
         .course-code {
@@ -736,6 +913,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             gap: 1.5rem;
             color: var(--gray);
             font-size: 0.9rem;
+            flex-wrap: wrap;
         }
 
         .no-data {
@@ -769,6 +947,20 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             background-color: #fee2e2;
             color: #991b1b;
             border: 1px solid #fecaca;
+        }
+
+        /* Danger button for unenroll */
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .student-actions .btn-danger {
+            border-color: transparent;
         }
 
         @media (max-width: 768px) {
@@ -893,11 +1085,11 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <?php endif; ?>
             </div>
 
-            <div class="stat-card students" onclick="window.location.href='<?php echo BASE_URL; ?>modules/admin/users/?program=<?php echo $program['id']; ?>'">
+            <div class="stat-card students" onclick="window.location.href='#enrolled-students'">
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-value"><?php echo $program['enrollment_count'] ?: '0'; ?></div>
+                <div class="stat-value"><?php echo count($enrolled_students) ?: '0'; ?></div>
                 <div class="stat-label">Enrolled Students</div>
             </div>
 
@@ -918,6 +1110,13 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
             </div>
         </div>
 
+        <!-- Hidden Unenrollment Form -->
+        <form id="unenrollForm" method="POST" style="display: none;">
+            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+            <input type="hidden" name="action" value="unenroll_student">
+            <input type="hidden" name="student_id" id="unenroll_student_id" value="">
+        </form>
+
         <!-- Main Content Grid -->
         <div class="content-grid">
             <!-- Left Column: Program Details & Courses -->
@@ -925,7 +1124,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <!-- Student Enrollment Form -->
                 <div class="section-card" style="margin-bottom: 2rem;">
                     <div class="section-header">
-                        <h2>Enroll New Student</h2>
+                        <h2><i class="fas fa-user-plus"></i> Enroll New Student</h2>
                     </div>
                     <div class="section-content">
                         <form method="POST" class="enrollment-form">
@@ -986,11 +1185,11 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                     </div>
                 </div>
 
-                <!-- Enrolled Students -->
-                <div class="section-card" style="margin-bottom: 2rem;">
+                <!-- Enrolled Students Section -->
+                <div id="enrolled-students" class="section-card" style="margin-bottom: 2rem;">
                     <div class="section-header">
-                        <h2>Enrolled Students</h2>
-                        <span style="font-size: 0.9rem; opacity: 0.9;">
+                        <h2><i class="fas fa-users"></i> Enrolled Students</h2>
+                        <span style="font-size: 0.9rem; opacity: 0.9; background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px;">
                             <?php echo count($enrolled_students); ?> students
                         </span>
                     </div>
@@ -1006,47 +1205,57 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                                 <?php foreach ($enrolled_students as $student): ?>
                                     <li class="student-item">
                                         <div class="student-header">
-                                            <div class="student-name">
-                                                <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>
+                                            <div>
+                                                <div class="student-name">
+                                                    <?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>
+                                                </div>
+                                                <div class="student-email">
+                                                    <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($student['email']); ?>
+                                                </div>
                                             </div>
                                             <div class="payment-status <?php echo $student['registration_fee_paid'] ? 'payment-paid' : 'payment-pending'; ?>">
                                                 <?php echo $student['registration_fee_paid'] ? 'Fee Paid' : 'Fee Pending'; ?>
                                             </div>
                                         </div>
-                                        <div class="student-email">
-                                            <i class="fas fa-envelope"></i>
-                                            <?php echo htmlspecialchars($student['email']); ?>
-                                        </div>
+
                                         <?php if ($student['phone']): ?>
                                             <div class="student-phone">
-                                                <i class="fas fa-phone"></i>
-                                                <?php echo htmlspecialchars($student['phone']); ?>
+                                                <i class="fas fa-phone"></i> <?php echo htmlspecialchars($student['phone']); ?>
                                             </div>
                                         <?php endif; ?>
+
                                         <div class="enrollment-date">
                                             <i class="fas fa-calendar-check"></i>
-                                            Enrolled: <?php echo formatDate($student['enrollment_date'], 'M j, Y'); ?>
+                                            Enrolled: <?php echo date('M j, Y', strtotime($student['enrollment_date'])); ?>
                                         </div>
+
                                         <div class="student-actions">
                                             <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $student['id']; ?>"
-                                                class="btn btn-secondary btn-sm">
+                                                class="btn btn-primary btn-sm">
                                                 <i class="fas fa-eye"></i> View Profile
                                             </a>
                                             <a href="<?php echo BASE_URL; ?>modules/admin/finance/transactions.php?student_id=<?php echo $student['id']; ?>&program_id=<?php echo $program_id; ?>"
                                                 class="btn btn-secondary btn-sm">
-                                                <i class="fas fa-money-bill"></i> View Payments
+                                                <i class="fas fa-money-bill"></i> Payments
                                             </a>
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="confirmUnenroll(<?php echo $student['id']; ?>, '<?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?>')">
+                                                <i class="fas fa-user-minus"></i> Unenroll
+                                            </button>
                                         </div>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
 
-                            <div style="text-align: center; margin-top: 1.5rem;">
-                                <a href="<?php echo BASE_URL; ?>modules/admin/users/?program=<?php echo $program['id']; ?>&status=approved"
-                                    class="btn btn-secondary">
-                                    <i class="fas fa-list"></i> View All Enrolled Students
-                                </a>
-                            </div>
+                            <?php if (count($enrolled_students) >= 10): ?>
+                                <div style="text-align: center; margin-top: 1.5rem;">
+                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/?program=<?php echo $program['id']; ?>&status=approved"
+                                        class="btn btn-secondary">
+                                        <i class="fas fa-list"></i> View All Enrolled Students
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -1054,7 +1263,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <!-- Courses Section -->
                 <div class="section-card">
                     <div class="section-header">
-                        <h2>Courses in this Program</h2>
+                        <h2><i class="fas fa-book"></i> Courses in this Program</h2>
                         <div style="display: flex; gap: 0.5rem;">
                             <a href="select-courses.php?target_program_id=<?php echo $program['id']; ?>"
                                 class="btn btn-primary" style="background: var(--info); color: white;">
@@ -1110,7 +1319,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <!-- Program Details -->
                 <div class="section-card" style="margin-bottom: 2rem;">
                     <div class="section-header">
-                        <h2>Program Details</h2>
+                        <h2><i class="fas fa-info-circle"></i> Program Details</h2>
                     </div>
                     <div class="section-content">
                         <div class="detail-grid">
@@ -1156,12 +1365,12 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
 
                             <div class="detail-group">
                                 <label>Created Date</label>
-                                <div class="value"><?php echo formatDate($program['created_at'], 'F j, Y \a\t h:i A'); ?></div>
+                                <div class="value"><?php echo date('F j, Y \a\t h:i A', strtotime($program['created_at'])); ?></div>
                             </div>
 
                             <div class="detail-group">
                                 <label>Last Updated</label>
-                                <div class="value"><?php echo formatDate($program['updated_at'], 'F j, Y \a\t h:i A'); ?></div>
+                                <div class="value"><?php echo date('F j, Y \a\t h:i A', strtotime($program['updated_at'])); ?></div>
                             </div>
                         </div>
                     </div>
@@ -1170,7 +1379,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <!-- Pending Applications -->
                 <div class="section-card" style="margin-bottom: 2rem;">
                     <div class="section-header">
-                        <h2>Pending Applications</h2>
+                        <h2><i class="fas fa-file-alt"></i> Pending Applications</h2>
                     </div>
                     <div class="section-content">
                         <?php if (empty($applications)): ?>
@@ -1188,7 +1397,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                                                 <?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?>
                                             </div>
                                             <div class="application-date">
-                                                <?php echo formatDate($application['created_at'], 'M j'); ?>
+                                                <?php echo date('M j', strtotime($application['created_at'])); ?>
                                             </div>
                                         </div>
                                         <div class="applicant-email">
@@ -1214,7 +1423,7 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                 <!-- Quick Actions -->
                 <div class="section-card">
                     <div class="section-header">
-                        <h2>Quick Actions</h2>
+                        <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
                     </div>
                     <div class="section-content">
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -1278,30 +1487,40 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
         document.getElementById('enrollment_date').value = new Date().toISOString().split('T')[0];
 
         // Student search functionality
-        document.getElementById('student_id').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const options = e.target.options;
+        const studentSelect = document.getElementById('student_id');
+        if (studentSelect) {
+            studentSelect.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const options = e.target.options;
 
-            if (searchTerm.length > 1) {
-                // Highlight matching options
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    const text = option.text.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.backgroundColor = '#e8f4ff';
-                    } else {
-                        option.style.backgroundColor = '';
+                if (searchTerm.length > 1) {
+                    // Highlight matching options
+                    for (let i = 0; i < options.length; i++) {
+                        const option = options[i];
+                        const text = option.text.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.backgroundColor = '#e8f4ff';
+                        } else {
+                            option.style.backgroundColor = '';
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
-        // Auto-refresh statistics every 30 seconds
+        // Unenroll student functionality
+        function confirmUnenroll(studentId, studentName) {
+            if (confirm(`Are you sure you want to unenroll ${studentName} from this program?\n\nThis action will:\n• Remove the student from the program\n• Delete all their class enrollments\n• Remove their submissions and grades\n• Delete payment records\n• Mark their application as rejected\n\nThis action cannot be undone.`)) {
+                document.getElementById('unenroll_student_id').value = studentId;
+                document.getElementById('unenrollForm').submit();
+            }
+        }
+
+        // Auto-refresh statistics every 30 seconds (optional)
         setInterval(() => {
             fetch(window.location.href + '&refresh=1')
                 .then(response => response.text())
                 .then(html => {
-                    // Could update stats here without full page reload
                     console.log('Refreshed program data');
                 })
                 .catch(error => console.error('Refresh failed:', error));
