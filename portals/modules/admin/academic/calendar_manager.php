@@ -426,7 +426,7 @@ logActivity('view_academic_calendar', "Viewed academic calendar with filters");
     <title>Academic Calendar Manager - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="/../../../public/images/favicon.ico">
+    <link rel="icon" href="../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;

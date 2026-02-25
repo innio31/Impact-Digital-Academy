@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>CorelDRAW Interface & Workspace · complete DTP guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ede7d9;
+            color: #3a3222;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #6b5340;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #3f2b1c, #7f5a3e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #7b583b;
+            border-left: 6px solid #b3875a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #efe4d5;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(110, 70, 30, 0.15), 0 16px 24px -14px #7b6246;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #5e3e26;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #5f432e;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(110, 60, 20, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #eadac8;
+            border-color: #9e7b5c;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #7b5a3e;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(80, 50, 25, 0.05);
+            border: 1px solid #f0e0ce;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #6a462b;
+            border-bottom: 3px solid #bc8f64;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #7b5637;
+            border-left: 8px solid #dbb594;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #86633f;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f9f1e7;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #c39260;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(70, 40, 20, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #7b5a3b;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #ecdac7;
+            background: #fffcf7;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #8e6b48;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f7efe4;
+            border: 1px solid #e4cfb7;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #f3e6d8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #c1a07e;
+        }
+
+        .sample-box {
+            background: #fcf7f0;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #decbb6;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #6b4f36;
+            color: #fef7e9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #decbb6, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #7d6043;
+            border-top: 1px dashed #d9bfa5;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🖌️ CORELDRAW INTERFACE & WORKSPACE</h1>
+        <div class="subhead">Complete guide – every original line included · DTP professional reference</div>
+
+        <!-- TABLE OF CONTENTS (exact from original) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#intro">Introduction to the CorelDRAW Workspace</a>
+                <a href="#toolbox">1. The Toolbox: Primary Design Arsenal</a>
+                <a href="#propbar">2. The Property Bar: Context‑Sensitive Panel</a>
+                <a href="#dockers">3. Dockers: Versatile Tool Panels</a>
+                <a href="#palette">4. The Color Palette: Applying & Managing Color</a>
+                <a href="#pagesetup">5. Page Setup: Defining Your Document Canvas</a>
+                <a href="#conclusion">Conclusion & quick reference</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <section id="intro">
+            <h2>📘 Introduction to the CorelDRAW Workspace</h2>
+            <p>CorelDRAW is a powerful vector-based graphic design software used extensively in the desktop publishing
+                industry for creating everything from simple logos and business cards to complex brochures and
+                multi-page newsletters. For a beginner, the interface can seem overwhelming, but understanding its core
+                components is the first step to mastering the software. The workspace is intuitively designed to put all
+                the necessary tools at your fingertips . The main components you will interact with are the
+                <strong>Toolbox</strong>, <strong>Property Bar</strong>, <strong>Dockers</strong>, <strong>Color
+                    Palette</strong>, and the <strong>Document Window</strong> with its <strong>Page Setup</strong>
+                controls. Mastering these five areas will provide you with a solid foundation for all your design
+                projects.</p>
+        </section>
+
+        <!-- CHAPTER 1: TOOLBOX -->
+        <section id="toolbox">
+            <h2>🧰 1. The Toolbox: Your Primary Design Arsenal</h2>
+            <p>The Toolbox is typically located on the far left side of the screen and contains all the tools you need
+                to create, select, edit, and transform objects in your document . Many tools are grouped together in
+                flyouts, indicated by a small black triangle in the bottom-right corner of a tool button. Clicking and
+                holding this triangle reveals a set of related tools.</p>
+            <p><strong>Here is a detailed breakdown of the essential tool groups:</strong></p>
+
+            <h3>A. Selection Tools</h3>
+            <ul>
+                <li><strong>Pick Tool</strong>: The most frequently used tool. It allows you to select, move, scale,
+                    rotate, and skew objects. Click an object to select it, or drag a marquee around multiple objects to
+                    select them all .</li>
+                <li><strong>Freehand Pick Tool</strong>: Allows you to draw an irregular, freeform selection area around
+                    objects, which is useful for selecting objects within complex shapes .</li>
+            </ul>
+
+            <h3>B. Editing and Shaping Tools</h3>
+            <ul>
+                <li><strong>Shape Tool</strong>: A powerful tool for editing the nodes and curves of vector objects.
+                    It's used to refine the shape of lines, curves, and text characters .</li>
+                <li><strong>Smooth Tool</strong>: Used to remove jagged edges and reduce the number of nodes on a curved
+                    object, making it smoother .</li>
+                <li><strong>Smear Tool</strong>: Allows you to push or pull the outline of an object to distort its
+                    shape, similar to molding clay .</li>
+                <li><strong>Twirl Tool</strong>: Creates swirl and spiral effects by dragging along the edge of an
+                    object .</li>
+                <li><strong>Attract and Repel Tool</strong>: Reshapes an object by attracting nodes toward or repelling
+                    them from the cursor .</li>
+                <li><strong>Crop Tool</strong>: Used to remove unwanted areas from a selected object or imported image .
+                </li>
+                <li><strong>Knife Tool</strong>: Cuts objects, groups of objects, and even bitmaps along a line you
+                    draw, splitting them into separate paths .</li>
+                <li><strong>Eraser Tool</strong>: Removes portions of an object, breaking it into separate closed paths
+                    .</li>
+                <li><strong>Virtual Segment Delete Tool</strong>: A handy tool for deleting specific portions of
+                    intersecting objects without breaking them apart. For example, you can click on a line segment that
+                    crosses over another to remove it .</li>
+            </ul>
+
+            <h3>C. Zoom and Navigation Tools</h3>
+            <ul>
+                <li><strong>Zoom Tool</strong>: Changes the magnification level of your view. Click to zoom in,
+                    right-click to zoom out. You can also drag a marquee around an area to zoom into that specific
+                    region .</li>
+                <li><strong>Pan Tool</strong>: Allows you to click and drag around the document window to view different
+                    areas of a zoomed-in page .</li>
+            </ul>
+
+            <h3>D. Curve and Line Drawing Tools</h3>
+            <ul>
+                <li><strong>Freehand Tool</strong>: The most intuitive drawing tool; it allows you to draw lines and
+                    curves as if you were using a pencil on paper .</li>
+                <li><strong>2-Point Line Tool</strong>: Draws a straight line between two points with a simple click,
+                    drag, and release .</li>
+                <li><strong>Bezier Tool</strong>: A precision tool for drawing smooth, complex curves and lines one
+                    segment at a time by placing nodes and adjusting control handles .</li>
+                <li><strong>Pen Tool</strong>: Works similarly to the Bezier tool, offering a preview of the next curve
+                    segment as you draw, giving you more control .</li>
+                <li><strong>B-Spline Tool</strong>: Creates curves by setting control points that shape the curve
+                    without breaking it into separate segments. The curve does not touch these points but is influenced
+                    by them .</li>
+                <li><strong>Polyline Tool</strong>: Draws connected lines and curves in a single, continuous path. Click
+                    to place nodes for straight lines, and click and drag to draw curves .</li>
+                <li><strong>3-Point Curve Tool</strong>: Draws a simple curve by defining three points: the start point,
+                    the end point, and the center point of the curve .</li>
+                <li><strong>Artistic Media Tool</strong>: This tool opens a flyout with five distinct tools for applying
+                    creative effects:
+                    <ul>
+                        <li><strong>Preset</strong>: Applies preset brush strokes to your paths.</li>
+                        <li><strong>Brush</strong>: Applies vector or bitmap images along a path, simulating a
+                            paintbrush.</li>
+                        <li><strong>Sprayer</strong>: Sprays a sequence of vector objects (like leaves, stars, or other
+                            graphics) along a path.</li>
+                        <li><strong>Calligraphic</strong>: Draws lines that vary in thickness based on the angle of the
+                            pen, mimicking calligraphy.</li>
+                        <li><strong>Expression</strong>: Draws lines that vary in thickness based on the speed of your
+                            mouse or stylus movement .</li>
+                    </ul>
+                </li>
+                <li><strong>Smart Drawing Tool</strong>: Converts your rough, freehand sketches into basic, smooth
+                    shapes. For instance, drawing a rough circle will automatically snap it to a perfect circle .</li>
+                <li><strong>LiveSketch Tool</strong>: An advanced tool that uses machine learning to interpret your
+                    natural drawing strokes and convert them into clean, adjustable curves in real-time .</li>
+            </ul>
+
+            <h3>E. Shape Creation Tools</h3>
+            <ul>
+                <li><strong>Rectangle Tool</strong>: Click and drag to draw a rectangle. Holding <kbd>Ctrl</kbd> while
+                    dragging draws a perfect square .</li>
+                <li><strong>3-Point Rectangle Tool</strong>: Draws a rectangle at any angle by defining the width and
+                    baseline first, then the height .</li>
+                <li><strong>Ellipse Tool</strong>: Click and drag to draw an ellipse. Holding <kbd>Ctrl</kbd> while
+                    dragging draws a perfect circle .</li>
+                <li><strong>3-Point Ellipse Tool</strong>: Draws an ellipse at any angle by defining the centerline axis
+                    and then the opposing point .</li>
+                <li><strong>Polygon Tool</strong>: Draws symmetrical polygons and stars. You can adjust the number of
+                    sides or points in the Property Bar .</li>
+                <li><strong>Star Tool</strong>: Draws perfect star shapes. You can adjust the number of points and
+                    sharpness .</li>
+                <li><strong>Complex Star Tool</strong>: Draws star shapes that have intersecting sides, creating
+                    complex, layered star patterns.</li>
+                <li><strong>Graph Paper Tool</strong>: Draws a grid of lines, similar to graph paper. You can set the
+                    number of rows and columns .</li>
+                <li><strong>Spiral Tool</strong>: Draws two types of spirals: <strong>Symmetrical</strong> (where the
+                    distance between turns is constant) and <strong>Logarithmic</strong> (where the distance between
+                    turns increases as the spiral expands) .</li>
+                <li><strong>Common Shapes Tool</strong>: Provides a library of predefined shapes, such as hearts, smiley
+                    faces, arrows, and banners, which can be customized with special handles .</li>
+                <li><strong>Impact Tool</strong>: A specialized tool for creating comic book and modern
+                    illustration-style graphics, often with bold, stylized effects.</li>
+                <li><strong>Table Tool</strong>: Draws and edits a table directly in your document, allowing you to add
+                    text and graphics within cells .</li>
+            </ul>
+
+            <h3>F. Text and Dimension Tools</h3>
+            <ul>
+                <li><strong>Text Tool</strong>: Used to create two types of text:
+                    <ul>
+                        <li><strong>Artistic Text</strong>: Click on the page and start typing. It's used for short
+                            titles or headlines and remains in a "container" that can be manipulated like any other
+                            object.</li>
+                        <li><strong>Paragraph Text</strong>: Click and drag to draw a text frame. This text flows within
+                            the boundaries of the frame, making it ideal for longer bodies of text like brochures or
+                            newsletters .</li>
+                    </ul>
+                </li>
+                <li><strong>Parallel, Horizontal or Vertical, Angle, and Segment Dimension Tools</strong>: A suite of
+                    tools for adding precise measurements to technical illustrations and diagrams. They automatically
+                    calculate and display the distance or angle .</li>
+                <li><strong>3-Point Callout Tool</strong>: Draws a two-segment leader line for creating callouts or
+                    labels .</li>
+                <li><strong>Connector and Anchor Editing Tools</strong>: Used to draw lines that connect objects, often
+                    in flowcharts or organizational charts. These lines stay connected even if you move the objects .
+                </li>
+            </ul>
+
+            <h3>G. Effects and Transparency Tools</h3>
+            <ul>
+                <li><strong>Shadow Tool</strong>: Applies a drop shadow to an object, giving it a sense of depth. You
+                    can control the shadow's direction, opacity, feathering, and color .</li>
+                <li><strong>Contour Tool</strong>: Creates a series of concentric lines radiating inward or outward from
+                    an object's edge. Great for creating neon effects, outlines, and frames .</li>
+                <li><strong>Blend Tool</strong>: Creates a transition and a progression of shapes and colors between two
+                    objects. This can be used for creating 3D effects, rainbow effects, or smooth color transitions .
+                </li>
+                <li><strong>Envelope Tool</strong>: Places a non-rectangular bounding "envelope" around an object. You
+                    can then manipulate the nodes of the envelope to distort the shape of the object inside .</li>
+                <li><strong>Extrude Tool</strong>: Creates the illusion of three-dimensional depth by extending the
+                    sides of a 2D object .</li>
+                <li><strong>Block Shadow Tool</strong>: Creates a solid, vector-based shadow that attaches to the
+                    object, giving it a bold, graphic look .</li>
+                <li><strong>Transparency Tool</strong>: Applies a transparent effect to an object. You can create
+                    uniform, fountain, or pattern transparencies to blend objects together .</li>
+            </ul>
+
+            <h3>H. Color and Fill Tools</h3>
+            <ul>
+                <li><strong>Eyedropper Tool</strong>: Samples a color from any object on the page or anywhere on your
+                    desktop, making it ready to apply to another object .</li>
+                <li><strong>Property Eyedropper Tool</strong>: Samples not just the color, but the entire set of
+                    properties of an object, such as outline thickness, fill type, and applied effects, and then applies
+                    those properties to another object .</li>
+                <li><strong>Interactive Fill Tool</strong>: Provides on-object controls for applying and adjusting
+                    various types of fills, including uniform, fountain (gradient), pattern, and texture fills .</li>
+                <li><strong>Mesh Fill Tool</strong>: Applies a grid (mesh) over an object. You can color individual
+                    nodes on this grid, creating incredibly smooth and complex color transitions, ideal for
+                    photorealistic illustrations .</li>
+                <li><strong>Smart Fill Tool</strong>: This clever tool applies a fill to any enclosed area (even if the
+                    area is not a separate object). It also creates a new object from that filled area .</li>
+                <li><strong>Outline Tool</strong>: A flyout that provides quick access to settings for outline color,
+                    thickness, and style .</li>
+            </ul>
+        </section>
+
+        <!-- CHAPTER 2: PROPERTY BAR -->
+        <section id="propbar">
+            <h2>⚙️ 2. The Property Bar: Your Context-Sensitive Control Panel</h2>
+            <p>The <strong>Property Bar</strong> is a dynamic toolbar that sits just below the menu bar by default. Its
+                content changes instantly based on what you are doing in the program—hence the name "context-sensitive"
+                .</p>
+            <ul>
+                <li><strong>When no object is selected:</strong> The Property Bar displays document-wide options such as
+                    page size, orientation, measurement units, and default zoom levels.</li>
+                <li><strong>When the Text Tool is selected:</strong> It transforms to show text-formatting options like
+                    font family, font size, bold, italic, alignment, and character spacing .</li>
+                <li><strong>When a Rectangle is selected:</strong> It displays options for the rectangle's dimensions,
+                    scale, position, rotation angle, corner roundness, and outline width.</li>
+                <li><strong>When a Bitmap (photo) is selected:</strong> It provides tools to adjust color, contrast, and
+                    cropping.</li>
+            </ul>
+            <p>This bar is your primary point of control for modifying any tool or object with precision. You can also
+                customize the Property Bar by adding or removing buttons to suit your workflow .</p>
+        </section>
+
+        <!-- CHAPTER 3: DOCKERS -->
+        <section id="dockers">
+            <h2>📦 3. Dockers: Your Versatile Tool Panels</h2>
+            <p><strong>Dockers</strong> are windows that can be docked on the left or right side of the workspace to
+                give you access to more advanced controls and features. They are like floating or fixed tool panels. You
+                can open them via the <code>Window &gt; Dockers</code> menu. When multiple dockers are open, they appear
+                as tabs, allowing you to switch between them easily. You can click the double arrow at the top of a
+                docker to collapse it into a vertical bar, saving screen space while keeping it readily accessible .</p>
+            <p>Key Dockers you will use frequently include:</p>
+            <ul>
+                <li><strong>Object Manager Docker:</strong> This is one of the most important dockers. It provides a
+                    hierarchical view of every object, layer, and page in your document . You can use it to:
+                    <ul>
+                        <li>Create, rename, and delete layers.</li>
+                        <li>Hide, lock, and reorder objects and layers.</li>
+                        <li>See the exact stacking order of objects.</li>
+                        <li>Edit across multiple layers or restrict editing to a single layer .</li>
+                    </ul>
+                </li>
+                <li><strong>Object Properties Docker:</strong> This docker displays the formatting attributes (fill,
+                    outline, size, etc.) of the selected object, allowing you to make precise adjustments in one place .
+                </li>
+                <li><strong>Align and Distribute Docker:</strong> Provides a comprehensive interface for precisely
+                    aligning and spacing objects relative to each other or to the page .</li>
+                <li><strong>Color Palette Manager / Palettes Docker:</strong> This docker allows you to open, close,
+                    create, and manage all your color palettes .</li>
+                <li><strong>CONNECT Docker:</strong> This is your content browser. It allows you to search for and
+                    browse clipart, photos, fonts, and other content available in your CorelDRAW installation or on your
+                    computer .</li>
+                <li><strong>Tray Docker:</strong> Works in conjunction with the CONNECT docker. You can use the Tray to
+                    temporarily store content you find for easy access in your current project .</li>
+            </ul>
+        </section>
+
+        <!-- CHAPTER 4: COLOR PALETTE -->
+        <section id="palette">
+            <h2>🎨 4. The Color Palette: Applying and Managing Color</h2>
+            <p>The <strong>Color Palette</strong> is typically docked on the right side of the application window . It
+                holds a set of color swatches that you can use to apply fill and outline colors to your objects.
+                Understanding how to use it is fundamental to design.</p>
+            <h4>Applying Color:</h4>
+            <ul>
+                <li>To apply a color as a <strong>fill</strong>, <strong>left-click</strong> on a color swatch with an
+                    object selected.</li>
+                <li>To apply a color as an <strong>outline</strong>, <strong>right-click</strong> on a color swatch with
+                    an object selected.</li>
+                <li>To remove a fill, left-click the <code>X</code> (No Color) swatch at the top of the palette. To
+                    remove an outline, right-click it .</li>
+                <li>You can also drag and drop a color swatch directly onto any object, even if it's not selected, to
+                    fill it.</li>
+            </ul>
+            <h4>Types of Palettes:</h4>
+            <ul>
+                <li><strong>Document Palette:</strong> This is a special palette that appears in the bottom-left corner
+                    of the interface. It automatically collects all the colors you use in your current document. It is
+                    saved with the document, which is great for ensuring color consistency when you move your file to
+                    another computer .</li>
+                <li><strong>Default Palettes:</strong> CorelDRAW comes with many preset palettes based on standard color
+                    models and systems:
+                    <ul>
+                        <li><strong>CMYK Palette:</strong> Used for professional printing where colors are made from
+                            Cyan, Magenta, Yellow, and Black .</li>
+                        <li><strong>RGB Palette:</strong> Used for on-screen designs, websites, and digital displays,
+                            where colors are made from Red, Green, and Blue .</li>
+                        <li><strong>Spot Color Palettes (e.g., Pantone):</strong> Used for specific, pre-mixed inks in
+                            professional printing to ensure exact color matching, often for brand logos .</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4>Managing Palettes:</h4>
+            <p>You can open and close palettes from the <code>Window &gt; Color Palettes</code> menu. The
+                <strong>Palettes Docker</strong> (<code>Window &gt; Dockers &gt; Palettes</code>) gives you full
+                control, allowing you to create your own custom color palettes from scratch or from the colors in a
+                selected object or an entire document .</p>
+        </section>
+
+        <!-- CHAPTER 5: PAGE SETUP -->
+        <section id="pagesetup">
+            <h2>📄 5. Page Setup: Defining Your Document Canvas</h2>
+            <p>Before you start designing, you must set up your page correctly. The primary controls for this are in the
+                <strong>Property Bar</strong> (when no object is selected) and under the <strong>Layout</strong> menu .
+            </p>
+            <h4>Page Size and Orientation:</h4>
+            <ul>
+                <li>On the Property Bar, you can quickly select a standard paper size (like A4, Letter, Legal) from a
+                    dropdown menu, or you can type in custom <strong>Paper Width and Height</strong> values.</li>
+                <li>You can also set the page to <strong>Portrait</strong> (vertical) or <strong>Landscape</strong>
+                    (horizontal) orientation .</li>
+            </ul>
+            <h4>Layout and Document Options:</h4>
+            <p>For more detailed options, go to <strong>Layout &gt; Page Setup</strong> or <strong>Layout &gt; Document
+                    Options</strong>. This opens a dialog where you can:</p>
+            <ul>
+                <li><strong>Create custom page sizes</strong> and save them as presets for future use.</li>
+                <li>Set up <strong>multi-page documents</strong> with different sizes or layouts (e.g., for a book or
+                    booklet).</li>
+                <li>Choose from hundreds of pre-defined <strong>Label formats</strong> from various manufacturers.
+                    CorelDRAW will automatically create a page with multiple, perfectly sized "labels" for you to design
+                    on .</li>
+            </ul>
+            <h4>Adding, Deleting, and Renaming Pages:</h4>
+            <ul>
+                <li>At the bottom-left of the document window, above the status bar, you'll see page tabs (like "Page
+                    1"). You can right-click on these tabs to <strong>Rename</strong>, <strong>Delete</strong>, or
+                    <strong>Insert</strong> new pages before or after the current one.</li>
+            </ul>
+        </section>
+
+        <!-- CONCLUSION -->
+        <section id="conclusion">
+            <h2>✅ Conclusion & Quick Reference</h2>
+            <p>Mastering the CorelDRAW interface is about understanding the relationship between these five key areas.
+                The <strong>Toolbox</strong> provides the tools to create. The <strong>Property Bar</strong> gives you
+                immediate, context-sensitive control over those tools. The <strong>Dockers</strong> house advanced
+                features for complex management. The <strong>Color Palette</strong> is your source for applying color.
+                Finally, the <strong>Page Setup</strong> defines the canvas you are working on. By familiarizing
+                yourself with these components, you build a powerful and efficient workflow that will serve as the
+                bedrock for all your future desktop publishing projects.</p>
+            <div class="mini-card">
+                <h4 style="margin-top:0;">🧾 Quick reference – do you know?</h4>
+                <div class="def-grid">
+                    <div class="def-item">☐ Pick vs Shape tool<br>☐ Artistic vs Paragraph text<br>☐ CMYK vs RGB palette
+                    </div>
+                    <div class="def-item">☐ Property Eyedropper<br>☐ Object Manager docker<br>☐ Contour & Blend tools
+                    </div>
+                    <div class="def-item">☐ Page setup / labels<br>☐ Virtual Segment Delete<br>☐ 5 Artistic Media modes
+                    </div>
+                </div>
+                <p style="margin-top:1.2rem;"><em>Complete guide – every original line from the CorelDRAW Interface
+                        document is included.</em></p>
+            </div>
+        </section>
+
+        <footer>
+            🖥️ Desktop Publishing & Secretarial Studies · CorelDRAW Interface & Workspace · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

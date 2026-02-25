@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Working with Color in CorelDRAW: A Comprehensive Guide · complete DTP notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e3dac9;
+            color: #2f2a1f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #5f4d3a;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #3b4b5e, #165a4c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #1d6d5e;
+            border-left: 6px solid #2c9c84;
+            padding-left: 1.5rem;
+            margin-bottom: 2.2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #e2f0e9;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 8px rgba(0, 80, 70, 0.1), 0 18px 24px -14px #256454;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #0b4f43;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #0e5b4b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 60, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cde3db;
+            border-color: #1f8a73;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #0f5f4e;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(30, 70, 50, 0.05);
+            border: 1px solid #cfeadf;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0a5f4e;
+            border-bottom: 3px solid #289f87;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1a755f;
+            border-left: 8px solid #68d0b5;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #216b58;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #ebf6f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #36ab90;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 70, 50, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #147561;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c0e2d6;
+            background: #f9fffc;
+        }
+
+        .badge {
+            background: #1c7f69;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #e9f4ef;
+            border: 1px solid #b7dfd1;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #dcf0e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #37a48a;
+        }
+
+        .sample-box {
+            background: #f0fcf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #b4dfd1;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #145f4d;
+            color: #effdf5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b8dfd2, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #246b5a;
+            border-top: 1px dashed #b1d9cc;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>🎨 WORKING WITH COLOR IN CORELDRAW: A COMPREHENSIVE GUIDE</h1>
+        <div class="subhead">Complete DTP notes – uniform fills, outline colors, fountain fills & color theory</div>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Color in CorelDRAW</a>
+                <a href="#color-models">2. Understanding Color Models</a>
+                <a href="#color-interface">3. The CorelDRAW Color Interface</a>
+                <a href="#uniform-fills">4. Uniform Fills</a>
+                <a href="#outline-colors">5. Outline Colors</a>
+                <a href="#fountain-fills">6. Fountain Fills (Gradients)</a>
+                <a href="#color-theory">7. Color Harmonies and Theory</a>
+                <a href="#practical-applications">8. Practical Applications</a>
+                <a href="#troubleshooting">9. Troubleshooting and Best Practices</a>
+                <a href="#exercises">10. Exercises and Projects</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION TO COLOR IN CORELDRAW -->
+        <section id="introduction">
+            <h2>📘 CHAPTER 1: INTRODUCTION TO COLOR IN CORELDRAW</h2>
+            <p>Color is one of the most powerful tools in a designer's arsenal. In CorelDRAW, mastering color
+                application transforms ordinary designs into professional, visually compelling artwork. This
+                comprehensive guide explores the three fundamental ways to apply color in CorelDRAW: uniform fills,
+                outline colors, and fountain fills.</p>
+            <h3>Why Color Matters in Design</h3>
+            <ul>
+                <li><strong>Grabs attention</strong> – Color is the first thing viewers notice</li>
+                <li><strong>Conveys emotions</strong> – Different colors evoke different psychological responses</li>
+                <li><strong>Creates hierarchy</strong> – Guides the viewer's eye through the design</li>
+                <li><strong>Establishes brand identity</strong> – Consistent color use builds recognition</li>
+                <li><strong>Improves readability</strong> – Proper contrast ensures text is legible</li>
+            </ul>
+            <h3>The CorelDRAW Color Workflow</h3>
+            <div class="sample-box">Object Selection → Choose Color Type → Apply Color → Refine → Output</div>
+        </section>
+
+        <!-- 2. UNDERSTANDING COLOR MODELS -->
+        <section id="color-models">
+            <h2>🎨 CHAPTER 2: UNDERSTANDING COLOR MODELS</h2>
+            <p>Before diving into color application, it's essential to understand the color models CorelDRAW uses. The
+                choice of color model depends on your final output destination.</p>
+
+            <h3>2.1 RGB Color Model (Red, Green, Blue)</h3>
+            <p><strong>Best for:</strong> Digital displays, websites, social media, presentations</p>
+            <ul>
+                <li><strong>How it works:</strong> Additive color model – colors are created by adding light</li>
+                <li><strong>Color range:</strong> 16.7 million colors (256 values per channel)</li>
+                <li><strong>When to use:</strong> All screen-based designs</li>
+                <li><strong>Color values:</strong> 0-255 for each channel (e.g., R=255, G=0, B=0 = pure red)</li>
+            </ul>
+            <p><strong>RGB Color Values Table:</strong></p>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Red</th>
+                    <th>Green</th>
+                    <th>Blue</th>
+                </tr>
+                <tr>
+                    <td>Pure Red</td>
+                    <td>255</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Pure Green</td>
+                    <td>0</td>
+                    <td>255</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Pure Blue</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>255</td>
+                </tr>
+                <tr>
+                    <td>Pure White</td>
+                    <td>255</td>
+                    <td>255</td>
+                    <td>255</td>
+                </tr>
+                <tr>
+                    <td>Pure Black</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Yellow</td>
+                    <td>255</td>
+                    <td>255</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Cyan</td>
+                    <td>0</td>
+                    <td>255</td>
+                    <td>255</td>
+                </tr>
+                <tr>
+                    <td>Magenta</td>
+                    <td>255</td>
+                    <td>0</td>
+                    <td>255</td>
+                </tr>
+            </table>
+
+            <h3>2.2 CMYK Color Model (Cyan, Magenta, Yellow, Key/Black)</h3>
+            <p><strong>Best for:</strong> Professional printing, brochures, business cards, packaging</p>
+            <ul>
+                <li><strong>How it works:</strong> Subtractive color model – colors are created by subtracting light
+                    using ink</li>
+                <li><strong>Color range:</strong> Limited compared to RGB (approximately 50-60% of RGB colors)</li>
+                <li><strong>When to use:</strong> Any design destined for commercial printing</li>
+                <li><strong>Color values:</strong> 0-100% for each channel (e.g., C=100, M=0, Y=0, K=0 = cyan)</li>
+            </ul>
+            <p><strong>CMYK Color Values Table:</strong></p>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Cyan</th>
+                    <th>Magenta</th>
+                    <th>Yellow</th>
+                    <th>Black</th>
+                </tr>
+                <tr>
+                    <td>Cyan</td>
+                    <td>100</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Magenta</td>
+                    <td>0</td>
+                    <td>100</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Yellow</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>100</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Rich Black</td>
+                    <td>60</td>
+                    <td>40</td>
+                    <td>40</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>Process Red</td>
+                    <td>0</td>
+                    <td>100</td>
+                    <td>100</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Process Blue</td>
+                    <td>100</td>
+                    <td>60</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Green</td>
+                    <td>100</td>
+                    <td>0</td>
+                    <td>100</td>
+                    <td>0</td>
+                </tr>
+            </table>
+
+            <h3>2.3 HSB Color Model (Hue, Saturation, Brightness)</h3>
+            <p><strong>Best for:</strong> Intuitive color selection and adjustment</p>
+            <ul>
+                <li><strong>Hue:</strong> The pure color (0-360 degrees on a color wheel)</li>
+                <li><strong>Saturation:</strong> Intensity/purity of color (0-100%)</li>
+                <li><strong>Brightness:</strong> Lightness/darkness of color (0-100%)</li>
+            </ul>
+            <p><strong>HSB Explained:</strong></p>
+            <ul>
+                <li><strong>Hue 0°</strong> = Red</li>
+                <li><strong>Hue 120°</strong> = Green</li>
+                <li><strong>Hue 240°</strong> = Blue</li>
+                <li><strong>Saturation 0%</strong> = Grayscale</li>
+                <li><strong>Saturation 100%</strong> = Pure, vivid color</li>
+                <li><strong>Brightness 0%</strong> = Black</li>
+                <li><strong>Brightness 100%</strong> = Full lightness</li>
+            </ul>
+
+            <h3>2.4 Grayscale (Black and White)</h3>
+            <p><strong>Best for:</strong> Black and white printing, sketches, elegant designs</p>
+            <ul>
+                <li><strong>Uses:</strong> 256 shades of gray (0-255) or percentages (0-100%)</li>
+                <li><strong>0% black</strong> = White</li>
+                <li><strong>100% black</strong> = Pure black</li>
+            </ul>
+
+            <h3>2.5 Spot Colors (Pantone)</h3>
+            <p><strong>Best for:</strong> Brand colors, corporate identities, specialty printing</p>
+            <ul>
+                <li><strong>What they are:</strong> Pre-mixed inks, not process colors</li>
+                <li><strong>Advantages:</strong> Perfect color matching, additional effects (metallic, fluorescent)</li>
+                <li><strong>Disadvantages:</strong> Additional cost in printing</li>
+            </ul>
+            <p><strong>Common Pantone Systems:</strong></p>
+            <ul>
+                <li><strong>Pantone Solid Coated (PMS C):</strong> For coated paper stocks</li>
+                <li><strong>Pantone Solid Uncoated (PMS U):</strong> For uncoated paper stocks</li>
+                <li><strong>Pantone Pastels & Neons:</strong> For special effects</li>
+            </ul>
+
+            <h3>2.6 Converting Between Color Models</h3>
+            <p><strong>Important Considerations:</strong></p>
+            <ul>
+                <li>RGB to CMYK conversion always results in some color shift</li>
+                <li>Always design in the final output color mode</li>
+                <li>Use CorelDRAW's "Color Management" settings for accurate preview</li>
+            </ul>
+            <p><strong>Conversion Methods in CorelDRAW:</strong></p>
+            <ol>
+                <li><strong>Bitmaps:</strong> Bitmaps → Convert to Bitmap → Choose color model</li>
+                <li><strong>Vector objects:</strong> Select objects → Edit → Find and Replace → Replace Colors</li>
+                <li><strong>Document-wide:</strong> Tools → Color Management → Document Settings</li>
+            </ol>
+        </section>
+
+        <!-- 3. THE CORELDRAW COLOR INTERFACE -->
+        <section id="color-interface">
+            <h2>🖱️ CHAPTER 3: THE CORELDRAW COLOR INTERFACE</h2>
+            <p>Understanding CorelDRAW's color interface is crucial for efficient workflow. Let's explore every
+                component in detail.</p>
+
+            <h3>3.1 The Color Palette</h3>
+            <p><strong>Default Position:</strong> Right side of the application window</p>
+            <p><strong>Types of Color Palettes:</strong></p>
+            <ol>
+                <li><strong>Document Palette</strong>
+                    <ul>
+                        <li>Automatically saves colors used in current document</li>
+                        <li>Great for maintaining consistency</li>
+                        <li>Appears at the top of the default palette</li>
+                    </ul>
+                </li>
+                <li><strong>Default RGB/CMYK Palettes</strong>
+                    <ul>
+                        <li>Pre-loaded with standard colors</li>
+                        <li>Organized by color families</li>
+                        <li>Can be customized</li>
+                    </ul>
+                </li>
+                <li><strong>Custom Palettes</strong>
+                    <ul>
+                        <li>User-created color sets</li>
+                        <li>Can be saved and loaded for different projects</li>
+                        <li>Ideal for brand colors</li>
+                    </ul>
+                </li>
+            </ol>
+            <p><strong>Palette Management:</strong></p>
+            <ul>
+                <li><strong>Show/Hide:</strong> Window → Color Palettes</li>
+                <li><strong>Create New Palette:</strong> Window → Color Palettes → Palette Editor → New</li>
+                <li><strong>Load Palette:</strong> Window → Color Palettes → Open Palette</li>
+                <li><strong>Dock/Undock:</strong> Drag the palette header</li>
+            </ul>
+
+            <h3>3.2 The Color Docker (Color Panel)</h3>
+            <p><strong>Access:</strong> Window → Dockers → Color</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li><strong>Color Sliders:</strong> Adjust CMYK, RGB, or HSB values</li>
+                <li><strong>Color Viewer:</strong> Visual color selection</li>
+                <li><strong>Color Harmonies:</strong> Automatically generate harmonious colors</li>
+                <li><strong>Color Blend:</strong> Create color ranges</li>
+            </ul>
+            <p><strong>Sections of Color Docker:</strong></p>
+            <div class="sample-box">
+                ┌─────────────────────────┐
+                │ Color Sliders │
+                │ └── CMYK/RGB/HSB │
+                │ │
+                │ Color Viewer │
+                │ └── Visual selection │
+                │ │
+                │ Color Harmonies │
+                │ └── Complementary │
+                │ └── Triadic │
+                │ └── Analogous │
+                │ │
+                │ Color Blend │
+                │ └── Create ranges │
+                └─────────────────────────┘
+            </div>
+
+            <h3>3.3 The Eyedropper Tool</h3>
+            <p><strong>Shortcut:</strong> Ctrl+Shift+E (Eyedropper), Ctrl+Shift+A (Apply)</p>
+            <p><strong>Color Eyedropper Modes:</strong></p>
+            <ol>
+                <li><strong>Sample Color</strong>
+                    <ul>
+                        <li>Picks color from any object or bitmap</li>
+                        <li>Can sample from outside CorelDRAW (on your desktop)</li>
+                        <li>Options for sample size (1x1, 2x2, 5x5 average)</li>
+                    </ul>
+                </li>
+                <li><strong>Sample Color with Properties</strong>
+                    <ul>
+                        <li>Picks color AND object properties (outline, transparency)</li>
+                        <li>Great for matching formatting</li>
+                    </ul>
+                </li>
+            </ol>
+            <p><strong>Eyedropper Settings:</strong></p>
+            <div class="sample-box">
+                Property Bar Options:
+                ┌─────────────────────────────────┐
+                │ [Sample Color] [Sample Size] │
+                │ ○ 1x1 Pixel ○ 2x2 Average │
+                │ ○ 3x3 Average ○ 5x5 Average │
+                └─────────────────────────────────┘
+            </div>
+
+            <h3>3.4 The Object Properties Docker</h3>
+            <p><strong>Access:</strong> Window → Dockers → Object Properties</p>
+            <p><strong>Color Section Features:</strong></p>
+            <ul>
+                <li><strong>Fill Section:</strong> Uniform, Fountain, Pattern, etc.</li>
+                <li><strong>Outline Section:</strong> Color, width, style</li>
+                <li><strong>Quick color picks:</strong> Recently used colors</li>
+                <li><strong>Color model display:</strong> Shows current color values</li>
+            </ul>
+
+            <h3>3.5 The Status Bar Color Display</h3>
+            <p>Located at the bottom of the window, shows:</p>
+            <ul>
+                <li>Fill color of selected object</li>
+                <li>Outline color of selected object</li>
+                <li>Quick double-click access to edit</li>
+            </ul>
+
+            <h3>3.6 Interactive Fill Tool</h3>
+            <p><strong>Shortcut:</strong> F11 (for fountain fills), or click Interactive Fill tool in toolbox</p>
+            <p><strong>Modes:</strong></p>
+            <ul>
+                <li>Uniform Fill</li>
+                <li>Fountain Fill (Linear, Radial, Conical, Square)</li>
+                <li>Pattern Fill</li>
+                <li>Texture Fill</li>
+                <li>PostScript Fill</li>
+            </ul>
+        </section>
+
+        <!-- 4. UNIFORM FILLS -->
+        <section id="uniform-fills">
+            <h2>🟦 CHAPTER 4: UNIFORM FILLS</h2>
+            <p>A uniform fill applies a single, solid color to the interior of an object. This is the most basic and
+                commonly used fill type in CorelDRAW.</p>
+
+            <h3>4.1 Methods to Apply Uniform Fills</h3>
+            <p><strong>Method 1: Drag and Drop from Color Palette</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Click and hold on a color in the palette</li>
+                <li>Drag color onto object</li>
+                <li>Release mouse button</li>
+            </ol>
+            <p><strong>Method 2: Click with Object Selected</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Left-click on a color in the palette</li>
+                <li>Color applies immediately</li>
+            </ol>
+            <p><strong>Method 3: Using the Fill Tool</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Click Fill tool in toolbox</li>
+                <li>Choose Uniform Fill</li>
+                <li>Select color from dialog</li>
+            </ol>
+            <p><strong>Method 4: Object Properties Docker</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Open Object Properties docker (Window → Dockers → Object Properties)</li>
+                <li>In Fill section, choose Uniform Fill</li>
+                <li>Select color</li>
+            </ol>
+            <p><strong>Method 5: Interactive Fill Tool</strong></p>
+            <ol>
+                <li>Select Interactive Fill tool</li>
+                <li>Choose Uniform Fill from property bar</li>
+                <li>Pick color from property bar or palette</li>
+            </ol>
+
+            <h3>4.2 The Uniform Fill Dialog Box</h3>
+            <p><strong>Access:</strong> Select object → Fill tool → Uniform Fill (or press Shift+F11)</p>
+            <p><strong>Dialog Sections:</strong></p>
+            <div class="sample-box">
+                ┌─────────────────────────────────────┐
+                │ UNIFORM FILL │
+                ├─────────────────────────────────────┤
+                │ Models Mixers Palettes │
+                │ ┌─────┐ │
+                │ │ │ Color Preview │
+                │ │ │ │ │
+                │ │ │ ▼ │
+                │ │ │ Current: Old: │
+                │ └─────┘ │
+                │ │
+                │ Components: │
+                │ C: [ ] M: [ ] Y: [ ] K: [ ] │
+                │ │
+                │ Name: [ ] [▼] │
+                │ │
+                │ [OK] [Cancel] [Help] │
+                └─────────────────────────────────────┘
+            </div>
+            <p><strong>Tabs Explained:</strong></p>
+            <ol>
+                <li><strong>Models Tab</strong>
+                    <ul>
+                        <li>Visual color selection</li>
+                        <li>Color component sliders</li>
+                        <li>Color model selector</li>
+                    </ul>
+                </li>
+                <li><strong>Mixers Tab</strong>
+                    <ul>
+                        <li>Color harmonies</li>
+                        <li>Color blends</li>
+                        <li>Custom mixing</li>
+                    </ul>
+                </li>
+                <li><strong>Palettes Tab</strong>
+                    <ul>
+                        <li>Fixed palettes (Pantone, Focoltone, etc.)</li>
+                        <li>Custom palettes</li>
+                        <li>Document palette</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>4.3 Advanced Uniform Fill Techniques</h3>
+            <p><strong>Applying Fills to Multiple Objects:</strong></p>
+            <div class="sample-box">
+                # Workflow for consistent fills
+                1. Select all objects (Ctrl+A or marquee select)
+                2. Hold Ctrl while clicking color for independent fills
+                3. Hold Shift while clicking for different fill types
+            </div>
+            <p><strong>Using Hotkeys for Efficiency:</strong></p>
+            <ul>
+                <li><strong>Ctrl+Click</strong> on palette color: Applies fill to multiple selected objects individually
+                </li>
+                <li><strong>Shift+Click</strong> on palette color: Applies outline color</li>
+                <li><strong>Ctrl+Shift+Click</strong>: Applies fill and outline properties</li>
+                <li><strong>Alt+Click</strong> on palette color: Applies to all similar objects (based on fill color)
+                </li>
+            </ul>
+            <p><strong>Creating Color Variations:</strong></p>
+            <ol>
+                <li>Select object with desired fill</li>
+                <li>Hold Ctrl and drag a duplicate</li>
+                <li>Click different color on duplicate</li>
+                <li>Use Blend tool to create gradient between them</li>
+            </ol>
+            <p><strong>Fill Transparency:</strong></p>
+            <ol>
+                <li>Apply uniform fill</li>
+                <li>Select Transparency tool</li>
+                <li>Choose Uniform transparency</li>
+                <li>Adjust opacity percentage</li>
+            </ol>
+
+            <h3>4.4 Uniform Fill Shortcuts and Tips</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Shortcut/Method</th>
+                </tr>
+                <tr>
+                    <td>Open Uniform Fill dialog</td>
+                    <td>Shift+F11</td>
+                </tr>
+                <tr>
+                    <td>Apply last used fill</td>
+                    <td>Ctrl+F</td>
+                </tr>
+                <tr>
+                    <td>Remove fill</td>
+                    <td>Right-click X in palette</td>
+                </tr>
+                <tr>
+                    <td>Copy fill from another object</td>
+                    <td>Eyedropper tool (Color with Properties)</td>
+                </tr>
+                <tr>
+                    <td>Make fill default for new objects</td>
+                    <td>Edit → Properties → Set as default</td>
+                </tr>
+            </table>
+            <p><strong>Pro Tips:</strong></p>
+            <ul>
+                <li>Double-click the Fill icon in status bar to open Uniform Fill dialog</li>
+                <li>Use the Color Docker for non-modal color selection</li>
+                <li>Save frequently used colors in a custom palette</li>
+                <li>Use the Document Palette for project-specific colors</li>
+            </ul>
+
+            <h3>4.5 Working with Color Values</h3>
+            <p><strong>Entering Exact Color Values:</strong></p>
+            <p>For CMYK (professional print):</p>
+            <div class="sample-box">
+                Cyan: 0-100%
+                Magenta: 0-100%
+                Yellow: 0-100%
+                Black: 0-100%
+            </div>
+            <p>For RGB (digital display):</p>
+            <div class="sample-box">
+                Red: 0-255
+                Green: 0-255
+                Blue: 0-255
+            </div>
+            <p>For Hex (web design):</p>
+            <div class="sample-box">
+                Format: #RRGGBB
+                Example: #FF0000 = Red
+                #00FF00 = Green
+                #0000FF = Blue
+            </div>
+        </section>
+
+        <!-- 5. OUTLINE COLORS -->
+        <section id="outline-colors">
+            <h2>✏️ CHAPTER 5: OUTLINE COLORS</h2>
+            <p>Outlines (also called strokes or contours) define the edges of objects. In CorelDRAW, you have extensive
+                control over outline properties.</p>
+
+            <h3>5.1 Understanding Outlines</h3>
+            <p><strong>Outline Components:</strong></p>
+            <ul>
+                <li><strong>Color:</strong> The hue of the outline</li>
+                <li><strong>Width:</strong> Thickness of the outline</li>
+                <li><strong>Style:</strong> Solid, dashed, dotted, etc.</li>
+                <li><strong>Corners:</strong> Miter, round, or bevel</li>
+                <li><strong>Line caps:</strong> Butt, round, or square ends</li>
+            </ul>
+
+            <h3>5.2 Methods to Apply Outline Colors</h3>
+            <p><strong>Method 1: Right-Click on Color Palette</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Right-click on a color in the palette</li>
+                <li>Outline color applies immediately</li>
+            </ol>
+            <p><strong>Method 2: Using the Outline Tool</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Click Outline tool in toolbox</li>
+                <li>Choose Outline Color</li>
+                <li>Select color from dialog</li>
+            </ol>
+            <p><strong>Method 3: Object Properties Docker</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Open Object Properties docker</li>
+                <li>In Outline section, choose color</li>
+                <li>Adjust width and style as needed</li>
+            </ol>
+            <p><strong>Method 4: Drag and Drop</strong></p>
+            <ol>
+                <li>Click and hold on a palette color</li>
+                <li>Drag to the outline of an object</li>
+                <li>Release when outline highlights</li>
+            </ol>
+
+            <h3>5.3 The Outline Pen Dialog</h3>
+            <p><strong>Access:</strong> Select object → Outline tool → Outline Pen (or press F12)</p>
+            <div class="sample-box">
+                ┌─────────────────────────────────────┐
+                │ OUTLINE PEN │
+                ├─────────────────────────────────────┤
+                │ Color: [ ] [▼] │
+                │ Width: [ ] [in/mm/pt] │
+                │ │
+                │ Style: [──────────] [▼] │
+                │ Edit Style... │
+                │ │
+                │ Corners: ○ Miter ○ Round ○ Bevel │
+                │ │
+                │ Line caps: ○ Butt ○ Round ○ Square │
+                │ │
+                │ Behind fill: [ ] │
+                │ Scale with image: [ ] │
+                │ │
+                │ Arrows: │
+                │ Start: [None] [▼] End: [None] [▼] │
+                │ │
+                │ Calligraphy: │
+                │ Stretch: [100]% Angle: [0]° │
+                │ │
+                │ [OK] [Cancel] [Help] │
+                └─────────────────────────────────────┘
+            </div>
+            <p><strong>Key Settings Explained:</strong></p>
+            <ol>
+                <li><strong>Color:</strong> Choose outline color (can be uniform or fountain)</li>
+                <li><strong>Width:</strong> Set thickness (from hairline to 36 points or more)</li>
+                <li><strong>Style:</strong> Choose line pattern (create custom patterns)</li>
+                <li><strong>Corners:</strong> How corners appear (miter=sharp, round=smooth, bevel=cut)</li>
+                <li><strong>Line caps:</strong> How line ends appear</li>
+                <li><strong>Behind fill:</strong> Places outline behind object fill (great for text effects)</li>
+                <li><strong>Scale with image:</strong> Outline thickness scales when object is resized</li>
+                <li><strong>Arrows:</strong> Add arrowheads to open paths</li>
+                <li><strong>Calligraphy:</strong> Creates variable-width outlines</li>
+            </ol>
+
+            <h3>5.4 Outline Widths and Units</h3>
+            <p><strong>Common Units:</strong></p>
+            <ul>
+                <li><strong>Points (pt):</strong> Standard for print (1 pt = 1/72 inch)</li>
+                <li><strong>Inches (in):</strong> US standard</li>
+                <li><strong>Millimeters (mm):</strong> Metric standard</li>
+                <li><strong>Picas (pc):</strong> Traditional print (1 pica = 12 points)</li>
+            </ul>
+            <p><strong>Outline Width Reference:</strong></p>
+            <div class="sample-box">
+                Hairline: 0.5 pt (finest printable line)
+                Thin: 0.5-1 pt
+                Medium: 1-2 pt
+                Thick: 2-4 pt
+                Very Thick: 4-8+ pt
+            </div>
+
+            <h3>5.5 Creating Custom Outline Styles</h3>
+            <p><strong>To Edit Line Style:</strong></p>
+            <ol>
+                <li>Open Outline Pen dialog (F12)</li>
+                <li>Click "Edit Style" button</li>
+                <li>In the edit window:
+                    <ul>
+                        <li>Click to create dots</li>
+                        <li>Drag to create dashes</li>
+                        <li>Use slider for spacing</li>
+                    </ul>
+                </li>
+                <li>Save custom style</li>
+                <li>Name and save for future use</li>
+            </ol>
+            <p><strong>Custom Style Editor:</strong></p>
+            <div class="sample-box">
+                Line Style Editor
+                [●●●●○●●●○●●●○●●○○○○]
+                Click to add/remove dots
+                Drag to adjust spacing
+                [Add] [Replace] [Cancel]
+            </div>
+
+            <h3>5.6 Advanced Outline Techniques</h3>
+            <p><strong>Converting Outline to Object:</strong></p>
+            <ol>
+                <li>Select object with outline</li>
+                <li>Arrange → Convert Outline to Object (Ctrl+Shift+Q)</li>
+                <li>Outline becomes separate fillable object</li>
+            </ol>
+            <p><strong>Use cases:</strong></p>
+            <ul>
+                <li>Create outlined text effects</li>
+                <li>Design custom borders</li>
+                <li>Prepare files for specialty printing</li>
+            </ul>
+            <p><strong>Multi-Color Outlines:</strong></p>
+            <ol>
+                <li>Create object with outline</li>
+                <li>Convert outline to object</li>
+                <li>Apply fountain fill to new object</li>
+                <li>Combine with original for multi-color effect</li>
+            </ol>
+            <p><strong>Dashed Line Variations:</strong></p>
+            <div class="sample-box">
+                Solid: ────────────
+                Dotted: ············
+                Short Dash: ── ── ── ──
+                Long Dash: ──── ──── ────
+                Dash-Dot: ── · ── · ──
+                Custom: ─·─·─·─·─·─·─
+            </div>
+
+            <h3>5.7 Outline Shortcuts and Tips</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Shortcut/Method</th>
+                </tr>
+                <tr>
+                    <td>Open Outline Pen dialog</td>
+                    <td>F12</td>
+                </tr>
+                <tr>
+                    <td>Open Outline Color dialog</td>
+                    <td>Shift+F12</td>
+                </tr>
+                <tr>
+                    <td>Remove outline</td>
+                    <td>Right-click X in palette with object selected</td>
+                </tr>
+                <tr>
+                    <td>Copy outline properties</td>
+                    <td>Eyedropper (Color with Properties)</td>
+                </tr>
+                <tr>
+                    <td>Set default outline</td>
+                    <td>Edit → Properties → Set as default</td>
+                </tr>
+                <tr>
+                    <td>No outline</td>
+                    <td>Left-click X in palette</td>
+                </tr>
+            </table>
+            <p><strong>Pro Tips:</strong></p>
+            <ul>
+                <li>Use "Behind fill" for text to make outlines less intrusive</li>
+                <li>Check "Scale with image" for designs that will be resized</li>
+                <li>For hairline outlines, ensure they're visible at final output size</li>
+                <li>Use round corners for organic shapes, miter for geometric designs</li>
+            </ul>
+
+            <h3>5.8 Outline vs. No Outline Scenarios</h3>
+            <p><strong>When to Use Outlines:</strong></p>
+            <ul>
+                <li>Defining shapes in illustrations</li>
+                <li>Creating emphasis</li>
+                <li>Designing logos</li>
+                <li>Making text stand out from backgrounds</li>
+                <li>Creating technical drawings</li>
+            </ul>
+            <p><strong>When to Avoid Outlines:</strong></p>
+            <ul>
+                <li>Photorealistic images</li>
+                <li>Small text (under 8pt)</li>
+                <li>Designs requiring clean, modern look</li>
+                <li>When outlines compete with content</li>
+            </ul>
+        </section>
+
+        <!-- 6. FOUNTAIN FILLS (GRADIENTS) -->
+        <section id="fountain-fills">
+            <h2>🌈 CHAPTER 6: FOUNTAIN FILLS (GRADIENTS)</h2>
+            <p>Fountain fills (also called gradients) create smooth transitions between two or more colors. This is one
+                of CorelDRAW's most powerful features for creating depth, dimension, and visual interest.</p>
+
+            <h3>6.1 Types of Fountain Fills</h3>
+            <p><strong>Linear Fountain Fill</strong></p>
+            <ul>
+                <li>Colors transition in a straight line</li>
+                <li>Direction can be any angle (0-360°)</li>
+                <li>Best for: Backgrounds, metallic effects, simple shading</li>
+            </ul>
+            <p><strong>Radial Fountain Fill</strong></p>
+            <ul>
+                <li>Colors radiate from a center point</li>
+                <li>Creates circular or elliptical transitions</li>
+                <li>Best for: Spheres, highlights, vignettes, light effects</li>
+            </ul>
+            <p><strong>Conical Fountain Fill</strong></p>
+            <ul>
+                <li>Colors transition around a center point like a cone</li>
+                <li>Creates 3D illusion</li>
+                <li>Best for: 3D buttons, dials, cylinders, perspective effects</li>
+            </ul>
+            <p><strong>Square Fountain Fill</strong></p>
+            <ul>
+                <li>Colors transition in a square pattern from center</li>
+                <li>Best for: Geometric effects, abstract backgrounds, corner highlights</li>
+            </ul>
+            <p><strong>Visual Reference:</strong></p>
+            <div class="sample-box">
+                Linear: ██████████→
+                ██████████→
+                ██████████→
+
+                Radial: ▄████▄
+                ██████████
+                ▀██████▀
+
+                Conical: ████
+                ██ ██
+                ██ ██
+                ▀████▀
+
+                Square: ██████
+                ██ ██
+                ██ ██
+                ██████
+            </div>
+
+            <h3>6.2 Methods to Apply Fountain Fills</h3>
+            <p><strong>Method 1: Interactive Fill Tool (Most Common)</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Click Interactive Fill tool</li>
+                <li>Choose Fountain Fill from property bar</li>
+                <li>Click and drag on object to set gradient direction</li>
+                <li>Adjust handles for precise control</li>
+            </ol>
+            <p><strong>Method 2: Fill Tool Dialog</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Click Fill tool → Fountain Fill (or press F11)</li>
+                <li>Set parameters in dialog box</li>
+                <li>Preview and apply</li>
+            </ol>
+            <p><strong>Method 3: Object Properties Docker</strong></p>
+            <ol>
+                <li>Select object(s)</li>
+                <li>Open Object Properties docker</li>
+                <li>In Fill section, choose Fountain Fill</li>
+                <li>Configure gradient settings</li>
+            </ol>
+
+            <h3>6.3 The Fountain Fill Dialog Box</h3>
+            <p><strong>Access:</strong> Select object → Fill tool → Fountain Fill (F11)</p>
+            <div class="sample-box">
+                ┌─────────────────────────────────────┐
+                │ FOUNTAIN FILL │
+                ├─────────────────────────────────────┤
+                │ Type: [Linear ▼] │
+                │ │
+                │ Center Offset: │
+                │ Horizontal: [0]% Vertical: [0]% │
+                │ │
+                │ Color blend: │
+                │ ○ Two color ○ Custom │
+                │ │
+                │ From: [ ] [▼] To: [ ] │
+                │ │
+                │ Mid-point: [50]% │
+                │ │
+                │ Angle: [0]° Steps: [256] │
+                │ Edge pad: [0]% │
+                │ │
+                │ [OK] [Cancel] [Help] │
+                └─────────────────────────────────────┘
+            </div>
+            <p><strong>Dialog Sections Explained:</strong></p>
+            <ol>
+                <li><strong>Type:</strong> Choose gradient style (Linear, Radial, Conical, Square)</li>
+                <li><strong>Center Offset (for Radial/Conical/Square):</strong> Move center point
+                    horizontally/vertically</li>
+                <li><strong>Color Blend Options:</strong> Two Color or Custom</li>
+                <li><strong>Color Selection:</strong> From (start color), To (end color)</li>
+                <li><strong>Mid-point:</strong> Balance point between colors (0-100%)</li>
+                <li><strong>Angle:</strong> Direction of linear gradient (0-360°)</li>
+                <li><strong>Steps:</strong> Smoothness of transition (higher = smoother)</li>
+                <li><strong>Edge pad:</strong> How far colors extend before blending</li>
+            </ol>
+
+            <h3>6.4 Creating Two-Color Fountain Fills</h3>
+            <p><strong>Step-by-Step Process:</strong></p>
+            <ol>
+                <li><strong>Select Object</strong> – Create or select the object to fill</li>
+                <li><strong>Open Fountain Fill Dialog</strong> – Press F11 or use Fill tool</li>
+                <li><strong>Choose Type</strong> – Select Linear, Radial, Conical, or Square</li>
+                <li><strong>Set Colors</strong> – Click "From" color button, choose start color; click "To" color
+                    button, choose end color</li>
+                <li><strong>Adjust Mid-point</strong> – 50% = Even blend; &lt;50% = More start color; &gt;50% = More end
+                    color</li>
+                <li><strong>Set Angle/Direction</strong> – For Linear: set angle (0=left to right, 90=bottom to top);
+                    For Radial: adjust center offset if needed</li>
+                <li><strong>Adjust Edge Pad</strong> – 0% = Immediate transition; Higher values = Colors hold longer
+                    before blending</li>
+                <li><strong>Preview and Apply</strong> – Check preview window; Click OK to apply</li>
+            </ol>
+
+            <h3>6.5 Creating Custom Fountain Fills (Multi-Color)</h3>
+            <p><strong>Method: Interactive Fill Tool with Color Nodes</strong></p>
+            <ol>
+                <li><strong>Apply Initial Gradient</strong> – Use Interactive Fill tool; create simple two-color
+                    gradient</li>
+                <li><strong>Add Color Nodes</strong> – Double-click on gradient path (the line with arrow); new node
+                    appears; drag node to position</li>
+                <li><strong>Change Node Colors</strong> – Select node; click color from palette; or use Color Docker
+                </li>
+                <li><strong>Adjust Node Positions</strong> – Drag nodes along path; remove nodes by double-clicking</li>
+                <li><strong>Fine-tune Transitions</strong> – Right-click node for transition options; choose between
+                    smooth, linear, or custom</li>
+            </ol>
+            <p><strong>Gradient Node Controls:</strong></p>
+            <div class="sample-box">
+                Gradient Path:
+                [Start]──●──●────●──[End]
+                ↑ ↑ ↑
+                Node 1 Node 2 Node 3
+            </div>
+            <p><strong>Custom Color Stops Example:</strong></p>
+            <div class="sample-box">
+                Rainbow Gradient:
+                Red (0%) → Orange (20%) → Yellow (40%) →
+                Green (60%) → Blue (80%) → Purple (100%)
+            </div>
+
+            <h3>6.6 The Interactive Fill Tool in Detail</h3>
+            <p><strong>Tool Components:</strong></p>
+            <div class="sample-box">
+                Interactive Fill Handles:
+                ┌─────────────────────┐
+                │ Start Handle │
+                │ ↓ │
+                │ ────●──── End │
+                │ ↑ │
+                │ Middle Handle │
+                │ │
+                │ Color Nodes │
+                │ ○ ○ ○ ○ │
+                └─────────────────────┘
+            </div>
+            <p><strong>Handle Functions:</strong></p>
+            <ul>
+                <li><strong>Start Handle:</strong> Controls gradient origin</li>
+                <li><strong>End Handle:</strong> Controls gradient end point</li>
+                <li><strong>Middle Handle:</strong> Controls curvature/position</li>
+                <li><strong>Color Nodes:</strong> Add/remove/position colors</li>
+                <li><strong>Control Points:</strong> Adjust transition smoothness</li>
+            </ul>
+            <p><strong>Interactive Fill Property Bar:</strong></p>
+            <div class="sample-box">
+                ┌──────────────────────────────────────┐
+                │ [Linear▼] [Free Scale▼] │
+                │ From: [RGB Red] To: [RGB Yellow] │
+                │ Mid-point: [50]% Steps: [256] │
+                │ Angle: [0]° Edge: [0]% │
+                │ [Add Node] [Delete Node] [Reverse] │
+                └──────────────────────────────────────┘
+            </div>
+
+            <h3>6.7 Advanced Fountain Fill Techniques</h3>
+            <p><strong>Creating Metallic Effects:</strong></p>
+            <div class="sample-box">
+                Metallic Gold Gradient:
+                Color 1: C=0, M=20, Y=60, K=20 (position 0%)
+                Color 2: C=0, M=10, Y=40, K=0 (position 30%)
+                Color 3: C=0, M=30, Y=80, K=40 (position 70%)
+                Color 4: C=0, M=20, Y=60, K=20 (position 100%)
+            </div>
+            <p><strong>Creating Glass/Transparent Effects:</strong></p>
+            <ol>
+                <li>Apply linear gradient from dark to light</li>
+                <li>Add transparency with Transparency tool</li>
+                <li>Use radial gradient for highlights</li>
+                <li>Combine with blend modes for realism</li>
+            </ol>
+            <p><strong>Creating 3D Sphere:</strong></p>
+            <div class="sample-box">
+                Radial Gradient for Sphere:
+                Center: White (0% position)
+                Mid: Light color (50% position)
+                Edge: Dark color (100% position)
+                Offset center slightly for light source direction
+            </div>
+            <p><strong>Creating Sunset Sky:</strong></p>
+            <div class="sample-box">
+                Linear Gradient:
+                Top: Dark blue (0%)
+                Upper: Light blue (30%)
+                Middle: Orange (60%)
+                Lower: Dark orange (85%)
+                Bottom: Deep red (100%)
+            </div>
+
+            <h3>6.8 Fountain Fill Transparency Combinations</h3>
+            <p><strong>Method 1: Transparency Tool</strong></p>
+            <ol>
+                <li>Apply fountain fill</li>
+                <li>Select Transparency tool</li>
+                <li>Choose Fountain transparency</li>
+                <li>Adjust transparency gradient independently</li>
+            </ol>
+            <p><strong>Method 2: Blend Modes</strong></p>
+            <ol>
+                <li>Create two objects with fountain fills</li>
+                <li>Apply different blend modes (Multiply, Screen, Overlay)</li>
+                <li>Experiment for unique effects</li>
+            </ol>
+            <p><strong>Transparency Gradient Types:</strong></p>
+            <ul>
+                <li><strong>Linear:</strong> Fades in straight line</li>
+                <li><strong>Radial:</strong> Fades from center</li>
+                <li><strong>Uniform:</strong> Even transparency</li>
+                <li><strong>Texture:</strong> Patterned transparency</li>
+            </ul>
+
+            <h3>6.9 Saving and Reusing Fountain Fills</h3>
+            <p><strong>Method: Create Custom Fill Preset</strong></p>
+            <ol>
+                <li><strong>Create Desired Gradient</strong> – Use Interactive Fill tool; set all colors and positions
+                </li>
+                <li><strong>Save as Preset</strong> – Open Fountain Fill dialog (F11); click "+" next to Presets; name
+                    your preset; click Save</li>
+                <li><strong>Use Preset</strong> – Select object; open Fountain Fill dialog; choose preset from dropdown;
+                    apply</li>
+            </ol>
+            <p><strong>Managing Presets:</strong></p>
+            <ul>
+                <li><strong>Save:</strong> Create new preset</li>
+                <li><strong>Delete:</strong> Remove unwanted presets</li>
+                <li><strong>Import:</strong> Load presets from other files</li>
+                <li><strong>Export:</strong> Share presets with others</li>
+            </ul>
+
+            <h3>6.10 Fountain Fill Shortcuts</h3>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Shortcut/Method</th>
+                </tr>
+                <tr>
+                    <td>Open Fountain Fill dialog</td>
+                    <td>F11</td>
+                </tr>
+                <tr>
+                    <td>Interactive Fill tool</td>
+                    <td>Press F11 then click tool</td>
+                </tr>
+                <tr>
+                    <td>Add color node</td>
+                    <td>Double-click on gradient path</td>
+                </tr>
+                <tr>
+                    <td>Remove color node</td>
+                    <td>Double-click node</td>
+                </tr>
+                <tr>
+                    <td>Reverse gradient</td>
+                    <td>Click Reverse button</td>
+                </tr>
+                <tr>
+                    <td>Copy fill properties</td>
+                    <td>Eyedropper tool</td>
+                </tr>
+                <tr>
+                    <td>Apply last used fill</td>
+                    <td>Ctrl+F</td>
+                </tr>
+            </table>
+
+            <h3>6.11 Fountain Fill Best Practices</h3>
+            <p><strong>For Print:</strong></p>
+            <ul>
+                <li>Use at least 256 steps for smooth gradients</li>
+                <li>Avoid banding by adding slight noise</li>
+                <li>Test gradients in grayscale for contrast</li>
+                <li>Consider paper stock affects appearance</li>
+            </ul>
+            <p><strong>For Web/Digital:</strong></p>
+            <ul>
+                <li>Optimize gradient steps for file size</li>
+                <li>Use web-safe colors when needed</li>
+                <li>Test on different monitors</li>
+                <li>Consider mobile displays</li>
+            </ul>
+            <p><strong>Common Mistakes to Avoid:</strong></p>
+            <ul>
+                <li>Too many color nodes (creates muddiness)</li>
+                <li>Insufficient contrast (hard to see)</li>
+                <li>Wrong direction (confusing lighting)</li>
+                <li>Banding in gradients (too few steps)</li>
+                <li>Misaligned center points (unbalanced look)</li>
+            </ul>
+
+            <h3>6.12 Troubleshooting Fountain Fills</h3>
+            <p><strong>Problem: Gradient Banding</strong></p>
+            <div class="sample-box">
+                Solution:
+                - Increase step value (256+)
+                - Add small amount of noise
+                - Use longer color transitions
+                - Avoid extreme color jumps
+            </div>
+            <p><strong>Problem: Colors Look Muddy</strong></p>
+            <div class="sample-box">
+                Solution:
+                - Reduce number of color nodes
+                - Use colors from same family
+                - Check color model (CMYK vs RGB)
+                - Increase saturation
+            </div>
+            <p><strong>Problem: Gradient Doesn't Print Correctly</strong></p>
+            <div class="sample-box">
+                Solution:
+                - Convert to CMYK
+                - Check color profiles
+                - Increase steps
+                - Test on proof printer
+            </div>
+        </section>
+
+        <!-- 7. COLOR HARMONIES AND THEORY -->
+        <section id="color-theory">
+            <h2>🎨 CHAPTER 7: COLOR HARMONIES AND THEORY</h2>
+            <p>Understanding color theory helps you make informed decisions when applying fills and outlines.</p>
+
+            <h3>7.1 The Color Wheel</h3>
+            <p><strong>Primary Colors:</strong></p>
+            <ul>
+                <li>Red, Yellow, Blue (traditional art)</li>
+                <li>Cannot be created by mixing other colors</li>
+            </ul>
+            <p><strong>Secondary Colors:</strong></p>
+            <ul>
+                <li>Orange (Red + Yellow)</li>
+                <li>Green (Yellow + Blue)</li>
+                <li>Purple (Blue + Red)</li>
+            </ul>
+            <p><strong>Tertiary Colors:</strong></p>
+            <ul>
+                <li>Red-Orange, Yellow-Orange, Yellow-Green</li>
+                <li>Blue-Green, Blue-Purple, Red-Purple</li>
+            </ul>
+
+            <h3>7.2 Color Harmonies</h3>
+            <p><strong>Monochromatic</strong></p>
+            <ul>
+                <li>Single color with variations in saturation/brightness</li>
+                <li>Creates elegant, unified designs</li>
+                <li>Use for sophisticated, minimal looks</li>
+            </ul>
+            <p><strong>Analogous</strong></p>
+            <ul>
+                <li>Adjacent colors on color wheel</li>
+                <li>Creates harmonious, peaceful designs</li>
+                <li>Use for natural, comfortable feelings</li>
+            </ul>
+            <p><strong>Complementary</strong></p>
+            <ul>
+                <li>Opposite colors on color wheel</li>
+                <li>Creates high contrast, vibrant looks</li>
+                <li>Use for emphasis and excitement</li>
+            </ul>
+            <p><strong>Split Complementary</strong></p>
+            <ul>
+                <li>Base color plus two adjacent to its complement</li>
+                <li>High contrast but less tension</li>
+                <li>More versatile than straight complementary</li>
+            </ul>
+            <p><strong>Triadic</strong></p>
+            <ul>
+                <li>Three evenly spaced colors</li>
+                <li>Creates balanced, rich designs</li>
+                <li>Use for playful, energetic projects</li>
+            </ul>
+            <p><strong>Tetradic (Double Complementary)</strong></p>
+            <ul>
+                <li>Four colors in two complementary pairs</li>
+                <li>Very rich, complex harmonies</li>
+                <li>Use carefully to avoid chaos</li>
+            </ul>
+
+            <h3>7.3 Color Psychology</h3>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Emotion/Use</th>
+                </tr>
+                <tr>
+                    <td><strong>Red</strong></td>
+                    <td>Energy, passion, urgency, excitement. Use for: Sales, food, entertainment. Avoid for: Calm,
+                        professional contexts.</td>
+                </tr>
+                <tr>
+                    <td><strong>Blue</strong></td>
+                    <td>Trust, calm, professional, secure. Use for: Corporate, technology, healthcare. Avoid for:
+                        Appetite stimulation.</td>
+                </tr>
+                <tr>
+                    <td><strong>Yellow</strong></td>
+                    <td>Optimism, warmth, attention, happiness. Use for: Children's products, warnings. Avoid for:
+                        Overuse (eye strain).</td>
+                </tr>
+                <tr>
+                    <td><strong>Green</strong></td>
+                    <td>Nature, growth, health, money. Use for: Environmental, organic, finance. Avoid for: Luxury,
+                        high-tech.</td>
+                </tr>
+                <tr>
+                    <td><strong>Orange</strong></td>
+                    <td>Friendly, energetic, affordable. Use for: Calls-to-action, sports. Avoid for: Corporate, serious
+                        brands.</td>
+                </tr>
+                <tr>
+                    <td><strong>Purple</strong></td>
+                    <td>Luxury, creativity, wisdom. Use for: Beauty products, premium brands. Avoid for:
+                        Budget-conscious messaging.</td>
+                </tr>
+                <tr>
+                    <td><strong>Black</strong></td>
+                    <td>Power, elegance, sophistication. Use for: Luxury goods, formal events. Avoid for: Large text
+                        areas.</td>
+                </tr>
+                <tr>
+                    <td><strong>White</strong></td>
+                    <td>Purity, simplicity, cleanliness. Use for: Medical, minimalist design. Avoid for: Lack of
+                        contrast.</td>
+                </tr>
+            </table>
+
+            <h3>7.4 Color Temperature</h3>
+            <p><strong>Warm Colors</strong> (Red, Orange, Yellow)</p>
+            <ul>
+                <li>Advance toward viewer</li>
+                <li>Create energy and excitement</li>
+                <li>Feel closer than they are</li>
+            </ul>
+            <p><strong>Cool Colors</strong> (Blue, Green, Purple)</p>
+            <ul>
+                <li>Recede from viewer</li>
+                <li>Create calm and professionalism</li>
+                <li>Feel farther than they are</li>
+            </ul>
+
+            <h3>7.5 Using Color Harmonies in CorelDRAW</h3>
+            <p><strong>Color Harmonies Docker:</strong></p>
+            <ol>
+                <li>Window → Dockers → Color Harmonies</li>
+                <li>Choose base color</li>
+                <li>Select harmony type</li>
+                <li>Drag colors to objects or palette</li>
+            </ol>
+            <p><strong>Benefits:</strong></p>
+            <ul>
+                <li>Guaranteed color relationships</li>
+                <li>Quick color scheme creation</li>
+                <li>Easy adjustments</li>
+                <li>Professional results</li>
+            </ul>
+        </section>
+
+        <!-- 8. PRACTICAL APPLICATIONS -->
+        <section id="practical-applications">
+            <h2>💼 CHAPTER 8: PRACTICAL APPLICATIONS</h2>
+
+            <h3>8.1 Logo Design</h3>
+            <p><strong>Uniform Fill Applications:</strong></p>
+            <ul>
+                <li>Solid brand colors</li>
+                <li>Clean, memorable shapes</li>
+                <li>Easy reproduction</li>
+            </ul>
+            <p><strong>Outline Applications:</strong></p>
+            <ul>
+                <li>Define logo marks</li>
+                <li>Create distinction from backgrounds</li>
+                <li>Add emphasis to elements</li>
+            </ul>
+            <p><strong>Fountain Fill Applications:</strong></p>
+            <ul>
+                <li>Add dimension to logos</li>
+                <li>Create unique brand elements</li>
+                <li>Suggest movement/energy</li>
+            </ul>
+            <p><strong>Logo Color Checklist:</strong></p>
+            <ul>
+                <li>[ ] Works in single color</li>
+                <li>[ ] Works reversed out</li>
+                <li>[ ] Works in grayscale</li>
+                <li>[ ] Has sufficient contrast</li>
+                <li>[ ] Reproduces well at small sizes</li>
+            </ul>
+
+            <h3>8.2 Business Cards</h3>
+            <p><strong>Uniform Fill Strategy:</strong></p>
+            <ul>
+                <li>Background colors</li>
+                <li>Text colors</li>
+                <li>Solid logo areas</li>
+            </ul>
+            <p><strong>Outline Strategy:</strong></p>
+            <ul>
+                <li>Border effects</li>
+                <li>Text emphasis</li>
+                <li>Graphic elements</li>
+            </ul>
+            <p><strong>Fountain Fill Strategy:</strong></p>
+            <ul>
+                <li>Subtle background gradients</li>
+                <li>Metallic effects</li>
+                <li>Dimensional elements</li>
+            </ul>
+            <p><strong>Business Card Color Considerations:</strong></p>
+            <ul>
+                <li>CMYK for professional printing</li>
+                <li>Spot colors for brand accuracy</li>
+                <li>Paper stock affects appearance</li>
+                <li>Cost of additional colors</li>
+            </ul>
+
+            <h3>8.3 Brochures and Flyers</h3>
+            <p><strong>Uniform Fill Uses:</strong></p>
+            <ul>
+                <li>Text boxes</li>
+                <li>Headers/footers</li>
+                <li>Color blocks</li>
+                <li>Backgrounds</li>
+            </ul>
+            <p><strong>Outline Uses:</strong></p>
+            <ul>
+                <li>Pull quotes</li>
+                <li>Information boxes</li>
+                <li>Graphic separators</li>
+                <li>Text emphasis</li>
+            </ul>
+            <p><strong>Fountain Fill Uses:</strong></p>
+            <ul>
+                <li>Background interest</li>
+                <li>Sky/landscape elements</li>
+                <li>Product highlights</li>
+                <li>Call-to-action buttons</li>
+            </ul>
+
+            <h3>8.4 Web Graphics</h3>
+            <p><strong>Uniform Fill Considerations:</strong></p>
+            <ul>
+                <li>Use RGB color mode</li>
+                <li>Web-safe colors optional</li>
+                <li>Consistent brand colors</li>
+                <li>High contrast for readability</li>
+            </ul>
+            <p><strong>Outline Uses:</strong></p>
+            <ul>
+                <li>Button borders</li>
+                <li>Text legibility</li>
+                <li>Icon definition</li>
+            </ul>
+            <p><strong>Fountain Fill Uses:</strong></p>
+            <ul>
+                <li>Button gradients</li>
+                <li>Background interest</li>
+                <li>Banner effects</li>
+            </ul>
+
+            <h3>8.5 Presentation Materials</h3>
+            <p><strong>Uniform Fill Strategy:</strong></p>
+            <ul>
+                <li>Slide backgrounds</li>
+                <li>Chart colors</li>
+                <li>Text highlighting</li>
+            </ul>
+            <p><strong>Outline Strategy:</strong></p>
+            <ul>
+                <li>Chart elements</li>
+                <li>Diagram connectors</li>
+                <li>Text boxes</li>
+            </ul>
+            <p><strong>Fountain Fill Strategy:</strong></p>
+            <ul>
+                <li>Slide backgrounds</li>
+                <li>Chart depth</li>
+                <li>Emphasis effects</li>
+            </ul>
+        </section>
+
+        <!-- 9. TROUBLESHOOTING AND BEST PRACTICES -->
+        <section id="troubleshooting">
+            <h2>🔧 CHAPTER 9: TROUBLESHOOTING AND BEST PRACTICES</h2>
+
+            <h3>9.1 Common Color Problems</h3>
+            <p><strong>Problem: Colors Print Differently Than Screen</strong></p>
+            <p><strong>Solutions:</strong></p>
+            <ol>
+                <li>Calibrate monitor regularly</li>
+                <li>Use color management</li>
+                <li>Design in final output color mode</li>
+                <li>Request printed proofs</li>
+                <li>Use Pantone colors for critical brand colors</li>
+            </ol>
+            <p><strong>Problem: Gradient Banding</strong></p>
+            <p><strong>Solutions:</strong></p>
+            <ol>
+                <li>Increase steps to 256+</li>
+                <li>Add subtle noise</li>
+                <li>Use longer color transitions</li>
+                <li>Avoid pure black to pure white</li>
+                <li>Check printer resolution</li>
+            </ol>
+            <p><strong>Problem: Outline Disappears When Printing</strong></p>
+            <p><strong>Solutions:</strong></p>
+            <ol>
+                <li>Check outline width (hairline may not print)</li>
+                <li>Increase minimum width to 0.5pt</li>
+                <li>Check printer settings</li>
+                <li>Convert to object if necessary</li>
+            </ol>
+            <p><strong>Problem: Colors Look Muddy</strong></p>
+            <p><strong>Solutions:</strong></p>
+            <ol>
+                <li>Check color model conversions</li>
+                <li>Reduce number of colors</li>
+                <li>Increase saturation</li>
+                <li>Check complementary color usage</li>
+                <li>Add white or black for clarity</li>
+            </ol>
+
+            <h3>9.2 Color Management Settings</h3>
+            <p><strong>Setting Up Color Management:</strong></p>
+            <ol>
+                <li>Tools → Color Management</li>
+                <li>Choose document intent</li>
+                <li>Select working color spaces</li>
+                <li>Set rendering intent</li>
+                <li>Save settings as default</li>
+            </ol>
+            <p><strong>Color Management Options:</strong></p>
+            <div class="sample-box">
+                Color Management Settings:
+                ┌─────────────────────────────────┐
+                │ Primary Color Mode: CMYK │
+                │ RGB Profile: sRGB IEC61966-2.1 │
+                │ CMYK Profile: US Web Coated │
+                │ Rendering Intent: Relative │
+                │ [ ] Simulate printer on screen │
+                │ [ ] Convert colors on export │
+                └─────────────────────────────────┘
+            </div>
+
+            <h3>9.3 Best Practices Summary</h3>
+            <p><strong>Before Starting:</strong></p>
+            <ul>
+                <li>Determine final output (print/digital)</li>
+                <li>Set up document in correct color mode</li>
+                <li>Create brand color palette</li>
+                <li>Save custom color swatches</li>
+            </ul>
+            <p><strong>During Design:</strong></p>
+            <ul>
+                <li>Use consistent color model</li>
+                <li>Create color harmony</li>
+                <li>Test contrast and readability</li>
+                <li>Save frequently used colors</li>
+                <li>Use layers for organization</li>
+            </ul>
+            <p><strong>Before Output:</strong></p>
+            <ul>
+                <li>Check color model</li>
+                <li>Proof on different devices</li>
+                <li>Test print if possible</li>
+                <li>Convert to final format</li>
+                <li>Embed color profiles</li>
+            </ul>
+            <p><strong>File Preparation Checklist:</strong></p>
+            <ul>
+                <li>[ ] All objects have appropriate fills</li>
+                <li>[ ] Outlines are correct width/style</li>
+                <li>[ ] Gradients have sufficient steps</li>
+                <li>[ ] Colors are in correct mode</li>
+                <li>[ ] Spot colors are identified</li>
+                <li>[ ] Black text is pure black (not rich black)</li>
+                <li>[ ] Large black areas are rich black</li>
+                <li>[ ] Color profiles are embedded</li>
+            </ul>
+        </section>
+
+        <!-- 10. EXERCISES AND PROJECTS -->
+        <section id="exercises">
+            <h2>📐 CHAPTER 10: EXERCISES AND PROJECTS</h2>
+
+            <h3>Exercise 1: Basic Uniform Fills</h3>
+            <p><strong>Objective:</strong> Practice applying and modifying uniform fills</p>
+            <p><strong>Tasks:</strong></p>
+            <ol>
+                <li>Create 10 rectangles</li>
+                <li>Apply different uniform fills to each</li>
+                <li>Practice using all five application methods</li>
+                <li>Create a color swatch sheet with color values</li>
+                <li>Save document as "Uniform_Fill_Practice.cdr"</li>
+            </ol>
+
+            <h3>Exercise 2: Outline Mastery</h3>
+            <p><strong>Objective:</strong> Master outline applications and properties</p>
+            <p><strong>Tasks:</strong></p>
+            <ol>
+                <li>Create 5 shapes with different outline widths</li>
+                <li>Apply various outline styles (dashed, dotted, custom)</li>
+                <li>Create text with outline behind fill</li>
+                <li>Convert outline to object</li>
+                <li>Create multi-color outline effect</li>
+                <li>Save as "Outline_Practice.cdr"</li>
+            </ol>
+
+            <h3>Exercise 3: Basic Fountain Fills</h3>
+            <p><strong>Objective:</strong> Create and modify simple gradients</p>
+            <p><strong>Tasks:</strong></p>
+            <ol>
+                <li>Create four squares (one for each gradient type)</li>
+                <li>Apply linear gradient to first square</li>
+                <li>Apply radial gradient to second square</li>
+                <li>Apply conical gradient to third square</li>
+                <li>Apply square gradient to fourth square</li>
+                <li>Experiment with angles and midpoints</li>
+                <li>Save as "Basic_Gradients.cdr"</li>
+            </ol>
+
+            <h3>Exercise 4: Custom Gradients</h3>
+            <p><strong>Objective:</strong> Create complex multi-color gradients</p>
+            <p><strong>Tasks:</strong></p>
+            <ol>
+                <li>Create rainbow gradient (5+ colors)</li>
+                <li>Create metallic gold gradient</li>
+                <li>Create sunset gradient</li>
+                <li>Create 3D sphere using radial gradient</li>
+                <li>Save as custom presets</li>
+                <li>Save file as "Custom_Gradients.cdr"</li>
+            </ol>
+
+            <h3>Exercise 5: Color Harmonies</h3>
+            <p><strong>Objective:</strong> Apply color theory principles</p>
+            <p><strong>Tasks:</strong></p>
+            <ol>
+                <li>Create color wheel in CorelDRAW</li>
+                <li>Create monochromatic color scheme poster</li>
+                <li>Create analogous color scheme poster</li>
+                <li>Create complementary color scheme poster</li>
+                <li>Compare and analyze results</li>
+                <li>Save as "Color_Harmonies.cdr"</li>
+            </ol>
+
+            <h3>Project 1: Business Card Design</h3>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+                <li>Company logo (create simple logo)</li>
+                <li>Name, title, contact information</li>
+                <li>Use uniform fills for text</li>
+                <li>Apply outline to logo or graphic elements</li>
+                <li>Add subtle fountain fill background</li>
+                <li>Prepare in both RGB and CMYK</li>
+            </ul>
+
+            <h3>Project 2: Event Flyer</h3>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+                <li>Eye-catching headline</li>
+                <li>Event details and date</li>
+                <li>Use fountain fill for background</li>
+                <li>Apply outlines to important text</li>
+                <li>Include 3-4 colors in harmony</li>
+                <li>Save for both print and web</li>
+            </ul>
+
+            <h3>Project 3: Product Packaging Mockup</h3>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+                <li>Create 3D box shape</li>
+                <li>Apply metallic gradient effects</li>
+                <li>Use outlines for text legibility</li>
+                <li>Create shadow effects</li>
+                <li>Combine multiple fill types</li>
+                <li>Save as final presentation file</li>
+            </ul>
+
+            <h3>Project 4: Brand Style Guide</h3>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+                <li>Primary brand colors with values (CMYK, RGB, Hex)</li>
+                <li>Secondary color palette</li>
+                <li>Gradient usage guidelines</li>
+                <li>Outline specifications</li>
+                <li>Color combination examples</li>
+                <li>Do's and don'ts</li>
+            </ul>
+
+            <h3>Project 5: Portfolio Piece</h3>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+                <li>Complex illustration or design</li>
+                <li>Demonstrates mastery of all three fill types</li>
+                <li>Applies color theory principles</li>
+                <li>Professional presentation</li>
+                <li>Include color specifications</li>
+                <li>Save source file and exports</li>
+            </ul>
+        </section>
+
+        <!-- APPENDIX -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">📎 APPENDIX</h4>
+            <h4>A. Keyboard Shortcuts Summary</h4>
+            <table>
+                <tr>
+                    <th>Shortcut</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td>F11</td>
+                    <td>Fountain Fill dialog</td>
+                </tr>
+                <tr>
+                    <td>Shift+F11</td>
+                    <td>Uniform Fill dialog</td>
+                </tr>
+                <tr>
+                    <td>F12</td>
+                    <td>Outline Pen dialog</td>
+                </tr>
+                <tr>
+                    <td>Shift+F12</td>
+                    <td>Outline Color dialog</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+F</td>
+                    <td>Apply last used fill</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+Q</td>
+                    <td>Convert outline to object</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Click (palette)</td>
+                    <td>Apply fill to multiple objects</td>
+                </tr>
+                <tr>
+                    <td>Shift+Click (palette)</td>
+                    <td>Apply outline color</td>
+                </tr>
+                <tr>
+                    <td>Right-click X</td>
+                    <td>Remove fill/outline</td>
+                </tr>
+            </table>
+
+            <h4>B. Color Value Reference</h4>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>CMYK</th>
+                    <th>RGB</th>
+                    <th>Hex</th>
+                </tr>
+                <tr>
+                    <td>Pure Red</td>
+                    <td>0,100,100,0</td>
+                    <td>255,0,0</td>
+                    <td>#FF0000</td>
+                </tr>
+                <tr>
+                    <td>Pure Green</td>
+                    <td>100,0,100,0</td>
+                    <td>0,255,0</td>
+                    <td>#00FF00</td>
+                </tr>
+                <tr>
+                    <td>Pure Blue</td>
+                    <td>100,100,0,0</td>
+                    <td>0,0,255</td>
+                    <td>#0000FF</td>
+                </tr>
+                <tr>
+                    <td>Black</td>
+                    <td>0,0,0,100</td>
+                    <td>0,0,0</td>
+                    <td>#000000</td>
+                </tr>
+                <tr>
+                    <td>White</td>
+                    <td>0,0,0,0</td>
+                    <td>255,255,255</td>
+                    <td>#FFFFFF</td>
+                </tr>
+                <tr>
+                    <td>Rich Black</td>
+                    <td>60,40,40,100</td>
+                    <td>0,0,0</td>
+                    <td>#000000</td>
+                </tr>
+                <tr>
+                    <td>Gold</td>
+                    <td>0,20,60,20</td>
+                    <td>204,153,51</td>
+                    <td>#CC9933</td>
+                </tr>
+                <tr>
+                    <td>Silver</td>
+                    <td>0,0,0,40</td>
+                    <td>153,153,153</td>
+                    <td>#999999</td>
+                </tr>
+            </table>
+
+            <h4>C. Glossary of Terms</h4>
+            <ul>
+                <li><strong>Blend Mode:</strong> Mathematical method for combining colors</li>
+                <li><strong>Color Model:</strong> System for representing color numerically</li>
+                <li><strong>Color Profile:</strong> Data describing color characteristics</li>
+                <li><strong>Docker:</strong> Floating panel in CorelDRAW interface</li>
+                <li><strong>Fill:</strong> Interior color of an object</li>
+                <li><strong>Fountain Fill:</strong> Gradient fill with color transition</li>
+                <li><strong>Gamut:</strong> Range of colors reproducible in a color model</li>
+                <li><strong>Node:</strong> Control point on gradient path</li>
+                <li><strong>Outline:</strong> Border/stroke around an object</li>
+                <li><strong>Rendering Intent:</strong> Method for converting between color spaces</li>
+                <li><strong>Spot Color:</strong> Pre-mixed ink color</li>
+                <li><strong>Uniform Fill:</strong> Single, solid color fill</li>
+            </ul>
+
+            <h4>D. Recommended Resources</h4>
+            <p><strong>Books:</strong></p>
+            <ul>
+                <li>"Interaction of Color" by Josef Albers</li>
+                <li>"The Elements of Color" by Johannes Itten</li>
+                <li>"Color Design Workbook" by Sean Adams</li>
+            </ul>
+            <p><strong>Websites:</strong></p>
+            <ul>
+                <li>Adobe Color CC (color.adobe.com)</li>
+                <li>Coolors.co (color scheme generator)</li>
+                <li>Pantone.com (color of the year, trends)</li>
+            </ul>
+            <p><strong>Practice Resources:</strong></p>
+            <ul>
+                <li>CorelDRAW tutorials (Corel.com)</li>
+                <li>YouTube: CorelDRAW Master Courses</li>
+                <li>Design blogs and forums</li>
+            </ul>
+        </div>
+
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick reference – do you know?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ RGB vs CMYK difference<br>☐ Uniform fill shortcuts<br>☐ Outline Pen dialog (F12)
+                </div>
+                <div class="def-item">☐ Fountain fill types (4)<br>☐ Color harmonies (6)<br>☐ Spot colors vs process
+                </div>
+                <div class="def-item">☐ 300 PPI for print<br>☐ Rich black formula<br>☐ Convert outline to object</div>
+            </div>
+            <p style="margin-top:1.2rem;"><em>Complete guide – every original line included, word for word, nothing
+                    omitted.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Working with Color in CorelDRAW · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

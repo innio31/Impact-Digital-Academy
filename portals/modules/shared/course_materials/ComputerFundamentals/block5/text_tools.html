@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>CorelDRAW text tools · complete guide (artistic & paragraph)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9e1d2;
+            /* warm toned to match previous guide */
+            color: #2e2b23;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #5e4e3a;
+            overflow: hidden;
+            padding: 2rem 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.9rem;
+            font-weight: 750;
+            background: linear-gradient(155deg, #2b4f5c, #1d6b4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #256b54;
+            border-left: 8px solid #308a70;
+            padding-left: 1.6rem;
+            margin-bottom: 2rem;
+            font-weight: 380;
+        }
+
+        .toc-card {
+            background: #e2efe8;
+            border-radius: 2rem;
+            padding: 2rem 2rem;
+            margin: 2.2rem 0 3rem;
+            box-shadow: inset 0 2px 5px rgba(30, 80, 60, 0.2), 0 16px 24px -14px #386b54;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1b5443;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #185f45;
+            font-weight: 540;
+            box-shadow: 0 3px 10px rgba(30, 70, 50, 0.15);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cceae0;
+            border-color: #318067;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #1f644b;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2.2rem;
+            box-shadow: 0 10px 20px rgba(40, 70, 40, 0.05);
+            border: 1px solid #c6e0d4;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #1a6049;
+            border-bottom: 3px solid #388c6f;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        h3 {
+            font-size: 1.95rem;
+            font-weight: 650;
+            margin: 2.4rem 0 1.2rem;
+            color: #226b4f;
+            border-left: 8px solid #74b094;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.7rem 0 0.6rem;
+            color: #1d7a5a;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(40, 80, 60, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #217457;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c7e3d7;
+            background: #f8fffc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #266e55;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .highlight-block {
+            background: #e1f2ea;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #3c9e7a;
+        }
+
+        .mini-card {
+            background: #ecf9f1;
+            border: 1px solid #b1d9c8;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .def-item {
+            background: #daf0e6;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            border-bottom: 4px solid #419677;
+        }
+
+        .sample-box {
+            background: #f2fcf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #aad3c1;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #1c5e47;
+            color: #f0fcf5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b8d9cb, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #2e7059;
+            border-top: 1px dashed #9cc2b0;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <!-- exactly replicated heading structure from source but adapted to CorelDRAW guide -->
+        <h1>🖌️ COMPREHENSIVE GUIDE TO TEXT TOOLS IN CORELDRAW</h1>
+        <div class="subhead">Creating and Formatting Artistic Text and Paragraph Text</div>
+
+        <!-- TABLE OF CONTENTS (complete) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#introduction">1. Introduction to Text in CorelDRAW</a>
+                <a href="#text-types">2. Understanding the Two Text Types</a>
+                <a href="#artistic-text">3. Artistic Text: Comprehensive Guide</a>
+                <a href="#paragraph-text">4. Paragraph Text: Comprehensive Guide</a>
+                <a href="#converting">5. Converting Between Text Types</a>
+                <a href="#advanced-formatting">6. Advanced Text Formatting</a>
+                <a href="#text-effects">7. Text Effects and Enhancements</a>
+                <a href="#typography">8. Typography Best Practices</a>
+                <a href="#troubleshooting">9. Troubleshooting Common Text Issues</a>
+                <a href="#exercises">10. Practical Exercises</a>
+                <a href="#shortcuts">11. Keyboard Shortcuts</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction">
+            <h2>📌 1. INTRODUCTION TO TEXT IN CORELDRAW</h2>
+            <p>CorelDRAW is a powerful vector graphics editor that offers sophisticated text handling capabilities
+                essential for desktop publishing, logo design, brochure creation, and various other design projects.
+                Understanding the text tools thoroughly is crucial for any designer, as text often forms the backbone of
+                communication in design work.</p>
+            <h3>The Importance of Text in Design</h3>
+            <ul>
+                <li>Text conveys information and messages</li>
+                <li>Typography establishes visual hierarchy</li>
+                <li>Font choices influence brand perception</li>
+                <li>Proper text formatting ensures readability</li>
+                <li>Text integration with graphics creates cohesive designs</li>
+            </ul>
+        </section>
+
+        <!-- 2. UNDERSTANDING THE TWO TEXT TYPES -->
+        <section id="text-types">
+            <h2>🔠 2. UNDERSTANDING THE TWO TEXT TYPES</h2>
+            <p>CorelDRAW provides two distinct types of text objects, each designed for specific purposes and offering
+                different capabilities.</p>
+            <h3>2.1 Comparison Table: Artistic Text vs. Paragraph Text</h3>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Artistic Text</th>
+                    <th>Paragraph Text</th>
+                </tr>
+                <tr>
+                    <td><strong>Primary Use</strong></td>
+                    <td>Headlines, logos, short phrases</td>
+                    <td>Body text, articles, long content</td>
+                </tr>
+                <tr>
+                    <td><strong>Text Flow</strong></td>
+                    <td>Single line (unless manually broken)</td>
+                    <td>Automatic wrapping within frame</td>
+                </tr>
+                <tr>
+                    <td><strong>Maximum Length</strong></td>
+                    <td>Limited (for display purposes)</td>
+                    <td>Unlimited (thousands of paragraphs)</td>
+                </tr>
+                <tr>
+                    <td><strong>Frame</strong></td>
+                    <td>No frame (free-standing text)</td>
+                    <td>Contained in a frame</td>
+                </tr>
+                <tr>
+                    <td><strong>Text Wrapping</strong></td>
+                    <td>Manual line breaks (Enter key)</td>
+                    <td>Automatic at frame boundaries</td>
+                </tr>
+                <tr>
+                    <td><strong>Special Effects</strong></td>
+                    <td>All effects available</td>
+                    <td>Limited effects</td>
+                </tr>
+                <tr>
+                    <td><strong>Linking</strong></td>
+                    <td>Cannot be linked</td>
+                    <td>Can link multiple frames</td>
+                </tr>
+                <tr>
+                    <td><strong>Columns</strong></td>
+                    <td>No</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Drop Caps</strong></td>
+                    <td>No</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Typographic Controls</strong></td>
+                    <td>Full control</td>
+                    <td>Full control</td>
+                </tr>
+            </table>
+            <h4>2.2 Visual Indicators</h4>
+            <ul>
+                <li><strong>Artistic Text</strong>: Selected with node editing handles showing text baseline</li>
+                <li><strong>Paragraph Text</strong>: Selected with frame handles showing text area boundaries</li>
+            </ul>
+        </section>
+
+        <!-- 3. ARTISTIC TEXT -->
+        <section id="artistic-text">
+            <h2>✨ 3. ARTISTIC TEXT: COMPREHENSIVE GUIDE</h2>
+            <p>Artistic text is designed for creating visually impactful typography for headlines, logos, short phrases,
+                and design elements where text needs to follow creative paths or shapes.</p>
+            <h3>3.1 Creating Artistic Text</h3>
+            <p><strong>Method 1: Text Tool Direct Entry</strong><br>1. Select the <strong>Text Tool</strong> (F8) from
+                the Toolbox<br>2. Click once on the drawing page (do not click and drag)<br>3. A blinking cursor appears
+                - start typing immediately<br>4. Press <strong>Enter</strong> to create a new line</p>
+            <p><strong>Method 2: Importing Text as Artistic</strong><br>1. Copy text from external source (Ctrl+C)<br>2.
+                Select Text Tool and click on page<br>3. Paste text (Ctrl+V)<br>4. Text will paste as Artistic Text if
+                content is short</p>
+            <p><strong>Method 3: Converting Objects to Artistic Text</strong><br>- Select a curve or shape<br>- Go to
+                <strong>Object > Convert to Artistic Text</strong> (only available for compatible objects)</p>
+
+            <h3>3.2 Formatting Artistic Text</h3>
+            <p><strong>Accessing Formatting Options:</strong><br>- <strong>Property Bar</strong>: Most common options
+                available when Text Tool is active<br>- <strong>Text Toolbar</strong>: Right-click on any toolbar area
+                and select "Text"<br>- <strong>Format Text Docker</strong>: Window > Dockers > Text > Text Properties
+                (Ctrl+T)</p>
+            <p><strong>Font Selection:</strong><br>- Click the Font List dropdown on Property Bar<br>- Scroll or type
+                font name to search<br>- Fonts are displayed with their actual appearance (if enabled)<br>- Recently
+                used fonts appear at the top</p>
+            <p><strong>Font Size:</strong><br>- Select from predefined sizes in dropdown<br>- Type custom size directly
+                (supports decimal values)<br>- Keyboard: Ctrl+Shift+> (increase), Ctrl+Shift+< (decrease)<br>- Maximum
+                    size: 999.999 points (practically unlimited for scaling)</p>
+            <p><strong>Font Style:</strong><br>- Regular, Italic, Bold, Bold Italic (availability depends on font)<br>-
+                Synthetic styles: Available even if font doesn't include specific style</p>
+            <p><strong>Text Color:</strong><br>- Select text with Pick Tool or highlight with Text Tool<br>- Left-click
+                color palette for fill color<br>- Right-click color palette for outline color<br>- Drag color from
+                palette onto text for quick application</p>
+            <p><strong>Character Effects:</strong><br>- Underline (single, double, thick)<br>- Strikethrough<br>-
+                Overline<br>- Superscript/Subscript<br>- Small caps/All caps<br>- Outline, Shadow, Mirror (via Effects
+                menu)</p>
+
+            <h3>3.3 Advanced Artistic Text Features</h3>
+            <p><strong>Fitting Text to a Path</strong><br><strong>Method:</strong><br>1. Create artistic text and a path
+                (line, curve, circle)<br>2. Select both objects (Shift+click)<br>3. Go to <strong>Text > Fit Text to
+                    Path</strong><br>4. Text attaches to the path with default settings</p>
+            <p><strong>Adjusting Text on Path:</strong><br>- Use the <strong>Pick Tool</strong> to select the
+                text-on-path object<br>- Property Bar displays specialized controls:<br> - <strong>Text
+                    Orientation</strong>: Rotate, Skew, or keep text upright<br> - <strong>Distance from Path</strong>:
+                Positive/negative values<br> - <strong>Horizontal Offset</strong>: Slide text along path<br> -
+                <strong>Mirror Text</strong>: Flip horizontally or vertically</p>
+            <p><strong>Editing Text on Path:</strong><br>- Double-click text to edit content<br>- Path remains editable
+                - text updates automatically<br>- To separate text from path: <strong>Arrange > Break Text
+                    Apart</strong></p>
+
+            <p><strong>Applying Effects to Artistic Text</strong><br>Artistic text can accept virtually all CorelDRAW
+                effects:<br><strong>Interactive Effects:</strong><br>- <strong>Drop Shadow</strong>: Toolbox > Drop
+                Shadow Tool<br>- <strong>Contour</strong>: Toolbox > Contour Tool<br>- <strong>Blend</strong>: Toolbox >
+                Blend Tool<br>- <strong>Envelope</strong>: Toolbox > Envelope Tool<br>- <strong>Extrude</strong>:
+                Toolbox > Extrude Tool<br>- <strong>Bevel</strong>: Toolbox > Bevel Tool</p>
+            <p><strong>Important</strong>: Before applying complex effects, consider:<br>- Effects increase file
+                size<br>- Some effects cannot be edited as text afterward<br>- Convert to curves if extensive
+                manipulation needed</p>
+
+            <p><strong>Converting Artistic Text to Curves</strong><br><strong>Process:</strong><br>1. Select artistic
+                text with Pick Tool<br>2. Right-click > <strong>Convert to Curves</strong> (Ctrl+Q)<br>3. Text becomes
+                editable vector shapes<br><strong>After Conversion:</strong><br>- Individual characters become curve
+                objects<br>- Can edit individual nodes<br>- Text content no longer editable as text<br>- Cannot revert
+                to editable text<br><strong>When to Convert to Curves:</strong><br>- Creating custom logos<br>- Extreme
+                distortion requirements<br>- Sending files to printers (prevents font substitution)<br>- Creating unique
+                typographic illustrations</p>
+        </section>
+
+        <!-- 4. PARAGRAPH TEXT -->
+        <section id="paragraph-text">
+            <h2>📃 4. PARAGRAPH TEXT: COMPREHENSIVE GUIDE</h2>
+            <p>Paragraph text is designed for handling large amounts of text in documents, brochures, newsletters, and
+                any project requiring organized text blocks with professional typographic controls.</p>
+            <h3>4.1 Creating Paragraph Text Frames</h3>
+            <p><strong>Method 1: Drawing a Frame</strong><br>1. Select <strong>Text Tool</strong> (F8)<br>2. Click and
+                drag diagonally to create a rectangular frame<br>3. Release mouse button - cursor appears inside
+                frame<br>4. Begin typing or paste text<br>5. Text automatically wraps to fit frame width</p>
+            <p><strong>Method 2: Creating from Existing Artistic Text</strong><br>1. Select artistic text with Pick
+                Tool<br>2. Go to <strong>Text > Convert to Paragraph Text</strong> (Ctrl+F8)<br>3. Artistic text
+                converts with its content preserved</p>
+            <p><strong>Method 3: Importing Text into Frame</strong><br>1. Create empty paragraph text frame<br>2.
+                Right-click frame > <strong>Import Text</strong><br>3. Navigate to text file (.txt, .doc, .rtf,
+                etc.)<br>4. Text flows into frame</p>
+            <p><strong>Method 4: Pasting External Text</strong><br>1. Copy text from external source<br>2. Create
+                paragraph frame<br>3. Paste (Ctrl+V)<br>4. Choose paste options if dialog appears</p>
+
+            <h3>4.2 Paragraph Frame Types</h3>
+            <p><strong>Fixed Frames:</strong><br>- Created by click-and-drag<br>- Size remains constant<br>- Text
+                overflows if content exceeds capacity</p>
+            <p><strong>Expandable Frames:</strong><br>- Created by clicking (not dragging) with Text Tool<br>- Frame
+                expands vertically as you type<br>- Width determined by margins set in Options</p>
+
+            <h3>4.3 Managing Text Flow and Overflow</h3>
+            <p><strong>Understanding Flow Indicators:</strong><br>- <strong>Empty Frame</strong>: No text<br>-
+                <strong>Text in Frame</strong>: Normal display<br>- <strong>Overflow Indicator</strong>: Red arrow in
+                bottom-center handle – indicates text exceeds frame capacity – must link to another frame or resize
+                frame</p>
+            <p><strong>Linking Paragraph Frames:</strong><br>1. <strong>Create Link:</strong> Select frame with overflow
+                indicator, click the <strong>Text Flow</strong> tab at bottom of frame, cursor changes to "link" icon,
+                click in empty frame or create new frame by dragging.<br>2. <strong>Navigate Linked Frames:</strong>
+                <strong>Alt + Arrow Keys</strong>: Move between linked frames. Click flow tab to jump to next/previous
+                frame.<br>3. <strong>Break Link:</strong> Select frame, right-click > <strong>Break Text Link</strong>,
+                text flows back to previous frame.<br>4. <strong>Unlink Frame:</strong> Delete linked frame, text flows
+                to previous frame. Cannot have orphaned text - must have continuous flow.</p>
+
+            <h3>4.4 Basic Paragraph Text Formatting</h3>
+            <p><strong>Frame Properties</strong><br><strong>Resizing Frames:</strong> Drag corner handles (proportional
+                with Shift), drag side handles (stretch/squeeze). Text reflows automatically.<br><strong>Frame Shape
+                    Modification:</strong> 1. Select frame with Shape Tool; 2. Individual corner nodes appear; 3. Adjust
+                nodes to create custom frame shapes; 4. Text conforms to new shape.<br><strong>Frame Margins:</strong>
+                <strong>Text > Paragraph Text Frame > Format Frame</strong>. Set Top, Bottom, Left, Right margins –
+                creates padding between frame edge and text.<br><strong>Frame Background:</strong> Fill frame with
+                color, add outline. Frame and text remain separate objects.</p>
+            <p><strong>Character Formatting in Paragraph Text</strong> All character formatting options available for
+                Artistic Text also apply to Paragraph Text: font family, style, size, color, character effects, kerning,
+                tracking.</p>
+            <p><strong>Paragraph Formatting</strong><br><strong>Access Paragraph Formatting:</strong> <strong>Text
+                    Properties Docker (Ctrl+T)</strong> > Paragraph section; <strong>Property Bar</strong> when text is
+                selected.<br><strong>Alignment Options:</strong> Left, Center, Right, Full Justify, Force
+                Justify.<br><strong>Indents:</strong> First Line Indent, Left Indent, Right Indent. Set in inches, mm,
+                points, picas.<br><strong>Spacing:</strong> Character spacing, word spacing, line spacing (leading),
+                paragraph spacing (before/after).<br><strong>Tabs:</strong> View rulers, click on ruler to set tab
+                stops. Right-click tab to change type: Left Tab, Center Tab, Right Tab, Decimal Tab. Use Tab key in
+                text.<br><strong>Bullets and Numbering:</strong> Select paragraphs, click Bullets or Numbering on
+                Property Bar. Customize bullet character, size, position. Adjust hanging indent.</p>
+
+            <h3>4.5 Advanced Paragraph Features</h3>
+            <p><strong>Columns</strong><br>1. Select paragraph text frame<br>2. Go to <strong>Text >
+                    Columns</strong><br>3. Set: number of columns (2-8 typical), column width (equal or variable),
+                gutter width<br>4. Text automatically flows between columns<br><strong>Column Types:</strong> Equal
+                Width, Variable Width, Maintain current frame width.</p>
+            <p><strong>Drop Caps</strong><br>1. Click in paragraph<br>2. Go to <strong>Text > Drop Cap</strong><br>3.
+                Settings: Height (number of lines dropped 2-5 typical), distance from text, position (Dropped or
+                Hanging)<br>4. Preview in real-time.</p>
+            <p><strong>Hyphenation</strong><br>1. Select text frame<br>2. Go to <strong>Text > Hyphenation
+                    Settings</strong><br>3. Enable hyphenation<br>4. Set: minimum word length, minimum characters
+                before/after hyphen, maximum consecutive hyphens<br>5. Manual hyphen: Ctrl+Hyphen (inserts optional
+                hyphen).</p>
+            <p><strong>Rules (Paragraph Rules)</strong><br>1. Select paragraphs<br>2. <strong>Text > Paragraph
+                    Rules</strong><br>3. Choose Rule Above or Rule Below<br>4. Set: line weight, color, style, offset
+                from text, width relative to column or text.</p>
+            <p><strong>Wrap Paragraph Text Around Objects</strong><br>1. Place object (image, shape) overlapping
+                paragraph text<br>2. Select the object<br>3. Click <strong>Wrap Paragraph Text</strong> on Property
+                Bar<br>4. Choose wrap style: Contour, Square, Top & Bottom, Left/Right Only<br>5. Adjust <strong>Text
+                    Wrap Offset</strong> for spacing.</p>
+
+            <h3>4.6 Working with Multiple Paragraph Frames</h3>
+            <p><strong>Auto-Frame Creation</strong> When importing long documents: create initial frame, import text, if
+                overflow, CorelDRAW can auto-create pages and frames. Set in Options: Tools > Options > Text >
+                Paragraph.</p>
+            <p><strong>Frame Selection Techniques</strong><br>- <strong>Alt + Click</strong>: Select frame behind
+                another object<br>- <strong>Tab</strong>: Cycle through frames on page<br>- <strong>Ctrl +
+                    Click</strong>: Select frame containing text cursor</p>
+            <p><strong>Frame Management Tools</strong><br>- Align and Distribute, Group Frames, Lock Frame.</p>
+        </section>
+
+        <!-- 5. CONVERTING -->
+        <section id="converting">
+            <h2>🔄 5. CONVERTING BETWEEN TEXT TYPES</h2>
+            <h3>5.1 Artistic to Paragraph Text</h3>
+            <p><strong>When to Convert:</strong> adding large amounts of text, needing columns, requiring linking,
+                implementing drop caps.<br><strong>Process:</strong> 1. Select artistic text; 2. <strong>Text > Convert
+                    to Paragraph Text</strong> (Ctrl+F8); 3. Text appears in default-sized paragraph frame; 4. Adjust
+                frame.<br><strong>Limitations:</strong> long artistic text may overflow; text on path cannot be
+                converted directly; some effects may be lost.</p>
+            <h3>5.2 Paragraph to Artistic Text</h3>
+            <p><strong>When to Convert:</strong> creating headlines from body text, applying extensive effects, fitting
+                text to path.<br><strong>Process:</strong> 1. Select paragraph text frame; 2. <strong>Text > Convert to
+                    Artistic Text</strong> (Ctrl+F8); 3. Text converts with line breaks preserved; 4. May create
+                multiple artistic text objects if multi-line.<br><strong>Important Considerations:</strong> overflow
+                text cannot convert (must fit in one frame); multi-page text loses structure; columns removed; text
+                frame effects lost.</p>
+            <h3>5.3 Converting Both Types to Curves</h3>
+            <p><strong>Process:</strong> 1. Select text (any type); 2. <strong>Object > Convert to Curves</strong>
+                (Ctrl+Q); 3. OR right-click > Convert to Curves.<br><strong>Results:</strong> text becomes editable
+                vector paths; each character separate curve object (if "Auto-group on Convert" is off); can ungroup to
+                edit individual characters; font information removed.<br><strong>Strategic Use:</strong> before sending
+                to print (prevents font substitution); logo design; custom illustrations; signage.
+                <strong>Warning</strong>: Always keep a copy of editable text before converting to curves.</p>
+        </section>
+
+        <!-- 6. ADVANCED FORMATTING -->
+        <section id="advanced-formatting">
+            <h2>⚙️ 6. ADVANCED TEXT FORMATTING</h2>
+            <h3>6.1 Character Spacing Controls</h3>
+            <p><strong>Kerning (Space Between Specific Characters)</strong><br><strong>Method 1 Interactive:</strong>
+                select text with Shape Tool, drag nodes.<br><strong>Method 2 Numeric:</strong> select character(s) with
+                Shape Tool, enter Horizontal Shift, Vertical Shift, Rotation in Property Bar.<br><strong>Method 3 Range
+                    Kerning:</strong> select text with Pick Tool, in Text Properties Docker adjust Range Kerning.</p>
+            <p><strong>Tracking (Space Across Range of Text)</strong><br>1. Select text range; 2. Text Properties >
+                Character > Range Tracking; positive increase, negative decrease.</p>
+            <h3>6.2 Baseline Shift</h3>
+            <p>Raise/lower characters relative to baseline: select character(s), Text Properties > Character > Baseline
+                Shift, positive values raise, negative lower. Useful for math, trademark symbols.</p>
+            <h3>6.3 OpenType Features</h3>
+            <p><strong>Accessing OpenType:</strong> select text, Text Properties Docker > Character > OpenType.
+                Available features: Ligatures, Swash, Oldstyle Figures, Small Caps, Fractions, Ordinals
+                (font-dependent).</p>
+            <h3>6.4 Font Management</h3>
+            <p><strong>Substituting Missing Fonts:</strong> when opening files without required fonts, dialog lists
+                missing fonts, choose substitution (temporary/permanent, match style).<br><strong>Embedding Fonts in
+                    PDF:</strong> File > Publish to PDF > Settings > Objects > check "Embed fonts".<br><strong>Font
+                    Matching Rules:</strong> Panose matching, default substitution in Options.</p>
+            <h3>6.5 Special Characters and Symbols</h3>
+            <p><strong>Inserting Special Characters:</strong> <strong>Text > Insert Symbol Character</strong>
+                (Ctrl+F11). Browse character sets: current font, Unicode ranges, symbol sets. Double-click to
+                insert.<br><strong>Common Shortcuts:</strong> Copyright Alt+0169, Registered Alt+0174, Trademark
+                Alt+0153, Bullet Alt+0149, Em Dash Alt+0151, En Dash Alt+0150.<br><strong>Inserting Formatting
+                    Codes:</strong> Column Break Ctrl+Shift+Enter, Frame Break Ctrl+Enter, Optional Hyphen Ctrl+Hyphen,
+                Non-breaking Space Ctrl+Shift+Space, Non-breaking Hyphen Ctrl+Shift+Hyphen.</p>
+        </section>
+
+        <!-- 7. TEXT EFFECTS -->
+        <section id="text-effects">
+            <h2>🎨 7. TEXT EFFECTS AND ENHANCEMENTS</h2>
+            <h3>7.1 Fitting Text to Path (Advanced Techniques)</h3>
+            <p><strong>Creating Circular Text</strong> Draw circle, create artistic text, select both, Text > Fit Text
+                to Path; on Property Bar place text on outside/inside, position, adjust distance.</p>
+            <p><strong>Multi-Path Text</strong> Create compound path, fit text to compound path – text flows across all
+                segments.</p>
+            <p><strong>Editing Path-Adjacent Text</strong> Double-click text to edit, use Shape Tool to adjust path.</p>
+            <h3>7.2 Envelope Effects</h3>
+            <p>1. Select text; 2. <strong>Effects > Envelope</strong> (Ctrl+F7); 3. Choose mode: Straight Line, Single
+                Arc, Double Arc, Unconstrained; 4. Drag envelope nodes to distort; add/delete nodes with double-click.
+            </p>
+            <h3>7.3 3D Text Effects</h3>
+            <p><strong>Extrude:</strong> select text, Effects > Extrude, set depth, direction, lighting,
+                color.<br><strong>Bevel:</strong> Effects > Bevel, choose emboss or soft edge, set angle, depth,
+                lighting.<br><strong>Drop Shadow:</strong> Drop Shadow Tool, drag from text, adjust opacity, feathering,
+                direction, perspective.</p>
+            <h3>7.4 Text as Mask</h3>
+            <p>Place image, create text over image, select both, Effects > PowerClip > Place Inside Container – text
+                becomes window showing image.</p>
+            <h3>7.5 Perspective Effects</h3>
+            <p>Select text, Effects > Add Perspective, drag corner nodes; Ctrl+click to constrain movement.</p>
+        </section>
+
+        <!-- 8. TYPOGRAPHY BEST PRACTICES -->
+        <section id="typography">
+            <h2>📐 8. TYPOGRAPHY BEST PRACTICES</h2>
+            <h3>8.1 Font Selection Guidelines</h3>
+            <p><strong>For Headlines (Artistic Text):</strong> use bold display fonts, limit to 1-2 families, contrast
+                with body text, ensure readability at intended size.<br><strong>For Body Text (Paragraph Text):</strong>
+                choose highly readable serif or sans-serif, 9-12 point, line spacing 120-145%, 45-75 characters per line
+                optimal.<br><strong>For Logos:</strong> unique, distinctive typefaces, custom modifications, test at
+                small and large sizes, brand appropriateness.</p>
+            <h3>8.2 Readability Principles</h3>
+            <p><strong>Line Length:</strong> ideal 45-75 characters including spaces.<br><strong>Line Spacing
+                    (Leading):</strong> body text 120-145% of point size.<br><strong>Alignment:</strong> left-aligned
+                most readable, justified needs good hyphenation, centered for headlines only, right-aligned limited
+                use.<br><strong>Hierarchy:</strong> use size, weight, color, consistent heading levels, adequate
+                contrast.</p>
+            <h3>8.3 Color and Typography</h3>
+            <p>High contrast black on white best; avoid low contrast; test in grayscale. Color psychology: use to
+                emphasize, limit palette.</p>
+            <h3>8.4 Professional Typesetting Tips</h3>
+            <p><strong>Punctuation:</strong> smart quotes, em dashes (—) for breaks, en dashes (–) for ranges, proper
+                ellipsis (…), no double spaces.<br><strong>Hyphenation:</strong> avoid more than 3 consecutive, avoid
+                hyphenating proper names, don't hyphenate last word of paragraph.<br><strong>Widows and
+                    Orphans:</strong> widow = single line at top of new column/page; orphan = single word on last line;
+                adjust tracking/leading or edit text.<br><strong>Kerning:</strong> pay attention to problem pairs (WA,
+                To, AV); optical kerning often better than metric.</p>
+            <h3>8.5 Font Formats and Licensing</h3>
+            <p><strong>Font Formats:</strong> OpenType (.otf), TrueType (.ttf), Type 1 legacy, Variable
+                Fonts.<br><strong>Licensing Considerations:</strong> Desktop License, Web License, App/Game License;
+                free fonts: check commercial use restrictions.</p>
+        </section>
+
+        <!-- 9. TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <h2>⚠️ 9. TROUBLESHOOTING COMMON TEXT ISSUES</h2>
+            <h3>9.1 Font Problems</h3>
+            <p><strong>Missing Fonts:</strong> Symptom: substitute font; solution: install or choose substitutes;
+                prevention: convert to curves.<br><strong>Corrupt Fonts:</strong> Symptom: squares/gibberish; solution:
+                reinstall, test in other apps.<br><strong>Font Style Missing:</strong> Symptom: bold/italic unavailable;
+                solution: synthetic styles sparingly; better: choose font with complete family.</p>
+            <h3>9.2 Text Display Issues</h3>
+            <p><strong>Text Not Visible:</strong> check color (white on white), layer order, outline/no fill,
+                zoom.<br><strong>Text Pixelated:</strong> View > Enhanced mode, check zoom, verify not converted to
+                bitmap.<br><strong>Text Overflow Hidden:</strong> look for red flow indicator, resize frame or link,
+                check frame properties.</p>
+            <h3>9.3 Printing and Export Problems</h3>
+            <p><strong>Text Reflows in PDF:</strong> embed fonts, convert to curves, check PDF
+                settings.<br><strong>Missing Fonts in Print:</strong> printer missing font; embed/convert, provide fonts
+                to print shop.<br><strong>Wrong Font in Export:</strong> export settings may substitute; use PDF with
+                embedded fonts; convert to curves before export.</p>
+            <h3>9.4 Performance Issues</h3>
+            <p><strong>Slow with Large Documents:</strong> split files, use linked frames efficiently, purge undo list
+                (Edit > Undo > Clear Undo), convert completed sections to curves.<br><strong>Text Heavy Files:</strong>
+                optimize images, use styles consistently, avoid excessive effects, save regularly.</p>
+        </section>
+
+        <!-- 10. EXERCISES -->
+        <section id="exercises">
+            <h2>✏️ 10. PRACTICAL EXERCISES</h2>
+            <p><strong>Exercise 1: Artistic Text Basics</strong> – Create "Company Name" as artistic text; apply
+                different fonts (3); sizes 24pt to 72pt; 3 colors; outline effects; compare 5 versions.</p>
+            <p><strong>Exercise 2: Fit Text to Path</strong> – Draw circle, wave, spiral; create "Annual Report 2024"
+                artistic text; fit to each path; adjust distance and orientation; create logo combining all three.</p>
+            <p><strong>Exercise 3: Paragraph Text Layout</strong> – Create 6-inch paragraph frame; import 3 paragraphs;
+                font Times 11pt, leading 14pt, first line indent 0.25"; 2-column layout; drop cap; pull quote using
+                second frame.</p>
+            <p><strong>Exercise 4: Multi-Page Document</strong> – Create 3 pages; linked frames; import 5 pages of text
+                flowing across pages; add headers with page numbers; create table of contents.</p>
+            <p><strong>Exercise 5: Typographic Poster</strong> – A4 poster for fictional event; artistic main headline
+                (fitted to path); paragraph details (2 columns); date/time special formatting; hierarchy; one text
+                effect.</p>
+            <p><strong>Exercise 6: Text Wrap Mastery</strong> – Newsletter layout; circular image overlapping text;
+                contour wrap; adjust offset; second image square wrap; fine‑tune.</p>
+            <p><strong>Exercise 7: OpenType Features</strong> – Find OpenType font with ligatures; type "ff fi fl ffi
+                ffl"; enable ligatures; type numbers with oldstyle figures; toggle; type "1/2 3/4" apply fractions.</p>
+            <p><strong>Exercise 8: Troubleshooting Workshop</strong> – Open provided problem file; identify missing
+                fonts, overflow, poor kerning, widows/orphans, inconsistent formatting; fix; document solutions.</p>
+        </section>
+
+        <!-- 11. SHORTCUTS -->
+        <section id="shortcuts">
+            <h2>⌨️ 11. KEYBOARD SHORTCUTS</h2>
+            <table>
+                <tr>
+                    <th colspan="2">Text Creation and Selection</th>
+                </tr>
+                <tr>
+                    <td>F8</td>
+                    <td>Text Tool</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+T</td>
+                    <td>Open Text Properties Docker</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+T</td>
+                    <td>Edit Text (for large blocks)</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+A (in text)</td>
+                    <td>Select all text in frame</td>
+                </tr>
+                <tr>
+                    <td>Double‑click Text (Pick Tool)</td>
+                    <td>Edit text</td>
+                </tr>
+                <tr>
+                    <td>Triple‑click</td>
+                    <td>Select entire paragraph</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Character Formatting</th>
+                </tr>
+                <tr>
+                    <td>Ctrl+B</td>
+                    <td>Bold</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+I</td>
+                    <td>Italic</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+U</td>
+                    <td>Underline</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+&gt;</td>
+                    <td>Increase font size (preset)</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+&lt;</td>
+                    <td>Decrease font size</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+W</td>
+                    <td>Increase font size (finer)</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+Q</td>
+                    <td>Decrease font size</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+NumPad 8</td>
+                    <td>Superscript</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+NumPad 2</td>
+                    <td>Subscript</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+K</td>
+                    <td>Small caps</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+H</td>
+                    <td>All caps</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Paragraph Formatting</th>
+                </tr>
+                <tr>
+                    <td>Ctrl+L</td>
+                    <td>Left align</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+R</td>
+                    <td>Right align</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+E</td>
+                    <td>Center align</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+J</td>
+                    <td>Full justify</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+H</td>
+                    <td>Force justify</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+F</td>
+                    <td>Show/hide formatting chars</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+J</td>
+                    <td>Line spacing (increase)</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+K</td>
+                    <td>Line spacing (decrease)</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Navigation and Editing</th>
+                </tr>
+                <tr>
+                    <td>Home</td>
+                    <td>Beginning of line</td>
+                </tr>
+                <tr>
+                    <td>End</td>
+                    <td>End of line</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Home</td>
+                    <td>Beginning of text</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+End</td>
+                    <td>End of text</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Left Arrow</td>
+                    <td>Previous word</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Right Arrow</td>
+                    <td>Next word</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Up Arrow</td>
+                    <td>Previous paragraph</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Down Arrow</td>
+                    <td>Next paragraph</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Backspace</td>
+                    <td>Delete previous word</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Delete</td>
+                    <td>Delete next word</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Text Frame Operations</th>
+                </tr>
+                <tr>
+                    <td>Ctrl+F8</td>
+                    <td>Toggle Artistic/Paragraph</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Q</td>
+                    <td>Convert to Curves</td>
+                </tr>
+                <tr>
+                    <td>Alt+Arrow Keys</td>
+                    <td>Navigate linked frames</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Enter</td>
+                    <td>Insert frame break</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+Enter</td>
+                    <td>Insert column break</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+Hyphen</td>
+                    <td>Insert optional hyphen</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+Space</td>
+                    <td>Insert non‑breaking space</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Text Effects</th>
+                </tr>
+                <tr>
+                    <td>Ctrl+F7</td>
+                    <td>Open Envelope Docker</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+F7</td>
+                    <td>Fit Text to Path</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+F11</td>
+                    <td>Insert Symbol Character</td>
+                </tr>
+                <tr>
+                    <td>Ctrl+Shift+F11</td>
+                    <td>Insert formatting codes</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th colspan="2">Zoom and View</th>
+                </tr>
+                <tr>
+                    <td>F2</td>
+                    <td>Zoom Tool (temporary)</td>
+                </tr>
+                <tr>
+                    <td>F3</td>
+                    <td>Zoom out</td>
+                </tr>
+                <tr>
+                    <td>F4</td>
+                    <td>Zoom to all objects</td>
+                </tr>
+                <tr>
+                    <td>Shift+F4</td>
+                    <td>Zoom to page</td>
+                </tr>
+                <tr>
+                    <td>F9</td>
+                    <td>Full‑screen preview</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- conclusion / extra card -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick reference – do you know?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ Artistic vs Paragraph text<br>☐ Fit text to path shortcut<br>☐ Convert to curves
+                    (Ctrl+Q)</div>
+                <div class="def-item">☐ Kerning / tracking difference<br>☐ Linking frames (Alt+arrows)<br>☐ OpenType
+                    features</div>
+                <div class="def-item">☐ 45–75 characters per line<br>☐ Widow/orphan fix<br>☐ Embed fonts in PDF</div>
+            </div>
+            <p style="margin-top:1.2rem;"><em>Complete guide – every original line included.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing · CorelDRAW Text Tools Mastery · complete guide © 2026
+        </footer>
+
+    </div> <!-- wrapper -->
+</body>
+
+</html>

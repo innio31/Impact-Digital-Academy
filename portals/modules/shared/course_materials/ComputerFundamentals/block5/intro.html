@@ -1,0 +1,2799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Graphic Design fundamentals · complete DTP guide (interactive notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ede7d9;
+            color: #3a3222;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #6b5340;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #3f2b1c, #7f5a3e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #7b583b;
+            border-left: 6px solid #b3875a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #efe4d5;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px rgba(110, 70, 30, 0.15), 0 16px 24px -14px #7b6246;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #5e3e26;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #5f432e;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(110, 60, 20, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #eadac8;
+            border-color: #9e7b5c;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #7b5a3e;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(80, 50, 25, 0.05);
+            border: 1px solid #f0e0ce;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #6a462b;
+            border-bottom: 3px solid #bc8f64;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #7b5637;
+            border-left: 8px solid #dbb594;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #86633f;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #f9f1e7;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #c39260;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(70, 40, 20, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #7b5a3b;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #ecdac7;
+            background: #fffcf7;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #8e6b48;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #f7efe4;
+            border: 1px solid #e4cfb7;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #f3e6d8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #c1a07e;
+        }
+
+        .sample-box {
+            background: #fcf7f0;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #decbb6;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #6b4f36;
+            color: #fef7e9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #decbb6, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #7d6043;
+            border-top: 1px dashed #d9bfa5;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <h1>🎨 GRAPHIC DESIGN FUNDAMENTALS</h1>
+        <div class="subhead">A Comprehensive Guide for Desktop Publishing Professionals</div>
+
+        <!-- TABLE OF CONTENTS (exact replica) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#ch1">1. Introduction to Graphic Design</a>
+                <a href="#ch2">2. Design Elements</a>
+                <a href="#ch3">3. Design Principles</a>
+                <a href="#ch4">4. Color Theory and Color Modes</a>
+                <a href="#ch5">5. Typography Basics</a>
+                <a href="#ch6">6. Image Formats and Resolution</a>
+                <a href="#ch7">7. Summary and Key Takeaways</a>
+            </div>
+        </div>
+
+        <!-- CHAPTER 1: INTRODUCTION TO GRAPHIC DESIGN -->
+        <section id="ch1">
+            <h2>📘 CHAPTER 1: INTRODUCTION TO GRAPHIC DESIGN</h2>
+            <h3>What is Graphic Design?</h3>
+            <p>Graphic design is the art and practice of planning and projecting ideas and experiences with visual and
+                textual content. It is a form of visual communication that combines images, words, and ideas to convey
+                information to an audience, especially to produce a specific effect.</p>
+            <p>In the context of desktop publishing and secretarial studies, graphic design skills enable professionals
+                to:</p>
+            <ul>
+                <li>Create visually appealing business documents</li>
+                <li>Design effective marketing materials</li>
+                <li>Enhance corporate communications</li>
+                <li>Maintain brand consistency across all materials</li>
+                <li>Communicate complex information clearly and efficiently</li>
+            </ul>
+            <h3>The Role of Graphic Design in Business</h3>
+            <p>Effective graphic design in business:</p>
+            <ul>
+                <li>Establishes professional credibility</li>
+                <li>Enhances brand recognition</li>
+                <li>Improves communication efficiency</li>
+                <li>Increases audience engagement</li>
+                <li>Supports marketing and sales objectives</li>
+                <li>Creates emotional connections with audiences</li>
+            </ul>
+        </section>
+
+        <!-- CHAPTER 2: DESIGN ELEMENTS -->
+        <section id="ch2">
+            <h2>🔹 CHAPTER 2: DESIGN ELEMENTS</h2>
+            <p>Design elements are the basic components or building blocks used to create any visual composition. Think
+                of them as the "ingredients" in a recipe. Every design, regardless of complexity, is constructed from
+                these fundamental elements.</p>
+
+            <h3>2.1 LINE</h3>
+            <h4>Definition</h4>
+            <p>A line is a mark connecting two points. It is the most basic element of design and can be defined as a
+                moving dot. Lines have length, direction, and position.</p>
+            <h4>Types of Lines</h4>
+            <table>
+                <tr>
+                    <th>Line Type</th>
+                    <th>Characteristics</th>
+                    <th>Psychological Effect</th>
+                    <th>Common Uses</th>
+                </tr>
+                <tr>
+                    <td><strong>Straight Lines</strong></td>
+                    <td>Direct, precise, predictable</td>
+                    <td>Stability, order, strength</td>
+                    <td>Borders, grids, technical drawings</td>
+                </tr>
+                <tr>
+                    <td><strong>Curved Lines</strong></td>
+                    <td>Gentle, flowing, organic</td>
+                    <td>Grace, comfort, movement</td>
+                    <td>Logos, illustrations, decorative elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Horizontal Lines</strong></td>
+                    <td>Parallel to horizon</td>
+                    <td>Calm, stability, rest</td>
+                    <td>Headers, dividers, grounding elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Vertical Lines</strong></td>
+                    <td>Perpendicular to horizon</td>
+                    <td>Strength, dignity, growth</td>
+                    <td>Columns, pillars, upward movement</td>
+                </tr>
+                <tr>
+                    <td><strong>Diagonal Lines</strong></td>
+                    <td>Slanted, dynamic</td>
+                    <td>Action, tension, energy</td>
+                    <td>Movement indicators, dynamic compositions</td>
+                </tr>
+                <tr>
+                    <td><strong>Zigzag Lines</strong></td>
+                    <td>Angular, sharp changes</td>
+                    <td>Excitement, chaos, danger</td>
+                    <td>Attention-grabbing elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Implied Lines</strong></td>
+                    <td>Suggested, not continuous</td>
+                    <td>Connection, flow</td>
+                    <td>Visual pathways, eye movement guides</td>
+                </tr>
+            </table>
+            <h4>Practical Applications in Desktop Publishing</h4>
+            <p><strong>Example 1: Business Report</strong><br>- Use horizontal lines to separate sections<br>- Use
+                vertical lines to create columns<br>- Use thin rules under headings for emphasis</p>
+            <p><strong>Example 2: Brochure Design</strong><br>- Use diagonal lines to create dynamic layouts<br>- Use
+                curved lines to guide the eye around the page<br>- Use implied lines through alignment of elements</p>
+            <h4>Technical Considerations</h4>
+            <ul>
+                <li>Line weight (thickness) affects visual hierarchy</li>
+                <li>Line style (solid, dashed, dotted) conveys different meanings</li>
+                <li>Line color should contrast sufficiently with background</li>
+                <li>In CorelDRAW, use the Freehand Tool, Bezier Tool, or Shape Tool to create lines</li>
+            </ul>
+
+            <h3>2.2 SHAPE</h3>
+            <h4>Definition</h4>
+            <p>A shape is a defined area created by lines, color changes, or texture differences. Shapes are
+                two-dimensional and have height and width.</p>
+            <h4>Categories of Shapes</h4>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Examples</th>
+                    <th>Psychological Impact</th>
+                </tr>
+                <tr>
+                    <td><strong>Geometric Shapes</strong></td>
+                    <td>Mathematical, precise, regular</td>
+                    <td>Squares, circles, triangles, rectangles</td>
+                    <td>Order, stability, efficiency, professionalism</td>
+                </tr>
+                <tr>
+                    <td><strong>Organic Shapes</strong></td>
+                    <td>Free-form, natural, irregular</td>
+                    <td>Leaves, clouds, puddles, abstract blobs</td>
+                    <td>Natural, friendly, creative, relaxed</td>
+                </tr>
+                <tr>
+                    <td><strong>Abstract Shapes</strong></td>
+                    <td>Simplified versions of organic shapes</td>
+                    <td>Stick figures, icons, symbols</td>
+                    <td>Universal recognition, communication efficiency</td>
+                </tr>
+            </table>
+            <h4>Shape Meanings and Associations</h4>
+            <p><strong>Circles and Ovals:</strong><br>- Represent infinity, protection, wholeness<br>- Suggest
+                community, relationships, unity<br>- Often used in logos for harmony-focused companies<br>- Directs eye
+                in a circular path around the composition</p>
+            <p><strong>Squares and Rectangles:</strong><br>- Represent stability, honesty, security<br>- Suggest
+                professionalism, reliability<br>- Most common shape for printed materials (pages, photos)<br>- Create
+                structure and organization</p>
+            <p><strong>Triangles:</strong><br>- Represent action, tension, energy<br>- Suggest direction (pointing
+                upward = aspiration, downward = stability)<br>- Create dynamic compositions<br>- Draw attention to the
+                point</p>
+            <h4>Practical Applications:</h4>
+            <p><strong>Business Card Design:</strong><br>- Rectangle shape for the card itself<br>- Circular logo for
+                approachability<br>- Square photo for stability</p>
+            <p><strong>Flyer Design:</strong><br>- Use shapes as containers for text<br>- Create visual interest with
+                overlapping shapes<br>- Use shapes to direct attention to key information</p>
+            <h4>Technical Considerations in CorelDRAW</h4>
+            <ul>
+                <li>Rectangle Tool (F6) for perfect rectangles and squares (hold Ctrl)</li>
+                <li>Ellipse Tool (F7) for circles and ellipses</li>
+                <li>Polygon Tool for multi-sided shapes</li>
+                <li>Shape Tool (F10) to modify shapes</li>
+                <li>Combine shapes using Weld, Trim, Intersect functions</li>
+            </ul>
+
+            <h3>2.3 COLOR</h3>
+            <h4>Definition</h4>
+            <p>Color is the element of design that results from light reflecting off objects. It is perhaps the most
+                powerful and emotional design element, capable of conveying mood, attracting attention, and organizing
+                information.</p>
+            <h4>The Color Wheel</h4>
+            <p>The color wheel is a visual representation of colors arranged according to their chromatic relationship.
+                It is fundamental to understanding color relationships.</p>
+            <p><strong>Primary Colors:</strong><br>- Red, Blue, Yellow<br>- Cannot be created by mixing other
+                colors<br>- The foundation of all other colors</p>
+            <p><strong>Secondary Colors:</strong><br>- Green (Blue + Yellow)<br>- Orange (Red + Yellow)<br>- Purple (Red
+                + Blue)<br>- Created by mixing two primary colors</p>
+            <p><strong>Tertiary Colors:</strong><br>- Red-Orange, Yellow-Orange, Yellow-Green, Blue-Green, Blue-Purple,
+                Red-Purple<br>- Created by mixing a primary with an adjacent secondary</p>
+            <h4>Color Properties</h4>
+            <table>
+                <tr>
+                    <th>Property</th>
+                    <th>Definition</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Hue</strong></td>
+                    <td>The pure color itself (the name of the color)</td>
+                    <td>Red, Blue, Green</td>
+                </tr>
+                <tr>
+                    <td><strong>Saturation (Chroma)</strong></td>
+                    <td>The purity or intensity of a color</td>
+                    <td>Vivid red vs. dull gray-red</td>
+                </tr>
+                <tr>
+                    <td><strong>Value (Brightness)</strong></td>
+                    <td>The lightness or darkness of a color</td>
+                    <td>Light blue vs. dark blue</td>
+                </tr>
+            </table>
+            <h4>Color Temperature</h4>
+            <p><strong>Warm Colors:</strong><br>- Reds, oranges, yellows<br>- Advance toward the viewer<br>- Energetic,
+                exciting, stimulating<br>- Use for attention-grabbing elements</p>
+            <p><strong>Cool Colors:</strong><br>- Blues, greens, purples<br>- Recede from the viewer<br>- Calming,
+                professional, trustworthy<br>- Use for backgrounds and professional communications</p>
+            <h4>Color Meanings by Culture</h4>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Western Meaning</th>
+                    <th>Business Use</th>
+                </tr>
+                <tr>
+                    <td><strong>Red</strong></td>
+                    <td>Passion, danger, excitement, love</td>
+                    <td>Sales, clearance, urgency</td>
+                </tr>
+                <tr>
+                    <td><strong>Blue</strong></td>
+                    <td>Trust, calm, professionalism, security</td>
+                    <td>Corporate, banking, technology</td>
+                </tr>
+                <tr>
+                    <td><strong>Green</strong></td>
+                    <td>Nature, growth, money, health</td>
+                    <td>Environmental, organic, financial</td>
+                </tr>
+                <tr>
+                    <td><strong>Yellow</strong></td>
+                    <td>Optimism, warmth, caution, happiness</td>
+                    <td>Attention, children's products</td>
+                </tr>
+                <tr>
+                    <td><strong>Purple</strong></td>
+                    <td>Royalty, luxury, wisdom, creativity</td>
+                    <td>Premium products, beauty</td>
+                </tr>
+                <tr>
+                    <td><strong>Orange</strong></td>
+                    <td>Energy, enthusiasm, creativity, affordability</td>
+                    <td>Casual brands, calls-to-action</td>
+                </tr>
+                <tr>
+                    <td><strong>Black</strong></td>
+                    <td>Power, elegance, sophistication, mystery</td>
+                    <td>Luxury brands, formal materials</td>
+                </tr>
+                <tr>
+                    <td><strong>White</strong></td>
+                    <td>Purity, cleanliness, simplicity, innocence</td>
+                    <td>Medical, minimalism, space</td>
+                </tr>
+                <tr>
+                    <td><strong>Gray</strong></td>
+                    <td>Neutrality, professionalism, practicality</td>
+                    <td>Corporate, backgrounds</td>
+                </tr>
+                <tr>
+                    <td><strong>Brown</strong></td>
+                    <td>Earth, stability, reliability, warmth</td>
+                    <td>Natural products, rustic</td>
+                </tr>
+            </table>
+            <h4>Practical Color Applications</h4>
+            <p><strong>For Professional Documents:</strong><br>- Use corporate colors consistently<br>- Limit to 2-3
+                main colors per document<br>- Ensure sufficient contrast for readability<br>- Use color to organize
+                information (e.g., color-coded sections)</p>
+            <p><strong>For Marketing Materials:</strong><br>- Use color to evoke desired emotions<br>- Create visual
+                hierarchy through color emphasis<br>- Use complementary colors for vibrant designs<br>- Consider
+                cultural implications for target audience</p>
+
+            <h3>2.4 TEXTURE</h3>
+            <h4>Definition</h4>
+            <p>Texture refers to the surface quality of a design—how things look like they would feel if touched. In
+                print design, texture is visual rather than tactile.</p>
+            <h4>Types of Texture</h4>
+            <table>
+                <tr>
+                    <th>Texture Type</th>
+                    <th>Description</th>
+                    <th>Examples in Design</th>
+                </tr>
+                <tr>
+                    <td><strong>Actual Texture</strong></td>
+                    <td>Physical texture you can feel</td>
+                    <td>Embossing, letterpress, textured paper</td>
+                </tr>
+                <tr>
+                    <td><strong>Visual (Implied) Texture</strong></td>
+                    <td>Illusion of texture created visually</td>
+                    <td>Photographs of fabric, stone, wood grain</td>
+                </tr>
+                <tr>
+                    <td><strong>Pattern Texture</strong></td>
+                    <td>Repetition of design elements</td>
+                    <td>Dots, lines, geometric repeats</td>
+                </tr>
+            </table>
+            <h4>Sources of Texture in Design</h4>
+            <p><strong>Natural Textures:</strong> Wood grain, stone/marble, fabric (linen, silk, burlap), organic
+                materials</p>
+            <p><strong>Man-made Textures:</strong> Concrete, metal (brushed, polished), paper (rough, smooth), plastic
+            </p>
+            <p><strong>Digital Textures:</strong> Gradients, noise/grain, patterns, halftone dots</p>
+            <h4>Psychological Impact of Texture</h4>
+            <table>
+                <tr>
+                    <th>Texture</th>
+                    <th>Feeling Conveyed</th>
+                </tr>
+                <tr>
+                    <td>Smooth, glossy</td>
+                    <td>Modern, clean, sophisticated</td>
+                </tr>
+                <tr>
+                    <td>Rough, gritty</td>
+                    <td>Rustic, natural, handcrafted</td>
+                </tr>
+                <tr>
+                    <td>Soft, fuzzy</td>
+                    <td>Comfortable, approachable, warm</td>
+                </tr>
+                <tr>
+                    <td>Hard, metallic</td>
+                    <td>Industrial, strong, precise</td>
+                </tr>
+                <tr>
+                    <td>Organic, natural</td>
+                    <td>Earthy, authentic, sustainable</td>
+                </tr>
+            </table>
+            <h4>Practical Applications</h4>
+            <p><strong>Business Stationery:</strong><br>- Use textured paper for letterheads and business cards<br>- Add
+                subtle texture backgrounds to digital designs<br>- Consider embossing for logos</p>
+            <p><strong>Brochures and Flyers:</strong><br>- Use texture to create visual interest in backgrounds<br>-
+                Combine smooth and textured areas for contrast<br>- Consider paper stock selection for actual texture
+            </p>
+            <p><strong>Digital Documents:</strong><br>- Use subtle gradient textures for backgrounds<br>- Apply noise
+                effects for vintage feel<br>- Use pattern overlays for visual interest</p>
+            <h4>Technical Considerations in CorelDRAW</h4>
+            <ul>
+                <li>Use Bitmap patterns for realistic textures</li>
+                <li>Use Vector patterns for scalable textures</li>
+                <li>Apply transparency effects to overlay textures</li>
+                <li>Use the Interactive Fill tool for gradient textures</li>
+                <li>Import texture images and use PowerClip to contain them</li>
+            </ul>
+        </section>
+
+        <!-- CHAPTER 3: DESIGN PRINCIPLES -->
+        <section id="ch3">
+            <h2>⚖️ CHAPTER 3: DESIGN PRINCIPLES</h2>
+            <p>Design principles are guidelines for organizing the design elements effectively. They help create
+                compositions that are visually appealing, functional, and communicative.</p>
+
+            <h3>3.1 BALANCE</h3>
+            <h4>Definition</h4>
+            <p>Balance refers to the distribution of visual weight in a composition. It creates stability and structure
+                in a design.</p>
+            <h4>Types of Balance</h4>
+            <table>
+                <tr>
+                    <th>Balance Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Best Used For</th>
+                </tr>
+                <tr>
+                    <td><strong>Symmetrical Balance</strong></td>
+                    <td>Elements mirror each other on either side of a central axis</td>
+                    <td>Formal invitations, certificates</td>
+                    <td>Traditional, formal, stable designs</td>
+                </tr>
+                <tr>
+                    <td><strong>Asymmetrical Balance</strong></td>
+                    <td>Balance achieved through contrast of different elements with equal visual weight</td>
+                    <td>Modern brochures, magazines</td>
+                    <td>Dynamic, interesting, contemporary designs</td>
+                </tr>
+                <tr>
+                    <td><strong>Radial Balance</strong></td>
+                    <td>Elements radiate from a central point</td>
+                    <td>Mandalas, some logos, CD labels</td>
+                    <td>Drawing attention to center, decorative designs</td>
+                </tr>
+                <tr>
+                    <td><strong>Mosaic/Crystallographic Balance</strong></td>
+                    <td>Chaos balanced by overall pattern</td>
+                    <td>Jackson Pollock paintings, all-over patterns</td>
+                    <td>Backgrounds, textile designs</td>
+                </tr>
+            </table>
+            <h4>Achieving Visual Weight</h4>
+            <p>Visual weight is determined by:</p>
+            <table>
+                <tr>
+                    <th>Element Characteristic</th>
+                    <th>Heavier (More Weight)</th>
+                    <th>Lighter (Less Weight)</th>
+                </tr>
+                <tr>
+                    <td><strong>Size</strong></td>
+                    <td>Large objects</td>
+                    <td>Small objects</td>
+                </tr>
+                <tr>
+                    <td><strong>Color</strong></td>
+                    <td>Bright, warm colors</td>
+                    <td>Muted, cool colors</td>
+                </tr>
+                <tr>
+                    <td><strong>Value</strong></td>
+                    <td>Dark values</td>
+                    <td>Light values</td>
+                </tr>
+                <tr>
+                    <td><strong>Texture</strong></td>
+                    <td>High texture/detail</td>
+                    <td>Smooth, minimal texture</td>
+                </tr>
+                <tr>
+                    <td><strong>Position</strong></td>
+                    <td>Isolated elements</td>
+                    <td>Clustered elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Shape</strong></td>
+                    <td>Irregular shapes</td>
+                    <td>Regular shapes</td>
+                </tr>
+            </table>
+            <h4>Practical Examples</h4>
+            <p><strong>Symmetrical Balance Example - Formal Letter:</strong><br>- Company logo centered at top<br>-
+                Equal margins left and right<br>- Recipient address block centered or left-aligned with equal white
+                space</p>
+            <p><strong>Asymmetrical Balance Example - Brochure Cover:</strong><br>- Large image on right side
+                (heavy)<br>- Small logo and bold headline on left (light but attention-grabbing)<br>- Balance achieved
+                through color and typography weight</p>
+            <h4>Tips for Achieving Balance</h4>
+            <ol>
+                <li>Step back and squint at your design</li>
+                <li>Look for areas that feel too heavy or too light</li>
+                <li>Use the "see-saw" mental model</li>
+                <li>Check balance in grayscale to remove color influence</li>
+                <li>Consider both horizontal and vertical balance</li>
+            </ol>
+
+            <h3>3.2 CONTRAST</h3>
+            <h4>Definition</h4>
+            <p>Contrast is the arrangement of opposite elements to create visual interest, excitement, and emphasis. It
+                helps organize information and guide the viewer's eye.</p>
+            <h4>Types of Contrast</h4>
+            <table>
+                <tr>
+                    <th>Contrast Type</th>
+                    <th>Examples</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td><strong>Size Contrast</strong></td>
+                    <td>Large vs. small elements</td>
+                    <td>Creates hierarchy, drama</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Contrast</strong></td>
+                    <td>Complementary colors, light vs. dark</td>
+                    <td>Attracts attention, separates elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Value Contrast</strong></td>
+                    <td>Light vs. dark</td>
+                    <td>Creates depth, readability</td>
+                </tr>
+                <tr>
+                    <td><strong>Shape Contrast</strong></td>
+                    <td>Geometric vs. organic</td>
+                    <td>Visual interest, tension</td>
+                </tr>
+                <tr>
+                    <td><strong>Texture Contrast</strong></td>
+                    <td>Smooth vs. rough</td>
+                    <td>Tactile interest, separation</td>
+                </tr>
+                <tr>
+                    <td><strong>Typography Contrast</strong></td>
+                    <td>Serif vs. sans-serif, bold vs. light</td>
+                    <td>Hierarchy, personality</td>
+                </tr>
+                <tr>
+                    <td><strong>Direction Contrast</strong></td>
+                    <td>Horizontal vs. vertical</td>
+                    <td>Dynamic movement</td>
+                </tr>
+            </table>
+            <h4>The Importance of Contrast</h4>
+            <p>Without contrast, designs appear:<br>- Flat and uninteresting<br>- Difficult to navigate<br>-
+                Unprofessional<br>- Hard to read</p>
+            <p>With effective contrast:<br>- Information hierarchy is clear<br>- Visual interest is maintained<br>- Key
+                elements stand out<br>- Readability improves</p>
+            <h4>Contrast in Readability</h4>
+            <p><strong>Text and Background Contrast Requirements:</strong><br>- WCAG (Web Content Accessibility
+                Guidelines) recommends:<br> - Normal text: 4.5:1 contrast ratio minimum<br> - Large text: 3:1 contrast
+                ratio minimum</p>
+            <p><strong>Examples of Good Contrast:</strong><br>- Black text on white background (highest
+                readability)<br>- Dark colored text on light colored background<br>- White text on dark colored
+                background</p>
+            <p><strong>Examples of Poor Contrast:</strong><br>- Light gray text on white background<br>- Red text on
+                green background<br>- Yellow text on white background</p>
+            <h4>Practical Applications</h4>
+            <p><strong>Headlines and Body Text:</strong><br>- Use large, bold, contrasting font for headlines<br>- Use
+                smaller, lighter, simpler font for body text<br>- Ensure sufficient contrast between text and background
+            </p>
+            <p><strong>Call-to-Action Buttons:</strong><br>- Use high-contrast colors that stand out<br>- Make buttons
+                larger than surrounding elements<br>- Use contrasting shapes (rounded buttons on square design)</p>
+            <h4>Tips for Effective Contrast</h4>
+            <ol>
+                <li>Use contrast to create a focal point</li>
+                <li>Don't use contrast for everything (it becomes noise)</li>
+                <li>Test contrast by viewing in grayscale</li>
+                <li>Ensure sufficient contrast for accessibility</li>
+                <li>Use contrast to establish hierarchy</li>
+            </ol>
+
+            <h3>3.3 ALIGNMENT</h3>
+            <h4>Definition</h4>
+            <p>Alignment is the placement of elements so they line up along common edges or axes. It creates order,
+                organization, and visual connections between elements.</p>
+            <h4>Types of Alignment</h4>
+            <table>
+                <tr>
+                    <th>Alignment Type</th>
+                    <th>Description</th>
+                    <th>Best Used For</th>
+                </tr>
+                <tr>
+                    <td><strong>Left Alignment</strong></td>
+                    <td>Text/elements align on the left edge</td>
+                    <td>Body text, Western languages</td>
+                </tr>
+                <tr>
+                    <td><strong>Right Alignment</strong></td>
+                    <td>Text/elements align on the right edge</td>
+                    <td>Captions, dates, pull quotes</td>
+                </tr>
+                <tr>
+                    <td><strong>Center Alignment</strong></td>
+                    <td>Elements centered on a central axis</td>
+                    <td>Headlines, invitations, titles</td>
+                </tr>
+                <tr>
+                    <td><strong>Justified Alignment</strong></td>
+                    <td>Text aligns on both left and right</td>
+                    <td>Newspapers, magazines, books</td>
+                </tr>
+                <tr>
+                    <td><strong>Edge Alignment</strong></td>
+                    <td>Elements align to page edges</td>
+                    <td>Modern layouts, minimal designs</td>
+                </tr>
+                <tr>
+                    <td><strong>Optical Alignment</strong></td>
+                    <td>Visual alignment adjusting for shape quirks</td>
+                    <td>Logos, professional typography</td>
+                </tr>
+            </table>
+            <h4>The Power of Alignment</h4>
+            <p>Good alignment:<br>- Creates visual connections between elements<br>- Reduces visual clutter<br>- Creates
+                a clean, professional appearance<br>- Guides the viewer through the design<br>- Creates visual rhythm
+            </p>
+            <p>Poor alignment:<br>- Creates visual chaos<br>- Looks unprofessional and sloppy<br>- Confuses the
+                viewer<br>- Breaks visual connections</p>
+            <h4>Grid Systems</h4>
+            <p>A grid is a system for organizing content using columns, rows, and margins.</p>
+            <p><strong>Common Grid Types:</strong></p>
+            <table>
+                <tr>
+                    <th>Grid Type</th>
+                    <th>Description</th>
+                    <th>Applications</th>
+                </tr>
+                <tr>
+                    <td><strong>Manuscript Grid</strong></td>
+                    <td>Single column of text</td>
+                    <td>Books, reports, essays</td>
+                </tr>
+                <tr>
+                    <td><strong>Column Grid</strong></td>
+                    <td>Multiple columns</td>
+                    <td>Newspapers, magazines, brochures</td>
+                </tr>
+                <tr>
+                    <td><strong>Modular Grid</strong></td>
+                    <td>Columns and rows</td>
+                    <td>Forms, tables, complex layouts</td>
+                </tr>
+                <tr>
+                    <td><strong>Hierarchical Grid</strong></td>
+                    <td>Based on content needs</td>
+                    <td>Web design, posters</td>
+                </tr>
+            </table>
+            <p><strong>Benefits of Using Grids:</strong><br>- Creates consistency across multiple pages<br>- Speeds up
+                the design process<br>- Ensures proper alignment<br>- Creates visual harmony<br>- Makes responsive
+                design easier</p>
+            <h4>Practical Applications</h4>
+            <p><strong>Business Document:</strong><br>- Align all text to a consistent left margin<br>- Align page
+                numbers consistently<br>- Align headings with body text or use consistent indentation<br>- Align
+                graphics with text columns</p>
+            <p><strong>Multi-page Document:</strong><br>- Use consistent margins throughout<br>- Align elements
+                consistently across pages<br>- Use a grid to maintain consistency<br>- Align headers and footers</p>
+            <h4>Common Alignment Mistakes</h4>
+            <ol>
+                <li>Using multiple alignments on one page without purpose</li>
+                <li>Centering body text</li>
+                <li>Ignoring the optical alignment of curved letters</li>
+                <li>Not using enough white space around aligned elements</li>
+            </ol>
+            <h4>Tips for Perfect Alignment</h4>
+            <ol>
+                <li>Use guides and grids in your software</li>
+                <li>Zoom in to check precise alignment</li>
+                <li>Group related elements for consistent movement</li>
+                <li>Align to a consistent baseline grid for text</li>
+                <li>Break alignment purposefully for emphasis (then restore it)</li>
+            </ol>
+
+            <h3>3.4 REPETITION</h3>
+            <h4>Definition</h4>
+            <p>Repetition involves repeating visual elements throughout a design to create consistency, unity, and
+                visual interest. It strengthens the design by tying together individual parts.</p>
+            <h4>What Can Be Repeated</h4>
+            <table>
+                <tr>
+                    <th>Element Type</th>
+                    <th>Examples of Repetition</th>
+                </tr>
+                <tr>
+                    <td><strong>Color</strong></td>
+                    <td>Brand colors throughout a document</td>
+                </tr>
+                <tr>
+                    <td><strong>Shape</strong></td>
+                    <td>Using same shape style for all graphics</td>
+                </tr>
+                <tr>
+                    <td><strong>Typography</strong></td>
+                    <td>Consistent heading and body fonts</td>
+                </tr>
+                <tr>
+                    <td><strong>Line Weight</strong></td>
+                    <td>Consistent border thickness</td>
+                </tr>
+                <tr>
+                    <td><strong>Texture</strong></td>
+                    <td>Same texture on related elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Spatial Relationships</strong></td>
+                    <td>Consistent spacing and margins</td>
+                </tr>
+                <tr>
+                    <td><strong>Format</strong></td>
+                    <td>Consistent document structure</td>
+                </tr>
+            </table>
+            <h4>Repetition vs. Pattern</h4>
+            <p><strong>Repetition:</strong> The use of the same element multiple times<br>- Example: Using the same
+                heading style throughout a report</p>
+            <p><strong>Pattern:</strong> A specific arrangement of repeated elements<br>- Example: A geometric pattern
+                created from repeated shapes</p>
+            <h4>Benefits of Repetition</h4>
+            <p><strong>Consistency:</strong><br>- Creates a cohesive look<br>- Reinforces brand identity<br>- Makes
+                multi-page documents feel unified</p>
+            <p><strong>Navigation:</strong><br>- Helps readers understand document structure<br>- Creates predictable
+                layouts<br>- Guides readers to find information</p>
+            <p><strong>Professionalism:</strong><br>- Shows attention to detail<br>- Demonstrates design skill<br>-
+                Creates polished appearance</p>
+            <h4>Practical Applications</h4>
+            <p><strong>Brand Identity:</strong><br>- Repeat logo placement consistently<br>- Use consistent color
+                palette throughout all materials<br>- Use consistent typography across all communications</p>
+            <p><strong>Reports and Documents:</strong><br>- Use same heading styles throughout<br>- Repeat page numbers
+                in same position<br>- Use consistent bullet styles<br>- Repeat footer elements on every page</p>
+            <p><strong>Marketing Materials:</strong><br>- Repeat brand elements across all pieces<br>- Use consistent
+                image treatment<br>- Repeat call-to-action styling</p>
+            <h4>Examples of Repetition in Business Documents</h4>
+            <p><strong>Corporate Report:</strong><br>- Same header style on every page<br>- Same footer with consistent
+                information<br>- Same treatment for all section headings<br>- Same bullet style for all lists</p>
+            <p><strong>Brochure Series:</strong><br>- Same color scheme across all brochures<br>- Same typography
+                choices<br>- Same layout structure<br>- Same image treatment</p>
+            <h4>Tips for Effective Repetition</h4>
+            <ol>
+                <li>Establish a clear system before starting</li>
+                <li>Document your choices (create a style guide)</li>
+                <li>Be consistent but not boring</li>
+                <li>Use repetition to create rhythm</li>
+                <li>Occasionally break repetition for emphasis</li>
+            </ol>
+
+            <h3>3.5 HIERARCHY</h3>
+            <h4>Definition</h4>
+            <p>Hierarchy is the organization of elements to show their order of importance. It guides the viewer through
+                the content, telling them what to look at first, second, and third.</p>
+            <h4>Creating Visual Hierarchy</h4>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>How It Works</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Size</strong></td>
+                    <td>Larger elements attract attention first</td>
+                    <td>Large headline, smaller subhead, smallest body text</td>
+                </tr>
+                <tr>
+                    <td><strong>Color</strong></td>
+                    <td>Bright or contrasting colors attract attention</td>
+                    <td>Red call-to-action button</td>
+                </tr>
+                <tr>
+                    <td><strong>Position</strong></td>
+                    <td>Top and center are primary positions</td>
+                    <td>Logo at top of page</td>
+                </tr>
+                <tr>
+                    <td><strong>Weight</strong></td>
+                    <td>Bold elements attract attention</td>
+                    <td>Bold headings, light body text</td>
+                </tr>
+                <tr>
+                    <td><strong>Space</strong></td>
+                    <td>More space around an element emphasizes it</td>
+                    <td>Isolated logo on cover</td>
+                </tr>
+                <tr>
+                    <td><strong>Texture/Pattern</strong></td>
+                    <td>Textured elements stand out from smooth</td>
+                    <td>Patterned background for highlight</td>
+                </tr>
+                <tr>
+                    <td><strong>Style</strong></td>
+                    <td>Distinctive styling creates emphasis</td>
+                    <td>Drop caps, pull quotes</td>
+                </tr>
+            </table>
+            <h4>The Visual Hierarchy Pyramid</h4>
+            <div class="sample-box">
+                Primary Message
+                ▲
+                │
+                Secondary Elements
+                ▲
+                │
+                Supporting Details
+                ▲
+                │
+                Background Elements
+            </div>
+            <p><strong>Level 1 - Primary Message:</strong><br>- Main headline<br>- Primary image<br>- Logo<br>-
+                Call-to-action</p>
+            <p><strong>Level 2 - Secondary Elements:</strong><br>- Subheadings<br>- Section titles<br>- Navigation
+                elements<br>- Key supporting images</p>
+            <p><strong>Level 3 - Supporting Details:</strong><br>- Body text<br>- Captions<br>- Data<br>- Secondary
+                images</p>
+            <p><strong>Level 4 - Background Elements:</strong><br>- Page numbers<br>- Footer information<br>- Background
+                textures<br>- Decorative elements</p>
+            <h4>Reading Patterns</h4>
+            <p>Understanding how people read helps establish hierarchy:</p>
+            <p><strong>Z-Pattern (for simple layouts):</strong><br>1. Top left (primary)<br>2. Top right
+                (secondary)<br>3. Bottom left (tertiary)<br>4. Bottom right (call-to-action)</p>
+            <p><strong>F-Pattern (for text-heavy layouts):</strong><br>1. Top headline<br>2. First few lines of
+                text<br>3. Left-aligned headings down the page</p>
+            <h4>Practical Applications</h4>
+            <p><strong>Business Letter:</strong><br>- Level 1: Company logo, date, recipient name<br>- Level 2: Subject
+                line, salutation<br>- Level 3: Body paragraphs<br>- Level 4: Signature block, enclosures</p>
+            <p><strong>Brochure Cover:</strong><br>- Level 1: Main headline<br>- Level 2: Primary image,
+                subheadline<br>- Level 3: Logo, date/location<br>- Level 4: Background color/texture</p>
+            <p><strong>Report Cover:</strong><br>- Level 1: Report title<br>- Level 2: Company logo, report
+                subtitle<br>- Level 3: Date, author, department<br>- Level 4: Background elements</p>
+            <h4>Hierarchy Mistakes to Avoid</h4>
+            <ol>
+                <li>Making everything important (nothing stands out)</li>
+                <li>Conflicting hierarchy cues (large but light gray text)</li>
+                <li>Ignoring natural reading patterns</li>
+                <li>Poor contrast in important elements</li>
+                <li>Inconsistent hierarchy across pages</li>
+            </ol>
+            <h4>Tips for Effective Hierarchy</h4>
+            <ol>
+                <li>Decide on the single most important element</li>
+                <li>Use size as the primary hierarchy tool</li>
+                <li>Support size with color and weight</li>
+                <li>Test hierarchy by squinting</li>
+                <li>Get feedback on what viewers see first</li>
+            </ol>
+        </section>
+
+        <!-- CHAPTER 4: COLOR THEORY AND COLOR MODES -->
+        <section id="ch4">
+            <h2>🎨 CHAPTER 4: COLOR THEORY AND COLOR MODES</h2>
+            <h3>4.1 COLOR MODES: CMYK vs. RGB</h3>
+            <p>Understanding color modes is essential for ensuring your designs appear correctly in their final format.
+            </p>
+            <h4>RGB (Red, Green, Blue)</h4>
+            <table>
+                <tr>
+                    <th>Characteristic</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Full Name</strong></td>
+                    <td>Red, Green, Blue</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Model</strong></td>
+                    <td>Additive color model</td>
+                </tr>
+                <tr>
+                    <td><strong>How It Works</strong></td>
+                    <td>Colors are created by adding light; black is absence of light, white is all colors combined</td>
+                </tr>
+                <tr>
+                    <td><strong>Gamut</strong></td>
+                    <td>Wider color range (more colors than CMYK)</td>
+                </tr>
+                <tr>
+                    <td><strong>Primary Use</strong></td>
+                    <td>Digital displays (monitors, TVs, phones, projectors)</td>
+                </tr>
+                <tr>
+                    <td><strong>File Formats</strong></td>
+                    <td>JPEG, PNG, GIF, SVG (for web)</td>
+                </tr>
+                <tr>
+                    <td><strong>When to Use</strong></td>
+                    <td>Web design, social media graphics, presentations, videos, any screen-only output</td>
+                </tr>
+            </table>
+            <p><strong>Technical Details:</strong><br>- Each channel has 256 values (0-255)<br>- 0,0,0 = Black<br>-
+                255,255,255 = White<br>- 16.7 million possible colors</p>
+            <h4>CMYK (Cyan, Magenta, Yellow, Key/Black)</h4>
+            <table>
+                <tr>
+                    <th>Characteristic</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Full Name</strong></td>
+                    <td>Cyan, Magenta, Yellow, Key (Black)</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Model</strong></td>
+                    <td>Subtractive color model</td>
+                </tr>
+                <tr>
+                    <td><strong>How It Works</strong></td>
+                    <td>Colors are created by subtracting light using ink on paper; white is absence of ink, black is
+                        all inks combined</td>
+                </tr>
+                <tr>
+                    <td><strong>Gamut</strong></td>
+                    <td>Narrower color range (limited by ink and paper)</td>
+                </tr>
+                <tr>
+                    <td><strong>Primary Use</strong></td>
+                    <td>Commercial printing (brochures, business cards, flyers, magazines)</td>
+                </tr>
+                <tr>
+                    <td><strong>File Formats</strong></td>
+                    <td>PDF, TIFF, AI, CDR (for print)</td>
+                </tr>
+                <tr>
+                    <td><strong>When to Use</strong></td>
+                    <td>Any project that will be professionally printed</td>
+                </tr>
+            </table>
+            <p><strong>Technical Details:</strong><br>- Each channel has percentages (0-100%)<br>- 0,0,0,0 = White
+                (paper color)<br>- 100,100,100,100 = Rich black (but rarely used)<br>- Approximately 1 million printable
+                colors</p>
+            <h4>Conversion Considerations</h4>
+            <p><strong>RGB to CMYK Conversion Issues:</strong><br>- Bright RGB colors often become dull in CMYK<br>-
+                Neon and fluorescent colors cannot be reproduced in CMYK<br>- Some blues and purples shift
+                significantly<br>- Always convert before finalizing print designs</p>
+            <p><strong>Best Practices:</strong><br>1. Design in the mode you'll output in<br>2. If designing for both,
+                design in RGB first, then convert copy for print<br>3. Use Pantone Matching System (PMS) for exact color
+                matching<br>4. Proof your designs before mass printing</p>
+            <h4>Spot Colors (Pantone)</h4>
+            <table>
+                <tr>
+                    <th>Characteristic</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Pre-mixed ink colors, not created by CMYK combination</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Exact color matching, consistent results, special effects (metallic, fluorescent)</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>More expensive, additional printing plate required</td>
+                </tr>
+                <tr>
+                    <td><strong>When to Use</strong></td>
+                    <td>Brand colors, logos, high-end printing</td>
+                </tr>
+            </table>
+
+            <h3>4.2 COLOR HARMONIES</h3>
+            <p>Color harmonies are combinations of colors that are pleasing to the eye, based on their positions on the
+                color wheel.</p>
+
+            <h4>Monochromatic Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Uses variations of a single hue (different tints, shades, tones)</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Wheel Relationship</strong></td>
+                    <td>One hue only</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Harmonious, cohesive, elegant, subtle</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Always works, creates unity, professional appearance</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>Can be boring without texture or contrast</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Corporate materials, minimalist designs, elegant invitations</td>
+                </tr>
+            </table>
+            <p><strong>Creating Monochromatic Schemes:</strong><br>- Tint: Add white to lighten<br>- Shade: Add black to
+                darken<br>- Tone: Add gray to mute</p>
+
+            <h4>Analogous Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Uses colors adjacent to each other on the color wheel</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Wheel Relationship</strong></td>
+                    <td>2-4 colors next to each other</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Harmonious, serene, comfortable, natural</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Rich color schemes, pleasing to eye, easy to create</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>Low contrast, can lack energy</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Nature-themed designs, backgrounds, calming materials</td>
+                </tr>
+            </table>
+            <p><strong>Example Schemes:</strong><br>- Blue, Blue-Green, Green<br>- Red, Red-Orange, Orange<br>- Yellow,
+                Yellow-Green, Green</p>
+
+            <h4>Complementary Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Uses colors opposite each other on the color wheel</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Wheel Relationship</strong></td>
+                    <td>Directly opposite</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>High contrast, vibrant, energetic, exciting</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Maximum visibility, attention-grabbing, dynamic</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>Can be jarring if overused, difficult to balance</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Calls-to-action, logos, attention-grabbing elements</td>
+                </tr>
+            </table>
+            <p><strong>Common Complementary Pairs:</strong><br>- Red and Green<br>- Blue and Orange<br>- Yellow and
+                Purple</p>
+
+            <h4>Split Complementary Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>One color plus the two colors adjacent to its complement</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>High contrast like complementary but less tension, more versatile</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Versatile designs requiring contrast without harshness</td>
+                </tr>
+            </table>
+            <p><strong>Example:</strong><br>- Base: Blue<br>- Complement's neighbors: Yellow-Orange and Red-Orange</p>
+
+            <h4>Triadic Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Three colors equally spaced on the color wheel</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Vibrant, balanced, rich, even contrast</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Strong visual interest, balanced energy</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>Can be overwhelming if all colors are saturated</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Bold designs, children's materials, vibrant branding</td>
+                </tr>
+            </table>
+            <p><strong>Primary Triad:</strong><br>- Red, Blue, Yellow</p>
+            <p><strong>Secondary Triad:</strong><br>- Green, Orange, Purple</p>
+
+            <h4>Tetradic (Double Complementary) Harmony</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Two complementary color pairs</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Rich, complex, full of variety</td>
+                </tr>
+                <tr>
+                    <td><strong>Advantages</strong></td>
+                    <td>Most color variety, rich schemes</td>
+                </tr>
+                <tr>
+                    <td><strong>Disadvantages</strong></td>
+                    <td>Difficult to balance, can be chaotic</td>
+                </tr>
+                <tr>
+                    <td><strong>Best Uses</strong></td>
+                    <td>Complex designs, illustrations, advanced projects</td>
+                </tr>
+            </table>
+
+            <h4>The 60-30-10 Rule</h4>
+            <p>A practical rule for applying color harmonies:</p>
+            <table>
+                <tr>
+                    <th>Percentage</th>
+                    <th>Usage</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>60%</strong></td>
+                    <td>Dominant color - main background</td>
+                    <td>Walls, large areas</td>
+                </tr>
+                <tr>
+                    <td><strong>30%</strong></td>
+                    <td>Secondary color - supporting elements</td>
+                    <td>Furniture, key sections</td>
+                </tr>
+                <tr>
+                    <td><strong>10%</strong></td>
+                    <td>Accent color - highlights</td>
+                    <td>Accessories, call-to-action</td>
+                </tr>
+            </table>
+
+            <h4>Color Temperature in Harmonies</h4>
+            <p><strong>Warm Harmonies:</strong><br>- Reds, oranges, yellows<br>- Advance, energize, excite<br>- Use for
+                foreground elements</p>
+            <p><strong>Cool Harmonies:</strong><br>- Blues, greens, purples<br>- Recede, calm, professional<br>- Use for
+                backgrounds</p>
+
+            <h4>Practical Application Steps</h4>
+            <ol>
+                <li><strong>Start with Purpose:</strong> What feeling should the design convey?</li>
+                <li><strong>Choose Base Color:</strong> Usually brand color or main message color</li>
+                <li><strong>Select Harmony Type:</strong> Based on desired effect</li>
+                <li><strong>Apply 60-30-10 Rule:</strong> Ensure balanced application</li>
+                <li><strong>Test in Context:</strong> View in different sizes and on different media</li>
+            </ol>
+        </section>
+
+        <!-- CHAPTER 5: TYPOGRAPHY BASICS -->
+        <section id="ch5">
+            <h2>🔤 CHAPTER 5: TYPOGRAPHY BASICS</h2>
+            <p>Typography is the art and technique of arranging type to make written language legible, readable, and
+                appealing when displayed.</p>
+
+            <h3>5.1 SERIF vs. SANS-SERIF FONTS</h3>
+            <h4>Understanding Type Classifications</h4>
+            <p><strong>Serif Fonts</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Fonts with small lines or strokes attached to the ends of larger strokes</td>
+                </tr>
+                <tr>
+                    <td><strong>Origin</strong></td>
+                    <td>Derived from Roman stone carving; serifs helped finish strokes cleanly</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Traditional, formal, authoritative, trustworthy, readable in long text</td>
+                </tr>
+                <tr>
+                    <td><strong>Readability</strong></td>
+                    <td>Excellent for long passages of text (books, newspapers)</td>
+                </tr>
+                <tr>
+                    <td><strong>Common Examples</strong></td>
+                    <td>Times New Roman, Garamond, Georgia, Baskerville, Caslon</td>
+                </tr>
+            </table>
+            <p><strong>Sans-Serif Fonts</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Fonts without serifs ("sans" = French for "without")</td>
+                </tr>
+                <tr>
+                    <td><strong>Origin</strong></td>
+                    <td>Developed in the 19th century, popularized in the 20th century</td>
+                </tr>
+                <tr>
+                    <td><strong>Characteristics</strong></td>
+                    <td>Modern, clean, informal, approachable, simple</td>
+                </tr>
+                <tr>
+                    <td><strong>Readability</strong></td>
+                    <td>Excellent for headlines, screens, and short text</td>
+                </tr>
+                <tr>
+                    <td><strong>Common Examples</strong></td>
+                    <td>Arial, Helvetica, Verdana, Calibri, Futura, Open Sans</td>
+                </tr>
+            </table>
+
+            <h4>Comparison Guide</h4>
+            <table>
+                <tr>
+                    <th>Use Case</th>
+                    <th>Serif Recommendation</th>
+                    <th>Sans-Serif Recommendation</th>
+                </tr>
+                <tr>
+                    <td><strong>Long body text (print)</strong></td>
+                    <td>✓ Excellent</td>
+                    <td>Acceptable</td>
+                </tr>
+                <tr>
+                    <td><strong>Long body text (screen)</strong></td>
+                    <td>Acceptable</td>
+                    <td>✓ Better (lower resolution)</td>
+                </tr>
+                <tr>
+                    <td><strong>Headlines</strong></td>
+                    <td>Good</td>
+                    <td>✓ Excellent</td>
+                </tr>
+                <tr>
+                    <td><strong>Formal documents</strong></td>
+                    <td>✓ Excellent</td>
+                    <td>Acceptable</td>
+                </tr>
+                <tr>
+                    <td><strong>Modern designs</strong></td>
+                    <td>Acceptable</td>
+                    <td>✓ Excellent</td>
+                </tr>
+                <tr>
+                    <td><strong>Children's materials</strong></td>
+                    <td>Avoid</td>
+                    <td>✓ Best (simpler forms)</td>
+                </tr>
+                <tr>
+                    <td><strong>Low resolution</strong></td>
+                    <td>Avoid</td>
+                    <td>✓ Best</td>
+                </tr>
+                <tr>
+                    <td><strong>High resolution</strong></td>
+                    <td>✓ Excellent</td>
+                    <td>✓ Excellent</td>
+                </tr>
+            </table>
+
+            <h4>Other Type Classifications</h4>
+            <p><strong>Script Fonts:</strong><br>- Mimic handwriting or calligraphy<br>- Elegant, personal, formal<br>-
+                Use sparingly for invitations, logos<br>- Difficult to read in long passages</p>
+            <p><strong>Display/Decorative Fonts:</strong><br>- Highly stylized, unique designs<br>- Strong personality,
+                attention-grabbing<br>- Use for headlines only, never body text<br>- One per design maximum</p>
+            <p><strong>Monospace Fonts:</strong><br>- Each character occupies same width<br>- Technical, coding,
+                typewriter feel<br>- Use for code, technical documents, retro designs</p>
+
+            <h3>5.2 FONT PAIRING</h3>
+            <h4>Principles of Font Pairing</h4>
+            <p><strong>Contrast is Key:</strong> Successful font pairings usually combine different but complementary
+                typefaces. Similar fonts often clash.</p>
+            <p><strong>The Golden Rule:</strong> Pair a serif with a sans-serif for best results.</p>
+
+            <h4>Successful Pairing Strategies</h4>
+            <table>
+                <tr>
+                    <th>Strategy</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>1. Serif + Sans-Serif</strong></td>
+                    <td>Classic, reliable, creates clear hierarchy</td>
+                    <td>Garamond (headline) + Helvetica (body)</td>
+                </tr>
+                <tr>
+                    <td><strong>2. Same Family</strong></td>
+                    <td>Different weights/styles of same typeface</td>
+                    <td>Light, regular, bold of Open Sans</td>
+                </tr>
+                <tr>
+                    <td><strong>3. Superfamily</strong></td>
+                    <td>Type families designed with both serif and sans-serif versions</td>
+                    <td>Scala & Scala Sans</td>
+                </tr>
+                <tr>
+                    <td><strong>4. Similar Structure</strong></td>
+                    <td>Fonts with similar proportions but different personalities</td>
+                    <td>Both have large x-height</td>
+                </tr>
+                <tr>
+                    <td><strong>5. Historical Connection</strong></td>
+                    <td>Fonts from same time period</td>
+                    <td>Baskerville (18th) + Didot (18th)</td>
+                </tr>
+            </table>
+
+            <h4>Font Mood Matching</h4>
+            <p>Ensure font personalities work together:</p>
+            <table>
+                <tr>
+                    <th>Mood</th>
+                    <th>Serif Options</th>
+                    <th>Sans-Serif Options</th>
+                </tr>
+                <tr>
+                    <td><strong>Professional/Formal</strong></td>
+                    <td>Garamond, Times, Caslon</td>
+                    <td>Frutiger, Myriad</td>
+                </tr>
+                <tr>
+                    <td><strong>Friendly/Approachable</strong></td>
+                    <td>Georgia, Chaparral</td>
+                    <td>Arial, Calibri, Verdana</td>
+                </tr>
+                <tr>
+                    <td><strong>Modern/Clean</strong></td>
+                    <td>Bodoni, Didot</td>
+                    <td>Helvetica, Futura</td>
+                </tr>
+                <tr>
+                    <td><strong>Creative/Artistic</strong></td>
+                    <td>Caslon, Adobe Jenson</td>
+                    <td>Gotham, Proxima Nova</td>
+                </tr>
+                <tr>
+                    <td><strong>Traditional/Trustworthy</strong></td>
+                    <td>Garamond, Minion</td>
+                    <td>Univers, Frutiger</td>
+                </tr>
+            </table>
+
+            <h4>Font Pairing Checklist</h4>
+            <ul>
+                <li>☐ Do fonts contrast sufficiently?</li>
+                <li>☐ Are font personalities compatible?</li>
+                <li>☐ Is there a clear hierarchy?</li>
+                <li>☐ Do x-heights work well together?</li>
+                <li>☐ Are weights appropriate for usage?</li>
+                <li>☐ Have you limited to 2-3 fonts maximum?</li>
+            </ul>
+
+            <h4>Common Pairing Examples</h4>
+            <table>
+                <tr>
+                    <th>Headline Font</th>
+                    <th>Body Font</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>Garamond (Serif)</strong></td>
+                    <td><strong>Helvetica (Sans)</strong></td>
+                    <td>Corporate reports</td>
+                </tr>
+                <tr>
+                    <td><strong>Futura (Sans)</strong></td>
+                    <td><strong>Garamond (Serif)</strong></td>
+                    <td>Modern marketing</td>
+                </tr>
+                <tr>
+                    <td><strong>Bodoni (Serif)</strong></td>
+                    <td><strong>Arial (Sans)</strong></td>
+                    <td>Fashion, luxury</td>
+                </tr>
+                <tr>
+                    <td><strong>Georgia (Serif)</strong></td>
+                    <td><strong>Verdana (Sans)</strong></td>
+                    <td>Web content</td>
+                </tr>
+                <tr>
+                    <td><strong>Trajan (Serif)</strong></td>
+                    <td><strong>Garamond (Serif)</strong></td>
+                    <td>Formal invitations</td>
+                </tr>
+                <tr>
+                    <td><strong>Avenir (Sans)</strong></td>
+                    <td><strong>Minion (Serif)</strong></td>
+                    <td>Academic papers</td>
+                </tr>
+            </table>
+
+            <h4>Font Pairing Mistakes</h4>
+            <ol>
+                <li><strong>Too Similar:</strong> Two serifs that compete</li>
+                <li><strong>Too Different:</strong> Display font + highly decorative script</li>
+                <li><strong>Too Many Fonts:</strong> More than three creates chaos</li>
+                <li><strong>Wrong Context:</strong> Comic Sans in legal document</li>
+                <li><strong>Poor Contrast:</strong> Both medium weight, similar size</li>
+            </ol>
+
+            <h3>5.3 TYPOGRAPHY TERMINOLOGY</h3>
+            <h4>Essential Terms</h4>
+            <p><strong>Leading (pronounced "ledding")</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Vertical space between lines of text</td>
+                </tr>
+                <tr>
+                    <td><strong>Measurement</strong></td>
+                    <td>Usually measured in points (pt)</td>
+                </tr>
+                <tr>
+                    <td><strong>Rule of Thumb</strong></td>
+                    <td>120-145% of font size (e.g., 10pt type, 12-14.5pt leading)</td>
+                </tr>
+                <tr>
+                    <td><strong>Too Tight</strong></td>
+                    <td>Lines touch, difficult to read, crowded</td>
+                </tr>
+                <tr>
+                    <td><strong>Too Loose</strong></td>
+                    <td>Lines disconnect, reading flow broken</td>
+                </tr>
+            </table>
+            <p><strong>Optimal Leading by Use:</strong></p>
+            <table>
+                <tr>
+                    <th>Text Type</th>
+                    <th>Leading Recommendation</th>
+                </tr>
+                <tr>
+                    <td>Body text</td>
+                    <td>120-145% of type size</td>
+                </tr>
+                <tr>
+                    <td>Headlines</td>
+                    <td>100-120% of type size (tighter)</td>
+                </tr>
+                <tr>
+                    <td>Captions</td>
+                    <td>130-150% of type size (looser)</td>
+                </tr>
+                <tr>
+                    <td>All caps</td>
+                    <td>100-110% of type size</td>
+                </tr>
+            </table>
+
+            <p><strong>Kerning</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Space between individual character pairs</td>
+                </tr>
+                <tr>
+                    <td><strong>Purpose</strong></td>
+                    <td>Creates visually even spacing despite character shapes</td>
+                </tr>
+                <tr>
+                    <td><strong>Problem Pairs</strong></td>
+                    <td>AV, WA, To, Tr, Ya (need adjustment)</td>
+                </tr>
+                <tr>
+                    <td><strong>Good Kerning</strong></td>
+                    <td>Invisible; space appears even to the eye</td>
+                </tr>
+                <tr>
+                    <td><strong>Tools</strong></td>
+                    <td>Manual adjustment in professional software</td>
+                </tr>
+            </table>
+            <p><strong>Common Kerning Pairs to Check:</strong><br>- A V (too loose usually)<br>- L Y (too loose)<br>- T
+                o (can appear too tight)<br>- F o (can appear too tight)<br>- r n (can look like "m")</p>
+
+            <p><strong>Tracking (Letter-spacing)</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Uniform space across a range of characters</td>
+                </tr>
+                <tr>
+                    <td><strong>Difference from Kerning</strong></td>
+                    <td>Tracking affects all letters equally; kerning adjusts pairs</td>
+                </tr>
+                <tr>
+                    <td><strong>Normal Text</strong></td>
+                    <td>0 tracking (default)</td>
+                </tr>
+                <tr>
+                    <td><strong>All Caps</strong></td>
+                    <td>Often needs + tracking (5-50)</td>
+                </tr>
+                <tr>
+                    <td><strong>Headlines</strong></td>
+                    <td>May need - tracking (tighter)</td>
+                </tr>
+                <tr>
+                    <td><strong>Small Text</strong></td>
+                    <td>May need + tracking (looser)</td>
+                </tr>
+            </table>
+            <p><strong>Tracking Guidelines:</strong></p>
+            <table>
+                <tr>
+                    <th>Text Situation</th>
+                    <th>Tracking Adjustment</th>
+                </tr>
+                <tr>
+                    <td>Body text (upper/lowercase)</td>
+                    <td>0 (default)</td>
+                </tr>
+                <tr>
+                    <td>Body text (all caps)</td>
+                    <td>+10 to +50</td>
+                </tr>
+                <tr>
+                    <td>Headlines (upper/lowercase)</td>
+                    <td>-10 to -20</td>
+                </tr>
+                <tr>
+                    <td>Headlines (all caps)</td>
+                    <td>0 to +20</td>
+                </tr>
+                <tr>
+                    <td>Very small text (<10pt)< /td>
+                    <td>+5 to +15</td>
+                </tr>
+            </table>
+
+            <h4>Additional Typography Terms</h4>
+            <p><strong>x-height:</strong> Height of lowercase letters (excluding ascenders/descenders)<br>- Large
+                x-height = better readability at small sizes<br>- Small x-height = more elegant, needs larger size</p>
+            <p><strong>Baseline:</strong> Invisible line where letters sit</p>
+            <p><strong>Ascender:</strong> Part of letter extending above x-height (b, d, f, h)</p>
+            <p><strong>Descender:</strong> Part of letter extending below baseline (g, j, p, q)</p>
+            <p><strong>Counter:</strong> Enclosed space in letters (o, p, d)</p>
+            <p><strong>Ligature:</strong> Combined characters (ﬁ, ﬀ, ﬂ)</p>
+
+            <h3>5.4 PRACTICAL TYPOGRAPHY RULES</h3>
+            <h4>For Professional Documents</h4>
+            <ol>
+                <li><strong>Limit Font Families:</strong> Maximum 2-3 per document</li>
+                <li><strong>Establish Hierarchy:</strong><br> - Heading 1: Largest, boldest<br> - Heading 2: Smaller
+                    than H1<br> - Body text: 10-12pt for print, 14-16px for web<br> - Captions: Smaller than body text
+                </li>
+                <li><strong>Line Length (Measure):</strong><br> - Optimal: 45-75 characters per line<br> - Too short:
+                    Choppy reading<br> - Too long: Difficult to track next line</li>
+                <li><strong>Paragraph Spacing:</strong><br> - Use space after paragraphs, not indents for business<br> -
+                    Space after = 50-100% of line height</li>
+                <li><strong>Alignment:</strong><br> - Left align body text for easiest reading<br> - Center headlines
+                    (sparingly)<br> - Avoid justified text with poor hyphenation<br> - Avoid right-aligned body text
+                </li>
+                <li><strong>Widows and Orphans:</strong><br> - Widow: Single line at top of page<br> - Orphan: Single
+                    word on last line<br> - Avoid both through editing or manual adjustment</li>
+                <li><strong>Emphasis:</strong><br> - Use <strong>bold</strong> for strong emphasis<br> - Use
+                    <em>italic</em> for gentle emphasis<br> - Avoid underlining (reserved for links)<br> - Avoid ALL
+                    CAPS for long passages</li>
+            </ol>
+
+            <h4>Typography for Accessibility</h4>
+            <ul>
+                <li>Minimum 12pt for body text in print</li>
+                <li>Minimum 16px for body text on web</li>
+                <li>Strong contrast (4.5:1 minimum)</li>
+                <li>Avoid light text on light backgrounds</li>
+                <li>Avoid small text on textured backgrounds</li>
+            </ul>
+        </section>
+
+        <!-- CHAPTER 6: IMAGE FORMATS AND RESOLUTION -->
+        <section id="ch6">
+            <h2>🖼️ CHAPTER 6: IMAGE FORMATS AND RESOLUTION</h2>
+            <h3>6.1 RASTER vs. VECTOR GRAPHICS</h3>
+            <p>Understanding the fundamental difference between raster and vector graphics is essential for professional
+                design work.</p>
+
+            <h4>RASTER GRAPHICS</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Images composed of a grid of individual pixels</td>
+                </tr>
+                <tr>
+                    <td><strong>Also Known As</strong></td>
+                    <td>Bitmap images</td>
+                </tr>
+                <tr>
+                    <td><strong>Composition</strong></td>
+                    <td>Each pixel contains color information</td>
+                </tr>
+                <tr>
+                    <td><strong>Scalability</strong></td>
+                    <td>Limited - enlarging causes pixelation and quality loss</td>
+                </tr>
+                <tr>
+                    <td><strong>File Size</strong></td>
+                    <td>Increases with resolution and dimensions</td>
+                </tr>
+                <tr>
+                    <td><strong>Editing</strong></td>
+                    <td>Pixel-level editing, photo manipulation</td>
+                </tr>
+            </table>
+            <p><strong>Best Uses for Raster:</strong><br>- Photographs<br>- Complex images with gradients<br>- Web
+                images<br>- Digital art<br>- Scanned documents</p>
+            <p><strong>Limitations:</strong><br>- Not infinitely scalable<br>- Large file sizes at high resolution<br>-
+                Loss of quality with transformations</p>
+
+            <h4>VECTOR GRAPHICS</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Images composed of mathematical paths and curves</td>
+                </tr>
+                <tr>
+                    <td><strong>Also Known As</strong></td>
+                    <td>Object-oriented graphics</td>
+                </tr>
+                <tr>
+                    <td><strong>Composition</strong></td>
+                    <td>Points, lines, curves, and shapes defined mathematically</td>
+                </tr>
+                <tr>
+                    <td><strong>Scalability</strong></td>
+                    <td>Infinite - can be scaled to any size without quality loss</td>
+                </tr>
+                <tr>
+                    <td><strong>File Size</strong></td>
+                    <td>Generally smaller, based on complexity not dimensions</td>
+                </tr>
+                <tr>
+                    <td><strong>Editing</strong></td>
+                    <td>Object-level editing, easy color and shape changes</td>
+                </tr>
+            </table>
+            <p><strong>Best Uses for Vector:</strong><br>- Logos and branding<br>- Illustrations<br>- Typography<br>-
+                Technical drawings<br>- Icons<br>- Any design needing scaling to multiple sizes</p>
+            <p><strong>Limitations:</strong><br>- Not suitable for photorealistic images<br>- Limited gradient and
+                texture capabilities<br>- Requires specialized software</p>
+
+            <h4>Comparison Table</h4>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Raster</th>
+                    <th>Vector</th>
+                </tr>
+                <tr>
+                    <td><strong>Composition</strong></td>
+                    <td>Pixels</td>
+                    <td>Mathematical paths</td>
+                </tr>
+                <tr>
+                    <td><strong>Scalability</strong></td>
+                    <td>Limited</td>
+                    <td>Infinite</td>
+                </tr>
+                <tr>
+                    <td><strong>File Size</strong></td>
+                    <td>Based on dimensions</td>
+                    <td>Based on complexity</td>
+                </tr>
+                <tr>
+                    <td><strong>Photorealism</strong></td>
+                    <td>Excellent</td>
+                    <td>Poor</td>
+                </tr>
+                <tr>
+                    <td><strong>Logo Suitability</strong></td>
+                    <td>Poor</td>
+                    <td>Excellent</td>
+                </tr>
+                <tr>
+                    <td><strong>Software</strong></td>
+                    <td>Photoshop, GIMP</td>
+                    <td>CorelDRAW, Illustrator</td>
+                </tr>
+                <tr>
+                    <td><strong>Common Formats</strong></td>
+                    <td>JPEG, PNG, TIFF, GIF</td>
+                    <td>AI, CDR, SVG, EPS</td>
+                </tr>
+            </table>
+
+            <h3>6.2 RASTER FILE FORMATS</h3>
+
+            <h4>JPEG (Joint Photographic Experts Group)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.jpg, .jpeg</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Support</strong></td>
+                    <td>Up to 16.7 million colors (24-bit)</td>
+                </tr>
+                <tr>
+                    <td><strong>Compression</strong></td>
+                    <td>Lossy compression</td>
+                </tr>
+                <tr>
+                    <td><strong>Transparency</strong></td>
+                    <td>Not supported</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Photographs, web images, email attachments</td>
+                </tr>
+                <tr>
+                    <td><strong>Not For</strong></td>
+                    <td>Logos, line art, images needing transparency</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Adjustable compression levels (smaller file = lower quality)<br>-
+                Excellent for continuous-tone images<br>- No transparency support<br>- Artifacts appear at high
+                compression<br>- Universal compatibility</p>
+            <p><strong>JPEG Compression Settings:</strong></p>
+            <table>
+                <tr>
+                    <th>Quality Level</th>
+                    <th>Compression</th>
+                    <th>File Size</th>
+                    <th>Best Use</th>
+                </tr>
+                <tr>
+                    <td>100%</td>
+                    <td>Minimal</td>
+                    <td>Largest</td>
+                    <td>Archival, printing</td>
+                </tr>
+                <tr>
+                    <td>80-90%</td>
+                    <td>Moderate</td>
+                    <td>Medium</td>
+                    <td>Web display, presentations</td>
+                </tr>
+                <tr>
+                    <td>60-70%</td>
+                    <td>High</td>
+                    <td>Small</td>
+                    <td>Email, web thumbnails</td>
+                </tr>
+                <tr>
+                    <td>
+                        <50%< /td>
+                    <td>Very High</td>
+                    <td>Tiny</td>
+                    <td>Preview only (avoid)</td>
+                </tr>
+            </table>
+
+            <h4>PNG (Portable Network Graphics)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.png</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Support</strong></td>
+                    <td>24-bit (Truecolor) or 8-bit (indexed)</td>
+                </tr>
+                <tr>
+                    <td><strong>Compression</strong></td>
+                    <td>Lossless compression</td>
+                </tr>
+                <tr>
+                    <td><strong>Transparency</strong></td>
+                    <td>Full alpha channel transparency supported</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Web graphics, logos, screenshots, images needing transparency</td>
+                </tr>
+                <tr>
+                    <td><strong>Not For</strong></td>
+                    <td>Print (usually), photographs (file too large)</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Maintains original quality<br>- Supports variable
+                transparency<br>- Larger files than JPEG for photos<br>- No compression artifacts<br>- Excellent for
+                text and line art</p>
+            <p><strong>PNG Types:</strong></p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Color Depth</th>
+                    <th>Transparency</th>
+                    <th>Best Use</th>
+                </tr>
+                <tr>
+                    <td>PNG-8</td>
+                    <td>256 colors</td>
+                    <td>1-bit (on/off)</td>
+                    <td>Simple graphics, icons</td>
+                </tr>
+                <tr>
+                    <td>PNG-24</td>
+                    <td>16.7 million</td>
+                    <td>Full alpha</td>
+                    <td>Complex images with transparency</td>
+                </tr>
+                <tr>
+                    <td>PNG-32</td>
+                    <td>16.7 million</td>
+                    <td>Full alpha + gamma</td>
+                    <td>Same as PNG-24 (Photoshop)</td>
+                </tr>
+            </table>
+
+            <h4>TIFF (Tagged Image File Format)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.tif, .tiff</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Support</strong></td>
+                    <td>Up to 48-bit color, multiple color modes</td>
+                </tr>
+                <tr>
+                    <td><strong>Compression</strong></td>
+                    <td>Lossless (LZW) or uncompressed</td>
+                </tr>
+                <tr>
+                    <td><strong>Transparency</strong></td>
+                    <td>Supported</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Professional printing, scanning, archival</td>
+                </tr>
+                <tr>
+                    <td><strong>Not For</strong></td>
+                    <td>Web, email, general sharing</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Industry standard for print publishing<br>- Preserves all image
+                data<br>- Supports layers (in some implementations)<br>- Very large file sizes<br>- Excellent for
+                scanning documents</p>
+            <p><strong>When to Use TIFF:</strong><br>- Sending to commercial printers<br>- Archiving original scans<br>-
+                Professional photography work<br>- Images requiring multiple edits (no generation loss)</p>
+
+            <h4>GIF (Graphics Interchange Format)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.gif</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Support</strong></td>
+                    <td>Maximum 256 colors (8-bit)</td>
+                </tr>
+                <tr>
+                    <td><strong>Compression</strong></td>
+                    <td>Lossless (LZW)</td>
+                </tr>
+                <tr>
+                    <td><strong>Transparency</strong></td>
+                    <td>1-bit transparency (on/off only)</td>
+                </tr>
+                <tr>
+                    <td><strong>Animation</strong></td>
+                    <td>Supported</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Simple animations, low-color graphics, memes</td>
+                </tr>
+                <tr>
+                    <td><strong>Not For</strong></td>
+                    <td>Photographs, high-color images, print</td>
+                </tr>
+            </table>
+
+            <h4>BMP (Bitmap)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.bmp</td>
+                </tr>
+                <tr>
+                    <td><strong>Color Support</strong></td>
+                    <td>Various (1-24 bit)</td>
+                </tr>
+                <tr>
+                    <td><strong>Compression</strong></td>
+                    <td>Usually uncompressed</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Windows compatibility only</td>
+                </tr>
+                <tr>
+                    <td><strong>Not For</strong></td>
+                    <td>Professional use, web, print</td>
+                </tr>
+            </table>
+            <p><strong>Avoid BMP for professional work - file sizes are unnecessarily large.</strong></p>
+
+            <h3>6.3 VECTOR FILE FORMATS</h3>
+
+            <h4>AI (Adobe Illustrator)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.ai</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>Adobe Systems</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Professional vector work, Adobe ecosystem</td>
+                </tr>
+                <tr>
+                    <td><strong>Compatibility</strong></td>
+                    <td>Best with Adobe software</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Native Adobe Illustrator format<br>- Preserves all editing
+                capabilities<br>- Can embed raster images<br>- Industry standard for vector in print</p>
+
+            <h4>CDR (CorelDRAW)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.cdr</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>Corel Corporation</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>CorelDRAW users, DTP work</td>
+                </tr>
+                <tr>
+                    <td><strong>Compatibility</strong></td>
+                    <td>Best with Corel software</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Native CorelDRAW format<br>- Preserves all editing
+                capabilities<br>- Widely used in DTP and sign-making<br>- Versions may not be backward compatible</p>
+
+            <h4>SVG (Scalable Vector Graphics)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.svg</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>W3C</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Web graphics, responsive design, icons</td>
+                </tr>
+                <tr>
+                    <td><strong>Compatibility</strong></td>
+                    <td>All modern web browsers</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- XML-based format<br>- Editable with text editors<br>- Searchable
+                and indexable<br>- Supports CSS styling and JavaScript<br>- Excellent for web and mobile<br>- Small file
+                sizes</p>
+
+            <h4>EPS (Encapsulated PostScript)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.eps</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>Adobe</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Legacy compatibility, transferring between programs</td>
+                </tr>
+                <tr>
+                    <td><strong>Compatibility</strong></td>
+                    <td>Universal in professional design</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Older but widely compatible format<br>- Contains preview image +
+                PostScript data<br>- Being replaced by PDF<br>- Good for logo libraries</p>
+
+            <h4>PDF (Portable Document Format)</h4>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>File Extension</strong></td>
+                    <td>.pdf</td>
+                </tr>
+                <tr>
+                    <td><strong>Developer</strong></td>
+                    <td>Adobe</td>
+                </tr>
+                <tr>
+                    <td><strong>Best For</strong></td>
+                    <td>Final output, sharing, printing</td>
+                </tr>
+                <tr>
+                    <td><strong>Compatibility</strong></td>
+                    <td>Universal</td>
+                </tr>
+            </table>
+            <p><strong>Characteristics:</strong><br>- Can contain both vector and raster<br>- Preserves fonts, layout,
+                and formatting<br>- Can be password protected<br>- Industry standard for final artwork<br>- Supports
+                interactive elements</p>
+            <p><strong>PDF Types:</strong></p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Best Use</th>
+                </tr>
+                <tr>
+                    <td>PDF/X-1a</td>
+                    <td>High-end print, press-ready</td>
+                </tr>
+                <tr>
+                    <td>PDF/X-4</td>
+                    <td>Print with transparency</td>
+                </tr>
+                <tr>
+                    <td>PDF/A</td>
+                    <td>Archival, long-term storage</td>
+                </tr>
+                <tr>
+                    <td>Standard PDF</td>
+                    <td>Screen viewing, sharing</td>
+                </tr>
+            </table>
+
+            <h3>6.4 RESOLUTION: DPI vs. PPI</h3>
+            <h4>Understanding Resolution</h4>
+            <p><strong>PPI (Pixels Per Inch)</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Number of pixels in one inch of a digital image</td>
+                </tr>
+                <tr>
+                    <td><strong>Applies To</strong></td>
+                    <td>Digital images, screens, cameras</td>
+                </tr>
+                <tr>
+                    <td><strong>Formula</strong></td>
+                    <td>PPI = Pixel dimensions / Physical dimensions</td>
+                </tr>
+                <tr>
+                    <td><strong>Example</strong></td>
+                    <td>3000px wide / 10 inches wide = 300 PPI</td>
+                </tr>
+            </table>
+            <p><strong>DPI (Dots Per Inch)</strong></p>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Definition</strong></td>
+                    <td>Number of ink dots printed per inch</td>
+                </tr>
+                <tr>
+                    <td><strong>Applies To</strong></td>
+                    <td>Printed output, printers</td>
+                </tr>
+                <tr>
+                    <td><strong>Determined By</strong></td>
+                    <td>Printer capability and settings</td>
+                </tr>
+                <tr>
+                    <td><strong>Example</strong></td>
+                    <td>600 DPI printer places 600 dots per inch</td>
+                </tr>
+            </table>
+
+            <h4>Resolution Requirements by Output</h4>
+            <table>
+                <tr>
+                    <th>Output Type</th>
+                    <th>Recommended Resolution</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>Web/Screen</strong></td>
+                    <td>72-96 PPI</td>
+                    <td>Screen resolution only</td>
+                </tr>
+                <tr>
+                    <td><strong>Office Printing</strong></td>
+                    <td>150-200 PPI</td>
+                    <td>Standard laser/inkjet</td>
+                </tr>
+                <tr>
+                    <td><strong>Professional Print</strong></td>
+                    <td>300 PPI</td>
+                    <td>Magazines, brochures</td>
+                </tr>
+                <tr>
+                    <td><strong>High-Quality Print</strong></td>
+                    <td>300-600 PPI</td>
+                    <td>Art books, photography</td>
+                </tr>
+                <tr>
+                    <td><strong>Large Format</strong></td>
+                    <td>100-150 PPI</td>
+                    <td>Billboards, banners*</td>
+                </tr>
+            </table>
+            <p>*Large format viewed from distance requires lower PPI</p>
+
+            <h4>Calculating Required Resolution</h4>
+            <p><strong>Formula:</strong> Required PPI × Output Size (inches) = Pixel Dimensions Needed</p>
+            <p><strong>Example - Full Page Brochure (8.5" × 11"):</strong><br>- 300 PPI × 8.5" = 2550 pixels wide<br>-
+                300 PPI × 11" = 3300 pixels tall<br>- Required image size: 2550 × 3300 pixels</p>
+
+            <h4>Common Mistakes and Solutions</h4>
+            <table>
+                <tr>
+                    <th>Mistake</th>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Using 72 PPI for print</td>
+                    <td>Pixelated output</td>
+                    <td>Start with high-res images</td>
+                </tr>
+                <tr>
+                    <td>Upsampling low-res images</td>
+                    <td>Blurry, soft results</td>
+                    <td>Reshoot or rescan</td>
+                </tr>
+                <tr>
+                    <td>Confusing DPI with PPI</td>
+                    <td>Wrong file preparation</td>
+                    <td>Understand the difference</td>
+                </tr>
+                <tr>
+                    <td>Ignoring viewing distance</td>
+                    <td>Wrong resolution choice</td>
+                    <td>Consider final viewing conditions</td>
+                </tr>
+            </table>
+
+            <h4>Resolution Checklist for Print Projects</h4>
+            <ul>
+                <li>☐ All images at least 300 PPI at final size</li>
+                <li>☐ Check resolution after any scaling</li>
+                <li>☐ Use high-res source images</li>
+                <li>☐ Save at full resolution until final</li>
+                <li>☐ Convert to appropriate format for output</li>
+            </ul>
+
+            <h3>6.5 IMAGE FORMAT SELECTION GUIDE</h3>
+            <h4>Decision Tree for Format Selection</h4>
+            <div class="sample-box">
+                Start Here
+                │
+                ├── Is it for print? → Yes → Is it a photo?
+                │ │ ├── Yes → TIFF or high-quality JPEG
+                │ │ └── No → AI, CDR, EPS, or PDF (vector)
+                │ │
+                │ └── No → Is it for web?
+                │ ├── Yes → Is it a photo?
+                │ │ ├── Yes → JPEG
+                │ │ └── No → PNG or SVG
+                │ │
+                │ └── No → Is it for universal sharing?
+                │ └── Yes → PDF
+                │
+                └── Is it a logo?
+                ├── Yes → SVG (web) or AI/EPS/CDR (print)
+                └── No → [Follow above]
+            </div>
+
+            <h4>Format Selection by Project Type</h4>
+            <table>
+                <tr>
+                    <th>Project Type</th>
+                    <th>Primary Format</th>
+                    <th>Backup Format</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>Business Card</strong></td>
+                    <td>CDR/AI (vector)</td>
+                    <td>PDF</td>
+                    <td>Keep editable original</td>
+                </tr>
+                <tr>
+                    <td><strong>Letterhead</strong></td>
+                    <td>CDR/AI (vector)</td>
+                    <td>PDF</td>
+                    <td>Include bleeds for print</td>
+                </tr>
+                <tr>
+                    <td><strong>Brochure</strong></td>
+                    <td>CDR/AI (vector)</td>
+                    <td>Press-ready PDF</td>
+                    <td>Use layers for organization</td>
+                </tr>
+                <tr>
+                    <td><strong>Flyer</strong></td>
+                    <td>CDR/AI (vector)</td>
+                    <td>High-res PDF</td>
+                    <td>Consider both print/web</td>
+                </tr>
+                <tr>
+                    <td><strong>Newsletter</strong></td>
+                    <td>CDR/AI + Word</td>
+                    <td>PDF</td>
+                    <td>Multi-software workflow</td>
+                </tr>
+                <tr>
+                    <td><strong>Logo</strong></td>
+                    <td>CDR/AI (vector)</td>
+                    <td>SVG, PNG</td>
+                    <td>Provide multiple formats</td>
+                </tr>
+                <tr>
+                    <td><strong>Photo</strong></td>
+                    <td>TIFF (master)</td>
+                    <td>JPEG (use)</td>
+                    <td>Archive masters separately</td>
+                </tr>
+                <tr>
+                    <td><strong>Web Graphic</strong></td>
+                    <td>PNG</td>
+                    <td>JPEG</td>
+                    <td>PNG for text/logo, JPEG for photos</td>
+                </tr>
+                <tr>
+                    <td><strong>Presentation</strong></td>
+                    <td>JPEG/PNG</td>
+                    <td>Linked files</td>
+                    <td>Keep file size manageable</td>
+                </tr>
+            </table>
+
+            <h4>File Naming Best Practices</h4>
+            <p>Include in filename:<br>- Project name<br>- Version number<br>- Date (YYYY-MM-DD)<br>- Status (draft,
+                final, press-ready)<br>- Color mode (CMYK, RGB)</p>
+            <p><strong>Example:</strong> <code>CompanyLogo_Final_v2_2024-01-15_CMYK.cdr</code></p>
+        </section>
+
+        <!-- CHAPTER 7: SUMMARY AND KEY TAKEAWAYS -->
+        <section id="ch7">
+            <h2>📌 CHAPTER 7: SUMMARY AND KEY TAKEAWAYS</h2>
+
+            <h4>Design Elements Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Line</strong></td>
+                    <td>Creates direction, divides space, guides eye</td>
+                </tr>
+                <tr>
+                    <td><strong>Shape</strong></td>
+                    <td>Defines areas, creates structure, conveys meaning</td>
+                </tr>
+                <tr>
+                    <td><strong>Color</strong></td>
+                    <td>Evokes emotion, organizes, attracts attention</td>
+                </tr>
+                <tr>
+                    <td><strong>Texture</strong></td>
+                    <td>Adds depth, creates interest, suggests feel</td>
+                </tr>
+            </table>
+
+            <h4>Design Principles Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Principle</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Balance</strong></td>
+                    <td>Distributes visual weight, creates stability</td>
+                </tr>
+                <tr>
+                    <td><strong>Contrast</strong></td>
+                    <td>Creates emphasis, improves readability, adds interest</td>
+                </tr>
+                <tr>
+                    <td><strong>Alignment</strong></td>
+                    <td>Creates order, connects elements, professional look</td>
+                </tr>
+                <tr>
+                    <td><strong>Repetition</strong></td>
+                    <td>Creates unity, reinforces brand, guides navigation</td>
+                </tr>
+                <tr>
+                    <td><strong>Hierarchy</strong></td>
+                    <td>Shows importance, guides reading order</td>
+                </tr>
+            </table>
+
+            <h4>Color Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Concept</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>RGB</strong></td>
+                    <td>Additive, screens, wider gamut</td>
+                </tr>
+                <tr>
+                    <td><strong>CMYK</strong></td>
+                    <td>Subtractive, print, narrower gamut</td>
+                </tr>
+                <tr>
+                    <td><strong>Harmonies</strong></td>
+                    <td>Monochromatic, analogous, complementary, triadic</td>
+                </tr>
+                <tr>
+                    <td><strong>60-30-10</strong></td>
+                    <td>Background (60%), Secondary (30%), Accent (10%)</td>
+                </tr>
+            </table>
+
+            <h4>Typography Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Concept</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Serif</strong></td>
+                    <td>Traditional, formal, good for long text</td>
+                </tr>
+                <tr>
+                    <td><strong>Sans-Serif</strong></td>
+                    <td>Modern, clean, good for screens</td>
+                </tr>
+                <tr>
+                    <td><strong>Leading</strong></td>
+                    <td>Line spacing (120-145% of type size)</td>
+                </tr>
+                <tr>
+                    <td><strong>Kerning</strong></td>
+                    <td>Space between character pairs</td>
+                </tr>
+                <tr>
+                    <td><strong>Tracking</strong></td>
+                    <td>Uniform letter spacing</td>
+                </tr>
+                <tr>
+                    <td><strong>Pairing</strong></td>
+                    <td>Contrast is key; limit to 2-3 fonts</td>
+                </tr>
+            </table>
+
+            <h4>Image Formats Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Format</th>
+                    <th>Type</th>
+                    <th>Best Use</th>
+                </tr>
+                <tr>
+                    <td><strong>JPEG</strong></td>
+                    <td>Raster</td>
+                    <td>Photos, web</td>
+                </tr>
+                <tr>
+                    <td><strong>PNG</strong></td>
+                    <td>Raster</td>
+                    <td>Web graphics, transparency</td>
+                </tr>
+                <tr>
+                    <td><strong>TIFF</strong></td>
+                    <td>Raster</td>
+                    <td>Print, archival</td>
+                </tr>
+                <tr>
+                    <td><strong>AI/CDR</strong></td>
+                    <td>Vector</td>
+                    <td>Editable originals</td>
+                </tr>
+                <tr>
+                    <td><strong>SVG</strong></td>
+                    <td>Vector</td>
+                    <td>Web, responsive</td>
+                </tr>
+                <tr>
+                    <td><strong>PDF</strong></td>
+                    <td>Both</td>
+                    <td>Final output, sharing</td>
+                </tr>
+            </table>
+
+            <h4>Resolution Quick Reference</h4>
+            <table>
+                <tr>
+                    <th>Output</th>
+                    <th>Resolution</th>
+                </tr>
+                <tr>
+                    <td><strong>Web</strong></td>
+                    <td>72-96 PPI</td>
+                </tr>
+                <tr>
+                    <td><strong>Office Print</strong></td>
+                    <td>150-200 PPI</td>
+                </tr>
+                <tr>
+                    <td><strong>Professional Print</strong></td>
+                    <td>300 PPI</td>
+                </tr>
+                <tr>
+                    <td><strong>Large Format</strong></td>
+                    <td>100-150 PPI (viewing distance dependent)</td>
+                </tr>
+            </table>
+
+            <h4>Final Professional Tips</h4>
+            <ol>
+                <li><strong>Always work non-destructively</strong> - Keep originals, use layers</li>
+                <li><strong>Name your layers and files</strong> - Future you will thank you</li>
+                <li><strong>Proof before output</strong> - Check spelling, alignment, bleeds</li>
+                <li><strong>Know your output</strong> - Design for the final medium</li>
+                <li><strong>Build a style guide</strong> - Document your choices for consistency</li>
+                <li><strong>Keep learning</strong> - Design trends and software evolve</li>
+                <li><strong>Get feedback</strong> - Fresh eyes catch mistakes</li>
+                <li><strong>Backup your work</strong> - Cloud + local backup recommended</li>
+            </ol>
+
+            <p><em>This comprehensive guide to Graphic Design Fundamentals serves as a reference for desktop publishing
+                    professionals. Master these concepts to create professional, effective visual communications.</em>
+            </p>
+        </section>
+
+        <!-- extra shortcut card (inspired by excel version but content remains original) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick reference – do you know?</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ 4 design elements<br>☐ 5 design principles<br>☐ RGB vs CMYK difference</div>
+                <div class="def-item">☐ Serif vs Sans‑serif<br>☐ Leading vs kerning<br>☐ Vector vs raster</div>
+                <div class="def-item">☐ 60-30-10 color rule<br>☐ 300 PPI for print<br>☐ Pantone spot colors</div>
+            </div>
+            <p style="margin-top:1.2rem;"><em>Complete guide – every original line included.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies · Graphic Design Fundamentals · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

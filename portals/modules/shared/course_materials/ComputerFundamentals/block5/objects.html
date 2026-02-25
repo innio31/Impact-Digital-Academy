@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>CorelDRAW · creating & manipulating objects (complete DTP notes)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e3ddd2;
+            /* warm grey base */
+            color: #2d3a2a;
+            /* deep green‑grey for readability */
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #fefcf5;
+            /* soft paper */
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #3f4a3a;
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #2b4f2e, #5f7852);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subhead {
+            font-size: 1.4rem;
+            color: #4f684a;
+            border-left: 6px solid #8aa67d;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #e4f0de;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 6px #51724b33, 0 16px 24px -14px #3d613b;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #1f4d23;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #2b5e2b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(30, 70, 20, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cbe5c0;
+            border-color: #5d8c53;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #3d613b;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(30, 60, 20, 0.05);
+            border: 1px solid #dbe8d3;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #346b30;
+            border-bottom: 3px solid #92af87;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #3f6a39;
+            border-left: 8px solid #b8d4ab;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #4d7547;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #eaf4e4;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #80a775;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(30, 70, 20, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #4f7849;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #d5e6cd;
+            background: #f9fff8;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #55804b;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #ecf7e7;
+            border: 1px solid #c2dab8;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #ddecd5;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #9bba8d;
+        }
+
+        .sample-box {
+            background: #f6fcf2;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #bcd6ae;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #3a6433;
+            color: #f2ffe6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c2dab8, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #55754b;
+            border-top: 1px dashed #bad0ae;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <!-- MAIN TITLE exactly from prompt reference + CorelDRAW context -->
+        <h1>🖍️ CorelDRAW · CREATE & MANIPULATE OBJECTS</h1>
+        <div class="subhead">A comprehensive instructional note for DTP & vector graphics – every line included</div>
+
+        <!-- TABLE OF CONTENTS mirroring intro.html style but adapted to CorelDRAW sections -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 MODULE CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#intro-vector">📌 Introduction to Vector Objects</a>
+                <a href="#part1">✏️ Part 1: Drawing Basic Shapes, Lines & Curves</a>
+                <a href="#part2">⚙️ Part 2: Manipulating Objects</a>
+                <a href="#summary">📋 Summary & Key Takeaways</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION SECTION (exact copy from source) -->
+        <section id="intro-vector">
+            <h2>📘 Introduction to Vector Objects</h2>
+            <p>Before diving into the tools and techniques, it is essential to understand what you are working with.
+                CorelDRAW is a vector-based graphics program. Unlike raster images (like photographs) which are made up
+                of a grid of pixels, vector graphics are made up of <strong>objects</strong>. These objects are defined
+                by mathematical formulas that create lines, shapes, and curves . This fundamental difference means you
+                can scale, stretch, and manipulate vector objects infinitely without any loss of quality, making it the
+                perfect software for logo design, signage, and desktop publishing.</p>
+            <p>This module will cover two fundamental skill sets:<br>
+                1. <strong>Creating</strong> the basic building blocks of your design.<br>
+                2. <strong>Manipulating</strong> those blocks to achieve your desired composition.</p>
+        </section>
+
+        <!-- PART 1 – Drawing basic shapes, lines and curves (complete) -->
+        <section id="part1">
+            <h2>🔹 PART 1: DRAWING BASIC SHAPES, LINES & CURVES</h2>
+            <p>Every complex illustration, from a corporate logo to a detailed brochure, is built from a foundation of
+                simple shapes and lines. CorelDRAW provides a dedicated set of tools for creating these elements, found
+                in the <strong>Toolbox</strong> (usually on the left side of your screen).</p>
+
+            <h3>1.1 Basic Shapes</h3>
+            <p>These tools create "Corel objects," which are intelligent, editable shapes with specific properties .</p>
+            <ul>
+                <li><strong>Rectangle Tool (F6):</strong> Click and drag diagonally to draw a rectangle. To draw a
+                    perfect square, hold down the <strong>Ctrl key</strong> while you drag .</li>
+                <li><strong>Ellipse Tool (F7):</strong> Click and drag to draw an ellipse. To draw a perfect circle,
+                    hold down the <strong>Ctrl key</strong> while you drag .</li>
+                <li><strong>Polygon Tool:</strong> By default, this creates a five-sided polygon. You can change the
+                    number of sides in the property bar before you draw. This tool also gives you access to
+                    <strong>Star</strong> and <strong>Complex Star</strong> presets, allowing you to easily create
+                    perfect stars and starbursts .</li>
+                <li><strong>Common Shapes Tool:</strong> This flyout contains a variety of predefined shapes, including
+                    arrows, flowcharts, banners, and callouts, which are a great way to add professional, standard
+                    elements to your designs quickly .</li>
+            </ul>
+
+            <h3>1.2 Lines and Curves</h3>
+            <p>While shapes are great, the real power of illustration comes from the ability to draw custom lines and
+                curves. This is where the following tools come in.</p>
+            <ul>
+                <li><strong>Freehand Tool (F5):</strong> This tool works like a pencil. Click and drag to draw a
+                    freeform line. For a straight line, click once to set the start point, move your mouse, and click
+                    again to set the end point . To constrain the line to a perfect straight line (horizontal, vertical,
+                    or at a 15-degree increment), hold down <strong>Ctrl</strong> while clicking the end point .</li>
+                <li><strong>Bezier Tool:</strong> This is a more precise tool for creating smooth, complex curves.
+                    Instead of dragging, you create curves by clicking and dragging to set nodes and control handles.
+                    The handles determine the direction and angle of the curve, giving you immense control . It takes
+                    practice, but it is the industry standard for precision illustration.</li>
+                <li><strong>Pen Tool:</strong> Similar to the Bezier tool, it offers a preview of the next segment you
+                    are about to draw, which can make creating complex paths more intuitive.</li>
+                <li><strong>Polyline Tool:</strong> A hybrid tool that allows you to draw a series of connected straight
+                    and curved lines in a single, continuous action.</li>
+            </ul>
+
+            <h3>1.3 Converting Objects to Curves</h3>
+            <p>This is one of the most critical concepts in CorelDRAW. The basic shapes you draw (rectangles, circles,
+                polygons) have their own unique properties. For example, a rectangle will always have four corners that
+                you can round. However, if you want to create a unique shape that isn't a perfect rectangle—like a
+                trapezoid, an organic blob, or a custom letterform—you must first convert the object to curves.</p>
+            <ul>
+                <li><strong>How to Convert:</strong> Select the object (e.g., a square) and press <strong>Ctrl +
+                        Q</strong> on your keyboard, or right-click the object and choose <strong>Convert to
+                        Curves</strong> .</li>
+                <li><strong>What it Does:</strong> This action changes the object from a "Corel object" to a "regular
+                    object" or "curve object" . You can then add, delete, or manipulate individual nodes, change
+                    straight segments into curves, and have complete freedom to reshape the object into anything you can
+                    imagine .</li>
+            </ul>
+        </section>
+
+        <!-- PART 2 – Manipulating objects (complete original content) -->
+        <section id="part2">
+            <h2>🛠️ PART 2: MANIPULATING OBJECTS</h2>
+            <p>Once you have created your objects, you will need to position, resize, and transform them to build your
+                layout. This is done with the <strong>Pick Tool</strong> and a variety of transformation methods.</p>
+
+            <h3>2.1 Selecting Objects</h3>
+            <p>The <strong>Pick Tool</strong> is the most important tool for manipulation . It is the arrow at the top
+                of the toolbox.</p>
+            <ul>
+                <li><strong>Selecting a Single Object:</strong> Click on any object with the Pick tool. Handles (small
+                    black squares) will appear around the object, indicating it is selected .</li>
+                <li><strong>Selecting Multiple Objects:</strong> Hold down the <strong>Shift key</strong> and click on
+                    each object you want to select. Alternatively, you can "marquee select" by clicking and dragging a
+                    rectangular box around all the objects you wish to choose .</li>
+            </ul>
+
+            <h3>2.2 Moving Objects</h3>
+            <ul>
+                <li><strong>Interactive Method:</strong> Select an object with the Pick tool, then click and drag it to
+                    a new location.</li>
+                <li><strong>Nudging:</strong> Select an object and use the arrow keys on your keyboard to "nudge" it in
+                    small, precise increments.</li>
+            </ul>
+
+            <h3>2.3 Scaling and Sizing Objects</h3>
+            <ul>
+                <li><strong>Scaling (Proportional):</strong> Select an object with the Pick tool. Drag a <strong>corner
+                        handle</strong> (black square) inward to make it smaller or outward to make it larger. This will
+                    scale the object proportionally, keeping its height and width ratio the same.</li>
+                <li><strong>Sizing (Non-Proportional):</strong> Drag a <strong>side handle</strong> (top, bottom, left,
+                    or right) to stretch the object, changing only its height or width .</li>
+                <li><strong>Precise Sizing:</strong> With the object selected, you can enter exact dimensions in the
+                    <strong>Object Size</strong> boxes on the property bar .</li>
+            </ul>
+
+            <h3>2.4 Rotating and Skewing Objects</h3>
+            <p>When you click on a selected object a second time with the Pick tool, the handles change. The corner
+                handles become <strong>rotation handles</strong> (curved arrows), and the side handles become
+                <strong>skew handles</strong> (double-headed arrows) .</p>
+            <ul>
+                <li><strong>Rotating:</strong>
+                    <ol>
+                        <li>Select the object with the Pick tool, then click it again. The rotation/skew handles will
+                            appear.</li>
+                        <li>Drag a corner rotation handle in the direction you want to rotate the object.</li>
+                        <li>The object will rotate around a center point (marked by a circle with a dot in the middle of
+                            the object). You can drag this center point to a new location to change the axis of rotation
+                            .</li>
+                        <li>For constrained rotation (e.g., in 15-degree increments), hold down <strong>Ctrl</strong>
+                            while dragging .</li>
+                    </ol>
+                </li>
+                <li><strong>Skewing:</strong>
+                    <ol>
+                        <li>With the rotation/skew handles visible, drag a side skew handle (top, bottom, left, or
+                            right) to slant the object horizontally or vertically .</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>2.5 Duplicating Objects</h3>
+            <p>Duplication is a powerful feature for creating patterns and repeating elements efficiently. It is
+                different from copying and pasting because it does not use the clipboard, making it faster .</p>
+            <ul>
+                <li><strong>Duplicate (Ctrl + D):</strong> This creates a copy of the selected object and places it
+                    slightly offset from the original. The default offset distance can be changed in <strong>Layout &gt;
+                        Document Options</strong>. This is ideal for creating quick, evenly spaced copies .</li>
+                <li><strong>Step and Repeat (Ctrl + Shift + D):</strong> This opens a docker that allows you to create
+                    multiple copies at once and control the exact number of copies, the offset distance, and the
+                    direction (horizontal or vertical) .</li>
+                <li><strong>Quick Duplication Methods :</strong>
+                    <ul>
+                        <li><strong>Numeric Keypad (+):</strong> Press the <strong>plus sign (+)</strong> on your
+                            numeric keypad to place a copy directly on top of the original.</li>
+                        <li><strong>Right-Click Drag:</strong> While moving, scaling, or rotating an object with the
+                            left mouse button, <strong>right-click once</strong> before releasing the left mouse button.
+                            This will create a duplicate of the object at the new location or with the new
+                            transformation applied .</li>
+                        <li><strong>Spacebar:</strong> While transforming (moving, scaling, rotating) an object, press
+                            the <strong>Spacebar</strong> to anchor the transformation and create a duplicate, ready for
+                            the next transformation.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>2.6 Precision Transformation</h3>
+            <p>For projects that require exact measurements, interactive methods are not enough. CorelDRAW provides
+                powerful tools for precision work .</p>
+            <ul>
+                <li><strong>Property Bar:</strong> When an object is selected, the property bar displays its position
+                    (x, y coordinates), dimensions, scale factor, and rotation angle, all of which can be edited
+                    numerically.</li>
+                <li><strong>Transformation Docker (Window &gt; Dockers &gt; Transformations):</strong> This docker is a
+                    central hub for precision control. It has tabs for:
+                    <ul>
+                        <li><strong>Position:</strong> Move an object or create copies to exact coordinates.</li>
+                        <li><strong>Rotate:</strong> Rotate an object or create rotated copies around a specific center
+                            point .</li>
+                        <li><strong>Scale and Mirror:</strong> Resize by percentage and create mirror-image copies .
+                        </li>
+                        <li><strong>Size:</strong> Set exact dimensions.</li>
+                        <li><strong>Skew:</strong> Set an exact skew angle.</li>
+                    </ul>
+                    A key feature of this docker is the <strong>"Apply to Duplicate"</strong> button, which allows you
+                    to apply the transformation to a copy, leaving the original object untouched .
+                </li>
+            </ul>
+        </section>
+
+        <!-- SUMMARY AND KEY TAKEAWAYS (complete, verbatim) -->
+        <section id="summary">
+            <h2>📌 SUMMARY AND KEY TAKEAWAYS</h2>
+            <ul>
+                <li><strong>Creation:</strong> Master the <strong>Rectangle, Ellipse, and Polygon tools</strong> for
+                    basic shapes. Use the <strong>Freehand and Bezier tools</strong> for custom lines.</li>
+                <li><strong>Conversion:</strong> Remember <strong>Ctrl + Q (Convert to Curves)</strong> is the key to
+                    unlocking unlimited shape editing.</li>
+                <li><strong>Selection:</strong> The <strong>Pick tool</strong> is your primary tool for all
+                    manipulation. A single click selects, a second click enables rotation and skewing.</li>
+                <li><strong>Transformation:</strong> Use <strong>corner handles to scale proportionally</strong>, side
+                    handles to stretch, <strong>rotation handles to turn</strong>, and <strong>skew handles to
+                        slant</strong>.</li>
+                <li><strong>Duplication:</strong> Use <strong>Ctrl + D</strong> for quick duplicates, the
+                    <strong>numeric keypad (+)</strong> for in-place copies, and <strong>right-click drag</strong> for
+                    advanced control.</li>
+                <li><strong>Precision:</strong> For exact work, rely on the <strong>property bar</strong> and the
+                    <strong>Transformation docker</strong>, especially the "Apply to Duplicate" feature.</li>
+            </ul>
+            <p>By building a strong foundation in creating and manipulating objects, you will have the skills and
+                confidence to tackle any design project in CorelDRAW.</p>
+
+            <!-- extra interactive quick‑reference card (inspired by intro.html but tailored) -->
+            <div class="mini-card">
+                <h4 style="margin-top:0;">✅ Quick reference – do you know?</h4>
+                <div class="def-grid">
+                    <div class="def-item">☐ F6 rectangle · Ctrl = square<br>☐ F7 ellipse · Ctrl = circle<br>☐ F5
+                        freehand / Bezier</div>
+                    <div class="def-item">☐ Ctrl + Q convert to curves<br>☐ Pick tool: click / double‑click<br>☐ Rotate
+                        / skew on second click</div>
+                    <div class="def-item">☐ Ctrl+D duplicate<br>☐ numeric + in‑place copy<br>☐ right‑click drag
+                        duplicate</div>
+                </div>
+                <p style="margin-top:1.2rem;"><em>Complete guide – every original line from the CorelDRAW module
+                        included.</em></p>
+            </div>
+        </section>
+
+        <!-- final footer (similar style) -->
+        <footer>
+            🖥️ Desktop Publishing & Secretarial Studies · CorelDRAW object creation & manipulation · © 2026
+        </footer>
+
+    </div> <!-- wrapper -->
+</body>
+
+</html>

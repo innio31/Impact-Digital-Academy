@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Arranging Objects in CorelDRAW · grouping, ungrouping, locking, layering</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9e2d3;
+            color: #2f2a1f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #5f4d3a;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #3b4b5e, #165a4c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #1d6d5e;
+            border-left: 6px solid #2c9c84;
+            padding-left: 1.5rem;
+            margin-bottom: 2.2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #e2f0e9;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 8px rgba(0, 80, 70, 0.1), 0 18px 24px -14px #256454;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #0b4f43;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #0e5b4b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 60, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cde3db;
+            border-color: #1f8a73;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #0f5f4e;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(30, 70, 50, 0.05);
+            border: 1px solid #cfeadf;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0a5f4e;
+            border-bottom: 3px solid #289f87;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1a755f;
+            border-left: 8px solid #68d0b5;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #216b58;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #ebf6f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #36ab90;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 70, 50, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #147561;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c0e2d6;
+            background: #f9fffc;
+        }
+
+        .badge {
+            background: #1c7f69;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #e9f4ef;
+            border: 1px solid #b7dfd1;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #dcf0e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #37a48a;
+        }
+
+        .sample-box {
+            background: #f0fcf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #b4dfd1;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #145f4d;
+            color: #effdf5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b8dfd2, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #246b5a;
+            border-top: 1px dashed #b1d9cc;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>📦 ARRANGING OBJECTS IN CORELDRAW</h1>
+        <div class="subhead">Grouping · Ungrouping · Locking · Changing Object Order (Layering Basics)</div>
+
+        <!-- TABLE OF CONTENTS (exact replica) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#introduction">Introduction</a>
+                <a href="#grouping">1. Grouping Objects</a>
+                <a href="#ungrouping">2. Ungrouping Objects</a>
+                <a href="#locking">3. Locking Objects</a>
+                <a href="#order">4. Changing Object Order (Layering Basics)</a>
+                <a href="#summary">Summary of Key Techniques</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION -->
+        <section id="introduction">
+            <h2>📘 INTRODUCTION</h2>
+            <p>In CorelDRAW, efficient object management is key to creating professional and complex designs. Whether
+                you are designing a simple logo or a multi-page brochure, understanding how to arrange objects on your
+                page and in relation to one another is fundamental. This note provides a detailed overview of four
+                essential techniques for arranging objects: <strong>Grouping</strong>, <strong>Ungrouping</strong>,
+                <strong>Locking</strong>, and <strong>Changing Object Order (Layering Basics)</strong>. These tools give
+                you precise control over your design elements, helping you maintain organization, protect your work, and
+                establish the correct visual hierarchy.</p>
+        </section>
+
+        <!-- 1. GROUPING OBJECTS -->
+        <section id="grouping">
+            <h2>🔹 1. GROUPING OBJECTS</h2>
+            <p>Grouping is a command that allows you to combine multiple objects into a single unit. This is incredibly
+                useful for moving, resizing, or formatting several items at once without altering their individual
+                properties.</p>
+
+            <h3>Definition and Purpose:</h3>
+            <p>When you group two or more objects, they are treated as one cohesive unit. However, each object within
+                the group retains its own unique attributes, such as fill color, outline thickness, or effect. The
+                primary purposes of grouping are:</p>
+            <ul>
+                <li><strong>Convenience:</strong> It allows you to apply the same transformation (like moving, scaling,
+                    or rotating) to all objects in the group simultaneously.</li>
+                <li><strong>Protection:</strong> It prevents accidental changes to the relative position of objects.
+                    Once grouped, you cannot inadvertently move one object away from the others.</li>
+            </ul>
+
+            <h3>Nested Groups:</h3>
+            <p>CorelDRAW also allows you to create nested groups by grouping two or more existing groups together. This
+                is helpful for building complex objects from smaller, pre-assembled components.</p>
+
+            <h3>How to Group Objects:</h3>
+            <ol>
+                <li>Select the <strong>Pick Tool</strong> from the toolbox.</li>
+                <li>Hold down <code>Shift</code> and click on each object you want to include in the group, or drag a
+                    marquee box around them to select all.</li>
+                <li>With the objects selected, do one of the following:
+                    <ul>
+                        <li>Go to the top menu and click <strong>Object &gt; Group &gt; Group objects</strong>.</li>
+                        <li>Click the <strong>Group button</strong> (often represented by two or more squares joined
+                            together) on the property bar.</li>
+                        <li>Right-click on the selected objects and choose <strong>Group</strong> from the context menu.
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <p>After grouping, the status bar at the bottom of the application window will indicate that a group of
+                objects is selected.</p>
+
+            <h3>Important Consideration:</h3>
+            <p>If you select objects from different layers and group them, they will all reside on the same layer (the
+                active layer) and will be stacked on top of one another. This can disrupt your layer organization.</p>
+        </section>
+
+        <!-- 2. UNGROUPING OBJECTS -->
+        <section id="ungrouping">
+            <h2>🔹 2. UNGROUPING OBJECTS</h2>
+            <p>Ungrouping is the process of breaking a grouped set of objects back into its individual components.
+                CorelDRAW provides two distinct commands for this, offering flexibility depending on the complexity of
+                your group.</p>
+
+            <h3>Commands:</h3>
+            <ul>
+                <li><strong>Ungroup:</strong> This command breaks a group into its immediate components. If you have a
+                    simple group, it will break it into individual objects. If you have a nested group (a group
+                    containing other groups), the <code>Ungroup</code> command will break it into the smaller, nested
+                    groups, but will not break those nested groups themselves.</li>
+                <li><strong>Ungroup All:</strong> This command completely disassembles all levels of grouping in a
+                    selected object. It breaks one or more groups into individual objects, including all objects within
+                    any nested groups.</li>
+            </ul>
+
+            <h3>How to Ungroup Objects:</h3>
+            <ol>
+                <li>Select the grouped object with the <strong>Pick Tool</strong>.</li>
+                <li>Do one of the following:
+                    <ul>
+                        <li>Go to <strong>Object &gt; Group</strong> and select either <strong>Ungroup objects</strong>
+                            or <strong>Ungroup all objects</strong>.</li>
+                        <li>Click the corresponding <strong>Ungroup button</strong> or <strong>Ungroup All
+                                button</strong> on the property bar.</li>
+                        <li>Right-click on the group and choose <strong>Ungroup</strong> or <strong>Ungroup All</strong>
+                            from the context menu.</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 3. LOCKING OBJECTS -->
+        <section id="locking">
+            <h2>🔹 3. LOCKING OBJECTS</h2>
+            <p>Locking is a protective measure that prevents objects from being accidentally selected, moved, resized,
+                deleted, or otherwise edited. This is especially useful when you have finalized a background element or
+                a reference object that you don't want to disturb while working on other parts of your design.</p>
+
+            <h3>Purpose and Effect:</h3>
+            <p>Locking an object ensures it remains static on the page. You cannot click on it or modify it in any way
+                until it is unlocked. It is important to note that locking affects editability, not output. Locked
+                objects are still visible, printable, and exportable along with the rest of your document.</p>
+
+            <h3>How to Lock an Object:</h3>
+            <ol>
+                <li>Select the object(s) you wish to lock with the <strong>Pick Tool</strong>.</li>
+                <li>Go to the top menu and click <strong>Object &gt; Lock</strong>.</li>
+                <li>From the flyout menu, you can choose:
+                    <ul>
+                        <li><strong>Lock Object:</strong> To lock the selected object(s).</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Alternative Method:</h3>
+            <p>You can also right-click on the selected object and choose <strong>Lock Object</strong> from the pop-up
+                menu.</p>
+
+            <h3>How to Unlock Objects:</h3>
+            <p>There are three primary ways to unlock objects, depending on your preference and the situation:</p>
+            <ul>
+                <li><strong>Right-Click Menu:</strong> Click on a locked object (you will still be able to select it,
+                    indicated by padlock handles) and right-click. Choose <strong>Unlock Object</strong> from the menu.
+                    This works for unlocking a single object.</li>
+                <li><strong>Object Menu:</strong> Go to <strong>Object &gt; Lock</strong>. From the flyout menu, you
+                    have two choices:
+                    <ul>
+                        <li><strong>Unlock Object:</strong> To unlock a single, selected locked object.</li>
+                        <li><strong>Unlock All Objects:</strong> To unlock every locked object in the document at once.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Object Manager Docker:</strong> Open the <strong>Object Manager</strong> docker
+                    (<strong>Window &gt; Dockers &gt; Object Manager</strong>). In the docker, you will see a small
+                    padlock icon next to each locked object or layer. Clicking this icon will unlock the corresponding
+                    item.</li>
+            </ul>
+        </section>
+
+        <!-- 4. CHANGING OBJECT ORDER (LAYERING BASICS) -->
+        <section id="order">
+            <h2>🔹 4. CHANGING OBJECT ORDER (LAYERING BASICS)</h2>
+            <p>Every object you create in CorelDRAW is placed on an invisible plane, or "layer," and objects are stacked
+                vertically in the order they are created. This is known as the <strong>stacking order</strong>. The
+                stacking order determines which objects appear in front of or behind others. Changing this order is
+                crucial for creating the correct visual appearance in your design.</p>
+
+            <h3>The Concept of Stacking Order:</h3>
+            <p>Imagine your objects as a stack of papers on your desk. The first object you draw is at the bottom of the
+                stack, and the last object you draw is on top. You can rearrange this stack by moving objects forward
+                (toward the top) or backward (toward the bottom).</p>
+
+            <h3>Commands for Changing Order:</h3>
+            <p>To change an object's position in the stacking order, select the object, then go to <strong>Object &gt;
+                    Order</strong>. From the flyout menu, you can choose from several commands:</p>
+
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Effect</th>
+                </tr>
+                <tr>
+                    <td><strong>To Front of Page</strong></td>
+                    <td>Moves the selected object in front of all other objects on the page.</td>
+                </tr>
+                <tr>
+                    <td><strong>To Back of Page</strong></td>
+                    <td>Moves the selected object behind all other objects on the page.</td>
+                </tr>
+                <tr>
+                    <td><strong>To Front of Layer</strong></td>
+                    <td>Moves the selected object in front of all other objects on the active layer.</td>
+                </tr>
+                <tr>
+                    <td><strong>To Back of Layer</strong></td>
+                    <td>Moves the selected object behind all other objects on the active layer.</td>
+                </tr>
+                <tr>
+                    <td><strong>Forward One</strong></td>
+                    <td>Moves the selected object forward by one position in the stack.</td>
+                </tr>
+                <tr>
+                    <td><strong>Back One</strong></td>
+                    <td>Moves the selected object backward by one position in the stack.</td>
+                </tr>
+                <tr>
+                    <td><strong>In Front Of...</strong></td>
+                    <td>Lets you click on a specific object to place the selected object directly in front of it.</td>
+                </tr>
+                <tr>
+                    <td><strong>Behind...</strong></td>
+                    <td>Lets you click on a specific object to place the selected object directly behind it.</td>
+                </tr>
+                <tr>
+                    <td><strong>Reverse Order</strong></td>
+                    <td>Reverses the stacking order of multiple selected objects.</td>
+                </tr>
+            </table>
+
+            <h3>Interactions with Layers:</h3>
+            <p>The stacking order is managed within the context of layers. Each layer has its own independent stacking
+                order. If you move an object "To Front of Page" and the topmost layer is locked, the object will move to
+                the topmost <em>editable</em> layer, staying behind the objects on the locked layer.</p>
+        </section>
+
+        <!-- SUMMARY OF KEY TECHNIQUES -->
+        <section id="summary">
+            <h2>📌 SUMMARY OF KEY TECHNIQUES</h2>
+            <p>To effectively manage objects in CorelDRAW, remember the following core functions:</p>
+
+            <ul>
+                <li><strong>Grouping:</strong> Combines objects into a single unit for easy manipulation while
+                    preserving their individual properties. Use <code>Object &gt; Group</code>.</li>
+                <li><strong>Ungrouping:</strong> Separates grouped objects. Use <code>Ungroup</code> for one level or
+                    <code>Ungroup All</code> for all levels of nested groups. Use
+                    <code>Object &gt; Group &gt; Ungroup/Ungroup All</code>.</li>
+                <li><strong>Locking:</strong> Prevents objects from being edited. Locked objects are still visible and
+                    printable. Use <code>Object &gt; Lock &gt; Lock Object</code>. Unlock via the same menu or the
+                    <strong>Object Manager</strong> docker.</li>
+                <li><strong>Changing Order:</strong> Alters the front-to-back arrangement (stacking order) of objects.
+                    Use <code>Object &gt; Order</code> and select the appropriate command.</li>
+            </ul>
+
+            <p>Mastering these techniques will significantly improve your workflow, allowing you to create more complex,
+                organized, and visually precise designs in CorelDRAW.</p>
+        </section>
+
+        <!-- quick reference card (inspired by previous style, but all original content is above) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick reference – arranging objects</h4>
+            <div class="def-grid">
+                <div class="def-item"><strong>Group</strong><br>Shift + click objects → Object > Group (or right‑click)
+                </div>
+                <div class="def-item"><strong>Ungroup / Ungroup All</strong><br>Select group → Object > Group > Ungroup
+                    / Ungroup All</div>
+                <div class="def-item"><strong>Lock / Unlock</strong><br>Object > Lock > Lock Object ; unlock via
+                    right‑click or Object Manager</div>
+                <div class="def-item"><strong>Change order</strong><br>Object > Order → choose command (To Front, Back
+                    One, etc.)</div>
+            </div>
+            <p style="margin-top:1.2rem;"><em>Complete guide – every original line included, word for word, nothing
+                    omitted.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing · Arranging Objects in CorelDRAW · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>
