@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript fundamentals · complete study notes</title>
+    <style>
+        /* minimal reset + base — exactly same style spirit as block 4, but suited for long‑form notes */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5edf7;
+            color: #2a1f33;
+            line-height: 1.6;
+            padding: 1.5rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.2rem;
+            box-shadow: 0 30px 45px -25px #4a2c5f;
+            padding: 2.2rem 2rem;
+        }
+
+        /* typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #4a2c5f;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.3rem, 7vw, 3.5rem);
+            background: linear-gradient(145deg, #5e3c7e, #a45b85);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 10px solid #c881b4;
+            padding-left: 1.4rem;
+            margin-top: 0.2rem;
+        }
+
+        h2 {
+            font-size: clamp(1.9rem, 5vw, 2.6rem);
+            border-bottom: 3px solid #dbb0da;
+            padding-bottom: 0.4rem;
+        }
+
+        h3 {
+            font-size: clamp(1.6rem, 4vw, 2rem);
+            background: #f3e6fc;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+
+        h4 {
+            font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            color: #5b3d77;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #eed2f0, #fcf4ff, #eed2f0);
+            margin: 2.2rem 0;
+        }
+
+        p,
+        li,
+        .code-block,
+        table {
+            font-size: clamp(1rem, 2.2vw, 1.1rem);
+        }
+
+        /* tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(97, 46, 120, 0.15);
+        }
+
+        th {
+            background: #7c5295;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 0.8rem 0.8rem;
+            border-bottom: 1px solid #e1c6ec;
+            background: #fcf5ff;
+        }
+
+        /* code formatting */
+        code,
+        pre {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #f1e5fb;
+            border-radius: 10px;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.95em;
+            color: #2f1d44;
+            word-break: break-word;
+        }
+
+        pre {
+            padding: 1.2rem;
+            overflow-x: auto;
+            border: 1px solid #cda9d4;
+            box-shadow: inset 0 0 8px #f2e2fc;
+            margin: 1.2rem 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* blockquote style for notes */
+        .note-block {
+            background: #f6edff;
+            border-left: 8px solid #aa7ab0;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1.8rem;
+            margin: 1.8rem 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.8rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        /* special boxes */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            background: #faf2ff;
+            border: 1px solid #dbbde2;
+            border-radius: 2rem;
+            padding: 1.3rem;
+        }
+
+        .badge {
+            background: #7c5295;
+            color: white;
+            padding: 0.15rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
+        .convention-table {
+            overflow-x: auto;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #5b4575;
+            border-top: 2px dashed #dbbde2;
+            padding-top: 2rem;
+        }
+
+        hr.sep {
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>JAVASCRIPT FUNDAMENTALS: INTRODUCTION TO JAVASCRIPT &amp; VARIABLES</h1>
+        <p style="font-size:1.2rem; color:#62477a;"><strong>A COMPREHENSIVE GUIDE</strong></p>
+        <hr>
+
+        <!-- PART 1 -->
+        <h2>PART 1: INTRODUCTION TO JAVASCRIPT</h2>
+
+        <h3>1.1 What is JavaScript?</h3>
+        <p>JavaScript (often abbreviated as JS) is a high-level, interpreted programming language that is one of the
+            core technologies of the World Wide Web, alongside HTML and CSS. It was created by <strong>Brendan
+                Eich</strong> in 1995 while he was working at Netscape Communications Corporation. The language was
+            originally named <strong>Mocha</strong>, then briefly <strong>LiveScript</strong>, before finally being
+            renamed JavaScript.</p>
+
+        <h4>Key Characteristics of JavaScript:</h4>
+        <div class="convention-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Characteristic</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>High-level</strong></td>
+                        <td>Abstracted from low-level computer operations, making it easier to write</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Interpreted</strong></td>
+                        <td>Code is executed line-by-line without prior compilation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dynamic</strong></td>
+                        <td>Types are associated with values, not variables</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Weakly typed</strong></td>
+                        <td>Implicit type conversion occurs when operations involve mismatched types</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prototype-based</strong></td>
+                        <td>Uses prototypes for inheritance rather than classes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Single-threaded</strong></td>
+                        <td>Executes one command at a time</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Non-blocking</strong></td>
+                        <td>Uses asynchronous operations to handle multiple tasks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>1.2 The Role of JavaScript in Web Development</h3>
+        <p>JavaScript serves three primary roles in modern web development:</p>
+
+        <h4>A. Front-End Development (Client-Side)</h4>
+        <p>JavaScript runs in the user's browser and is responsible for:</p>
+        <h5>1. Dynamic Content Manipulation</h5>
+        <pre><code>// Example: Changing content dynamically
+document.getElementById("welcome-message").textContent = "Hello, Welcome to our site!";</code></pre>
+        <h5>2. User Interaction and Event Handling</h5>
+        <pre><code>// Example: Responding to user clicks
+button.addEventListener("click", function() {
+    alert("Button was clicked!");
+});</code></pre>
+        <h5>3. Form Validation</h5>
+        <pre><code>// Example: Validating form input before submission
+function validateEmail(email) {
+    if (!email.includes("@")) {
+        alert("Please enter a valid email address");
+        return false;
+    }
+    return true;
+}</code></pre>
+        <h5>4. Animations and Visual Effects</h5>
+        <pre><code>// Example: Simple fade-in effect
+element.style.transition = "opacity 1s";
+element.style.opacity = "1";</code></pre>
+        <h5>5. AJAX and API Communication</h5>
+        <pre><code>// Example: Fetching data from an API
+fetch("https://api.example.com/users")
+    .then(response => response.json())
+    .then(data => displayUsers(data));</code></pre>
+
+        <h4>B. Back-End Development (Server-Side)</h4>
+        <p>With the introduction of <strong>Node.js</strong> in 2009, JavaScript can now run on servers:</p>
+        <h5>1. Building Web Servers</h5>
+        <pre><code>// Example: Basic HTTP server with Node.js
+const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello World from Server!');
+});
+
+server.listen(3000);</code></pre>
+        <h5>2. Database Operations</h5>
+        <pre><code>// Example: Connecting to MongoDB
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/myapp');</code></pre>
+        <h5>3. File System Operations</h5>
+        <pre><code>// Example: Reading a file
+const fs = require('fs');
+fs.readFile('document.txt', 'utf8', (err, data) =&gt; {
+    console.log(data);
+});</code></pre>
+
+        <h4>C. Full-Stack Development</h4>
+        <p>JavaScript can be used for both front-end and back-end development, making it a <strong>full-stack
+                language</strong>. This concept is often referred to as <strong>"JavaScript Everywhere"</strong> or
+            <strong>"Isomorphic JavaScript."</strong></p>
+
+        <h3>1.3 The Evolution of JavaScript</h3>
+        <p>Understanding JavaScript's evolution helps contextualize why certain features exist:</p>
+        <h4>Timeline of Major JavaScript Versions</h4>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Official Name</th>
+                        <th>Year</th>
+                        <th>Key Features</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ES1</td>
+                        <td>ECMAScript 1</td>
+                        <td>1997</td>
+                        <td>First standardized version</td>
+                    </tr>
+                    <tr>
+                        <td>ES2</td>
+                        <td>ECMAScript 2</td>
+                        <td>1998</td>
+                        <td>Editorial changes</td>
+                    </tr>
+                    <tr>
+                        <td>ES3</td>
+                        <td>ECMAScript 3</td>
+                        <td>1999</td>
+                        <td>Regular expressions, try/catch, switch</td>
+                    </tr>
+                    <tr>
+                        <td>ES4</td>
+                        <td>Abandoned</td>
+                        <td>2008</td>
+                        <td>Too ambitious, never released</td>
+                    </tr>
+                    <tr>
+                        <td>ES5</td>
+                        <td>ECMAScript 5</td>
+                        <td>2009</td>
+                        <td>JSON support, strict mode, array methods</td>
+                    </tr>
+                    <tr>
+                        <td>ES6</td>
+                        <td>ECMAScript 2015</td>
+                        <td>2015</td>
+                        <td><strong>let/const</strong>, classes, arrow functions, promises, modules</td>
+                    </tr>
+                    <tr>
+                        <td>ES7</td>
+                        <td>ECMAScript 2016</td>
+                        <td>2016</td>
+                        <td>Exponentiation operator, Array.includes()</td>
+                    </tr>
+                    <tr>
+                        <td>ES8</td>
+                        <td>ECMAScript 2017</td>
+                        <td>2017</td>
+                        <td>Async/await, Object.values/entries</td>
+                    </tr>
+                    <tr>
+                        <td>ES9</td>
+                        <td>ECMAScript 2018</td>
+                        <td>2018</td>
+                        <td>Rest/spread for objects, Promise.finally</td>
+                    </tr>
+                    <tr>
+                        <td>ES10</td>
+                        <td>ECMAScript 2019</td>
+                        <td>2019</td>
+                        <td>Array.flat(), Object.fromEntries()</td>
+                    </tr>
+                    <tr>
+                        <td>ES11</td>
+                        <td>ECMAScript 2020</td>
+                        <td>2020</td>
+                        <td>Nullish coalescing, optional chaining</td>
+                    </tr>
+                    <tr>
+                        <td>ES12</td>
+                        <td>ECMAScript 2021</td>
+                        <td>2021</td>
+                        <td>String.replaceAll, logical assignment operators</td>
+                    </tr>
+                    <tr>
+                        <td>ES13</td>
+                        <td>ECMAScript 2022</td>
+                        <td>2022</td>
+                        <td>Class fields, top-level await</td>
+                    </tr>
+                    <tr>
+                        <td>ES14</td>
+                        <td>ECMAScript 2023</td>
+                        <td>2023</td>
+                        <td>Array find from last, Hashbang grammar</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>The Modern JavaScript Landscape</strong> Today, JavaScript is:<br>- <strong>The most popular
+                programming language</strong> according to Stack Overflow surveys<br>- <strong>Used by 98% of all
+                websites</strong> for client-side programming<br>- <strong>The foundation</strong> of countless
+            frameworks and libraries:<br> - <strong>Front-end frameworks</strong>: React, Angular, Vue, Svelte<br> -
+            <strong>Back-end frameworks</strong>: Express.js, NestJS, Koa<br> - <strong>Testing frameworks</strong>:
+            Jest, Mocha, Jasmine<br> - <strong>Mobile development</strong>: React Native, Ionic<br> - <strong>Desktop
+                applications</strong>: Electron</p>
+
+        <hr>
+
+        <!-- PART 2 -->
+        <h2>PART 2: ADDING JAVASCRIPT TO A WEB PAGE</h2>
+        <h3>2.1 The &lt;script&gt; Tag</h3>
+        <p>The &lt;script&gt; tag is the primary method for including JavaScript in HTML documents. It can be used in
+            three different ways:</p>
+
+        <h4>Method 1: Inline JavaScript</h4>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Inline JavaScript Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Web Page&lt;/h1&gt;
+    
+    &lt;script&gt;
+        // This is inline JavaScript
+        console.log("Hello from inline JavaScript!");
+        alert("Welcome to my website!");
+        
+        let userName = "John";
+        document.write("&lt;p&gt;Hello, " + userName + "!&lt;/p&gt;");
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Method 2: External JavaScript File</h4>
+        <p><strong>script.js:</strong></p>
+        <pre><code>// This is an external JavaScript file
+console.log("Hello from external JavaScript!");
+
+function greetUser(name) {
+    return `Hello, ${name}!`;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const button = document.getElementById("myButton");
+    button.addEventListener("click", function() {
+        alert("Button was clicked!");
+    });
+});</code></pre>
+        <p><strong>index.html:</strong></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;External JavaScript Example&lt;/title&gt;
+    &lt;!-- Linking external JavaScript file --&gt;
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Web Page&lt;/h1&gt;
+    &lt;button id="myButton"&gt;Click Me!&lt;/button&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Method 3: Inline Event Handlers (Not Recommended)</h4>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;!-- NOT RECOMMENDED - Old style --&gt;
+    &lt;button onclick="alert('Button clicked!'); return false;"&gt;
+        Click Me
+    &lt;/button&gt;
+    
+    &lt;a href="javascript:void(0)" onclick="doSomething()"&gt;
+        Click Here
+    &lt;/a&gt;
+    
+    &lt;body onload="initializePage()"&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>2.2 Placement of &lt;script&gt; Tags</h3>
+        <h4>Option A: &lt;script&gt; in &lt;head&gt;</h4>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Script in Head&lt;/title&gt;
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Page&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Option B: &lt;script&gt; at the end of &lt;body&gt;</h4>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Script at End of Body&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Page&lt;/h1&gt;
+    &lt;p&gt;Some content...&lt;/p&gt;
+    
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Option C: Using <code>async</code> and <code>defer</code> attributes</h4>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Async and Defer Examples&lt;/title&gt;
+    
+    &lt;!-- Defer: Execute after HTML parsing, in order --&gt;
+    &lt;script defer src="script1.js"&gt;&lt;/script&gt;
+    &lt;script defer src="script2.js"&gt;&lt;/script&gt;
+    
+    &lt;!-- Async: Execute as soon as downloaded (not in order) --&gt;
+    &lt;script async src="analytics.js"&gt;&lt;/script&gt;
+    
+    &lt;!-- Combined (rare) --&gt;
+    &lt;script async defer src="modern.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Page&lt;/h1&gt;
+    &lt;p&gt;Content...&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Comparison of Script Loading Methods:</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>HTML Parsing</th>
+                    <th>Script Execution</th>
+                    <th>Order Preserved</th>
+                    <th>Use Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>In &lt;head&gt;</strong></td>
+                    <td>Blocked</td>
+                    <td>Immediate after download</td>
+                    <td>Yes</td>
+                    <td>Critical scripts needed before rendering</td>
+                </tr>
+                <tr>
+                    <td><strong>End of &lt;body&gt;</strong></td>
+                    <td>Complete</td>
+                    <td>After full HTML parse</td>
+                    <td>Yes</td>
+                    <td>Most general scripts</td>
+                </tr>
+                <tr>
+                    <td><strong><code>defer</code></strong></td>
+                    <td>Continues</td>
+                    <td>After HTML parse</td>
+                    <td>Yes</td>
+                    <td>Scripts that need full DOM</td>
+                </tr>
+                <tr>
+                    <td><strong><code>async</code></strong></td>
+                    <td>Continues</td>
+                    <td>Immediate after download</td>
+                    <td>No</td>
+                    <td>Independent scripts (analytics, ads)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2.3 The &lt;noscript&gt; Tag</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Interactive Website&lt;/h1&gt;
+    
+    &lt;div id="app"&gt;
+        &lt;!-- JavaScript-dependent content --&gt;
+    &lt;/div&gt;
+    
+    &lt;noscript&gt;
+        &lt;div style="border: 2px solid red; padding: 20px; background: #ffeeee;"&gt;
+            &lt;h2&gt;JavaScript Required&lt;/h2&gt;
+            &lt;p&gt;This website requires JavaScript to function properly.&lt;/p&gt;
+            &lt;p&gt;Please enable JavaScript in your browser settings or use a modern browser.&lt;/p&gt;
+            &lt;p&gt;&lt;a href="nojs-version.html"&gt;Click here for a non-JavaScript version&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/noscript&gt;
+    
+    &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <!-- PART 3 -->
+        <h2>PART 3: VARIABLES IN JAVASCRIPT</h2>
+        <h3>3.1 What are Variables?</h3>
+        <p>Variables are <strong>containers for storing data values</strong>. Think of them as labeled boxes where you
+            can put information and retrieve it later using the label.</p>
+        <h4>Analogy: The Storage Box System</h4>
+        <pre><code>┌─────────────────────┐
+│      Variable       │
+│    ┌───────────┐    │
+│    │  Value    │    │
+│    │  "John"   │    │
+│    └───────────┘    │
+│      Label:         │
+│    "userName"       │
+└─────────────────────┘</code></pre>
+
+        <h3>3.2 Variable Declaration in JavaScript</h3>
+        <p>JavaScript provides three keywords for declaring variables: <code>let</code>, <code>const</code>, and
+            <code>var</code> (though <code>var</code> is outdated).</p>
+        <h4>The Evolution: <code>var</code> vs <code>let</code> vs <code>const</code></h4>
+        <pre><code>// OLD WAY (pre-2015) - Avoid using 'var' in modern code
+var oldWay = "This is old style";
+
+// MODERN WAY (ES6+) - Use 'let' and 'const'
+let modernWay = "This is modern";
+const PI = 3.14159;</code></pre>
+
+        <h4>3.2.1 The <code>let</code> Keyword</h4>
+        <pre><code>// Basic let declaration
+let message;
+console.log(message); // undefined (variable exists but has no value)
+
+// Assigning a value
+message = "Hello World";
+console.log(message); // "Hello World"
+
+// Reassigning a value
+message = "New Message";
+console.log(message); // "New Message"
+
+// Declaring and assigning simultaneously
+let count = 10;
+console.log(count); // 10
+
+// Multiple declarations
+let x = 5, y = 10, z = 15;
+console.log(x, y, z); // 5 10 15
+
+// Real-world examples with let
+let userName = "John";
+let userAge = 25;
+let isLoggedIn = false;
+
+// Variables that change over time
+let score = 0;
+score = score + 10; // score becomes 10
+score += 5;         // score becomes 15
+score++;            // score becomes 16
+
+let currentTemp = 72;
+currentTemp = 68;   // Temperature changed</code></pre>
+
+        <h4>3.2.2 The <code>const</code> Keyword</h4>
+        <pre><code>// Basic const declaration (must be initialized)
+const PI = 3.14159;
+console.log(PI); // 3.14159
+
+// THIS WILL CAUSE AN ERROR:
+// PI = 3.14; // TypeError: Assignment to constant variable
+
+// Must initialize when declaring
+// const wrong; // SyntaxError: Missing initializer in const declaration
+
+// Real-world constants
+const COMPANY_NAME = "Tech Corp";
+const MAX_USERS = 100;
+const API_KEY = "abc123xyz789";
+const BIRTH_YEAR = 1990;
+
+// const with objects (reference remains constant, properties can change)
+const person = {
+    name: "Alice",
+    age: 30
+};
+
+// This is allowed (modifying object property)
+person.age = 31;
+console.log(person); // { name: "Alice", age: 31 }
+
+// This is NOT allowed (reassigning the object)
+// person = { name: "Bob" }; // TypeError
+
+// const with arrays
+const colors = ["red", "green", "blue"];
+colors.push("yellow");     // Allowed
+colors[0] = "orange";      // Allowed
+console.log(colors);       // ["orange", "green", "blue", "yellow"]
+
+// This is NOT allowed
+// colors = ["black", "white"]; // TypeError</code></pre>
+
+        <h4>3.2.3 The <code>var</code> Keyword (Legacy)</h4>
+        <pre><code>// var declaration (avoid in modern code)
+var oldVariable = "This is old style";
+
+// var is function-scoped, not block-scoped
+if (true) {
+    var test = "I'm using var";
+}
+console.log(test); // "I'm using var" (accessible outside the block!)
+
+// var can be redeclared (can cause bugs)
+var name = "John";
+var name = "Jane"; // No error!
+console.log(name); // "Jane"
+
+// var is hoisted (moved to top of function)
+console.log(hoistedVar); // undefined (not an error!)
+var hoistedVar = "This is hoisted";
+
+// This is equivalent to:
+// var hoistedVar;
+// console.log(hoistedVar);
+// hoistedVar = "This is hoisted";</code></pre>
+
+        <h4>Comparison Table: <code>let</code> vs <code>const</code> vs <code>var</code></h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th><code>let</code></th>
+                    <th><code>const</code></th>
+                    <th><code>var</code></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Reassignable</strong></td>
+                    <td>✅ Yes</td>
+                    <td>❌ No</td>
+                    <td>✅ Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Redeclarable</strong></td>
+                    <td>❌ No</td>
+                    <td>❌ No</td>
+                    <td>✅ Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Block Scoped</strong></td>
+                    <td>✅ Yes</td>
+                    <td>✅ Yes</td>
+                    <td>❌ No (function scoped)</td>
+                </tr>
+                <tr>
+                    <td><strong>Hoisted</strong></td>
+                    <td>✅ Yes (but not initialized)</td>
+                    <td>✅ Yes (but not initialized)</td>
+                    <td>✅ Yes (initialized as <code>undefined</code>)</td>
+                </tr>
+                <tr>
+                    <td><strong>Must initialize</strong></td>
+                    <td>❌ No</td>
+                    <td>✅ Yes</td>
+                    <td>❌ No</td>
+                </tr>
+                <tr>
+                    <td><strong>Global Property</strong></td>
+                    <td>❌ No</td>
+                    <td>❌ No</td>
+                    <td>✅ Yes (becomes window property)</td>
+                </tr>
+                <tr>
+                    <td><strong>When to use</strong></td>
+                    <td>When value changes</td>
+                    <td>When value shouldn't change</td>
+                    <td><strong>Avoid in modern code</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.3 Variable Naming Rules and Conventions</h3>
+        <h4>Rules (Must Follow):</h4>
+        <pre><code>// ✅ VALID variable names
+let name = "John";
+let _private = "secret";
+let $dollar = "currency";
+let firstName = "John";
+let user123 = "data";
+let _ = "underscore";
+let $ = "dollar sign";
+
+// ❌ INVALID variable names
+// let 123user = "test";     // Cannot start with number
+// let my-name = "John";      // Hyphen not allowed
+// let my name = "John";      // Space not allowed
+// let class = "math";        // Reserved keyword
+// let let = "variable";      // Cannot use keyword as name
+
+// Reserved keywords (cannot use as variable names)
+// break, case, catch, class, const, continue, debugger, default,
+// delete, do, else, export, extends, finally, for, function, if,
+// import, in, instanceof, new, return, super, switch, this, throw,
+// try, typeof, var, void, while, with, yield</code></pre>
+
+        <h4>Conventions (Best Practices):</h4>
+        <pre><code>// 1. Use camelCase for variables (standard in JavaScript)
+let firstName = "John";
+let lastName = "Doe";
+let dateOfBirth = "1990-01-01";
+let isLoggedIn = false;
+
+// 2. Use UPPER_SNAKE_CASE for true constants
+const MAX_RETRY_COUNT = 3;
+const API_BASE_URL = "https://api.example.com";
+const DEFAULT_COLOR = "#000000";
+
+// 3. Use descriptive, meaningful names
+// ❌ Bad
+let d = new Date();
+let u = getUser();
+let x = 30;
+
+// ✅ Good
+let currentDate = new Date();
+let currentUser = getUser();
+let maxAge = 30;
+
+// 4. Boolean variables should sound like yes/no questions
+let isActive = true;
+let hasPermission = false;
+let canEdit = true;
+let shouldDisplay = false;
+
+// 5. Use nouns for variables (things), verbs for functions (actions)
+let user = { name: "John" };        // noun
+function getUser() { }               // verb
+let totalPrice = 100;                // noun
+function calculateTotal() { }        // verb</code></pre>
+
+        <h3>3.4 Variable Scope</h3>
+        <h4>Global Scope</h4>
+        <pre><code>// Global variable
+let globalVar = "I'm global";
+
+function testFunction() {
+    console.log(globalVar); // Accessible: "I'm global"
+}
+
+if (true) {
+    console.log(globalVar); // Accessible: "I'm global"
+}
+
+console.log(globalVar); // Accessible: "I'm global"</code></pre>
+
+        <h4>Function Scope</h4>
+        <pre><code>function myFunction() {
+    let functionVar = "I'm inside function";
+    console.log(functionVar); // Works: "I'm inside function"
+}
+
+myFunction();
+// console.log(functionVar); // ReferenceError: functionVar is not defined</code></pre>
+
+        <h4>Block Scope</h4>
+        <pre><code>if (true) {
+    let blockVar = "I'm inside block";
+    const alsoBlockVar = "Me too";
+    console.log(blockVar);     // Works
+    console.log(alsoBlockVar); // Works
+}
+// console.log(blockVar);     // ReferenceError
+// console.log(alsoBlockVar); // ReferenceError
+
+// Loop block scope
+for (let i = 0; i &lt; 3; i++) {
+    // i is accessible here
+    console.log(i);
+}
+// console.log(i); // ReferenceError: i is not defined</code></pre>
+
+        <h4>Scope Chain</h4>
+        <pre><code>let global = "global";
+
+function outerFunction() {
+    let outer = "outer";
+    
+    function innerFunction() {
+        let inner = "inner";
+        console.log(inner);  // Finds in current scope
+        console.log(outer);  // Finds in outer scope
+        console.log(global); // Finds in global scope
+    }
+    
+    innerFunction();
+    // console.log(inner); // ReferenceError: inner is not defined
+}
+
+outerFunction();</code></pre>
+
+        <hr>
+
+        <!-- PART 4 -->
+        <h2>PART 4: JAVASCRIPT DATA TYPES</h2>
+        <h3>4.1 Understanding Data Types</h3>
+        <p>JavaScript has <strong>8 data types</strong>, divided into two categories: <strong>Primitive</strong> and
+            <strong>Non-Primitive (Reference)</strong>.</p>
+        <h4>Data Types Overview:</h4>
+        <pre><code>┌─────────────────────────────────────┐
+│         JAVASCRIPT DATA TYPES        │
+├──────────────────┬──────────────────┤
+│   PRIMITIVE      │   NON-PRIMITIVE  │
+├──────────────────┼──────────────────┤
+│ • Number         │ • Object         │
+│ • String         │ • Array          │
+│ • Boolean        │ • Function       │
+│ • Undefined      │ • Date           │
+│ • Null           │ • RegExp         │
+│ • Symbol (ES6)   │ • Map, Set       │
+│ • BigInt (ES11)  │ • ...and more    │
+└──────────────────┴──────────────────┘</code></pre>
+
+        <h4>Key Difference: Primitive vs Reference</h4>
+        <pre><code>// PRIMITIVE TYPES - Stored by value
+let a = 10;
+let b = a;  // b gets a COPY of the value 10
+a = 20;
+console.log(a); // 20
+console.log(b); // 10 (unchanged)
+
+// REFERENCE TYPES - Stored by reference
+let obj1 = { name: "John" };
+let obj2 = obj1;  // obj2 points to the SAME object in memory
+obj1.name = "Jane";
+console.log(obj1.name); // "Jane"
+console.log(obj2.name); // "Jane" (both changed)</code></pre>
+
+        <h3>4.2 The Number Type</h3>
+        <pre><code>// Integer numbers
+let integer = 42;
+let negative = -10;
+let zero = 0;
+
+// Floating point numbers (decimals)
+let decimal = 3.14;
+let scientific = 1.5e6;  // 1.5 * 10^6 = 1,500,000
+let tiny = 1.2e-5;        // 0.000012
+
+// Special numeric values
+let infinity = Infinity;
+let negInfinity = -Infinity;
+let notANumber = NaN;      // Not a Number
+
+// Examples of NaN
+console.log(0 / 0);        // NaN
+console.log(parseInt("abc")); // NaN
+console.log(Math.sqrt(-1)); // NaN
+
+// Number operations
+let sum = 10 + 5;          // 15
+let difference = 10 - 5;   // 5
+let product = 10 * 5;      // 50
+let quotient = 10 / 5;     // 2
+let remainder = 10 % 3;    // 1 (modulo)
+let power = 2 ** 3;        // 8 (exponentiation)
+
+// Number precision issues (IEEE 754 floating point)
+console.log(0.1 + 0.2);    // 0.30000000000000004 (!)
+// Solution: Round to desired precision
+let result = (0.1 + 0.2).toFixed(2); // "0.30"
+
+// Number limits
+console.log(Number.MAX_VALUE);      // 1.7976931348623157e+308
+console.log(Number.MIN_VALUE);      // 5e-324
+console.log(Number.MAX_SAFE_INTEGER); // 9007199254740991
+console.log(Number.MIN_SAFE_INTEGER); // -9007199254740991
+
+// Checking if something is a number
+console.log(isNaN(NaN));        // true
+console.log(isNaN(123));        // false
+console.log(isFinite(Infinity)); // false
+console.log(isFinite(123));      // true</code></pre>
+
+        <h3>4.3 The String Type</h3>
+        <pre><code>// Three ways to create strings
+let singleQuotes = 'Hello with single quotes';
+let doubleQuotes = "Hello with double quotes";
+let backticks = `Hello with backticks (template literals)`;
+
+// When to use which
+let sentence1 = "It's a beautiful day";  // Double quotes allow apostrophe
+let sentence2 = 'He said "Hello"';        // Single quotes allow double quotes
+let sentence3 = `It's "JavaScript"`;      // Backticks allow both
+
+// Escape characters
+let escaped = "She said, \"Hello!\"";
+let newLine = "First line\nSecond line";
+let tab = "Column1\tColumn2";
+let backslash = "This is a backslash: \\";
+
+// String concatenation
+let firstName = "John";
+let lastName = "Doe";
+let fullName = firstName + " " + lastName;  // "John Doe"
+let greeting = "Hello, " + firstName + "!"; // "Hello, John!"
+
+// Template literals (ES6+) - BEST WAY
+let age = 30;
+let templateString = `Hello, my name is ${firstName} ${lastName} and I am ${age} years old.`;
+console.log(templateString);
+// "Hello, my name is John Doe and I am 30 years old."
+
+// Multi-line strings with template literals
+let multiLine = `
+This is line 1
+This is line 2
+This is line 3
+`;
+console.log(multiLine);
+
+// String properties and methods
+let text = "JavaScript";
+
+console.log(text.length);           // 10 (number of characters)
+console.log(text[0]);                // "J" (first character)
+console.log(text[text.length - 1]);  // "t" (last character)
+console.log(text.toUpperCase());     // "JAVASCRIPT"
+console.log(text.toLowerCase());     // "javascript"
+console.log(text.indexOf("Script")); // 4 (position where "Script" starts)
+console.log(text.includes("Java"));  // true
+console.log(text.slice(0, 4));       // "Java" (extract characters 0-3)
+console.log(text.substring(4, 10));  // "Script"
+console.log(text.replace("Java", "Type")); // "TypeScript"
+
+// String comparison
+console.log("a" &lt; "b");              // true (lexicographic)
+console.log("apple" &lt; "banana");     // true
+console.log("2" &gt; "12");             // true (compares character by character: '2' &gt; '1')
+
+// Converting to string
+let num = 123;
+let str1 = String(num);              // "123"
+let str2 = num.toString();           // "123"
+let str3 = "" + num;                 // "123" (implicit conversion)</code></pre>
+
+        <h3>4.4 The Boolean Type</h3>
+        <pre><code>// Boolean values
+let isActive = true;
+let isLoggedIn = false;
+
+// Boolean from comparisons
+let isGreater = 5 &gt; 3;     // true
+let isLess = 5 &lt; 3;         // false
+let isEqual = 5 === 5;      // true
+let isNotEqual = 5 !== 5;   // false
+
+// Boolean from logical operations
+let andOperation = true &amp;&amp; true;    // true
+let orOperation = true || false;    // true
+let notOperation = !true;           // false
+
+// Truthy and Falsy values
+// FALSY values (evaluate to false):
+console.log(Boolean(false));      // false
+console.log(Boolean(0));          // false
+console.log(Boolean(-0));         // false
+console.log(Boolean(0n));         // false (BigInt zero)
+console.log(Boolean(""));         // false (empty string)
+console.log(Boolean(null));       // false
+console.log(Boolean(undefined));  // false
+console.log(Boolean(NaN));        // false
+
+// TRUTHY values (everything else):
+console.log(Boolean(true));       // true
+console.log(Boolean(1));          // true
+console.log(Boolean(-1));         // true
+console.log(Boolean("hello"));    // true
+console.log(Boolean("0"));        // true (non-empty string)
+console.log(Boolean([]));         // true (empty array)
+console.log(Boolean({}));         // true (empty object)
+console.log(Boolean(function(){})); // true
+
+// Practical use of truthy/falsy
+let username = "";
+
+if (username) {
+    console.log("Welcome, " + username);
+} else {
+    console.log("Please enter a username"); // This runs
+}
+
+// Double negation to convert to boolean
+console.log(!!"hello");  // true
+console.log(!!0);         // false</code></pre>
+
+        <h3>4.5 The Undefined Type</h3>
+        <pre><code>// Variable declared but not initialized
+let x;
+console.log(x); // undefined
+
+// Function with no return value
+function doNothing() {
+    // no return statement
+}
+console.log(doNothing()); // undefined
+
+// Accessing non-existent object property
+let person = { name: "John" };
+console.log(person.age); // undefined
+
+// Accessing array element beyond length
+let arr = [1, 2, 3];
+console.log(arr[5]); // undefined
+
+// Checking for undefined
+let variable;
+
+if (variable === undefined) {
+    console.log("Variable is undefined");
+}
+
+// Using typeof (safe way)
+console.log(typeof variable);        // "undefined"
+console.log(typeof unknownVar);      // "undefined" (doesn't throw error)
+
+// undefined vs undeclared
+// console.log(notDeclared); // ReferenceError: notDeclared is not defined
+
+// Explicitly setting to undefined (possible but not recommended)
+let y = 123;
+y = undefined;  // Avoid doing this - use null instead
+console.log(y); // undefined</code></pre>
+
+        <h3>4.6 The Null Type</h3>
+        <pre><code>// Explicitly setting to null
+let user = null;
+console.log(user); // null
+
+// Common use cases
+let selectedItem = null;       // No item selected
+let currentUser = null;        // No user logged in
+let cachedData = null;         // Cache is empty
+let error = null;              // No error
+
+// null in operations
+console.log(null + 5);         // 5 (null converts to 0)
+console.log(null * 10);        // 0
+console.log(null == undefined); // true (loose equality)
+console.log(null === undefined); // false (strict equality)
+
+// Checking for null
+let data = null;
+
+if (data === null) {
+    console.log("Data is null");
+}
+
+// null vs undefined
+let a;              // a is undefined
+let b = null;       // b is null
+
+console.log(a);     // undefined
+console.log(b);     // null
+console.log(typeof a); // "undefined"
+console.log(typeof b); // "object" (historical bug in JavaScript)</code></pre>
+
+        <h3>4.7 Type Conversion and Coercion</h3>
+        <h4>Explicit Conversion (Type Casting)</h4>
+        <pre><code>// Convert to String
+let num = 123;
+let str1 = String(num);      // "123"
+let str2 = num.toString();   // "123"
+let str3 = (123).toString(); // "123"
+
+// Convert to Number
+let str = "123";
+let num1 = Number(str);      // 123
+let num2 = parseInt(str);    // 123
+let num3 = parseFloat("3.14"); // 3.14
+let num4 = +"456";           // 456 (unary plus operator)
+
+// Convert to Boolean
+let value = "hello";
+let bool1 = Boolean(value);  // true
+let bool2 = !!value;         // true (double negation)
+
+// Special conversions
+console.log(Number(""));           // 0
+console.log(Number("  "));         // 0
+console.log(Number("123abc"));     // NaN
+console.log(Number(true));         // 1
+console.log(Number(false));        // 0
+console.log(Number(null));         // 0
+console.log(Number(undefined));    // NaN</code></pre>
+
+        <h4>Implicit Conversion (Type Coercion)</h4>
+        <pre><code>// String coercion with +
+console.log("5" + 3);        // "53" (number converted to string)
+console.log("5" + "3");      // "53"
+console.log("Hello" + 123);  // "Hello123"
+
+// Numeric coercion with other operators
+console.log("10" - 5);       // 5 (string converted to number)
+console.log("10" * "2");     // 20 (both converted to numbers)
+console.log("10" / "2");     // 5
+console.log("10" - "5");     // 5
+console.log("10" - "abc");   // NaN (can't convert "abc")
+
+// Boolean coercion in conditions
+if ("hello") {               // "hello" is truthy
+    console.log("This runs");
+}
+
+if (0) {                     // 0 is falsy
+    console.log("This doesn't run");
+}
+
+// Comparison coercion
+console.log(5 == "5");       // true (loose equality - converts types)
+console.log(5 === "5");      // false (strict equality - no conversion)
+console.log(0 == false);     // true
+console.log(0 === false);    // false
+console.log(null == undefined); // true
+console.log(null === undefined); // false</code></pre>
+
+        <h3>4.8 Checking Data Types</h3>
+        <pre><code>// Using typeof operator
+console.log(typeof 42);              // "number"
+console.log(typeof "hello");         // "string"
+console.log(typeof true);            // "boolean"
+console.log(typeof undefined);       // "undefined"
+console.log(typeof null);            // "object" (historical bug)
+console.log(typeof {name: "John"});  // "object"
+console.log(typeof [1,2,3]);         // "object" (arrays are objects)
+console.log(typeof function(){});    // "function"
+
+// Better way to check for null
+let value = null;
+console.log(value === null);         // true
+
+// Check for array
+let arr = [1, 2, 3];
+console.log(Array.isArray(arr));     // true
+console.log(arr instanceof Array);    // true
+
+// Check for NaN (NaN is the only value not equal to itself)
+console.log(NaN === NaN);             // false
+console.log(isNaN(NaN));              // true
+console.log(isNaN("hello"));          // true (converts to number first)
+console.log(Number.isNaN("hello"));   // false (doesn't convert)
+
+// Using Object.prototype.toString (most accurate)
+console.log(Object.prototype.toString.call(42));        // "[object Number]"
+console.log(Object.prototype.toString.call("hello"));   // "[object String]"
+console.log(Object.prototype.toString.call(null));      // "[object Null]"
+console.log(Object.prototype.toString.call(undefined)); // "[object Undefined]"
+console.log(Object.prototype.toString.call([]));        // "[object Array]"
+console.log(Object.prototype.toString.call({}));        // "[object Object]"</code></pre>
+
+        <hr>
+
+        <!-- PART 5 -->
+        <h2>PART 5: PRACTICAL EXAMPLES AND BEST PRACTICES</h2>
+
+        <h3>5.1 Real-World Examples</h3>
+        <h4>Example 1: User Registration Form Data</h4>
+        <pre><code>// User registration data
+let username = "john_doe";              // string
+const MAX_USERNAME_LENGTH = 20;         // number (constant)
+let age = 25;                            // number
+let email = "john@example.com";          // string
+let isSubscribed = true;                  // boolean
+let referralCode = null;                  // null (no referral)
+let lastLogin = undefined;                // undefined (never logged in)
+
+// Registration validation
+function validateRegistration() {
+    if (!username) {
+        return "Username is required";
+    }
+    
+    if (username.length > MAX_USERNAME_LENGTH) {
+        return `Username must be less than ${MAX_USERNAME_LENGTH} characters`;
+    }
+    
+    if (age &lt; 13) {
+        return "You must be at least 13 years old";
+    }
+    
+    if (!email.includes("@")) {
+        return "Invalid email format";
+    }
+    
+    return null; // No errors
+}
+
+let validationResult = validateRegistration();
+if (validationResult === null) {
+    console.log("Registration valid!");
+} else {
+    console.log("Error:", validationResult);
+}</code></pre>
+
+        <h4>Example 2: Shopping Cart</h4>
+        <pre><code>// Shopping cart variables
+let cartItems = [];              // array (will store objects)
+const TAX_RATE = 0.08;           // number (constant)
+let subtotal = 0;                 // number
+let discount = null;               // null (no discount initially)
+let appliedCoupon = undefined;     // undefined
+
+// Adding an item to cart
+function addToCart(itemName, price, quantity = 1) {
+    let item = {
+        name: itemName,
+        price: price,
+        quantity: quantity
+    };
+    
+    cartItems.push(item);
+    subtotal += price * quantity;
+    
+    console.log(`Added ${quantity} x ${itemName} to cart`);
+}
+
+// Apply discount coupon
+function applyCoupon(couponCode) {
+    if (couponCode === "SAVE10") {
+        discount = subtotal * 0.1;
+        appliedCoupon = couponCode;
+        console.log("Coupon applied: 10% off");
+    } else {
+        console.log("Invalid coupon code");
+    }
+}
+
+// Calculate total
+function calculateTotal() {
+    let total = subtotal;
+    
+    if (discount !== null) {
+        total -= discount;
+    }
+    
+    let tax = total * TAX_RATE;
+    total += tax;
+    
+    return {
+        subtotal: subtotal,
+        discount: discount,
+        tax: tax,
+        total: total
+    };
+}
+
+// Usage
+addToCart("Laptop", 999.99);
+addToCart("Mouse", 29.99, 2);
+applyCoupon("SAVE10");
+let totals = calculateTotal();
+
+console.log("Subtotal: $" + totals.subtotal);
+console.log("Discount: $" + (totals.discount || 0));
+console.log("Tax: $" + totals.tax);
+console.log("Total: $" + totals.total);</code></pre>
+
+        <h4>Example 3: Game Score Tracker</h4>
+        <pre><code>// Game variables
+let playerName = "Player1";          // string
+let score = 0;                        // number
+let highScore = 1000;                 // number
+let isGameActive = true;               // boolean
+let powerUp = null;                    // null (no power-up active)
+let lastPowerUpTime = undefined;       // undefined
+
+// Score functions
+function increaseScore(points) {
+    if (!isGameActive) {
+        console.log("Game is not active");
+        return;
+    }
+    
+    score += points;
+    console.log(`Score: ${score}`);
+    
+    // Check for high score
+    if (score > highScore) {
+        highScore = score;
+        console.log("New high score!");
+    }
+}
+
+function activatePowerUp(type) {
+    powerUp = type;
+    lastPowerUpTime = Date.now();
+    console.log(`Power-up activated: ${type}`);
+}
+
+function updateGame() {
+    // Check if power-up expired (after 5 seconds)
+    if (powerUp !== null &amp;&amp; lastPowerUpTime) {
+        let timeActive = Date.now() - lastPowerUpTime;
+        if (timeActive > 5000) {
+            powerUp = null;
+            console.log("Power-up expired");
+        }
+    }
+}
+
+// Usage
+increaseScore(100);
+activatePowerUp("Speed Boost");
+increaseScore(50);
+// After 5 seconds...
+updateGame(); // Power-up will be null</code></pre>
+
+        <h3>5.2 Best Practices and Common Pitfalls</h3>
+        <h4>DO's ✅</h4>
+        <pre><code>// 1. Use const by default, let when needed
+const API_URL = "https://api.example.com";  // won't change
+let currentUser = null;                       // will change
+
+// 2. Use descriptive names
+let numberOfActiveUsers = 15;   // Good
+let nau = 15;                   // Bad
+
+// 3. Initialize variables when declaring
+let count = 0;                   // Good
+let name = "";                   // Good
+let items = [];                  // Good
+let config = null;                // Good
+
+// 4. Use template literals for strings with variables
+let user = "John";
+let greeting = `Hello, ${user}!`;  // Good
+// let oldGreeting = "Hello, " + user + "!"; // Old way
+
+// 5. Use strict equality (===) instead of loose (==)
+if (count === 0) {  // Good
+    // ...
+}
+
+// 6. Check for null/undefined properly
+if (user === null || user === undefined) {
+    // Handle case
+}
+
+// Modern way (optional chaining)
+// if (user?.name) { ... }</code></pre>
+
+        <h4>DON'TS ❌</h4>
+        <pre><code>// 1. Don't use var
+var oldWay = "Avoid this";  // Bad
+
+// 2. Don't use implicit globals
+function badFunction() {
+    accidentalGlobal = "Oops!";  // Missing let/const - becomes global!
+}
+
+// 3. Don't use reserved words
+// let class = "math";  // SyntaxError
+
+// 4. Don't use confusing names
+let data = "something";  // Too vague
+let d = "something";     // Even worse
+
+// 5. Don't rely on automatic semicolon insertion (use semicolons)
+let a = 5
+let b = 10  // Works but risky
+
+// 6. Don't compare with loose equality
+console.log(0 == false);    // true (but confusing)
+console.log("" == false);    // true (but confusing)
+console.log([] == false);    // true (very confusing)
+
+// 7. Don't forget to declare variables in loops
+for (i = 0; i &lt; 5; i++) {  // Bad - i becomes global
+    // ...
+}
+
+// 8. Don't reassign constants
+const PI = 3.14;
+// PI = 3.14159;  // TypeError</code></pre>
+
+        <h3>5.3 Debugging Tips</h3>
+        <pre><code>// 1. Use console.log() effectively
+let user = { name: "John", age: 30 };
+console.log("User:", user);  // Better than just console.log(user)
+
+// 2. Use console.table() for arrays/objects
+let users = [
+    { name: "John", age: 30 },
+    { name: "Jane", age: 25 }
+];
+console.table(users);
+
+// 3. Use console.error() for errors
+if (error) {
+    console.error("An error occurred:", error);
+}
+
+// 4. Use console.warn() for warnings
+if (value === undefined) {
+    console.warn("Value is undefined, using default");
+}
+
+// 5. Check variable types when debugging
+let value = "123";
+console.log(typeof value, value);  // "string 123"
+
+// 6. Use debugger statement
+function complexFunction() {
+    debugger;  // Execution will pause here if dev tools open
+    // ... complex code
+}
+
+// 7. Common debugging scenarios
+// Check if variable exists
+if (typeof myVar !== "undefined") {
+    console.log("myVar exists:", myVar);
+}
+
+// Check if object has property
+if (user.hasOwnProperty("name")) {
+    console.log("User has name:", user.name);
+}</code></pre>
+
+        <h3>5.4 Memory and Performance Considerations</h3>
+        <pre><code>// 1. Don't create unnecessary variables
+// ❌ Bad
+let firstName = "John";
+let lastName = "Doe";
+let fullName = firstName + " " + lastName;
+let greeting = "Hello, " + fullName + "!";
+
+// ✅ Good
+let greeting = `Hello, John Doe!`;
+
+// 2. Reuse variables when appropriate
+let result = 0;
+result = calculateFirstPart();
+result += calculateSecondPart();
+result = Math.round(result);
+
+// 3. Be careful with large data
+let largeArray = new Array(1000000).fill("data");
+// console.log(largeArray); // Don't log huge arrays
+
+// 4. Use const for objects/arrays you don't want to reassign
+const CONFIG = {
+    api: "https://api.example.com",
+    timeout: 5000
+};
+// This is fine - modifying properties is allowed
+CONFIG.timeout = 10000;  // OK
+// CONFIG = {}; // Error - can't reassign</code></pre>
+
+        <hr>
+
+        <!-- PART 6 -->
+        <h2>PART 6: EXERCISES AND PRACTICE PROBLEMS</h2>
+
+        <h3>Exercise 1: Variable Declaration Practice</h3>
+        <pre><code>// Task 1: Declare variables for a person
+// Requirements:
+// - Use const for data that won't change (birth year, SSN)
+// - Use let for data that might change (name, age, email)
+// - Use appropriate data types
+
+// Your code here:
+const BIRTH_YEAR = 1995;
+// const SSN = "123-45-6789";
+let personName = "Alice Smith";
+let personAge = 28;
+let personEmail = "alice@example.com";
+let isStudent = true;
+let phoneNumber = null;
+let middleName = undefined;
+
+// Task 2: Calculate age from birth year
+let currentYear = 2024;
+let calculatedAge = currentYear - BIRTH_YEAR;
+console.log(`${personName} is ${calculatedAge} years old`);</code></pre>
+
+        <h3>Exercise 2: Data Type Identification</h3>
+        <pre><code>// Identify the data type of each variable
+
+let a = "Hello World";        // string
+let b = 42;                    // number
+let c = true;                   // boolean
+let d = null;                   // object (null)
+let e;                          // undefined
+let f = NaN;                    // number
+let g = Infinity;               // number
+let h = "123";                  // string
+let i = 123 + "";               // string
+let j = +"456";                 // number
+let k = !!"";                   // boolean
+
+// Check your answers
+console.log(typeof a);  // "string"
+console.log(typeof b);  // "number"
+console.log(typeof c);  // "boolean"
+console.log(typeof d);  // "object" (historical bug)
+console.log(typeof e);  // "undefined"
+console.log(typeof f);  // "number"
+console.log(typeof g);  // "number"
+console.log(typeof h);  // "string"
+console.log(typeof i);  // "string"
+console.log(typeof j);  // "number"
+console.log(typeof k);  // "boolean"</code></pre>
+
+        <h3>Exercise 3: Temperature Converter</h3>
+        <pre><code>// Build a temperature converter
+
+// Constants
+const ABSOLUTE_ZERO_C = -273.15;
+const ABSOLUTE_ZERO_F = -459.67;
+
+// Variables
+let celsiusTemp = 25;
+let fahrenheitTemp = null;
+
+// Convert Celsius to Fahrenheit
+fahrenheitTemp = (celsiusTemp * 9/5) + 32;
+console.log(`${celsiusTemp}°C = ${fahrenheitTemp}°F`);
+
+// Convert Fahrenheit to Celsius
+fahrenheitTemp = 77;
+celsiusTemp = (fahrenheitTemp - 32) * 5/9;
+console.log(`${fahrenheitTemp}°F = ${celsiusTemp}°C`);
+
+// Check if temperature is below absolute zero
+if (celsiusTemp &lt; ABSOLUTE_ZERO_C) {
+    console.log("Warning: Temperature below absolute zero!");
+}</code></pre>
+
+        <h3>Exercise 4: Shopping Cart Calculator</h3>
+        <pre><code>// Build a simple shopping cart calculator
+
+// Constants
+const TAX_RATE = 0.07;
+const FREE_SHIPPING_MIN = 50;
+
+// Variables
+let item1Price = 29.99;
+let item1Quantity = 2;
+let item2Price = 15.50;
+let item2Quantity = 1;
+let couponCode = "SAVE10";
+let discount = null;
+
+// Calculate subtotal
+let subtotal = (item1Price * item1Quantity) + (item2Price * item2Quantity);
+console.log("Subtotal: $" + subtotal.toFixed(2));
+
+// Apply discount
+if (couponCode === "SAVE10") {
+    discount = subtotal * 0.1;
+    console.log("Discount: $" + discount.toFixed(2));
+}
+
+// Calculate after discount
+let afterDiscount = discount ? subtotal - discount : subtotal;
+
+// Calculate shipping
+let shipping = afterDiscount &lt; FREE_SHIPPING_MIN ? 5.99 : 0;
+console.log("Shipping: $" + shipping.toFixed(2));
+
+// Calculate tax
+let tax = afterDiscount * TAX_RATE;
+console.log("Tax: $" + tax.toFixed(2));
+
+// Calculate total
+let total = afterDiscount + shipping + tax;
+console.log("Total: $" + total.toFixed(2));</code></pre>
+
+        <h3>Exercise 5: User Profile Builder</h3>
+        <pre><code>// Build a user profile system
+
+// User data
+let username = "jsmith";
+const MEMBERSHIP_ID = "MEM12345";
+let firstName = "John";
+let lastName = "Smith";
+let email = "john.smith@email.com";
+let age = 32;
+let isVerified = false;
+let profilePicture = null;
+let bio = undefined;
+
+// Build display name
+let displayName = firstName + " " + lastName;
+console.log("User:", displayName);
+
+// Check verification status
+if (isVerified) {
+    console.log("✓ Verified account");
+} else {
+    console.log("⚠ Unverified account");
+}
+
+// Handle optional fields
+if (profilePicture === null) {
+    console.log("Using default profile picture");
+}
+
+if (bio === undefined) {
+    console.log("User has not written a bio yet");
+}
+
+// Age verification
+const MINIMUM_AGE = 13;
+if (age >= MINIMUM_AGE) {
+    console.log("User meets minimum age requirement");
+} else {
+    console.log("User does not meet age requirement");
+}</code></pre>
+
+        <hr>
+
+        <!-- PART 7 -->
+        <h2>PART 7: SUMMARY AND QUICK REFERENCE</h2>
+
+        <h3>7.1 Quick Reference Card</h3>
+        <h4>Variable Declaration</h4>
+        <pre><code>let variable = "can change";
+const CONSTANT = "cannot change";
+// var old = "avoid using";</code></pre>
+
+        <h4>Data Types Quick Reference</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Example</th>
+                    <th>typeof</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Number</td>
+                    <td><code>let x = 42</code></td>
+                    <td><code>"number"</code></td>
+                    <td>Integers and floats</td>
+                </tr>
+                <tr>
+                    <td>String</td>
+                    <td><code>let s = "hello"</code></td>
+                    <td><code>"string"</code></td>
+                    <td>Use template literals</td>
+                </tr>
+                <tr>
+                    <td>Boolean</td>
+                    <td><code>let b = true</code></td>
+                    <td><code>"boolean"</code></td>
+                    <td><code>true</code> or <code>false</code></td>
+                </tr>
+                <tr>
+                    <td>Undefined</td>
+                    <td><code>let u;</code></td>
+                    <td><code>"undefined"</code></td>
+                    <td>Declared, no value</td>
+                </tr>
+                <tr>
+                    <td>Null</td>
+                    <td><code>let n = null</code></td>
+                    <td><code>"object"</code></td>
+                    <td>Intentional empty</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Truthy and Falsy Values</h4>
+        <p><strong>Falsy:</strong> <code>false</code>, <code>0</code>, <code>""</code>, <code>null</code>,
+            <code>undefined</code>, <code>NaN</code><br>
+            <strong>Truthy:</strong> Everything else
+        </p>
+
+        <h4>Type Conversion</h4>
+        <pre><code>String(value)      // to string
+Number(value)      // to number
+Boolean(value)     // to boolean
+!!value            // quick boolean conversion</code></pre>
+
+        <h4>Best Practices Checklist</h4>
+        <ul>
+            <li>[ ] Use <code>const</code> by default</li>
+            <li>[ ] Use <code>let</code> when you need to reassign</li>
+            <li>[ ] Use descriptive variable names</li>
+            <li>[ ] Initialize variables when declaring</li>
+            <li>[ ] Use template literals for strings</li>
+            <li>[ ] Use strict equality (<code>===</code>)</li>
+            <li>[ ] Avoid implicit globals</li>
+            <li>[ ] Comment complex logic</li>
+        </ul>
+
+        <h3>7.2 Common Mistakes to Avoid</h3>
+        <pre><code>// Mistake 1: Forgetting to declare variables
+score = 100;  // Becomes global! Use let or const
+
+// Mistake 2: Using == instead of ===
+if (0 == false) // true (but misleading)
+
+// Mistake 3: Not initializing variables
+let counter;
+counter = counter + 1; // NaN (undefined + 1)
+
+// Mistake 4: Misunderstanding null vs undefined
+let a;           // undefined (not set)
+let b = null;    // null (explicitly set to empty)
+
+// Mistake 5: Not handling NaN
+let result = "abc" / 2; // NaN
+if (result === NaN) // Wrong! Use isNaN(result)
+
+// Mistake 6: Modifying const objects thinking they're immutable
+const user = { name: "John" };
+user.name = "Jane"; // Works! (object properties can change)
+// user = {}; // Error! (can't reassign)</code></pre>
+
+        <h3>7.3 Next Steps</h3>
+        <p>After mastering variables and data types, you should move on to:</p>
+        <ol>
+            <li><strong>Operators and Expressions</strong> - Arithmetic, comparison, logical operators</li>
+            <li><strong>Control Flow</strong> - if/else, switch statements</li>
+            <li><strong>Loops</strong> - for, while, do-while</li>
+            <li><strong>Functions</strong> - Parameters, return values, scope</li>
+            <li><strong>Arrays and Objects</strong> - Complex data structures</li>
+            <li><strong>DOM Manipulation</strong> - Interacting with web pages</li>
+        </ol>
+        <p><em>"Variables are the nouns of programming - they name the data your program works with. Master them, and
+                you've taken the first step toward thinking like a programmer."</em></p>
+        <hr>
+        <p style="text-align:right;"><strong>End of Document</strong></p>
+        <footer>Complete JavaScript fundamentals – all notes preserved</footer>
+    </div>
+</body>
+
+</html>

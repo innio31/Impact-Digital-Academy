@@ -1,0 +1,3050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUILDING LAYOUTS WITH FLEXBOX · complete study notes</title>
+    <style>
+        /* RESET + BASE — exactly as in source spirit, but we focus on clean reading */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f5fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #0b2a41;
+            line-height: 1.55;
+            padding: 2rem 1.2rem;
+        }
+
+        .document-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -25px #123456;
+            padding: 2.5rem 2rem;
+        }
+
+        /* preserve every heading exactly */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            color: #1d3b5c;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 6vw, 3.6rem);
+            border-left: 12px solid #2b7fc2;
+            padding-left: 1.3rem;
+            margin: 1rem 0 1.2rem;
+            font-weight: 750;
+            letter-spacing: -0.01em;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+            margin: 2.2rem 0 1rem;
+            border-bottom: 4px solid #b0d4f0;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+            margin: 2rem 0 1rem;
+            color: #1f6290;
+            background: #e2f0ff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        h4 {
+            font-size: clamp(1.3rem, 3vw, 1.7rem);
+            margin: 1.6rem 0 0.6rem;
+            color: #1f5482;
+        }
+
+        pre,
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #1e2b3a;
+            color: #e4f0fb;
+            border-radius: 1rem;
+        }
+
+        pre {
+            padding: 1.4rem 1.8rem;
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 8px 20px rgba(0, 20, 50, 0.2);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            padding: 0.2rem 0.6rem;
+            background: #eaf3fc;
+            color: #1a3f60;
+            font-size: 0.9em;
+            border-radius: 8px;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            border: 1px solid #b8d3ed;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+        th {
+            background: #1f5d96;
+            color: white;
+            padding: 0.9rem 1rem;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #c2daf0;
+            background: #f9fcff;
+        }
+
+        ul,
+        ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 4px dotted #9ac2e6;
+            margin: 2.5rem 0;
+        }
+
+        .note-block {
+            background: #e6f2fc;
+            border-left: 8px solid #3079b3;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        strong {
+            color: #154360;
+        }
+
+        .badge-ref {
+            background: #2367a3;
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .feature-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: #f0f7fe;
+            border-radius: 1.6rem;
+            padding: 1.2rem 1.8rem;
+            flex: 1 1 200px;
+            border: 1px solid #b1d1f0;
+        }
+
+        /* ensure no content is hidden */
+        .exact-source {
+            all: inherit;
+            /* not needed, we keep everything visible */
+        }
+
+        /* preserve all text exactly */
+        .card-code blockquote {
+            background: #fafcff;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #335f8a;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <h1>BUILDING LAYOUTS WITH FLEXBOX</h1>
+        <hr>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <ol>
+            <li><strong>RECAP: Understanding Flexbox Item Flexibility</strong>
+                <ul>
+                    <li>The flex-grow Property</li>
+                    <li>The flex-shrink Property</li>
+                    <li>The flex-basis Property</li>
+                    <li>The flex Shorthand</li>
+                </ul>
+            </li>
+            <li><strong>INTRODUCTION TO PRACTICAL FLEXBOX LAYOUTS</strong></li>
+            <li><strong>PART 1: BUILDING A RESPONSIVE NAVIGATION BAR</strong>
+                <ul>
+                    <li>Understanding Navigation Patterns</li>
+                    <li>Basic Navbar Structure (HTML)</li>
+                    <li>Step 1: Creating the Flex Container</li>
+                    <li>Step 2: Styling Navbar Items</li>
+                    <li>Step 3: Adding Logo and Navigation Links</li>
+                    <li>Step 4: Creating a Search Bar within Navbar</li>
+                    <li>Step 5: Making the Navbar Responsive</li>
+                    <li>Complete Navbar Examples (5 Variations)</li>
+                </ul>
+            </li>
+            <li><strong>PART 2: BUILDING A COMMON CARD LAYOUT</strong>
+                <ul>
+                    <li>Understanding Card-Based Design</li>
+                    <li>Basic Card Structure (HTML)</li>
+                    <li>Step 1: Creating the Card Grid Container</li>
+                    <li>Step 2: Designing Individual Cards</li>
+                    <li>Step 3: Making Cards Responsive</li>
+                    <li>Step 4: Card Content Arrangement with Flexbox</li>
+                    <li>Step 5: Equal Height Cards</li>
+                    <li>Complete Card Layout Examples (5 Variations)</li>
+                </ul>
+            </li>
+            <li><strong>ADVANCED FLEXBOX PATTERNS</strong>
+                <ul>
+                    <li>Holy Grail Layout</li>
+                    <li>Sticky Footer</li>
+                    <li>Media Objects</li>
+                    <li>Centering Strategies</li>
+                </ul>
+            </li>
+            <li><strong>COMMON PITFALLS AND SOLUTIONS</strong></li>
+            <li><strong>PRACTICE EXERCISES</strong></li>
+            <li><strong>COMPLETE CODE EXAMPLES</strong></li>
+        </ol>
+
+        <hr>
+
+        <h2>RECAP: UNDERSTANDING FLEXBOX ITEM FLEXIBILITY</h2>
+        <p>Before diving into practical layouts, let's solidify our understanding of how flex items grow, shrink, and
+            establish their base size.</p>
+
+        <h3>The flex-grow Property</h3>
+        <p><strong>Definition:</strong> Controls how much a flex item will grow relative to other flex items when there
+            is <strong>extra space</strong> available in the container.</p>
+        <pre><code class="language-css">.item {
+  flex-grow: 0; /* default - item does not grow */
+  flex-grow: 1; /* item can grow to fill available space */
+  flex-grow: 2; /* item grows twice as much as items with flex-grow: 1 */
+}</code></pre>
+
+        <h4>How flex-grow Works</h4>
+        <p>When there's extra space in a flex container, <code>flex-grow</code> distributes that space proportionally
+            among items.</p>
+        <p><strong>Example 1: Equal Distribution</strong></p>
+        <pre><code class="language-css">.container {
+  display: flex;
+  width: 800px;
+}
+
+.item {
+  flex-grow: 1; /* All three items will share extra space equally */
+  width: 100px; /* Each item starts at 100px */
+}
+/* Total base width: 300px */
+/* Extra space: 500px */
+/* Each item gets 500px/3 = 166.67px extra */
+/* Final width: 266.67px each */</code></pre>
+
+        <p><strong>Example 2: Proportional Distribution</strong></p>
+        <pre><code class="language-css">.container {
+  display: flex;
+  width: 800px;
+}
+
+.item1 { flex-grow: 1; width: 100px; } /* Gets 1 part of extra space */
+.item2 { flex-grow: 2; width: 100px; } /* Gets 2 parts of extra space */
+.item3 { flex-grow: 3; width: 100px; } /* Gets 3 parts of extra space */
+/* Total parts: 6 */
+/* Extra space: 500px */
+/* Each part: 500px/6 = 83.33px */
+/* Item1: 100px + 83.33px = 183.33px */
+/* Item2: 100px + (83.33px × 2) = 266.67px */
+/* Item3: 100px + (83.33px × 3) = 350px */</code></pre>
+
+        <h4>Visual Example of flex-grow</h4>
+        <pre><code class="language-html">&lt;div class="demo-container"&gt;
+  &lt;div class="item grow-0"&gt;grow: 0&lt;/div&gt;
+  &lt;div class="item grow-1"&gt;grow: 1&lt;/div&gt;
+  &lt;div class="item grow-2"&gt;grow: 2&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        <pre><code class="language-css">.demo-container {
+  display: flex;
+  width: 100%;
+  background: #f0f0f0;
+  padding: 10px;
+}
+
+.item {
+  padding: 20px;
+  background: #3498db;
+  color: white;
+  margin: 5px;
+}
+
+.grow-0 { flex-grow: 0; width: 100px; }   /* Stays at 100px */
+.grow-1 { flex-grow: 1; }                  /* Takes 1 part of remaining space */
+.grow-2 { flex-grow: 2; }                  /* Takes 2 parts of remaining space */</code></pre>
+
+        <h3>The flex-shrink Property</h3>
+        <p><strong>Definition:</strong> Controls how much a flex item will shrink relative to other flex items when
+            there <strong>isn't enough space</strong> in the container.</p>
+        <pre><code class="language-css">.item {
+  flex-shrink: 1; /* default - item can shrink */
+  flex-shrink: 0; /* item will not shrink */
+  flex-shrink: 2; /* item shrinks twice as much as items with flex-shrink: 1 */
+}</code></pre>
+
+        <h4>How flex-shrink Works</h4>
+        <p>When items don't fit in the container, <code>flex-shrink</code> determines how they should shrink
+            proportionally.</p>
+        <p><strong>Example: Understanding flex-shrink</strong></p>
+        <pre><code class="language-css">.container {
+  display: flex;
+  width: 500px;
+}
+
+.item {
+  flex-shrink: 1; /* All items shrink equally */
+  width: 200px; /* Total width would be 600px, but container is only 500px */
+}
+/* Total base width: 600px */
+/* Overflow: -100px (need to remove 100px total) */
+/* Each item shrinks by 33.33px */
+/* Final width: 166.67px each */</code></pre>
+
+        <p><strong>Example 2: Preventing Shrinkage</strong></p>
+        <pre><code class="language-css">.container {
+  display: flex;
+  width: 500px;
+}
+
+.logo { 
+  flex-shrink: 0; /* Logo will never shrink */
+  width: 200px; 
+}
+
+.nav-item { 
+  flex-shrink: 1; /* These will shrink */
+  width: 150px; 
+}</code></pre>
+
+        <h4>The Importance of flex-shrink: 0</h4>
+        <p>This is particularly useful for:</p>
+        <ul>
+            <li>Logos that must remain readable</li>
+            <li>Icons that should maintain their dimensions</li>
+            <li>Avatar images that shouldn't distort</li>
+        </ul>
+
+        <h3>The flex-basis Property</h3>
+        <p><strong>Definition:</strong> Sets the initial size of a flex item <strong>before</strong>
+            <code>flex-grow</code> or <code>flex-shrink</code> are applied.
+        </p>
+        <pre><code class="language-css">.item {
+  flex-basis: auto;      /* default - looks at width property */
+  flex-basis: 0;         /* ignores width, bases size on flex-grow */
+  flex-basis: 200px;     /* initial size of 200px */
+  flex-basis: 20%;       /* 20% of container width */
+  flex-basis: content;   /* based on content size (limited support) */
+}</code></pre>
+
+        <h4>flex-basis vs width</h4>
+        <pre><code class="language-css">.container {
+  display: flex;
+  width: 1000px;
+}
+
+/* These two items behave differently: */
+.item1 {
+  width: 200px;          /* Sets width, but flex-basis defaults to auto */
+  flex-grow: 1;          /* Grows from 200px base */
+}
+
+.item2 {
+  flex-basis: 200px;     /* Explicitly sets base size */
+  flex-grow: 1;          /* Grows from 200px base - same as above */
+}
+
+.item3 {
+  flex-basis: 0;         /* Base size is 0 */
+  flex-grow: 1;          /* All space is distributed from 0 */
+}</code></pre>
+
+        <h4>Key Difference:</h4>
+        <ul>
+            <li>With <code>flex-basis: 0</code>, all items start from 0 and share space based on <code>flex-grow</code>
+            </li>
+            <li>With <code>flex-basis: auto</code>, items start from their content width and then grow</li>
+        </ul>
+
+        <h3>The flex Shorthand</h3>
+        <p><strong>Definition:</strong> A convenient shorthand combining <code>flex-grow</code>,
+            <code>flex-shrink</code>, and <code>flex-basis</code>.
+        </p>
+        <pre><code class="language-css">.item {
+  flex: 0 1 auto;  /* default (grow, shrink, basis) */
+  flex: 1;         /* flex: 1 1 0; */
+  flex: 2;         /* flex: 2 1 0; */
+  flex: auto;      /* flex: 1 1 auto; */
+  flex: none;      /* flex: 0 0 auto; */
+  flex: 0 0 200px; /* fixed width: 200px, no grow, no shrink */
+}</code></pre>
+
+        <h4>Common flex Shorthand Patterns</h4>
+        <pre><code class="language-css">/* Pattern 1: Flexible item that can grow and shrink from 0 */
+.flexible-item {
+  flex: 1;  /* flex: 1 1 0 */
+}
+
+/* Pattern 2: Fixed-width item that never changes */
+.fixed-item {
+  flex: none;  /* flex: 0 0 auto */
+  width: 200px;
+}
+
+/* Pattern 3: Item with initial size, but can grow/shrink */
+.dynamic-item {
+  flex: 1 1 200px;  /* Start at 200px, can grow and shrink */
+}
+
+/* Pattern 4: Item that can shrink but never grow */
+.shrink-only {
+  flex: 0 1 auto;  /* flex: default - never grows */
+}
+
+/* Pattern 5: Item that can grow but never shrink */
+.grow-only {
+  flex: 1 0 auto;  /* Grows if space, never shrinks */
+}</code></pre>
+
+        <h4>Visual Reference Table</h4>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Shorthand</th>
+                        <th>Equivalent To</th>
+                        <th>Behavior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>flex: 1</code></td>
+                        <td><code>flex: 1 1 0</code></td>
+                        <td>Grows and shrinks equally from 0</td>
+                    </tr>
+                    <tr>
+                        <td><code>flex: auto</code></td>
+                        <td><code>flex: 1 1 auto</code></td>
+                        <td>Grows and shrinks based on content</td>
+                    </tr>
+                    <tr>
+                        <td><code>flex: initial</code></td>
+                        <td><code>flex: 0 1 auto</code></td>
+                        <td>Default - shrinks but doesn't grow</td>
+                    </tr>
+                    <tr>
+                        <td><code>flex: none</code></td>
+                        <td><code>flex: 0 0 auto</code></td>
+                        <td>Fixed size - no growing or shrinking</td>
+                    </tr>
+                    <tr>
+                        <td><code>flex: 2</code></td>
+                        <td><code>flex: 2 1 0</code></td>
+                        <td>Takes twice as much space as <code>flex:1</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr>
+
+        <h2>INTRODUCTION TO PRACTICAL FLEXBOX LAYOUTS</h2>
+        <p>Now that we understand how flex items behave individually, let's explore how to combine these properties to
+            build real-world layouts. In this comprehensive guide, we'll focus on two essential layout patterns that
+            you'll use repeatedly in web development:</p>
+
+        <h3>Why These Two Layouts?</h3>
+        <h4>1. <strong>Responsive Navigation Bar</strong></h4>
+        <p>The navigation bar is the most ubiquitous component on the web. Every website needs one, and it presents
+            unique challenges:</p>
+        <ul>
+            <li>Must work on all screen sizes</li>
+            <li>Contains multiple element types (logo, links, buttons, search bars)</li>
+            <li>Needs to maintain usability while adapting to different devices</li>
+            <li>Often requires complex alignment (logo left, links center, actions right)</li>
+        </ul>
+
+        <h4>2. <strong>Card Layout</strong></h4>
+        <p>Cards have become the dominant design pattern for content presentation:</p>
+        <ul>
+            <li>Used in portfolios, e-commerce, blogs, dashboards</li>
+            <li>Need to maintain consistent appearance in a grid</li>
+            <li>Must handle varying content lengths</li>
+            <li>Require equal heights for visual harmony</li>
+            <li>Need to be responsive across device sizes</li>
+        </ul>
+
+        <h3>What We'll Build</h3>
+        <p>In this guide, we'll create:</p>
+        <p><strong>For Navigation Bars:</strong></p>
+        <ul>
+            <li>Simple horizontal navbar</li>
+            <li>Navbar with centered navigation</li>
+            <li>Navbar with search bar</li>
+            <li>Navbar with dropdown menus (conceptually)</li>
+            <li>Mobile-responsive hamburger menu (conceptually)</li>
+        </ul>
+        <p><strong>For Card Layouts:</strong></p>
+        <ul>
+            <li>Basic card grid</li>
+            <li>Cards with images</li>
+            <li>Cards with actions (buttons)</li>
+            <li>Horizontal product cards</li>
+            <li>Masonry-style card layout (with Flexbox limitations)</li>
+        </ul>
+        <p>Let's begin our journey into practical Flexbox layouts!</p>
+
+        <hr>
+
+        <h2>PART 1: BUILDING A RESPONSIVE NAVIGATION BAR</h2>
+
+        <h3>Understanding Navigation Patterns</h3>
+        <p>Navigation bars typically follow several common patterns:</p>
+        <ol>
+            <li><strong>Logo Left, Links Right</strong> (Most common)</li>
+            <li><strong>Logo Left, Links Center, Actions Right</strong> (Modern SaaS sites)</li>
+            <li><strong>Logo Center, Links Distributed</strong> (Creative portfolios)</li>
+            <li><strong>All Links Centered</strong> (Minimalist designs)</li>
+            <li><strong>Stacked Navigation</strong> (Mobile views)</li>
+        </ol>
+
+        <h3>Basic Navbar Structure (HTML)</h3>
+        <p>Let's start with a semantic HTML structure for our navbar:</p>
+        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Flexbox Navbar Examples&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Our navbar will go here --&gt;
+    &lt;header class="navbar"&gt;
+        &lt;nav class="navbar-container"&gt;
+            &lt;!-- Navbar content --&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        &lt;h1&gt;Page Content&lt;/h1&gt;
+        &lt;p&gt;Lorem ipsum dolor sit amet...&lt;/p&gt;
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Step 1: Creating the Flex Container</h3>
+        <p>First, let's establish our flex container with proper styling:</p>
+        <pre><code class="language-css">/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Navbar base styles */
+.navbar {
+    background-color: #2c3e50;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar-container {
+    display: flex;           /* Establish flex container */
+    align-items: center;     /* Vertically center all items */
+    justify-content: space-between; /* Spread items horizontally */
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;          /* Center the container */
+}</code></pre>
+
+        <h3>Step 2: Styling Navbar Items</h3>
+        <p>Now, let's style the basic navigation elements:</p>
+        <pre><code class="language-css">/* Logo styling */
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: #3498db;  /* Accent color */
+}
+
+/* Navigation links container */
+.nav-links {
+    display: flex;           /* Make the links container flex */
+    list-style: none;        /* Remove bullet points */
+    gap: 2rem;               /* Space between links */
+    margin: 0;
+    padding: 0;
+}
+
+/* Individual link styling */
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #3498db;
+}
+
+/* Active link indicator */
+.nav-links a.active {
+    color: #3498db;
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3498db;
+}
+
+/* Hover effect - underline animation */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}</code></pre>
+
+        <h3>Step 3: Adding Logo and Navigation Links</h3>
+        <p>Let's put it together in our HTML:</p>
+        <pre><code class="language-html">&lt;header class="navbar"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;!-- Logo --&gt;
+        &lt;a href="#" class="logo"&gt;Flex&lt;span&gt;Blog&lt;/span&gt;&lt;/a&gt;
+        
+        &lt;!-- Navigation Links --&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#" class="active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Articles&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Categories&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+        
+        &lt;!-- Action Button --&gt;
+        &lt;button class="btn-primary"&gt;Subscribe&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/header&gt;</code></pre>
+        <p>And style the button:</p>
+        <pre><code class="language-css">.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}</code></pre>
+
+        <h3>Step 4: Creating a Search Bar within Navbar</h3>
+        <p>A common pattern is including a search bar. Here's how to integrate it:</p>
+        <pre><code class="language-html">&lt;div class="navbar-container"&gt;
+    &lt;a href="#" class="logo"&gt;Flex&lt;span&gt;Blog&lt;/span&gt;&lt;/a&gt;
+    
+    &lt;ul class="nav-links"&gt;
+        &lt;li&gt;&lt;a href="#" class="active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Articles&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Categories&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;!-- Search Bar --&gt;
+    &lt;div class="search-container"&gt;
+        &lt;form class="search-form" action="#" method="GET"&gt;
+            &lt;input type="text" placeholder="Search articles..." class="search-input"&gt;
+            &lt;button type="submit" class="search-btn"&gt;🔍&lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+    
+    &lt;button class="btn-primary"&gt;Subscribe&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        <pre><code class="language-css">.search-container {
+    margin: 0 1rem;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+.search-form:focus-within {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: white;
+    width: 200px;
+    font-size: 0.9rem;
+}
+
+.search-input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: white;
+    font-size: 1rem;
+}
+
+.search-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+}</code></pre>
+
+        <h3>Step 5: Making the Navbar Responsive</h3>
+        <p>Now for the crucial part - making our navbar work on mobile devices:</p>
+        <pre><code class="language-css">/* Base styles (already written) */
+
+/* Tablet Styles (max-width: 768px) */
+@media screen and (max-width: 768px) {
+    .navbar-container {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .search-container {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .search-form {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+/* Mobile Styles (max-width: 480px) */
+@media screen and (max-width: 480px) {
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .nav-links a {
+        display: block;
+        padding: 0.5rem;
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+}
+
+/* Optional: Show/hide mobile menu button */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    /* Hide nav-links initially on mobile (if using JS) */
+    .nav-links.mobile-hidden {
+        display: none;
+    }
+}</code></pre>
+
+        <h3>Step 6: Adding JavaScript for Mobile Menu (Optional)</h3>
+        <p>If you want a hamburger menu that toggles:</p>
+        <pre><code class="language-javascript">// Simple mobile menu toggle
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('mobile-hidden');
+    });
+}
+
+// Close menu when clicking outside (optional)
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.navbar-container')) {
+        navLinks.classList.add('mobile-hidden');
+    }
+});</code></pre>
+
+        <h3>Complete Navbar Examples (5 Variations)</h3>
+
+        <h4>Variation 1: Simple Navbar with Logo Left, Links Right</h4>
+        <pre><code class="language-html">&lt;nav class="navbar variation-1"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;a href="#" class="logo"&gt;Brand&lt;/a&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+        <pre><code class="language-css">.variation-1 .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}</code></pre>
+
+        <h4>Variation 2: Navbar with Centered Links</h4>
+        <pre><code class="language-html">&lt;nav class="navbar variation-2"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;a href="#" class="logo"&gt;Brand&lt;/a&gt;
+        &lt;ul class="nav-links centered"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;div class="auth-buttons"&gt;
+            &lt;a href="#" class="btn-link"&gt;Login&lt;/a&gt;
+            &lt;button class="btn-primary"&gt;Sign Up&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+        <pre><code class="language-css">.variation-2 .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.variation-2 .nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Alternative approach using flex: 1 */
+.variation-2 .logo {
+    flex: 1;
+}
+
+.variation-2 .nav-links {
+    flex: 1;
+    justify-content: center;
+}
+
+.variation-2 .auth-buttons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}</code></pre>
+
+        <h4>Variation 3: Navbar with Search (as seen above)</h4>
+        <pre><code class="language-html">&lt;nav class="navbar variation-3"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;a href="#" class="logo"&gt;Brand&lt;/a&gt;
+        &lt;div class="search-container"&gt;
+            &lt;form class="search-form"&gt;
+                &lt;input type="text" placeholder="Search..."&gt;
+                &lt;button type="submit"&gt;🔍&lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+        <pre><code class="language-css">.variation-3 .navbar-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.variation-3 .search-container {
+    flex: 1;  /* Search takes available space */
+    max-width: 400px;
+}
+
+.variation-3 .nav-links {
+    flex-shrink: 0;  /* Prevent links from shrinking */
+}</code></pre>
+
+        <h4>Variation 4: Multi-level Navbar with Dropdown (Conceptual)</h4>
+        <pre><code class="language-html">&lt;nav class="navbar variation-4"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;a href="#" class="logo"&gt;Brand&lt;/a&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li class="dropdown"&gt;
+                &lt;a href="#"&gt;Products ▼&lt;/a&gt;
+                &lt;ul class="dropdown-menu"&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Product 1&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Product 2&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Product 3&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+        <pre><code class="language-css">.variation-4 .dropdown {
+    position: relative;
+}
+
+.variation-4 .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #2c3e50;
+    list-style: none;
+    padding: 0.5rem 0;
+    min-width: 150px;
+    border-radius: 4px;
+}
+
+.variation-4 .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.variation-4 .dropdown-menu a {
+    padding: 0.5rem 1rem;
+    display: block;
+}
+
+.variation-4 .dropdown-menu a:hover {
+    background: #34495e;
+}</code></pre>
+
+        <h4>Variation 5: Transparent Navbar (For Hero Sections)</h4>
+        <pre><code class="language-html">&lt;nav class="navbar variation-5 transparent"&gt;
+    &lt;div class="navbar-container"&gt;
+        &lt;a href="#" class="logo"&gt;Brand&lt;/a&gt;
+        &lt;ul class="nav-links"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;section class="hero"&gt;
+    &lt;h1&gt;Welcome to Our Site&lt;/h1&gt;
+    &lt;p&gt;This is a hero section with a transparent navbar&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+        <pre><code class="language-css">.variation-5.transparent {
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.variation-5.transparent .logo,
+.variation-5.transparent .nav-links a {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.hero {
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}</code></pre>
+
+        <hr>
+
+        <h2>PART 2: BUILDING A COMMON CARD LAYOUT</h2>
+
+        <h3>Understanding Card-Based Design</h3>
+        <p>Cards are rectangular containers that group related information. They typically contain:</p>
+        <ul>
+            <li>An image or icon</li>
+            <li>A title/heading</li>
+            <li>Descriptive text</li>
+            <li>Actions (buttons, links)</li>
+            <li>Metadata (date, author, category)</li>
+        </ul>
+
+        <h3>Basic Card Structure (HTML)</h3>
+        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Flexbox Card Layouts&lt;/title&gt;
+    &lt;link rel="stylesheet" href="card-styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1 class="page-title"&gt;Featured Articles&lt;/h1&gt;
+        
+        &lt;!-- Card Grid Container --&gt;
+        &lt;div class="card-grid"&gt;
+            &lt;!-- Individual Card --&gt;
+            &lt;article class="card"&gt;
+                &lt;img src="https://via.placeholder.com/300x200" alt="Card image" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;h2 class="card-title"&gt;Card Title&lt;/h2&gt;
+                    &lt;p class="card-description"&gt;This is a short description of the card content. It gives users a preview of what to expect.&lt;/p&gt;
+                    &lt;div class="card-meta"&gt;
+                        &lt;span class="date"&gt;Jan 1, 2025&lt;/span&gt;
+                        &lt;span class="author"&gt;By John Doe&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;a href="#" class="card-link"&gt;Read More →&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+            
+            &lt;!-- More cards will be added here --&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Step 1: Creating the Card Grid Container</h3>
+        <pre><code class="language-css">/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    color: #2c3e50;
+}
+
+/* Card Grid - The Flex Container */
+.card-grid {
+    display: flex;              /* Establish flex container */
+    flex-wrap: wrap;           /* Allow cards to wrap */
+    gap: 2rem;                  /* Space between cards */
+    margin: 0 -1rem;           /* Negative margin for gutters */
+}
+
+/* Alternative grid using margin (if gap not supported) */
+.card-grid.legacy {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -1rem;  /* Negative margin to counteract card margins */
+}
+
+.card-grid.legacy .card {
+    margin: 1rem;
+    width: calc(33.333% - 2rem);
+}</code></pre>
+
+        <h3>Step 2: Designing Individual Cards</h3>
+        <pre><code class="language-css">/* Individual Card */
+.card {
+    flex: 1 1 300px;           /* Grow, shrink, basis 300px */
+    min-width: 250px;           /* Minimum width before wrapping */
+    max-width: 400px;           /* Maximum width */
+    
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;           /* Ensures image respects border radius */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    display: flex;              /* Make card a flex container */
+    flex-direction: column;     /* Stack content vertically */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Image */
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;          /* Ensures image covers area without distortion */
+}
+
+/* Card Content */
+.card-content {
+    padding: 1.5rem;
+    
+    display: flex;              /* Make content area flex */
+    flex-direction: column;     /* Stack elements vertically */
+    flex: 1;                    /* Take remaining space */
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+.card-description {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    flex: 1;                    /* Push meta and link to bottom */
+}
+
+/* Card Metadata */
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: #7f8c8d;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.date, .author {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Card Link/Button */
+.card-link {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;     /* Don't stretch full width */
+}
+
+.card-link:hover {
+    background-color: #2980b9;
+}</code></pre>
+
+        <h3>Step 3: Making Cards Responsive</h3>
+        <pre><code class="language-css">/* Tablet Styles */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .card-grid {
+        gap: 1.5rem;
+    }
+    
+    .card {
+        flex: 1 1 calc(50% - 1.5rem);  /* 2 columns */
+    }
+    
+    .card-image {
+        height: 180px;
+    }
+    
+    .card-content {
+        padding: 1.25rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-grid {
+        gap: 1rem;
+    }
+    
+    .card {
+        flex: 1 1 100%;  /* 1 column */
+        max-width: 100%;
+    }
+    
+    .card-image {
+        height: 160px;
+    }
+    
+    .card-content {
+        padding: 1rem;
+    }
+    
+    .card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .card-link {
+        width: 100%;  /* Full width button on mobile */
+    }
+}
+
+/* Large Desktop Styles */
+@media screen and (min-width: 1200px) {
+    .card-grid {
+        gap: 2.5rem;
+    }
+    
+    .card {
+        flex: 1 1 calc(33.333% - 2.5rem);
+    }
+}</code></pre>
+
+        <h3>Step 4: Card Content Arrangement with Flexbox</h3>
+        <p>Here's where our understanding of flex properties really shines:</p>
+        <pre><code class="language-css">/* Advanced Card Content Layouts */
+
+/* Card with Badge/Tag */
+.card-with-badge .card-content {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: -0.5rem;
+    right: 1rem;
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Card with Multiple Actions */
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.card-actions .btn {
+    flex: 1;  /* Equal width buttons */
+    padding: 0.5rem;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: opacity 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #ecf0f1;
+    color: #333;
+}
+
+.card-actions .btn:hover {
+    opacity: 0.9;
+}
+
+/* Card with Rating */
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.stars {
+    display: flex;
+    gap: 0.125rem;
+}
+
+.star {
+    color: #f1c40f;
+    font-size: 1rem;
+}
+
+.rating-count {
+    color: #7f8c8d;
+    font-size: 0.75rem;
+}
+
+/* Card with Price */
+.card-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.current-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.original-price {
+    font-size: 0.875rem;
+    color: #7f8c8d;
+    text-decoration: line-through;
+}
+
+.discount {
+    background-color: #27ae60;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}</code></pre>
+
+        <h3>Step 5: Equal Height Cards</h3>
+        <p>One of Flexbox's superpowers is making items in a row equal height:</p>
+        <pre><code class="language-css">/* Equal height cards - Flexbox does this automatically! */
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;  /* Default value, makes all cards same height */
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Push footer to bottom regardless of content length */
+.card-footer {
+    margin-top: auto;  /* Pushes footer to bottom */
+    padding-top: 1rem;
+}
+
+/* Example card with flexible content */
+.card-vertical-demo {
+    display: flex;
+    flex-direction: column;
+    height: 100%;  /* Fill parent height */
+}
+
+.card-vertical-demo .card-content {
+    flex: 1;  /* Take all available space */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-vertical-demo .card-description {
+    flex: 1;  /* Push button to bottom */
+}
+
+.card-vertical-demo .card-button {
+    margin-top: auto;  /* Alternative way to push button */
+}</code></pre>
+
+        <h3>Complete Card Layout Examples (5 Variations)</h3>
+
+        <h4>Variation 1: Basic Blog Card</h4>
+        <pre><code class="language-html">&lt;article class="card blog-card"&gt;
+    &lt;img src="blog-image.jpg" alt="Blog post" class="card-image"&gt;
+    &lt;div class="card-content"&gt;
+        &lt;div class="card-category"&gt;Technology&lt;/div&gt;
+        &lt;h2 class="card-title"&gt;Understanding Flexbox: A Complete Guide&lt;/h2&gt;
+        &lt;p class="card-description"&gt;Learn how to master CSS Flexbox with practical examples and real-world layouts...&lt;/p&gt;
+        &lt;div class="card-meta"&gt;
+            &lt;span class="date"&gt;📅 March 15, 2025&lt;/span&gt;
+            &lt;span class="author"&gt;👤 Sarah Johnson&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a href="#" class="card-link"&gt;Read Article →&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+        <pre><code class="language-css">.blog-card .card-category {
+    display: inline-block;
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+}</code></pre>
+
+        <h4>Variation 2: Product Card (E-commerce)</h4>
+        <pre><code class="language-html">&lt;article class="card product-card"&gt;
+    &lt;div class="card-badge"&gt;Sale&lt;/div&gt;
+    &lt;img src="product.jpg" alt="Product" class="card-image"&gt;
+    &lt;div class="card-content"&gt;
+        &lt;h2 class="card-title"&gt;Wireless Headphones&lt;/h2&gt;
+        &lt;div class="card-rating"&gt;
+            &lt;div class="stars"&gt;★★★★½&lt;/div&gt;
+            &lt;span class="rating-count"&gt;(128 reviews)&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="card-price"&gt;
+            &lt;span class="current-price"&gt;$79.99&lt;/span&gt;
+            &lt;span class="original-price"&gt;$129.99&lt;/span&gt;
+            &lt;span class="discount"&gt;-38%&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class="card-description"&gt;Premium sound quality with noise cancellation...&lt;/p&gt;
+        &lt;div class="card-actions"&gt;
+            &lt;button class="btn btn-primary"&gt;Add to Cart&lt;/button&gt;
+            &lt;button class="btn btn-secondary"&gt;♥ Wishlist&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+        <pre><code class="language-css">.product-card .card-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.product-card {
+    position: relative;
+}</code></pre>
+
+        <h4>Variation 3: Profile Card</h4>
+        <pre><code class="language-html">&lt;article class="card profile-card"&gt;
+    &lt;div class="profile-header"&gt;
+        &lt;img src="avatar.jpg" alt="Profile" class="profile-image"&gt;
+        &lt;h2 class="profile-name"&gt;Alex Morgan&lt;/h2&gt;
+        &lt;p class="profile-title"&gt;Senior Web Developer&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="profile-content"&gt;
+        &lt;div class="profile-stats"&gt;
+            &lt;div class="stat"&gt;
+                &lt;span class="stat-value"&gt;2.5K&lt;/span&gt;
+                &lt;span class="stat-label"&gt;Followers&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="stat"&gt;
+                &lt;span class="stat-value"&gt;1.2K&lt;/span&gt;
+                &lt;span class="stat-label"&gt;Following&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="stat"&gt;
+                &lt;span class="stat-value"&gt;45&lt;/span&gt;
+                &lt;span class="stat-label"&gt;Projects&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="profile-bio"&gt;Passionate about creating responsive web applications and teaching others.&lt;/p&gt;
+        &lt;button class="profile-btn"&gt;Follow&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+        <pre><code class="language-css">.profile-card {
+    text-align: center;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid white;
+    margin-bottom: 1rem;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.profile-title {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.profile-content {
+    padding: 1.5rem;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+}
+
+.profile-bio {
+    margin-bottom: 1.5rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.profile-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.profile-btn:hover {
+    background-color: #2980b9;
+}</code></pre>
+
+        <h4>Variation 4: Horizontal Card</h4>
+        <pre><code class="language-html">&lt;article class="card horizontal-card"&gt;
+    &lt;img src="featured.jpg" alt="Featured" class="card-image"&gt;
+    &lt;div class="card-content"&gt;
+        &lt;h2 class="card-title"&gt;Featured Article: Web Design Trends 2025&lt;/h2&gt;
+        &lt;p class="card-description"&gt;Explore the latest trends in web design including glassmorphism, 3D elements, and micro-interactions...&lt;/p&gt;
+        &lt;div class="card-meta"&gt;
+            &lt;span&gt;📅 January 2025&lt;/span&gt;
+            &lt;span&gt;⏱ 8 min read&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a href="#" class="card-link"&gt;Read Full Article →&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+        <pre><code class="language-css">.horizontal-card {
+    display: flex;
+    flex-direction: row;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.horizontal-card .card-image {
+    width: 40%;
+    height: auto;
+    object-fit: cover;
+}
+
+.horizontal-card .card-content {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 600px) {
+    .horizontal-card {
+        flex-direction: column;
+    }
+    
+    .horizontal-card .card-image,
+    .horizontal-card .card-content {
+        width: 100%;
+    }
+    
+    .horizontal-card .card-image {
+        height: 200px;
+    }
+}</code></pre>
+
+        <h4>Variation 5: Course Card with Progress</h4>
+        <pre><code class="language-html">&lt;article class="card course-card"&gt;
+    &lt;img src="course.jpg" alt="Course" class="card-image"&gt;
+    &lt;div class="card-content"&gt;
+        &lt;span class="course-badge"&gt;Bestseller&lt;/span&gt;
+        &lt;h2 class="card-title"&gt;Advanced JavaScript: From Fundamentals to Functional&lt;/h2&gt;
+        &lt;div class="course-instructor"&gt;Instructor: Jane Smith&lt;/div&gt;
+        &lt;div class="course-progress"&gt;
+            &lt;div class="progress-bar"&gt;
+                &lt;div class="progress-fill" style="width: 75%"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;span class="progress-text"&gt;75% complete&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="course-meta"&gt;
+            &lt;span&gt;📚 42 lessons&lt;/span&gt;
+            &lt;span&gt;⏱ 15 hours&lt;/span&gt;
+            &lt;span class="course-level"&gt;Advanced&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;button class="btn-primary"&gt;Continue Learning&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+        <pre><code class="language-css">.course-card .course-badge {
+    background-color: #f1c40f;
+    color: #2c3e50;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.75rem;
+    align-self: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.course-instructor {
+    color: #7f8c8d;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.course-progress {
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    background-color: #ecf0f1;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.progress-fill {
+    background-color: #27ae60;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.course-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: #7f8c8d;
+    flex-wrap: wrap;
+}
+
+.course-level {
+    margin-left: auto;
+    background-color: #3498db;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}</code></pre>
+
+        <hr>
+
+        <h2>ADVANCED FLEXBOX PATTERNS</h2>
+
+        <h3>1. The Holy Grail Layout</h3>
+        <p>A classic three-column layout with header and footer:</p>
+        <pre><code class="language-css">.holy-grail {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.holy-grail-header,
+.holy-grail-footer {
+    background: #2c3e50;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+.holy-grail-body {
+    display: flex;
+    flex: 1;
+}
+
+.holy-grail-content {
+    flex: 1;
+    padding: 2rem;
+    background: #f5f5f5;
+}
+
+.holy-grail-nav {
+    flex: 0 0 200px;
+    background: #e74c3c;
+    color: white;
+    padding: 2rem;
+    order: -1;  /* Move to left */
+}
+
+.holy-grail-ads {
+    flex: 0 0 150px;
+    background: #f1c40f;
+    padding: 2rem;
+}
+
+@media screen and (max-width: 768px) {
+    .holy-grail-body {
+        flex-direction: column;
+    }
+    
+    .holy-grail-nav,
+    .holy-grail-ads {
+        flex: 0 0 auto;
+    }
+    
+    .holy-grail-nav {
+        order: 0;  /* Reset order */
+    }
+}</code></pre>
+
+        <h3>2. Sticky Footer</h3>
+        <p>Keep footer at bottom even with minimal content:</p>
+        <pre><code class="language-css">.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;  /* Pushes footer down */
+    padding: 2rem;
+}
+
+.footer {
+    background: #2c3e50;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}</code></pre>
+
+        <h3>3. Media Object</h3>
+        <p>The classic media object pattern (image with content):</p>
+        <pre><code class="language-css">.media {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.media-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.media-body {
+    flex: 1;
+}
+
+.media-heading {
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.media-text {
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Nested media objects */
+.media-nested {
+    margin-top: 1rem;
+    margin-left: 2rem;
+}</code></pre>
+
+        <h3>4. Centering Strategies</h3>
+
+        <h4>Perfect Centering (both axes)</h4>
+        <pre><code class="language-css">.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    background: #f5f5f5;
+}
+
+.child {
+    padding: 2rem;
+    background: #3498db;
+    color: white;
+}</code></pre>
+
+        <h4>Horizontal Centering Only</h4>
+        <pre><code class="language-css">.parent {
+    display: flex;
+    justify-content: center;
+}
+
+.child {
+    /* No need for margin: auto */
+}</code></pre>
+
+        <h4>Vertical Centering Only</h4>
+        <pre><code class="language-css">.parent {
+    display: flex;
+    align-items: center;
+    height: 300px;
+}</code></pre>
+
+        <h4>Centering with Auto Margins</h4>
+        <pre><code class="language-css">.parent {
+    display: flex;
+}
+
+.child {
+    margin: auto;  /* Centers in both axes */
+    /* OR */
+    margin-left: auto;  /* Pushes to the right */
+    margin-right: auto;  /* Centers horizontally */
+}</code></pre>
+
+        <hr>
+
+        <h2>COMMON PITFALLS AND SOLUTIONS</h2>
+
+        <h3>Pitfall 1: Unexpected Item Sizes</h3>
+        <p><strong>Problem:</strong> Items don't size as expected</p>
+        <pre><code class="language-css">/* Wrong */
+.item {
+    width: 200px;
+}
+
+/* Correct - using flex-basis */
+.item {
+    flex: 0 0 200px;  /* Fixed width, won't grow or shrink */
+}
+
+/* Or */
+.item {
+    flex-basis: 200px;
+    flex-shrink: 0;
+}</code></pre>
+
+        <h3>Pitfall 2: Content Overflow</h3>
+        <p><strong>Problem:</strong> Text overflows container</p>
+        <pre><code class="language-css">/* Solution */
+.card-text {
+    min-width: 0;  /* Allows text to shrink below content size */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Or for flex items */
+.flex-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}</code></pre>
+
+        <h3>Pitfall 3: Collapsing Margins</h3>
+        <p><strong>Problem:</strong> Margins between flex items collapse unexpectedly</p>
+        <pre><code class="language-css">/* Solution 1: Use gap */
+.container {
+    display: flex;
+    gap: 1rem;  /* Modern, preferred */
+}
+
+/* Solution 2: Use padding on container */
+.container {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;  /* Still better */
+}
+
+/* Solution 3: Old way - margins on items */
+.item {
+    margin-right: 1rem;
+}
+.item:last-child {
+    margin-right: 0;
+}</code></pre>
+
+        <h3>Pitfall 4: Wrapping Issues</h3>
+        <p><strong>Problem:</strong> Items don't wrap as expected</p>
+        <pre><code class="language-css">/* Wrong */
+.container {
+    display: flex;
+    /* Missing flex-wrap */
+}
+
+/* Correct */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.item {
+    flex: 1 1 300px;  /* Base size 300px, can grow/shrink */
+}</code></pre>
+
+        <h3>Pitfall 5: Height Issues in Multi-line Containers</h3>
+        <p><strong>Problem:</strong> Rows don't align properly</p>
+        <pre><code class="language-css">.container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;  /* Controls multi-line alignment */
+    align-items: flex-start;       /* Controls item alignment within rows */
+    min-height: 400px;
+}</code></pre>
+
+        <hr>
+
+        <h2>PRACTICE EXERCISES</h2>
+
+        <h3>Exercise 1: Build a Responsive Navbar</h3>
+        <p>Create a navbar with:</p>
+        <ul>
+            <li>Logo on the left</li>
+            <li>4 navigation links in the center</li>
+            <li>Login/Signup buttons on the right</li>
+            <li>Mobile breakpoint at 768px that stacks everything</li>
+        </ul>
+
+        <h3>Exercise 2: Card Gallery</h3>
+        <p>Build a gallery with:</p>
+        <ul>
+            <li>6 cards in a responsive grid</li>
+            <li>Each card has an image, title, description, and button</li>
+            <li>Cards should be equal height</li>
+            <li>4 columns on desktop, 2 on tablet, 1 on mobile</li>
+        </ul>
+
+        <h3>Exercise 3: Feature Section</h3>
+        <p>Create a "Our Features" section with:</p>
+        <ul>
+            <li>3 feature cards in a row</li>
+            <li>Each card has an icon (emoji), title, description, and "Learn More" link</li>
+            <li>Icons should be centered at the top</li>
+            <li>Cards should have equal height</li>
+        </ul>
+
+        <h3>Exercise 4: Complex Navbar</h3>
+        <p>Build a navbar with:</p>
+        <ul>
+            <li>Logo</li>
+            <li>Search bar (flex: 1)</li>
+            <li>User menu with avatar and dropdown</li>
+            <li>Notification badge</li>
+            <li>All properly aligned and responsive</li>
+        </ul>
+
+        <h3>Exercise 5: Product Showcase</h3>
+        <p>Create a product showcase with:</p>
+        <ul>
+            <li>A featured product card (horizontal on desktop)</li>
+            <li>Related products grid below</li>
+            <li>Use flexbox for all layouts</li>
+            <li>Ensure proper spacing and alignment</li>
+        </ul>
+
+        <hr>
+
+        <h2>COMPLETE CODE EXAMPLES</h2>
+
+        <h3>Example 1: Complete Navbar with All Features</h3>
+        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Complete Navbar Example&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #f1c40f;
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #f1c40f;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #f1c40f;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Search Bar */
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-form {
+            display: flex;
+            background: rgba(255,255,255,0.15);
+            border-radius: 30px;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form:focus-within {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-btn {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .notifications {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .avatar-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .avatar-name {
+            font-weight: 500;
+        }
+
+        /* Mobile Responsive */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 768px) {
+            .navbar-container {
+                flex-wrap: wrap;
+                position: relative;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .search-container {
+                order: 1;
+                max-width: 100%;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+
+            .user-menu {
+                margin-left: auto;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .navbar-container {
+                padding: 1rem;
+            }
+
+            .user-menu {
+                gap: 1rem;
+            }
+
+            .avatar-name {
+                display: none;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar"&gt;
+        &lt;div class="navbar-container"&gt;
+            &lt;a href="#" class="logo"&gt;Flex&lt;span&gt;Master&lt;/span&gt;&lt;/a&gt;
+            
+            &lt;button class="mobile-menu-btn" onclick="toggleMenu()"&gt;☰&lt;/button&gt;
+            
+            &lt;ul class="nav-links" id="navLinks"&gt;
+                &lt;li&gt;&lt;a href="#" class="active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Features&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Pricing&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            
+            &lt;div class="search-container"&gt;
+                &lt;form class="search-form"&gt;
+                    &lt;input type="text" class="search-input" placeholder="Search..."&gt;
+                    &lt;button type="submit" class="search-btn"&gt;🔍&lt;/button&gt;
+                &lt;/form&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="user-menu"&gt;
+                &lt;div class="notifications"&gt;
+                    &lt;span&gt;🔔&lt;/span&gt;
+                    &lt;span class="notification-badge"&gt;3&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class="user-avatar"&gt;
+                    &lt;img src="https://via.placeholder.com/35" alt="User" class="avatar-img"&gt;
+                    &lt;span class="avatar-name"&gt;John Doe&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+    
+    &lt;main style="padding: 2rem; text-align: center;"&gt;
+        &lt;h1&gt;Welcome to Flexbox Mastery&lt;/h1&gt;
+        &lt;p&gt;This is a complete example of a responsive navbar with all features.&lt;/p&gt;
+    &lt;/main&gt;
+
+    &lt;script&gt;
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('show');
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Example 2: Complete Card Grid System</h3>
+        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Complete Card Grid System&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            font-size: 2.5rem;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Base Card Styles */
+        .card {
+            flex: 1 1 300px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Card Meta */
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.875rem;
+            color: #7f8c8d;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #e0e0e0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #333;
+        }
+
+        /* Card Actions */
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        /* Card Variations */
+        
+        /* 1. Blog Card */
+        .blog-card .card-category {
+            background: #e74c3c;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            align-self: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        /* 2. Product Card */
+        .product-card {
+            position: relative;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #e74c3c;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            z-index: 1;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stars {
+            color: #f1c40f;
+            letter-spacing: 2px;
+        }
+
+        .rating-count {
+            color: #7f8c8d;
+            font-size: 0.75rem;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .original-price {
+            font-size: 0.875rem;
+            color: #7f8c8d;
+            text-decoration: line-through;
+        }
+
+        /* 3. Profile Card */
+        .profile-card .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-title {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+        }
+
+        .profile-bio {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+
+        /* 4. Course Card */
+        .course-card .course-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #7f8c8d;
+            flex-wrap: wrap;
+        }
+
+        .course-level {
+            background: #3498db;
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0 0.25rem;
+        }
+
+        .progress-fill {
+            background: #27ae60;
+            height: 100%;
+            width: 75%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        /* 5. Horizontal Card */
+        .horizontal-card {
+            flex-direction: row;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .horizontal-card .card-image {
+            width: 40%;
+            height: auto;
+        }
+
+        .horizontal-card .card-content {
+            width: 60%;
+        }
+
+        /* Responsive Breakpoints */
+        @media screen and (max-width: 1024px) {
+            .card-grid {
+                gap: 1.5rem;
+            }
+            
+            .card {
+                flex: 1 1 calc(50% - 1.5rem);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .card-grid {
+                gap: 1rem;
+            }
+            
+            .card {
+                flex: 1 1 100%;
+            }
+            
+            .horizontal-card {
+                flex-direction: column;
+            }
+            
+            .horizontal-card .card-image,
+            .horizontal-card .card-content {
+                width: 100%;
+            }
+            
+            .horizontal-card .card-image {
+                height: 200px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card-actions {
+                flex-direction: column;
+            }
+            
+            .card-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;🎴 Flexbox Card Gallery&lt;/h1&gt;
+        
+        &lt;!-- Card Grid Section --&gt;
+        &lt;div class="card-grid"&gt;
+            &lt;!-- Blog Card --&gt;
+            &lt;article class="card blog-card"&gt;
+                &lt;img src="https://via.placeholder.com/400x250/3498db/ffffff?text=Blog+Post" alt="Blog" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;span class="card-category"&gt;Technology&lt;/span&gt;
+                    &lt;h2 class="card-title"&gt;Mastering CSS Flexbox in 2025&lt;/h2&gt;
+                    &lt;p class="card-description"&gt;Learn how to create complex layouts with ease using modern CSS techniques and best practices...&lt;/p&gt;
+                    &lt;div class="card-meta"&gt;
+                        &lt;span&gt;📅 Mar 15, 2025&lt;/span&gt;
+                        &lt;span&gt;👤 5 min read&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card-tags"&gt;
+                        &lt;span class="tag"&gt;CSS&lt;/span&gt;
+                        &lt;span class="tag"&gt;Flexbox&lt;/span&gt;
+                        &lt;span class="tag"&gt;Tutorial&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;a href="#" class="btn btn-primary"&gt;Read More&lt;/a&gt;
+                        &lt;button class="btn btn-secondary"&gt;📌 Save&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+
+            &lt;!-- Product Card --&gt;
+            &lt;article class="card product-card"&gt;
+                &lt;span class="product-badge"&gt;-38%&lt;/span&gt;
+                &lt;img src="https://via.placeholder.com/400x250/27ae60/ffffff?text=Wireless+Headphones" alt="Product" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;h2 class="card-title"&gt;Premium Wireless Headphones&lt;/h2&gt;
+                    &lt;div class="product-rating"&gt;
+                        &lt;span class="stars"&gt;★★★★½&lt;/span&gt;
+                        &lt;span class="rating-count"&gt;(245 reviews)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="product-price"&gt;
+                        &lt;span class="current-price"&gt;$79.99&lt;/span&gt;
+                        &lt;span class="original-price"&gt;$129.99&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;p class="card-description"&gt;Active noise cancellation, 30-hour battery life, and premium sound quality...&lt;/p&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;button class="btn btn-primary"&gt;🛒 Add to Cart&lt;/button&gt;
+                        &lt;button class="btn btn-secondary"&gt;❤️&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+
+            &lt;!-- Profile Card --&gt;
+            &lt;article class="card profile-card"&gt;
+                &lt;div class="profile-header"&gt;
+                    &lt;img src="https://via.placeholder.com/100" alt="Profile" class="profile-avatar"&gt;
+                    &lt;h2 class="profile-name"&gt;Sarah Johnson&lt;/h2&gt;
+                    &lt;p class="profile-title"&gt;Senior UI/UX Designer&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;div class="profile-stats"&gt;
+                        &lt;div class="stat"&gt;
+                            &lt;span class="stat-value"&gt;2.5K&lt;/span&gt;
+                            &lt;span class="stat-label"&gt;Followers&lt;/span&gt;
+                        &lt;/div&gt;
+                        &lt;div class="stat"&gt;
+                            &lt;span class="stat-value"&gt;1.2K&lt;/span&gt;
+                            &lt;span class="stat-label"&gt;Following&lt;/span&gt;
+                        &lt;/div&gt;
+                        &lt;div class="stat"&gt;
+                            &lt;span class="stat-value"&gt;45&lt;/span&gt;
+                            &lt;span class="stat-label"&gt;Projects&lt;/span&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;p class="profile-bio"&gt;Passionate about creating beautiful and accessible user experiences. Figma expert and CSS enthusiast.&lt;/p&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;button class="btn btn-primary"&gt;Follow&lt;/button&gt;
+                        &lt;button class="btn btn-secondary"&gt;Message&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+
+            &lt;!-- Course Card --&gt;
+            &lt;article class="card course-card"&gt;
+                &lt;img src="https://via.placeholder.com/400x250/e74c3c/ffffff?text=JavaScript+Course" alt="Course" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;h2 class="card-title"&gt;Advanced JavaScript: From Fundamentals to Functional&lt;/h2&gt;
+                    &lt;div class="course-meta"&gt;
+                        &lt;span&gt;📚 42 lessons&lt;/span&gt;
+                        &lt;span&gt;⏱ 15 hours&lt;/span&gt;
+                        &lt;span class="course-level"&gt;Advanced&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="progress-bar"&gt;
+                        &lt;div class="progress-fill" style="width: 75%"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;span class="progress-text"&gt;75% complete&lt;/span&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;button class="btn btn-primary"&gt;Continue Learning&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+
+            &lt;!-- Horizontal Card (Featured) --&gt;
+            &lt;article class="card horizontal-card"&gt;
+                &lt;img src="https://via.placeholder.com/400x250/f1c40f/2c3e50?text=Featured" alt="Featured" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;span class="card-category"&gt;Featured&lt;/span&gt;
+                    &lt;h2 class="card-title"&gt;The Complete Web Development Bootcamp 2025&lt;/h2&gt;
+                    &lt;p class="card-description"&gt;The only course you need to become a full-stack web developer. Covers HTML, CSS, JavaScript, React, Node.js and more...&lt;/p&gt;
+                    &lt;div class="card-meta"&gt;
+                        &lt;span&gt;👨‍🏫 John Smith&lt;/span&gt;
+                        &lt;span&gt;⭐ 4.9 (12.5K ratings)&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;button class="btn btn-primary"&gt;Enroll Now - $89.99&lt;/button&gt;
+                        &lt;button class="btn btn-secondary"&gt;Preview&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+
+            &lt;!-- Regular Card (Placeholder for variety) --&gt;
+            &lt;article class="card"&gt;
+                &lt;img src="https://via.placeholder.com/400x250/9b59b6/ffffff?text=Web+Design" alt="Design" class="card-image"&gt;
+                &lt;div class="card-content"&gt;
+                    &lt;h2 class="card-title"&gt;Web Design Trends 2025&lt;/h2&gt;
+                    &lt;p class="card-description"&gt;Discover the latest trends in web design including glassmorphism, 3D elements, and micro-interactions...&lt;/p&gt;
+                    &lt;div class="card-meta"&gt;
+                        &lt;span&gt;📅 Jan 5, 2025&lt;/span&gt;
+                        &lt;span&gt;👤 3 min read&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card-actions"&gt;
+                        &lt;a href="#" class="btn btn-primary"&gt;Read Article&lt;/a&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/article&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <h2>SUMMARY AND KEY TAKEAWAYS</h2>
+
+        <h3>Flexbox Mastery Checklist</h3>
+
+        <h4>For Navigation Bars:</h4>
+        <ul>
+            <li>✅ Use <code>display: flex</code> on the container</li>
+            <li>✅ Use <code>justify-content</code> for horizontal distribution</li>
+            <li>✅ Use <code>align-items</code> for vertical alignment</li>
+            <li>✅ Apply <code>flex: 1</code> to elements that should take remaining space</li>
+            <li>✅ Use <code>flex-shrink: 0</code> on elements that shouldn't shrink</li>
+            <li>✅ Implement media queries for responsive behavior</li>
+            <li>✅ Consider mobile-first approach</li>
+            <li>✅ Test on multiple screen sizes</li>
+        </ul>
+
+        <h4>For Card Layouts:</h4>
+        <ul>
+            <li>✅ Use <code>flex-wrap: wrap</code> on the grid container</li>
+            <li>✅ Set appropriate <code>flex-basis</code> for cards (e.g., <code>300px</code>)</li>
+            <li>✅ Use <code>gap</code> for consistent spacing</li>
+            <li>✅ Make cards <code>display: flex</code> with <code>flex-direction: column</code></li>
+            <li>✅ Use <code>margin-top: auto</code> or <code>flex: 1</code> to push content</li>
+            <li>✅ Ensure images are responsive with <code>object-fit: cover</code></li>
+            <li>✅ Add hover effects for interactivity</li>
+            <li>✅ Test with varying content lengths</li>
+        </ul>
+
+        <h4>Common Patterns Reference</h4>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Flexbox Solution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Equal width items</td>
+                        <td><code>flex: 1</code> on all items</td>
+                    </tr>
+                    <tr>
+                        <td>Fixed sidebar + flexible content</td>
+                        <td>Sidebar: <code>flex: 0 0 250px</code>, Content: <code>flex: 1</code></td>
+                    </tr>
+                    <tr>
+                        <td>Sticky footer</td>
+                        <td>Container: <code>min-height: 100vh</code>, Content: <code>flex: 1</code></td>
+                    </tr>
+                    <tr>
+                        <td>Centered content</td>
+                        <td><code>justify-content: center</code>, <code>align-items: center</code></td>
+                    </tr>
+                    <tr>
+                        <td>Holy grail layout</td>
+                        <td>Nested flex containers with column and row directions</td>
+                    </tr>
+                    <tr>
+                        <td>Card grid</td>
+                        <td><code>flex-wrap: wrap</code> with <code>flex-basis</code> for responsiveness</td>
+                    </tr>
+                    <tr>
+                        <td>Media object</td>
+                        <td><code>display: flex</code> on container, <code>flex: 1</code> on content</td>
+                    </tr>
+                    <tr>
+                        <td>Equal height cards</td>
+                        <td>Flex container with <code>align-items: stretch</code> (default)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>Performance Considerations</h4>
+        <ol>
+            <li><strong>Avoid over-nesting</strong> - Too many flex containers can impact performance</li>
+            <li><strong>Use <code>gap</code> instead of margins</strong> - More efficient and cleaner</li>
+            <li><strong>Be specific with selectors</strong> - Avoid universal selectors in large flex layouts</li>
+            <li><strong>Test on real devices</strong> - Don't just rely on browser dev tools</li>
+            <li><strong>Consider print styles</strong> - Flexbox can behave differently in print media</li>
+        </ol>
+
+        <h4>Browser Support</h4>
+        <ul>
+            <li>Flexbox is supported in all modern browsers</li>
+            <li>For older browsers (IE11), use vendor prefixes and fallbacks</li>
+            <li>Test critical layouts in target browsers</li>
+            <li>Use <code>@supports</code> for progressive enhancement</li>
+        </ul>
+
+        <pre><code class="language-css">@supports (display: flex) {
+    .container {
+        display: flex;
+    }
+}
+
+/* Fallback for older browsers */
+.container {
+    display: block;
+}
+
+.container::after {
+    content: "";
+    display: table;
+    clear: both;
+}</code></pre>
+
+        <hr>
+
+        <h2>NEXT STEPS</h2>
+        <p>After mastering these Flexbox patterns, you're ready to:</p>
+        <ol>
+            <li><strong>Learn CSS Grid</strong> - For two-dimensional layouts</li>
+            <li><strong>Explore animations</strong> - Combine Flexbox with CSS transitions</li>
+            <li><strong>Build component libraries</strong> - Create reusable flexbox components</li>
+            <li><strong>Study responsive images</strong> - Combine with <code>srcset</code> and <code>picture</code>
+                elements</li>
+            <li><strong>Practice with frameworks</strong> - See how Bootstrap/Tailwind implement flexbox</li>
+            <li><strong>Contribute to open source</strong> - Apply skills to real projects</li>
+            <li><strong>Build a portfolio</strong> - Showcase your responsive layouts</li>
+        </ol>
+        <p>Remember: <strong>Flexbox is a tool, not a goal</strong>. The true mastery comes from knowing when to use it
+            and when to reach for other layout methods like CSS Grid, multi-column, or block layout.</p>
+
+        <div class="note-block">
+            <em>"Flexbox makes the once-difficult task of creating complex, responsive layouts feel almost effortless.
+                Master it, and you've mastered one of the most powerful tools in modern CSS."</em>
+        </div>
+
+        <p style="font-size:1.6rem; font-weight:bold; text-align:center;">Happy Coding! 🚀</p>
+
+        <footer>© 2025 · BUILDING LAYOUTS WITH FLEXBOX: A COMPREHENSIVE GUIDE · all lines preserved exactly</footer>
+    </div> <!-- document-wrapper -->
+</body>
+
+</html>

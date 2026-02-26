@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Box Model – Part 2 · complete notes</title>
+    <style>
+        /* ===== reset / base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f5fa;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a2b3c;
+            padding: 2rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -20px #0a2e4b;
+            padding: 2.2rem 2rem;
+        }
+
+        /* headings & hierarchy */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #0d3b4c;
+            font-weight: 650;
+            line-height: 1.3;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 12px solid #1f7a8c;
+            padding-left: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #b5d8e8;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #155a6b;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #1d6d7a;
+        }
+
+        hr {
+            margin: 2.5rem 0;
+            border: 2px dashed #9ec5d9;
+        }
+
+        p,
+        li,
+        blockquote {
+            margin-bottom: 1rem;
+            color: #1f3a47;
+        }
+
+        code,
+        pre {
+            background: #e9f0f5;
+            border-radius: 10px;
+            padding: 0.2rem 0.6rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            border: 1px solid #bdd3e3;
+        }
+
+        pre {
+            padding: 1.2rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 8px #d4e2ed;
+        }
+
+        /* tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #c9dde9;
+        }
+
+        th {
+            background: #1f7a8c;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        td {
+            background: #f3f9ff;
+            padding: 0.9rem 0.5rem;
+            border-bottom: 1px solid #c2dae8;
+        }
+
+        .note-block {
+            background: #e4f0f7;
+            border-radius: 1.6rem;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2b95b0;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .glossary-term {
+            font-weight: 700;
+            color: #004d66;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <!-- CONTENT START: EXACT COPY OF PROVIDED STUDY NOTES (BOX MODEL PART 2), EVERY LINE PRESERVED -->
+
+        <h1>THE CSS BOX MODEL - PART 2: A COMPREHENSIVE GUIDE</h1>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <ol>
+            <li><a href="#introduction">Introduction to the Box Model Revisited</a></li>
+            <li><a href="#width-height">Understanding Width and Height</a></li>
+            <li><a href="#box-sizing">The Critical <code>box-sizing</code> Property</a></li>
+            <li><a href="#overflow">Controlling Overflow</a></li>
+            <li><a href="#centering">Centering with <code>margin: auto</code></a></li>
+            <li><a href="#practical-examples">Practical Examples and Use Cases</a></li>
+            <li><a href="#pitfalls">Common Pitfalls and Solutions</a></li>
+            <li><a href="#best-practices">Browser Compatibility and Best Practices</a></li>
+            <li><a href="#exercises">Hands-On Exercises</a></li>
+            <li><a href="#interview-questions">Interview Questions and Answers</a></li>
+        </ol>
+
+        <hr>
+
+        <h1 id="introduction">1. INTRODUCTION TO THE BOX MODEL REVISITED</h1>
+
+        <p>Before diving deep into Part 2, let's briefly revisit what the CSS Box Model is. Every element on a web page
+            is a rectangular box, and the box model describes how these boxes are sized and spaced.</p>
+
+        <h3>The Four Components of the Box Model:</h3>
+
+        <pre><code>+-------------------------------------------+
+|                MARGIN (Transparent)       |
+|  +-------------------------------------+  |
+|  |              BORDER                 |  |
+|  |  +-------------------------------+  |  |
+|  |  |          PADDING               |  |  |
+|  |  |  +-------------------------+  |  |  |
+|  |  |  |                         |  |  |  |
+|  |  |  |        CONTENT           |  |  |  |
+|  |  |  |                         |  |  |  |
+|  |  |  +-------------------------+  |  |  |
+|  |  |                               |  |  |
+|  |  +-------------------------------+  |  |
+|  |                                   |  |
+|  +-------------------------------------+  |
+|                                           |
++-------------------------------------------+
+</code></pre>
+
+        <h3>Default Box Model Calculation:</h3>
+        <p>By default, the <code>width</code> and <code>height</code> properties only set the dimensions of the
+            <strong>content area</strong>. The actual space an element occupies on the page is:</p>
+
+        <p><strong>Total Width = width + padding-left + padding-right + border-left + border-right + margin-left +
+                margin-right</strong></p>
+
+        <p><strong>Total Height = height + padding-top + padding-bottom + border-top + border-bottom + margin-top +
+                margin-bottom</strong></p>
+
+        <p>This default behavior is the source of many layout frustrations, which is why understanding Part 2 concepts
+            is crucial.</p>
+
+        <hr>
+
+        <h1 id="width-height">2. UNDERSTANDING WIDTH AND HEIGHT</h1>
+
+        <h3>2.1 The <code>width</code> Property</h3>
+        <p>The <code>width</code> property sets the width of an element's content area (by default). It can be specified
+            in various units:</p>
+
+        <pre><code>.element {
+    /* Absolute units */
+    width: 300px;        /* Fixed pixels */
+    width: 5cm;          /* Centimeters */
+    width: 2in;          /* Inches */
+    
+    /* Relative units */
+    width: 50%;          /* 50% of parent's width */
+    width: 50vw;         /* 50% of viewport width */
+    width: 30rem;        /* Relative to root font size */
+    width: 30em;         /* Relative to element's font size */
+    
+    /* Keyword values */
+    width: auto;         /* Default - browser calculates */
+    width: max-content;  /* Width required for content */
+    width: min-content;  /* Smallest possible width */
+    width: fit-content;  /* Shrinks to fit content up to available space */
+}
+</code></pre>
+
+        <h3>2.2 The <code>height</code> Property</h3>
+        <p>Similarly, <code>height</code> sets the height of an element's content area:</p>
+        <pre><code>.element {
+    /* Absolute units */
+    height: 200px;       /* Fixed pixels */
+    
+    /* Relative units */
+    height: 50%;         /* 50% of parent's height */
+    height: 50vh;        /* 50% of viewport height */
+    height: 100%;        /* Full height of parent */
+    
+    /* Keyword values */
+    height: auto;        /* Default - based on content */
+    height: max-content; /* Height required for content */
+}
+</code></pre>
+
+        <h3>2.3 Special Values: <code>min-*</code> and <code>max-*</code> Properties</h3>
+        <p>These properties set boundaries for element dimensions:</p>
+        <pre><code>.responsive-box {
+    /* Minimum width - element won't go below this */
+    min-width: 200px;
+    
+    /* Maximum width - element won't exceed this */
+    max-width: 800px;
+    
+    /* Minimum height */
+    min-height: 150px;
+    
+    /* Maximum height */
+    max-height: 500px;
+    
+    /* Actual width will be between 200px and 800px */
+    width: 100%; /* Tries to be 100% but constrained by min/max */
+}
+</code></pre>
+
+        <p><strong>Practical Example - Responsive Container:</strong></p>
+        <pre><code>.container {
+    width: 100%;          /* Takes full width of parent */
+    max-width: 1200px;    /* But never wider than 1200px */
+    margin: 0 auto;       /* Centers when less than 1200px */
+}
+</code></pre>
+
+        <h3>2.4 The Problem with Default Width/Height Behavior</h3>
+        <p>Consider this common scenario:</p>
+        <pre><code>.box {
+    width: 300px;
+    padding: 20px;
+    border: 5px solid black;
+}
+</code></pre>
+        <p><strong>What developers expect:</strong> Total width = 300px<br>
+            <strong>What actually happens:</strong> Total width = 300px (content) + 40px (padding) + 10px (border) =
+            350px
+        </p>
+        <p>This discrepancy is the #1 source of layout headaches and leads us directly to the <code>box-sizing</code>
+            property.</p>
+
+        <hr>
+
+        <h1 id="box-sizing">3. THE CRITICAL <code>BOX-SIZING</code> PROPERTY</h1>
+
+        <h3>3.1 What is <code>box-sizing</code>?</h3>
+        <p>The <code>box-sizing</code> property defines how the total width and height of an element are calculated. It
+            has two possible values:</p>
+        <pre><code>.element {
+    box-sizing: content-box; /* Default behavior */
+    box-sizing: border-box;   /* The game-changer */
+}
+</code></pre>
+
+        <h3>3.2 <code>content-box</code> (Default)</h3>
+        <p>With <code>content-box</code>, the <code>width</code> and <code>height</code> properties apply only to the
+            content area:</p>
+        <pre><code>.content-box-example {
+    box-sizing: content-box;
+    width: 300px;
+    padding: 20px;
+    border: 5px solid black;
+    margin: 10px;
+    
+    /* Total width = 300px (content) 
+                     + 40px (padding left+right)
+                     + 10px (border left+right)
+                     = 350px
+    */
+}
+</code></pre>
+
+        <h3>3.3 <code>border-box</code> (The Modern Standard)</h3>
+        <p>With <code>border-box</code>, the <code>width</code> and <code>height</code> properties include
+            <strong>content, padding, and border</strong>:</p>
+        <pre><code>.border-box-example {
+    box-sizing: border-box;
+    width: 300px;
+    padding: 20px;
+    border: 5px solid black;
+    margin: 10px;
+    
+    /* Total width = 300px (includes content, padding, and border)
+       Content width automatically shrinks to: 
+       300px - 40px(padding) - 10px(border) = 250px
+    */
+}
+</code></pre>
+
+        <p><strong>Visual Comparison:</strong></p>
+        <pre><code>CONTENT-BOX:
++-------------------------------------------------+
+|   Total Width: 350px                            |
+|  +-------------------------------------------+  |
+|  | Border: 5px                               |  |
+|  |  +-------------------------------------+  |  |
+|  |  | Padding: 20px                        |  |  |
+|  |  |  +-------------------------------+  |  |  |
+|  |  |  | Content: 300px                |  |  |  |
+|  |  |  +-------------------------------+  |  |  |
+|  |  +-------------------------------------+  |  |
+|  +-------------------------------------------+  |
++-------------------------------------------------+
+
+BORDER-BOX:
++-------------------------------------------------+
+|   Total Width: 300px                            |
+|  +-------------------------------------------+  |
+|  | Border: 5px                               |  |
+|  |  +-------------------------------------+  |  |
+|  |  | Padding: 20px                        |  |  |
+|  |  |  +-------------------------------+  |  |  |
+|  |  |  | Content: 250px (auto-shrunk)  |  |  |  |
+|  |  |  +-------------------------------+  |  |  |
+|  |  +-------------------------------------+  |  |
+|  +-------------------------------------------+  |
++-------------------------------------------------+
+</code></pre>
+
+        <h3>3.4 The Universal <code>border-box</code> Reset</h3>
+        <p>It's now standard practice to apply <code>border-box</code> to all elements:</p>
+        <pre><code>/* Universal border-box reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+</code></pre>
+        <p><strong>Why this is powerful:</strong> With this reset, when you set an element to <code>width: 100%</code>,
+            it stays at 100% regardless of padding or borders you add later.</p>
+
+        <h3>3.5 Deep Dive: How <code>border-box</code> Calculates</h3>
+        <p>Let's understand the math behind <code>border-box</code>:</p>
+        <pre><code>.card {
+    box-sizing: border-box;
+    width: 500px;
+    padding: 30px 40px;  /* 30px top/bottom, 40px left/right */
+    border: 3px solid blue;
+}
+</code></pre>
+        <p><strong>Calculation:</strong><br>
+            - Total width = 500px (as specified)<br>
+            - Border takes: 3px (left) + 3px (right) = 6px<br>
+            - Padding takes: 40px (left) + 40px (right) = 80px<br>
+            - <strong>Available content width = 500px - 6px - 80px = 414px</strong></p>
+
+        <h3>3.6 Practical Example: Form Inputs</h3>
+        <p>Form inputs demonstrate why <code>border-box</code> is essential:</p>
+        <pre><code>/* Without border-box - broken layout */
+.form-container {
+    width: 400px;
+}
+
+.input-broken {
+    width: 100%;        /* Tries to be 400px */
+    padding: 10px;      /* Adds 20px total */
+    border: 2px solid gray; /* Adds 4px total */
+    /* Actual total width: 400px + 20px + 4px = 424px */
+    /* Overflows container! */
+}
+
+/* With border-box - perfect layout */
+.input-perfect {
+    box-sizing: border-box;
+    width: 100%;        /* Exactly 400px including padding/border */
+    padding: 10px;
+    border: 2px solid gray;
+    /* Stays perfectly inside container */
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="overflow">4. CONTROLLING OVERFLOW WITH <code>OVERFLOW</code></h1>
+
+        <h3>4.1 What is Overflow?</h3>
+        <p>Overflow occurs when content doesn't fit within an element's box. The <code>overflow</code> property controls
+            what happens to this extra content.</p>
+
+        <h3>4.2 The <code>overflow</code> Property Values</h3>
+        <pre><code>.element {
+    /* Single value for both axes */
+    overflow: visible;   /* Default - content overflows */
+    overflow: hidden;    /* Content clipped, no scrollbars */
+    overflow: scroll;    /* Always show scrollbars */
+    overflow: auto;      /* Show scrollbars only when needed */
+    
+    /* Separate control for each axis */
+    overflow-x: hidden;  /* Horizontal overflow only */
+    overflow-y: scroll;  /* Vertical overflow only */
+}
+</code></pre>
+
+        <h3>4.3 Detailed Look at Each Value</h3>
+
+        <p><strong><code>overflow: visible</code> (Default)</strong></p>
+        <pre><code>.visible-example {
+    width: 200px;
+    height: 100px;
+    overflow: visible; /* Default */
+    background-color: lightblue;
+}
+</code></pre>
+        <ul>
+            <li>Content is <strong>not clipped</strong></li>
+            <li>Content renders outside the element's box</li>
+            <li>Can overlap other elements</li>
+        </ul>
+        <pre><code>[200px wide box]
++------------------+
+| This is some long| 
+| text that over-  |
+| flows because    |
+| it doesn't fit.  |
++------------------+
+  flows outside the box
+  and overlaps content below ↓
+</code></pre>
+
+        <p><strong><code>overflow: hidden</code></strong></p>
+        <pre><code>.hidden-example {
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+    background-color: lightcoral;
+}
+</code></pre>
+        <ul>
+            <li>Content that doesn't fit is <strong>clipped/invisible</strong></li>
+            <li>No scrollbars provided</li>
+            <li>Useful for creating "clean" containers</li>
+        </ul>
+        <pre><code>[200px wide box]
++------------------+
+| This is some long| 
+| text that over-  |
+| flows because    |
+| it doesn't fit.  |
++------------------+
+  (content beyond this point is invisible)
+</code></pre>
+
+        <p><strong><code>overflow: scroll</code></strong></p>
+        <pre><code>.scroll-example {
+    width: 200px;
+    height: 100px;
+    overflow: scroll;
+    background-color: lightgreen;
+}
+</code></pre>
+        <ul>
+            <li>Always shows scrollbars (even if not needed)</li>
+            <li>Takes up space for scrollbars</li>
+            <li>Predictable layout but sometimes wasteful</li>
+        </ul>
+
+        <p><strong><code>overflow: auto</code></strong></p>
+        <pre><code>.auto-example {
+    width: 200px;
+    height: 100px;
+    overflow: auto;
+    background-color: lightgoldenrodyellow;
+}
+</code></pre>
+        <ul>
+            <li>Shows scrollbars <strong>only when necessary</strong></li>
+            <li>Most commonly used value</li>
+            <li>Best user experience</li>
+        </ul>
+
+        <h3>4.4 Text Overflow and Ellipsis</h3>
+        <p>Combining overflow with other properties creates common UI patterns:</p>
+        <pre><code>.text-ellipsis {
+    width: 250px;
+    white-space: nowrap;      /* Prevents text wrapping */
+    overflow: hidden;         /* Hides overflowing text */
+    text-overflow: ellipsis;  /* Adds ... at the end */
+    border: 1px solid black;
+    padding: 5px;
+}
+</code></pre>
+        <p><strong>Result:</strong> "This is a very long text that..." (truncated with ellipsis)</p>
+
+        <h3>4.5 Creating Scrollable Areas</h3>
+        <pre><code>.scrollable-card {
+    width: 300px;
+    height: 400px;
+    overflow-y: auto;    /* Vertical scroll only when needed */
+    overflow-x: hidden;  /* Never horizontal scroll */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+}
+</code></pre>
+
+        <h3>4.6 Overflow and Float Clearing</h3>
+        <pre><code>.clearfix-overflow {
+    overflow: auto;  /* Forces container to contain floats */
+    border: 1px solid black;
+}
+
+.float-left {
+    float: left;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+}
+</code></pre>
+
+        <h3>4.7 Advanced: <code>overflow</code> with Positioning</h3>
+        <pre><code>.container {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    overflow: hidden;  /* Clips absolutely positioned children too */
+    border: 2px solid black;
+}
+
+.absolute-child {
+    position: absolute;
+    top: 150px;        /* 150px from container top */
+    left: 250px;       /* 250px from container left */
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    /* This element will be clipped if it goes outside container */
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="centering">5. CENTERING WITH <code>MARGIN: AUTO</code></h1>
+
+        <h3>5.1 The Magic of <code>auto</code></h3>
+        <p>The <code>auto</code> keyword in CSS margin tells the browser to automatically calculate the margin. When
+            used in specific ways, it becomes a powerful centering tool.</p>
+
+        <h3>5.2 Horizontal Centering with <code>margin: 0 auto</code></h3>
+        <pre><code>.center-horizontal {
+    width: 300px;           /* Must have a width */
+    margin-left: auto;      /* Auto-calculated left margin */
+    margin-right: auto;     /* Auto-calculated right margin */
+    /* OR shorthand */
+    margin: 0 auto;         /* Top/Bottom 0, Left/Right auto */
+}
+</code></pre>
+        <p><strong>How it works:</strong><br>
+            1. The element has a fixed width (300px)<br>
+            2. The browser calculates available horizontal space<br>
+            3. <code>auto</code> margins split the remaining space equally<br>
+            4. Result: Element is perfectly centered</p>
+        <pre><code>[Parent Container - 800px wide]
++-------------------------------------------------------------------+
+|                                                                   |
+|      [Centered Element - 300px wide]                              |
+|      +-------------------------------------------------------+    |
+|      |                                                       |    |
+|      +-------------------------------------------------------+    |
+|                                                                   |
+|  &lt;-- 250px auto margin --&gt;  300px   &lt;-- 250px auto margin --&gt;    |
++-------------------------------------------------------------------+
+</code></pre>
+
+        <h3>5.3 Requirements for <code>margin: auto</code> to Work</h3>
+        <pre><code>/* This WON'T center */
+.wont-center {
+    /* No width specified - defaults to auto (full width) */
+    margin: 0 auto;  /* No effect - no extra space to distribute */
+}
+
+/* This WILL center */
+.will-center {
+    width: 50%;              /* Relative width works too */
+    max-width: 600px;        /* Can also use max-width */
+    margin: 0 auto;
+}
+
+/* This also centers */
+.also-centers {
+    width: fit-content;      /* Width based on content */
+    margin: 0 auto;
+}
+</code></pre>
+
+        <h3>5.4 Different Auto Combinations</h3>
+        <pre><code>/* Push element to the right */
+.push-right {
+    width: 200px;
+    margin-left: auto;   /* Auto left margin pushes right */
+    margin-right: 0;
+}
+
+/* Push element to the left */
+.push-left {
+    width: 200px;
+    margin-left: 0;
+    margin-right: auto;  /* Auto right margin pushes left */
+}
+
+/* Center with different top/bottom margins */
+.center-vertical-context {
+    width: 300px;
+    margin: 20px auto 50px auto;  /* 20px top, auto sides, 50px bottom */
+}
+</code></pre>
+
+        <h3>5.5 Centering Images and Block-level Elements</h3>
+        <pre><code>/* Images are inline by default - need display: block */
+.image-container img {
+    display: block;      /* Makes image block-level */
+    width: 80%;          /* Or specific width */
+    margin: 0 auto;      /* Centers horizontally */
+}
+
+/* Block-level elements */
+div, p, h1, section {
+    margin: 0 auto;      /* Works on any block element with width */
+}
+</code></pre>
+
+        <h3>5.6 The Limitations of <code>margin: auto</code></h3>
+        <pre><code>/* margin: auto does NOT work for vertical centering */
+.vertical-center {
+    width: 300px;
+    height: 200px;
+    margin: auto;        /* Auto top/bottom in normal flow = 0 */
+    /* This centers horizontally but NOT vertically */
+}
+
+/* Why? Because in normal document flow, 
+   the browser can't calculate available vertical space */
+</code></pre>
+
+        <h3>5.7 Vertical Centering Alternatives</h3>
+        <p>Since <code>margin: auto</code> doesn't work for vertical centering in normal flow, here are common
+            solutions:</p>
+        <p><strong>Method 1: Flexbox (Modern)</strong></p>
+        <pre><code>.flex-container {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center;     /* Vertical centering */
+    height: 400px;
+}
+
+.centered-item {
+    width: 300px;
+    /* No margin needed */
+}
+</code></pre>
+        <p><strong>Method 2: Absolute Positioning with Auto Margins</strong></p>
+        <pre><code>.absolute-container {
+    position: relative;
+    height: 400px;
+}
+
+.centered-absolute {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;  /* Now works for both axes! */
+}
+</code></pre>
+
+        <h3>5.8 Advanced Centering Patterns</h3>
+        <p><strong>Centering within a navigation bar:</strong></p>
+        <pre><code>.navbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+}
+
+.nav-links {
+    margin-left: auto;  /* Pushes nav-links to the right */
+}
+
+.logo {
+    margin-right: auto; /* Keeps logo on left */
+}
+</code></pre>
+        <p><strong>Responsive centered container:</strong></p>
+        <pre><code>.responsive-center {
+    width: 90%;           /* Mobile: almost full width */
+    max-width: 1200px;    /* Desktop: max width */
+    margin: 0 auto;       /* Always centered */
+    padding: 20px;
+}
+
+/* Different behavior at breakpoints */
+@media (min-width: 768px) {
+    .responsive-center {
+        width: 80%;       /* Tablet: slightly narrower */
+    }
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="practical-examples">6. PRACTICAL EXAMPLES AND USE CASES</h1>
+
+        <h3>Example 1: Complete Card Component</h3>
+        <pre><code>&lt;div class="card-container"&gt;
+    &lt;div class="card"&gt;
+        &lt;img src="image.jpg" alt="Card image" class="card-image"&gt;
+        &lt;div class="card-content"&gt;
+            &lt;h3 class="card-title"&gt;Card Title&lt;/h3&gt;
+            &lt;p class="card-description"&gt;This is a long description that might overflow and need special handling.&lt;/p&gt;
+            &lt;button class="card-button"&gt;Read More&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+        <pre><code>/* Universal reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.card-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures image respects border-radius */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card-image {
+    display: block;
+    width: 100%; /* Image fills card width */
+    height: 200px;
+    object-fit: cover; /* Prevents image distortion */
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-title {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.card-description {
+    max-height: 100px;
+    overflow-y: auto; /* Scroll if description too long */
+    padding-right: 10px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.card-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.card-button:hover {
+    background-color: #0056b3;
+}
+</code></pre>
+
+        <h3>Example 2: Dashboard Widget with Overflow Control</h3>
+        <pre><code>&lt;div class="dashboard"&gt;
+    &lt;div class="widget"&gt;
+        &lt;h4 class="widget-title"&gt;Recent Activity&lt;/h4&gt;
+        &lt;ul class="activity-list"&gt;
+            &lt;li class="activity-item"&gt;User logged in - 2 minutes ago&lt;/li&gt;
+            &lt;li class="activity-item"&gt;File uploaded - 15 minutes ago&lt;/li&gt;
+            &lt;!-- 20 more items... --&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+        <pre><code>.dashboard {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+}
+
+.widget {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden; /* Creates new formatting context */
+}
+
+.widget-title {
+    padding: 15px;
+    margin: 0;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+}
+
+.activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto; /* Scrollable list */
+}
+
+.activity-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long items */
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* Hover effect reveals full text */
+.activity-item:hover {
+    white-space: normal;
+    overflow: visible;
+    background-color: #f9f9f9;
+}
+</code></pre>
+
+        <h3>Example 3: Responsive Image Gallery</h3>
+        <pre><code>&lt;div class="gallery"&gt;
+    &lt;div class="gallery-item"&gt;
+        &lt;img src="photo1.jpg" alt="Description"&gt;
+    &lt;/div&gt;
+    &lt;!-- Repeat items --&gt;
+&lt;/div&gt;
+</code></pre>
+        <pre><code>* {
+    box-sizing: border-box;
+}
+
+.gallery {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.gallery-item {
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 250px; /* Prevents items from getting too small */
+    border-radius: 8px;
+    overflow: hidden; /* Ensures images respect border-radius */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.gallery-item img {
+    display: block;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .gallery-item {
+        flex: 1 1 calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-item {
+        flex: 1 1 100%;
+    }
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="pitfalls">7. COMMON PITFALLS AND SOLUTIONS</h1>
+
+        <h3>Pitfall 1: Forgetting <code>box-sizing: border-box</code></h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>.container {
+    width: 100%;
+    padding: 20px;
+    /* Width becomes 100% + 40px - overflows parent */
+}
+</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>.container {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20px;
+    /* Width stays exactly 100% */
+}
+</code></pre>
+
+        <h3>Pitfall 2: Unexpected Overflow with Long Words</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>.card {
+    width: 200px;
+    border: 1px solid black;
+    /* Long word will overflow */
+}
+</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>.card {
+    width: 200px;
+    border: 1px solid black;
+    overflow-wrap: break-word; /* Breaks long words */
+    word-break: break-word;    /* Alternative */
+}
+</code></pre>
+
+        <h3>Pitfall 3: Centering with <code>margin: auto</code> but No Width</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>.element {
+    margin: 0 auto; /* Does nothing - no width specified */
+}
+</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>.element {
+    width: fit-content; /* Width based on content */
+    margin: 0 auto;
+    
+    /* OR */
+    width: 300px; /* Fixed width */
+    margin: 0 auto;
+    
+    /* OR */
+    max-width: 500px; /* Maximum width */
+    margin: 0 auto;
+}
+</code></pre>
+
+        <h3>Pitfall 4: Height Collapse with Floats</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>.container {
+    border: 1px solid black;
+    /* No height specified */
+}
+
+.float-child {
+    float: left;
+    width: 100px;
+    height: 100px;
+}
+/* Container collapses to 0 height */
+</code></pre>
+        <p><strong>Solution with Overflow:</strong></p>
+        <pre><code>.container {
+    border: 1px solid black;
+    overflow: auto; /* Creates new BFC, contains floats */
+}
+</code></pre>
+
+        <h3>Pitfall 5: Scrollbars Appearing Unexpectedly</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>.element {
+    width: 100%;
+    height: 100vh;
+    overflow: auto; /* Unnecessary scrollbars */
+}
+</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>.element {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto; /* Only vertical when needed */
+    overflow-x: hidden; /* Never horizontal */
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="best-practices">8. BROWSER COMPATIBILITY AND BEST PRACTICES</h1>
+
+        <h3>8.1 Browser Support</h3>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Chrome</th>
+                <th>Firefox</th>
+                <th>Safari</th>
+                <th>Edge</th>
+                <th>IE</th>
+            </tr>
+            <tr>
+                <td><code>box-sizing</code></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>IE8+ (partial)</td>
+            </tr>
+            <tr>
+                <td><code>overflow</code></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td><code>margin: auto</code></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+            </tr>
+        </table>
+
+        <h3>8.2 Best Practices Checklist</h3>
+        <p>✅ <strong>Always use the universal <code>border-box</code> reset:</strong></p>
+        <pre><code>*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+</code></pre>
+        <p>✅ <strong>Set boundaries with <code>min-*</code> and <code>max-*</code> properties:</strong></p>
+        <pre><code>.responsive-element {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 300px;
+}
+</code></pre>
+        <p>✅ <strong>Choose the right <code>overflow</code> value:</strong><br>
+            - Use <code>overflow: auto</code> for scrollable areas<br>
+            - Use <code>overflow: hidden</code> to clip decorative content<br>
+            - Use <code>overflow: visible</code> carefully (can cause layout issues)</p>
+        <p>✅ <strong>Center responsibly:</strong></p>
+        <pre><code>/* For horizontal centering */
+.center-me {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/* For complete centering, use Flexbox */
+.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</code></pre>
+        <p>✅ <strong>Test responsive behavior:</strong></p>
+        <pre><code>.test-breakpoints {
+    width: 100%;
+    border: 1px solid red; /* Visual indicator */
+    box-sizing: border-box; /* Ensure padding doesn't break layout */
+}
+</code></pre>
+
+        <h3>8.3 Performance Considerations</h3>
+        <pre><code>/* Avoid these performance pitfalls */
+.bad-performance {
+    overflow: scroll; /* Always renders scrollbars - wasteful */
+    width: 100vw;     /* Can cause horizontal scrollbar */
+    height: 100%;     /* May not work as expected in some contexts */
+}
+
+/* Better alternatives */
+.good-performance {
+    overflow: auto;   /* Only when needed */
+    width: 100%;      /* Respects parent constraints */
+    min-height: 100vh; /* Better for full-height sections */
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="exercises">9. HANDS-ON EXERCISES</h1>
+
+        <h3>Exercise 1: Build a Pricing Card</h3>
+        <p><strong>Task:</strong> Create a pricing card that demonstrates <code>box-sizing</code>,
+            <code>overflow</code>, and <code>margin: auto</code>.</p>
+        <pre><code>&lt;!-- Starter HTML --&gt;
+&lt;div class="pricing-card"&gt;
+    &lt;h3&gt;Basic Plan&lt;/h3&gt;
+    &lt;div class="price"&gt;$19&lt;span&gt;/month&lt;/span&gt;&lt;/div&gt;
+    &lt;ul class="features"&gt;
+        &lt;li&gt;10GB Storage&lt;/li&gt;
+        &lt;li&gt;100GB Bandwidth&lt;/li&gt;
+        &lt;li&gt;5 Email Accounts&lt;/li&gt;
+        &lt;li&gt;24/7 Support&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;button&gt;Choose Plan&lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+        <p><strong>Requirements:</strong><br>
+            1. Card should be 350px wide, centered on page<br>
+            2. Add 25px padding inside card<br>
+            3. Features list should scroll if too many items<br>
+            4. Button should be full width with padding<br>
+            5. Ensure total width stays 350px regardless of padding</p>
+
+        <h3>Exercise 2: Create a News Ticker</h3>
+        <p><strong>Task:</strong> Build a horizontal news ticker with overflow control.</p>
+        <pre><code>&lt;!-- Starter HTML --&gt;
+&lt;div class="ticker-container"&gt;
+    &lt;div class="ticker-content"&gt;
+        &lt;span&gt;Breaking News: &lt;/span&gt;
+        &lt;span&gt;New CSS features announced • &lt;/span&gt;
+        &lt;span&gt;React 19 released • &lt;/span&gt;
+        &lt;span&gt;WebAssembly gains traction • &lt;/span&gt;
+        &lt;!-- Add 10 more items --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+        <p><strong>Requirements:</strong><br>
+            1. Ticker container fixed width of 600px<br>
+            2. Content should scroll horizontally when overflowing<br>
+            3. Hide scrollbar but maintain functionality<br>
+            4. Add hover pause effect</p>
+
+        <h3>Exercise 3: Responsive Dashboard Widget</h3>
+        <p><strong>Task:</strong> Create a widget that works on all screen sizes.</p>
+        <p><strong>Requirements:</strong><br>
+            1. Container max-width 500px, centered<br>
+            2. Widget header with fixed height of 60px<br>
+            3. Scrollable content area (max-height 300px)<br>
+            4. Three action buttons at bottom, evenly spaced<br>
+            5. All padding and borders included in width calculations</p>
+
+        <h3>Exercise 4: Debug the Layout</h3>
+        <p><strong>Task:</strong> Fix the following broken layout:</p>
+        <pre><code>/* Find and fix the issues */
+.broken-layout {
+    width: 100%;
+    padding: 30px;
+    border: 5px solid black;
+    /* This overflows its parent */
+}
+
+.centered-broken {
+    width: auto;
+    margin: 0 auto;
+    /* This doesn't center */
+}
+
+.scroll-broken {
+    height: 200px;
+    overflow: visible;
+    /* Content overflows but should scroll */
+}
+</code></pre>
+
+        <hr>
+
+        <h1 id="interview-questions">10. INTERVIEW QUESTIONS AND ANSWERS</h1>
+
+        <h3>Beginner Level Questions</h3>
+        <p><strong>Q1: What's the difference between <code>content-box</code> and <code>border-box</code>?</strong></p>
+        <p><strong>A:</strong> <code>content-box</code> is the default value where <code>width</code> and
+            <code>height</code> only apply to the content area. Padding and border are added outside.
+            <code>border-box</code> includes padding and border in the specified width/height, making layout much more
+            predictable. For example, with <code>width: 100px</code> and <code>padding: 10px</code>,
+            <code>content-box</code> total width is 120px, while <code>border-box</code> stays at 100px.</p>
+
+        <p><strong>Q2: How do you center a block element horizontally?</strong></p>
+        <p><strong>A:</strong> To center a block element horizontally, you need to:<br>
+            1. Give it a width (fixed, percentage, or <code>fit-content</code>)<br>
+            2. Set <code>margin-left: auto</code> and <code>margin-right: auto</code><br>
+            Shorthand: <code>margin: 0 auto;</code></p>
+
+        <p><strong>Q3: What does <code>overflow: hidden</code> do?</strong></p>
+        <p><strong>A:</strong> <code>overflow: hidden</code> clips any content that extends beyond the element's box.
+            The clipped content is not visible and cannot be scrolled to. It's commonly used to contain floats, create
+            clean containers, or for text truncation when combined with <code>text-overflow</code>.</p>
+
+        <h3>Intermediate Level Questions</h3>
+        <p><strong>Q4: Why doesn't <code>margin: auto</code> work for vertical centering?</strong></p>
+        <p><strong>A:</strong> In normal document flow, the browser cannot calculate available vertical space because
+            the containing block's height is typically determined by its content. Without a defined height context,
+            <code>auto</code> margins evaluate to 0. For vertical centering, you need either Flexbox
+            (<code>align-items: center</code>), Grid, or absolute positioning with all offsets set to 0.</p>
+
+        <p><strong>Q5: What's the difference between <code>overflow: auto</code> and
+                <code>overflow: scroll</code>?</strong></p>
+        <p><strong>A:</strong> <code>overflow: scroll</code> always shows scrollbars regardless of whether content
+            overflows, taking up space even when not needed. <code>overflow: auto</code> only shows scrollbars when
+            content actually overflows, providing a better user experience by default. Use <code>auto</code> for most
+            cases unless you have a specific reason to always show scrollbars.</p>
+
+        <p><strong>Q6: How do you create a text truncation with ellipsis?</strong></p>
+        <p><strong>A:</strong> Text truncation with ellipsis requires three properties:</p>
+        <pre><code>.truncate {
+    white-space: nowrap;      /* Prevents wrapping */
+    overflow: hidden;         /* Hides overflowing text */
+    text-overflow: ellipsis;  /* Adds ... */
+}
+</code></pre>
+
+        <h3>Advanced Level Questions</h3>
+        <p><strong>Q7: Can you explain a situation where <code>box-sizing: border-box</code> would be
+                problematic?</strong></p>
+        <p><strong>A:</strong> While <code>border-box</code> is generally preferred, it can be problematic when you need
+            precise control over content width. For example, if you're creating a text container where you need exactly
+            60 characters per line (using <code>ch</code> units), <code>border-box</code> would shrink the content area
+            when padding is added, potentially breaking your typographic grid. In such cases, <code>content-box</code>
+            might be more appropriate.</p>
+
+        <p><strong>Q8: How does <code>overflow</code> affect block formatting contexts?</strong></p>
+        <p><strong>A:</strong> Setting <code>overflow</code> to anything other than <code>visible</code> (the default)
+            creates a new block formatting context (BFC). This is useful for:<br>
+            - Containing floats<br>
+            - Preventing margin collapsing<br>
+            - Creating independent layouts that don't interact with outer elements<br>
+            This is why <code>overflow: auto</code> is often used as a clearfix alternative.</p>
+
+        <p><strong>Q9: What happens when you set <code>margin: auto</code> on a flex item?</strong></p>
+        <p><strong>A:</strong> In flexbox, <code>margin: auto</code> has special behavior. It absorbs available space in
+            the flex container. For example, <code>margin-left: auto</code> on a flex item pushes it to the right, while
+            <code>margin: auto</code> on all sides centers the item both horizontally and vertically within the flex
+            container (if there's extra space). This is different from block layout where <code>margin: auto</code> only
+            affects horizontal centering.</p>
+
+        <p><strong>Q10: How would you create a horizontally scrollable card carousel with centered first/last
+                items?</strong></p>
+        <p><strong>A:</strong> This requires a combination of techniques:</p>
+        <pre><code>.carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 calc(50% - 200px); /* Centers first item */
+}
+
+.carousel-item {
+    flex: 0 0 400px; /* Fixed width cards */
+    scroll-snap-align: center;
+    margin-right: 20px;
+}
+
+.carousel-item:last-child {
+    margin-right: 0;
+}
+</code></pre>
+
+        <h3>Practical Problem-Solving Questions</h3>
+        <p><strong>Q11: A fixed-width container with padding overflows its parent. How do you fix it?</strong></p>
+        <p><strong>A:</strong> Several solutions:<br>
+            1. Apply <code>box-sizing: border-box</code> to the container<br>
+            2. Reduce the width by the total padding amount (not recommended, harder to maintain)<br>
+            3. Use <code>width: auto</code> instead of fixed width<br>
+            4. Use <code>calc()</code>: <code>width: calc(100% - 40px)</code> if you know padding is 20px each side<br>
+            Best practice: Use <code>box-sizing: border-box</code> universally.</p>
+
+        <p><strong>Q12: How do you create a modal that's centered both horizontally and vertically using only
+                <code>margin: auto</code>?</strong></p>
+        <p><strong>A:</strong> Using absolute positioning:</p>
+        <pre><code>.modal {
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto; /* Works when all offsets are set */
+}
+</code></pre>
+
+        <p><strong>Q13: What's the difference between <code>overflow: visible</code> and
+                <code>overflow: clip</code>?</strong></p>
+        <p><strong>A:</strong> <code>overflow: clip</code> is a newer value that also clips content but unlike
+            <code>hidden</code>, it prevents programmatic scrolling. The content is truly clipped and cannot be scrolled
+            to, even with JavaScript. It's useful for situations where you want to ensure content stays completely
+            hidden.</p>
+
+        <p><strong>Q14: How would you debug an element that's wider than expected despite using
+                <code>border-box</code>?</strong></p>
+        <p><strong>A:</strong> Debugging steps:<br>
+            1. Check if any child elements have <code>width: 100%</code> plus margins/padding<br>
+            2. Inspect computed styles for <code>min-width</code> that might be forcing expansion<br>
+            3. Look for <code>flex-basis</code> or <code>flex-grow</code> in flex containers<br>
+            4. Check for absolute positioning or transforms affecting size<br>
+            5. Verify no pseudo-elements (<code>::before</code>, <code>::after</code>) are adding content<br>
+            6. Use browser dev tools to visualize box model and identify the contributor</p>
+
+        <hr>
+
+        <h2>SUMMARY CHEAT SHEET</h2>
+        <pre><code>/* UNIVERSAL RESET */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* WIDTH & HEIGHT */
+.element {
+    width: 300px;          /* Fixed width */
+    width: 50%;            /* Relative to parent */
+    min-width: 200px;      /* Minimum boundary */
+    max-width: 800px;      /* Maximum boundary */
+    height: auto;          /* Default - based on content */
+    max-height: 500px;     /* Maximum height */
+}
+
+/* BOX-SIZING */
+.element {
+    box-sizing: content-box; /* Default - width = content only */
+    box-sizing: border-box;   /* Width includes padding + border */
+}
+
+/* OVERFLOW */
+.element {
+    overflow: visible;  /* Default - content overflows */
+    overflow: hidden;   /* Clips excess content */
+    overflow: scroll;   /* Always shows scrollbars */
+    overflow: auto;     /* Scrollbars only when needed */
+    
+    /* Axis-specific */
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+    /* Text overflow */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* CENTERING */
+.center-horizontal {
+    width: fit-content;  /* or fixed width */
+    margin: 0 auto;
+}
+
+.center-absolute {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</code></pre>
+
+        <hr>
+
+        <h2>CONCLUSION</h2>
+        <p>The CSS Box Model, particularly width/height control, <code>box-sizing</code>, <code>overflow</code>, and
+            centering with <code>margin: auto</code>, forms the foundation of web layout. Mastering these concepts
+            allows you to:</p>
+        <ol>
+            <li><strong>Create predictable layouts</strong> that behave consistently across browsers</li>
+            <li><strong>Build responsive designs</strong> that adapt to different screen sizes</li>
+            <li><strong>Handle content gracefully</strong> when it doesn't fit allocated space</li>
+            <li><strong>Center elements effectively</strong> without resorting to hacks</li>
+            <li><strong>Debug layout issues</strong> efficiently by understanding how space is calculated</li>
+        </ol>
+        <p>Remember these key principles:<br>
+            - Always use <code>box-sizing: border-box</code> for intuitive sizing<br>
+            - Choose the right <code>overflow</code> value based on user experience needs<br>
+            - Remember that <code>margin: auto</code> centers horizontally but not vertically<br>
+            - Use <code>min-*</code> and <code>max-*</code> properties to create resilient layouts</p>
+        <p>With practice, these concepts will become second nature, allowing you to focus on creating beautiful,
+            functional web experiences rather than fighting with layout inconsistencies.</p>
+
+        <!-- CONTENT END: exact copy of provided study notes (box model part 2) -->
+    </div>
+</body>
+
+</html>

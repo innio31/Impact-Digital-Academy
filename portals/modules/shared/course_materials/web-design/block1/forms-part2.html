@@ -1,0 +1,3550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Forms – Part 2 · Complete Guide (interactive exercises)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #d9e9f0;
+            color: #153e4a;
+            line-height: 1.5;
+            padding: 2rem 1.2rem;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 3rem 3rem 2rem 2rem;
+            box-shadow: 0 25px 45px -20px #0f4655;
+            padding: 3rem 3rem 2.5rem;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #005f73, #0a5b4c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #239989;
+            padding-left: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .toc {
+            background: #e2f0f2;
+            padding: 1.8rem 2.2rem;
+            border-radius: 3rem;
+            margin: 2rem 0 2.8rem;
+            border: 2px solid #9ecfdb;
+        }
+
+        .toc h2 {
+            margin-bottom: 1rem;
+            color: #115e6b;
+        }
+
+        .toc ul {
+            columns: 3 220px;
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 0.4rem 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #0f6475;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+            color: #083d47;
+        }
+
+        h2 {
+            font-size: 2.4rem;
+            color: #166f7c;
+            margin: 2.5rem 0 1.2rem;
+            border-bottom: 5px solid #52b9a7;
+            padding-bottom: 0.4rem;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            color: #1a717d;
+            margin: 2rem 0 0.8rem;
+            background: #effcf9;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            color: #0c6872;
+            margin: 1.6rem 0 0.6rem;
+        }
+
+        p {
+            margin: 1.2rem 0;
+            font-size: 1.05rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2.2rem 0;
+            border-radius: 1.4rem;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(16, 79, 86, 0.1);
+        }
+
+        th {
+            background: #1c7f8c;
+            color: white;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        td {
+            background: #f6fcfd;
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #bfe2eb;
+        }
+
+        pre,
+        code,
+        kbd {
+            background: #eef4f7;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            border-radius: 10px;
+        }
+
+        pre {
+            padding: 1.4rem 1.8rem;
+            border-left: 8px solid #48b5a8;
+            margin: 1.8rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f1f9fc;
+            border-radius: 20px;
+            box-shadow: inset 0 2px 12px #cde3ec;
+            font-size: 0.95rem;
+        }
+
+        code {
+            background: #dff0f3;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            color: #095461;
+        }
+
+        hr {
+            border: none;
+            height: 4px;
+            background: linear-gradient(90deg, #b3dfe5, white, #b3dfe5);
+            margin: 3rem 0;
+        }
+
+        /* interactive exercises */
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .exercise-card {
+            background: #f6fbfe;
+            border-radius: 2rem;
+            border: 2px solid #aad4df;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .exercise-header {
+            background: #239989;
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-header:hover {
+            background: #1b7e8b;
+        }
+
+        .exercise-content {
+            padding: 1.8rem;
+            display: none;
+            background: white;
+        }
+
+        .exercise-content.show {
+            display: block;
+        }
+
+        .btn-run {
+            background: #0d6272;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn-run:hover {
+            background: #124f5c;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #3e6d73;
+            border-top: 2px dashed #9bc8d3;
+            padding-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <h1>📝 HTML Forms – Part 2: A Comprehensive Guide</h1>
+
+        <!-- TABLE OF CONTENTS (exact from source) -->
+        <div class="toc">
+            <h2>📑 Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">1. Introduction to Advanced Form Elements</a></li>
+                <li><a href="#radio-buttons">2. Radio Buttons</a></li>
+                <li><a href="#checkboxes">3. Checkboxes</a></li>
+                <li><a href="#number-inputs">4. Number Inputs</a></li>
+                <li><a href="#select-menus">5. Select Menus (Dropdowns)</a></li>
+                <li><a href="#grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</a></li>
+                <li><a href="#complete-form-examples">7. Complete Form Examples</a></li>
+                <li><a href="#best-practices">8. Best Practices and Accessibility</a></li>
+                <li><a href="#common-patterns">9. Common Patterns and Use Cases</a></li>
+                <li><a href="#styling-form-elements">10. Styling Form Elements</a></li>
+                <li><a href="#troubleshooting">11. Troubleshooting and Common Issues</a></li>
+                <li><a href="#practice-exercises">12. Practice Exercises</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <h2 id="introduction">1. Introduction to Advanced Form Elements</h2>
+        <p>Forms are the primary way users interact with websites—whether they're signing up for a newsletter, placing
+            an order, filling out a job application, or configuring product options. While basic text inputs handle
+            simple data entry, advanced form elements provide more intuitive and efficient ways to collect specific
+            types of information.</p>
+
+        <h3>Why Advanced Form Elements Matter</h3>
+        <table>
+            <tr>
+                <th>Element Type</th>
+                <th>Best For</th>
+                <th>User Benefit</th>
+                <th>Developer Benefit</th>
+            </tr>
+            <tr>
+                <td>Radio Buttons</td>
+                <td>Single choice from few options</td>
+                <td>Clear visibility of all options</td>
+                <td>Easy data validation</td>
+            </tr>
+            <tr>
+                <td>Checkboxes</td>
+                <td>Multiple selections, agreements</td>
+                <td>Flexibility in choices</td>
+                <td>Simple boolean/array data</td>
+            </tr>
+            <tr>
+                <td>Select Menus</td>
+                <td>Single choice from many options</td>
+                <td>Saves screen space</td>
+                <td>Organized data structure</td>
+            </tr>
+            <tr>
+                <td>Number Inputs</td>
+                <td>Numeric data with constraints</td>
+                <td>Prevents invalid entries</td>
+                <td>Built-in validation</td>
+            </tr>
+        </table>
+
+        <h3>The User Experience Perspective</h3>
+        <p>When designing forms, consider these principles:<br>
+            • <strong>Fitts's Law</strong>: Larger and closer targets are easier to click<br>
+            • <strong>Hick's Law</strong>: More choices increase decision time<br>
+            • <strong>Scanning Patterns</strong>: Users scan forms in F-patterns (desktop) or Z-patterns (mobile)</p>
+        <hr>
+
+        <!-- 2. RADIO BUTTONS (complete) -->
+        <h2 id="radio-buttons">2. Radio Buttons</h2>
+        <p>Radio buttons allow users to select exactly <strong>one option</strong> from a set. They're named after the
+            physical buttons on old car radios—pressing one button would pop out any previously pressed button.</p>
+
+        <h3>Basic Syntax and Structure</h3>
+        <pre><code>&lt;form&gt;
+  &lt;p&gt;Select your preferred contact method:&lt;/p&gt;
+  
+  &lt;input type="radio" id="contactEmail" name="contact" value="email"&gt;
+  &lt;label for="contactEmail"&gt;Email&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="contactPhone" name="contact" value="phone"&gt;
+  &lt;label for="contactPhone"&gt;Phone&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="contactMail" name="contact" value="mail"&gt;
+  &lt;label for="contactMail"&gt;Postal Mail&lt;/label&gt;
+&lt;/form&gt;</code></pre>
+
+        <h3>Critical Attributes Explained</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td><code>type="radio"</code></td>
+                <td>Defines the input as a radio button</td>
+                <td><code>type="radio"</code></td>
+                <td>Required</td>
+            </tr>
+            <tr>
+                <td><code>name</code></td>
+                <td>Groups related radio buttons</td>
+                <td><code>name="shipping"</code></td>
+                <td>All options in group must share the same name</td>
+            </tr>
+            <tr>
+                <td><code>value</code></td>
+                <td>The data sent to the server</td>
+                <td><code>value="express"</code></td>
+                <td>Required for meaningful data</td>
+            </tr>
+            <tr>
+                <td><code>id</code></td>
+                <td>Connects to label's <code>for</code> attribute</td>
+                <td><code>id="shipExpress"</code></td>
+                <td>Must be unique per element</td>
+            </tr>
+            <tr>
+                <td><code>checked</code></td>
+                <td>Pre-selects an option</td>
+                <td><code>checked</code> or <code>checked="checked"</code></td>
+                <td>Use sparingly</td>
+            </tr>
+            <tr>
+                <td><code>disabled</code></td>
+                <td>Disables an option</td>
+                <td><code>disabled</code></td>
+                <td>User cannot select/interact</td>
+            </tr>
+            <tr>
+                <td><code>required</code></td>
+                <td>Requires selection</td>
+                <td><code>required</code></td>
+                <td>At least one option must be chosen</td>
+            </tr>
+        </table>
+
+        <h3>The Importance of the <code>name</code> Attribute</h3>
+        <pre><code>&lt;!-- These are correctly grouped --&gt;
+&lt;input type="radio" name="delivery" value="standard" id="std"&gt;
+&lt;label for="std"&gt;Standard (3-5 days)&lt;/label&gt;
+
+&lt;input type="radio" name="delivery" value="express" id="exp"&gt;
+&lt;label for="exp"&gt;Express (1-2 days)&lt;/label&gt;
+
+&lt;!-- When user selects Express, server receives: delivery=express --&gt;</code></pre>
+
+        <h3>Pre-selecting Options</h3>
+        <pre><code>&lt;fieldset&gt;
+  &lt;legend&gt;Newsletter Frequency:&lt;/legend&gt;
+  
+  &lt;input type="radio" id="daily" name="frequency" value="daily"&gt;
+  &lt;label for="daily"&gt;Daily&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="weekly" name="frequency" value="weekly" checked&gt;
+  &lt;label for="weekly"&gt;Weekly (Recommended)&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="monthly" name="frequency" value="monthly"&gt;
+  &lt;label for="monthly"&gt;Monthly&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+
+        <h3>Disabling Options</h3>
+        <pre><code>&lt;fieldset&gt;
+  &lt;legend&gt;Select Your Meal Plan:&lt;/legend&gt;
+  
+  &lt;input type="radio" id="basic" name="mealPlan" value="basic"&gt;
+  &lt;label for="basic"&gt;Basic Plan - $9.99/month&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="premium" name="mealPlan" value="premium"&gt;
+  &lt;label for="premium"&gt;Premium Plan - $19.99/month&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="vip" name="mealPlan" value="vip" disabled&gt;
+  &lt;label for="vip" style="color: #999;"&gt;VIP Plan - Sold Out&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+
+        <h3>Real-World Example: Pizza Ordering</h3>
+        <pre><code>&lt;h3&gt;Step 1: Choose Your Crust&lt;/h3&gt;
+&lt;fieldset&gt;
+  &lt;legend&gt;Crust Type *Required&lt;/legend&gt;
+  
+  &lt;input type="radio" id="crustThin" name="crust" value="thin" required&gt;
+  &lt;label for="crustThin"&gt;Thin Crust (Crispy)&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="crustThick" name="crust" value="thick"&gt;
+  &lt;label for="crustThick"&gt;Thick Crust (Fluffy)&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="crustStuffed" name="crust" value="stuffed"&gt;
+  &lt;label for="crustStuffed"&gt;Stuffed Crust (+$2.00)&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="crustGluten" name="crust" value="gluten-free"&gt;
+  &lt;label for="crustGluten"&gt;Gluten-Free (+$1.50)&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+
+        <h3>Common Mistakes with Radio Buttons</h3>
+        <pre><code>&lt;!-- WRONG - Different `name` attributes (User can select multiple) --&gt;
+&lt;input type="radio" name="size1" value="small"&gt; Small
+&lt;input type="radio" name="size2" value="medium"&gt; Medium
+&lt;input type="radio" name="size3" value="large"&gt; Large
+
+&lt;!-- CORRECT - All share the same name --&gt;
+&lt;input type="radio" name="size" value="small"&gt; Small
+&lt;input type="radio" name="size" value="medium"&gt; Medium
+&lt;input type="radio" name="size" value="large"&gt; Large
+
+&lt;!-- WRONG - Missing value attributes (server receives "on") --&gt;
+&lt;input type="radio" name="tos"&gt; I agree
+
+&lt;!-- CORRECT --&gt;
+&lt;input type="radio" name="tos" value="agreed"&gt; I agree
+&lt;input type="radio" name="tos" value="disagreed"&gt; I disagree
+
+&lt;!-- WRONG - Forgetting labels (poor accessibility) --&gt;
+&lt;input type="radio" name="color"&gt; Red
+
+&lt;!-- CORRECT --&gt;
+&lt;input type="radio" id="colorRed" name="color" value="red"&gt;
+&lt;label for="colorRed"&gt;Red&lt;/label&gt;</code></pre>
+        <hr>
+
+        <!-- 3. CHECKBOXES (complete) -->
+        <h2 id="checkboxes">3. Checkboxes</h2>
+        <p>Checkboxes allow users to select <strong>zero, one, or multiple</strong> options from a set. They're ideal
+            for "yes/no" choices, feature selection, and agreements.</p>
+
+        <h3>Basic Syntax and Structure</h3>
+        <pre><code>&lt;h3&gt;Select your interests (check all that apply):&lt;/h3&gt;
+
+&lt;input type="checkbox" id="interestTech" name="interests" value="technology"&gt;
+&lt;label for="interestTech"&gt;Technology&lt;/label&gt;&lt;br&gt;
+
+&lt;input type="checkbox" id="interestDesign" name="interests" value="design"&gt;
+&lt;label for="interestDesign"&gt;Design&lt;/label&gt;&lt;br&gt;
+
+&lt;input type="checkbox" id="interestBusiness" name="interests" value="business"&gt;
+&lt;label for="interestBusiness"&gt;Business&lt;/label&gt;</code></pre>
+
+        <h3>Checkbox Attributes Deep Dive</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+                <th>Behavior</th>
+            </tr>
+            <tr>
+                <td><code>type="checkbox"</code></td>
+                <td>Defines checkbox input</td>
+                <td><code>type="checkbox"</code></td>
+                <td>Required</td>
+            </tr>
+            <tr>
+                <td><code>name</code></td>
+                <td>Identifies the field</td>
+                <td><code>name="newsletter"</code></td>
+                <td>Can be same or different per checkbox</td>
+            </tr>
+            <tr>
+                <td><code>value</code></td>
+                <td>Data sent when checked</td>
+                <td><code>value="weekly"</code></td>
+                <td>If omitted, default is "on"</td>
+            </tr>
+            <tr>
+                <td><code>checked</code></td>
+                <td>Pre-checks the box</td>
+                <td><code>checked</code></td>
+                <td>Use for opt-out options</td>
+            </tr>
+            <tr>
+                <td><code>indeterminate</code></td>
+                <td>Visual "maybe" state</td>
+                <td><code>indeterminate</code></td>
+                <td>JavaScript-only, can't be set in HTML</td>
+            </tr>
+            <tr>
+                <td><code>required</code></td>
+                <td>Must be checked</td>
+                <td><code>required</code></td>
+                <td>Rarely used with checkboxes</td>
+            </tr>
+        </table>
+
+        <h3>Single Checkbox (Yes/No) Pattern</h3>
+        <pre><code>&lt;!-- Newsletter signup with explicit opt-in --&gt;
+&lt;div class="checkbox-group"&gt;
+  &lt;input type="checkbox" id="newsletter" name="newsletter" value="yes" checked&gt;
+  &lt;label for="newsletter"&gt;
+    &lt;strong&gt;Yes!&lt;/strong&gt; I'd like to receive weekly updates and special offers
+  &lt;/label&gt;
+  &lt;small class="hint"&gt;You can unsubscribe at any time&lt;/small&gt;
+&lt;/div&gt;
+
+&lt;!-- Terms and conditions with required agreement --&gt;
+&lt;div class="checkbox-group"&gt;
+  &lt;input type="checkbox" id="terms" name="terms" value="agreed" required&gt;
+  &lt;label for="terms"&gt;
+    I have read and agree to the 
+    &lt;a href="/terms" target="_blank"&gt;Terms and Conditions&lt;/a&gt; and 
+    &lt;a href="/privacy" target="_blank"&gt;Privacy Policy&lt;/a&gt; *
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>Multiple Checkboxes (Same Name Pattern)</h3>
+        <pre><code>&lt;h3&gt;Which toppings would you like? ($0.50 each)&lt;/h3&gt;
+
+&lt;input type="checkbox" id="toppingPepperoni" name="toppings" value="pepperoni"&gt;
+&lt;label for="toppingPepperoni"&gt;Pepperoni&lt;/label&gt;&lt;br&gt;
+
+&lt;input type="checkbox" id="toppingMushrooms" name="toppings" value="mushrooms"&gt;
+&lt;label for="toppingMushrooms"&gt;Mushrooms&lt;/label&gt;&lt;br&gt;
+
+&lt;input type="checkbox" id="toppingOlives" name="toppings" value="olives"&gt;
+&lt;label for="toppingOlives"&gt;Olives&lt;/label&gt;&lt;br&gt;
+
+&lt;!-- If user selects Pepperoni and Olives, server receives:
+     toppings=pepperoni&toppings=olives --&gt;</code></pre>
+
+        <h3>Checkbox States: Visual Reference</h3>
+        <pre><code>&lt;style&gt;
+  .checkbox-demo div { margin:10px; padding:10px; border-left:4px solid; }
+  .checked-state { border-left-color: green; background:#f0fff0; }
+  .unchecked-state { border-left-color: gray; background:#f5f5f5; }
+  .disabled-checked { border-left-color: #ccc; background:#eee; color:#999; }
+  .disabled-unchecked { border-left-color: #ccc; background:#eee; color:#999; }
+&lt;/style&gt;
+
+&lt;div class="checkbox-demo"&gt;
+  &lt;h4&gt;Checkbox States:&lt;/h4&gt;
+  
+  &lt;div class="checked-state"&gt;
+    &lt;input type="checkbox" id="demo1" checked&gt; 
+    &lt;label for="demo1"&gt;Checked (Default/Selected)&lt;/label&gt;
+    &lt;code&gt;checked attribute present&lt;/code&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="unchecked-state"&gt;
+    &lt;input type="checkbox" id="demo2"&gt; 
+    &lt;label for="demo2"&gt;Unchecked (Default)&lt;/label&gt;
+    &lt;code&gt;no checked attribute&lt;/code&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="disabled-checked"&gt;
+    &lt;input type="checkbox" id="demo3" checked disabled&gt; 
+    &lt;label for="demo3"&gt;Disabled &amp; Checked&lt;/label&gt;
+    &lt;code&gt;disabled + checked attributes&lt;/code&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="disabled-unchecked"&gt;
+    &lt;input type="checkbox" id="demo4" disabled&gt; 
+    &lt;label for="demo4"&gt;Disabled &amp; Unchecked&lt;/label&gt;
+    &lt;code&gt;disabled attribute only&lt;/code&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>Advanced Pattern: Checkbox with Indeterminate State</h3>
+        <pre><code>&lt;div class="category-group"&gt;
+  &lt;div&gt;
+    &lt;input type="checkbox" id="allItems" onclick="toggleAll(this)"&gt;
+    &lt;label for="allItems"&gt;&lt;strong&gt;Select All Items&lt;/strong&gt;&lt;/label&gt;
+  &lt;/div&gt;
+  
+  &lt;div style="margin-left: 20px;"&gt;
+    &lt;input type="checkbox" class="item" id="item1" onclick="updateParent()"&gt;
+    &lt;label for="item1"&gt;Item 1&lt;/label&gt;&lt;br&gt;
+    
+    &lt;input type="checkbox" class="item" id="item2" onclick="updateParent()"&gt;
+    &lt;label for="item2"&gt;Item 2&lt;/label&gt;&lt;br&gt;
+    
+    &lt;input type="checkbox" class="item" id="item3" onclick="updateParent()"&gt;
+    &lt;label for="item3"&gt;Item 3&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  function toggleAll(source) {
+    const checkboxes = document.getElementsByClassName('item');
+    for (let checkbox of checkboxes) {
+      checkbox.checked = source.checked;
+    }
+  }
+  
+  function updateParent() {
+    const items = document.getElementsByClassName('item');
+    const parent = document.getElementById('allItems');
+    let checkedCount = 0;
+    
+    for (let item of items) {
+      if (item.checked) checkedCount++;
+    }
+    
+    if (checkedCount === 0) {
+      parent.checked = false;
+      parent.indeterminate = false;
+    } else if (checkedCount === items.length) {
+      parent.checked = true;
+      parent.indeterminate = false;
+    } else {
+      parent.checked = false;
+      parent.indeterminate = true;  // The "maybe" state
+    }
+  }
+&lt;/script&gt;</code></pre>
+
+        <h3>Real-World Example: Product Customization</h3>
+        <pre><code>&lt;form class="product-customizer"&gt;
+  &lt;h2&gt;Customize Your Laptop&lt;/h2&gt;
+  
+  &lt;!-- Required options --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Included Software (Select all that apply)&lt;/legend&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="softOffice" name="software" value="office" checked&gt;
+      &lt;label for="softOffice"&gt;Microsoft Office 365 (30-day trial)&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="softAdobe" name="software" value="adobe"&gt;
+      &lt;label for="softAdobe"&gt;Adobe Creative Cloud (1-month trial)&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="softAntivirus" name="software" value="antivirus" checked&gt;
+      &lt;label for="softAntivirus"&gt;McAfee Antivirus (1-year subscription)&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Add-ons with prices --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Optional Add-ons (Select any that apply)&lt;/legend&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="addonMouse" name="addons" value="mouse"&gt;
+      &lt;label for="addonMouse"&gt;Wireless Mouse &lt;span class="price"&gt;+$29.99&lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="addonBag" name="addons" value="bag"&gt;
+      &lt;label for="addonBag"&gt;Laptop Sleeve &lt;span class="price"&gt;+$39.99&lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="option"&gt;
+      &lt;input type="checkbox" id="addonWarranty" name="addons" value="warranty"&gt;
+      &lt;label for="addonWarranty"&gt;Extended Warranty (2 years) &lt;span class="price"&gt;+$99.99&lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Terms agreement --&gt;
+  &lt;div class="terms"&gt;
+    &lt;input type="checkbox" id="termsAgree" name="terms" value="agreed" required&gt;
+    &lt;label for="termsAgree"&gt;I agree to the &lt;a href="#"&gt;terms and conditions&lt;/a&gt; *&lt;/label&gt;
+  &lt;/div&gt;
+  
+  &lt;!-- Marketing opt-out (pre-checked) --&gt;
+  &lt;div class="marketing"&gt;
+    &lt;input type="checkbox" id="marketingOptOut" name="marketing" value="optout" checked&gt;
+    &lt;label for="marketingOptOut"&gt;Uncheck this box if you DO NOT wish to receive marketing emails&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/form&gt;</code></pre>
+
+        <h3>Checkbox Design Patterns</h3>
+
+        <h4>Pattern 1: Toggle Switches (Styled Checkboxes)</h4>
+        <pre><code>&lt;style&gt;
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+&lt;/style&gt;
+
+&lt;label class="toggle-switch"&gt;
+  &lt;input type="checkbox" id="darkMode"&gt;
+  &lt;span class="slider"&gt;&lt;/span&gt;
+&lt;/label&gt;
+&lt;label for="darkMode"&gt;Dark Mode&lt;/label&gt;</code></pre>
+
+        <h4>Pattern 2: Card-Based Selection</h4>
+        <pre><code>&lt;style&gt;
+  .card-checkbox {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .card-checkbox:hover {
+    border-color: #999;
+    background: #f9f9f9;
+  }
+  
+  .card-checkbox input:checked + &amp; {
+    border-color: #007bff;
+    background: #e6f2ff;
+  }
+  
+  .card-checkbox input {
+    display: none;
+  }
+  
+  .card-checkbox input:checked ~ .checkmark {
+    display: block;
+  }
+&lt;/style&gt;
+
+&lt;div&gt;
+  &lt;input type="checkbox" id="planBasic" name="plan" value="basic"&gt;
+  &lt;label for="planBasic" class="card-checkbox"&gt;
+    &lt;h3&gt;Basic Plan&lt;/h3&gt;
+    &lt;p class="price"&gt;$9.99/month&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;10GB Storage&lt;/li&gt;
+      &lt;li&gt;5 Users&lt;/li&gt;
+      &lt;li&gt;Basic Support&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
+        <hr>
+
+        <!-- 4. NUMBER INPUTS (complete) -->
+        <h2 id="number-inputs">4. Number Inputs</h2>
+        <p>Number inputs provide a specialized field for numeric data with built-in validation and controls (spinner
+            arrows).</p>
+
+        <h3>Basic Syntax</h3>
+        <pre><code>&lt;label for="quantity"&gt;Quantity:&lt;/label&gt;
+&lt;input type="number" id="quantity" name="quantity"&gt;</code></pre>
+
+        <h3>Number Input Attributes</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+                <th>Behavior</th>
+            </tr>
+            <tr>
+                <td><code>min</code></td>
+                <td>Minimum allowed value</td>
+                <td><code>min="0"</code></td>
+                <td>Prevents values below this</td>
+            </tr>
+            <tr>
+                <td><code>max</code></td>
+                <td>Maximum allowed value</td>
+                <td><code>max="100"</code></td>
+                <td>Prevents values above this</td>
+            </tr>
+            <tr>
+                <td><code>step</code></td>
+                <td>Increment/decrement amount</td>
+                <td><code>step="1"</code></td>
+                <td>Default is "1", use "any" for decimals</td>
+            </tr>
+            <tr>
+                <td><code>value</code></td>
+                <td>Initial/default value</td>
+                <td><code>value="5"</code></td>
+                <td>Sets starting number</td>
+            </tr>
+            <tr>
+                <td><code>placeholder</code></td>
+                <td>Hint text</td>
+                <td><code>placeholder="Enter age"</code></td>
+                <td>Only shown when empty</td>
+            </tr>
+        </table>
+
+        <h3>Practical Examples</h3>
+
+        <h4>Example 1: Age Input with Limits</h4>
+        <pre><code>&lt;label for="age"&gt;Age (18-120):&lt;/label&gt;
+&lt;input type="number" 
+       id="age" 
+       name="age"
+       min="18" 
+       max="120" 
+       step="1"
+       value="25"
+       required&gt;
+&lt;small&gt;Must be 18 or older to register&lt;/small&gt;</code></pre>
+
+        <h4>Example 2: Decimal Numbers with Custom Step</h4>
+        <pre><code>&lt;label for="price"&gt;Price ($):&lt;/label&gt;
+&lt;input type="number" 
+       id="price" 
+       name="price"
+       min="0.01" 
+       max="9999.99" 
+       step="0.01"
+       placeholder="0.00"&gt;
+
+&lt;label for="rating"&gt;Rating (0-5):&lt;/label&gt;
+&lt;input type="number" 
+       id="rating" 
+       name="rating"
+       min="0" 
+       max="5" 
+       step="0.5"
+       value="3.5"&gt;</code></pre>
+
+        <h4>Example 3: Quantity Selector with Validation</h4>
+        <pre><code>&lt;div class="quantity-selector"&gt;
+  &lt;label for="tickets"&gt;Number of Tickets (Max 10 per person):&lt;/label&gt;
+  &lt;div class="number-control"&gt;
+    &lt;button type="button" onclick="decrement()"&gt;-&lt;/button&gt;
+    &lt;input type="number" 
+           id="tickets" 
+           name="tickets"
+           min="1" 
+           max="10" 
+           step="1"
+           value="1"
+           required&gt;
+    &lt;button type="button" onclick="increment()"&gt;+&lt;/button&gt;
+  &lt;/div&gt;
+  
+  &lt;script&gt;
+    function increment() {
+      const input = document.getElementById('tickets');
+      if (input.value &lt; input.max) {
+        input.value = parseInt(input.value) + 1;
+      }
+    }
+    
+    function decrement() {
+      const input = document.getElementById('tickets');
+      if (input.value > input.min) {
+        input.value = parseInt(input.value) - 1;
+      }
+    }
+  &lt;/script&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>Number Input Validation</h3>
+        <pre><code>&lt;form onsubmit="return validateNumbers()"&gt;
+  &lt;label for="childAge"&gt;Child's Age (2-12 years):&lt;/label&gt;
+  &lt;input type="number" 
+         id="childAge" 
+         name="childAge"
+         min="2" 
+         max="12"
+         required&gt;
+  
+  &lt;label for="grade"&gt;Grade Level (K-12):&lt;/label&gt;
+  &lt;input type="number" 
+         id="grade" 
+         name="grade"
+         min="0" 
+         max="12"
+         step="1"
+         placeholder="0 = Kindergarten"&gt;
+  
+  &lt;input type="submit" value="Submit"&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  function validateNumbers() {
+    const age = document.getElementById('childAge');
+    const grade = document.getElementById('grade');
+    
+    if (age.value &lt; 2 || age.value > 12) {
+      alert('Child must be between 2 and 12 years old');
+      return false;
+    }
+    
+    if (grade.value &lt; 0 || grade.value > 12) {
+      alert('Grade must be between K (0) and 12');
+      return false;
+    }
+    
+    return true;
+  }
+&lt;/script&gt;</code></pre>
+
+        <h3>Browser Support and Fallbacks</h3>
+        <pre><code>&lt;!-- Modern browsers show number controls, older browsers show text input --&gt;
+&lt;label for="years"&gt;Years of Experience:&lt;/label&gt;
+&lt;input type="number" 
+       id="years" 
+       name="years"
+       min="0" 
+       max="50" 
+       step="1"
+       value="0"
+       oninput="validateNumber(this)"
+       pattern="[0-9]*"&gt;  &lt;!-- Pattern for old browsers --&gt;
+
+&lt;script&gt;
+  function validateNumber(input) {
+    // Ensure value stays within bounds
+    if (input.value &lt; input.min) input.value = input.min;
+    if (input.value > input.max) input.value = input.max;
+    
+    // Handle empty input
+    if (input.value === '') input.value = input.min;
+  }
+&lt;/script&gt;
+
+&lt;!-- Polyfill for older browsers --&gt;
+&lt;noscript&gt;
+  &lt;style&gt;
+    /* Hide number spinner in no-script browsers */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  &lt;/style&gt;
+&lt;/noscript&gt;</code></pre>
+        <hr>
+
+        <!-- 5. SELECT MENUS (complete) -->
+        <h2 id="select-menus">5. Select Menus (Dropdowns)</h2>
+        <p>Select menus (dropdowns) are space-efficient ways to present multiple options, especially when there are many
+            choices or limited screen space.</p>
+
+        <h3>Basic Select Menu</h3>
+        <pre><code>&lt;label for="country"&gt;Choose your country:&lt;/label&gt;
+&lt;select id="country" name="country"&gt;
+  &lt;option value=""&gt;--Please choose an option--&lt;/option&gt;
+  &lt;option value="us"&gt;United States&lt;/option&gt;
+  &lt;option value="ca"&gt;Canada&lt;/option&gt;
+  &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
+  &lt;option value="au"&gt;Australia&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+
+        <h3>Select Element Attributes</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>name</code></td>
+                <td>Field identifier</td>
+                <td><code>name="country"</code></td>
+                <td>Sent to server</td>
+            </tr>
+            <tr>
+                <td><code>id</code></td>
+                <td>Label association</td>
+                <td><code>id="country"</code></td>
+                <td>Links with <code>&lt;label for="country"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>multiple</code></td>
+                <td>Allow multiple selections</td>
+                <td><code>multiple</code></td>
+                <td>Creates list box</td>
+            </tr>
+            <tr>
+                <td><code>size</code></td>
+                <td>Number of visible options</td>
+                <td><code>size="4"</code></td>
+                <td>Works with/without <code>multiple</code></td>
+            </tr>
+            <tr>
+                <td><code>required</code></td>
+                <td>Must select an option</td>
+                <td><code>required</code></td>
+                <td>Prevents form submission</td>
+            </tr>
+            <tr>
+                <td><code>disabled</code></td>
+                <td>Disable entire menu</td>
+                <td><code>disabled</code></td>
+                <td>Grayed out, cannot interact</td>
+            </tr>
+        </table>
+
+        <h3>Option Element Attributes</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td><code>value</code></td>
+                <td>Data sent to server</td>
+                <td><code>value="us"</code></td>
+                <td>If omitted, option text is sent</td>
+            </tr>
+            <tr>
+                <td><code>selected</code></td>
+                <td>Pre-selects option</td>
+                <td><code>selected</code></td>
+                <td>Default choice</td>
+            </tr>
+            <tr>
+                <td><code>disabled</code></td>
+                <td>Disable specific option</td>
+                <td><code>disabled</code></td>
+                <td>Option visible but not selectable</td>
+            </tr>
+            <tr>
+                <td><code>label</code></td>
+                <td>Shorter label for option</td>
+                <td><code>label="US"</code></td>
+                <td>Alternative to option text</td>
+            </tr>
+        </table>
+
+        <h3>Advanced Select Examples</h3>
+
+        <h4>Example 1: Grouped Options with &lt;optgroup&gt;</h4>
+        <pre><code>&lt;label for="car"&gt;Select your vehicle:&lt;/label&gt;
+&lt;select id="car" name="car"&gt;
+  &lt;optgroup label="American Cars"&gt;
+    &lt;option value="ford"&gt;Ford Mustang&lt;/option&gt;
+    &lt;option value="chevy"&gt;Chevrolet Camaro&lt;/option&gt;
+    &lt;option value="dodge"&gt;Dodge Challenger&lt;/option&gt;
+  &lt;/optgroup&gt;
+  &lt;optgroup label="German Cars"&gt;
+    &lt;option value="bmw"&gt;BMW M3&lt;/option&gt;
+    &lt;option value="audi"&gt;Audi R8&lt;/option&gt;
+    &lt;option value="porsche"&gt;Porsche 911&lt;/option&gt;
+  &lt;/optgroup&gt;
+  &lt;optgroup label="Japanese Cars" disabled&gt;
+    &lt;option value="toyota"&gt;Toyota Supra&lt;/option&gt;
+    &lt;option value="nissan"&gt;Nissan GT-R&lt;/option&gt;
+    &lt;option value="honda"&gt;Honda NSX&lt;/option&gt;
+  &lt;/optgroup&gt;
+&lt;/select&gt;</code></pre>
+
+        <h4>Example 2: Multi-Select List Box</h4>
+        <pre><code>&lt;label for="skills"&gt;Select your skills (hold Ctrl/Cmd to select multiple):&lt;/label&gt;
+&lt;select id="skills" name="skills" multiple size="6"&gt;
+  &lt;option value="html"&gt;HTML5&lt;/option&gt;
+  &lt;option value="css"&gt;CSS3&lt;/option&gt;
+  &lt;option value="js"&gt;JavaScript&lt;/option&gt;
+  &lt;option value="react"&gt;React&lt;/option&gt;
+  &lt;option value="node"&gt;Node.js&lt;/option&gt;
+  &lt;option value="python"&gt;Python&lt;/option&gt;
+  &lt;option value="java"&gt;Java&lt;/option&gt;
+  &lt;option value="sql"&gt;SQL&lt;/option&gt;
+&lt;/select&gt;
+&lt;p class="hint"&gt;Selected: &lt;span id="selectedCount"&gt;0&lt;/span&gt; skills&lt;/p&gt;
+
+&lt;script&gt;
+  const select = document.getElementById('skills');
+  const counter = document.getElementById('selectedCount');
+  
+  select.addEventListener('change', function() {
+    const selected = Array.from(this.selectedOptions).map(opt =&gt; opt.value);
+    counter.textContent = selected.length;
+  });
+&lt;/script&gt;</code></pre>
+
+        <h4>Example 3: Dependent/Chained Selects</h4>
+        <pre><code>&lt;label for="category"&gt;Category:&lt;/label&gt;
+&lt;select id="category" onchange="updateProducts()"&gt;
+  &lt;option value=""&gt;Select a category&lt;/option&gt;
+  &lt;option value="electronics"&gt;Electronics&lt;/option&gt;
+  &lt;option value="clothing"&gt;Clothing&lt;/option&gt;
+  &lt;option value="books"&gt;Books&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label for="product"&gt;Product:&lt;/label&gt;
+&lt;select id="product" name="product"&gt;
+  &lt;option value=""&gt;First select a category&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;script&gt;
+  const products = {
+    electronics: ['Laptop', 'Smartphone', 'Tablet', 'Headphones'],
+    clothing: ['T-Shirt', 'Jeans', 'Jacket', 'Shoes'],
+    books: ['Fiction', 'Non-Fiction', 'Textbook', 'Comic']
+  };
+  
+  function updateProducts() {
+    const category = document.getElementById('category').value;
+    const productSelect = document.getElementById('product');
+    
+    // Clear current options
+    productSelect.innerHTML = '';
+    
+    if (category) {
+      // Add default option
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '--Select a product--';
+      productSelect.appendChild(defaultOption);
+      
+      // Add product options
+      products[category].forEach(product =&gt; {
+        const option = document.createElement('option');
+        option.value = product.toLowerCase();
+        option.textContent = product;
+        productSelect.appendChild(option);
+      });
+    } else {
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'First select a category';
+      productSelect.appendChild(option);
+    }
+  }
+&lt;/script&gt;</code></pre>
+
+        <h4>Example 4: Select with Search/Filter (Enhanced)</h4>
+        <pre><code>&lt;div class="searchable-select"&gt;
+  &lt;label for="city"&gt;Select your city:&lt;/label&gt;
+  &lt;input type="text" 
+         id="citySearch" 
+         placeholder="Type to search cities..."
+         onkeyup="filterCities()"&gt;
+  
+  &lt;select id="city" name="city" size="5"&gt;
+    &lt;option value="nyc"&gt;New York City&lt;/option&gt;
+    &lt;option value="la"&gt;Los Angeles&lt;/option&gt;
+    &lt;option value="chi"&gt;Chicago&lt;/option&gt;
+    &lt;option value="hou"&gt;Houston&lt;/option&gt;
+    &lt;option value="phi"&gt;Philadelphia&lt;/option&gt;
+    &lt;option value="phx"&gt;Phoenix&lt;/option&gt;
+    &lt;option value="sa"&gt;San Antonio&lt;/option&gt;
+    &lt;option value="sd"&gt;San Diego&lt;/option&gt;
+    &lt;option value="dal"&gt;Dallas&lt;/option&gt;
+    &lt;option value="sj"&gt;San Jose&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  function filterCities() {
+    const search = document.getElementById('citySearch').value.toLowerCase();
+    const select = document.getElementById('city');
+    const options = select.options;
+    
+    for (let option of options) {
+      const text = option.text.toLowerCase();
+      option.style.display = text.includes(search) ? '' : 'none';
+    }
+  }
+&lt;/script&gt;
+
+&lt;style&gt;
+  .searchable-select input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .searchable-select select {
+    width: 100%;
+    padding: 8px;
+  }
+&lt;/style&gt;</code></pre>
+
+        <h3>Styling Select Menus</h3>
+
+        <h4>Basic Cross-Browser Styling</h4>
+        <pre><code>&lt;style&gt;
+  .custom-select {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .custom-select select {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'&gt;&lt;polyline points='6 9 12 15 18 9'/&gt;&lt;/svg&gt;");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+  }
+  
+  .custom-select select:hover {
+    border-color: #999;
+  }
+  
+  .custom-select select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+  }
+  
+  .custom-select select:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+  }
+&lt;/style&gt;
+
+&lt;div class="custom-select"&gt;
+  &lt;select name="styled" id="styled"&gt;
+    &lt;option value=""&gt;Choose an option&lt;/option&gt;
+    &lt;option value="1"&gt;Option 1&lt;/option&gt;
+    &lt;option value="2"&gt;Option 2&lt;/option&gt;
+    &lt;option value="3"&gt;Option 3&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+
+        <h4>Custom Dropdown with JavaScript (Full Control)</h4>
+        <pre><code>&lt;div class="dropdown"&gt;
+  &lt;div class="dropdown-selected" onclick="toggleDropdown()"&gt;
+    Select an option
+    &lt;span class="arrow"&gt;▼&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="dropdown-options" id="dropdownOptions"&gt;
+    &lt;div class="dropdown-option" onclick="selectOption(this)" data-value="1"&gt;Option 1&lt;/div&gt;
+    &lt;div class="dropdown-option" onclick="selectOption(this)" data-value="2"&gt;Option 2&lt;/div&gt;
+    &lt;div class="dropdown-option" onclick="selectOption(this)" data-value="3"&gt;Option 3&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;select name="custom" id="customSelect" style="display:none;"&gt;
+    &lt;option value=""&gt;Select an option&lt;/option&gt;
+    &lt;option value="1"&gt;Option 1&lt;/option&gt;
+    &lt;option value="2"&gt;Option 2&lt;/option&gt;
+    &lt;option value="3"&gt;Option 3&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .dropdown {
+    position: relative;
+    width: 300px;
+  }
+  
+  .dropdown-selected {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    background: white;
+  }
+  
+  .dropdown-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 2px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: white;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .dropdown-options.show {
+    display: block;
+  }
+  
+  .dropdown-option {
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  .dropdown-option:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .arrow {
+    float: right;
+  }
+&lt;/style&gt;
+
+&lt;script&gt;
+  function toggleDropdown() {
+    document.getElementById('dropdownOptions').classList.toggle('show');
+  }
+  
+  function selectOption(element) {
+    const value = element.dataset.value;
+    const text = element.textContent;
+    
+    // Update selected display
+    document.querySelector('.dropdown-selected').innerHTML = 
+      text + ' &lt;span class="arrow"&gt;▼&lt;/span&gt;';
+    
+    // Update hidden select
+    document.getElementById('customSelect').value = value;
+    
+    // Hide dropdown
+    document.getElementById('dropdownOptions').classList.remove('show');
+  }
+  
+  // Close dropdown when clicking outside
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-selected')) {
+      const dropdown = document.getElementById('dropdownOptions');
+      if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    }
+  }
+&lt;/script&gt;</code></pre>
+        <hr>
+
+        <!-- 6. FIELDSET AND LEGEND -->
+        <h2 id="grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</h2>
+        <p>The <code>&lt;fieldset&gt;</code> element groups related form controls, and the <code>&lt;legend&gt;</code>
+            element provides a caption for the group. This is crucial for form organization, accessibility, and visual
+            structure.</p>
+
+        <h3>Basic Fieldset Structure</h3>
+        <pre><code>&lt;form&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Personal Information&lt;/legend&gt;
+    
+    &lt;label for="name"&gt;Name:&lt;/label&gt;
+    &lt;input type="text" id="name" name="name"&gt;&lt;br&gt;
+    
+    &lt;label for="email"&gt;Email:&lt;/label&gt;
+    &lt;input type="email" id="email" name="email"&gt;&lt;br&gt;
+    
+    &lt;label for="phone"&gt;Phone:&lt;/label&gt;
+    &lt;input type="tel" id="phone" name="phone"&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;fieldset&gt;
+    &lt;legend&gt;Address&lt;/legend&gt;
+    
+    &lt;label for="street"&gt;Street:&lt;/label&gt;
+    &lt;input type="text" id="street" name="street"&gt;&lt;br&gt;
+    
+    &lt;label for="city"&gt;City:&lt;/label&gt;
+    &lt;input type="text" id="city" name="city"&gt;&lt;br&gt;
+    
+    &lt;label for="zip"&gt;ZIP Code:&lt;/label&gt;
+    &lt;input type="text" id="zip" name="zip"&gt;
+  &lt;/fieldset&gt;
+&lt;/form&gt;</code></pre>
+
+        <h3>Fieldset Attributes and Styling</h3>
+        <pre><code>&lt;style&gt;
+  /* Base fieldset styling */
+  fieldset {
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+  }
+  
+  /* Legend styling */
+  legend {
+    background-color: #3498db;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  
+  /* Disabled fieldset */
+  fieldset:disabled {
+    opacity: 0.6;
+    background-color: #eee;
+    border-color: #999;
+  }
+  
+  fieldset:disabled legend {
+    background-color: #999;
+  }
+  
+  /* Nested fieldsets */
+  fieldset fieldset {
+    border-color: #e74c3c;
+    margin: 15px 0;
+    background-color: white;
+  }
+  
+  fieldset fieldset legend {
+    background-color: #e74c3c;
+    font-size: 1em;
+    padding: 5px 10px;
+  }
+&lt;/style&gt;
+
+&lt;form&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Account Information&lt;/legend&gt;
+    
+    &lt;!-- Regular fields --&gt;
+    &lt;label for="username"&gt;Username:&lt;/label&gt;
+    &lt;input type="text" id="username" name="username" required&gt;&lt;br&gt;
+    
+    &lt;label for="password"&gt;Password:&lt;/label&gt;
+    &lt;input type="password" id="password" name="password" required&gt;&lt;br&gt;
+    
+    &lt;!-- Nested fieldset for preferences --&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Notification Preferences&lt;/legend&gt;
+      
+      &lt;input type="checkbox" id="emailNotify" name="emailNotify"&gt;
+      &lt;label for="emailNotify"&gt;Email notifications&lt;/label&gt;&lt;br&gt;
+      
+      &lt;input type="checkbox" id="smsNotify" name="smsNotify"&gt;
+      &lt;label for="smsNotify"&gt;SMS notifications&lt;/label&gt;
+    &lt;/fieldset&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Disabled fieldset example --&gt;
+  &lt;fieldset disabled&gt;
+    &lt;legend&gt;Legacy Features (Disabled)&lt;/legend&gt;
+    &lt;p&gt;These features are no longer available for new accounts.&lt;/p&gt;
+    &lt;label for="oldField"&gt;Old Field:&lt;/label&gt;
+    &lt;input type="text" id="oldField" name="oldField"&gt;
+  &lt;/fieldset&gt;
+&lt;/form&gt;</code></pre>
+
+        <h3>Accessibility Benefits of Fieldset</h3>
+        <pre><code>&lt;!-- Without fieldset, screen readers just hear:
+     "Credit card number, edit text"
+     "Expiration, edit text" 
+     "CVV, edit text" --&gt;
+
+&lt;!-- With fieldset, they hear:
+     "Payment Information group"
+     "Credit card number, edit text"
+     "Expiration, edit text"
+     "CVV, edit text" --&gt;
+
+&lt;fieldset&gt;
+  &lt;legend&gt;Payment Information&lt;/legend&gt;
+  
+  &lt;label for="cardNumber"&gt;Credit card number:&lt;/label&gt;
+  &lt;input type="text" id="cardNumber" name="cardNumber" 
+         placeholder="1234 5678 9012 3456"
+         pattern="[0-9]{13,16}"
+         required
+         aria-describedby="cardHelp"&gt;
+  &lt;small id="cardHelp"&gt;13-16 digit card number&lt;/small&gt;&lt;br&gt;
+  
+  &lt;label for="expiry"&gt;Expiration (MM/YY):&lt;/label&gt;
+  &lt;input type="text" id="expiry" name="expiry" 
+         placeholder="MM/YY"
+         pattern="(0[1-9]|1[0-2])\/([0-9]{2})"
+         required&gt;&lt;br&gt;
+  
+  &lt;label for="cvv"&gt;CVV:&lt;/label&gt;
+  &lt;input type="text" id="cvv" name="cvv" 
+         placeholder="123"
+         pattern="[0-9]{3,4}"
+         required
+         maxlength="4"&gt;
+&lt;/fieldset&gt;</code></pre>
+
+        <h3>Complex Form with Multiple Fieldsets</h3>
+        <pre><code>&lt;form class="job-application"&gt;
+  &lt;h2&gt;Job Application Form&lt;/h2&gt;
+  
+  &lt;!-- Section 1: Personal Details --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;📋 Personal Details&lt;/legend&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="fullName"&gt;Full Name *&lt;/label&gt;
+      &lt;input type="text" id="fullName" name="fullName" required 
+             placeholder="John Doe"&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="email"&gt;Email Address *&lt;/label&gt;
+      &lt;input type="email" id="email" name="email" required
+             placeholder="john@example.com"&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="phone"&gt;Phone Number&lt;/label&gt;
+      &lt;input type="tel" id="phone" name="phone"
+             placeholder="(555) 123-4567"&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Section 2: Position Details --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;💼 Position Details&lt;/legend&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="position"&gt;Position Applied For *&lt;/label&gt;
+      &lt;select id="position" name="position" required&gt;
+        &lt;option value=""&gt;--Select a position--&lt;/option&gt;
+        &lt;optgroup label="Development"&gt;
+          &lt;option value="frontend"&gt;Frontend Developer&lt;/option&gt;
+          &lt;option value="backend"&gt;Backend Developer&lt;/option&gt;
+          &lt;option value="fullstack"&gt;Full Stack Developer&lt;/option&gt;
+        &lt;/optgroup&gt;
+        &lt;optgroup label="Design"&gt;
+          &lt;option value="ui"&gt;UI Designer&lt;/option&gt;
+          &lt;option value="ux"&gt;UX Designer&lt;/option&gt;
+          &lt;option value="graphic"&gt;Graphic Designer&lt;/option&gt;
+        &lt;/optgroup&gt;
+      &lt;/select&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="startDate"&gt;Available Start Date&lt;/label&gt;
+      &lt;input type="date" id="startDate" name="startDate"
+             min="2024-01-01" max="2024-12-31"&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label&gt;Employment Type *&lt;/label&gt;
+      &lt;div class="radio-group"&gt;
+        &lt;input type="radio" id="fulltime" name="employmentType" value="fulltime" required&gt;
+        &lt;label for="fulltime"&gt;Full-time&lt;/label&gt;
+        
+        &lt;input type="radio" id="parttime" name="employmentType" value="parttime"&gt;
+        &lt;label for="parttime"&gt;Part-time&lt;/label&gt;
+        
+        &lt;input type="radio" id="contract" name="employmentType" value="contract"&gt;
+        &lt;label for="contract"&gt;Contract&lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Section 3: Skills & Experience --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;🚀 Skills &amp; Experience&lt;/legend&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="experience"&gt;Years of Experience *&lt;/label&gt;
+      &lt;input type="number" id="experience" name="experience"
+             min="0" max="50" step="1" value="0" required&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label&gt;Technical Skills (Select all that apply)&lt;/label&gt;
+      &lt;div class="checkbox-group"&gt;
+        &lt;input type="checkbox" id="skillHTML" name="skills" value="html"&gt;
+        &lt;label for="skillHTML"&gt;HTML5&lt;/label&gt;&lt;br&gt;
+        
+        &lt;input type="checkbox" id="skillCSS" name="skills" value="css"&gt;
+        &lt;label for="skillCSS"&gt;CSS3&lt;/label&gt;&lt;br&gt;
+        
+        &lt;input type="checkbox" id="skillJS" name="skills" value="javascript"&gt;
+        &lt;label for="skillJS"&gt;JavaScript&lt;/label&gt;&lt;br&gt;
+        
+        &lt;input type="checkbox" id="skillReact" name="skills" value="react"&gt;
+        &lt;label for="skillReact"&gt;React&lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-row"&gt;
+      &lt;label for="coverLetter"&gt;Cover Letter&lt;/label&gt;
+      &lt;textarea id="coverLetter" name="coverLetter" rows="5"
+                placeholder="Tell us why you'd be a great fit..."&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Section 4: Agreements --&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;⚖️ Terms and Agreements&lt;/legend&gt;
+    
+    &lt;div class="checkbox-group"&gt;
+      &lt;input type="checkbox" id="termsAgree" name="termsAgree" value="yes" required&gt;
+      &lt;label for="termsAgree"&gt;I confirm that the information provided is true and accurate *&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="checkbox-group"&gt;
+      &lt;input type="checkbox" id="backgroundCheck" name="backgroundCheck" value="yes"&gt;
+      &lt;label for="backgroundCheck"&gt;I consent to a background check if offered the position&lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="checkbox-group"&gt;
+      &lt;input type="checkbox" id="newsletter" name="newsletter" value="yes" checked&gt;
+      &lt;label for="newsletter"&gt;I'd like to receive company updates and newsletters&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;!-- Form Actions --&gt;
+  &lt;div class="form-actions"&gt;
+    &lt;button type="reset"&gt;Reset Form&lt;/button&gt;
+    &lt;button type="submit"&gt;Submit Application&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/form&gt;
+
+&lt;style&gt;
+  .job-application {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .job-application fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff;
+  }
+  
+  .job-application legend {
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0 10px;
+    font-size: 1.2em;
+  }
+  
+  .job-application .form-row {
+    margin-bottom: 15px;
+  }
+  
+  .job-application label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .job-application .radio-group label,
+  .job-application .checkbox-group label {
+    display: inline;
+    margin-left: 5px;
+    font-weight: normal;
+  }
+  
+  .job-application input[type="text"],
+  .job-application input[type="email"],
+  .job-application input[type="tel"],
+  .job-application input[type="number"],
+  .job-application select,
+  .job-application textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .job-application input:focus,
+  .job-application select:focus,
+  .job-application textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+  }
+  
+  .job-application .form-actions {
+    text-align: right;
+  }
+  
+  .job-application button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .job-application button[type="reset"] {
+    background: #95a5a6;
+    color: white;
+  }
+  
+  .job-application button[type="submit"] {
+    background: #3498db;
+    color: white;
+  }
+  
+  .job-application button:hover {
+    opacity: 0.9;
+  }
+&lt;/style&gt;</code></pre>
+        <hr>
+
+        <!-- 7. COMPLETE FORM EXAMPLES (fully preserved) -->
+        <h2 id="complete-form-examples">7. Complete Form Examples</h2>
+
+        <h3>Example 1: E-commerce Checkout Form</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Secure Checkout&lt;/title&gt;
+  &lt;style&gt;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .checkout-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .checkout-header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px 30px;
+    }
+    
+    .checkout-header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    
+    .checkout-header p {
+      margin: 5px 0 0;
+      opacity: 0.8;
+    }
+    
+    .checkout-form {
+      padding: 30px;
+    }
+    
+    fieldset {
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      background: #fff;
+    }
+    
+    legend {
+      background: #3498db;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .form-row {
+      margin-bottom: 15px;
+    }
+    
+    .form-row label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #34495e;
+    }
+    
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #ecf0f1;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+    }
+    
+    .form-row input.error {
+      border-color: #e74c3c;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+    
+    .row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .row-3col {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .payment-methods {
+      display: flex;
+      gap: 20px;
+      margin: 15px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .payment-method input[type="radio"] {
+      width: auto;
+    }
+    
+    .payment-method label {
+      margin: 0;
+      font-weight: normal;
+    }
+    
+    .order-summary {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #3498db;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .terms-group {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .terms-group label {
+      margin-left: 8px;
+      font-weight: normal;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+    
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background: #d4edda;
+      color: #155724;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="checkout-container"&gt;
+    &lt;div class="checkout-header"&gt;
+      &lt;h1&gt;Secure Checkout&lt;/h1&gt;
+      &lt;p&gt;Complete your purchase safely and securely&lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;form class="checkout-form" onsubmit="return validateCheckout()"&gt;
+      &lt;!-- Contact Information --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;📧 Contact Information&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="checkoutEmail"&gt;Email Address *&lt;/label&gt;
+          &lt;input type="email" id="checkoutEmail" name="email" 
+                 placeholder="your@email.com" required
+                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"&gt;
+          &lt;div class="error-message" id="emailError"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="row-2col"&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="firstName"&gt;First Name *&lt;/label&gt;
+            &lt;input type="text" id="firstName" name="firstName" required&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="form-row"&gt;
+            &lt;label for="lastName"&gt;Last Name *&lt;/label&gt;
+            &lt;input type="text" id="lastName" name="lastName" required&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="phone"&gt;Phone Number&lt;/label&gt;
+          &lt;input type="tel" id="phone" name="phone" 
+                 placeholder="(555) 555-5555"
+                 pattern="[0-9]{3}[0-9]{3}[0-9]{4}"&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Shipping Address --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;🚚 Shipping Address&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="address"&gt;Street Address *&lt;/label&gt;
+          &lt;input type="text" id="address" name="address" required&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="address2"&gt;Apt, Suite, etc. (optional)&lt;/label&gt;
+          &lt;input type="text" id="address2" name="address2"&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="row-3col"&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="city"&gt;City *&lt;/label&gt;
+            &lt;input type="text" id="city" name="city" required&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="form-row"&gt;
+            &lt;label for="state"&gt;State *&lt;/label&gt;
+            &lt;select id="state" name="state" required&gt;
+              &lt;option value=""&gt;Select&lt;/option&gt;
+              &lt;option value="AL"&gt;Alabama&lt;/option&gt;
+              &lt;option value="AK"&gt;Alaska&lt;/option&gt;
+              &lt;option value="AZ"&gt;Arizona&lt;/option&gt;
+              &lt;option value="AR"&gt;Arkansas&lt;/option&gt;
+              &lt;option value="CA"&gt;California&lt;/option&gt;
+              &lt;option value="CO"&gt;Colorado&lt;/option&gt;
+              &lt;option value="CT"&gt;Connecticut&lt;/option&gt;
+              &lt;option value="DE"&gt;Delaware&lt;/option&gt;
+              &lt;option value="FL"&gt;Florida&lt;/option&gt;
+              &lt;option value="GA"&gt;Georgia&lt;/option&gt;
+              &lt;!-- Add all states --&gt;
+            &lt;/select&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="form-row"&gt;
+            &lt;label for="zip"&gt;ZIP Code *&lt;/label&gt;
+            &lt;input type="text" id="zip" name="zip" required
+                   pattern="[0-9]{5}" maxlength="5"&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="country"&gt;Country *&lt;/label&gt;
+          &lt;select id="country" name="country" required&gt;
+            &lt;option value=""&gt;Select country&lt;/option&gt;
+            &lt;option value="US" selected&gt;United States&lt;/option&gt;
+            &lt;option value="CA"&gt;Canada&lt;/option&gt;
+            &lt;option value="UK"&gt;United Kingdom&lt;/option&gt;
+            &lt;option value="AU"&gt;Australia&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Payment Information --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;💳 Payment Information&lt;/legend&gt;
+        
+        &lt;div class="payment-methods"&gt;
+          &lt;div class="payment-method"&gt;
+            &lt;input type="radio" id="creditCard" name="paymentMethod" 
+                   value="credit" checked&gt;
+            &lt;label for="creditCard"&gt;Credit Card&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="payment-method"&gt;
+            &lt;input type="radio" id="paypal" name="paymentMethod" value="paypal"&gt;
+            &lt;label for="paypal"&gt;PayPal&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="payment-method"&gt;
+            &lt;input type="radio" id="applePay" name="paymentMethod" value="apple"&gt;
+            &lt;label for="applePay"&gt;Apple Pay&lt;/label&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div id="creditCardFields"&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="cardNumber"&gt;Card Number *&lt;/label&gt;
+            &lt;input type="text" id="cardNumber" name="cardNumber" 
+                   placeholder="1234 5678 9012 3456"
+                   pattern="[0-9]{13,16}" maxlength="16"
+                   required&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="row-2col"&gt;
+            &lt;div class="form-row"&gt;
+              &lt;label for="expMonth"&gt;Expiration Month *&lt;/label&gt;
+              &lt;select id="expMonth" name="expMonth" required&gt;
+                &lt;option value=""&gt;Month&lt;/option&gt;
+                &lt;option value="01"&gt;January (01)&lt;/option&gt;
+                &lt;option value="02"&gt;February (02)&lt;/option&gt;
+                &lt;option value="03"&gt;March (03)&lt;/option&gt;
+                &lt;option value="04"&gt;April (04)&lt;/option&gt;
+                &lt;option value="05"&gt;May (05)&lt;/option&gt;
+                &lt;option value="06"&gt;June (06)&lt;/option&gt;
+                &lt;option value="07"&gt;July (07)&lt;/option&gt;
+                &lt;option value="08"&gt;August (08)&lt;/option&gt;
+                &lt;option value="09"&gt;September (09)&lt;/option&gt;
+                &lt;option value="10"&gt;October (10)&lt;/option&gt;
+                &lt;option value="11"&gt;November (11)&lt;/option&gt;
+                &lt;option value="12"&gt;December (12)&lt;/option&gt;
+              &lt;/select&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="form-row"&gt;
+              &lt;label for="expYear"&gt;Expiration Year *&lt;/label&gt;
+              &lt;select id="expYear" name="expYear" required&gt;
+                &lt;option value=""&gt;Year&lt;/option&gt;
+                &lt;option value="2024"&gt;2024&lt;/option&gt;
+                &lt;option value="2025"&gt;2025&lt;/option&gt;
+                &lt;option value="2026"&gt;2026&lt;/option&gt;
+                &lt;option value="2027"&gt;2027&lt;/option&gt;
+                &lt;option value="2028"&gt;2028&lt;/option&gt;
+              &lt;/select&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="row-2col"&gt;
+            &lt;div class="form-row"&gt;
+              &lt;label for="cvv"&gt;CVV *&lt;/label&gt;
+              &lt;input type="text" id="cvv" name="cvv" 
+                     placeholder="123"
+                     pattern="[0-9]{3,4}" maxlength="4"
+                     required&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="form-row"&gt;
+              &lt;label for="cardName"&gt;Name on Card *&lt;/label&gt;
+              &lt;input type="text" id="cardName" name="cardName" required&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Order Summary --&gt;
+      &lt;div class="order-summary"&gt;
+        &lt;h3&gt;Order Summary&lt;/h3&gt;
+        &lt;div class="order-item"&gt;
+          &lt;span&gt;Product 1 × 2&lt;/span&gt;
+          &lt;span&gt;$199.98&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="order-item"&gt;
+          &lt;span&gt;Product 2 × 1&lt;/span&gt;
+          &lt;span&gt;$49.99&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="order-item"&gt;
+          &lt;span&gt;Shipping&lt;/span&gt;
+          &lt;span&gt;$9.99&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="order-item"&gt;
+          &lt;span&gt;Tax&lt;/span&gt;
+          &lt;span&gt;$15.60&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="order-total"&gt;
+          &lt;span&gt;Total&lt;/span&gt;
+          &lt;span&gt;$275.56&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Billing Address Options --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;📋 Billing Address&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="sameAsShipping" name="sameAsShipping" 
+                 checked onclick="toggleBilling()"&gt;
+          &lt;label for="sameAsShipping"&gt;Same as shipping address&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;div id="billingFields" style="display: none;"&gt;
+          &lt;!-- Duplicate address fields for billing --&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="billingAddress"&gt;Street Address *&lt;/label&gt;
+            &lt;input type="text" id="billingAddress" name="billingAddress"&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="row-3col"&gt;
+            &lt;div class="form-row"&gt;
+              &lt;label for="billingCity"&gt;City *&lt;/label&gt;
+              &lt;input type="text" id="billingCity" name="billingCity"&gt;
+            &lt;/div&gt;
+            &lt;div class="form-row"&gt;
+              &lt;label for="billingState"&gt;State *&lt;/label&gt;
+              &lt;select id="billingState" name="billingState"&gt;
+                &lt;option value=""&gt;Select&lt;/option&gt;
+              &lt;/select&gt;
+            &lt;/div&gt;
+            &lt;div class="form-row"&gt;
+              &lt;label for="billingZip"&gt;ZIP Code *&lt;/label&gt;
+              &lt;input type="text" id="billingZip" name="billingZip"&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Terms and Conditions --&gt;
+      &lt;div class="terms-group"&gt;
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="termsCheckout" name="termsCheckout" required&gt;
+          &lt;label for="termsCheckout"&gt;I agree to the &lt;a href="#"&gt;Terms and Conditions&lt;/a&gt; and &lt;a href="#"&gt;Privacy Policy&lt;/a&gt; *&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="marketingCheckout" name="marketingCheckout"&gt;
+          &lt;label for="marketingCheckout"&gt;Keep me updated on new products and offers&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="saveInfo" name="saveInfo"&gt;
+          &lt;label for="saveInfo"&gt;Save this information for next time&lt;/label&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Form Actions --&gt;
+      &lt;div class="form-actions"&gt;
+        &lt;button type="button" class="btn btn-secondary" onclick="history.back()"&gt;
+          Continue Shopping
+        &lt;/button&gt;
+        &lt;button type="submit" class="btn btn-primary"&gt;
+          Place Order - $275.56
+        &lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Security Badge --&gt;
+      &lt;div class="secure-badge"&gt;
+        &lt;svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"&gt;
+          &lt;rect x="3" y="11" width="18" height="11" rx="2" ry="2"&gt;&lt;/rect&gt;
+          &lt;path d="M7 11V7a5 5 0 0 1 10 0v4"&gt;&lt;/path&gt;
+        &lt;/svg&gt;
+        &lt;span&gt;Your payment information is encrypted and secure&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+  
+  &lt;script&gt;
+    function validateCheckout() {
+      const email = document.getElementById('checkoutEmail');
+      const emailError = document.getElementById('emailError');
+      
+      // Email validation
+      if (!email.value.includes('@') || !email.value.includes('.')) {
+        emailError.textContent = 'Please enter a valid email address';
+        email.classList.add('error');
+        return false;
+      }
+      
+      // Card validation if credit card selected
+      if (document.getElementById('creditCard').checked) {
+        const cardNumber = document.getElementById('cardNumber');
+        if (cardNumber.value.length &lt; 13) {
+          alert('Please enter a valid card number');
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    function toggleBilling() {
+      const billingFields = document.getElementById('billingFields');
+      const sameAsShipping = document.getElementById('sameAsShipping');
+      
+      billingFields.style.display = sameAsShipping.checked ? 'none' : 'block';
+    }
+    
+    // Real-time card number formatting
+    document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s/g, '');
+      if (value.length > 0) {
+        value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+        e.target.value = value;
+      }
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Example 2: Event Registration Form</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;TechConf 2024 - Registration&lt;/title&gt;
+  &lt;style&gt;
+    /* Similar styling to previous example, but with event-specific colors */
+    .event-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .ticket-selector {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      margin: 20px 0;
+    }
+    
+    .ticket-type {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .ticket-type input[type="radio"] {
+      width: auto;
+      transform: scale(1.2);
+    }
+    
+    .ticket-type label {
+      flex: 1;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .ticket-price {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .workshop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+    
+    .workshop-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.3s;
+    }
+    
+    .workshop-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102,126,234,0.2);
+    }
+    
+    .workshop-card input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    .workshop-card label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .workshop-time {
+      color: #666;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    
+    .workshop-capacity {
+      color: #f5576c;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    
+    .dietary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    
+    .dietary-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="checkout-container"&gt;
+    &lt;div class="event-header"&gt;
+      &lt;h1&gt;🎯 TechConf 2024&lt;/h1&gt;
+      &lt;p&gt;June 15-17, 2024 • San Francisco, CA&lt;/p&gt;
+      &lt;p&gt;The premier conference for web developers&lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;form class="checkout-form"&gt;
+      &lt;!-- Ticket Selection --&gt;
+      &lt;div class="ticket-selector"&gt;
+        &lt;h2 style="margin-top:0"&gt;Select Your Pass&lt;/h2&gt;
+        
+        &lt;div class="ticket-type"&gt;
+          &lt;input type="radio" id="ticketEarly" name="ticketType" value="early" checked&gt;
+          &lt;label for="ticketEarly"&gt;Early Bird Pass&lt;/label&gt;
+          &lt;div class="ticket-price"&gt;$299&lt;/div&gt;
+          &lt;small&gt;Save $200! Limited availability&lt;/small&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="ticket-type"&gt;
+          &lt;input type="radio" id="ticketRegular" name="ticketType" value="regular"&gt;
+          &lt;label for="ticketRegular"&gt;Regular Pass&lt;/label&gt;
+          &lt;div class="ticket-price"&gt;$499&lt;/div&gt;
+          &lt;small&gt;Includes all conference sessions&lt;/small&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="ticket-type"&gt;
+          &lt;input type="radio" id="ticketVIP" name="ticketType" value="vip"&gt;
+          &lt;label for="ticketVIP"&gt;VIP Pass&lt;/label&gt;
+          &lt;div class="ticket-price"&gt;$999&lt;/div&gt;
+          &lt;small&gt;Includes workshops + VIP lounge&lt;/small&gt;
+        &lt;/div&gt;
+        
+        &lt;div style="margin-top:20px"&gt;
+          &lt;label for="quantity"&gt;Number of Passes:&lt;/label&gt;
+          &lt;input type="number" id="quantity" name="quantity" 
+                 min="1" max="10" value="1" style="width:80px"&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Attendee Information --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;👤 Attendee Information&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="fullName"&gt;Full Name *&lt;/label&gt;
+          &lt;input type="text" id="fullName" name="fullName" required&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="row-2col"&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="jobTitle"&gt;Job Title&lt;/label&gt;
+            &lt;input type="text" id="jobTitle" name="jobTitle" 
+                   placeholder="e.g., Senior Developer"&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="form-row"&gt;
+            &lt;label for="company"&gt;Company&lt;/label&gt;
+            &lt;input type="text" id="company" name="company"&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="row-2col"&gt;
+          &lt;div class="form-row"&gt;
+            &lt;label for="email"&gt;Email Address *&lt;/label&gt;
+            &lt;input type="email" id="email" name="email" required&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="form-row"&gt;
+            &lt;label for="phone"&gt;Phone Number&lt;/label&gt;
+            &lt;input type="tel" id="phone" name="phone"&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="experience"&gt;Years of Experience&lt;/label&gt;
+          &lt;input type="number" id="experience" name="experience" 
+                 min="0" max="50" step="1"&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Workshop Selection --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;🔧 Select Workshops (VIP Only)&lt;/legend&gt;
+        &lt;p class="hint"&gt;Workshops are included with VIP passes. Limited seats available.&lt;/p&gt;
+        
+        &lt;div class="workshop-grid"&gt;
+          &lt;div class="workshop-card"&gt;
+            &lt;input type="checkbox" id="wsReact" name="workshops" value="react"&gt;
+            &lt;label for="wsReact"&gt;Advanced React Patterns&lt;/label&gt;
+            &lt;div class="workshop-time"&gt;📅 June 15, 9am-12pm&lt;/div&gt;
+            &lt;div class="workshop-capacity"&gt;🔥 Only 5 spots left!&lt;/div&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="workshop-card"&gt;
+            &lt;input type="checkbox" id="wsNode" name="workshops" value="node"&gt;
+            &lt;label for="wsNode"&gt;Node.js Performance&lt;/label&gt;
+            &lt;div class="workshop-time"&gt;📅 June 15, 1pm-4pm&lt;/div&gt;
+            &lt;div class="workshop-capacity"&gt;🔥 Only 8 spots left!&lt;/div&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="workshop-card"&gt;
+            &lt;input type="checkbox" id="wsTS" name="workshops" value="typescript"&gt;
+            &lt;label for="wsTS"&gt;TypeScript Masterclass&lt;/label&gt;
+            &lt;div class="workshop-time"&gt;📅 June 16, 9am-12pm&lt;/div&gt;
+            &lt;div class="workshop-capacity"&gt;🔥 Only 3 spots left!&lt;/div&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="workshop-card"&gt;
+            &lt;input type="checkbox" id="wsGraphQL" name="workshops" value="graphql"&gt;
+            &lt;label for="wsGraphQL"&gt;GraphQL from Scratch&lt;/label&gt;
+            &lt;div class="workshop-time"&gt;📅 June 16, 1pm-4pm&lt;/div&gt;
+            &lt;div class="workshop-capacity"&gt;🔥 Only 6 spots left!&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Dietary Restrictions --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;🍽️ Dietary Requirements&lt;/legend&gt;
+        &lt;p&gt;We'll provide meals during the conference. Please let us know your preferences.&lt;/p&gt;
+        
+        &lt;div class="dietary-grid"&gt;
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietVeg" name="dietary" value="vegetarian"&gt;
+            &lt;label for="dietVeg"&gt;Vegetarian&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietVegan" name="dietary" value="vegan"&gt;
+            &lt;label for="dietVegan"&gt;Vegan&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietGF" name="dietary" value="gluten-free"&gt;
+            &lt;label for="dietGF"&gt;Gluten-Free&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietNF" name="dietary" value="nut-free"&gt;
+            &lt;label for="dietNF"&gt;Nut-Free&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietDF" name="dietary" value="dairy-free"&gt;
+            &lt;label for="dietDF"&gt;Dairy-Free&lt;/label&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="dietary-item"&gt;
+            &lt;input type="checkbox" id="dietHalal" name="dietary" value="halal"&gt;
+            &lt;label for="dietHalal"&gt;Halal&lt;/label&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row" style="margin-top:15px"&gt;
+          &lt;label for="otherDietary"&gt;Other dietary requirements:&lt;/label&gt;
+          &lt;textarea id="otherDietary" name="otherDietary" rows="2" 
+                    placeholder="Please specify any other requirements..."&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Networking Preferences --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;🤝 Networking Preferences&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label&gt;What topics are you most interested in?&lt;/label&gt;
+          &lt;div class="checkbox-group"&gt;
+            &lt;input type="checkbox" id="topicFrontend" name="topics" value="frontend"&gt;
+            &lt;label for="topicFrontend"&gt;Frontend Development&lt;/label&gt;&lt;br&gt;
+            
+            &lt;input type="checkbox" id="topicBackend" name="topics" value="backend"&gt;
+            &lt;label for="topicBackend"&gt;Backend Development&lt;/label&gt;&lt;br&gt;
+            
+            &lt;input type="checkbox" id="topicDevOps" name="topics" value="devops"&gt;
+            &lt;label for="topicDevOps"&gt;DevOps &amp; Cloud&lt;/label&gt;&lt;br&gt;
+            
+            &lt;input type="checkbox" id="topicAI" name="topics" value="ai"&gt;
+            &lt;label for="topicAI"&gt;AI &amp; Machine Learning&lt;/label&gt;&lt;br&gt;
+            
+            &lt;input type="checkbox" id="topicMobile" name="topics" value="mobile"&gt;
+            &lt;label for="topicMobile"&gt;Mobile Development&lt;/label&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;label for="shirtSize"&gt;T-Shirt Size&lt;/label&gt;
+          &lt;select id="shirtSize" name="shirtSize"&gt;
+            &lt;option value=""&gt;Select size&lt;/option&gt;
+            &lt;option value="S"&gt;Small&lt;/option&gt;
+            &lt;option value="M"&gt;Medium&lt;/option&gt;
+            &lt;option value="L"&gt;Large&lt;/option&gt;
+            &lt;option value="XL"&gt;X-Large&lt;/option&gt;
+            &lt;option value="XXL"&gt;XX-Large&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Code of Conduct --&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;📜 Code of Conduct&lt;/legend&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="codeOfConduct" name="codeOfConduct" 
+                 value="agreed" required&gt;
+          &lt;label for="codeOfConduct"&gt;I have read and agree to the conference &lt;a href="#"&gt;Code of Conduct&lt;/a&gt; *&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="photoConsent" name="photoConsent" value="yes" checked&gt;
+          &lt;label for="photoConsent"&gt;I consent to being photographed/filmed during the event&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-row"&gt;
+          &lt;input type="checkbox" id="emailUpdates" name="emailUpdates" value="yes" checked&gt;
+          &lt;label for="emailUpdates"&gt;I'd like to receive email updates about future events&lt;/label&gt;
+        &lt;/div&gt;
+      &lt;/fieldset&gt;
+      
+      &lt;!-- Form Actions --&gt;
+      &lt;div class="form-actions"&gt;
+        &lt;button type="reset" class="btn btn-secondary"&gt;Reset Form&lt;/button&gt;
+        &lt;button type="submit" class="btn btn-primary"&gt;Register Now - $299&lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;p style="text-align:center; margin-top:20px; color:#666;"&gt;
+        ⚡ Tickets are limited. Register early to secure your spot!
+      &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+  
+  &lt;script&gt;
+    // Update price based on ticket selection and quantity
+    const ticketRadios = document.querySelectorAll('input[name="ticketType"]');
+    const quantityInput = document.getElementById('quantity');
+    const priceDisplay = document.querySelector('.btn-primary');
+    
+    function updatePrice() {
+      const selectedTicket = document.querySelector('input[name="ticketType"]:checked');
+      const quantity = parseInt(quantityInput.value) || 1;
+      let price = 0;
+      
+      switch(selectedTicket.value) {
+        case 'early':
+          price = 299;
+          break;
+        case 'regular':
+          price = 499;
+          break;
+        case 'vip':
+          price = 999;
+          break;
+      }
+      
+      const total = price * quantity;
+      priceDisplay.textContent = `Register Now - $${total}`;
+    }
+    
+    ticketRadios.forEach(radio =&gt; radio.addEventListener('change', updatePrice));
+    quantityInput.addEventListener('input', updatePrice);
+    
+    // Workshop availability based on ticket type
+    const ticketVIP = document.getElementById('ticketVIP');
+    const workshops = document.querySelectorAll('input[name="workshops"]');
+    
+    function toggleWorkshops() {
+      const enabled = ticketVIP.checked;
+      workshops.forEach(workshop =&gt; {
+        workshop.disabled = !enabled;
+        if (!enabled) workshop.checked = false;
+      });
+    }
+    
+    ticketVIP.addEventListener('change', toggleWorkshops);
+    toggleWorkshops(); // Initial state
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        <hr>
+
+        <!-- 8. BEST PRACTICES -->
+        <h2 id="best-practices">8. Best Practices and Accessibility</h2>
+
+        <h3>Accessibility (a11y) Guidelines</h3>
+
+        <h4>1. Always Use Labels</h4>
+        <pre><code>&lt;!-- GOOD: Properly associated labels --&gt;
+&lt;label for="email"&gt;Email Address:&lt;/label&gt;
+&lt;input type="email" id="email" name="email"&gt;
+
+&lt;!-- GOOD: Implicit labeling (wrapping) --&gt;
+&lt;label&gt;
+  Email Address:
+  &lt;input type="email" name="email"&gt;
+&lt;/label&gt;
+
+&lt;!-- BAD: No label association --&gt;
+Email: &lt;input type="email" name="email"&gt;</code></pre>
+
+        <h4>2. Use Fieldset and Legend for Groups</h4>
+        <pre><code>&lt;!-- GOOD: Screen readers announce context --&gt;
+&lt;fieldset&gt;
+  &lt;legend&gt;Shipping Method&lt;/legend&gt;
+  &lt;!-- radio buttons here --&gt;
+&lt;/fieldset&gt;
+
+&lt;!-- BAD: No grouping context --&gt;
+&lt;div&gt;Shipping Method&lt;/div&gt;
+&lt;!-- radio buttons here --&gt;</code></pre>
+
+        <h4>3. Provide Clear Instructions</h4>
+        <pre><code>&lt;!-- GOOD: Clear, associated instructions --&gt;
+&lt;label for="phone"&gt;Phone Number:&lt;/label&gt;
+&lt;input type="tel" id="phone" name="phone"
+       aria-describedby="phoneHelp"&gt;
+&lt;small id="phoneHelp"&gt;Format: 555-555-5555&lt;/small&gt;
+
+&lt;!-- GOOD: Required field indication --&gt;
+&lt;label for="username"&gt;
+  Username &lt;span aria-hidden="true"&gt;*&lt;/span&gt;
+  &lt;span class="sr-only"&gt;required&lt;/span&gt;
+&lt;/label&gt;
+&lt;input type="text" id="username" name="username" required&gt;</code></pre>
+
+        <h4>4. Error Handling and Validation</h4>
+        <pre><code>&lt;div class="form-group"&gt;
+  &lt;label for="email"&gt;Email:&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" 
+         required
+         aria-required="true"
+         aria-invalid="false"
+         aria-describedby="emailError"&gt;
+  &lt;div id="emailError" class="error-message" role="alert"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  document.getElementById('email').addEventListener('invalid', function(e) {
+    e.preventDefault();
+    this.setAttribute('aria-invalid', 'true');
+    document.getElementById('emailError').textContent = 
+      'Please enter a valid email address';
+  });
+&lt;/script&gt;</code></pre>
+
+        <h3>HTML Validation Attributes Reference</h3>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Elements</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>required</code></td>
+                <td>input, select, textarea</td>
+                <td>Field must have a value</td>
+            </tr>
+            <tr>
+                <td><code>pattern</code></td>
+                <td>input (text, email, etc.)</td>
+                <td>Value must match regex pattern</td>
+            </tr>
+            <tr>
+                <td><code>min</code> / <code>max</code></td>
+                <td>input (number, date, etc.)</td>
+                <td>Numeric/date range validation</td>
+            </tr>
+            <tr>
+                <td><code>minlength</code> / <code>maxlength</code></td>
+                <td>input, textarea</td>
+                <td>Text length validation</td>
+            </tr>
+            <tr>
+                <td><code>step</code></td>
+                <td>input (number)</td>
+                <td>Increment steps</td>
+            </tr>
+            <tr>
+                <td><code>multiple</code></td>
+                <td>input (email), select</td>
+                <td>Allow multiple values</td>
+            </tr>
+        </table>
+
+        <h3>Progressive Enhancement Strategy</h3>
+        <pre><code>&lt;!-- Start with basic HTML --&gt;
+&lt;input type="text" id="phone" name="phone" 
+       placeholder="555-555-5555"
+       pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"&gt;
+
+&lt;!-- Enhance with JavaScript --&gt;
+&lt;script&gt;
+  if (Modernizr.inputtypes.tel) {
+    // Browser supports tel input type
+    document.getElementById('phone').type = 'tel';
+  }
+  
+  // Add additional enhancements
+  const phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length &gt;= 3) {
+      value = value.slice(0,3) + '-' + value.slice(3);
+    }
+    if (value.length &gt;= 7) {
+      value = value.slice(0,7) + '-' + value.slice(7);
+    }
+    e.target.value = value.slice(0,12);
+  });
+&lt;/script&gt;</code></pre>
+        <hr>
+
+        <!-- 9. COMMON PATTERNS -->
+        <h2 id="common-patterns">9. Common Patterns and Use Cases</h2>
+
+        <h3>Pattern 1: Multi-Step Form (Wizard)</h3>
+        <pre><code>&lt;div class="wizard"&gt;
+  &lt;div class="wizard-steps"&gt;
+    &lt;div class="step active"&gt;1. Account&lt;/div&gt;
+    &lt;div class="step"&gt;2. Profile&lt;/div&gt;
+    &lt;div class="step"&gt;3. Preferences&lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="step-content" id="step1"&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Create Your Account&lt;/legend&gt;
+      &lt;!-- Step 1 fields --&gt;
+    &lt;/fieldset&gt;
+    &lt;button onclick="nextStep()"&gt;Next&lt;/button&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="step-content" id="step2" style="display:none"&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Profile Information&lt;/legend&gt;
+      &lt;!-- Step 2 fields --&gt;
+    &lt;/fieldset&gt;
+    &lt;button onclick="prevStep()"&gt;Previous&lt;/button&gt;
+    &lt;button onclick="nextStep()"&gt;Next&lt;/button&gt;
+  &lt;/div&gt;
+  
+  &lt;!-- More steps... --&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>Pattern 2: Dynamic Form Fields</h3>
+        <pre><code>&lt;div id="educationFields"&gt;
+  &lt;div class="education-entry"&gt;
+    &lt;select name="degree[]"&gt;
+      &lt;option value="hs"&gt;High School&lt;/option&gt;
+      &lt;option value="ba"&gt;Bachelor's&lt;/option&gt;
+      &lt;option value="ma"&gt;Master's&lt;/option&gt;
+    &lt;/select&gt;
+    &lt;input type="text" name="school[]" placeholder="School Name"&gt;
+    &lt;input type="number" name="gradYear[]" placeholder="Graduation Year"&gt;
+    &lt;button type="button" onclick="removeEducation(this)"&gt;Remove&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;button type="button" onclick="addEducation()"&gt;Add Another Degree&lt;/button&gt;
+
+&lt;script&gt;
+  function addEducation() {
+    const template = document.querySelector('.education-entry').cloneNode(true);
+    template.querySelectorAll('input, select').forEach(field =&gt; field.value = '');
+    document.getElementById('educationFields').appendChild(template);
+  }
+  
+  function removeEducation(button) {
+    if (document.querySelectorAll('.education-entry').length > 1) {
+      button.closest('.education-entry').remove();
+    }
+  }
+&lt;/script&gt;</code></pre>
+
+        <h3>Pattern 3: Conditional Fields</h3>
+        <pre><code>&lt;div class="form-row"&gt;
+  &lt;label for="hasOtherAddress"&gt;Ship to different address?&lt;/label&gt;
+  &lt;input type="checkbox" id="hasOtherAddress" onchange="toggleOtherAddress()"&gt;
+&lt;/div&gt;
+
+&lt;div id="otherAddress" style="display:none"&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Shipping Address&lt;/legend&gt;
+    &lt;!-- Address fields here --&gt;
+  &lt;/fieldset&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  function toggleOtherAddress() {
+    const otherAddress = document.getElementById('otherAddress');
+    const checkbox = document.getElementById('hasOtherAddress');
+    otherAddress.style.display = checkbox.checked ? 'block' : 'none';
+    
+    // Enable/disable fields for validation
+    otherAddress.querySelectorAll('input, select').forEach(field =&gt; {
+      field.disabled = !checkbox.checked;
+      if (!checkbox.checked) field.required = false;
+    });
+  }
+&lt;/script&gt;</code></pre>
+        <hr>
+
+        <!-- 10. STYLING -->
+        <h2 id="styling-form-elements">10. Styling Form Elements</h2>
+
+        <h3>Cross-Browser Consistent Styling</h3>
+        <pre><code>/* Reset and base styles */
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Text inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.75em 1em;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+}
+
+/* Invalid state */
+input:invalid,
+select:invalid,
+textarea:invalid {
+  border-color: #dc3545;
+}
+
+input:invalid:focus,
+select:invalid:focus,
+textarea:invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220,53,69,0.25);
+}
+
+/* Radio and checkbox */
+input[type="radio"],
+input[type="checkbox"] {
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.5em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="radio"]:checked,
+input[type="checkbox"]:checked {
+  accent-color: #007bff;
+}
+
+/* Select dropdown arrow */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1em center;
+  background-size: 1em;
+  padding-right: 2.5em;
+}
+
+/* Disabled state */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Readonly state */
+input:read-only,
+textarea:read-only {
+  background-color: #f9f9f9;
+  border-color: #ccc;
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+/* Fieldset styling */
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5em;
+  margin: 1.5em 0;
+}
+
+legend {
+  font-weight: bold;
+  padding: 0 0.5em;
+  color: #333;
+}
+
+/* Error message styling */
+.error-message {
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+}
+
+/* Help text */
+.help-text {
+  color: #666;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+}</code></pre>
+        <hr>
+
+        <!-- 11. TROUBLESHOOTING -->
+        <h2 id="troubleshooting">11. Troubleshooting and Common Issues</h2>
+
+        <h3>Issue 1: Radio Button Not Allowing Deselection</h3>
+        <p><strong>Problem</strong>: Once a radio button is selected, it can't be deselected.<br>
+            <strong>Solution</strong>: Provide a "None" or "Clear" option:
+        </p>
+        <pre><code>&lt;fieldset&gt;
+  &lt;legend&gt;Choose one:&lt;/legend&gt;
+  
+  &lt;input type="radio" id="option1" name="options" value="1"&gt;
+  &lt;label for="option1"&gt;Option 1&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="option2" name="options" value="2"&gt;
+  &lt;label for="option2"&gt;Option 2&lt;/label&gt;&lt;br&gt;
+  
+  &lt;input type="radio" id="optionNone" name="options" value="" 
+         onclick="this.checked=false;"&gt;
+  &lt;label for="optionNone"&gt;Clear selection&lt;/label&gt;
+&lt;/fieldset&gt;
+
+&lt;!-- OR with JavaScript --&gt;
+&lt;button type="button" onclick="clearRadios('options')"&gt;Clear Selection&lt;/button&gt;
+&lt;script&gt;
+  function clearRadios(name) {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(radio =&gt; {
+      radio.checked = false;
+    });
+  }
+&lt;/script&gt;</code></pre>
+
+        <h3>Issue 2: Select Menu Default Value Not Submitting</h3>
+        <p><strong>Problem</strong>: The first option is selected but no value is submitted.<br>
+            <strong>Solution</strong>: Always provide a value or use a placeholder option:
+        </p>
+        <pre><code>&lt;!-- PROBLEM: No value for first option --&gt;
+&lt;select name="country"&gt;
+  &lt;option&gt;Select a country&lt;/option&gt;
+  &lt;option value="us"&gt;United States&lt;/option&gt;
+&lt;/select&gt;
+&lt;!-- If user doesn't change, "Select a country" is submitted --&gt;
+
+&lt;!-- SOLUTION 1: Add empty value --&gt;
+&lt;select name="country" required&gt;
+  &lt;option value=""&gt;Select a country&lt;/option&gt;
+  &lt;option value="us"&gt;United States&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;!-- SOLUTION 2: Disable first option --&gt;
+&lt;select name="country"&gt;
+  &lt;option value="" disabled selected&gt;Select a country&lt;/option&gt;
+  &lt;option value="us"&gt;United States&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+
+        <h3>Issue 3: Checkbox Values Not Appearing When Unchecked</h3>
+        <p><strong>Problem</strong>: Unchecked checkboxes don't submit any value.<br>
+            <strong>Solution</strong>: Use hidden fields for default "off" values:
+        </p>
+        <pre><code>&lt;!-- PROBLEM: If unchecked, nothing is sent --&gt;
+&lt;input type="checkbox" name="newsletter" value="yes"&gt;
+
+&lt;!-- SOLUTION: Hidden field with default value --&gt;
+&lt;input type="hidden" name="newsletter" value="no"&gt;
+&lt;input type="checkbox" name="newsletter" value="yes" 
+       onchange="this.previousElementSibling.disabled = this.checked"&gt;
+&lt;!-- Server receives: newsletter=no (unchecked) or newsletter=yes (checked) --&gt;</code></pre>
+
+        <h3>Issue 4: Number Input Spinners Not Appearing</h3>
+        <p><strong>Problem</strong>: Number input doesn't show spinner controls.<br>
+            <strong>Solution</strong>: Check CSS that might hide them:
+        </p>
+        <pre><code>/* Problematic CSS */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Solution: Remove or override the CSS */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: inner-spin-button;
+  opacity: 1;
+}
+input[type=number] {
+  -moz-appearance: spinner;
+}</code></pre>
+
+        <h3>Issue 5: Mobile Keyboard Types</h3>
+        <p><strong>Problem</strong>: Wrong keyboard appears on mobile devices.<br>
+            <strong>Solution</strong>: Use appropriate input types:
+        </p>
+        <pre><code>&lt;!-- Numbers keyboard --&gt;
+&lt;input type="tel" name="phone"&gt;  &lt;!-- Shows numeric keypad --&gt;
+&lt;input type="number" name="age"&gt;  &lt;!-- Shows numeric keypad --&gt;
+&lt;input type="text" inputmode="numeric" name="zip"&gt;  &lt;!-- Modern approach --&gt;
+
+&lt;!-- Email keyboard --&gt;
+&lt;input type="email" name="email"&gt;  &lt;!-- Shows @ and .com keys --&gt;
+
+&lt;!-- URL keyboard --&gt;
+&lt;input type="url" name="website"&gt;  &lt;!-- Shows .com and / keys --&gt;</code></pre>
+        <hr>
+
+        <!-- 12. PRACTICE EXERCISES (INTERACTIVE) -->
+        <h2 id="practice-exercises">12. Practice Exercises</h2>
+
+        <div class="exercise-grid">
+            <!-- Exercise 1 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>🍕 Exercise 1: Pizza Order Form</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Create a pizza ordering form that includes:</p>
+                    <ul>
+                        <li>Radio buttons for crust type (thin, thick, stuffed)</li>
+                        <li>Checkboxes for toppings (pepperoni, mushrooms, olives, peppers)</li>
+                        <li>Number input for quantity (1-10)</li>
+                        <li>Select menu for size (small, medium, large, extra-large)</li>
+                        <li>Fieldset grouping for each section</li>
+                        <li>Total price calculation display</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Open your editor and build this interactive form!')">Start
+                        Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 2 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>💼 Exercise 2: Job Application Form</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Build a job application with:</p>
+                    <ul>
+                        <li>Personal information section (name, email, phone)</li>
+                        <li>Position selection (radio buttons for full-time/part-time/contract)</li>
+                        <li>Skills checklist (multiple checkboxes)</li>
+                        <li>Years of experience (number input with min/max)</li>
+                        <li>Availability date (select menus for month/day/year)</li>
+                        <li>Resume upload (file input)</li>
+                        <li>Cover letter (textarea)</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Create this comprehensive job application form!')">Start
+                        Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 3 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>🎟️ Exercise 3: Event Registration System</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Create an event registration form with:</p>
+                    <ul>
+                        <li>Ticket type selection (radio buttons with different prices)</li>
+                        <li>Workshop selection (checkboxes that enable/disable based on ticket type)</li>
+                        <li>Dietary restrictions (checkboxes + textarea for other)</li>
+                        <li>T-shirt size (select menu)</li>
+                        <li>Emergency contact information (conditional fields)</li>
+                        <li>Terms agreement checkbox</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Build this event registration system!')">Start
+                        Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 4 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>💻 Exercise 4: Product Customizer</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Build a product customization form for a laptop:</p>
+                    <ul>
+                        <li>Model selection (select menu with optgroups)</li>
+                        <li>RAM options (radio buttons)</li>
+                        <li>Storage options (radio buttons with capacity)</li>
+                        <li>Software bundle (checkboxes)</li>
+                        <li>Warranty options (radio buttons)</li>
+                        <li>Accessories (checkboxes)</li>
+                        <li>Total price updates in real-time</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Create this dynamic product customizer!')">Start
+                        Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 5 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>📊 Exercise 5: Survey with Conditional Logic</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Create a survey that shows/hides questions based on previous answers:</p>
+                    <ul>
+                        <li>Radio button: "Have you used our product before?" (Yes/No)</li>
+                        <li>If Yes: Show rating questions (radio buttons 1-5)</li>
+                        <li>If No: Show "What brought you here?" (checkboxes)</li>
+                        <li>Feedback textarea</li>
+                        <li>Newsletter signup checkbox</li>
+                        <li>Age verification number input</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Build this conditional survey!')">Start Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 6 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>🛒 Exercise 6: Multi-Step Checkout</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Build a 3-step checkout process:</p>
+                    <ul>
+                        <li>Step 1: Shipping address (text inputs, select for country)</li>
+                        <li>Step 2: Payment method (radio buttons for card types)</li>
+                        <li>Step 3: Order review (read-only fields + confirmation checkbox)</li>
+                        <li>Navigation between steps</li>
+                        <li>Data persistence between steps</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Create this multi-step checkout!')">Start Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 7 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>✅ Exercise 7: Advanced Form with JavaScript Validation</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Create a registration form with real-time validation:</p>
+                    <ul>
+                        <li>Username: minimum 3 characters, no special characters</li>
+                        <li>Email: valid format</li>
+                        <li>Password: minimum 8 characters, at least one number</li>
+                        <li>Confirm password: must match</li>
+                        <li>Age: 18-120</li>
+                        <li>Terms: must be checked</li>
+                        <li>Real-time validation messages</li>
+                        <li>Submit button enables only when all valid</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Build this form with real-time validation!')">Start
+                        Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 8 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>♿ Exercise 8: Accessible Form Challenge</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Take an inaccessible form and make it accessible:</p>
+                    <ul>
+                        <li>Add proper labels to all fields</li>
+                        <li>Group related fields with fieldset/legend</li>
+                        <li>Add ARIA attributes where necessary</li>
+                        <li>Implement proper error messaging</li>
+                        <li>Ensure keyboard navigation works</li>
+                        <li>Test with screen reader</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Practice accessibility fixes!')">Start Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 9 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>👨‍👩‍👧 Exercise 9: Data Entry Form with Dynamic Fields</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Create a form for entering family members:</p>
+                    <ul>
+                        <li>Start with one set of fields</li>
+                        <li>Button to "Add Family Member" duplicates the fields</li>
+                        <li>Each set includes: name, relationship, age (number)</li>
+                        <li>Remove button for each set (except first)</li>
+                        <li>Ensure all fields have unique names/ids</li>
+                        <li>Maximum 5 family members</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Build this dynamic form!')">Start Coding</button>
+                </div>
+            </div>
+
+            <!-- Exercise 10 -->
+            <div class="exercise-card">
+                <div class="exercise-header" onclick="toggleExercise(this)">
+                    <span>🏨 Exercise 10: Room Booking System</span>
+                    <span>▼</span>
+                </div>
+                <div class="exercise-content">
+                    <p>Build a room booking form with:</p>
+                    <ul>
+                        <li>Room type (select with optgroups)</li>
+                        <li>Check-in date (date input)</li>
+                        <li>Check-out date (date input)</li>
+                        <li>Number of guests (number input)</li>
+                        <li>Special requests (textarea)</li>
+                        <li>Add-ons (checkboxes: breakfast, parking, wifi)</li>
+                        <li>Total nights and price calculation</li>
+                        <li>Availability checking (simulated)</li>
+                    </ul>
+                    <button class="btn-run" onclick="alert('Create this room booking system!')">Start Coding</button>
+                </div>
+            </div>
+        </div>
+
+        <h3>Sample Exercise Solution Structure (Exercise 1 – Pizza Order Form)</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Pizza Order Form - Practice Exercise&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+    fieldset { margin: 20px 0; padding: 20px; border: 2px solid #f0f0f0; border-radius: 8px; }
+    legend { font-weight: bold; color: #333; padding: 0 10px; }
+    .form-row { margin: 15px 0; }
+    label { display: block; margin-bottom: 5px; }
+    input[type="radio"] + label, input[type="checkbox"] + label { display: inline; margin-left: 5px; }
+    .price { color: #e67e22; font-weight: bold; }
+    .total { font-size: 24px; margin-top: 20px; padding: 15px; background: #f8f9fa; text-align: right; }
+    button { background: #e67e22; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #d35400; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;🍕 Build Your Pizza&lt;/h1&gt;
+  
+  &lt;form id="pizzaForm"&gt;
+    &lt;!-- Crust Selection --&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Choose Your Crust&lt;/legend&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="crustThin" name="crust" value="thin" checked&gt;
+        &lt;label for="crustThin"&gt;Thin Crust &lt;span class="price"&gt;+$0&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="crustThick" name="crust" value="thick"&gt;
+        &lt;label for="crustThick"&gt;Thick Crust &lt;span class="price"&gt;+$2&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="crustStuffed" name="crust" value="stuffed"&gt;
+        &lt;label for="crustStuffed"&gt;Stuffed Crust &lt;span class="price"&gt;+$3&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/fieldset&gt;
+    
+    &lt;!-- Size Selection --&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Select Size&lt;/legend&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="sizeSmall" name="size" value="small" checked&gt;
+        &lt;label for="sizeSmall"&gt;Small (10") &lt;span class="price"&gt;$10&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="sizeMedium" name="size" value="medium"&gt;
+        &lt;label for="sizeMedium"&gt;Medium (12") &lt;span class="price"&gt;$14&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="radio" id="sizeLarge" name="size" value="large"&gt;
+        &lt;label for="sizeLarge"&gt;Large (14") &lt;span class="price"&gt;$18&lt;/span&gt;&lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/fieldset&gt;
+    
+    &lt;!-- Toppings --&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Choose Toppings ($1 each)&lt;/legend&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="checkbox" id="toppingPepperoni" name="toppings" value="pepperoni"&gt;
+        &lt;label for="toppingPepperoni"&gt;Pepperoni&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="checkbox" id="toppingMushrooms" name="toppings" value="mushrooms"&gt;
+        &lt;label for="toppingMushrooms"&gt;Mushrooms&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="checkbox" id="toppingOlives" name="toppings" value="olives"&gt;
+        &lt;label for="toppingOlives"&gt;Olives&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="form-row"&gt;
+        &lt;input type="checkbox" id="toppingPeppers" name="toppings" value="peppers"&gt;
+        &lt;label for="toppingPeppers"&gt;Bell Peppers&lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/fieldset&gt;
+    
+    &lt;!-- Quantity --&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Quantity&lt;/legend&gt;
+      &lt;div class="form-row"&gt;
+        &lt;label for="quantity"&gt;Number of Pizzas:&lt;/label&gt;
+        &lt;input type="number" id="quantity" name="quantity" min="1" max="10" value="1"&gt;
+      &lt;/div&gt;
+    &lt;/fieldset&gt;
+    
+    &lt;!-- Total Display --&gt;
+    &lt;div class="total" id="totalDisplay"&gt;
+      Total: $0
+    &lt;/div&gt;
+    
+    &lt;!-- Order Button --&gt;
+    &lt;button type="submit"&gt;Place Order&lt;/button&gt;
+  &lt;/form&gt;
+  
+  &lt;script&gt;
+    function calculateTotal() {
+      let total = 0;
+      
+      // Base price based on size
+      const size = document.querySelector('input[name="size"]:checked').value;
+      const sizePrices = { small: 10, medium: 14, large: 18 };
+      total += sizePrices[size];
+      
+      // Crust extra
+      const crust = document.querySelector('input[name="crust"]:checked').value;
+      const crustExtras = { thin: 0, thick: 2, stuffed: 3 };
+      total += crustExtras[crust];
+      
+      // Toppings
+      const toppings = document.querySelectorAll('input[name="toppings"]:checked');
+      total += toppings.length * 1;
+      
+      // Quantity
+      const quantity = document.getElementById('quantity').value;
+      total *= quantity;
+      
+      document.getElementById('totalDisplay').textContent = `Total: $${total}`;
+    }
+    
+    // Add event listeners
+    document.querySelectorAll('input').forEach(input =&gt; {
+      input.addEventListener('change', calculateTotal);
+    });
+    
+    // Form submission
+    document.getElementById('pizzaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Order placed! Your pizza will be ready in 20 minutes.');
+    });
+    
+    // Initial calculation
+    calculateTotal();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+        <h2>📌 Summary: Key Takeaways</h2>
+        <ul style="margin:2rem 0 3rem; font-size:1.2rem; columns:2 300px;">
+            <li><strong>Radio Buttons</strong>: single selection, same <code>name</code>, always provide
+                <code>value</code>.</li>
+            <li><strong>Checkboxes</strong>: multiple selections, use <code>checked</code> for opt‑out patterns.</li>
+            <li><strong>Number Inputs</strong>: use <code>min</code>, <code>max</code>, <code>step</code>.</li>
+            <li><strong>Select Menus</strong>: space‑efficient, <code>&lt;optgroup&gt;</code> for categories.</li>
+            <li><strong>Fieldset+Legend</strong>: essential for accessibility and grouping.</li>
+            <li><strong>Accessibility</strong>: labels, fieldsets, error descriptions, ARIA.</li>
+            <li><strong>Validation</strong>: combine HTML5 attributes with JavaScript.</li>
+            <li><strong>Progressive enhancement</strong>: start with HTML, then enhance.</li>
+            <li><strong>Mobile</strong>: use correct input types for touch keyboards.</li>
+            <li><strong>Form design</strong>: intuitive, accessible, user‑friendly.</li>
+        </ul>
+        <p style="font-size:1.3rem; font-weight:600; color:#166f7c; text-align:center; margin:3rem 0;">Remember:
+            Well-designed forms are the bridge between users and your application. Invest time in making them intuitive,
+            accessible, and user‑friendly!</p>
+
+        <footer>
+            📘 HTML Forms – Part 2 · Advanced elements & accessibility · every single line preserved · interactive
+            exercises
+        </footer>
+    </div>
+
+    <script>
+        function toggleExercise(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('span:last-child');
+            content.classList.toggle('show');
+            arrow.textContent = content.classList.contains('show') ? '▲' : '▼';
+        }
+    </script>
+</body>
+
+</html>

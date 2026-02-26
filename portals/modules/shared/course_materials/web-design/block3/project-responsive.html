@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 3 · Step‑by‑step project · build a responsive homepage</title>
+    <style>
+        /* ---------- base (same friendly style) ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e0ecf9;
+            color: #1a2e4d;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guide-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.8rem;
+            box-shadow: 0 30px 45px -30px #0b3452;
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #133f65, #1f6ba0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .step-badge {
+            background: #23629b;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 500;
+            padding: 0.2rem 1.8rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1.2rem;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: #1f6290;
+            border-left: 8px solid #4c9fd8;
+            padding-left: 1.3rem;
+            margin: 0.8rem 0 2rem;
+            font-weight: 360;
+        }
+
+        /* step timeline */
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            background: #f6fbfe;
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.8rem 1.8rem 2rem;
+            border: 1px solid #c1dcf7;
+            box-shadow: 0 12px 25px -18px #1b4d77;
+            position: relative;
+        }
+
+        .step-number {
+            font-size: clamp(2rem, 7vw, 3.2rem);
+            font-weight: 800;
+            color: #3070ac;
+            opacity: 0.2;
+            line-height: 1;
+            position: absolute;
+            top: 0.2rem;
+            right: 1.2rem;
+            pointer-events: none;
+        }
+
+        .step-title {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            color: #1d5f99;
+            margin-bottom: 0.8rem;
+            border-bottom: 3px solid #8bc1f0;
+            padding-bottom: 0.3rem;
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .step-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 650px) {
+            .step-content {
+                grid-template-columns: 1.5fr 1fr;
+            }
+        }
+
+        .do-section {
+            background: #e3f0fd;
+            border-radius: 1.8rem;
+            padding: 1.3rem 1.5rem;
+        }
+
+        .do-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e5d96;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .code-block {
+            background: #1a304a;
+            color: #e2f0fa;
+            padding: 1rem 1.5rem;
+            border-radius: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1rem 0;
+            border: 2px solid #528fc9;
+        }
+
+        .tip-note {
+            background: #feeac2;
+            border-left: 8px solid #f3b13e;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .bullet-list {
+            list-style: none;
+            margin-top: 0.6rem;
+        }
+
+        .bullet-list li {
+            margin: 0.7rem 0;
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+
+        .bullet-list li::before {
+            content: "✓";
+            color: #1e7e34;
+            font-weight: 800;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .demo-visual {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            border: 2px dashed #458bcf;
+        }
+
+        .mini-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: #ecf5fc;
+            border-radius: 1.4rem;
+            padding: 1rem;
+            justify-content: center;
+        }
+
+        .mini-flex div {
+            background: #367bc2;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        /* highlight code-like */
+        code {
+            background: #d9ecfe;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            color: #044079;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #d7e9fc, white, #d7e9fc);
+            margin: 2rem 0;
+        }
+
+        .final-cta {
+            background: #cde2fc;
+            border-radius: 3rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-download {
+            background: #1f5d96;
+            color: white;
+            padding: 1rem 2.2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.4rem;
+            border: 2px solid white;
+            box-shadow: 0 8px 15px -6px #103a5b;
+            transition: 0.1s;
+        }
+
+        footer {
+            text-align: center;
+            color: #1e5681;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="guide-wrapper">
+        <h1>🧪 PROJECT BUILDER · RESPONSIVE STARTUP HOMEPAGE</h1>
+        <div class="step-badge">step‑by‑step guide · 7 milestones</div>
+        <div class="subhead">follow the steps, write code, test in browser — build with flexbox + media queries</div>
+
+        <!-- step container -->
+        <div class="step-list">
+
+            <!-- STEP 1 -->
+            <div class="step-item">
+                <span class="step-number">1/7</span>
+                <div class="step-title">📁 1. HTML structure (mobile‑first)</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Create <code>&lt;header&gt;</code> with logo + nav (use <code>&lt;ul&gt;</code> inside).
+                            </li>
+                            <li>Add <code>&lt;main&gt;</code> → <code>&lt;section class="hero"&gt;</code>.</li>
+                            <li>Add <code>&lt;section class="features"&gt;</code> with 3‑6 cards (each: icon, title,
+                                short text).</li>
+                            <li>Add <code>&lt;footer&gt;</code> with 2‑3 columns (links, contact, social).</li>
+                            <li>Wrap everything in <code>&lt;div class="container"&gt;</code> or use body padding.</li>
+                        </ul>
+                        <div class="code-block">
+                            &lt;!-- mobile first skeleton --&gt;
+                            &lt;body&gt;
+                            &lt;div class="page"&gt;
+                            &lt;header&gt;
+                            &lt;div class="logo"&gt;🌿 startup&lt;/div&gt;
+                            &lt;nav&gt;&lt;ul&gt; ... &lt;/ul&gt;&lt;/nav&gt;
+                            &lt;/header&gt;
+                            &lt;main&gt;
+                            &lt;section class="hero"&gt; ... &lt;/section&gt;
+                            &lt;section class="features"&gt;
+                            &lt;article class="card"&gt;...&lt;/article&gt;
+                            ... (repeat)
+                            &lt;/section&gt;
+                            &lt;/main&gt;
+                            &lt;footer&gt; ... &lt;/footer&gt;
+                            &lt;/div&gt;
+                            &lt;/body&gt;
+                        </div>
+                    </div>
+                    <div class="demo-visual">
+                        <h4 style="color: #15507b;">📱 mobile wireframe</h4>
+                        <div style="background:#f1f9ff; border-radius:1.2rem; padding:0.8rem; margin:0.5rem 0">
+                            <div
+                                style="background:#ddd; height:40px; width:100px; border-radius:30px; margin-bottom:10px;">
+                            </div>
+                            <div style="background:#ccc; height:120px; border-radius:30px;"></div>
+                            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                                <div style="background:#b8d2f0; height:80px; border-radius:25px;"></div>
+                                <div style="background:#b8d2f0; height:80px; border-radius:25px;"></div>
+                                <div style="background:#b8d2f0; height:80px; border-radius:25px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step-item">
+                <span class="step-number">2/7</span>
+                <div class="step-title">🎨 2. base CSS · mobile styles (no media queries yet)</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Set <code>box-sizing: border-box</code>, body background, font.</li>
+                            <li>Make <code>header</code> flex column, nav <code>ul</code> list-style none with padding
+                                0.</li>
+                            <li>Stack all sections vertically (they already do).</li>
+                            <li>Style cards: background, padding, margin, border-radius.</li>
+                            <li>Use relative units (<code>%, rem</code>) — avoid fixed px widths.</li>
+                            <li>Make nav links tappable (padding: 0.8rem).</li>
+                        </ul>
+                        <div class="code-block">
+                            /* mobile first – base */
+                            header { display: flex; flex-direction: column; gap: 0.8rem; }
+                            nav ul { display: flex; flex-direction: column; gap: 0.5rem; }
+                            .features { display: flex; flex-direction: column; gap: 1rem; }
+                            .card { background: #f2f8ff; border-radius: 2rem; padding: 1.5rem; }
+                        </div>
+                    </div>
+                    <div class="tip-note">
+                        💡 <strong>mobile first</strong> = design the smallest screen first. Everything stacks, full
+                        width, easy thumbs.
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step-item">
+                <span class="step-number">3/7</span>
+                <div class="step-title">🧩 3. improve with flexbox — navigation + cards</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Change nav <code>ul</code> to <code>display: flex</code> (still column for mobile? no –
+                                we keep column until media query).</li>
+                            <li>For cards inside <code>.features</code> we keep column, but we add <code>flex</code>
+                                properties for later.</li>
+                            <li>Add <code>.hero</code> flexbox centering:
+                                <code>display: flex; flex-direction: column; align-items: center; text-align: center;</code>.
+                            </li>
+                            <li>Set <code>flex: 1 1 auto</code>? not needed yet, but prepare classes.</li>
+                        </ul>
+                        <div class="code-block">
+                            .hero { display: flex; flex-direction: column;
+                            align-items: center; justify-content: center;
+                            min-height: 40vh; text-align: center; }
+                            .features { display: flex; flex-direction: column; gap:1.5rem; }
+                            /* cards already stacked, fine for mobile */
+                        </div>
+                    </div>
+                    <div class="demo-visual">
+                        <h4 style="color:#15507b;">⚡ hero flex (mobile)</h4>
+                        <div style="background:#eef6fe; border-radius:1.5rem; padding:1rem; text-align:center;">
+                            <div
+                                style="height:10px; width:80%; background:#5795cf; margin:0 auto 10px; border-radius:20px;">
+                            </div>
+                            <div style="height:8px; width:60%; background:#a3c5ec; margin:0 auto; border-radius:20px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: first media query (tablet) -->
+            <div class="step-item">
+                <span class="step-number">4/7</span>
+                <div class="step-title">📟 4. tablet layout · first media query (min‑width: 640px)</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Write <code>@media (min-width: 640px) { ... }</code></li>
+                            <li>Change header to row: <code>flex-direction: row; justify-content: space-between;</code>
+                            </li>
+                            <li>Nav <code>ul</code> becomes row: <code>flex-direction: row;</code></li>
+                            <li>Features grid: switch to row wrap — <code>flex-direction: row; flex-wrap: wrap;</code>.
+                            </li>
+                            <li>Cards get <code>flex: 1 1 280px;</code> (basis ~280px, grow & shrink).</li>
+                        </ul>
+                        <div class="code-block">
+                            @media (min-width: 640px) {
+                            header { flex-direction: row; align-items: center; }
+                            nav ul { flex-direction: row; }
+                            .features { flex-direction: row; flex-wrap: wrap; }
+                            .card { flex: 1 1 280px; } /* two columns possible */
+                            .hero { min-height: 50vh; }
+                            }
+                        </div>
+                    </div>
+                    <div class="tip-note">
+                        ↻ <strong>resize preview:</strong> cards start to sit side by side. Play with
+                        <code>flex-grow</code> to control widths.
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: desktop media query -->
+            <div class="step-item">
+                <span class="step-number">5/7</span>
+                <div class="step-title">🖥️ 5. desktop layout · second breakpoint (min‑width: 960px)</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Add <code>@media (min-width: 960px) { ... }</code></li>
+                            <li>Increase max width of container, adjust font sizes.</li>
+                            <li>Make cards appear in 3 columns: adjust <code>flex-basis</code> to <code>300px</code> or
+                                use <code>max-width: 30%</code>.</li>
+                            <li>Option: use <code>grid</code> inside features for more control (but flex is fine).</li>
+                            <li>Add more spacing, larger hero.</li>
+                        </ul>
+                        <div class="code-block">
+                            @media (min-width: 960px) {
+                            .features { gap: 2rem; }
+                            .card { flex: 1 1 280px; max-width: 30%; } /* three per row */
+                            .hero h1 { font-size: 3.5rem; }
+                            footer { display: flex; justify-content: space-between; }
+                            }
+                        </div>
+                    </div>
+                    <div class="demo-visual">
+                        <div class="mini-flex">
+                            <div>card 1</div>
+                            <div>card 2</div>
+                            <div>card 3</div>
+                            <div>card 4</div>
+                            <div>card 5</div>
+                        </div>
+                        <p style="font-size:0.8rem; margin-top:0.5rem;">flex‑wrap + basis → cards flow to next line</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: fine tuning -->
+            <div class="step-item">
+                <span class="step-number">6/7</span>
+                <div class="step-title">🔧 6. cross‑axis & alignment polish</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Use <code>align-items: stretch</code> so all cards have same height? (default stretch).
+                            </li>
+                            <li>Add <code>align-self</code> to specific cards if needed.</li>
+                            <li>Check <code>justify-content</code> on nav (space-between, gap).</li>
+                            <li>Use <code>margin-top: auto</code> on buttons inside cards to push them down.</li>
+                            <li>Test on real mobile / browser devtools.</li>
+                        </ul>
+                        <div class="code-block">
+                            /* example: push button to bottom inside card */
+                            .card { display: flex; flex-direction: column; }
+                            .card .btn { margin-top: auto; }
+                        </div>
+                    </div>
+                    <div class="tip-note">
+                        🧪 test <code>align-content</code> when flex-wrap creates multiple lines.
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: validate & publish -->
+            <div class="step-item">
+                <span class="step-number">7/7</span>
+                <div class="step-title">🚀 7. final touches & testing</div>
+                <div class="step-content">
+                    <div class="do-section">
+                        <h3>🛠️ actions</h3>
+                        <ul class="bullet-list">
+                            <li>Add <code>&lt;meta name="viewport" ...&gt;</code> (already in head).</li>
+                            <li>Check responsive images (set <code>max-width:100%</code>).</li>
+                            <li>Test on 360px, 768px, 1200px widths.</li>
+                            <li>Validate HTML & CSS.</li>
+                            <li>Add a fun hover effect on cards / buttons.</li>
+                        </ul>
+                    </div>
+                    <div style="background: #e5f2d2; border-radius:1.8rem; padding:1.2rem;">
+                        <p><span style="background:#258f4b; color:white; padding:0.2rem 1rem; border-radius:40px;">✔️ go
+                                live</span> your responsive startup homepage is ready!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- extra resources / mini challenge -->
+        <hr>
+        <div style="background: #e7f3fe; border-radius: 2.5rem; padding: 1.8rem; margin: 2rem 0;">
+            <h2 style="color: #1d5f99; margin-bottom: 1rem;">🎯 practice drill (after steps)</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+                <div style="flex: 1 1 200px;">
+                    <p style="font-size: 1.2rem;">✨ try to build a <strong>responsive navigation</strong> where the logo
+                        stays left, links become a row on desktop, and a special "sign up" button is pushed to the right
+                        using <code>margin-left: auto</code>.</p>
+                </div>
+                <div
+                    style="flex: 0 0 200px; background: #3079b3; border-radius: 1.5rem; padding: 1.2rem; color: white;">
+                    <code style="background: #15496b; color:white;">.signup { margin-left: auto; }</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- final block with project brief recap -->
+        <div class="final-cta">
+            <span style="font-size: clamp(1.5rem,5vw,2.2rem); font-weight: 700; color: #144571;">✶ you have the
+                roadmap</span>
+            <a href="#" class="btn-download"
+                onclick="alert('Now code your own startup page! Follow steps 1‑7. 📱'); return false;">📂 start
+                building</a>
+        </div>
+
+        <footer>
+            ⚡ block 3 · project guide · flexbox + media queries · mobile‑first workflow
+        </footer>
+    </div>
+</body>
+
+</html>

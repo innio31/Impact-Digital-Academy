@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- responsive meta – mobile first -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 2 · CSS Styling & Box Model · project hub</title>
+    <style>
+        /* ---------- reset + base (mobile first) ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e0f0e9;
+            color: #1a3a31;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem;
+        }
+
+        /* main card – fluid, with max width */
+        .project-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.8rem;
+            box-shadow: 0 30px 45px -30px #0b4f3e;
+            overflow: hidden;
+            padding: 2rem 1.6rem;
+            transition: padding 0.2s;
+        }
+
+        /* fluid typography */
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 4rem);
+            font-weight: 750;
+            background: linear-gradient(148deg, #1b6f58, #12645a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            letter-spacing: -0.01em;
+        }
+
+        .project-badge {
+            background: #1f7f65;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 520;
+            padding: 0.3rem 1.8rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.4rem 0 1rem;
+            word-break: break-word;
+            border: 2px solid #caf5e5;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.9rem);
+            color: #257a63;
+            border-left: 10px solid #4fc2a6;
+            padding-left: 1.4rem;
+            margin: 0.6rem 0 2rem;
+            font-weight: 360;
+        }
+
+        /* ---------- responsive grid structures ---------- */
+        .grid-panels {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.8rem;
+            margin: 2rem 0 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .grid-panels {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .project-container {
+                padding: 2.4rem 2.2rem;
+            }
+        }
+
+        /* cards */
+        .style-card {
+            background: #f3fcf8;
+            border-radius: 2.4rem;
+            padding: 1.8rem 1.6rem;
+            border: 1px solid #c2ecd9;
+            box-shadow: 0 16px 28px -18px #2e7b64;
+            height: fit-content;
+        }
+
+        .style-card h2 {
+            font-size: clamp(1.5rem, 5vw, 2.1rem);
+            color: #166b53;
+            border-bottom: 3px solid #52c2a5;
+            padding-bottom: 0.7rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        /* checklist / list */
+        .check-list {
+            list-style: none;
+        }
+
+        .check-list li {
+            margin: 0.9rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        }
+
+        .check-list li::before {
+            content: "✓";
+            background: #1a8870;
+            color: white;
+            font-weight: bold;
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        /* tag cloud */
+        .topic-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin: 1.2rem 0;
+        }
+
+        .project-tag {
+            background: #e3fff2;
+            border: 1px solid #37a583;
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
+            font-weight: 550;
+            color: #16634c;
+            box-shadow: 0 3px 12px #def3e4;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 420px) {
+            .project-tag {
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* two-column detail grid inside */
+        .detail-mini-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+            margin: 1.8rem 0 0.5rem;
+        }
+
+        @media (min-width: 500px) {
+            .detail-mini-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .inset-box {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.3rem;
+            border-left: 8px solid #34997d;
+            box-shadow: 0 4px 14px #e2f1e8;
+        }
+
+        .inset-box p {
+            font-weight: 650;
+            color: #0f5e4b;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            margin-bottom: 0.7rem;
+            border-bottom: 1px dashed #a1dbc8;
+        }
+
+        .inset-box ul {
+            list-style: none;
+        }
+
+        .inset-box li {
+            margin: 0.5rem 0;
+            padding-left: 1.2rem;
+            position: relative;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .inset-box li::before {
+            content: "▹";
+            color: #268971;
+            position: absolute;
+            left: 0;
+        }
+
+        /* block showcase – visual box model demo */
+        .box-demo {
+            background: #ddf7ec;
+            border-radius: 2.5rem;
+            padding: 2rem 1.5rem;
+            margin: 2rem 0 1.5rem;
+            border: 2px solid #399e82;
+        }
+
+        .demo-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box-visual {
+            background: white;
+            border-radius: 2rem;
+            padding: 0.8rem;
+            flex: 1 1 200px;
+            min-width: 180px;
+            box-shadow: 0 8px 0 #267a60;
+            border: 2px solid #267a60;
+        }
+
+        .box-content {
+            background: #c7f0e0;
+            padding: 1rem;
+            border: 6px solid #39936e;
+            margin: 8px;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 14px;
+            color: #0c4e3b;
+        }
+
+        .box-label {
+            background: #27735d;
+            color: white;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        /* resource cards (pages) */
+        .resource-panel {
+            background: #e1f3e9;
+            border-radius: 2rem;
+            padding: 1.5rem 1.5rem;
+            margin: 1.8rem 0;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .page-btn {
+            background: white;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 50px;
+            color: #14664d;
+            font-weight: 600;
+            border: 1px solid #8fd2b9;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: clamp(0.85rem, 3vw, 1rem);
+            word-break: break-word;
+            box-shadow: 0 3px 10px #eafaf0;
+        }
+
+        /* activities */
+        .activity-zone {
+            background: #e9f9f1;
+            border-radius: 2.5rem;
+            padding: 2rem 1.2rem;
+            margin: 2.5rem 0;
+            border: 2px solid #3ea182;
+        }
+
+        .act-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            justify-content: center;
+        }
+
+        .act-tile {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.3rem;
+            flex: 1 1 200px;
+            border-bottom: 6px solid #2b8268;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+        }
+
+        .mini-badge {
+            background: #2e8d72;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        /* assessment + quiz */
+        .assessment-box {
+            background: #dcf2e7;
+            border-radius: 2.5rem;
+            padding: 1.8rem 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            border-radius: 1.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffffd9;
+            border-radius: 1.6rem;
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
+        }
+
+        th {
+            background: #2e7f68;
+            color: white;
+            padding: 0.9rem 0.5rem;
+        }
+
+        td {
+            padding: 0.8rem 0.5rem;
+            border-bottom: 1px solid #b3e2cf;
+        }
+
+        .quiz-teaser {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0 0;
+        }
+
+        .quiz-mini-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+
+        @media (min-width: 550px) {
+            .quiz-mini-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .quiz-item {
+            background: #eefbf4;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #a8dcc9;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        }
+
+        /* footer / project link */
+        .footer-cta {
+            background: #d3efe2;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .big-project-btn {
+            background: #166e58;
+            color: white;
+            padding: 1.1rem 2.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(1.2rem, 4vw, 1.6rem);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid white;
+            box-shadow: 0 8px 16px -4px #135b48;
+        }
+
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+            margin: 1.8rem 0 0.5rem;
+        }
+
+        .footer-nav a {
+            background: #ddf2e7;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #146149;
+            font-weight: 500;
+            border: 1px solid #96cfb8;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c0e6d6, #f6fffa, #c0e6d6);
+            margin: 2rem 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #216b57;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="project-container">
+        <!-- header -->
+        <h1>🧩 FINAL PROJECT BRIEF</h1>
+        <div class="project-badge">block 2 · css styling & box model · style a small business homepage</div>
+        <div class="subhead">transform the wireframe into a polished, responsive layout</div>
+
+        <!-- left / right core panels -->
+        <div class="grid-panels">
+            <!-- left: project description & box model recap -->
+            <div class="style-card">
+                <h2>📋 project context</h2>
+                <ul class="check-list">
+                    <li>Use the raw HTML from <strong>block 1</strong> (business wireframe).</li>
+                    <li>Apply external CSS – no inline styles (except tiny tweaks).</li>
+                    <li>Demonstrate <strong>box model</strong>: padding, margin, border, and box-sizing.</li>
+                    <li>Include at least 3 selectors: element, class, id + one pseudo‑class (:hover, :focus).</li>
+                    <li>Set colors with HEX, RGB, and named – background & text.</li>
+                    <li>Use <code>rem</code>/<code>em</code> for scalable typography.</li>
+                </ul>
+                <div class="topic-pool">
+                    <span class="project-tag">header / footer</span>
+                    <span class="project-tag">navigation bar</span>
+                    <span class="project-tag">product/article cards</span>
+                    <span class="project-tag">contact section</span>
+                    <span class="project-tag">hover effects</span>
+                    <span class="project-tag">responsive margin</span>
+                    <span class="project-tag">border-box</span>
+                </div>
+            </div>
+            <!-- right: box model essentials (refresher) -->
+            <div class="style-card">
+                <h2>📦 box model – must have</h2>
+                <div class="detail-mini-grid">
+                    <div class="inset-box">
+                        <p>🧱 layers</p>
+                        <ul>
+                            <li>content (width/height)</li>
+                            <li>padding (inner space)</li>
+                            <li>border (style, width, color)</li>
+                            <li>margin (outer space)</li>
+                        </ul>
+                    </div>
+                    <div class="inset-box">
+                        <p>⚙️ key properties</p>
+                        <ul>
+                            <li><code>box-sizing: border-box</code></li>
+                            <li><code>margin: 0 auto;</code> (center)</li>
+                            <li><code>overflow</code> / <code>display</code></li>
+                            <li>shorthands (padding, margin)</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- tiny visual box demo (illustrative) -->
+                <div style="background: #cef0e0; border-radius: 1.5rem; padding: 0.8rem; margin-top: 1rem;">
+                    <div style="background: white; border: 3px dashed #26745c; border-radius: 1rem; padding: 0.8rem;">
+                        <div style="background: #a7e2ce; padding: 0.6rem; text-align: center; font-weight: bold;">⬅️
+                            margin ➔ border ➔ padding ➔ content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- step‑by‑step guide & selectors focus (full width) -->
+        <div class="resource-panel">
+            <h2 style="color: #1e6d58; margin-bottom: 1rem; display: flex; gap: 0.6rem; flex-wrap: wrap;">🧭
+                step‑by‑step & selectors to include</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.2rem;">
+                <div style="background: white; border-radius: 1.8rem; padding: 1.3rem;">
+                    <span style="background: #1e8064; color: white; padding: 0.2rem 1rem; border-radius: 40px;">1.
+                        base</span>
+                    <ul style="margin-top: 0.8rem; list-style: none;">
+                        <li>• element: body, h1, p</li>
+                        <li>• class: .container, .card</li>
+                        <li>• id: #main-header, #cta</li>
+                    </ul>
+                </div>
+                <div style="background: white; border-radius: 1.8rem; padding: 1.3rem;">
+                    <span style="background: #1e8064; color: white; padding: 0.2rem 1rem; border-radius: 40px;">2.
+                        pseudo</span>
+                    <ul style="margin-top: 0.8rem; list-style: none;">
+                        <li>• a:hover, a:focus</li>
+                        <li>• button:active</li>
+                        <li>• first-child / last-child</li>
+                    </ul>
+                </div>
+                <div style="background: white; border-radius: 1.8rem; padding: 1.3rem;">
+                    <span style="background: #1e8064; color: white; padding: 0.2rem 1rem; border-radius: 40px;">3.
+                        descendant</span>
+                    <ul style="margin-top: 0.8rem; list-style: none;">
+                        <li>• nav a</li>
+                        <li>• .card p</li>
+                        <li>• footer .social</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- box model in practice – example card to restyle -->
+        <div class="box-demo">
+            <h2 style="color: #17664f; margin-bottom: 1rem;">🪧 starter component – restyle it</h2>
+            <div class="demo-flex">
+                <div class="box-visual">
+                    <div class="box-content">content</div>
+                    <div style="text-align: center; margin-top: 4px;"><span class="box-label">padding + border + margin
+                            visible</span></div>
+                </div>
+                <div
+                    style="flex: 1 1 240px; background: white; border-radius: 2rem; padding: 1.2rem; border: 1px solid #3faa8b;">
+                    <h3 style="color: #1c755c;">☕ Cafe card</h3>
+                    <p style="margin: 0.5rem 0;">padding: 1rem; border: 4px solid #419c81; margin: 12px; background:
+                        #ebfff6;</p>
+                    <a href="#"
+                        style="background: #196e57; color: white; padding: 0.4rem 1.2rem; border-radius: 60px; display: inline-block;">order
+                        now →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- resources / pages (like module links) -->
+        <div class="resource-panel">
+            <p style="font-size: 1.7rem; font-weight: 600; color: #14684f;">📌 quick reference / example pages</p>
+            <div class="button-grid">
+                <a href="#" class="page-btn">🎯 selectors cheat</a>
+                <a href="#" class="page-btn">📐 box-model demo</a>
+                <a href="#" class="page-btn">🎨 color bg ideas</a>
+                <a href="#" class="page-btn">🔤 typography scale</a>
+                <a href="#" class="page-btn">⚡ pseudo‑class :hover</a>
+                <a href="#" class="page-btn">📏 units converter</a>
+                <a href="#" class="page-btn">🧱 display modes</a>
+                <a href="#" class="page-btn">🧪 box-sizing</a>
+            </div>
+        </div>
+
+        <!-- activities zone (hands‑on) -->
+        <div class="activity-zone">
+            <h2 style="color: #196e57; border-bottom: 3px solid #49b798; padding-bottom: 0.6rem;">🧪 project subtasks
+            </h2>
+            <div class="act-grid">
+                <div class="act-tile"><span class="mini-badge">wireframe</span> <strong>build html
+                        structure</strong><br>from block 1 or use semantic tags</div>
+                <div class="act-tile"><span class="mini-badge">design system</span> <strong>define color
+                        palette</strong><br>min 3 colors + backgrounds</div>
+                <div class="act-tile"><span class="mini-badge">card component</span> <strong>create 3
+                        cards</strong><br>box model: border, padding, margin</div>
+                <div class="act-tile"><span class="mini-badge">navigation</span> <strong>inline-block or
+                        flex</strong><br>:hover state with background</div>
+            </div>
+        </div>
+
+        <!-- assessment & quiz part -->
+        <div class="assessment-box">
+            <h2 style="color: #1d745d;">📋 assessment checklist (self‑eval)</h2>
+            <div class="table-scroll">
+                <table>
+                    <tr>
+                        <th>criterion</th>
+                        <th>must show</th>
+                        <th>status</th>
+                    </tr>
+                    <tr>
+                        <td>selectors</td>
+                        <td>element, .class, #id, descendant, pseudo‑class</td>
+                        <td>✅ / ❌</td>
+                    </tr>
+                    <tr>
+                        <td>box model</td>
+                        <td>padding, margin, border, box-sizing: border-box</td>
+                        <td>✅ / ❌</td>
+                    </tr>
+                    <tr>
+                        <td>colors</td>
+                        <td>hex, rgb, named at least once</td>
+                        <td>✅ / ❌</td>
+                    </tr>
+                    <tr>
+                        <td>typography</td>
+                        <td>font-size with rem/em, line-height</td>
+                        <td>✅ / ❌</td>
+                    </tr>
+                    <tr>
+                        <td>responsive</td>
+                        <td>relative units, no hard-coded widths (max-width used)</td>
+                        <td>✅ / ❌</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- mini quiz teaser -->
+            <div class="quiz-teaser">
+                <h4 style="color: #1b725a;">✏️ quick recap – can you explain?</h4>
+                <div class="quiz-mini-grid">
+                    <div class="quiz-item">difference between padding and margin?</div>
+                    <div class="quiz-item">what does box-sizing: border-box do?</div>
+                    <div class="quiz-item">how to center a block with margin?</div>
+                    <div class="quiz-item">specificity of .card vs #main?</div>
+                    <div class="quiz-item">em vs rem – which one is relative to root?</div>
+                    <div class="quiz-item">:hover vs :focus</div>
+                    <div class="quiz-item">inline vs inline-block</div>
+                    <div class="quiz-item">hex #0f4f2d → rgb?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- final cta + footer navigation -->
+        <div class="footer-cta">
+            <div style="font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 650; color: #16664f;">🚀 start your project
+            </div>
+            <a href="#" class="big-project-btn">📂 download boilerplate →</a>
+        </div>
+
+        <hr>
+
+        <div class="footer-nav">
+            <a href="#">intro</a><a href="#">selectors</a><a href="#">box model</a><a href="#">units</a><a
+                href="#">colors</a><a href="#">pseudo</a><a href="#">display</a><a href="#">project</a>
+        </div>
+
+        <footer>
+            🎯 final project · block 2 · css styling & box model · responsive · due [date]
+        </footer>
+    </div>
+    <!-- end container -->
+</body>
+
+</html>

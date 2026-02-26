@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLEXBOX FOR CROSS AXIS ALIGNMENT · complete notes</title>
+    <style>
+        /* simple reset + typography for readability */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f5f9;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            color: #0b2b44;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -20px #1a3f60;
+            padding: 2.5rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1a4b75;
+            margin-top: 2rem;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 10px solid #2b7fc2;
+            padding-left: 1.4rem;
+            margin-top: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            border-bottom: 3px solid #cbe4fe;
+            padding-bottom: 0.4rem;
+        }
+
+        h3 {
+            font-size: 1.7rem;
+            margin: 2.2rem 0 1rem;
+            background: #e6f0fa;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f6fafe;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #d9e6f5;
+            margin: 1.8rem 0;
+        }
+
+        th {
+            background: #1f5f96;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #c2dcf5;
+        }
+
+        pre {
+            background: #1e2d47;
+            color: #f0f8ff;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 0 0 1px #4874a0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #e2effb;
+            color: #104c7d;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .visual-block {
+            background: #e6f2fd;
+            border-left: 8px solid #2f80c9;
+            padding: 1.4rem;
+            border-radius: 1.8rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #c1ddfc, white);
+            margin: 2.2rem 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 0.8rem 0 1.5rem;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .badge-default {
+            background: #1f6eb0;
+            color: white;
+            border-radius: 30px;
+            padding: 0.2rem 1.2rem;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .note {
+            background: #fff3cf;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.8rem;
+            border-left: 8px solid #ed9b40;
+            margin: 1.8rem 0;
+        }
+
+        .table-of-contents {
+            background: #f2f9ff;
+            padding: 1.5rem 2rem;
+            border-radius: 2rem;
+            margin: 2rem 0 2.5rem;
+            columns: 2 220px;
+            column-gap: 2rem;
+        }
+
+        .table-of-contents a {
+            text-decoration: none;
+            color: #1460a0;
+            display: block;
+            margin: 0.2rem 0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>FLEXBOX FOR CROSS AXIS ALIGNMENT: A COMPREHENSIVE GUIDE</h1>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <div class="table-of-contents">
+            <a>1. Introduction to Flexbox and Axes</a>
+            <a>2. Understanding the Cross Axis</a>
+            <a>3. The align-items Property Deep Dive</a>
+            <a>4. align-items Values Explained</a>
+            <a>5. Practical Examples and Use Cases</a>
+            <a>6. Combining align-items with Other Properties</a>
+            <a>7. Advanced Techniques and Patterns</a>
+            <a>8. Browser Compatibility and Fallbacks</a>
+            <a>9. Troubleshooting Common Issues</a>
+            <a>10. Performance Considerations</a>
+            <a>11. Exercises and Practice Problems</a>
+            <a>12. Summary and Best Practices</a>
+        </div>
+
+        <hr>
+
+        <h2>1. INTRODUCTION TO FLEXBOX AND AXES</h2>
+
+        <h3>1.1 What is Flexbox?</h3>
+        <p>Flexbox (Flexible Box Layout) is a CSS layout module designed to provide a more efficient way to arrange,
+            align, and distribute space among items in a container, even when their size is unknown or dynamic.</p>
+
+        <h3>1.2 The Two Axes of Flexbox</h3>
+        <p>Understanding the two axes is crucial for mastering Flexbox alignment:</p>
+        <div class="visual-block">
+            FLEX CONTAINER VISUALIZATION:
+
+            MAIN AXIS (flex-direction: row)
+            ←─────────────────────────────────→
+            ┌─────────────────────────────────┐
+            │ ┌─────┐ ┌─────┐ ┌─────┐ ↑
+            │ │ │ │ │ │ │ │
+            │ │ 1 │ │ 2 │ │ 3 │ CROSS AXIS
+            │ │ │ │ │ │ │ │
+            │ └─────┘ └─────┘ └─────┘ ↓
+            └─────────────────────────────────┘
+        </div>
+        <table>
+            <tr>
+                <th>Axis</th>
+                <th>Direction</th>
+                <th>Properties</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><strong>Main Axis</strong></td>
+                <td>Horizontal (default) or Vertical</td>
+                <td><code>justify-content</code></td>
+                <td>Primary direction of item layout</td>
+            </tr>
+            <tr>
+                <td><strong>Cross Axis</strong></td>
+                <td>Perpendicular to Main Axis</td>
+                <td><code>align-items</code>, <code>align-self</code></td>
+                <td>Secondary direction for alignment</td>
+            </tr>
+        </table>
+
+        <h3>1.3 How flex-direction Affects the Axes</h3>
+        <pre><code>/* When flex-direction: row (DEFAULT) */
+.container {
+    display: flex;
+    flex-direction: row;  /* Main axis: horizontal */
+    /* Cross axis: vertical */
+}
+
+/* Visualization: */
+/*
+    MAIN AXIS (row) ──────►
+    ┌─────────────────────┐
+    │  ┌───┐ ┌───┐ ┌───┐  │
+    │  │ 1 │ │ 2 │ │ 3 │  │  ▲
+    │  └───┘ └───┘ └───┘  │  │ CROSS AXIS
+    │                     │  │ (column)
+    └─────────────────────┘  ▼
+*/
+
+/* When flex-direction: column */
+.container {
+    display: flex;
+    flex-direction: column;  /* Main axis: vertical */
+    /* Cross axis: horizontal */
+}
+
+/* Visualization: */
+/*
+    MAIN AXIS (column) ▼
+    ┌─────────────────────┐
+    │  ┌───┐              │ ◄───┐
+    │  │ 1 │              │     │
+    │  └───┘              │     │
+    │  ┌───┐              │ CROSS AXIS
+    │  │ 2 │              │ (row)
+    │  └───┘              │     │
+    │  ┌───┐              │     │
+    │  │ 3 │              │ ◄───┘
+    │  └───┘              │
+    └─────────────────────┘
+*/</code></pre>
+
+        <hr>
+
+        <h2>2. UNDERSTANDING THE CROSS AXIS</h2>
+
+        <h3>2.1 Definition and Role</h3>
+        <p>The <strong>cross axis</strong> runs perpendicular to the main axis. Its direction is determined by the
+            <code>flex-direction</code> property:</p>
+        <table>
+            <tr>
+                <th>flex-direction</th>
+                <th>Main Axis</th>
+                <th>Cross Axis</th>
+            </tr>
+            <tr>
+                <td><code>row</code></td>
+                <td>Horizontal (left to right)</td>
+                <td>Vertical (top to bottom)</td>
+            </tr>
+            <tr>
+                <td><code>row-reverse</code></td>
+                <td>Horizontal (right to left)</td>
+                <td>Vertical (top to bottom)</td>
+            </tr>
+            <tr>
+                <td><code>column</code></td>
+                <td>Vertical (top to bottom)</td>
+                <td>Horizontal (left to right)</td>
+            </tr>
+            <tr>
+                <td><code>column-reverse</code></td>
+                <td>Vertical (bottom to top)</td>
+                <td>Horizontal (left to right)</td>
+            </tr>
+        </table>
+
+        <h3>2.2 Properties That Control Cross Axis Alignment</h3>
+        <pre><code>.container {
+    /* For aligning ALL flex items on the cross axis */
+    align-items: value;
+    
+    /* For controlling wrapping lines on the cross axis */
+    align-content: value;  /* Only works with flex-wrap: wrap */
+}
+
+.item {
+    /* For overriding container's alignment for a SINGLE item */
+    align-self: value;
+}</code></pre>
+
+        <h3>2.3 Visual Representation of Cross Axis Control</h3>
+        <div class="visual-block">
+            CROSS AXIS ALIGNMENT WITH flex-direction: row
+
+            Container with varying item heights:
+
+            ┌─────────────────────────────────────────────────┐
+            │ ┌───────┐ │
+            │ │ │ ┌─────────────┐ ┌───┐ │
+            │ │ │ │ │ │ │ │
+            │ │ │ │ │ │ │ │
+            │ │ A │ │ B │ │ C │ │
+            │ │ │ │ │ │ │ │
+            │ │ │ │ │ │ │ │
+            │ │ │ │ │ │ │ │
+            │ └───────┘ └─────────────┘ └───┘ │
+            └─────────────────────────────────────────────────┘
+            ▲ ▲
+            │ │
+            └─────────── CROSS AXIS (vertical) ─────────────┘
+
+            The align-items property controls how these items
+            align along the vertical axis (top, center, bottom, etc.)
+        </div>
+
+        <hr>
+
+        <h2>3. THE align-items PROPERTY DEEP DIVE</h2>
+
+        <h3>3.1 Syntax and Basic Usage</h3>
+        <pre><code>.flex-container {
+    display: flex;
+    align-items: stretch | flex-start | flex-end | center | baseline;
+}</code></pre>
+
+        <h3>3.2 Default Behavior</h3>
+        <p>By default, <code>align-items</code> is set to <code>stretch</code>:</p>
+        <pre><code>.container {
+    display: flex;
+    align-items: stretch; /* This is the default value */
+}</code></pre>
+
+        <h3>3.3 How align-items Affects Items</h3>
+        <pre><code>/* HTML Structure */
+&lt;div class="container"&gt;
+    &lt;div class="item item1"&gt;Short&lt;/div&gt;
+    &lt;div class="item item2"&gt;Medium content&lt;/div&gt;
+    &lt;div class="item item3"&gt;Very long content that spans multiple lines&lt;/div&gt;
+&lt;/div&gt;
+
+/* Base CSS */
+.container {
+    display: flex;
+    width: 600px;
+    height: 200px;
+    border: 2px solid #333;
+}
+
+.item {
+    width: 100px;
+    border: 1px solid #007bff;
+    padding: 8px;
+}</code></pre>
+
+        <hr>
+
+        <h2>4. align-items VALUES EXPLAINED</h2>
+
+        <h3>4.1 stretch (Default Value)</h3>
+        <pre><code>.container {
+    align-items: stretch;
+}</code></pre>
+        <div class="visual-block">
+            VISUAL REPRESENTATION:
+
+            Container height: 200px
+            ┌─────────────────────────────────────┐
+            │ ┌─────────┐ ┌─────────┐ ┌─────────┐ │
+            │ │ │ │ │ │ │ │
+            │ │ Short │ │ Medium │ │ Very │ │
+            │ │ │ │ content │ │ long │ │
+            │ │ │ │ │ │ content │ │
+            │ │ │ │ │ │ │ │
+            │ └─────────┘ └─────────┘ └─────────┘ │
+            └─────────────────────────────────────┘
+            ▲ ▲ ▲ ▲
+            │ │ │ │
+            All items stretch to 200px tall
+        </div>
+        <p><strong>Important Notes:</strong></p>
+        <ul>
+            <li>Only works if items don't have a fixed height/width in the cross axis dimension</li>
+            <li>For <code>flex-direction: row</code>, items will stretch vertically</li>
+            <li>For <code>flex-direction: column</code>, items will stretch horizontally</li>
+        </ul>
+        <pre><code>/* Example with custom item heights */
+.container {
+    display: flex;
+    align-items: stretch;
+    height: 300px;
+}
+
+.item1 { height: 50px; }  /* This will be overridden */
+.item2 { height: auto; }    /* This will stretch */
+.item3 { }                  /* This will stretch */
+
+/* Result: .item1 stays at 50px, others stretch to 300px */</code></pre>
+
+        <h3>4.2 flex-start</h3>
+        <pre><code>.container {
+    align-items: flex-start;
+}</code></pre>
+        <div class="visual-block">
+            VISUAL REPRESENTATION:
+
+            Container height: 200px
+            ┌─────────────────────────────────────┐
+            │ ┌─────────┐ ┌─────────┐ ┌─────────┐ │
+            │ │ Short │ │ Medium │ │ Very │ │
+            │ │ │ │ content │ │ long │ │
+            │ └─────────┘ │ │ │ content │ │
+            │ │ └─────────┘ │ │ │
+            │ │ │ └─────────┘ │
+            │ │ │ │
+            │ │ │ │
+            │ │ │ │
+            └─────────────────────────────────────┘
+            ▲ ▲ ▲
+            │ │ │
+            All items aligned at the TOP
+        </div>
+        <p><strong>Cross Axis Start Positions:</strong></p>
+        <table>
+            <tr>
+                <th>flex-direction</th>
+                <th>Cross Axis Start</th>
+            </tr>
+            <tr>
+                <td><code>row</code></td>
+                <td>Top edge</td>
+            </tr>
+            <tr>
+                <td><code>row-reverse</code></td>
+                <td>Top edge</td>
+            </tr>
+            <tr>
+                <td><code>column</code></td>
+                <td>Left edge</td>
+            </tr>
+            <tr>
+                <td><code>column-reverse</code></td>
+                <td>Left edge</td>
+            </tr>
+        </table>
+        <pre><code>/* Example with different flex-directions */
+.container-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;  /* Items align at top */
+    height: 200px;
+}
+
+.container-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* Items align at left */
+    width: 400px;
+    height: 300px;
+}
+
+/* Visualization for column direction:
+    ┌─────────────────────────┐
+    │ ┌───┐                   │
+    │ │ 1 │ (aligned left)    │
+    │ └───┘                   │
+    │ ┌───────┐               │
+    │ │   2   │ (aligned left)│
+    │ └───────┘               │
+    │ ┌─────────┐             │
+    │ │    3    │ (aligned left)
+    │ └─────────┘             │
+    └─────────────────────────┘
+*/</code></pre>
+
+        <h3>4.3 flex-end</h3>
+        <pre><code>.container {
+    align-items: flex-end;
+}</code></pre>
+        <div class="visual-block">
+            VISUAL REPRESENTATION:
+
+            Container height: 200px
+            ┌─────────────────────────────────────┐
+            │ │
+            │ │
+            │ │
+            │ ┌─────────┐ │
+            │ │ Short │ ┌─────────┐ │
+            │ ┌─────────┐ │ │ │ Very │ │
+            │ │ Medium │ └─────────┘ │ long │ │
+            │ │ content │ │ content │ │
+            │ └─────────┘ └─────────┘ │
+            └─────────────────────────────────────┘
+            ▲ ▲ ▲
+            │ │ │
+            All items aligned at the BOTTOM
+        </div>
+        <p><strong>Cross Axis End Positions:</strong></p>
+        <table>
+            <tr>
+                <th>flex-direction</th>
+                <th>Cross Axis End</th>
+            </tr>
+            <tr>
+                <td><code>row</code></td>
+                <td>Bottom edge</td>
+            </tr>
+            <tr>
+                <td><code>row-reverse</code></td>
+                <td>Bottom edge</td>
+            </tr>
+            <tr>
+                <td><code>column</code></td>
+                <td>Right edge</td>
+            </tr>
+            <tr>
+                <td><code>column-reverse</code></td>
+                <td>Right edge</td>
+            </tr>
+        </table>
+        <pre><code>/* Practical example: Bottom-aligned navigation */
+.nav-container {
+    display: flex;
+    align-items: flex-end;
+    height: 150px;
+    background: #f0f0f0;
+    border-bottom: 3px solid #333;
+}
+
+.nav-item {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    margin-right: 5px;
+}
+
+/* This creates a navigation where items sit at the bottom,
+   useful for tab-like interfaces */</code></pre>
+
+        <h3>4.4 center</h3>
+        <pre><code>.container {
+    align-items: center;
+}</code></pre>
+        <div class="visual-block">
+            VISUAL REPRESENTATION:
+
+            Container height: 200px
+            ┌─────────────────────────────────────┐
+            │ │
+            │ ┌─────────┐ │
+            │ │ Short │ ┌─────────┐ │
+            │ └─────────┘ │ Medium │ ┌─────────┐
+            │ │ content │ │ Very │
+            │ └─────────┘ │ long │
+            │ │ content │
+            │ └─────────┘
+            │ │
+            └─────────────────────────────────────┘
+            ▲ ▲ ▲
+            │ │ │
+            All items centered VERTICALLY
+        </div>
+        <p><strong>Perfect Centering Example:</strong></p>
+        <pre><code>/* Classic vertical centering solution */
+.center-container {
+    display: flex;
+    align-items: center;      /* Vertical centering */
+    justify-content: center;  /* Horizontal centering */
+    height: 400px;
+    border: 2px solid #333;
+}
+
+.centered-item {
+    width: 200px;
+    height: 150px;
+    background: #007bff;
+}
+
+/* This creates a perfectly centered item both
+   horizontally and vertically */</code></pre>
+
+        <p><strong>Multi-line Centering:</strong></p>
+        <pre><code>.multi-line-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 300px;
+    border: 2px solid #333;
+}
+
+.item {
+    width: 150px;
+    margin: 10px;
+    background: #007bff;
+    color: white;
+    padding: 20px;
+}
+
+/*
+All rows of items will be centered as a group
+within the container, while items within each
+row are also centered relative to each other
+*/</code></pre>
+
+        <h3>4.5 baseline</h3>
+        <pre><code>.container {
+    align-items: baseline;
+}</code></pre>
+        <div class="visual-block">
+            VISUAL REPRESENTATION:
+
+            ┌─────────────────────────────────────┐
+            │ ┌─────────┐ │
+            │ │ Short │ ┌─────────────┐ │
+            │ └─────────┘ │ Medium │ ┌───┐ │
+            │ │ content │ │ │ │
+            │ └─────────────┘ │ V │ │
+            │ │ e │ │
+            │ │ r │ │
+            │ │ y │ │
+            │ └───┘ │
+            └─────────────────────────────────────┘
+            ▲ ▲ ▲
+            │ │ │
+            All text baselines aligned
+
+            The dashed line shows the baseline alignment:
+            ─────────────────────────────────────
+        </div>
+        <p><strong>Detailed Baseline Example:</strong></p>
+        <pre><code>.container {
+    display: flex;
+    align-items: baseline;
+    border: 2px solid #333;
+    padding: 20px;
+}
+
+.item1 {
+    font-size: 24px;
+    padding: 20px;
+    background: #ff6b6b;
+}
+
+.item2 {
+    font-size: 16px;
+    padding: 30px;
+    background: #4ecdc4;
+}
+
+.item3 {
+    font-size: 32px;
+    padding: 10px;
+    background: #45b7d1;
+}
+
+/* All text will align along their baselines
+   regardless of padding or font sizes */</code></pre>
+
+        <p><strong>Understanding Baseline Alignment:</strong></p>
+        <pre><code>/* Baseline alignment with different content */
+.baseline-demo {
+    display: flex;
+    align-items: baseline;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.box {
+    border: 1px solid #999;
+    margin: 10px;
+    padding: 10px;
+}
+
+/* Even with different padding and margins,
+   the text aligns perfectly */
+.box1 { padding: 20px; font-size: 20px; }
+.box2 { padding: 5px; font-size: 14px; }
+.box3 { padding: 30px; font-size: 28px; }</code></pre>
+
+        <hr>
+
+        <h2>5. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3>5.1 Vertical Centering - The Classic Use Case</h3>
+        <pre><code>/* Example 1: Centering content in a hero section */
+.hero {
+    display: flex;
+    align-items: center;      /* Vertically centers content */
+    justify-content: center;  /* Horizontally centers content */
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* HTML Structure:
+&lt;div class="hero"&gt;
+    &lt;div class="hero-content"&gt;
+        &lt;h1&gt;Welcome to Our Site&lt;/h1&gt;
+        &lt;p&gt;Lorem ipsum dolor sit amet...&lt;/p&gt;
+        &lt;button&gt;Learn More&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+*/</code></pre>
+
+        <h3>5.2 Card Layout with Different Content Heights</h3>
+        <pre><code>/* Creating consistent card layouts */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    display: flex;           /* Makes card a flex container */
+    flex-direction: column;
+    align-items: flex-start; /* Align content to start of cross axis */
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    flex: 1;
+    color: #666;
+    line-height: 1.5;
+}
+
+.card-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* This ensures all cards align properly despite
+   different content lengths */</code></pre>
+
+        <h3>5.3 Navigation Bars with Different Item Heights</h3>
+        <pre><code>/* Navigation with various alignments */
+.navbar {
+    display: flex;
+    align-items: center;     /* Centers items vertically */
+    justify-content: space-between;
+    background: #333;
+    color: white;
+    padding: 0 20px;
+    height: 80px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo img {
+    height: 50px;            /* Fixed height */
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+.nav-links a:hover {
+    background: #555;
+    border-radius: 4px;
+}
+
+.cta-button {
+    background: #ff6b6b;
+    padding: 10px 20px;      /* Different height from links */
+    border-radius: 4px;
+}
+
+/* With align-items: center, all these elements
+   (text, button, potentially images) align perfectly
+   regardless of their individual heights */</code></pre>
+
+        <h3>5.4 Form Layout with Aligned Labels and Inputs</h3>
+        <pre><code>/* Form with baseline alignment */
+.form-container {
+    max-width: 500px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.form-row {
+    display: flex;
+    align-items: baseline;   /* Aligns labels and inputs by text baseline */
+    margin-bottom: 20px;
+}
+
+.form-row label {
+    width: 100px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Different sized elements align beautifully */
+.form-row textarea {
+    min-height: 100px;
+    font-family: inherit;
+}
+
+/* HTML Example:
+&lt;div class="form-row"&gt;
+    &lt;label&gt;Name:&lt;/label&gt;
+    &lt;input type="text" placeholder="Enter your name"&gt;
+&lt;/div&gt;
+&lt;div class="form-row"&gt;
+    &lt;label&gt;Bio:&lt;/label&gt;
+    &lt;textarea placeholder="Tell us about yourself"&gt;&lt;/textarea&gt;
+&lt;/div&gt;
+*/</code></pre>
+
+        <h3>5.5 Media Object Pattern</h3>
+        <pre><code>/* The classic media object pattern */
+.media {
+    display: flex;
+    align-items: flex-start; /* Image at top, content aligned */
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.media-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.media-content {
+    flex: 1;
+}
+
+.media-title {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.media-description {
+    margin: 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* Variations */
+.media-center {
+    align-items: center;  /* Image centered with content */
+}
+
+.media-end {
+    align-items: flex-end; /* Image at bottom */
+}
+
+/* This pattern is great for comments, user lists,
+   and any image + text combination */</code></pre>
+
+        <h3>5.6 Centering Multiple Elements</h3>
+        <pre><code>/* Complex centering scenario */
+.features-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Centers horizontally (cross axis) */
+    min-height: 600px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.section-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: #666;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+}
+
+.feature-item {
+    flex: 0 1 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Centers content horizontally */
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* With align-items: center on the section, everything
+   is perfectly centered horizontally */</code></pre>
+
+        <hr>
+
+        <h2>6. COMBINING align-items WITH OTHER PROPERTIES</h2>
+
+        <h3>6.1 align-items + justify-content</h3>
+        <pre><code>.container {
+    display: flex;
+    flex-direction: row;
+    height: 300px;
+    width: 600px;
+    border: 2px solid #333;
+    
+    /* Perfect 2D centering */
+    align-items: center;      /* Vertical centering */
+    justify-content: center;  /* Horizontal centering */
+}
+
+.item {
+    width: 100px;
+    height: 100px;
+    background: #007bff;
+}
+
+/* This creates a perfectly centered square
+   both horizontally and vertically */</code></pre>
+
+        <h3>6.2 align-items + flex-wrap</h3>
+        <pre><code>.container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;      /* Aligns items within each row */
+    align-content: center;     /* Aligns the rows themselves */
+    height: 400px;
+    width: 500px;
+    border: 2px solid #333;
+}
+
+.item {
+    width: 120px;
+    height: 80px;
+    margin: 10px;
+    background: #007bff;
+}
+
+/* Visualization:
+┌─────────────────────────────────┐
+│                                 │
+│   ┌───┐ ┌───┐ ┌───┐ ┌───┐     │
+│   │ 1 │ │ 2 │ │ 3 │ │ 4 │     │
+│   └───┘ └───┘ └───┘ └───┘     │
+│                                 │
+│   ┌───┐ ┌───┐ ┌───┐           │
+│   │ 5 │ │ 6 │ │ 7 │           │
+│   └───┘ └───┘ └───┘           │
+│                                 │
+└─────────────────────────────────┘
+   ▲         ▲         ▲
+   │         │         │
+   Items centered in rows,
+   rows centered in container
+*/</code></pre>
+
+        <h3>6.3 align-items + align-self (Per-Item Override)</h3>
+        <pre><code>.container {
+    display: flex;
+    align-items: flex-start;  /* Default for all items */
+    height: 200px;
+    border: 2px solid #333;
+    padding: 10px;
+}
+
+.item {
+    width: 100px;
+    margin: 5px;
+    background: #007bff;
+    color: white;
+    padding: 10px;
+}
+
+/* Individual overrides */
+.item1 {
+    align-self: stretch;      /* This item stretches */
+    height: auto;             /* Allows stretching */
+}
+
+.item2 {
+    align-self: center;       /* This item centers */
+}
+
+.item3 {
+    align-self: flex-end;     /* This item goes to bottom */
+}
+
+.item4 {
+    align-self: baseline;     /* This item aligns by baseline */
+    font-size: 24px;          /* Demonstrates baseline */
+}
+
+/* Visualization:
+┌─────────────────────────────────┐
+│ ┌─────────┐                     │
+│ │ item1   │  ┌─────────┐         │
+│ │(stretch)│  │  item2  │ ┌─────┐ │
+│ └─────────┘  │(center) │ │     │ │
+│             └─────────┘ │item4│ │
+│ ┌─────────┐            │(base)│ │
+│ │  item3  │            └─────┘ │
+│ │(flex-end│                     │
+│ └─────────┘                     │
+└─────────────────────────────────┘
+*/</code></pre>
+
+        <h3>6.4 align-items with Different flex-direction Values</h3>
+        <pre><code>/* Row direction examples */
+.row-examples {
+    display: flex;
+    flex-direction: row;
+    height: 200px;
+    border: 2px solid #333;
+    margin-bottom: 20px;
+}
+
+/* Column direction examples */
+.column-examples {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    width: 600px;
+    border: 2px solid #333;
+}
+
+/* align-items in column layout */
+.column-start {
+    align-items: flex-start;  /* Items align LEFT */
+}
+
+.column-center {
+    align-items: center;      /* Items align CENTER horizontally */
+}
+
+.column-end {
+    align-items: flex-end;    /* Items align RIGHT */
+}
+
+.column-stretch {
+    align-items: stretch;     /* Items stretch horizontally */
+}
+
+.column-stretch .item {
+    width: auto;              /* Required for stretch to work */
+}
+
+/* Visualization for column-start:
+┌─────────────────────────────────┐
+│ ┌───┐                           │
+│ │ 1 │                           │
+│ └───┘                           │
+│     ┌───┐                       │
+│     │ 2 │                       │
+│     └───┘                       │
+│         ┌───┐                   │
+│         │ 3 │                   │
+│         └───┘                   │
+└─────────────────────────────────┘
+   ▲
+   │
+Items aligned LEFT
+*/</code></pre>
+
+        <hr>
+
+        <h2>7. ADVANCED TECHNIQUES AND PATTERNS</h2>
+
+        <h3>7.1 Multi-line Text Centering with align-items: baseline</h3>
+        <pre><code>.complex-text-alignment {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.large-text {
+    font-size: 48px;
+    font-weight: bold;
+    background: #ff6b6b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.small-text {
+    font-size: 14px;
+    max-width: 300px;
+    background: #4ecdc4;
+    color: white;
+    padding: 15px;
+    border-radius: 4px;
+    line-height: 1.6;
+}
+
+.medium-text {
+    font-size: 24px;
+    background: #45b7d1;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+/* All text aligns perfectly despite different
+   font sizes, padding, and line heights */</code></pre>
+
+        <h3>7.2 Creating a Sticky Footer with align-items</h3>
+        <pre><code>/* Classic sticky footer pattern */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* Centers content horizontally */
+    padding: 20px;
+}
+
+.main-content {
+    max-width: 800px;
+    width: 100%;
+}
+
+.footer {
+    display: flex;
+    align-items: center;      /* Vertically centers footer content */
+    justify-content: center;
+    height: 100px;
+    background: #333;
+    color: white;
+}
+
+/* HTML Structure:
+&lt;body&gt;
+    &lt;div class="content"&gt;
+        &lt;div class="main-content"&gt;
+            &lt;h1&gt;Page Title&lt;/h1&gt;
+            &lt;p&gt;Content here...&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;footer class="footer"&gt;
+        &lt;p&gt;&amp;copy; 2024 Your Company&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+*/</code></pre>
+
+        <h3>7.3 Masonry-like Layout with Flexbox</h3>
+        <pre><code>.masonry-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;  /* Prevents stretching */
+    gap: 20px;
+    padding: 20px;
+}
+
+.masonry-item {
+    flex: 0 0 calc(33.333% - 14px);
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.masonry-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.masonry-item-content {
+    padding: 15px;
+}
+
+/* This prevents items from stretching to match
+   heights, creating a natural masonry effect */</code></pre>
+
+        <h3>7.4 align-items for Split Navigation</h3>
+        <pre><code>.split-nav {
+    display: flex;
+    align-items: center;      /* Centers all items vertically */
+    justify-content: space-between;
+    background: #2c3e50;
+    color: white;
+    padding: 0 20px;
+    height: 70px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Complex navigation with centered logo and
+   aligned left/right items */
+.nav-center .logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.nav-center a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+.nav-right .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}</code></pre>
+
+        <h3>7.5 Dynamic Height Management</h3>
+        <pre><code>.dynamic-height-container {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    border: 2px solid #333;
+}
+
+.header,
+.footer {
+    flex-shrink: 0;
+    padding: 20px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;      /* Centers header/footer content */
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;      /* Vertically centers main content */
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Even when content changes, vertical centering
+   is maintained */</code></pre>
+
+        <hr>
+
+        <h2>8. BROWSER COMPATIBILITY AND FALLBACKS</h2>
+
+        <h3>8.1 Browser Support Overview</h3>
+        <pre><code>/* Modern browsers (Chrome, Firefox, Safari, Edge) */
+.container {
+    display: flex;
+    align-items: center;
+}
+
+/* Fallback for older browsers */
+.container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+/* Even older browsers (IE10) */
+.container {
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    align-items: center;
+}</code></pre>
+
+        <h3>8.2 Feature Detection with @supports</h3>
+        <pre><code>.container {
+    /* Fallback layout */
+    display: block;
+    text-align: center;
+}
+
+.container .item {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Modern flexbox layout if supported */
+@supports (display: flex) {
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: left;
+    }
+    
+    .container .item {
+        display: block;
+        vertical-align: baseline;
+    }
+}</code></pre>
+
+        <h3>8.3 Graceful Degradation Examples</h3>
+        <pre><code>/* Complex layout with fallbacks */
+.card-grid {
+    /* Fallback for older browsers */
+    font-size: 0;  /* Remove whitespace */
+    text-align: center;
+}
+
+.card {
+    display: inline-block;
+    width: 300px;
+    margin: 10px;
+    vertical-align: top;
+    font-size: 16px;  /* Reset font size */
+    text-align: left;
+}
+
+/* Modern flexbox layout */
+@supports (display: flex) {
+    .card-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: center;
+        gap: 20px;
+        font-size: inherit;
+    }
+    
+    .card {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        margin: 0;
+        vertical-align: baseline;
+    }
+}</code></pre>
+
+        <hr>
+
+        <h2>9. TROUBLESHOOTING COMMON ISSUES</h2>
+
+        <h3>9.1 align-items Not Working</h3>
+        <pre><code>/* Problem 1: Missing container height */
+.container {
+    display: flex;
+    align-items: center;  /* Won't work if height is auto */
+    /* height: 300px;  &lt;- Need explicit height */
+}
+
+/* Solution: Ensure container has height */
+.container {
+    display: flex;
+    align-items: center;
+    height: 300px;  /* Fixed height */
+    /* OR */
+    min-height: 300px;  /* Minimum height */
+}
+
+/* Problem 2: flex-direction confusion */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* This centers horizontally, not vertically */
+    height: 300px;
+    width: 500px;
+}
+
+/* For vertical centering in column direction: */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Now this centers vertically */
+    align-items: center;      /* This centers horizontally */
+    height: 300px;
+    width: 500px;
+}
+
+/* Problem 3: Items have fixed cross-axis size */
+.container {
+    display: flex;
+    align-items: stretch;  /* Won't stretch items with fixed height */
+    height: 300px;
+}
+
+.item {
+    height: 100px;  /* This prevents stretching */
+}
+
+/* Solution: Remove fixed height */
+.item {
+    height: auto;  /* Allow stretching */
+    /* OR use min-height */
+    min-height: 100px;
+}</code></pre>
+
+        <h3>9.2 Baseline Alignment Issues</h3>
+        <pre><code>/* Problem: Items not aligning by baseline properly */
+.container {
+    display: flex;
+    align-items: baseline;
+}
+
+.item {
+    display: flex;  /* Nested flexbox can break baseline */
+    flex-direction: column;
+}
+
+/* Solution: Adjust nested elements */
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.item > * {
+    /* Ensure text is the first child for baseline */
+    margin: 0;
+}
+
+/* Better solution for complex items */
+.item {
+    display: flex;
+    flex-direction: column;
+}
+
+.item::before {
+    content: '';
+    display: block;
+    height: 0;
+}
+
+.item-content {
+    /* This ensures baseline comes from actual content */
+}</code></pre>
+
+        <h3>9.3 Overflow and Scrolling Issues</h3>
+        <pre><code>/* Problem: Content overflows container */
+.container {
+    display: flex;
+    align-items: center;
+    height: 200px;
+}
+
+.item {
+    height: 300px;  /* Taller than container */
+}
+
+/* Solutions: */
+.container {
+    display: flex;
+    align-items: center;
+    height: 200px;
+    overflow-y: auto;  /* Add scrollbars */
+}
+
+/* OR */
+.item {
+    height: 100%;  /* Limit to container height */
+    overflow-y: auto;
+}
+
+/* OR */
+.container {
+    display: flex;
+    align-items: center;
+    min-height: 200px;  /* Allow container to grow */
+    height: auto;
+}</code></pre>
+
+        <h3>9.4 Debugging Checklist</h3>
+        <pre><code>/* Debugging align-items issues */
+
+/* 1. Check container display */
+.container {
+    display: flex;  /* Make sure this is present */
+}
+
+/* 2. Check container height */
+.container {
+    height: 300px;  /* Is this set? */
+    /* Temporary debugging */
+    border: 2px solid red;
+    min-height: 100px;  /* Temporary min-height */
+}
+
+/* 3. Check flex-direction */
+.container {
+    flex-direction: row;  /* Or column? */
+}
+
+/* 4. Check for overriding properties */
+.item {
+    align-self: auto;  /* Is this being overridden? */
+    height: auto;      /* Remove fixed heights */
+}
+
+/* 5. Check for margins */
+.item {
+    margin: 0;  /* Remove margins temporarily */
+}
+
+/* 6. Debug with outlines */
+.item {
+    outline: 1px solid blue;  /* Better than border */
+}</code></pre>
+
+        <hr>
+
+        <h2>10. PERFORMANCE CONSIDERATIONS</h2>
+
+        <h3>10.1 Layout Performance</h3>
+        <pre><code>/* Optimize for performance */
+.container {
+    display: flex;
+    align-items: center;
+    /* Use transforms when possible */
+    transform: translateZ(0);  /* Hardware acceleration */
+}
+
+/* Avoid frequent recalculations */
+.animated-item {
+    will-change: transform;  /* Hint browser */
+    transition: transform 0.3s ease;
+}
+
+/* Use contain for isolated layouts */
+.isolated-section {
+    contain: layout;  /* Isolate layout calculations */
+}</code></pre>
+
+        <h3>10.2 Best Practices for Complex Layouts</h3>
+        <pre><code>/* Use min-height instead of fixed heights when possible */
+.container {
+    display: flex;
+    align-items: center;
+    min-height: 300px;  /* More flexible than height */
+}
+
+/* Limit nesting depth */
+/* Instead of: */
+.level1 { display: flex; }
+.level2 { display: flex; }
+.level3 { display: flex; }
+.level4 { display: flex; }
+
+/* Consider combining layouts or using CSS Grid */
+.combined-layout {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}</code></pre>
+
+        <hr>
+
+        <h2>11. EXERCISES AND PRACTICE PROBLEMS</h2>
+
+        <h3>Exercise 1: Basic Alignment</h3>
+        <p><strong>Objective:</strong> Create a flex container with three items of different heights and practice all
+            align-items values.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        .container {
+            display: flex;
+            height: 400px;
+            border: 2px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .item {
+            width: 100px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            padding: 10px;
+        }
+        
+        /* Try different heights */
+        .item1 { height: 50px; }
+        .item2 { height: 150px; }
+        .item3 { height: 100px; }
+        
+        /* TODO: Apply different align-items values */
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container" style="align-items: flex-start;"&gt;
+        &lt;div class="item item1"&gt;Start&lt;/div&gt;
+        &lt;div class="item item2"&gt;Start&lt;/div&gt;
+        &lt;div class="item item3"&gt;Start&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="container" style="align-items: center;"&gt;
+        &lt;!-- Same items here --&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="container" style="align-items: flex-end;"&gt;
+        &lt;!-- Same items here --&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="container" style="align-items: stretch;"&gt;
+        &lt;!-- Remove heights for stretch --&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Exercise 2: Profile Card Layout</h3>
+        <p><strong>Objective:</strong> Create a profile card with properly aligned elements.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* TODO: Style this profile card */
+        .profile-card {
+            display: flex;
+            /* Add your styles here */
+            width: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #007bff;
+            margin-right: 20px;
+        }
+        
+        .info {
+            /* Make this grow and align properly */
+        }
+        
+        .name {
+            font-size: 24px;
+            margin: 0 0 5px 0;
+        }
+        
+        .bio {
+            color: #666;
+            margin: 0 0 10px 0;
+        }
+        
+        .stats {
+            display: flex;
+            /* Align stats properly */
+        }
+        
+        .stat {
+            margin-right: 20px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            color: #999;
+            font-size: 14px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="profile-card"&gt;
+        &lt;div class="avatar"&gt;&lt;/div&gt;
+        &lt;div class="info"&gt;
+            &lt;h2 class="name"&gt;John Doe&lt;/h2&gt;
+            &lt;p class="bio"&gt;Full-stack developer passionate about creating amazing web experiences.&lt;/p&gt;
+            &lt;div class="stats"&gt;
+                &lt;div class="stat"&gt;
+                    &lt;div class="stat-value"&gt;2.5K&lt;/div&gt;
+                    &lt;div class="stat-label"&gt;Followers&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="stat"&gt;
+                    &lt;div class="stat-value"&gt;1.2K&lt;/div&gt;
+                    &lt;div class="stat-label"&gt;Following&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="stat"&gt;
+                    &lt;div class="stat-value"&gt;150&lt;/div&gt;
+                    &lt;div class="stat-label"&gt;Posts&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Exercise 3: Flexible Navigation Bar</h3>
+        <p><strong>Objective:</strong> Build a responsive navigation bar that maintains vertical centering.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* TODO: Create a fully responsive navbar */
+        .navbar {
+            display: flex;
+            /* Add styles for centering */
+            background: #333;
+            color: white;
+            padding: 0 20px;
+            height: 70px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            /* Style the navigation links */
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+        }
+        
+        .search-box {
+            /* Create a search box that aligns properly */
+            padding: 5px;
+        }
+        
+        .user-menu {
+            display: flex;
+            /* Align user menu items */
+        }
+        
+        /* Make it responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                /* Adjust for mobile */
+                height: auto;
+                flex-wrap: wrap;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar"&gt;
+        &lt;div class="logo"&gt;MySite&lt;/div&gt;
+        &lt;div class="nav-links"&gt;
+            &lt;a href="#"&gt;Home&lt;/a&gt;
+            &lt;a href="#"&gt;About&lt;/a&gt;
+            &lt;a href="#"&gt;Services&lt;/a&gt;
+            &lt;a href="#"&gt;Contact&lt;/a&gt;
+        &lt;/div&gt;
+        &lt;div class="search-box"&gt;
+            &lt;input type="text" placeholder="Search..."&gt;
+        &lt;/div&gt;
+        &lt;div class="user-menu"&gt;
+            &lt;span&gt;John&lt;/span&gt;
+            &lt;img src="avatar.jpg" alt="User" width="40" height="40"&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Exercise 4: Pricing Cards</h3>
+        <p><strong>Objective:</strong> Create three pricing cards with different content that align properly.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* TODO: Create pricing cards with proper alignment */
+        .pricing-container {
+            display: flex;
+            /* Align cards properly */
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .pricing-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* Ensure consistent card layout */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .card-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .price {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .features {
+            /* Style the features list */
+            padding: 20px 0;
+        }
+        
+        .feature {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .card-footer {
+            margin-top: auto;  /* Push to bottom */
+            padding-top: 20px;
+        }
+        
+        .btn {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        /* Featured card might be taller */
+        .featured {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="pricing-container"&gt;
+        &lt;div class="pricing-card"&gt;
+            &lt;div class="card-header"&gt;
+                &lt;h3&gt;Basic&lt;/h3&gt;
+                &lt;div class="price"&gt;$9.99&lt;/div&gt;
+                &lt;div&gt;per month&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="features"&gt;
+                &lt;div class="feature"&gt;10GB Storage&lt;/div&gt;
+                &lt;div class="feature"&gt;1 User&lt;/div&gt;
+                &lt;div class="feature"&gt;Basic Support&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card-footer"&gt;
+                &lt;a href="#" class="btn"&gt;Choose Plan&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="pricing-card featured"&gt;
+            &lt;!-- Popular plan with more features --&gt;
+            &lt;div class="card-header"&gt;
+                &lt;h3&gt;Pro&lt;/h3&gt;
+                &lt;div class="price"&gt;$19.99&lt;/div&gt;
+                &lt;div&gt;per month&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="features"&gt;
+                &lt;div class="feature"&gt;50GB Storage&lt;/div&gt;
+                &lt;div class="feature"&gt;5 Users&lt;/div&gt;
+                &lt;div class="feature"&gt;Priority Support&lt;/div&gt;
+                &lt;div class="feature"&gt;Advanced Analytics&lt;/div&gt;
+                &lt;div class="feature"&gt;API Access&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card-footer"&gt;
+                &lt;a href="#" class="btn" style="background: #fff; color: #764ba2;"&gt;Choose Plan&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="pricing-card"&gt;
+            &lt;div class="card-header"&gt;
+                &lt;h3&gt;Enterprise&lt;/h3&gt;
+                &lt;div class="price"&gt;$49.99&lt;/div&gt;
+                &lt;div&gt;per month&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="features"&gt;
+                &lt;div class="feature"&gt;200GB Storage&lt;/div&gt;
+                &lt;div class="feature"&gt;Unlimited Users&lt;/div&gt;
+                &lt;div class="feature"&gt;24/7 Support&lt;/div&gt;
+                &lt;div class="feature"&gt;Custom Solutions&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card-footer"&gt;
+                &lt;a href="#" class="btn"&gt;Choose Plan&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Exercise 5: Comment Section</h3>
+        <p><strong>Objective:</strong> Build a comment section with proper alignment for replies.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* TODO: Style a nested comment section */
+        .comment-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .comment {
+            display: flex;
+            /* Align comment elements */
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .comment-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #007bff;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-header {
+            display: flex;
+            /* Align username and time */
+            margin-bottom: 8px;
+        }
+        
+        .username {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .time {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .comment-text {
+            margin: 0 0 10px 0;
+            line-height: 1.5;
+        }
+        
+        .comment-actions {
+            display: flex;
+            /* Align action buttons */
+            gap: 15px;
+        }
+        
+        .comment-actions button {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .replies {
+            margin-left: 65px;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+        }
+        
+        /* Nested comments should maintain alignment */
+        .replies .comment {
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="comment-section"&gt;
+        &lt;div class="comment"&gt;
+            &lt;div class="comment-avatar"&gt;&lt;/div&gt;
+            &lt;div class="comment-content"&gt;
+                &lt;div class="comment-header"&gt;
+                    &lt;span class="username"&gt;John Doe&lt;/span&gt;
+                    &lt;span class="time"&gt;2 hours ago&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;p class="comment-text"&gt;Great article! Really helpful information about flexbox alignment.&lt;/p&gt;
+                &lt;div class="comment-actions"&gt;
+                    &lt;button&gt;Like&lt;/button&gt;
+                    &lt;button&gt;Reply&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="replies"&gt;
+            &lt;div class="comment"&gt;
+                &lt;div class="comment-avatar"&gt;&lt;/div&gt;
+                &lt;div class="comment-content"&gt;
+                    &lt;div class="comment-header"&gt;
+                        &lt;span class="username"&gt;Jane Smith&lt;/span&gt;
+                        &lt;span class="time"&gt;1 hour ago&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;p class="comment-text"&gt;Thanks for sharing this! The examples really helped clarify align-items.&lt;/p&gt;
+                    &lt;div class="comment-actions"&gt;
+                        &lt;button&gt;Like&lt;/button&gt;
+                        &lt;button&gt;Reply&lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <h2>12. SUMMARY AND BEST PRACTICES</h2>
+
+        <h3>12.1 Quick Reference Card</h3>
+        <pre><code>/* align-items Quick Reference */
+
+.flex-container {
+    display: flex;
+    
+    /* CROSS AXIS ALIGNMENT VALUES */
+    align-items: stretch;    /* Default - items fill container */
+    align-items: flex-start; /* Align to start of cross axis */
+    align-items: flex-end;   /* Align to end of cross axis */
+    align-items: center;     /* Center on cross axis */
+    align-items: baseline;   /* Align by text baseline */
+}
+
+/* REMEMBER: */
+/* - With flex-direction: row    → cross axis is vertical */
+/* - With flex-direction: column → cross axis is horizontal */
+/* - align-items affects ALL items in container */
+/* - Use align-self to override individual items */</code></pre>
+
+        <h3>12.2 Best Practices Checklist</h3>
+        <ul>
+            <li>✅ Always define a height for containers when using <code>align-items</code> with <code>row</code>
+                direction</li>
+            <li>✅ Use <code>min-height</code> instead of fixed <code>height</code> for flexible layouts</li>
+            <li>✅ Remember that <code>stretch</code> only works if items don't have a fixed size on the cross axis</li>
+            <li>✅ Use <code>align-self</code> sparingly - it's better to control at the container level</li>
+            <li>✅ Test with different content lengths to ensure robust layouts</li>
+            <li>✅ Use browser dev tools to inspect and debug alignment issues</li>
+            <li>✅ Consider mobile layouts first, then enhance for larger screens</li>
+            <li>✅ Combine <code>align-items</code> with <code>justify-content</code> for complete control</li>
+        </ul>
+
+        <h3>12.3 Common Pitfalls to Avoid</h3>
+        <pre><code>/* DON'T DO THIS: */
+.container {
+    display: flex;
+    align-items: center;  /* Won't work without height */
+}
+
+/* DO THIS: */
+.container {
+    display: flex;
+    align-items: center;
+    min-height: 300px;    /* Explicit height or min-height */
+}
+
+/* DON'T DO THIS: */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* This centers horizontally, not vertically */
+    justify-content: center; /* Need this for vertical centering */
+    height: 300px;
+}
+
+/* DO THIS: */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Now this does vertical */
+    align-items: center;      /* This does horizontal */
+    height: 300px;
+}</code></pre>
+
+        <h3>12.4 Final Thoughts</h3>
+        <p>Mastering <code>align-items</code> is essential for creating professional, responsive layouts with Flexbox.
+            Remember that the cross axis direction depends on your <code>flex-direction</code>, and that
+            <code>align-items</code> provides powerful control over how items are arranged perpendicular to your main
+            layout direction. Practice with the exercises provided, experiment with different values, and always test
+            your layouts with real content to ensure they're robust and flexible.</p>
+        <p>The key to mastery is understanding the relationship between main and cross axes, and how
+            <code>align-items</code> interacts with other Flexbox properties like <code>justify-content</code>,
+            <code>flex-wrap</code>, and <code>align-self</code>. With practice, these concepts will become second
+            nature, allowing you to create complex, responsive layouts with confidence.</p>
+
+        <!-- end of every single line from source material -->
+    </div>
+</body>
+
+</html>

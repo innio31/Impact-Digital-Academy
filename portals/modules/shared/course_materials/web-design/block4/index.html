@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- responsive meta tag – mobile first -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 4 · JavaScript Programming Fundamentals · interactive</title>
+    <style>
+        /* -------------------- RESET + BASE (mobile first) -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2e9f0;
+            /* soft lavender hint */
+            color: #2d2a3b;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main container – fully responsive, relative units */
+        .landing-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -25px #3f2e4b;
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+            transition: padding 0.2s;
+        }
+
+        /* typography scales fluidly */
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #5e3c7e, #9e4f7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            word-break: break-word;
+        }
+
+        .block-badge {
+            background: #7c5295;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 500;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: #76548c;
+            border-left: 8px solid #c67fb0;
+            padding-left: 1.2rem;
+            margin: 0.8rem 0 2rem;
+            font-weight: 360;
+        }
+
+        /* responsive grid – mobile → desktop */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0 1.5rem;
+        }
+
+        @media (min-width: 680px) {
+            .overview-grid {
+                grid-template-columns: 2.2fr 1.2fr;
+            }
+
+            .landing-wrapper {
+                padding: 2.2rem 2rem;
+            }
+        }
+
+        .card {
+            background: #f9f1fc;
+            border-radius: 2rem;
+            padding: 1.5rem 1.5rem;
+            border: 1px solid #dbbde2;
+            box-shadow: 0 12px 28px -15px #3d2b4b;
+            height: fit-content;
+        }
+
+        .card h2 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            color: #67437e;
+            border-bottom: 3px solid #cc8abb;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .learning-list {
+            list-style: none;
+        }
+
+        .learning-list li {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        }
+
+        .learning-list li::before {
+            content: "⚡";
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .topic-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0;
+        }
+
+        .topic-tag {
+            background: white;
+            border: 1px solid #c27fb0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-weight: 500;
+            color: #5b3b73;
+            box-shadow: 0 4px 10px #f1e2f8;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 400px) {
+            .topic-tag {
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* resource block – full width flexible */
+        .resource-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .resource-block {
+            background: #f0e1fc;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.2rem;
+            border-left: 8px solid #8b5fa0;
+        }
+
+        .resource-block p {
+            font-weight: 600;
+            color: #4f3672;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            margin-bottom: 0.8rem;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .page-link {
+            background: white;
+            text-decoration: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            color: #573e74;
+            font-weight: 550;
+            border: 1px solid #c191cf;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            box-shadow: 0 3px 10px #f3e5fa;
+            word-break: break-word;
+        }
+
+        /* topic sections */
+        .topic-section {
+            margin: 2.8rem 0 2rem;
+        }
+
+        .topic-section h3 {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            color: #67437e;
+            border-left: 10px solid #d897c4;
+            padding-left: 1.2rem;
+            margin: 2rem 0 1.5rem;
+            line-height: 1.2;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 500px) {
+            .mini-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .mini-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .topic-card {
+            background: #fbf3ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #dbb2dd;
+            height: 100%;
+        }
+
+        .topic-card h4 {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            color: #67437e;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px dashed #cb99c2;
+            padding-bottom: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .dot-list {
+            list-style: none;
+        }
+
+        .dot-list li {
+            margin: 0.6rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .dot-list li::before {
+            content: "✦";
+            color: #9c5fa0;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+
+        /* activities – flex with wrapping */
+        .activity-case {
+            background: #f2e2fb;
+            border-radius: 2rem;
+            padding: 1.8rem 1.2rem;
+            margin: 2.5rem 0;
+            border: 2px solid #b175b4;
+        }
+
+        .flex-act {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .act-item {
+            background: white;
+            border-radius: 1.6rem;
+            padding: 1.5rem;
+            flex: 1 1 240px;
+            min-width: 200px;
+            border-bottom: 6px solid #9569b0;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .badge {
+            background: #7c5295;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        /* assessment table – responsive with overflow */
+        .assessment-zone {
+            background: #eddff5;
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.2rem;
+            margin: 2.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(65, 35, 85, 0.12);
+            font-size: clamp(0.85rem, 2.8vw, 1rem);
+        }
+
+        th {
+            background: #7c5295;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem 0.8rem;
+            border-bottom: 1px solid #dbbde2;
+            background: #fcf6ff;
+        }
+
+        @media (max-width: 500px) {
+            .table-wrapper {
+                overflow-x: auto;
+                display: block;
+                width: 100%;
+            }
+        }
+
+        .quiz-mini {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        @media (min-width: 550px) {
+            .quiz-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .quiz-grid div {
+            background: #f3e3fd;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            border: 1px solid #dbb2dd;
+        }
+
+        /* footer + project block */
+        .footer-links {
+            background: #eeddfa;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            margin: 2.5rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        @media (min-width: 700px) {
+            .footer-links {
+                justify-content: space-between;
+                text-align: left;
+            }
+        }
+
+        .btn-project {
+            background: #6b3f84;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 14px -6px #482f5a;
+            border: 2px solid white;
+            white-space: wrap;
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #eed2f0, #fcf4ff, #eed2f0);
+            margin: 2rem 0;
+        }
+
+        .bottom-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .bottom-nav a {
+            background: #f3e5fa;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #4c2f69;
+            font-weight: 500;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            border: 1px solid #ca9dcb;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            color: #59417a;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        code {
+            word-break: break-word;
+            background: #f2e4fc;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-wrapper">
+        <!-- header -->
+        <h1>⚡ JAVASCRIPT PROGRAMMING FUNDAMENTALS</h1>
+        <div class="block-badge">block four · syntax · data structures · control flow</div>
+        <div class="subhead">build logical thinking & interactivity with modern JS</div>
+
+        <!-- objectives + core topics grid -->
+        <div class="overview-grid">
+            <div class="card">
+                <h2>🎯 learning objectives</h2>
+                <ul class="learning-list">
+                    <li>Understand and use JS syntax, variables (<code>let</code>/<code>const</code>), and data types.
+                    </li>
+                    <li>Work with operators for calculations and comparisons.</li>
+                    <li>Implement control flow using conditionals and loops.</li>
+                    <li>Write and invoke functions to organize code.</li>
+                    <li>Create and manipulate basic arrays and objects.</li>
+                    <li>Explore template literals, string methods, and scope.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📘 core topics</h2>
+                <div class="topic-cloud">
+                    <span class="topic-tag">let & const</span>
+                    <span class="topic-tag">numbers / strings</span>
+                    <span class="topic-tag">booleans</span>
+                    <span class="topic-tag">=== / !==</span>
+                    <span class="topic-tag">template literals</span>
+                    <span class="topic-tag">if / else</span>
+                    <span class="topic-tag">for / while</span>
+                    <span class="topic-tag">functions</span>
+                    <span class="topic-tag">return / scope</span>
+                    <span class="topic-tag">arrays []</span>
+                    <span class="topic-tag">objects {}</span>
+                    <span class="topic-tag">logical && || !</span>
+                    <span class="topic-tag">ternary operator</span>
+                    <span class="topic-tag">string methods</span>
+                    <span class="topic-tag">break & continue</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- module pages (deep dives) -->
+        <div class="resource-links">
+            <div class="resource-block">
+                <p>📄 module pages – code & concepts</p>
+                <div class="page-grid">
+                    <a href="js-intro.html" target="_blank" rel="noopener noreferrer" class="page-link">📜 1. intro,
+                        script tag, let/const</a>
+                    <a href="js-datatypes.html" target="_blank" rel="noopener noreferrer" class="page-link">🔢 2. data
+                        types & operators</a>
+                    <a href="js-strings.html" target="_blank" rel="noopener noreferrer" class="page-link">🧵 3. strings
+                        & template literals</a>
+                    <a href="js-conditionals.html" target="_blank" rel="noopener noreferrer" class="page-link">⚖️ 4.
+                        if/else & ternary</a>
+                    <a href="js-loops.html" target="_blank" rel="noopener noreferrer" class="page-link">🔄 5. for /
+                        while loops</a>
+                    <a href="js-functions.html" target="_blank" rel="noopener noreferrer" class="page-link">🧩 6.
+                        functions (declarations & expressions)</a>
+                    <a href="js-return-scope.html" target="_blank" rel="noopener noreferrer" class="page-link">📦 7.
+                        return & scope</a>
+                    <a href="js-arrays-objects.html" target="_blank" rel="noopener noreferrer" class="page-link">🗂️ 8.
+                        arrays & objects</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript foundations deep dive -->
+        <div class="topic-section">
+            <h3>🧠 CORE JS BUILDING BLOCKS</h3>
+            <div class="mini-grid">
+                <div class="topic-card">
+                    <h4>📦 variables & types</h4>
+                    <ul class="dot-list">
+                        <li><code>let</code> vs <code>const</code> (block scope)</li>
+                        <li>Primitive types: number, string, boolean, null, undefined</li>
+                        <li><code>typeof</code> operator</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🧮 operators</h4>
+                    <ul class="dot-list">
+                        <li>arithmetic: <code>+ - * / %</code></li>
+                        <li>comparison: <code>=== !== &lt; &gt; &lt;= &gt;=</code></li>
+                        <li>logical: <code>&amp;&amp; || !</code></li>
+                        <li>assignment: <code>= += -=</code></li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📝 strings & literals</h4>
+                    <ul class="dot-list">
+                        <li><code>.toUpperCase()</code>, <code>.includes()</code>, <code>.length</code></li>
+                        <li>template literals: <code>`Hello ${name}`</code></li>
+                        <li>escape characters & concatenation</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- second row -->
+            <div class="mini-grid" style="margin-top:1.5rem;">
+                <div class="topic-card">
+                    <h4>⚡ control flow</h4>
+                    <ul class="dot-list">
+                        <li><code>if / else if / else</code></li>
+                        <li>ternary operator <code>condition ? a : b</code></li>
+                        <li>switch (optional)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🔄 loops</h4>
+                    <ul class="dot-list">
+                        <li><code>for</code> (initialization; condition; increment)</li>
+                        <li><code>while</code> loops</li>
+                        <li><code>break</code> and <code>continue</code></li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🧩 functions</h4>
+                    <ul class="dot-list">
+                        <li>function declaration / expression</li>
+                        <li>parameters & arguments</li>
+                        <li><code>return</code> and side effects</li>
+                        <li>global vs local scope</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- third row : arrays & objects -->
+            <div class="mini-grid" style="margin-top:1.5rem;">
+                <div class="topic-card">
+                    <h4>🗃️ arrays</h4>
+                    <ul class="dot-list">
+                        <li><code>let arr = [1, 2, 3]</code></li>
+                        <li>access by index, <code>.length</code></li>
+                        <li>basic methods: <code>push</code>, <code>pop</code></li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📂 objects</h4>
+                    <ul class="dot-list">
+                        <li><code>{ key: value }</code> – dot / bracket notation</li>
+                        <li>nested properties</li>
+                        <li>adding / updating properties</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🔁 iteration</h4>
+                    <ul class="dot-list">
+                        <li>loop over an array</li>
+                        <li><code>for...in</code> for objects</li>
+                        <li>array of objects (practical data)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- hands‑on activities -->
+        <div class="activity-case">
+            <h2 style="color: #67437e; border-bottom: 3px solid #cb99c2; padding-bottom: 0.8rem;">🧪 hands‑on activities
+            </h2>
+            <div class="flex-act">
+                <div class="act-item"><span class="badge">tip calc</span><strong>flexible tip</strong><br>write a script
+                    that calculates a tip based on bill amount & percentage.</div>
+                <div class="act-item"><span class="badge">guess game</span><strong>number
+                        guessing</strong><br>conditionals + loops – random number, hints, limited attempts.</div>
+                <div class="act-item"><span class="badge">student stats</span><strong>array & objects</strong><br>array
+                    of student objects; find student or average grade.</div>
+                <div class="act-item"><span class="badge">drill</span><strong>template literals &
+                        methods</strong><br>use string methods and backticks to format messages.</div>
+            </div>
+        </div>
+
+        <!-- assessment + quiz -->
+        <div class="assessment-zone">
+            <h2 style="color: #67437e;">📋 assessment</h2>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>type</th>
+                        <th>description</th>
+                        <th>delivery</th>
+                    </tr>
+                    <tr>
+                        <td><strong>coding exercise</strong></td>
+                        <td>Build a simple "to‑do list task manager" (console) – arrays, objects, functions, loops to
+                            add, list, and mark tasks as complete.</td>
+                        <td>JavaScript</td>
+                    </tr>
+                    <tr>
+                        <td><strong>quiz</strong></td>
+                        <td>syntax, data types, operators, conditionals, loops, functions, basic arrays/objects</td>
+                        <td>20 questions</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- mini quiz preview -->
+            <div class="quiz-mini">
+                <h4 style="color: #67437e;">✏️ quiz sample – do you know?</h4>
+                <div class="quiz-grid">
+                    <div>• difference <code>let</code> vs <code>const</code>?</div>
+                    <div>• <code>===</code> vs <code>==</code>?</div>
+                    <div>• template literal <code>`${var}`</code> vs concatenation?</div>
+                    <div>• how does a <code>for</code> loop work?</div>
+                    <div>• function declaration vs expression?</div>
+                    <div>• global vs local scope?</div>
+                    <div>• access object property <code>obj.prop</code> vs <code>obj['prop']</code>?</div>
+                    <div>• what does <code>.includes()</code> do?</div>
+                    <div>• logical && and || short‑circuit?</div>
+                    <div>• break vs continue in loops?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- final project block -->
+        <div class="footer-links">
+            <div>
+                <span style="font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; color: #6b3f84;">🧩 final
+                    project</span><br>
+                <span style="font-size: 1.1rem;">interactive console task manager</span>
+            </div>
+            <a href="project-todo-console.html" target="_blank" class="btn-project">📂 open project brief →</a>
+        </div>
+
+        <hr>
+        <!-- bottom navigation (compact) -->
+        <div class="bottom-nav">
+            <a href="#">intro & variables</a><a href="#">operators</a><a href="#">strings</a><a
+                href="#">conditionals</a><a href="#">loops</a><a href="#">functions</a><a href="#">return/scope</a><a
+                href="#">arrays/objects</a>
+        </div>
+
+        <footer>
+            ⚡ Block 4 – JavaScript Programming Fundamentals · syntax · control flow · data structures
+        </footer>
+    </div>
+</body>
+
+</html>

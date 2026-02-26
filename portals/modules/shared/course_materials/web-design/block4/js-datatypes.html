@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAVASCRIPT OPERATORS – complete study notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f0f7;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+            color: #2a1b3a;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.2rem;
+            box-shadow: 0 25px 45px -20px #3b2852;
+            padding: 2.5rem 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            color: #3f2863;
+            border-left: 14px solid #b47bd6;
+            padding-left: 1.5rem;
+            margin: 0 0 0.8rem 0;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            color: #4a3173;
+            margin: 2.2rem 0 1rem;
+            border-bottom: 3px solid #d9b3e6;
+            padding-bottom: 0.4rem;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            color: #5b3e7a;
+            margin: 2rem 0 0.8rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            color: #674b82;
+            margin: 1.5rem 0 0.4rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, #dac0ee, #f0e2fc, #dac0ee);
+            margin: 2.5rem 0;
+        }
+
+        pre {
+            background: #1e1528;
+            color: #f6eefc;
+            padding: 1.2rem 1.8rem;
+            border-radius: 2rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.8rem 0;
+            border: 2px solid #bba1d1;
+            box-shadow: inset 0 0 10px #0a0710;
+        }
+
+        code {
+            background: #ede3f5;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 500;
+            color: #2c1642;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            box-shadow: 0 8px 22px #d1c1e0;
+        }
+
+        th {
+            background: #754e94;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 0.8rem;
+        }
+
+        td {
+            background: #faf4ff;
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid #d4bedf;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        blockquote {
+            background: #f2e8fc;
+            border-left: 12px solid #a67ac4;
+            padding: 1.2rem 2rem;
+            border-radius: 2rem;
+            margin: 2rem 0;
+            font-style: normal;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.5rem 1.8rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .badge-pitfall {
+            background: #a84c7a;
+            color: white;
+            border-radius: 60px;
+            padding: 0.2rem 1.2rem;
+            display: inline-block;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .toc {
+            background: #efe2fd;
+            border-radius: 2.2rem;
+            padding: 2rem 2rem;
+            margin: 2rem 0;
+            columns: 2 240px;
+            column-gap: 2.5rem;
+        }
+
+        .toc a {
+            display: block;
+            color: #3d265b;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0.3rem 0;
+            border-bottom: 1px dashed #b990d1;
+        }
+
+        .toc a:hover {
+            color: #812f75;
+        }
+
+        hr.sep {
+            margin: 2.5rem 0;
+        }
+
+        .ref-card {
+            background: #f1e5fc;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .example-block {
+            background: #faf1ff;
+            border-radius: 2rem;
+            padding: 1rem 1.8rem;
+            border: 1px solid #cba7da;
+            margin: 1.5rem 0;
+        }
+
+        .small-note {
+            color: #68527a;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>JAVASCRIPT OPERATORS</h1>
+
+        <!-- TABLE OF CONTENTS -->
+        <h2>TABLE OF CONTENTS</h2>
+        <div class="toc">
+            <a href="#introduction">1. Introduction to Operators</a>
+            <a href="#arithmetic-operators">2. Arithmetic Operators</a>
+            <a href="#assignment-operators">3. Assignment Operators</a>
+            <a href="#comparison-operators">4. Comparison Operators</a>
+            <a href="#logical-operators">5. Logical Operators</a>
+            <a href="#operator-precedence">6. Operator Precedence</a>
+            <a href="#practical-examples">7. Practical Examples and Use Cases</a>
+            <a href="#common-pitfalls">8. Common Pitfalls and Best Practices</a>
+            <a href="#practice-exercises">9. Practice Exercises</a>
+        </div>
+
+        <hr>
+
+        <!-- 1. INTRODUCTION -->
+        <h2 id="introduction">INTRODUCTION TO OPERATORS</h2>
+        <h3>What are Operators?</h3>
+        <p>Operators are special symbols or keywords in JavaScript that perform operations on operands (values or
+            variables). They are the building blocks of expressions and logic in programming.</p>
+        <h3>Classification of Operators</h3>
+        <p>Based on the number of operands they work on:</p>
+        <ul>
+            <li><strong>Unary Operators</strong>: Work with one operand (e.g., <code>!</code>, <code>++</code>,
+                <code>--</code>)
+            </li>
+            <li><strong>Binary Operators</strong>: Work with two operands (e.g., <code>+</code>, <code>-</code>,
+                <code>*</code>, <code>/</code>, <code>&amp;&amp;</code>, <code>||</code>)
+            </li>
+            <li><strong>Ternary Operator</strong>: Works with three operands (the conditional operator <code>? :</code>)
+            </li>
+        </ul>
+
+        <hr>
+
+        <!-- 2. ARITHMETIC OPERATORS -->
+        <h2 id="arithmetic-operators">ARITHMETIC OPERATORS</h2>
+        <p>Arithmetic operators are used to perform mathematical calculations on numbers.</p>
+
+        <h3>1. Addition Operator (+)</h3>
+        <p>The addition operator performs numeric addition and string concatenation.</p>
+        <pre><code>// Numeric Addition
+let sum = 10 + 5;           // 15
+let total = 100 + 200 + 300; // 600
+
+// String Concatenation
+let firstName = "John";
+let lastName = "Doe";
+let fullName = firstName + " " + lastName; // "John Doe"
+
+// Mixed Operations (Number + String = String)
+let result = 10 + "20";      // "1020" (string)
+let mixed = "The answer is " + 42; // "The answer is 42"
+
+// Multiple additions with different types
+console.log(10 + 20 + "30"); // "3030" (left to right: 10+20=30, then 30+"30"="3030")
+console.log("10" + 20 + 30); // "102030" (all become strings)</code></pre>
+        <p><strong>Important Notes:</strong> If any operand is a string, the <code>+</code> operator performs string
+            concatenation. Operations are performed from left to right. Use parentheses to control order of operations.
+        </p>
+
+        <h3>2. Subtraction Operator (-)</h3>
+        <p>Performs subtraction between two numbers.</p>
+        <pre><code>// Basic Subtraction
+let difference = 20 - 5;      // 15
+let negative = 5 - 10;        // -5
+
+// With variables
+let price = 100;
+let discount = 20;
+let finalPrice = price - discount; // 80
+
+// Multiple subtractions
+let result = 100 - 30 - 20;   // 50 (left to right)
+
+// Type coercion with subtraction
+console.log("100" - 50);       // 50 (string converted to number)
+console.log("hello" - 1);      // NaN (Not a Number)
+console.log(true - 1);         // 0 (true becomes 1, 1-1=0)
+console.log(false - 1);        // -1 (false becomes 0, 0-1=-1)</code></pre>
+
+        <h3>3. Multiplication Operator (*)</h3>
+        <p>Performs multiplication between two numbers.</p>
+        <pre><code>// Basic Multiplication
+let product = 5 * 4;          // 20
+let large = 100 * 200;        // 20000
+
+// Real-world example: Area calculation
+let length = 15;
+let width = 10;
+let area = length * width;    // 150
+
+// Compound multiplication
+let volume = length * width * 5; // 750
+
+// Type coercion
+console.log("5" * "4");        // 20 (both strings converted to numbers)
+console.log("10" * 2);         // 20
+console.log("abc" * 2);        // NaN
+console.log(true * 5);         // 5 (true = 1)
+console.log(false * 5);        // 0 (false = 0)</code></pre>
+
+        <h3>4. Division Operator (/)</h3>
+        <p>Performs division between two numbers.</p>
+        <pre><code>// Basic Division
+let quotient = 20 / 4;         // 5
+let decimal = 10 / 3;          // 3.3333333333333335
+
+// Important considerations
+console.log(5 / 2);            // 2.5 (always returns float)
+console.log(10 / 0);           // Infinity
+console.log(-10 / 0);          // -Infinity
+console.log(0 / 0);            // NaN
+
+// Real-world examples
+let totalScore = 450;
+let numberOfPlayers = 5;
+let averageScore = totalScore / numberOfPlayers; // 90
+
+// Type coercion
+console.log("100" / "5");      // 20
+console.log("100" / 0);        // Infinity
+console.log("hello" / 2);      // NaN
+console.log(true / 2);         // 0.5 (1/2)</code></pre>
+
+        <h3>5. Remainder/Modulo Operator (%)</h3>
+        <p>Returns the remainder after division.</p>
+        <pre><code>// Basic Modulo
+console.log(10 % 3);           // 1 (10 divided by 3 = 3 with remainder 1)
+console.log(10 % 2);           // 0 (10 is divisible by 2)
+console.log(15 % 4);           // 3
+
+// Practical Applications
+
+// 1. Checking even or odd numbers
+function isEven(number) {
+    return number % 2 === 0;
+}
+console.log(isEven(10));       // true
+console.log(isEven(7));        // false
+
+// 2. Cycling through array indices
+let colors = ["red", "green", "blue", "yellow"];
+for (let i = 0; i < 10; i++) {
+    console.log(colors[i % colors.length]); // Cycles through colors
+}
+
+// 3. Converting seconds to minutes and seconds
+let totalSeconds = 125;
+let minutes = Math.floor(totalSeconds / 60);  // 2
+let seconds = totalSeconds % 60;               // 5
+console.log(`${minutes} minutes and ${seconds} seconds`);
+
+// 4. Working with time and angles (modular arithmetic)
+let angle = 370 % 360;          // 10 degrees (normalized)</code></pre>
+
+        <h3>6. Exponentiation Operator (**)</h3>
+        <p>Raises the first operand to the power of the second operand (ES7+).</p>
+        <pre><code>// Basic Exponentiation
+console.log(2 ** 3);            // 8 (2 * 2 * 2)
+console.log(5 ** 2);            // 25
+console.log(10 ** 4);           // 10000
+
+// Fractional exponents (roots)
+console.log(9 ** 0.5);          // 3 (square root)
+console.log(27 ** (1/3));       // 3 (cube root)
+
+// Negative exponents
+console.log(2 ** -2);           // 0.25 (1 / 4)
+
+// Real-world examples
+let initialInvestment = 1000;
+let interestRate = 1.05;        // 5% interest
+let years = 3;
+let finalAmount = initialInvestment * (interestRate ** years); // ~1157.63
+
+// Comparison with Math.pow()
+console.log(2 ** 3);            // 8
+console.log(Math.pow(2, 3));    // 8 (older method)</code></pre>
+
+        <h3>7. Increment (++) and Decrement (--) Operators</h3>
+        <p>Increase or decrease a variable by 1.</p>
+        <pre><code>// Post-increment: returns value THEN increments
+let x = 5;
+let y = x++;  // y = 5, x = 6
+console.log(`x: ${x}, y: ${y}`); // "x: 6, y: 5"
+
+// Pre-increment: increments THEN returns value
+let a = 5;
+let b = ++a;  // a = 6, b = 6
+console.log(`a: ${a}, b: ${b}`); // "a: 6, b: 6"
+
+// Post-decrement
+let p = 10;
+let q = p--;  // q = 10, p = 9
+
+// Pre-decrement
+let m = 10;
+let n = --m;  // m = 9, n = 9
+
+// Practical examples in loops
+for (let i = 0; i < 5; i++) {    // Post-increment commonly used in loops
+    console.log(i);               // 0, 1, 2, 3, 4
+}
+
+// Be careful with multiple increments in one expression
+let counter = 5;
+let result = counter++ + ++counter; 
+// Step 1: counter++ returns 5, counter becomes 6
+// Step 2: ++counter makes counter 7, returns 7
+// Step 3: 5 + 7 = 12
+console.log(result); // 12
+console.log(counter); // 7</code></pre>
+
+        <h3>8. Unary Negation (-) and Unary Plus (+)</h3>
+        <p>Convert values to numbers and/or change sign.</p>
+        <pre><code>// Unary Plus: converts to number
+console.log(+"5");              // 5 (number)
+console.log(+true);             // 1
+console.log(+false);            // 0
+console.log(+"hello");          // NaN
+console.log(+null);             // 0
+console.log(+undefined);        // NaN
+console.log(+"  123  ");        // 123 (trims whitespace)
+
+// Unary Negation: converts to number and negates
+console.log(-"5");              // -5
+console.log(-true);             // -1
+console.log(-false);            // -0 (but technically 0)
+console.log(-" 123 ");          // -123
+
+// Practical use: ensuring numeric input
+function addNumbers(a, b) {
+    return +a + +b;             // Convert strings to numbers
+}
+console.log(addNumbers("5", "10")); // 15 (not "510")</code></pre>
+
+        <hr>
+
+        <!-- 3. ASSIGNMENT OPERATORS -->
+        <h2 id="assignment-operators">ASSIGNMENT OPERATORS</h2>
+        <p>Assignment operators assign values to variables, often performing an operation during assignment.</p>
+
+        <h3>1. Simple Assignment (=)</h3>
+        <pre><code>// Basic assignment
+let x = 10;
+let name = "John";
+let isActive = true;
+
+// Multiple assignments (right-associative)
+let a, b, c;
+a = b = c = 5;  // All become 5
+// This works right-to-left: c = 5, then b = c, then a = b
+
+// Assignment returns the assigned value
+let y;
+console.log(y = 10);  // 10 (assignment expression returns 10)
+
+// This can be used in conditions, but be careful!
+let user;
+if (user = getUser()) {  // Assigns and then checks if truthy
+    console.log("User found:", user);
+}</code></pre>
+
+        <h3>2. Addition Assignment (+=)</h3>
+        <pre><code>// Numeric addition
+let score = 10;
+score += 5;          // Equivalent to: score = score + 5;
+console.log(score);  // 15
+
+// String concatenation
+let message = "Hello";
+message += " World"; // Equivalent to: message = message + " World";
+console.log(message); // "Hello World"
+
+// In loops
+let total = 0;
+for (let i = 1; i <= 5; i++) {
+    total += i;      // Adds 1, then 2, then 3, then 4, then 5
+}
+console.log(total);  // 15
+
+// With arrays (pushing elements)
+let numbers = [1, 2, 3];
+numbers += 4;        // WARNING: This converts array to string!
+console.log(numbers); // "1,2,34" (not [1,2,3,4])
+
+// Correct way to add to array
+numbers = [1, 2, 3];
+numbers.push(4);     // [1, 2, 3, 4]</code></pre>
+
+        <h3>3. Subtraction Assignment (-=)</h3>
+        <pre><code>let balance = 100;
+balance -= 30;       // Equivalent to: balance = balance - 30;
+console.log(balance); // 70
+
+let count = 10;
+count -= 2.5;        // Works with decimals
+console.log(count);  // 7.5
+
+// In game development
+let health = 100;
+let damage = 15;
+health -= damage;    // health becomes 85</code></pre>
+
+        <h3>4. Multiplication Assignment (*=)</h3>
+        <pre><code>let factor = 5;
+factor *= 4;         // Equivalent to: factor = factor * 4;
+console.log(factor); // 20
+
+// Compound interest example
+let investment = 1000;
+investment *= 1.05;  // Add 5% interest
+console.log(investment); // 1050
+
+// Scaling in graphics
+let scale = 1;
+scale *= 2;          // Double the scale
+scale *= 1.5;        // Multiply by 1.5 again
+console.log(scale);  // 3</code></pre>
+
+        <h3>5. Division Assignment (/=)</h3>
+        <pre><code>let value = 100;
+value /= 4;          // Equivalent to: value = value / 4;
+console.log(value);  // 25
+
+// Averaging
+let sum = 450;
+let count = 5;
+sum /= count;        // Calculate average
+console.log(sum);    // 90</code></pre>
+
+        <h3>6. Remainder Assignment (%=)</h3>
+        <pre><code>let number = 17;
+number %= 5;         // Equivalent to: number = number % 5;
+console.log(number); // 2
+
+// Keeping values within a range (circular buffer)
+let index = 7;
+let arrayLength = 5;
+index %= arrayLength; // index becomes 2 (wraps around)</code></pre>
+
+        <h3>7. Exponentiation Assignment (**=)</h3>
+        <pre><code>let base = 2;
+base **= 3;          // Equivalent to: base = base ** 3;
+console.log(base);   // 8
+
+// Growth calculation
+let population = 1000;
+let growthRate = 1.03; // 3% annual growth
+let years = 5;
+
+// Simulating compound growth
+for (let i = 0; i < years; i++) {
+    population *= growthRate; // Can't use **= for annual compounding
+}
+// Better: population = 1000 * (1.03 ** 5);</code></pre>
+
+        <h3>8. Logical Assignment Operators (ES2021)</h3>
+        <p>Combine logical operators with assignment.</p>
+        <pre><code>// Logical OR assignment (||=)
+// Assigns if the left-hand side is falsy
+let user = null;
+user ||= { name: "Guest" };
+console.log(user); // { name: "Guest" }
+
+let settings = { theme: "dark" };
+settings.theme ||= "light"; // theme already exists, so no assignment
+console.log(settings.theme); // "dark"
+
+settings.volume ||= 50; // volume doesn't exist, so assigned
+console.log(settings.volume); // 50
+
+// Logical AND assignment (&&=)
+// Assigns if the left-hand side is truthy
+let isLoggedIn = true;
+isLoggedIn &&= fetchUserData(); // fetchUserData() will be called
+
+let product = { price: 100 };
+product.price &&= applyDiscount(product.price); // applies discount if price exists
+
+// Nullish coalescing assignment (??=)
+// Assigns if left-hand side is null or undefined
+let cache = null;
+cache ??= initializeCache(); // cache is null, so initializeCache() is called
+
+let options = { timeout: 0 }; // 0 is NOT null or undefined
+options.timeout ??= 1000; // timeout remains 0</code></pre>
+
+        <hr>
+
+        <!-- 4. COMPARISON OPERATORS -->
+        <h2 id="comparison-operators">COMPARISON OPERATORS</h2>
+        <p>Comparison operators compare two values and return a boolean (true or false).</p>
+
+        <h3>1. Equality Operators (== vs ===)</h3>
+        <p><strong>Loose Equality (==)</strong> Compares values after type conversion (coercion).</p>
+        <pre><code>console.log(5 == 5);           // true
+console.log(5 == "5");         // true (string "5" converted to number)
+console.log(0 == false);       // true (false becomes 0)
+console.log(null == undefined); // true (special case)
+console.log("" == 0);          // true (empty string becomes 0)
+console.log("" == false);      // true (both become 0)
+console.log([] == false);      // true (complex coercion)
+console.log([] == ![]);        // true (mind-bending coercion!)
+
+// The coercion rules are complex:
+console.log(true == 1);        // true (true becomes 1)
+console.log(true == "1");      // true (both become numbers)
+console.log(false == "0");     // true
+console.log(null == 0);        // false (special rule: null only equals undefined)
+console.log(undefined == 0);    // false
+console.log(NaN == NaN);       // false (NaN never equals anything, even itself)
+
+// Avoid == due to unpredictable results</code></pre>
+
+        <p><strong>Strict Equality (===)</strong> Compares both value AND type, no conversion.</p>
+        <pre><code>console.log(5 === 5);          // true (same value, same type)
+console.log(5 === "5");        // false (different types)
+console.log(0 === false);      // false
+console.log(null === undefined); // false
+console.log("" === 0);         // false
+console.log(NaN === NaN);      // false (NaN is the only value not equal to itself)
+
+// Use Number.isNaN() to check for NaN
+console.log(Number.isNaN(NaN)); // true
+
+// Comparing objects and arrays
+console.log({} === {});        // false (different objects in memory)
+console.log([] === []);        // false (different arrays in memory)
+
+let arr1 = [1, 2, 3];
+let arr2 = arr1;               // arr2 references the same array
+console.log(arr1 === arr2);    // true (same reference)</code></pre>
+
+        <h3>2. Inequality Operators (!= vs !==)</h3>
+        <p><strong>Loose Inequality (!=)</strong> Opposite of loose equality.</p>
+        <pre><code>console.log(5 != 5);           // false
+console.log(5 != "5");         // false (after coercion, they're equal)
+console.log(0 != false);       // false
+console.log(null != undefined); // false
+console.log("" != 0);          // false
+console.log(10 != "10");       // false
+console.log(5 != 6);           // true</code></pre>
+        <p><strong>Strict Inequality (!==)</strong> Opposite of strict equality.</p>
+        <pre><code>console.log(5 !== 5);          // false
+console.log(5 !== "5");        // true (different types)
+console.log(0 !== false);      // true
+console.log(null !== undefined); // true
+console.log("" !== 0);         // true
+console.log(10 !== "10");      // true
+console.log(5 !== 6);          // true
+// Always prefer !== over != for predictable results</code></pre>
+
+        <h3>3. Greater Than (>)</h3>
+        <pre><code>// Numeric comparisons
+console.log(10 > 5);           // true
+console.log(5 > 10);           // false
+console.log(5 > 5);            // false (not greater, equal)
+
+// String comparisons (lexicographic, based on Unicode values)
+console.log("b" > "a");        // true
+console.log("apple" > "banana"); // false (a < b in dictionary order)
+console.log("Z" > "A");        // true (but uppercase has lower code points)
+console.log("Z" > "a");        // false (uppercase comes before lowercase)
+
+// Type coercion
+console.log("10" > 5);         // true (string "10" becomes number 10)
+console.log("5" > 10);         // false
+console.log(true > 0);         // true (true = 1)
+console.log(false > -1);       // true (false = 0)
+
+// Comparing dates
+let date1 = new Date("2023-01-01");
+let date2 = new Date("2024-01-01");
+console.log(date2 > date1);    // true (dates are compared as timestamps)</code></pre>
+
+        <h3>4. Less Than (<)< /h3>
+                <pre><code>console.log(5 < 10);           // true
+console.log(10 < 5);           // false
+console.log(5 < 5);            // false
+
+// String comparisons
+console.log("a" < "b");        // true
+console.log("apple" < "banana"); // true
+console.log("10" < "5");       // true! (string comparison: '1' < '5')
+console.log("10" < 5);         // false (string becomes number)
+
+// Real-world: filtering products
+let products = [
+    { name: "Laptop", price: 999 },
+    { name: "Mouse", price: 25 },
+    { name: "Keyboard", price: 75 }
+];
+let affordableProducts = products.filter(p => p.price < 100);
+console.log(affordableProducts); // Mouse and Keyboard</code></pre>
+
+                <h3>5. Greater Than or Equal (>=)</h3>
+                <pre><code>console.log(10 >= 5);          // true
+console.log(10 >= 10);         // true
+console.log(5 >= 10);          // false
+
+// With strings
+console.log("b" >= "a");       // true
+console.log("b" >= "b");       // true
+console.log("b" >= "c");       // false
+
+// Practical: age verification
+let age = 18;
+let canVote = age >= 18;       // true
+
+// Grade calculation
+let score = 85;
+let grade = score >= 90 ? "A" : 
+            score >= 80 ? "B" : 
+            score >= 70 ? "C" : "F";
+console.log(grade); // "B"</code></pre>
+
+                <h3>6. Less Than or Equal (<=)< /h3>
+                        <pre><code>console.log(5 <= 10);          // true
+console.log(5 <= 5);           // true
+console.log(10 <= 5);          // false
+
+// Real-world: checking stock levels
+let stock = 15;
+let reorderPoint = 20;
+let needsReorder = stock <= reorderPoint; // true
+
+// With floating point numbers
+console.log(0.1 + 0.2 <= 0.3); // false (floating point precision issue)
+console.log((0.1 + 0.2).toFixed(1) <= 0.3); // true (be careful!)</code></pre>
+
+                        <h3>7. Special Cases and Edge Cases</h3>
+                        <pre><code>// Comparing different types
+console.log(null > 0);         // false
+console.log(null == 0);        // false
+console.log(null >= 0);        // true (special: null becomes 0 in relational comparisons)
+
+console.log(undefined > 0);    // false
+console.log(undefined < 0);    // false
+console.log(undefined == 0);   // false
+console.log(undefined >= 0);   // false
+
+// NaN comparisons
+console.log(NaN > 5);          // false
+console.log(NaN < 5);          // false
+console.log(NaN == NaN);       // false
+console.log(NaN === NaN);      // false
+
+// Comparing objects
+console.log({} > {});          // false (objects are compared by conversion)
+console.log({} < {});          // false
+console.log({} == {});         // false (different objects)
+
+// Arrays comparison
+console.log([1,2] > [1,1]);    // true? (complex conversion to string)
+// Both become "1,2" and "1,1", then string comparison</code></pre>
+
+                        <hr>
+
+                        <!-- 5. LOGICAL OPERATORS -->
+                        <h2 id="logical-operators">LOGICAL OPERATORS</h2>
+                        <p>Logical operators work with boolean values but can also return non-boolean values due to
+                            short-circuit evaluation.</p>
+
+                        <h3>1. Logical AND (&amp;&amp;)</h3>
+                        <p>Returns true if ALL operands are true. Evaluates left to right and returns the first falsy
+                            value or the last truthy value.</p>
+                        <pre><code>// Basic boolean usage
+console.log(true && true);     // true
+console.log(true && false);    // false
+console.log(false && true);    // false
+console.log(false && false);   // false
+
+// Short-circuit evaluation
+// Returns first falsy value, otherwise last value
+console.log(5 && 10);          // 10 (both truthy, returns last)
+console.log(0 && 10);          // 0 (0 is falsy, returns 0)
+console.log("" && "hello");    // "" (empty string is falsy)
+console.log(null && 100);      // null
+console.log(undefined && "test"); // undefined
+console.log(NaN && 500);       // NaN
+console.log("hello" && "world"); // "world" (both truthy)
+
+// Practical: Guard operator (safe property access)
+let user = { name: "John", age: 25 };
+console.log(user && user.name); // "John" (user exists)
+
+let guest = null;
+console.log(guest && guest.name); // null (doesn't try to access guest.name)
+
+// Conditional rendering in React/UI
+let isLoggedIn = true;
+let showDashboard = isLoggedIn && renderDashboard(); // renderDashboard called only if isLoggedIn is true
+
+// Multiple conditions
+let age = 25;
+let hasLicense = true;
+let canDrive = age >= 18 && hasLicense; // true
+
+// Chaining conditions
+let score = 85;
+let grade = score >= 90 && "A" || 
+            score >= 80 && "B" || 
+            score >= 70 && "C" || 
+            "F"; // (Be careful: mixing && and ||)
+console.log(grade); // "B"
+
+// Function execution guard
+function fetchData() {
+    console.log("Fetching data...");
+    return { data: [1, 2, 3] };
+}
+
+let shouldFetch = false;
+let data = shouldFetch && fetchData(); // fetchData not called
+console.log(data); // false
+
+shouldFetch = true;
+data = shouldFetch && fetchData(); // fetchData called
+console.log(data); // { data: [1,2,3] }</code></pre>
+
+                        <h3>2. Logical OR (||)</h3>
+                        <p>Returns true if AT LEAST ONE operand is true. Returns the first truthy value or the last
+                            falsy value.</p>
+                        <pre><code>// Basic boolean usage
+console.log(true || true);     // true
+console.log(true || false);    // true
+console.log(false || true);    // true
+console.log(false || false);   // false
+
+// Short-circuit evaluation
+// Returns first truthy value, otherwise last value
+console.log(5 || 10);          // 5 (first truthy)
+console.log(0 || 10);          // 10 (0 is falsy, so returns 10)
+console.log("" || "default");  // "default"
+console.log(null || "fallback"); // "fallback"
+console.log(undefined || 100); // 100
+console.log(NaN || "valid");   // "valid"
+console.log(false || 0 || "" || null || "hello"); // "hello" (first truthy)
+
+// Practical: Default values (pre-ES2020)
+function greet(name) {
+    name = name || "Guest";    // If name is falsy, use "Guest"
+    console.log(`Hello, ${name}!`);
+}
+greet("John");   // "Hello, John!"
+greet("");       // "Hello, Guest!" (empty string is falsy)
+greet(null);     // "Hello, Guest!"
+greet(undefined); // "Hello, Guest!"
+
+// Caution: This also replaces 0, false, etc.
+function setCount(count) {
+    count = count || 10;       // Bug: if count = 0, it becomes 10
+    console.log(`Count: ${count}`);
+}
+setCount(5);     // "Count: 5"
+setCount(0);     // "Count: 10" (unexpected!)
+// Better to use ?? (nullish coalescing) for this case
+
+// Multiple fallbacks
+let config = {
+    theme: null,
+    language: undefined,
+    timeout: 0
+};
+
+let theme = config.theme || "light";     // "light" (null is falsy)
+let language = config.language || "en";  // "en" (undefined is falsy)
+let timeout = config.timeout || 30000;   // 30000 (0 is falsy, so this is a bug!)
+// 0 is a valid timeout value, but it's falsy
+
+// Better with nullish coalescing
+timeout = config.timeout ?? 30000;       // 0 (only replaces null/undefined)
+
+// Short-circuit in function calls
+function getFromCache() {
+    console.log("Checking cache...");
+    return null; // cache miss
+}
+
+function getFromDatabase() {
+    console.log("Querying database...");
+    return { user: "John" };
+}
+
+let userData = getFromCache() || getFromDatabase(); // Both called? No!
+// getFromCache returns null (falsy), so getFromDatabase is called</code></pre>
+
+                        <h3>3. Logical NOT (!)</h3>
+                        <p>Inverts the boolean value of its operand.</p>
+                        <pre><code>// Basic usage
+console.log(!true);            // false
+console.log(!false);           // true
+
+// With other values (coerces to boolean first)
+console.log(!5);               // false (5 is truthy)
+console.log(!0);               // true (0 is falsy)
+console.log(!"hello");         // false ("hello" is truthy)
+console.log(!"");              // true (empty string is falsy)
+console.log(!null);            // true
+console.log(!undefined);       // true
+console.log(!NaN);             // true
+console.log(![]);              // false (arrays are truthy)
+console.log(!{});              // false (objects are truthy)
+
+// Double NOT (!!) - convert to boolean
+console.log(!!5);              // true
+console.log(!!0);              // false
+console.log(!!"hello");        // true
+console.log(!!"");             // false
+console.log(!!null);           // false
+console.log(!!undefined);      // false
+
+// Practical: checking if value exists
+function isValidUser(user) {
+    return !!user && !!user.id && !!user.name;
+}
+
+console.log(isValidUser({ id: 1, name: "John" })); // true
+console.log(isValidUser({ id: 0, name: "John" })); // false (id: 0 is falsy)
+
+// In conditions
+let isActive = false;
+if (!isActive) {
+    console.log("User is not active");
+}
+
+// Toggling boolean values
+let featureEnabled = true;
+featureEnabled = !featureEnabled; // false
+featureEnabled = !featureEnabled; // true
+
+// Filtering truthy values from array
+let mixed = [0, 1, "", "hello", null, undefined, false, true, 42];
+let truthyValues = mixed.filter(Boolean); // [1, "hello", true, 42]
+// Boolean is the same as (value) => !!value
+
+// Checking for specific falsy conditions
+function processInput(input) {
+    if (input === undefined || input === null || input === "") {
+        return "No input provided";
+    }
+    return `Processing: ${input}`;
+}
+
+// More concise using !
+function processInputConcise(input) {
+    if (!input && input !== 0) { // Exclude 0 from falsy check
+        return "No input provided";
+    }
+    return `Processing: ${input}`;
+}</code></pre>
+
+                        <h3>4. Nullish Coalescing Operator (??) - ES2020</h3>
+                        <p>Returns the right-hand side operand only if the left-hand side is null or undefined.</p>
+                        <pre><code>// Basic usage
+console.log(null ?? "default");     // "default"
+console.log(undefined ?? "default"); // "default"
+console.log(0 ?? "default");        // 0 (not null/undefined)
+console.log("" ?? "default");       // "" (not null/undefined)
+console.log(false ?? "default");    // false (not null/undefined)
+
+// Comparison with ||
+let value1 = 0 || 100;              // 100 (0 is falsy)
+let value2 = 0 ?? 100;              // 0 (0 is not null/undefined)
+
+let value3 = "" || "fallback";      // "fallback"
+let value4 = "" ?? "fallback";      // ""
+
+let value5 = null || "default";     // "default"
+let value6 = null ?? "default";     // "default" (same for null/undefined)
+
+// Practical: handling default values correctly
+function configure(options) {
+    let timeout = options.timeout ?? 30000;  // 0 is a valid timeout
+    let retries = options.retries ?? 3;      // 0 retries is valid
+    let host = options.host ?? "localhost";
+    
+    return { timeout, retries, host };
+}
+
+console.log(configure({ timeout: 0, retries: 0 }));
+// { timeout: 0, retries: 0, host: "localhost" }
+
+console.log(configure({}));
+// { timeout: 30000, retries: 3, host: "localhost" }
+
+// Chaining with && and ||
+// Must use parentheses when combining with && or ||
+let x = (null ?? 5) || 10;          // 5 (null??5=5, then 5||10=5)
+let y = null ?? (5 || 10);          // 5 (5||10=5, then null??5=5)
+
+// Without parentheses, it causes a SyntaxError
+// let z = null ?? 5 || 10; // SyntaxError</code></pre>
+
+                        <h3>5. Logical AND Assignment (&amp;&amp;=) - ES2021</h3>
+                        <pre><code>let a = 5;
+a &&= 10;            // a = 5 && 10 => 10 (a is truthy)
+console.log(a);      // 10
+
+let b = 0;
+b &&= 10;            // b = 0 && 10 => 0 (b is falsy, so no assignment)
+console.log(b);      // 0
+
+let user = { name: "John", isAdmin: true };
+user.isAdmin &&= grantAdminPrivileges(); // Only called if isAdmin is true
+
+// Practical: updating only if property exists
+let settings = { theme: "dark" };
+settings.theme &&= "light"; // changes to "light" because theme exists
+settings.volume &&= 50;     // volume doesn't exist, so no change
+console.log(settings); // { theme: "light" }</code></pre>
+
+                        <h3>6. Logical OR Assignment (||=) - ES2021</h3>
+                        <pre><code>let a = null;
+a ||= 10;            // a = null || 10 => 10
+console.log(a);      // 10
+
+let b = 5;
+b ||= 10;            // b = 5 || 10 => 5 (b is truthy, so no assignment)
+console.log(b);      // 5
+
+// Practical: setting defaults for missing properties
+let user = {
+    name: "John",
+    age: 25
+};
+
+user.name ||= "Anonymous";     // name already exists, no change
+user.email ||= "no-email@example.com"; // email doesn't exist, assigned
+
+console.log(user);
+// { name: "John", age: 25, email: "no-email@example.com" }
+
+// Cache initialization
+let cache = null;
+cache ||= initializeCache(); // initializeCache called if cache is falsy</code></pre>
+
+                        <h3>7. Nullish Coalescing Assignment (??=) - ES2021</h3>
+                        <pre><code>let a = null;
+a ??= 10;            // a = null ?? 10 => 10
+console.log(a);      // 10
+
+let b = undefined;
+b ??= 20;            // b = undefined ?? 20 => 20
+console.log(b);      // 20
+
+let c = 0;
+c ??= 100;           // c = 0 ?? 100 => 0 (0 is not null/undefined)
+console.log(c);      // 0
+
+let d = "";
+d ??= "default";     // "" (not null/undefined)
+console.log(d);      // ""
+
+// Practical: setting defaults while preserving 0, false, ""
+function initializeConfig(config) {
+    config.timeout ??= 30000;   // only if null/undefined
+    config.retries ??= 3;       // only if null/undefined
+    config.host ??= "localhost";
+    return config;
+}
+
+console.log(initializeConfig({ timeout: 0, retries: null }));
+// { timeout: 0, retries: 3, host: "localhost" }</code></pre>
+
+                        <h3>8. Complex Logical Expressions and Short-Circuiting</h3>
+                        <pre><code>// Short-circuit evaluation in depth
+function logAndReturn(value, message) {
+    console.log(message);
+    return value;
+}
+
+// AND short-circuits on first falsy
+let result1 = logAndReturn(0, "First") && logAndReturn(5, "Second");
+// Logs: "First"
+// result1 = 0 (never reaches second)
+
+// OR short-circuits on first truthy
+let result2 = logAndReturn(5, "First") || logAndReturn(10, "Second");
+// Logs: "First"
+// result2 = 5 (never reaches second)
+
+// Nested logical expressions
+let userInput = "";
+let defaultValue = "Guest";
+let finalName = userInput || (defaultValue && defaultValue.toUpperCase());
+// Step 1: userInput is "" (falsy) → continue to ||
+// Step 2: defaultValue && defaultValue.toUpperCase() → "Guest" && "GUEST" → "GUEST"
+// Step 3: "" || "GUEST" → "GUEST"
+
+console.log(finalName); // "GUEST"
+
+// Complex condition with precedence
+let a = 5, b = 10, c = 0;
+let condition = a > 0 && b > 0 || c > 0;
+// Step 1: a > 0 is true
+// Step 2: true && b > 0 → true && true → true
+// Step 3: true || (c > 0) → true (short-circuits)
+console.log(condition); // true
+
+// Using parentheses to control precedence
+let shouldProcess = (user.isActive || user.isAdmin) && !user.isBanned;
+
+// Practical: safe navigation without optional chaining
+let city = user && user.address && user.address.city || "Unknown";
+// With optional chaining: user?.address?.city ?? "Unknown"</code></pre>
+
+                        <hr>
+
+                        <!-- 6. OPERATOR PRECEDENCE -->
+                        <h2 id="operator-precedence">OPERATOR PRECEDENCE</h2>
+                        <p>Operator precedence determines the order in which operators are evaluated in expressions.</p>
+
+                        <h3>Precedence Table (Highest to Lowest)</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <tr>
+                                    <th>Precedence</th>
+                                    <th>Operator Type</th>
+                                    <th>Operators</th>
+                                    <th>Associativity</th>
+                                </tr>
+                                <tr>
+                                    <td>20</td>
+                                    <td>Grouping</td>
+                                    <td><code>( ... )</code></td>
+                                    <td>n/a</td>
+                                </tr>
+                                <tr>
+                                    <td>19</td>
+                                    <td>Member Access</td>
+                                    <td><code>... . ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>19</td>
+                                    <td>Computed Member</td>
+                                    <td><code>... [ ... ]</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>18</td>
+                                    <td>Function Call</td>
+                                    <td><code>... ( ... )</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td>Postfix Increment</td>
+                                    <td><code>... ++</code></td>
+                                    <td>n/a</td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td>Postfix Decrement</td>
+                                    <td><code>... --</code></td>
+                                    <td>n/a</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>Logical NOT</td>
+                                    <td><code>! ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>Unary Plus</td>
+                                    <td><code>+ ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>Unary Negation</td>
+                                    <td><code>- ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>Prefix Increment</td>
+                                    <td><code>++ ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>Prefix Decrement</td>
+                                    <td><code>-- ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td>typeof</td>
+                                    <td><code>typeof ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>14</td>
+                                    <td>Exponentiation</td>
+                                    <td><code>... ** ...</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td>Multiplication</td>
+                                    <td><code>... * ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td>Division</td>
+                                    <td><code>... / ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td>Remainder</td>
+                                    <td><code>... % ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td>Addition</td>
+                                    <td><code>... + ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td>Subtraction</td>
+                                    <td><code>... - ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td>Bitwise Shift</td>
+                                    <td><code>&lt;&lt; &gt;&gt; &gt;&gt;&gt;</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>Relational</td>
+                                    <td><code>&lt; &lt;= &gt; &gt;=</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>in</td>
+                                    <td><code>... in ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>instanceof</td>
+                                    <td><code>... instanceof ...</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Equality</td>
+                                    <td><code>== != === !==</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Bitwise AND</td>
+                                    <td><code>&amp;</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Bitwise XOR</td>
+                                    <td><code>^</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Bitwise OR</td>
+                                    <td><code>|</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Logical AND</td>
+                                    <td><code>&amp;&amp;</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Logical OR</td>
+                                    <td><code>||</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Nullish Coalescing</td>
+                                    <td><code>??</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Conditional</td>
+                                    <td><code>? :</code></td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Assignment</td>
+                                    <td><code>= += -= *= /= %= **= &lt;&lt;= &gt;&gt;= &gt;&gt;&gt;= &amp;= ^= |= &amp;&amp;= ||= ??=</code>
+                                    </td>
+                                    <td>right-to-left</td>
+                                </tr>
+                                <tr>
+                                    <td>0</td>
+                                    <td>Comma</td>
+                                    <td><code>,</code></td>
+                                    <td>left-to-right</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h3>Examples Demonstrating Precedence</h3>
+                        <pre><code>// Arithmetic precedence (multiplication before addition)
+let result1 = 5 + 3 * 2;       // 11, not 16 (3*2=6, then 5+6=11)
+let result2 = (5 + 3) * 2;     // 16 (parentheses override)
+
+// Comparison vs Logical
+let a = 5, b = 10, c = 15;
+let check1 = a < b && b < c;   // true && true = true
+// Equivalent to: (a < b) && (b < c)
+
+// Assignment has low precedence
+let x, y;
+x = y = 5 + 3;                 // y = 8, then x = 8 (right-to-left)
+// Equivalent to: x = (y = (5 + 3))
+
+// Complex expression
+let value = 2 + 3 * 4 ** 2;    // 2 + 3 * 16 = 2 + 48 = 50
+// Step 1: 4 ** 2 = 16 (exponentiation)
+// Step 2: 3 * 16 = 48 (multiplication)
+// Step 3: 2 + 48 = 50 (addition)
+
+// Mixing logical operators
+let user = { name: "John", age: 25 };
+let isAdult = user && user.age >= 18 || user.age === undefined;
+// Step 1: user && user.age >= 18 → user exists, then user.age >= 18 → true
+// Step 2: true || (user.age === undefined) → true (short-circuits)
+
+// Using parentheses for clarity
+let isAdultClear = user && (user.age >= 18 || user.age === undefined);
+
+// Conditional (ternary) with other operators
+let temperature = 25;
+let weather = temperature > 30 ? "Hot" : temperature > 15 ? "Warm" : "Cold";
+// Equivalent to: temperature > 30 ? "Hot" : (temperature > 15 ? "Warm" : "Cold")</code></pre>
+
+                        <h3>Associativity Examples</h3>
+                        <pre><code>// Left-to-right associativity (most operators)
+let result = 10 - 5 - 2;       // (10 - 5) - 2 = 3
+
+// Right-to-left associativity (assignment, exponentiation, unary)
+let x, y, z;
+x = y = z = 10;                // x = (y = (z = 10))
+
+// Exponentiation is right-associative
+let exp = 2 ** 3 ** 2;         // 2 ** (3 ** 2) = 2 ** 9 = 512, not (2**3)**2 = 8**2 = 64
+
+// Ternary is right-associative
+let grade = score >= 90 ? "A" : score >= 80 ? "B" : "C";
+// Equivalent to: score >= 90 ? "A" : (score >= 80 ? "B" : "C")</code></pre>
+
+                        <hr>
+
+                        <!-- 7. PRACTICAL EXAMPLES AND USE CASES -->
+                        <h2 id="practical-examples">PRACTICAL EXAMPLES AND USE CASES</h2>
+
+                        <h3>Example 1: E-Commerce Shopping Cart</h3>
+                        <pre><code>class ShoppingCart {
+    constructor() {
+        this.items = [];
+        this.taxRate = 0.1; // 10%
+        this.shippingThreshold = 50; // Free shipping over $50
+        this.shippingCost = 5.99;
+    }
+    
+    addItem(name, price, quantity = 1) {
+        this.items.push({ name, price, quantity });
+    }
+    
+    calculateSubtotal() {
+        let subtotal = 0;
+        for (let item of this.items) {
+            subtotal += item.price * item.quantity;
+        }
+        return subtotal;
+    }
+    
+    calculateTax(subtotal) {
+        return subtotal * this.taxRate;
+    }
+    
+    calculateShipping(subtotal) {
+        // Free shipping if subtotal >= threshold, otherwise standard cost
+        return subtotal >= this.shippingThreshold ? 0 : this.shippingCost;
+    }
+    
+    applyDiscount(code) {
+        let discount = 0;
+        
+        // Logical operators for discount validation
+        if (code === "SAVE10" && this.calculateSubtotal() > 20) {
+            discount = 0.1; // 10% discount
+        } else if (code === "SAVE20" && this.calculateSubtotal() > 50) {
+            discount = 0.2; // 20% discount
+        } else if (code === "FREESHIPPING" && this.calculateSubtotal() > 25) {
+            this.shippingCost = 0; // Free shipping override
+        }
+        
+        return discount;
+    }
+    
+    calculateTotal(discountCode) {
+        let subtotal = this.calculateSubtotal();
+        let discount = this.applyDiscount(discountCode);
+        
+        // Apply discount (if any)
+        let afterDiscount = subtotal * (1 - discount);
+        
+        let tax = this.calculateTax(afterDiscount);
+        let shipping = this.calculateShipping(afterDiscount);
+        
+        // Calculate final total with proper rounding
+        let total = afterDiscount + tax + shipping;
+        return Math.round(total * 100) / 100; // Round to 2 decimal places
+    }
+    
+    checkout() {
+        let subtotal = this.calculateSubtotal();
+        let tax = this.calculateTax(subtotal);
+        let shipping = this.calculateShipping(subtotal);
+        let total = subtotal + tax + shipping;
+        
+        // Using comparison operators for validation
+        if (this.items.length === 0) {
+            console.log("Cart is empty!");
+            return false;
+        }
+        
+        // Logical operators in display logic
+        console.log("=== ORDER SUMMARY ===");
+        for (let item of this.items) {
+            console.log(`${item.name} x${item.quantity}: $${(item.price * item.quantity).toFixed(2)}`);
+        }
+        console.log("=====================");
+        console.log(`Subtotal: $${subtotal.toFixed(2)}`);
+        console.log(`Tax (${this.taxRate * 100}%): $${tax.toFixed(2)}`);
+        console.log(`Shipping: $${shipping > 0 ? shipping.toFixed(2) : "FREE"}`);
+        console.log(`TOTAL: $${total.toFixed(2)}`);
+        
+        return total <= 1000 ? "Proceed to payment" : "Order exceeds limit";
+    }
+}
+
+// Usage example
+let cart = new ShoppingCart();
+cart.addItem("Laptop", 999.99);
+cart.addItem("Mouse", 25.99, 2);
+cart.addItem("Keyboard", 75.50);
+
+console.log(cart.checkout());</code></pre>
+
+                        <h3>Example 2: User Authentication System</h3>
+                        <pre><code>class AuthSystem {
+    constructor() {
+        this.users = [];
+        this.maxLoginAttempts = 5;
+        this.sessionTimeout = 30; // minutes
+    }
+    
+    register(username, email, password, confirmPassword) {
+        // Validation using comparison operators
+        if (!username || !email || !password) {
+            return { success: false, error: "All fields are required" };
+        }
+        
+        if (password !== confirmPassword) {
+            return { success: false, error: "Passwords do not match" };
+        }
+        
+        if (password.length < 8) {
+            return { success: false, error: "Password must be at least 8 characters" };
+        }
+        
+        // Password strength validation using logical operators
+        let hasUpperCase = /[A-Z]/.test(password);
+        let hasLowerCase = /[a-z]/.test(password);
+        let hasNumbers = /\d/.test(password);
+        let hasSpecialChar = /[!@#$%^&*]/.test(password);
+        
+        let isStrongPassword = hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar;
+        
+        if (!isStrongPassword) {
+            return { 
+                success: false, 
+                error: "Password must include uppercase, lowercase, number, and special character" 
+            };
+        }
+        
+        // Check if user exists using comparison
+        let userExists = this.users.some(user => 
+            user.username === username || user.email === email
+        );
+        
+        if (userExists) {
+            return { success: false, error: "Username or email already exists" };
+        }
+        
+        // Create new user
+        let newUser = {
+            id: this.users.length + 1,
+            username,
+            email,
+            password: this.hashPassword(password), // In reality, use bcrypt
+            createdAt: new Date(),
+            loginAttempts: 0,
+            locked: false,
+            lastLogin: null
+        };
+        
+        this.users.push(newUser);
+        return { success: true, user: { username, email } };
+    }
+    
+    login(usernameOrEmail, password) {
+        // Find user
+        let user = this.users.find(u => 
+            u.username === usernameOrEmail || u.email === usernameOrEmail
+        );
+        
+        // User doesn't exist
+        if (!user) {
+            return { success: false, error: "Invalid credentials" };
+        }
+        
+        // Check if account is locked
+        if (user.locked) {
+            return { success: false, error: "Account locked. Contact support." };
+        }
+        
+        // Verify password (simplified)
+        let isValidPassword = this.verifyPassword(password, user.password);
+        
+        if (!isValidPassword) {
+            user.loginAttempts++;
+            
+            // Lock account if too many attempts
+            if (user.loginAttempts >= this.maxLoginAttempts) {
+                user.locked = true;
+                return { success: false, error: "Account locked due to too many attempts" };
+            }
+            
+            let remainingAttempts = this.maxLoginAttempts - user.loginAttempts;
+            return { 
+                success: false, 
+                error: `Invalid password. ${remainingAttempts} attempts remaining` 
+            };
+        }
+        
+        // Successful login - reset attempts
+        user.loginAttempts = 0;
+        user.lastLogin = new Date();
+        
+        // Generate session token (simplified)
+        let token = this.generateToken(user);
+        
+        return { 
+            success: true, 
+            user: { id: user.id, username: user.username, email: user.email },
+            token 
+        };
+    }
+    
+    hashPassword(password) {
+        // NEVER do this in real life! Use bcrypt or similar
+        return `hashed_${password}_${Math.random()}`;
+    }
+    
+    verifyPassword(plainPassword, hashedPassword) {
+        // NEVER do this in real life!
+        return hashedPassword.startsWith(`hashed_${plainPassword}`);
+    }
+    
+    generateToken(user) {
+        // In reality, use JWT
+        return `token_${user.id}_${Date.now()}`;
+    }
+    
+    authorize(token, requiredRole) {
+        // Simplified authorization
+        if (!token) {
+            return { authorized: false, error: "No token provided" };
+        }
+        
+        // Extract user id from token (simplified)
+        let tokenParts = token.split('_');
+        if (tokenParts.length < 2) {
+            return { authorized: false, error: "Invalid token" };
+        }
+        
+        let userId = parseInt(tokenParts[1]);
+        let user = this.users.find(u => u.id === userId);
+        
+        if (!user) {
+            return { authorized: false, error: "User not found" };
+        }
+        
+        // Check if session expired (simplified)
+        let tokenTime = parseInt(tokenParts[2]);
+        let now = Date.now();
+        let minutesSinceToken = (now - tokenTime) / (1000 * 60);
+        
+        if (minutesSinceToken > this.sessionTimeout) {
+            return { authorized: false, error: "Session expired" };
+        }
+        
+        // Check role (simplified - assuming admin role exists)
+        let hasRequiredRole = !requiredRole || user.role === requiredRole;
+        
+        return {
+            authorized: hasRequiredRole,
+            user: hasRequiredRole ? user : null,
+            error: hasRequiredRole ? null : "Insufficient permissions"
+        };
+    }
+}
+
+// Usage
+let auth = new AuthSystem();
+
+// Register
+let registration = auth.register("john_doe", "john@example.com", "Pass123!@#", "Pass123!@#");
+console.log(registration);
+
+// Login
+let login = auth.login("john@example.com", "Pass123!@#");
+console.log(login);
+
+if (login.success) {
+    // Check authorization
+    let authorized = auth.authorize(login.token, "admin");
+    console.log(authorized);
+}</code></pre>
+
+                        <h3>Example 3: Data Validation and Processing</h3>
+                        <pre><code>class DataValidator {
+    static isValidEmail(email) {
+        if (!email || typeof email !== 'string') return false;
+        
+        // Basic email validation using logical operators
+        let hasAtSymbol = email.includes('@');
+        let hasDotAfterAt = email.indexOf('.') > email.indexOf('@') + 1;
+        let notTooLong = email.length <= 254;
+        let hasLocalPart = email.split('@')[0].length > 0;
+        let hasDomain = email.split('@')[1] && email.split('@')[1].length > 0;
+        
+        return hasAtSymbol && hasDotAfterAt && notTooLong && hasLocalPart && hasDomain;
+    }
+    
+    static isValidPhone(phone) {
+        if (!phone) return false;
+        
+        // Remove common formatting characters
+        let cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+        
+        // Check if it's all digits and reasonable length
+        let isAllDigits = /^\d+$/.test(cleaned);
+        let isValidLength = cleaned.length >= 10 && cleaned.length <= 15;
+        
+        return isAllDigits && isValidLength;
+    }
+    
+    static isValidAge(age) {
+        if (age === null || age === undefined) return false;
+        
+        // Convert to number if it's a string
+        let numAge = +age;
+        
+        // Check if it's a valid number and within range
+        let isNumber = !isNaN(numAge) && typeof numAge === 'number';
+        let isWithinRange = numAge >= 0 && numAge <= 150;
+        let isInteger = numAge % 1 === 0;
+        
+        return isNumber && isWithinRange && isInteger;
+    }
+    
+    static validateUserInput(input) {
+        let errors = [];
+        let warnings = [];
+        
+        // Name validation
+        if (!input.name || input.name.trim().length === 0) {
+            errors.push("Name is required");
+        } else if (input.name.length < 2) {
+            errors.push("Name must be at least 2 characters");
+        } else if (input.name.length > 100) {
+            errors.push("Name must be less than 100 characters");
+        } else if (!/^[a-zA-Z\s\-']+$/.test(input.name)) {
+            errors.push("Name contains invalid characters");
+        }
+        
+        // Email validation
+        if (!input.email) {
+            errors.push("Email is required");
+        } else if (!this.isValidEmail(input.email)) {
+            errors.push("Invalid email format");
+        }
+        
+        // Phone validation (optional)
+        if (input.phone && !this.isValidPhone(input.phone)) {
+            warnings.push("Phone number format may be incorrect");
+        }
+        
+        // Age validation
+        if (input.age !== undefined && input.age !== null && input.age !== '') {
+            if (!this.isValidAge(input.age)) {
+                errors.push("Invalid age");
+            } else if (+input.age < 18) {
+                warnings.push("User is under 18");
+            } else if (+input.age > 120) {
+                warnings.push("Age seems unusually high");
+            }
+        }
+        
+        // Password validation
+        if (input.password || input.confirmPassword) {
+            if (!input.password) {
+                errors.push("Password is required");
+            } else if (!input.confirmPassword) {
+                errors.push("Please confirm your password");
+            } else if (input.password !== input.confirmPassword) {
+                errors.push("Passwords do not match");
+            } else if (input.password.length < 8) {
+                errors.push("Password must be at least 8 characters");
+            } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(input.password)) {
+                errors.push("Password must include uppercase, lowercase, and number");
+            }
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors,
+            warnings,
+            hasWarnings: warnings.length > 0
+        };
+    }
+    
+    static sanitizeInput(input) {
+        if (typeof input === 'string') {
+            // Remove potentially dangerous characters
+            return input
+                .replace(/[<>]/g, '') // Remove < and > to prevent HTML injection
+                .trim();
+        }
+        return input;
+    }
+}
+
+// Usage
+let userInput = {
+    name: "John O'Connor",
+    email: "john@example.com",
+    phone: "+1 (555) 123-4567",
+    age: "25",
+    password: "Pass1234",
+    confirmPassword: "Pass1234"
+};
+
+let validation = DataValidator.validateUserInput(userInput);
+console.log("Validation result:", validation);
+
+if (validation.isValid) {
+    let sanitizedInput = {
+        name: DataValidator.sanitizeInput(userInput.name),
+        email: DataValidator.sanitizeInput(userInput.email),
+        phone: DataValidator.sanitizeInput(userInput.phone),
+        age: +userInput.age,
+        password: userInput.password // Don't sanitize passwords
+    };
+    console.log("Sanitized input:", sanitizedInput);
+}</code></pre>
+
+                        <h3>Example 4: Game Mechanics with Operators</h3>
+                        <pre><code>class RPGCharacter {
+    constructor(name, characterClass) {
+        this.name = name;
+        this.class = characterClass;
+        this.level = 1;
+        this.health = 100;
+        this.maxHealth = 100;
+        this.mana = 50;
+        this.maxMana = 50;
+        this.strength = 10;
+        this.intelligence = 10;
+        this.defense = 10;
+        this.experience = 0;
+        this.expToNextLevel = 100;
+        this.inventory = [];
+        this.gold = 50;
+        this.statusEffects = [];
+        this.isAlive = true;
+    }
+    
+    takeDamage(amount) {
+        // Calculate damage reduction based on defense
+        let damageReduction = Math.floor(this.defense / 2);
+        let actualDamage = Math.max(amount - damageReduction, 1); // Minimum 1 damage
+        
+        this.health -= actualDamage;
+        
+        // Using comparison to check if character died
+        if (this.health <= 0) {
+            this.health = 0;
+            this.isAlive = false;
+            console.log(`${this.name} has been defeated!`);
+        }
+        
+        return actualDamage;
+    }
+    
+    heal(amount) {
+        if (!this.isAlive) {
+            console.log(`${this.name} is dead and cannot be healed`);
+            return 0;
+        }
+        
+        this.health += amount;
+        
+        // Using comparison to prevent overheal
+        if (this.health > this.maxHealth) {
+            let overheal = this.health - this.maxHealth;
+            this.health = this.maxHealth;
+            return amount - overheal;
+        }
+        
+        return amount;
+    }
+    
+    attack(target) {
+        if (!this.isAlive) {
+            console.log(`${this.name} is dead and cannot attack`);
+            return 0;
+        }
+        
+        // Base damage calculation
+        let baseDamage = this.strength + Math.floor(Math.random() * 10);
+        
+        // Critical hit chance (20%)
+        let isCritical = Math.random() < 0.2;
+        let damage = isCritical ? baseDamage * 2 : baseDamage;
+        
+        // Apply any status effects
+        this.statusEffects.forEach(effect => {
+            if (effect.type === 'damageBoost') {
+                damage = Math.floor(damage * effect.multiplier);
+            }
+        });
+        
+        let actualDamage = target.takeDamage(damage);
+        
+        // Gain experience from successful hit
+        if (actualDamage > 0) {
+            this.gainExperience(actualDamage / 2);
+        }
+        
+        console.log(`${this.name} attacks for ${actualDamage} damage! ${isCritical ? 'CRITICAL HIT!' : ''}`);
+        
+        return actualDamage;
+    }
+    
+    castSpell(spellName, target) {
+        if (!this.isAlive) return false;
+        
+        let spellBook = {
+            'fireball': { manaCost: 20, damage: 30, type: 'fire' },
+            'heal': { manaCost: 15, healAmount: 25, type: 'healing' },
+            'iceShard': { manaCost: 12, damage: 18, type: 'ice' },
+            'lightning': { manaCost: 25, damage: 40, type: 'lightning' }
+        };
+        
+        let spell = spellBook[spellName];
+        
+        // Check if spell exists and has enough mana
+        if (!spell || this.mana < spell.manaCost) {
+            console.log(`Cannot cast ${spellName || 'spell'}`);
+            return false;
+        }
+        
+        this.mana -= spell.manaCost;
+        
+        if (spell.type === 'healing') {
+            let healedAmount = this.heal(spell.healAmount);
+            console.log(`${this.name} heals for ${healedAmount}!`);
+            return healedAmount;
+        } else {
+            // Spell damage calculation with intelligence scaling
+            let spellDamage = spell.damage + Math.floor(this.intelligence / 2);
+            let actualDamage = target.takeDamage(spellDamage);
+            console.log(`${this.name} casts ${spellName} for ${actualDamage} damage!`);
+            return actualDamage;
+        }
+    }
+    
+    gainExperience(amount) {
+        this.experience += amount;
+        console.log(`${this.name} gains ${amount} experience!`);
+        
+        // Level up if enough experience
+        while (this.experience >= this.expToNextLevel) {
+            this.levelUp();
+        }
+    }
+    
+    levelUp() {
+        this.level++;
+        this.experience -= this.expToNextLevel;
+        this.expToNextLevel = Math.floor(this.expToNextLevel * 1.5);
+        
+        // Stat increases based on class
+        this.maxHealth += 20;
+        this.maxMana += 10;
+        this.health = this.maxHealth; // Full heal on level up
+        this.mana = this.maxMana;
+        
+        this.strength += 2;
+        this.intelligence += 2;
+        this.defense += 1;
+        
+        console.log(`*** LEVEL UP! ${this.name} is now level ${this.level}! ***`);
+    }
+    
+    useItem(item) {
+        let itemIndex = this.inventory.findIndex(i => i.name === item.name);
+        
+        if (itemIndex === -1) {
+            console.log(`${item.name} not in inventory`);
+            return false;
+        }
+        
+        let inventoryItem = this.inventory[itemIndex];
+        
+        // Use item based on type
+        switch (item.type) {
+            case 'potion':
+                this.heal(inventoryItem.value);
+                break;
+            case 'manaPotion':
+                this.mana += inventoryItem.value;
+                if (this.mana > this.maxMana) this.mana = this.maxMana;
+                break;
+            case 'weapon':
+                this.equipWeapon(inventoryItem);
+                break;
+            case 'armor':
+                this.equipArmor(inventoryItem);
+                break;
+        }
+        
+        // Remove consumable items
+        if (item.type === 'potion' || item.type === 'manaPotion') {
+            this.inventory.splice(itemIndex, 1);
+        }
+        
+        return true;
+    }
+    
+    addItem(item) {
+        this.inventory.push(item);
+    }
+    
+    buyItem(item, price) {
+        // Using logical AND for validation
+        return (this.gold >= price) && (this.addItem(item), this.gold -= price, true);
+    }
+    
+    getStatus() {
+        let healthPercent = (this.health / this.maxHealth) * 100;
+        let manaPercent = (this.mana / this.maxMana) * 100;
+        let healthBar = this.getBar(healthPercent, 20);
+        let manaBar = this.getBar(manaPercent, 20);
+        
+        console.log(`
+${this.name} (Level ${this.level} ${this.class})
+Health: [${healthBar}] ${this.health}/${this.maxHealth}
+Mana:   [${manaBar}] ${this.mana}/${this.maxMana}
+Stats: STR:${this.strength} INT:${this.intelligence} DEF:${this.defense}
+Gold: ${this.gold} | Items: ${this.inventory.length}
+        `);
+    }
+    
+    getBar(percent, length) {
+        let filled = Math.floor(percent / 100 * length);
+        let empty = length - filled;
+        return '█'.repeat(filled) + '░'.repeat(empty);
+    }
+}
+
+// Game simulation
+let player = new RPGCharacter("Aragorn", "Warrior");
+let enemy = new RPGCharacter("Goblin", "Monster");
+
+// Add items
+player.addItem({ name: "Health Potion", type: "potion", value: 50 });
+player.addItem({ name: "Mana Potion", type: "manaPotion", value: 30 });
+player.addItem({ name: "Iron Sword", type: "weapon", damage: 15 });
+
+// Combat simulation
+console.log("=== BATTLE START ===");
+
+while (player.isAlive && enemy.isAlive) {
+    console.log("\n--- New Round ---");
+    
+    // Player's turn
+    if (player.isAlive && enemy.isAlive) {
+        if (player.health < 30 && player.inventory.some(i => i.type === 'potion')) {
+            player.useItem({ name: "Health Potion", type: "potion" });
+        } else if (Math.random() < 0.7) {
+            player.attack(enemy);
+        } else {
+            player.castSpell('fireball', enemy);
+        }
+    }
+    
+    // Enemy's turn
+    if (enemy.isAlive && player.isAlive) {
+        enemy.attack(player);
+    }
+    
+    // Show status
+    player.getStatus();
+    enemy.getStatus();
+}
+
+console.log(`\n=== BATTLE END: ${player.isAlive ? 'VICTORY!' : 'DEFEAT...'} ===`);</code></pre>
+
+                        <hr>
+
+                        <!-- 8. COMMON PITFALLS AND BEST PRACTICES -->
+                        <h2 id="common-pitfalls">COMMON PITFALLS AND BEST PRACTICES</h2>
+
+                        <h3>Pitfall 1: Assignment (=) vs Comparison (==, ===)</h3>
+                        <pre><code>// WRONG - causes bugs
+let x = 5;
+if (x = 10) {  // Assignment, not comparison! Always true.
+    console.log("This always runs");
+}
+
+// CORRECT
+if (x === 10) {
+    console.log("This runs conditionally");
+}
+
+// WRONG - common mistake in loops
+for (let i = 0; i = 10; i++) { // Infinite loop! Assignment always truthy
+    console.log(i);
+}
+
+// CORRECT
+for (let i = 0; i < 10; i++) {
+    console.log(i);
+}</code></pre>
+
+                        <h3>Pitfall 2: Floating Point Precision</h3>
+                        <pre><code>// WRONG - unreliable
+console.log(0.1 + 0.2 === 0.3); // false!
+
+// CORRECT - use tolerance
+let EPSILON = 0.0001;
+console.log(Math.abs((0.1 + 0.2) - 0.3) < EPSILON); // true
+
+// Alternative - use rounding
+console.log(+(0.1 + 0.2).toFixed(2) === 0.3); // true</code></pre>
+
+                        <h3>Pitfall 3: NaN Comparisons</h3>
+                        <pre><code>// WRONG
+console.log(NaN === NaN); // false
+console.log(NaN == NaN);  // false
+
+// CORRECT
+console.log(isNaN(NaN));          // true
+console.log(Number.isNaN(NaN));   // true
+
+// Check if value is actually a number
+function isValidNumber(value) {
+    return typeof value === 'number' && !isNaN(value);
+}
+console.log(isValidNumber(NaN));   // false
+console.log(isValidNumber(5));     // true</code></pre>
+
+                        <h3>Pitfall 4: Truthy/Falsy Confusion</h3>
+                        <pre><code>// WRONG - treats 0 as "no value"
+function processCount(count) {
+    count = count || 10; // If count = 0, becomes 10 (probably wrong)
+    console.log(count);
+}
+processCount(0); // 10, not 0!
+
+// CORRECT - check for undefined/null specifically
+function processCountCorrect(count) {
+    count = count ?? 10; // Nullish coalescing
+    // OR
+    count = count !== undefined ? count : 10;
+    console.log(count);
+}
+processCountCorrect(0); // 0</code></pre>
+
+                        <h3>Pitfall 5: String Concatenation vs Addition</h3>
+                        <pre><code>// WRONG - unintended string concatenation
+let result = 10 + 20 + "30"; // "3030", not 60
+console.log(result);
+
+// CORRECT - use parentheses or convert first
+let correct = 10 + 20 + parseInt("30"); // 60
+console.log(correct);
+
+// CORRECT - convert all to numbers
+let a = "10", b = "20", c = "30";
+let sum = +a + +b + +c; // 60
+console.log(sum);</code></pre>
+
+                        <h3>Pitfall 6: Short-Circuit Evaluation Side Effects</h3>
+                        <pre><code>// WRONG - function may not be called when expected
+function updateUser() {
+    console.log("Updating user...");
+    // complex update logic
+    return true;
+}
+
+let shouldUpdate = false;
+shouldUpdate && updateUser(); // updateUser not called (expected)
+
+// But what if you always want the function to run?
+let result = updateUser() && processData(); // Both run
+let result2 = processData() && updateUser(); // Both run if processData returns truthy
+
+// CORRECT - be explicit
+if (shouldUpdate) {
+    updateUser();
+}</code></pre>
+
+                        <h3>Pitfall 7: Operator Precedence Confusion</h3>
+                        <pre><code>// WRONG - misunderstood precedence
+let a = 5, b = 10, c = 15;
+let condition = a > 0 && b > 0 || c > 0 && a < b;
+// What's the actual order? Use parentheses!
+
+// CORRECT
+let correctCondition = (a > 0 && b > 0) || (c > 0 && a < b);
+
+// WRONG
+let value = 5 + 3 * 2 ** 2 / 2; // 11 (hard to read)
+
+// CORRECT
+let valueCorrect = 5 + ((3 * (2 ** 2)) / 2); // 11 but clearer</code></pre>
+
+                        <h3>Pitfall 8: Increment/Decrement in Complex Expressions</h3>
+                        <pre><code>// WRONG - hard to understand
+let x = 5;
+let y = x++ + ++x - x--; // -2? Let's not do this
+
+// CORRECT - separate operations
+let a = 5;
+let temp = a;
+a++;
+let b = ++a;
+a--;
+let c = a;
+let result = temp + b - c;</code></pre>
+
+                        <h3>Best Practices Summary</h3>
+                        <ul>
+                            <li>1. <strong>Always use strict equality (<code>===</code> and <code>!==</code>)</strong>
+                                unless you have a specific reason to use loose equality.</li>
+                            <li>2. <strong>Use parentheses to make precedence clear</strong>, even when not strictly
+                                necessary.</li>
+                            <li>3. <strong>Use <code>??</code> for default values</strong> when <code>0</code>,
+                                <code>""</code>, or <code>false</code> are valid values.
+                            </li>
+                            <li>4. <strong>Be explicit with conditions</strong> instead of relying on complex
+                                short-circuiting.</li>
+                            <li>5. <strong>Avoid side effects in logical expressions</strong> - functions should not be
+                                called within &amp;&amp; or || unless the intent is conditional execution.</li>
+                            <li>6. <strong>Use <code>Number.isNaN()</code></strong> instead of <code>isNaN()</code> for
+                                NaN checking.</li>
+                            <li>7. <strong>Separate increment/decrement operations</strong> from other expressions for
+                                clarity.</li>
+                            <li>8. <strong>Use descriptive variable names</strong> to make expressions self-documenting.
+                            </li>
+                            <li>9. <strong>Test edge cases</strong> like <code>null</code>, <code>undefined</code>,
+                                <code>0</code>, <code>""</code>, <code>NaN</code>.
+                            </li>
+                            <li>10. <strong>Comment complex expressions</strong> explaining what they do.</li>
+                        </ul>
+
+                        <hr>
+
+                        <!-- 9. PRACTICE EXERCISES -->
+                        <h2 id="practice-exercises">PRACTICE EXERCISES</h2>
+
+                        <h3>Exercise 1: Basic Calculator</h3>
+                        <pre><code>/*
+Create a calculator function that takes two numbers and an operator (+, -, *, /, %, **)
+Return the result or an appropriate error message for invalid operations.
+*/
+function calculator(num1, num2, operator) {
+    // Your code here
+}
+
+// Test cases
+console.log(calculator(10, 5, '+')); // 15
+console.log(calculator(10, 5, '-')); // 5
+console.log(calculator(10, 5, '*')); // 50
+console.log(calculator(10, 5, '/')); // 2
+console.log(calculator(10, 3, '%')); // 1
+console.log(calculator(2, 3, '**')); // 8
+console.log(calculator(10, 0, '/')); // Error: Division by zero
+console.log(calculator(10, 5, '&')); // Error: Invalid operator</code></pre>
+
+                        <h3>Exercise 2: Grade Calculator</h3>
+                        <pre><code>/*
+Write a function that takes a score (0-100) and returns:
+- "A" if score >= 90
+- "B" if score >= 80
+- "C" if score >= 70
+- "D" if score >= 60
+- "F" otherwise
+Also return "+" or "-" for grades (e.g., 95 = "A-", 88 = "B+")
+*/
+function calculateGrade(score) {
+    // Your code here
+}
+
+// Test cases
+console.log(calculateGrade(95)); // "A-"
+console.log(calculateGrade(88)); // "B+"
+console.log(calculateGrade(72)); // "C-"
+console.log(calculateGrade(60)); // "D"
+console.log(calculateGrade(45)); // "F"</code></pre>
+
+                        <h3>Exercise 3: Password Strength Checker</h3>
+                        <pre><code>/*
+Check password strength based on:
+- Length >= 8 (1 point)
+- Contains uppercase letter (1 point)
+- Contains lowercase letter (1 point)
+- Contains number (1 point)
+- Contains special character (!@#$%^&*) (1 point)
+Return: { score, strength: "weak"/"moderate"/"strong"/"very strong" }
+*/
+function checkPasswordStrength(password) {
+    // Your code here
+}
+
+// Test cases
+console.log(checkPasswordStrength("abc123")); // { score: 2, strength: "weak" }
+console.log(checkPasswordStrength("Password123")); // { score: 3, strength: "moderate" }
+console.log(checkPasswordStrength("Pass123!@#")); // { score: 5, strength: "very strong" }</code></pre>
+
+                        <h3>Exercise 4: Age Verification System</h3>
+                        <pre><code>/*
+Create a function that verifies if a person can:
+- Vote (age >= 18)
+- Drink alcohol (age >= 21) [US standard]
+- Rent a car (age >= 25)
+- Get senior discount (age >= 65)
+Return an object with boolean values for each.
+*/
+function verifyAge(age) {
+    // Your code here
+}
+
+// Test cases
+console.log(verifyAge(17)); // { canVote: false, canDrink: false, canRentCar: false, seniorDiscount: false }
+console.log(verifyAge(20)); // { canVote: true, canDrink: false, canRentCar: false, seniorDiscount: false }
+console.log(verifyAge(30)); // { canVote: true, canDrink: true, canRentCar: true, seniorDiscount: false }
+console.log(verifyAge(70)); // { canVote: true, canDrink: true, canRentCar: true, seniorDiscount: true }</code></pre>
+
+                        <h3>Exercise 5: Discount Calculator</h3>
+                        <pre><code>/*
+Calculate final price after applying discounts:
+- If user is member: 10% off
+- If purchase > $100: additional 5% off
+- If holiday season: additional 10% off
+- Maximum total discount: 25%
+*/
+function calculateDiscount(price, isMember, purchaseAmount, isHoliday) {
+    // Your code here
+}
+
+// Test cases
+console.log(calculateDiscount(200, true, 200, true)); // Max 25% off: 150
+console.log(calculateDiscount(50, true, 50, false)); // Member only: 45
+console.log(calculateDiscount(150, false, 150, true)); // Holiday only: 135
+console.log(calculateDiscount(80, true, 80, false)); // Member only: 72</code></pre>
+
+                        <h3>Exercise 6: Login Attempt Limiter</h3>
+                        <pre><code>/*
+Create a login system that tracks attempts:
+- Max 3 attempts
+- After 3 failed attempts, lock account for 5 minutes
+- Return status: "success", "locked", or "failed" with remaining attempts
+*/
+class LoginSystem {
+    constructor() {
+        this.attempts = 0;
+        this.lockedUntil = null;
+    }
+    
+    attemptLogin(username, password) {
+        // Your code here
+    }
+}
+
+// Test
+let login = new LoginSystem();
+console.log(login.attemptLogin("user", "wrong")); // { status: "failed", remaining: 2 }
+console.log(login.attemptLogin("user", "wrong")); // { status: "failed", remaining: 1 }
+console.log(login.attemptLogin("user", "wrong")); // { status: "failed", remaining: 0 }
+console.log(login.attemptLogin("user", "wrong")); // { status: "locked", remaining: 0 }</code></pre>
+
+                        <h3>Exercise 7: Shopping Cart with Operators</h3>
+                        <pre><code>/*
+Implement a shopping cart with:
+- Add item (name, price, quantity)
+- Remove item
+- Calculate subtotal
+- Apply tax (10%)
+- Apply shipping ($5 or free if > $50)
+- Apply coupon codes (10% off with code "SAVE10", 20% off with "SAVE20")
+*/
+class ShoppingCart {
+    constructor() {
+        this.items = [];
+    }
+    
+    addItem(name, price, quantity = 1) {
+        // Your code here
+    }
+    
+    removeItem(name) {
+        // Your code here
+    }
+    
+    calculateTotal(couponCode = null) {
+        // Your code here
+    }
+}
+
+// Test
+let cart = new ShoppingCart();
+cart.addItem("Laptop", 1000, 1);
+cart.addItem("Mouse", 25, 2);
+console.log(cart.calculateTotal("SAVE10")); // Should calculate properly</code></pre>
+
+                        <h3>Exercise 8: FizzBuzz with Operators</h3>
+                        <pre><code>/*
+Write FizzBuzz but using logical operators:
+- For multiples of 3: "Fizz"
+- For multiples of 5: "Buzz"
+- For multiples of both: "FizzBuzz"
+- Otherwise: the number
+*/
+function fizzBuzz(n) {
+    // Your code here - use logical operators, not if/else
+    return (n % 3 === 0 && n % 5 === 0 && "FizzBuzz") || 
+           (n % 3 === 0 && "Fizz") || 
+           (n % 5 === 0 && "Buzz") || 
+           n;
+}
+
+// Test
+for (let i = 1; i <= 20; i++) {
+    console.log(fizzBuzz(i));
+}</code></pre>
+
+                        <h3>Exercise 9: Temperature Converter</h3>
+                        <pre><code>/*
+Convert between Celsius, Fahrenheit, and Kelvin
+Return converted value or error message
+Formulas:
+- C to F: (C * 9/5) + 32
+- C to K: C + 273.15
+- F to C: (F - 32) * 5/9
+- F to K: (F - 32) * 5/9 + 273.15
+- K to C: K - 273.15
+- K to F: (K - 273.15) * 9/5 + 32
+*/
+function convertTemperature(value, fromUnit, toUnit) {
+    // Your code here
+}
+
+// Test cases
+console.log(convertTemperature(100, 'C', 'F')); // 212
+console.log(convertTemperature(32, 'F', 'C')); // 0
+console.log(convertTemperature(0, 'C', 'K')); // 273.15
+console.log(convertTemperature(273.15, 'K', 'C')); // 0
+console.log(convertTemperature(100, 'C', 'X')); // Error: Invalid unit</code></pre>
+
+                        <h3>Exercise 10: Complex Validation</h3>
+                        <pre><code>/*
+Validate a user registration form with:
+- Username: 3-20 chars, alphanumeric + underscore
+- Email: valid format
+- Password: min 8 chars, 1 uppercase, 1 lowercase, 1 number
+- Confirm password: matches password
+- Age: 13-120
+- Terms accepted: must be true
+Return array of error messages (empty if valid)
+*/
+function validateRegistration(form) {
+    // Your code here
+}
+
+// Test
+let form = {
+    username: "john_doe",
+    email: "john@example.com",
+    password: "Pass1234",
+    confirmPassword: "Pass1234",
+    age: 25,
+    termsAccepted: true
+};
+console.log(validateRegistration(form)); // []
+
+let invalidForm = {
+    username: "j", // too short
+    email: "invalid-email",
+    password: "pass", // too weak
+    confirmPassword: "different",
+    age: 10, // too young
+    termsAccepted: false
+};
+console.log(validateRegistration(invalidForm)); 
+// Should return multiple error messages</code></pre>
+
+                        <hr>
+
+                        <h2>SUMMARY</h2>
+                        <h3>Key Takeaways</h3>
+                        <ul>
+                            <li><strong>Arithmetic Operators</strong>: Used for mathematical calculations. Be aware of
+                                type coercion with <code>+</code> and floating-point precision issues.</li>
+                            <li><strong>Assignment Operators</strong>: Not just <code>=</code>, but compound operators
+                                that combine assignment with arithmetic or logical operations. Modern JavaScript added
+                                <code>&amp;&amp;=</code>, <code>||=</code>, and <code>??=</code>.
+                            </li>
+                            <li><strong>Comparison Operators</strong>: Always prefer <code>===</code> and
+                                <code>!==</code> over <code>==</code> and <code>!=</code> to avoid unexpected type
+                                coercion.
+                            </li>
+                            <li><strong>Logical Operators</strong>:
+                                <ul>
+                                    <li><code>&amp;&amp;</code> returns first falsy or last truthy</li>
+                                    <li><code>||</code> returns first truthy or last falsy</li>
+                                    <li><code>!</code> inverts boolean</li>
+                                    <li><code>??</code> only considers <code>null</code>/<code>undefined</code> as "no
+                                        value"</li>
+                                </ul>
+                            </li>
+                            <li><strong>Short-Circuit Evaluation</strong>: Logical operators don't evaluate the right
+                                side if not needed. Useful for guards and defaults, but be careful with function calls
+                                that have side effects.</li>
+                            <li><strong>Operator Precedence</strong>: Know the order of operations. When in doubt, use
+                                parentheses.</li>
+                            <li><strong>Edge Cases</strong>: Always test with <code>null</code>, <code>undefined</code>,
+                                <code>0</code>, <code>""</code>, <code>NaN</code>, and other falsy values.
+                            </li>
+                            <li><strong>Readability</strong>: Write code for humans first. Complex expressions should be
+                                broken down or commented.</li>
+                        </ul>
+
+                        <h3>Quick Reference Card</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Operators</th>
+                                    <th>Notes</th>
+                                </tr>
+                                <tr>
+                                    <td>Arithmetic</td>
+                                    <td><code>+ - * / % ** ++ --</code></td>
+                                    <td>Watch for string concatenation with <code>+</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Assignment</td>
+                                    <td><code>= += -= *= /= %= **=</code></td>
+                                    <td>Right-associative</td>
+                                </tr>
+                                <tr>
+                                    <td>Comparison</td>
+                                    <td><code>=== !== > < >= <=</code></td>
+                                    <td>Use strict equality</td>
+                                </tr>
+                                <tr>
+                                    <td>Logical</td>
+                                    <td><code>&amp;&amp; || ! ??</code></td>
+                                    <td>Short-circuit evaluation</td>
+                                </tr>
+                                <tr>
+                                    <td>Modern</td>
+                                    <td><code>&amp;&amp;= ||= ??=</code></td>
+                                    <td>ES2021+</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h3>Remember</h3>
+                        <ul>
+                            <li><strong>Clarity &gt; Cleverness</strong>: Your code should be easy to understand</li>
+                            <li><strong>Test Edge Cases</strong>: Always consider what happens with unexpected inputs
+                            </li>
+                            <li><strong>Use Strict Equality</strong>: Avoid the pitfalls of type coercion</li>
+                            <li><strong>Comment Complex Logic</strong>: If an expression is non-obvious, explain it</li>
+                            <li><strong>Keep Learning</strong>: JavaScript evolves, new operators and features appear
+                                regularly</li>
+                        </ul>
+                        <p><em>This comprehensive guide should give you a solid foundation in JavaScript operators.
+                                Practice regularly, experiment with the examples, and always be curious about how
+                                expressions evaluate!</em></p>
+
+                        <!-- end of every single line from source material (preserved word for word) -->
+    </div>
+</body>
+
+</html>

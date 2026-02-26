@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- responsive meta tag – mobile first -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 3 · CSS Layouts & Responsive Design · complete notes · no omissions</title>
+    <style>
+        /* -------------------- RESET + BASE (mobile first) -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e8f0fe;
+            /* soft blue */
+            color: #1a2e4d;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main container – fully responsive, uses relative units */
+        .landing-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -25px #1e3b5c;
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+            transition: padding 0.2s;
+        }
+
+        /* typography scales fluidly */
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #1f4b8a, #1b6c9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            word-break: break-word;
+        }
+
+        .block-badge {
+            background: #2c6b9e;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 500;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: #1f6290;
+            border-left: 8px solid #4c9fd8;
+            padding-left: 1.2rem;
+            margin: 0.8rem 0 2rem;
+            font-weight: 360;
+        }
+
+        /* -------------------- responsive grid – mobile → desktop -------------------- */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0 1.5rem;
+        }
+
+        @media (min-width: 680px) {
+            .overview-grid {
+                grid-template-columns: 2.2fr 1.2fr;
+            }
+
+            .landing-wrapper {
+                padding: 2.2rem 2rem;
+            }
+        }
+
+        .card {
+            background: #f4fafd;
+            border-radius: 2rem;
+            padding: 1.5rem 1.5rem;
+            border: 1px solid #bdd9f0;
+            box-shadow: 0 12px 28px -15px #1f4b77;
+            height: fit-content;
+        }
+
+        .card h2 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            color: #1d62a0;
+            border-bottom: 3px solid #68b6e6;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .learning-list {
+            list-style: none;
+        }
+
+        .learning-list li {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        }
+
+        .learning-list li::before {
+            content: "📐";
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .topic-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0;
+        }
+
+        .topic-tag {
+            background: white;
+            border: 1px solid #4a9fd8;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-weight: 500;
+            color: #1a5490;
+            box-shadow: 0 4px 10px #e5f0fc;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 400px) {
+            .topic-tag {
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* resource block – full width flexible */
+        .resource-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .resource-block {
+            background: #e1f0fd;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.2rem;
+            border-left: 8px solid #3079b3;
+        }
+
+        .resource-block p {
+            font-weight: 600;
+            color: #17507c;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            margin-bottom: 0.8rem;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .page-link {
+            background: white;
+            text-decoration: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            color: #1a5490;
+            font-weight: 550;
+            border: 1px solid #92c1ec;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            box-shadow: 0 3px 10px #e9f2fa;
+            word-break: break-word;
+        }
+
+        /* topic sections */
+        .topic-section {
+            margin: 2.8rem 0 2rem;
+        }
+
+        .topic-section h3 {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            color: #1d62a0;
+            border-left: 10px solid #7ac0f0;
+            padding-left: 1.2rem;
+            margin: 2rem 0 1.5rem;
+            line-height: 1.2;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 500px) {
+            .mini-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .mini-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .topic-card {
+            background: #f7fcff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #b7d8f7;
+            height: 100%;
+        }
+
+        .topic-card h4 {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            color: #1d62a0;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px dashed #77b9ec;
+            padding-bottom: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .dot-list {
+            list-style: none;
+        }
+
+        .dot-list li {
+            margin: 0.6rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .dot-list li::before {
+            content: "✦";
+            color: #2b78b3;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+
+        /* activities – flex with wrapping */
+        .activity-case {
+            background: #e5f2fd;
+            border-radius: 2rem;
+            padding: 1.8rem 1.2rem;
+            margin: 2.5rem 0;
+            border: 2px solid #3c8ec9;
+        }
+
+        .flex-act {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .act-item {
+            background: white;
+            border-radius: 1.6rem;
+            padding: 1.5rem;
+            flex: 1 1 240px;
+            min-width: 200px;
+            border-bottom: 6px solid #1f6db0;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .badge {
+            background: #256dad;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        /* assessment table – responsive with overflow */
+        .assessment-zone {
+            background: #e0effb;
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.2rem;
+            margin: 2.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(15, 50, 90, 0.12);
+            font-size: clamp(0.85rem, 2.8vw, 1rem);
+        }
+
+        th {
+            background: #2b6fa8;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem 0.8rem;
+            border-bottom: 1px solid #b7d9f5;
+            background: #f6fbfe;
+        }
+
+        @media (max-width: 500px) {
+            .table-wrapper {
+                overflow-x: auto;
+                display: block;
+                width: 100%;
+            }
+        }
+
+        .quiz-mini {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        @media (min-width: 550px) {
+            .quiz-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .quiz-grid div {
+            background: #e6f2fe;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            border: 1px solid #b1d1f0;
+        }
+
+        /* footer + project block */
+        .footer-links {
+            background: #ddecfa;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            margin: 2.5rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        @media (min-width: 700px) {
+            .footer-links {
+                justify-content: space-between;
+                text-align: left;
+            }
+        }
+
+        .btn-project {
+            background: #1f5d96;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 14px -6px #164570;
+            border: 2px solid white;
+            white-space: wrap;
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #d3e6fc, #f2faff, #d3e6fc);
+            margin: 2rem 0;
+        }
+
+        .bottom-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .bottom-nav a {
+            background: #e2f0fd;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #165788;
+            font-weight: 500;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            border: 1px solid #aac9ed;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            color: #1f5482;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        code {
+            word-break: break-word;
+            background: #eaf3fc;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+        }
+
+        /* additional styles for long notes – preserve everything exactly */
+        .deep-dive {
+            background: #f9f9ff;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            border: 2px solid #3a7ca5;
+        }
+
+        .deep-dive h1,
+        .deep-dive h2,
+        .deep-dive h3,
+        .deep-dive h4 {
+            color: #1d3b5c;
+        }
+
+        .deep-dive pre {
+            background: #1e2b3c;
+            color: #f1f9ff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            margin: 1.2rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .deep-dive table.alt {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin: 1rem 0;
+        }
+
+        .deep-dive table.alt th {
+            background: #2b6fa8;
+            color: white;
+            padding: 0.6rem;
+        }
+
+        .deep-dive table.alt td {
+            background: #ecf5fd;
+            padding: 0.6rem;
+            border: 1px solid #b9d5f0;
+        }
+
+        hr.dashed {
+            border: 1px dashed #4682b4;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-wrapper">
+        <!-- header -->
+        <h1>📐 CSS LAYOUTS & RESPONSIVE DESIGN</h1>
+        <div class="block-badge">block three · flexbox · media queries · mobile‑first</div>
+        <div class="subhead">build flexible, device‑friendly layouts with modern CSS</div>
+
+        <!-- objectives + topics grid (stack → two columns) -->
+        <div class="overview-grid">
+            <div class="card">
+                <h2>📌 learning objectives</h2>
+                <ul class="learning-list">
+                    <li>Implement 1D layouts effectively using Flexbox.</li>
+                    <li>Apply principles of Responsive Web Design (RWD).</li>
+                    <li>Create responsive navigation bars & multi‑column layouts.</li>
+                    <li>Use Media Queries to adapt styles based on viewport size.</li>
+                    <li>Understand the viewport meta tag and its importance.</li>
+                    <li>Combine flexbox & media queries for complete page layouts.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📘 core topics</h2>
+                <div class="topic-cloud">
+                    <span class="topic-tag">flex container/item</span>
+                    <span class="topic-tag">justify-content</span>
+                    <span class="topic-tag">align-items</span>
+                    <span class="topic-tag">flex-grow/shrink</span>
+                    <span class="topic-tag">flex-basis</span>
+                    <span class="topic-tag">flex shorthand</span>
+                    <span class="topic-tag">responsive nav</span>
+                    <span class="topic-tag">card layout</span>
+                    <span class="topic-tag">RWD principles</span>
+                    <span class="topic-tag">viewport meta</span>
+                    <span class="topic-tag">@media queries</span>
+                    <span class="topic-tag">min-width / max-width</span>
+                    <span class="topic-tag">mobile‑first</span>
+                    <span class="topic-tag">breakpoints</span>
+                    <span class="topic-tag">flex + MQ</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- module pages (responsive cards) -->
+        <div class="resource-links">
+            <div class="resource-block">
+                <p>📄 module pages – deep dives</p>
+                <div class="page-grid">
+                    <a href="flex-intro.html" target="_blank" rel="noopener noreferrer" class="page-link">🧩 1. intro to
+                        flexbox</a>
+                    <a href="flex-main-axis.html" target="_blank" rel="noopener noreferrer" class="page-link">➡️ 2. main
+                        axis (justify‑content)</a>
+                    <a href="flex-cross-axis.html" target="_blank" rel="noopener noreferrer" class="page-link">⬇️ 3.
+                        cross axis (align‑items)</a>
+                    <a href="flex-grow-shrink.html" target="_blank" rel="noopener noreferrer" class="page-link">📈 4.
+                        flex grow/shrink</a>
+                    <a href="flex-layouts.html" target="_blank" rel="noopener noreferrer" class="page-link">🏗️ 5. nav &
+                        cards</a>
+                    <a href="rwd-intro.html" target="_blank" rel="noopener noreferrer" class="page-link">📱 6. RWD &
+                        viewport</a>
+                    <a href="media-queries.html" target="_blank" rel="noopener noreferrer" class="page-link">🎚️ 7.
+                        media queries</a>
+                    <a href="flex-plus-mq.html" target="_blank" rel="noopener noreferrer" class="page-link">🔁 8. flex +
+                        MQ together</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- flexbox & alignment deep dive -->
+        <div class="topic-section">
+            <h3>🧩 FLEXBOX FOUNDATIONS</h3>
+            <div class="mini-grid">
+                <div class="topic-card">
+                    <h4>🎯 container & items</h4>
+                    <ul class="dot-list">
+                        <li>display: flex (block vs inline-flex)</li>
+                        <li>flex container, flex items</li>
+                        <li>main axis / cross axis</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>⚙️ main axis</h4>
+                    <ul class="dot-list">
+                        <li>justify-content: flex-start, center, space-between, space-around, space-evenly</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📏 cross axis</h4>
+                    <ul class="dot-list">
+                        <li>align-items: stretch, center, flex-start, flex-end, baseline</li>
+                        <li>align-self on children</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- second row for flexibility -->
+            <div class="mini-grid" style="margin-top:1.5rem;">
+                <div class="topic-card">
+                    <h4>📈 flexibility</h4>
+                    <ul class="dot-list">
+                        <li>flex-grow (proportional distribution)</li>
+                        <li>flex-shrink (how items shrink)</li>
+                        <li>flex-basis (initial size)</li>
+                        <li>flex: 1 1 auto (shorthand)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🧱 practical layouts</h4>
+                    <ul class="dot-list">
+                        <li>responsive navigation (horizontal → stacked)</li>
+                        <li>card gallery with flex-wrap</li>
+                        <li>centering with margin: auto</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📐 ordering & wrapping</h4>
+                    <ul class="dot-list">
+                        <li>flex-wrap: wrap / nowrap</li>
+                        <li>align-content for multi-line</li>
+                        <li>order property</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ############################################# -->
+        <!-- COMPLETE JUSTIFY-CONTENT NOTES - EVERY LINE   -->
+        <!-- ############################################# -->
+        <div class="deep-dive">
+            <!-- EVERY LINE FROM THE PROVIDED STUDY NOTES EXACTLY AS WRITTEN -->
+            <h1>Flexbox: Main Axis Alignment with `justify-content`</h1>
+            <h2>Comprehensive Guide</h2>
+            <hr class="dashed">
+            <h1>PART ONE: UNDERSTANDING THE FLEXBOX MODEL</h1>
+            <h2>1. Introduction to Flexbox Layout</h2>
+            <h3>1.1 What is Flexbox?</h3>
+            <p>Flexbox (Flexible Box Layout) is a one-dimensional layout model in CSS designed to distribute space and
+                align items within a container—even when the size of the items is unknown or dynamic. The primary
+                characteristic of Flexbox is its ability to give items flexibility to expand, shrink, and align
+                efficiently.</p>
+            <h3>1.2 The Concept of Axes in Flexbox</h3>
+            <p>To master `justify-content`, you must first understand the two fundamental axes of Flexbox:</p>
+            <p><strong>The Main Axis:</strong><br>
+                - Defined by the `flex-direction` property<br>
+                - This is the primary direction in which flex items are laid out<br>
+                - `justify-content` works EXCLUSIVELY on this main axis</p>
+            <p><strong>The Cross Axis:</strong><br>
+                - Runs perpendicular to the main axis<br>
+                - Controlled by properties like `align-items` and `align-self`</p>
+            <h3>1.3 How flex-direction Affects the Main Axis</h3>
+            <p>The `flex-direction` property determines which direction is the main axis:</p>
+            <table class="alt">
+                <tr>
+                    <th>flex-direction</th>
+                    <th>Main Axis Direction</th>
+                    <th>justify-content Controls</th>
+                </tr>
+                <tr>
+                    <td>`row` (default)</td>
+                    <td>Horizontal (left to right)</td>
+                    <td>Horizontal alignment</td>
+                </tr>
+                <tr>
+                    <td>`row-reverse`</td>
+                    <td>Horizontal (right to left)</td>
+                    <td>Horizontal alignment (reversed)</td>
+                </tr>
+                <tr>
+                    <td>`column`</td>
+                    <td>Vertical (top to bottom)</td>
+                    <td>Vertical alignment</td>
+                </tr>
+                <tr>
+                    <td>`column-reverse`</td>
+                    <td>Vertical (bottom to top)</td>
+                    <td>Vertical alignment (reversed)</td>
+                </tr>
+            </table>
+            <p><strong>Visual Representation:</strong></p>
+            <pre>```
+flex-direction: row (default)
+Main Axis → (left to right)
+┌─────────────────────────────────┐
+│ [Item 1] [Item 2] [Item 3]      │
+└─────────────────────────────────┘
+
+flex-direction: column
+Main Axis ↓ (top to bottom)
+┌─────────────────────────────────┐
+│ [Item 1]                        │
+│ [Item 2]                        │
+│ [Item 3]                        │
+└─────────────────────────────────┘
+```</pre>
+            <h3>1.4 Prerequisites for Using justify-content</h3>
+            <p>Before applying `justify-content`, you must establish a flex container:</p>
+            <pre>```css
+.container {
+    display: flex;        /* Creates a block-level flex container */
+    /* OR */
+    display: inline-flex; /* Creates an inline-level flex container */
+    
+    /* Now justify-content will work */
+    justify-content: value;
+}
+```</pre>
+            <hr class="dashed">
+            <h1>PART TWO: THE JUSTIFY-CONTENT PROPERTY - DEEP DIVE</h1>
+            <h2>2. Understanding justify-content</h2>
+            <h3>2.1 Definition and Purpose</h3>
+            <p>The `justify-content` property defines how the browser distributes space <strong>between and
+                    around</strong> flex items along the main axis of the flex container. It helps manage:<br>
+                - Alignment of items when they don't take up all available space<br>
+                - Distribution of extra space in the container<br>
+                - Positioning of items relative to each other</p>
+            <h3>2.2 The justify-content Syntax</h3>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: flex-start | flex-end | center | 
+                     space-between | space-around | space-evenly | 
+                     start | end | left | right | 
+                     stretch | safe | unsafe;
+}
+```</pre>
+            <h3>2.3 Browser Support</h3>
+            <p>`justify-content` is supported in all modern browsers:<br>
+                - Chrome: 29+ (full support)<br>
+                - Firefox: 28+ (full support)<br>
+                - Safari: 9+ (full support)<br>
+                - Edge: 12+ (full support)<br>
+                - IE: 11 (partial support, no `space-evenly`)</p>
+            <hr class="dashed">
+            <h2>3. Comprehensive Guide to All justify-content Values</h2>
+            <h3>3.1 flex-start (Default Value)</h3>
+            <p><strong>What it does:</strong> Items are packed toward the start of the main axis.</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - First item is placed at the main-start edge<br>
+                - Subsequent items follow in order<br>
+                - No extra space is distributed between items<br>
+                - All remaining space is placed at the main-end</p>
+            <p><strong>Visual Examples:</strong></p>
+            <p>With `flex-direction: row`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│ [1] [2] [3]                    │
+│ ↑                              │
+│ main-start                     │
+└─────────────────────────────────┘
+      Extra space →
+```</pre>
+            <p>With `flex-direction: column`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│ [1]                             │
+│ [2]                             │
+│ [3]                             │
+│ ↑                               │
+│ main-start                      │
+│                                 │
+│                                 │
+│         Extra space ↓           │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```html
+<div class="container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+</div>
+```</pre>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: flex-start; /* default value, can be omitted */
+    border: 2px dashed #333;
+    padding: 10px;
+}
+
+.item {
+    width: 80px;
+    height: 80px;
+    background: #4CAF50;
+    margin: 5px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+```</pre>
+            <p><strong>Use Cases:</strong><br>
+                - Default layout for navigation bars<br>
+                - Left-aligned content in Western languages<br>
+                - When you want items to maintain their natural order<br>
+                - Building progressive disclosure interfaces</p>
+            <h3>3.2 flex-end</h3>
+            <p><strong>What it does:</strong> Items are packed toward the end of the main axis.</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - First item is placed at the main-end edge<br>
+                - Items flow backward from the end<br>
+                - All remaining space is placed at the main-start<br>
+                - Great for right-to-left language support or specific design patterns</p>
+            <p><strong>Visual Examples:</strong></p>
+            <p>With `flex-direction: row`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│                    [1] [2] [3]  │
+│                              ↑  │
+│                          main-end│
+└─────────────────────────────────┘
+← Extra space
+```</pre>
+            <p>With `flex-direction: column`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│                                 │
+│                                 │
+│         Extra space ↑           │
+│                               │
+│ [1]                           │
+│ [2]                           │
+│ [3]                           │
+│ ↑                             │
+│ main-end                      │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: flex-end;
+    border: 2px dashed #333;
+    padding: 10px;
+}
+
+/* Result: All items will be flush against the right edge */
+```</pre>
+            <p><strong>Use Cases:</strong><br>
+                - "Sign In" or "Register" links in headers<br>
+                - Right-aligned navigation menus<br>
+                - Pagination controls at the end of a section<br>
+                - Floating action buttons<br>
+                - Right-to-left language layouts</p>
+            <h3>3.3 center</h3>
+            <p><strong>What it does:</strong> Items are centered along the main axis.</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - Items are packed together as a single unit<br>
+                - This unit is centered in the container<br>
+                - Space is equally distributed on both sides of the group<br>
+                - Perfect for symmetrical layouts</p>
+            <p><strong>Visual Examples:</strong></p>
+            <p>With `flex-direction: row`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│        [1] [2] [3]             │
+│         ↑ centered              │
+└─────────────────────────────────┘
+← space → ← items → ← space →
+```</pre>
+            <p>With `flex-direction: column`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│                                 │
+│           [1]                   │
+│           [2]                   │
+│           [3]                   │
+│          centered ↑             │
+│                                 │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: center;
+    border: 2px dashed #333;
+    padding: 10px;
+}
+```</pre>
+            <p><strong>Advanced Centering Pattern:</strong></p>
+            <pre>```css
+.perfect-center {
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;      /* Centers vertically */
+    min-height: 100vh;        /* Takes full viewport height */
+}
+```</pre>
+            <p><strong>Use Cases:</strong><br>
+                - Logo containers<br>
+                - Modal and dialog boxes<br>
+                - Loading spinners<br>
+                - Centered navigation items<br>
+                - Hero section content<br>
+                - Login forms</p>
+            <h3>3.4 space-between</h3>
+            <p><strong>What it does:</strong> Items are evenly distributed with:<br>
+                - First item at the main-start<br>
+                - Last item at the main-end<br>
+                - Equal space between each pair of items</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - No space at the beginning or end<br>
+                - All extra space is converted into gaps between items<br>
+                - If there are 3 items, there will be 2 equal gaps<br>
+                - Mathematically: gaps = (container width - total items width) / (items count - 1)</p>
+            <p><strong>Visual Examples:</strong></p>
+            <p>With `flex-direction: row`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│ [1]       [2]       [3]        │
+│ ←gap→    ←gap→                  │
+└─────────────────────────────────┘
+```</pre>
+            <p>With `flex-direction: column`:</p>
+            <pre>```
+┌─────────────────────────────────┐
+│ [1]                             │
+│                                 │
+│               gap ↑             │
+│                                 │
+│ [2]                             │
+│                                 │
+│               gap ↑             │
+│                                 │
+│ [3]                             │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: space-between;
+    border: 2px dashed #333;
+    padding: 10px;
+}
+```</pre>
+            <p><strong>Real-World Example - Navigation Bar:</strong></p>
+            <pre>```html
+<nav class="navbar">
+    <div class="logo">MySite</div>
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+    </div>
+    <div class="user-menu">Profile</div>
+</nav>
+```</pre>
+            <pre>```css
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #333;
+    color: white;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px; /* Modern alternative to margins */
+}
+```</pre>
+            <p><strong>Use Cases:</strong><br>
+                - Navigation bars with logo on left, links center, profile on right<br>
+                - Article layouts with publish date on left, author on right<br>
+                - Pricing cards with features list<br>
+                - Toolbar layouts<br>
+                - Footer with copyright left and social icons right</p>
+            <h3>3.5 space-around</h3>
+            <p><strong>What it does:</strong> Items are evenly distributed with equal space around each item.</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - Space before the first item and after the last item is HALF the space between items<br>
+                - Each item has a margin of space on both sides<br>
+                - The gaps between items are the same, but the edge gaps are half that size<br>
+                - Creates a balanced look with breathing room on all sides</p>
+            <p><strong>Visual Example:</strong></p>
+            <p>With 3 items of 50px each in a 400px container:<br>
+                - Total items width: 150px<br>
+                - Available space: 250px<br>
+                - Number of gaps: 4 (before, between1, between2, after)<br>
+                - Each gap: 62.5px<br>
+                - Edge gaps: 31.25px each</p>
+            <pre>```
+┌─────────────────────────────────┐
+│   [1]   [2]   [3]   │
+│ ↑    ↑    ↑    ↑    ↑           │
+│31.25 62.5 62.5 31.25 px        │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: space-around;
+    border: 2px dashed #333;
+    padding: 10px;
+}
+
+.item {
+    width: 80px;
+    height: 80px;
+    background: #2196F3;
+}
+```</pre>
+            <p><strong>Use Cases:</strong><br>
+                - Gallery layouts where items need equal breathing room<br>
+                - Tab interfaces<br>
+                - Product listings in e-commerce<br>
+                - Icon toolbars<br>
+                - Footer link sections</p>
+            <h3>3.6 space-evenly</h3>
+            <p><strong>What it does:</strong> Items are distributed so that the space between ANY two items (including
+                the edges) is exactly equal.</p>
+            <p><strong>Detailed Behavior:</strong><br>
+                - All gaps are identical in size<br>
+                - Space before first item = Space between items = Space after last item<br>
+                - Most mathematically perfect distribution<br>
+                - Newest addition to the Flexbox specification</p>
+            <p><strong>Visual Example:</strong></p>
+            <p>With 3 items in a 400px container:<br>
+                - Each gap: (400px - 150px) / 4 = 62.5px</p>
+            <pre>```
+┌─────────────────────────────────┐
+│    [1]    [2]    [3]    │
+│ ↑     ↑     ↑     ↑     ↑       │
+│62.5  62.5  62.5  62.5  62.5 px  │
+└─────────────────────────────────┘
+```</pre>
+            <p><strong>Code Example:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    border: 2px dashed #333;
+    padding: 10px;
+}
+```</pre>
+            <p><strong>Comparison Table: space-between vs space-around vs space-evenly:</strong></p>
+            <table class="alt">
+                <tr>
+                    <th>Property</th>
+                    <th>Before 1st</th>
+                    <th>Between Items</th>
+                    <th>After Last</th>
+                </tr>
+                <tr>
+                    <td>space-between</td>
+                    <td>0</td>
+                    <td>Equal</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>space-around</td>
+                    <td>Half</td>
+                    <td>Equal</td>
+                    <td>Half</td>
+                </tr>
+                <tr>
+                    <td>space-evenly</td>
+                    <td>Equal</td>
+                    <td>Equal</td>
+                    <td>Equal</td>
+                </tr>
+            </table>
+            <p><strong>Use Cases:</strong><br>
+                - Dashboard widgets<br>
+                - Statistics displays<br>
+                - Split navigation items<br>
+                - Timeline components<br>
+                - Equal spacing in card layouts</p>
+            <hr class="dashed">
+            <h2>4. Advanced Concepts and Variations</h2>
+            <h3>4.1 Working with flex-direction: column</h3>
+            <p>When using `flex-direction: column`, `justify-content` works vertically:</p>
+            <pre>```css
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    height: 400px;  /* Must have a defined height */
+    justify-content: space-between;
+}
+```</pre>
+            <p><strong>Important Notes for Column Layouts:</strong><br>
+                - Container must have a defined height<br>
+                - Without height, vertical space can't be distributed<br>
+                - Items will only take space they need</p>
+            <h3>4.2 The gap Property</h3>
+            <p>Modern browsers support the `gap` property, which creates fixed gutters between flex items:</p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Creates 20px gap regardless of justify-content */
+}
+```</pre>
+            <p><strong>Gap vs justify-content:</strong><br>
+                - `gap` creates FIXED spacing between items<br>
+                - `justify-content` distributes VARIABLE space<br>
+                - They can work together:</p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Items centered with 30px between them */
+}
+```</pre>
+            <h3>4.3 The safe and unsafe Keywords</h3>
+            <p>These keywords modify how alignment behaves when items overflow:</p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: safe center; /* Prevents data loss */
+    /* OR */
+    justify-content: unsafe center; /* Default behavior */
+}
+```</pre>
+            <p>- <strong>safe</strong>: If items overflow, alignment changes to `flex-start` to prevent clipping<br>
+                - <strong>unsafe</strong>: Allows overflow even if items get clipped (default)</p>
+            <h3>4.4 Working with flex-wrap</h3>
+            <p>When `flex-wrap: wrap` is enabled, `justify-content` distributes items in each line independently:</p>
+            <pre>```css
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 500px;
+}
+
+.item {
+    width: 150px; /* Three items won't fit on one line */
+    height: 100px;
+}
+```</pre>
+            <p><strong>Result:</strong></p>
+            <pre>```
+Line 1: [150px]   [150px]   [150px]? No, only 2 fit
+Line 1: [1]                 [2] (space-between applies)
+Line 2: [3]                               [empty]
+```</pre>
+            <hr class="dashed">
+            <h1>PART THREE: PRACTICAL APPLICATIONS AND EXAMPLES</h1>
+            <h2>5. Real-World Layout Patterns</h2>
+            <h3>5.1 Pattern 1: The Holy Grail Navigation</h3>
+            <pre>```html
+<header class="site-header">
+    <div class="logo">Brand</div>
+    <nav class="main-nav">
+        <a href="#">Products</a>
+        <a href="#">Solutions</a>
+        <a href="#">Pricing</a>
+    </nav>
+    <div class="cta-buttons">
+        <button>Sign In</button>
+        <button>Sign Up</button>
+    </div>
+</header>
+```</pre>
+            <pre>```css
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex: 1; /* Takes available space */
+    margin: 0 2rem;
+}
+
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+```</pre>
+            <h3>5.2 Pattern 2: Card Grid with Mixed Alignment</h3>
+            <pre>```html
+<div class="card-grid">
+    <div class="card">
+        <img src="image1.jpg" alt="Product">
+        <h3>Product Name</h3>
+        <p>Description here</p>
+        <div class="card-footer">
+            <span>$19.99</span>
+            <button>Buy</button>
+        </div>
+    </div>
+    <!-- More cards... -->
+</div>
+```</pre>
+            <pre>```css
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f5f5f5;
+}
+```</pre>
+            <h3>5.3 Pattern 3: Split Button Groups</h3>
+            <pre>```html
+<div class="button-group">
+    <button class="primary">Save</button>
+    <button class="secondary">Cancel</button>
+    <button class="danger">Delete</button>
+</div>
+
+<div class="button-group right-aligned">
+    <button class="secondary">Cancel</button>
+    <button class="primary">Confirm</button>
+</div>
+```</pre>
+            <pre>```css
+.button-group {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.button-group.right-aligned {
+    justify-content: flex-end;
+}
+
+.button-group.centered {
+    justify-content: center;
+}
+
+.button-group.spread {
+    justify-content: space-between;
+}
+```</pre>
+            <h3>5.4 Pattern 4: Pricing Table</h3>
+            <pre>```html
+<div class="pricing-table">
+    <div class="pricing-card">
+        <h3>Basic</h3>
+        <div class="price">$9/mo</div>
+        <ul class="features">
+            <li>Feature 1</li>
+            <li>Feature 2</li>
+            <li>Feature 3</li>
+        </ul>
+        <button>Choose Plan</button>
+    </div>
+    <!-- More pricing cards... -->
+</div>
+```</pre>
+            <pre>```css
+.pricing-table {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.pricing-card {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.pricing-card .features {
+    flex: 1; /* Pushes button to bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+```</pre>
+            <h2>6. Responsive Design with justify-content</h2>
+            <h3>6.1 Mobile-First Approach</h3>
+            <pre>```css
+.toolbar {
+    display: flex;
+    justify-content: center; /* Centered on mobile */
+    gap: 15px;
+    padding: 10px;
+}
+
+@media (min-width: 768px) {
+    .toolbar {
+        justify-content: flex-start; /* Left-aligned on tablet */
+    }
+}
+
+@media (min-width: 1024px) {
+    .toolbar {
+        justify-content: space-between; /* Spread out on desktop */
+    }
+}
+```</pre>
+            <h3>6.2 Dynamic Navigation System</h3>
+            <pre>```html
+<nav class="responsive-nav">
+    <div class="nav-brand">Logo</div>
+    <button class="mobile-toggle">☰</button>
+    <div class="nav-menu">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+    </div>
+    <div class="nav-actions">
+        <button>Login</button>
+        <button>Signup</button>
+    </div>
+</nav>
+```</pre>
+            <pre>```css
+.responsive-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+@media (max-width: 767px) {
+    .responsive-nav {
+        flex-wrap: wrap;
+    }
+    
+    .nav-menu {
+        order: 3;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+}
+```</pre>
+            <h3>6.3 Fluid Layout Transitions</h3>
+            <pre>```css
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+.widget {
+    min-width: 250px;
+    flex: 1 1 300px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .dashboard-content {
+        justify-content: center;
+    }
+}
+```</pre>
+            <h2>7. Troubleshooting Common Issues</h2>
+            <h3>7.1 Problem: justify-content Not Working</h3>
+            <p><strong>Symptoms:</strong> Items aren't aligning as expected.</p>
+            <p><strong>Checklist:</strong></p>
+            <pre>```css
+/* SOLUTION CHECKLIST */
+.container {
+    display: flex;          /* 1. Is this set? */
+    /* justify-content only works on flex containers */
+    
+    flex-direction: row;    /* 2. Are you using the right axis? */
+    /* justify-content works on main axis defined by flex-direction */
+    
+    width: 100%;            /* 3. Is there available space? */
+    /* No extra space = no distribution possible */
+}
+```</pre>
+            <h3>7.2 Problem: Items Overflowing</h3>
+            <p><strong>Solution using min-width and flex-wrap:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.item {
+    min-width: 200px;  /* Prevents items from getting too small */
+    flex: 1 1 auto;     /* Allows growing/shrinking */
+    max-width: 300px;   /* Prevents items from getting too large */
+}
+```</pre>
+            <h3>7.3 Problem: Uneven Spacing with Different Sized Items</h3>
+            <p><strong>Solution: Use flex properties for more control:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.item {
+    flex: 1;  /* Makes all items grow equally */
+    margin: 0 10px;
+}
+
+.item:first-child {
+    margin-left: 0;
+}
+
+.item:last-child {
+    margin-right: 0;
+}
+```</pre>
+            <h3>7.4 Problem: Last Row Alignment with flex-wrap</h3>
+            <p><strong>Situation:</strong> When using `space-between` with wrapped items, the last row looks odd.</p>
+            <p><strong>Solution with grid or pseudo-elements:</strong></p>
+            <pre>```css
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Add invisible items to balance last row */
+.container::after {
+    content: "";
+    width: calc(33.333% - 20px); /* Same width as items */
+    height: 0;
+}
+```</pre>
+            <h2>8. Performance and Best Practices</h2>
+            <h3>8.1 Performance Considerations</h3>
+            <p>- `justify-content` is highly optimized and has minimal performance impact<br>
+                - Reflows occur when values change, but this is expected<br>
+                - For animations, prefer `transform` over changing `justify-content`</p>
+            <h3>8.2 Accessibility Considerations</h3>
+            <pre>```css
+/* Ensure content is accessible regardless of alignment */
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* For RTL languages */
+.container[dir="rtl"] {
+    justify-content: flex-start; /* Adjust for RTL */
+}
+
+/* Maintain focus indicators */
+.container a:focus-visible {
+    outline: 2px solid blue;
+    outline-offset: 2px;
+}
+```</pre>
+            <h3>8.3 Browser-Specific Considerations</h3>
+            <pre>```css
+/* Fallback for older browsers */
+.container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+/* IE 11 specific fixes */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .container {
+        /* IE 11 doesn't support space-evenly */
+        justify-content: space-between;
+    }
+}
+```</pre>
+            <h3>8.4 Best Practices Summary</h3>
+            <p>1. <strong>Always specify a container width/height</strong> when using distribution<br>
+                2. <strong>Use `gap` for fixed spacing</strong> instead of margins when possible<br>
+                3. <strong>Combine with `align-items`</strong> for complete control<br>
+                4. <strong>Test with different content lengths</strong> to ensure robustness<br>
+                5. <strong>Consider mobile layouts first</strong> with media queries<br>
+                6. <strong>Use browser DevTools</strong> to inspect and debug layouts<br>
+                7. <strong>Prefer `space-between` over `space-around`</strong> for most navigation patterns<br>
+                8. <strong>Remember that `justify-content` distributes EXTRA space</strong> - no extra space means no
+                effect</p>
+            <h2>9. Complete Reference Cheat Sheet</h2>
+            <h3>Quick Reference Card</h3>
+            <pre>```css
+/* MAIN AXIS ALIGNMENT - QUICK REFERENCE */
+
+.container {
+    display: flex;
+    
+    /* MAIN AXIS VALUES */
+    justify-content: 
+        flex-start,    /* Items at start (default) */
+        flex-end,      /* Items at end */
+        center,        /* Items centered */
+        space-between, /* First at start, last at end, rest spread */
+        space-around,  /* Equal space around each item */
+        space-evenly;  /* Equal space between all items and edges */
+}
+```</pre>
+            <h3>Value Comparison Table</h3>
+            <table class="alt">
+                <tr>
+                    <th>Value</th>
+                    <th>Start Space</th>
+                    <th>Between Space</th>
+                    <th>End Space</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td>flex-start</td>
+                    <td>None</td>
+                    <td>None</td>
+                    <td>All remaining</td>
+                    <td>Default, left-aligned</td>
+                </tr>
+                <tr>
+                    <td>center</td>
+                    <td>Half of remaining</td>
+                    <td>None</td>
+                    <td>Half of remaining</td>
+                    <td>Centered content</td>
+                </tr>
+                <tr>
+                    <td>flex-end</td>
+                    <td>All remaining</td>
+                    <td>None</td>
+                    <td>None</td>
+                    <td>Right-aligned content</td>
+                </tr>
+                <tr>
+                    <td>space-between</td>
+                    <td>None</td>
+                    <td>Equal</td>
+                    <td>None</td>
+                    <td>Navigation bars</td>
+                </tr>
+                <tr>
+                    <td>space-around</td>
+                    <td>Half of between</td>
+                    <td>Equal</td>
+                    <td>Half of between</td>
+                    <td>Gallery layouts</td>
+                </tr>
+                <tr>
+                    <td>space-evenly</td>
+                    <td>Equal</td>
+                    <td>Equal</td>
+                    <td>Equal</td>
+                    <td>Balanced layouts</td>
+                </tr>
+            </table>
+            <h3>Common Layout Patterns Reference</h3>
+            <pre>```css
+/* 1. Standard Navigation */
+.nav-standard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 2. Centered Hero */
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+
+/* 3. Card Footer */
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: auto;
+}
+
+/* 4. Toolbar with Groups */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+}
+.toolbar-group {
+    display: flex;
+    gap: 5px;
+}
+
+/* 5. Split Layout */
+.split-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.split-left, .split-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+}
+```</pre>
+            <hr class="dashed">
+            <h2>Conclusion</h2>
+            <p>The `justify-content` property is one of the most powerful tools in CSS Flexbox for controlling alignment
+                along the main axis. By understanding each value's behavior and appropriate use cases, you can create
+                sophisticated, responsive layouts with minimal code.</p>
+            <p><strong>Key Takeaways:</strong><br>
+                1. <strong>Always consider the main axis direction</strong> (set by `flex-direction`)<br>
+                2. <strong>Distribution requires available space</strong> in the container<br>
+                3. <strong>Each value serves a specific purpose</strong> - choose based on your layout needs<br>
+                4. <strong>Combine with other Flexbox properties</strong> for complete layout control<br>
+                5. <strong>Test across different screen sizes</strong> to ensure responsive behavior<br>
+                6. <strong>Use browser DevTools</strong> to experiment and debug</p>
+            <p>With this comprehensive understanding of `justify-content`, you're now equipped to handle any main-axis
+                alignment challenge in your web development projects.</p>
+            <!-- END OF JUSTIFY-CONTENT NOTES – EVERY LINE PRESERVED -->
+        </div>
+        <!-- ############################################# -->
+
+        <!-- responsive web design & media queries (original) -->
+        <div class="topic-section">
+            <h3>📱 RESPONSIVE DESIGN & MEDIA QUERIES</h3>
+            <div class="mini-grid">
+                <div class="topic-card">
+                    <h4>🌍 RWD principles</h4>
+                    <ul class="dot-list">
+                        <li>mobile‑first design</li>
+                        <li>fluid grids & images</li>
+                        <li>viewport meta tag: width=device-width, initial-scale=1</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🎚️ @media syntax</h4>
+                    <ul class="dot-list">
+                        <li>@media (min-width: 600px) { ... }</li>
+                        <li>logical operators (and, not, only)</li>
+                        <li>common breakpoints (480px, 768px, 1024px)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🔄 layout shifts</h4>
+                    <ul class="dot-list">
+                        <li>change flex-direction (row to column)</li>
+                        <li>adjust widths / columns</li>
+                        <li>hide/show elements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- hands‑on activities -->
+        <div class="activity-case">
+            <h2 style="color: #1e629e; border-bottom: 3px solid #5da5e0; padding-bottom: 0.8rem;">🧪 hands‑on activities
+            </h2>
+            <div class="flex-act">
+                <div class="act-item"><span class="badge">workshop</span><strong>responsive nav</strong><br>horizontal →
+                    stacked mobile menu with flexbox + media query.</div>
+                <div class="act-item"><span class="badge">guided</span><strong>card gallery</strong><br>flex-wrap &
+                    breakpoints: 1 → 2 → 3 columns.</div>
+                <div class="act-item"><span class="badge">makeover</span><strong>non‑responsive page</strong><br>add
+                    viewport, media queries, flexible units.</div>
+                <div class="act-item"><span class="badge">flex drill</span><strong>justify &
+                        align</strong><br>experiment with main/cross axis on a flex container.</div>
+            </div>
+        </div>
+
+        <!-- assessment + quiz -->
+        <div class="assessment-zone">
+            <h2 style="color: #1d66a5;">📋 assessment</h2>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>type</th>
+                        <th>description</th>
+                        <th>delivery</th>
+                    </tr>
+                    <tr>
+                        <td><strong>coding exercise</strong></td>
+                        <td>build responsive multi‑section landing page (portfolio) – flexbox for layout, media queries
+                            for mobile/tablet/desktop</td>
+                        <td>HTML+CSS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>quiz</strong></td>
+                        <td>flexbox properties, responsive concepts, media query syntax, viewport</td>
+                        <td>20 questions</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- mini quiz preview -->
+            <div class="quiz-mini">
+                <h4 style="color: #1d66a5;">✏️ quiz sample – do you know?</h4>
+                <div class="quiz-grid">
+                    <div>• justify-content: space-between vs space-around?</div>
+                    <div>• difference align-items vs align-content?</div>
+                    <div>• flex shorthand meaning (flex: 1 0 200px)?</div>
+                    <div>• how to make a flex item wrap?</div>
+                    <div>• viewport meta tag purpose?</div>
+                    <div>• @media (min-width: 600px) and (orientation: landscape)?</div>
+                    <div>• mobile‑first breakpoint strategy?</div>
+                    <div>• center an item with flexbox?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- final project block -->
+        <div class="footer-links">
+            <div>
+                <span style="font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; color: #1d5c93;">🧩 final
+                    project</span><br>
+                <span style="font-size: 1.1rem;">responsive startup homepage</span>
+            </div>
+            <a href="project-responsive.html" target="_blank" class="btn-project">📂 open project brief →</a>
+        </div>
+
+        <hr>
+        <!-- bottom navigation (compact) -->
+        <div class="bottom-nav">
+            <a href="#">flex intro</a><a href="#">main axis</a><a href="#">cross axis</a><a href="#">flex grow</a><a
+                href="#">nav & cards</a><a href="#">RWD</a><a href="#">media queries</a><a href="#">flex+MQ</a>
+        </div>
+
+        <footer>
+            📐 Block 3 – CSS Layouts & Responsive Design · flexbox · media queries · mobile‑first
+        </footer>
+    </div>
+</body>
+
+</html>

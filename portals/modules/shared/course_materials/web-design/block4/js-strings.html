@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPREHENSIVE GUIDE: STRINGS & TEMPLATE LITERALS IN JAVASCRIPT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4edf7;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1e1a2b;
+            line-height: 1.6;
+            padding: 1.5rem 1rem;
+        }
+
+        .guide-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -30px #563d7c;
+            padding: 2.5rem 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            background: linear-gradient(145deg, #4b2e62, #a14e7c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #b784c0;
+            padding-left: 1.2rem;
+            margin: 0 0 0.25rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(1.9rem, 5vw, 2.6rem);
+            color: #513573;
+            border-bottom: 4px solid #dbb0da;
+            padding-bottom: 0.4rem;
+            margin: 2.5rem 0 1.2rem 0;
+        }
+
+        h3 {
+            font-size: clamp(1.6rem, 4vw, 2rem);
+            color: #67437e;
+            margin: 2rem 0 1rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #c984c0;
+        }
+
+        h4 {
+            font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+            color: #4f3672;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        pre {
+            background: #1e142b;
+            color: #f2dbfc;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.8rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 0 0 1px #9f72b9;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Courier New', monospace;
+        }
+
+        code:not(pre code) {
+            background: #f0defa;
+            color: #401c5c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.9em;
+            border: 1px solid #ca9fcb;
+            font-family: 'Courier New', monospace;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fbf4fe;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px #d4c0e2;
+        }
+
+        th {
+            background: #7c5295;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 0.9rem;
+            border-bottom: 1px solid #dcc1ec;
+            background: #fdfaff;
+        }
+
+        hr {
+            border: 2px dashed #cba9da;
+            margin: 3rem 0;
+        }
+
+        .toc {
+            background: #f8f0ff;
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid #cea5da;
+            margin: 1.8rem 0;
+        }
+
+        .toc ul {
+            columns: 2 250px;
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #3a2750;
+            background: #f3e4fe;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+        }
+
+        .badge {
+            background: #764b8e;
+            color: white;
+            padding: 0.3rem 2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .note-box {
+            background: #ede1fd;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border-left: 12px solid #a45fbb;
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #5e4680;
+            border-top: 3px solid #e3caf0;
+            padding-top: 2rem;
+        }
+
+        .method-table {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="guide-container">
+
+        <!-- MAIN TITLE -->
+        <h1># COMPREHENSIVE GUIDE: STRINGS & TEMPLATE LITERALS IN JAVASCRIPT</h1>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc">
+            <h2 style="border-bottom: none; margin-top: 0;">TABLE OF CONTENTS</h2>
+            <ul>
+                <li><a href="#">1. Introduction to Strings</a></li>
+                <li><a href="#">2. Creating Strings</a></li>
+                <li><a href="#">3. String Properties</a></li>
+                <li><a href="#">4. Comprehensive String Methods</a></li>
+                <li><a href="#">5. Template Literals Deep Dive</a></li>
+                <li><a href="#">6. Advanced String Techniques</a></li>
+                <li><a href="#">7. Practical Examples and Use Cases</a></li>
+                <li><a href="#">8. Common Pitfalls and Best Practices</a></li>
+                <li><a href="#">9. Interview Questions</a></li>
+                <li><a href="#">10. Exercises and Projects</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <h2> 1. INTRODUCTION TO STRINGS</h2>
+
+        <h3> What are Strings?</h3>
+        <p>A string is a sequence of characters used to represent text in JavaScript. It's one of the primitive data
+            types and is immutable (cannot be changed once created).</p>
+
+        <h3> Why Strings Matter</h3>
+        <ul>
+            <li>Handle user input from forms</li>
+            <li>Display dynamic content</li>
+            <li>Process text data from APIs</li>
+            <li>Create formatted output</li>
+            <li>Build complex text manipulations</li>
+            <li>Generate HTML content dynamically</li>
+            <li>Validate and sanitize user input</li>
+            <li>Parse and format data</li>
+        </ul>
+
+        <h3> Character Encoding</h3>
+        <p>JavaScript strings use UTF-16 encoding, meaning each character is represented by 16 bits (2 bytes). This
+            allows for representation of a wide range of characters including emojis and international symbols.</p>
+
+        <pre><code>// UTF-16 allows for various characters
+const ascii = "Hello";
+const unicode = "café";  // Accented characters
+const emoji = "🚀";       // Emojis
+const chinese = "你好";   // Non-Latin scripts
+const mixed = "Hello 世界 🎉";</code></pre>
+
+        <hr>
+
+        <!-- 2. CREATING STRINGS -->
+        <h2> 2. CREATING STRINGS</h2>
+
+        <h3> 2.1 String Literals (Most Common)</h3>
+        <pre><code>// Single quotes - traditional
+const singleQuotes = 'Hello, World!';
+
+// Double quotes - interchangeable with single
+const doubleQuotes = "Hello, World!";
+
+// Template literals - ES6+ (most powerful)
+const templateLiteral = `Hello, World!`;</code></pre>
+
+        <h3> 2.2 String Constructor (Rarely Used)</h3>
+        <pre><code>// Using the String constructor
+const str1 = new String("Hello"); // Creates a String object
+const str2 = String("Hello");      // Creates a primitive string
+
+console.log(typeof str1); // "object"
+console.log(typeof str2); // "string"
+
+// Why avoid the constructor?
+const primitive = "hello";
+const object = new String("hello");
+
+console.log(primitive === "hello");  // true
+console.log(object === "hello");      // false (object vs primitive)</code></pre>
+
+        <h3> 2.3 Converting Other Types to Strings</h3>
+        <pre><code>// Numbers to strings
+const numToString = String(123);        // "123"
+const numMethod = (123).toString();      // "123"
+const numConcatenation = 123 + "";       // "123" (implicit conversion)
+
+// Booleans to strings
+String(true);        // "true"
+String(false);       // "false"
+
+// Null and Undefined
+String(null);        // "null"
+String(undefined);   // "undefined"
+
+// Arrays to strings
+String([1, 2, 3]);   // "1,2,3"
+[1, 2, 3].toString(); // "1,2,3"
+
+// Objects to strings
+String({});          // "[object Object]"
+String({name: "John"}); // "[object Object]"</code></pre>
+
+        <h3> 2.4 Escape Sequences</h3>
+        <pre><code>// Special characters in strings
+const quotes = "She said, \"Hello!\"";
+const quotes2 = 'It\'s a beautiful day';
+const newline = "First line\nSecond line";
+const tab = "Column1\tColumn2";
+const backslash = "C:\\Users\\name";
+const unicode = "\u00A9"; // Copyright symbol ©
+const emoji = "\u{1F600}"; // 😀 (requires braces for Unicode code points)
+
+console.log(quotes);   // She said, "Hello!"
+console.log(newline);  // First line
+                       // Second line</code></pre>
+
+        <hr>
+
+        <!-- 3. STRING PROPERTIES -->
+        <h2> 3. STRING PROPERTIES</h2>
+
+        <h3> 3.1 .length Property</h3>
+        <p>The <code>length</code> property returns the number of UTF-16 code units in the string.</p>
+        <pre><code>const str = "Hello, World!";
+console.log(str.length); // 13
+
+// Edge cases
+console.log("".length);           // 0 (empty string)
+console.log(" ".length);          // 1 (space)
+console.log("🚀".length);         // 2 (emojis use 2 code units)
+console.log("\n".length);         // 1 (newline)
+console.log("café".length);       // 4 (é is one character)</code></pre>
+
+        <h3> 3.2 Accessing Characters</h3>
+        <pre><code>const str = "JavaScript";
+
+// Using bracket notation (like arrays)
+console.log(str[0]);      // "J"
+console.log(str[4]);      // "S"
+console.log(str[10]);     // undefined (index out of bounds)
+
+// Using .charAt() method
+console.log(str.charAt(0));    // "J"
+console.log(str.charAt(10));   // "" (empty string, safer)
+
+// Using .charCodeAt() - get Unicode value
+console.log(str.charCodeAt(0)); // 74 (Unicode for 'J')
+
+// Using .codePointAt() - better for emojis
+console.log("🚀".codePointAt(0)); // 128640</code></pre>
+
+        <hr>
+
+        <!-- 4. COMPREHENSIVE STRING METHODS -->
+        <h2> 4. COMPREHENSIVE STRING METHODS</h2>
+
+        <h3> 4.1 Case Conversion Methods</h3>
+
+        <h4># .toUpperCase()</h4>
+        <p>Converts all characters in a string to uppercase.</p>
+        <pre><code>const text = "Hello World";
+
+console.log(text.toUpperCase()); // "HELLO WORLD"
+
+// Practical examples
+const userInput = "john@email.com";
+const normalizedEmail = userInput.toLowerCase(); // Better for email
+
+// Locale-aware case conversion
+const germanWord = "straße";
+console.log(germanWord.toUpperCase()); // "STRASSE" (correct ß conversion)
+
+// Turkish dotless i handling
+const turkishWord = "İstanbul";
+console.log(turkishWord.toLocaleUpperCase('tr')); // Locale-specific</code></pre>
+
+        <h4># .toLowerCase()</h4>
+        <p>Converts all characters in a string to lowercase.</p>
+        <pre><code>const text = "Hello World";
+console.log(text.toLowerCase()); // "hello world"
+
+// Case-insensitive comparison
+const input1 = "JavaScript";
+const input2 = "javascript";
+console.log(input1.toLowerCase() === input2.toLowerCase()); // true
+
+// Practical: Search functionality
+const searchTerm = "REACT";
+const databaseEntry = "I love React";
+console.log(databaseEntry.toLowerCase().includes(searchTerm.toLowerCase())); // true</code></pre>
+
+        <h4># .toLocaleUpperCase() / .toLocaleLowerCase()</h4>
+        <p>Locale-aware case conversion for internationalization.</p>
+        <pre><code>// Turkish has dotted and dotless i
+const turkish = "istanbul";
+console.log(turkish.toLocaleUpperCase('tr')); // "İSTANBUL" (correct)
+console.log(turkish.toUpperCase());           // "ISTANBUL" (incorrect for Turkish)
+
+// Greek sigma
+const greek = "Ὀδυσσεύς";
+console.log(greek.toLocaleLowerCase('el')); // Locale-specific conversion</code></pre>
+
+        <h3> 4.2 Search and Check Methods</h3>
+
+        <h4># .includes()</h4>
+        <p>Checks if a string contains a specified substring. Returns boolean.</p>
+        <pre><code>const sentence = "The quick brown fox jumps over the lazy dog";
+
+// Basic usage
+console.log(sentence.includes("fox"));      // true
+console.log(sentence.includes("cat"));      // false
+
+// With position parameter (start searching from index)
+console.log(sentence.includes("fox", 20));  // false (search after index 20)
+console.log(sentence.includes("the", 31));  // true (search from index 31)
+
+// Practical examples
+const email = "user@example.com";
+if (email.includes("@") && email.includes(".")) {
+    console.log("Valid email format");
+}
+
+// Case sensitivity
+console.log(sentence.includes("FOX"));      // false
+console.log(sentence.toLowerCase().includes("FOX".toLowerCase())); // true
+
+// Array-like search
+const tags = ["javascript", "react", "node"];
+const userTag = "JavaScript";
+if (tags.includes(userTag.toLowerCase())) {
+    console.log("Tag found!");
+}</code></pre>
+
+        <h4># .indexOf()</h4>
+        <p>Returns the index (position) of the first occurrence of a specified value. Returns -1 if not found.</p>
+        <pre><code>const str = "Hello world, welcome to the world of JavaScript";
+
+// Basic usage
+console.log(str.indexOf("world"));      // 6 (first occurrence)
+console.log(str.indexOf("World"));      // -1 (case sensitive)
+
+// With fromIndex parameter
+console.log(str.indexOf("world", 10));  // 21 (second occurrence)
+
+// Practical: Finding all occurrences
+const findAllOccurrences = (text, searchTerm) => {
+    const positions = [];
+    let index = text.indexOf(searchTerm);
+    
+    while (index !== -1) {
+        positions.push(index);
+        index = text.indexOf(searchTerm, index + 1);
+    }
+    
+    return positions;
+};
+
+console.log(findAllOccurrences(str, "world")); // [6, 21]
+
+// Checking existence
+if (str.indexOf("JavaScript") !== -1) {
+    console.log("Found JavaScript!");
+}
+
+// Practical: Parsing file extensions
+const filename = "document.pdf";
+const dotIndex = filename.indexOf(".");
+const extension = filename.substring(dotIndex + 1);
+console.log(extension); // "pdf"</code></pre>
+
+        <h4># .lastIndexOf()</h4>
+        <p>Returns the index of the last occurrence of a specified value.</p>
+        <pre><code>const str = "Hello world, welcome to the world of JavaScript";
+
+console.log(str.lastIndexOf("world"));      // 21
+console.log(str.lastIndexOf("world", 20));  // 6 (search backwards from index 20)
+
+// Practical: Getting the last part of a path
+const filePath = "/users/john/documents/report.pdf";
+const lastSlash = filePath.lastIndexOf("/");
+const filename = filePath.substring(lastSlash + 1);
+console.log(filename); // "report.pdf"</code></pre>
+
+        <h4># .startsWith()</h4>
+        <p>Checks if a string begins with specified characters.</p>
+        <pre><code>const url = "https://example.com";
+
+console.log(url.startsWith("https"));       // true
+console.log(url.startsWith("http"));        // true
+console.log(url.startsWith("ftp"));         // false
+
+// With position parameter
+console.log(url.startsWith("example", 8));  // true
+
+// Practical: URL validation
+const validateUrl = (url) => {
+    return url.startsWith("http://") || url.startsWith("https://");
+};
+
+console.log(validateUrl("https://google.com")); // true
+console.log(validateUrl("ftp://files.com"));    // false
+
+// Practical: File type checking
+const file = "image.jpg";
+if (file.startsWith("image")) {
+    console.log("This is an image file");
+}</code></pre>
+
+        <h4># .endsWith()</h4>
+        <p>Checks if a string ends with specified characters.</p>
+        <pre><code>const filename = "document.pdf";
+
+console.log(filename.endsWith(".pdf"));     // true
+console.log(filename.endsWith(".txt"));     // false
+
+// With length parameter
+console.log(filename.endsWith("doc", 6));   // true (check first 6 chars: "docume")
+
+// Practical: File extension validation
+const allowedExtensions = [".jpg", ".png", ".gif"];
+const userFile = "photo.jpg";
+
+if (allowedExtensions.some(ext => userFile.endsWith(ext))) {
+    console.log("Valid image format");
+}
+
+// Practical: Email domain check
+const email = "user@gmail.com";
+if (email.endsWith("@gmail.com")) {
+    console.log("Gmail user");
+}</code></pre>
+
+        <h4># .search()</h4>
+        <p>Searches for a match between a regular expression and the string. Returns index or -1.</p>
+        <pre><code>const text = "The rain in Spain falls mainly on the plain";
+
+// With regular expression
+console.log(text.search(/ain/));        // 5 (first occurrence)
+console.log(text.search(/AIN/i));       // 5 (case insensitive)
+
+// More complex regex
+console.log(text.search(/^The/));       // 0 (starts with "The")
+console.log(text.search(/plain$/));      // 40 (ends with "plain")
+console.log(text.search(/\d+/));         // -1 (no numbers)
+
+// Practical: Finding email-like patterns
+const message = "Contact us at support@example.com for help";
+const emailPattern = /[\w.-]+@[\w.-]+\.\w+/;
+const emailIndex = message.search(emailPattern);
+
+if (emailIndex !== -1) {
+    console.log(`Email found at index ${emailIndex}`);
+}</code></pre>
+
+        <h3> 4.3 Extraction Methods</h3>
+
+        <h4># .slice()</h4>
+        <p>Extracts a section of a string and returns it as a new string.</p>
+        <pre><code>const str = "The quick brown fox";
+
+// Basic slicing
+console.log(str.slice(4, 9));     // "quick" (start at 4, end before 9)
+console.log(str.slice(4));         // "quick brown fox" (from 4 to end)
+
+// Negative indices (count from the end)
+console.log(str.slice(-3));        // "fox" (last 3 characters)
+console.log(str.slice(-9, -4));    // "brown" (from -9 to -4)
+
+// Practical: Extracting domain from email
+const email = "john.doe@example.com";
+const username = email.slice(0, email.indexOf("@"));
+const domain = email.slice(email.indexOf("@") + 1);
+console.log(username); // "john.doe"
+console.log(domain);   // "example.com"
+
+// Practical: Getting file extension
+const filename = "report.final.2023.pdf";
+const lastDot = filename.lastIndexOf(".");
+const extension = filename.slice(lastDot + 1);
+console.log(extension); // "pdf"
+
+// Practical: Truncating text
+const truncate = (text, maxLength) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength - 3) + "...";
+};
+
+const longText = "This is a very long sentence that needs truncation";
+console.log(truncate(longText, 20)); // "This is a very..."</code></pre>
+
+        <h4># .substring()</h4>
+        <p>Similar to slice but cannot accept negative indices.</p>
+        <pre><code>const str = "The quick brown fox";
+
+// Basic usage
+console.log(str.substring(4, 9));    // "quick"
+console.log(str.substring(9, 4));    // "quick" (swaps if start > end)
+console.log(str.substring(4));        // "quick brown fox"
+
+// Negative numbers are treated as 0
+console.log(str.substring(-3));       // "The quick brown fox" (entire string)
+console.log(str.substring(-5, 4));    // "The " (from 0 to 4)
+
+// Comparison with slice
+const test = "hello";
+console.log(test.slice(-3));      // "llo"
+console.log(test.substring(-3));  // "hello" (different!)</code></pre>
+
+        <h4># .substr() (Deprecated, but still encountered)</h4>
+        <p>Extracts a specified number of characters from a specified index.</p>
+        <pre><code>const str = "The quick brown fox";
+
+// substr(start, length)
+console.log(str.substr(4, 5));     // "quick" (start at 4, take 5 chars)
+console.log(str.substr(4));         // "quick brown fox" (from 4 to end)
+console.log(str.substr(-3, 3));     // "fox" (from end)
+
+// Note: substr is deprecated, use slice() instead</code></pre>
+
+        <h3> 4.4 Splitting and Joining</h3>
+
+        <h4># .split()</h4>
+        <p>Splits a string into an array of substrings.</p>
+        <pre><code>const str = "apple,banana,orange";
+
+// Basic splitting
+console.log(str.split(","));        // ["apple", "banana", "orange"]
+
+// With limit
+console.log(str.split(",", 2));     // ["apple", "banana"]
+
+// Splitting on empty string (character array)
+const word = "hello";
+console.log(word.split(""));        // ["h", "e", "l", "l", "o"]
+
+// Splitting on whitespace
+const sentence = "The quick brown fox";
+console.log(sentence.split(" "));    // ["The", "quick", "brown", "fox"]
+console.log(sentence.split(/\s+/));  // Same, using regex
+
+// Splitting on multiple delimiters
+const messy = "apple, banana; orange.grape";
+console.log(messy.split(/[,;.\s]+/)); // ["apple", "banana", "orange", "grape"]
+
+// Practical: Parsing CSV data
+const csvLine = "John,Doe,30,New York";
+const userData = csvLine.split(",");
+console.log({
+    firstName: userData[0],
+    lastName: userData[1],
+    age: userData[2],
+    city: userData[3]
+});
+
+// Practical: Extracting query parameters
+const url = "?name=John&age=30&city=NYC";
+const params = url.slice(1).split("&");
+const queryParams = {};
+
+params.forEach(param => {
+    const [key, value] = param.split("=");
+    queryParams[key] = value;
+});
+console.log(queryParams); // {name: "John", age: "30", city: "NYC"}
+
+// Practical: Word count
+const text = "This is a sample text with several words";
+const wordCount = text.split(/\s+/).length;
+console.log(wordCount); // 7</code></pre>
+
+        <h4># .split() with Complex Patterns</h4>
+        <pre><code>// Splitting sentences
+const paragraph = "Hello world. How are you? I'm fine!";
+const sentences = paragraph.split(/[.!?]+/);
+console.log(sentences); // ["Hello world", " How are you", "I'm fine", ""]
+
+// Removing empty strings
+const cleanSentences = paragraph.split(/[.!?]+/).filter(s => s.trim());
+console.log(cleanSentences); // ["Hello world", "How are you", "I'm fine"]
+
+// Parsing structured data
+const logEntry = "2023-12-25 15:30:45 [ERROR] Failed to connect";
+const parts = logEntry.split(/\s+/);
+console.log(parts); // ["2023-12-25", "15:30:45", "[ERROR]", "Failed", "to", "connect"]
+
+// Limiting split with regex
+const data = "1,2,3,4,5";
+console.log(data.split(",", 3)); // ["1", "2", "3"]</code></pre>
+
+        <h3> 4.5 Replacement Methods</h3>
+
+        <h4># .replace()</h4>
+        <p>Replaces a specified value with another value in a string. Only replaces the first match.</p>
+        <pre><code>const str = "Hello World, World!";
+
+// Basic replacement
+console.log(str.replace("World", "JavaScript")); // "Hello JavaScript, World!"
+
+// Case-sensitive
+console.log(str.replace("world", "JavaScript")); // "Hello World, World!" (no match)
+
+// Using regular expression
+console.log(str.replace(/World/, "JavaScript")); // "Hello JavaScript, World!"
+console.log(str.replace(/World/g, "JavaScript")); // "Hello JavaScript, JavaScript!"
+
+// Case-insensitive replacement
+console.log(str.replace(/world/i, "JavaScript")); // "Hello JavaScript, World!"
+
+// Using replacement patterns
+const name = "John";
+console.log("Hello, $1".replace("$1", name)); // "Hello, John"
+
+// Special replacement patterns
+console.log("Hello World".replace(/(\w+)\s(\w+)/, "$2 $1")); // "World Hello"
+
+// Using function as replacement
+const prices = "The prices are 10, 20, 30";
+const doubled = prices.replace(/\d+/g, (match) => {
+    return parseInt(match) * 2;
+});
+console.log(doubled); // "The prices are 20, 40, 60"
+
+// Practical: Censoring words
+const message = "This is a bad word and another bad word";
+const censored = message.replace(/bad/g, "");
+console.log(censored); // "This is a  word and another  word"
+
+// Practical: Formatting phone numbers
+const phone = "1234567890";
+const formatted = phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+console.log(formatted); // "(123) 456-7890"</code></pre>
+
+        <h4># .replaceAll() (ES2021+)</h4>
+        <p>Replaces all occurrences of a specified value.</p>
+        <pre><code>const str = "Hello World, World!";
+
+// Replace all occurrences
+console.log(str.replaceAll("World", "JavaScript")); // "Hello JavaScript, JavaScript!"
+
+// Unlike replace with regex, this doesn't require the g flag
+console.log(str.replaceAll(/World/g, "JavaScript")); // Also works
+
+// Practical: Sanitizing input
+const userInput = "This <script>alert('hack')</script> is dangerous";
+const safe = userInput.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+console.log(safe); // "This &lt;script&gt;alert('hack')&lt;/script&gt; is dangerous"
+
+// Practical: CSV cleaning
+const csvData = "John,,Doe,,30";
+const cleaned = csvData.replaceAll(",,", ",null,");
+console.log(cleaned); // "John,null,Doe,null,30"</code></pre>
+
+        <h3> 4.6 Trimming Methods</h3>
+
+        <h4># .trim()</h4>
+        <p>Removes whitespace from both ends of a string.</p>
+        <pre><code>const str = "   Hello World   ";
+
+console.log(str.trim());          // "Hello World"
+console.log(str.length);          // 17 (original)
+console.log(str.trim().length);   // 11 (trimmed)
+
+// Whitespace includes spaces, tabs, newlines
+const messy = "\n\t  Hello  \n  ";
+console.log(messy.trim());        // "Hello"
+
+// Practical: Cleaning user input
+const userEmail = "  user@example.com  ";
+const cleanEmail = userEmail.trim().toLowerCase();
+console.log(cleanEmail); // "user@example.com"
+
+// Practical: Processing form data
+const formData = {
+    name: "  John Doe  ",
+    email: "  JOHN@EMAIL.COM  ",
+    comment: "  This is a comment  "
+};
+
+const cleanedData = Object.fromEntries(
+    Object.entries(formData).map(([key, value]) => [key, value.trim()])
+);
+console.log(cleanedData);
+// { name: "John Doe", email: "JOHN@EMAIL.COM", comment: "This is a comment" }</code></pre>
+
+        <h4># .trimStart() / .trimEnd()</h4>
+        <p>Removes whitespace from the start or end of a string.</p>
+        <pre><code>const str = "   Hello World   ";
+
+console.log(str.trimStart());     // "Hello World   "
+console.log(str.trimEnd());       // "   Hello World"
+console.log(str.trimStart().trimEnd()); // "Hello World"
+
+// Practical: Aligning text
+const alignRight = (text, width) => {
+    return text.padStart(width).trimStart();
+};
+
+console.log(alignRight("Hello", 10)); // "     Hello"</code></pre>
+
+        <h3> 4.7 Padding Methods</h3>
+
+        <h4># .padStart() / .padEnd()</h4>
+        <p>Pads the current string with another string until the resulting string reaches the given length.</p>
+        <pre><code>const str = "5";
+
+// Basic padding
+console.log(str.padStart(3, "0"));    // "005"
+console.log(str.padEnd(3, "0"));      // "500"
+
+// With different pad strings
+console.log("hello".padStart(10, "*")); // "hello"
+console.log("hello".padEnd(10, "*"));   // "hello"
+
+// If padding string is longer, it's truncated
+console.log("hi".padStart(5, "abcdef")); // "abchi"
+
+// Practical: Formatting numbers
+const formatNumber = (num, places) => {
+    return num.toString().padStart(places, "0");
+};
+
+console.log(formatNumber(7, 3));   // "007"
+console.log(formatNumber(42, 5));  // "00042"
+
+// Practical: Creating tables
+const createTableRow = (label, value, width = 20) => {
+    return label.padEnd(width) + value.padStart(width);
+};
+
+console.log(createTableRow("Name:", "John Doe"));
+// "Name:               John Doe"
+
+// Practical: Displaying time
+const formatTime = (hours, minutes, seconds) => {
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+};
+
+console.log(formatTime("9", "5", "3")); // "09:05:03"
+
+// Practical: Masking data
+const maskCreditCard = (cardNumber) => {
+    const visible = cardNumber.slice(-4);
+    return visible.padStart(cardNumber.length, "*");
+};
+
+console.log(maskCreditCard("1234567890123456")); // "3456"</code></pre>
+
+        <h3> 4.8 Concatenation Methods</h3>
+
+        <h4># .concat()</h4>
+        <p>Joins two or more strings.</p>
+        <pre><code>const str1 = "Hello";
+const str2 = "World";
+
+console.log(str1.concat(" ", str2));     // "Hello World"
+console.log(str1.concat(", ", str2, "!")); // "Hello, World!"
+
+// Multiple arguments
+console.log("".concat("a", "b", "c", "d")); // "abcd"
+
+// Note: The + operator is usually preferred
+console.log(str1 + " " + str2); // "Hello World"
+
+// Practical: Building HTML
+const buildHtmlElement = (tag, content, attributes = "") => {
+    return "".concat("<", tag, attributes, ">", content, "</", tag, ">");
+};
+
+console.log(buildHtmlElement("p", "Hello World"));
+// "<p>Hello World</p>"</code></pre>
+
+        <h3> 4.9 Character Access Methods</h3>
+
+        <h4># .charAt() / .charCodeAt() / .codePointAt()</h4>
+        <pre><code>const str = "JavaScript🚀";
+
+// charAt() - returns character
+console.log(str.charAt(0));      // "J"
+console.log(str.charAt(10));     // "🚀" (but might show as two chars)
+console.log(str.charAt(100));    // "" (empty string for out of bounds)
+
+// charCodeAt() - returns UTF-16 code unit
+console.log(str.charCodeAt(0));  // 74 (J)
+console.log(str.charCodeAt(1));  // 97 (a)
+
+// codePointAt() - returns full Unicode code point (better for emojis)
+console.log(str.codePointAt(10)); // 128640 (rocket emoji code)
+console.log(str.codePointAt(0));  // 74
+
+// Iterating through characters properly
+const iterateCharacters = (text) => {
+    const chars = [];
+    for (let i = 0; i < text.length; i++) {
+        // Check if this is the start of a surrogate pair (emoji)
+        const code = text.codePointAt(i);
+        if (code > 0xFFFF) {
+            chars.push(String.fromCodePoint(code));
+            i++; // Skip the next code unit
+        } else {
+            chars.push(text.charAt(i));
+        }
+    }
+    return chars;
+};
+
+console.log(iterateCharacters("Hello🚀World"));
+// ["H", "e", "l", "l", "o", "🚀", "W", "o", "r", "l", "d"]</code></pre>
+
+        <h3> 4.10 Repeating Strings</h3>
+
+        <h4># .repeat()</h4>
+        <p>Returns a new string with a specified number of copies of the original string.</p>
+        <pre><code>const str = "Hello";
+
+console.log(str.repeat(3));      // "HelloHelloHello"
+console.log("!".repeat(5));      // "!!!!!"
+console.log("".repeat(5));       // "" (empty string)
+
+// With decimals (they're floored)
+console.log("a".repeat(3.7));    // "aaa"
+
+// Practical: Creating separators
+const createSeparator = (char = "-", length = 50) => {
+    return char.repeat(length);
+};
+
+console.log(createSeparator());  // "--------------------------------------------------"
+console.log(createSeparator("=", 10)); // "=========="
+
+// Practical: Indentation
+const indent = (level, content) => {
+    return "  ".repeat(level) + content;
+};
+
+console.log(indent(2, "Nested text")); // "    Nested text"
+
+// Practical: ASCII art
+const drawBox = (width, height) => {
+    const top = "┌" + "─".repeat(width - 2) + "┐";
+    const middle = "│" + " ".repeat(width - 2) + "│";
+    const bottom = "└" + "─".repeat(width - 2) + "┘";
+    
+    return [top, ...Array(height).fill(middle), bottom].join("\n");
+};
+
+console.log(drawBox(10, 3));
+// ┌────────┐
+// │        │
+// │        │
+// │        │
+// └────────┘</code></pre>
+
+        <hr>
+
+        <!-- 5. TEMPLATE LITERALS DEEP DIVE -->
+        <h2> 5. TEMPLATE LITERALS DEEP DIVE</h2>
+
+        <h3> 5.1 Basic Syntax</h3>
+        <p>Template literals are string literals allowing embedded expressions, multi-line strings, and string
+            interpolation.</p>
+        <pre><code>// Basic template literal
+const basic = `This is a template literal`;
+
+// With single quotes inside
+const withQuotes = `She said, "Hello!" and 'Goodbye'`;
+
+// With backticks escaped
+const withBackticks = `This is a backtick: \``;</code></pre>
+
+        <h3> 5.2 String Interpolation</h3>
+        <p>The most powerful feature - embedding expressions using <code>${}</code>.</p>
+        <pre><code>const name = "John";
+const age = 30;
+
+// Simple variable interpolation
+const message = `Hello, my name is ${name} and I am ${age} years old.`;
+console.log(message);
+// "Hello, my name is John and I am 30 years old."
+
+// Expressions inside ${}
+const a = 10;
+const b = 5;
+console.log(`The sum of ${a} and ${b} is ${a + b}`); // "The sum of 10 and 5 is 15"
+console.log(`Is ${a} greater than ${b}? ${a > b}`);   // "Is 10 greater than 5? true"
+
+// Function calls
+const getUser = () => ({ name: "Alice", role: "admin" });
+console.log(`Welcome back, ${getUser().name}! You are an ${getUser().role}.`);
+
+// Ternary operators
+const isLoggedIn = true;
+console.log(`User is ${isLoggedIn ? "logged in" : "logged out"}`);
+
+// Complex expressions
+const items = [1, 2, 3, 4, 5];
+console.log(`The sum of items is ${items.reduce((sum, item) => sum + item, 0)}`);</code></pre>
+
+        <h3> 5.3 Multi-line Strings</h3>
+        <p>Template literals preserve whitespace and line breaks.</p>
+        <pre><code>// Multi-line string without template literals (old way)
+const oldWay = "Line 1\n" +
+               "Line 2\n" +
+               "Line 3";
+
+// With template literals
+const newWay = `Line 1
+Line 2
+Line 3`;
+
+console.log(newWay);
+// Line 1
+// Line 2
+// Line 3
+
+// Indentation is preserved
+const htmlSnippet = `
+&lt;div class="container"&gt;
+    &lt;h1&gt;Title&lt;/h1&gt;
+    &lt;p&gt;This is a paragraph&lt;/p&gt;
+&lt;/div&gt;
+`;
+
+// Practical: Generating HTML
+const generateUserCard = (user) => `
+&lt;div class="user-card"&gt;
+    &lt;h2&gt;${user.name}&lt;/h2&gt;
+    &lt;p&gt;Email: ${user.email}&lt;/p&gt;
+    &lt;p&gt;Role: ${user.role}&lt;/p&gt;
+    ${user.isActive ? '&lt;span class="active"&gt;Active&lt;/span&gt;' : '&lt;span class="inactive"&gt;Inactive&lt;/span&gt;'}
+&lt;/div&gt;
+`;
+
+const user = {
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Developer",
+    isActive: true
+};
+
+console.log(generateUserCard(user));</code></pre>
+
+        <h3> 5.4 Nested Template Literals</h3>
+        <p>Template literals can be nested for complex constructions.</p>
+        <pre><code>const people = ["John", "Jane", "Bob"];
+
+// Nested template literals
+const listItems = `
+&lt;ul&gt;
+    ${people.map(person =&gt; `
+        &lt;li&gt;${person}&lt;/li&gt;
+    `).join('')}
+&lt;/ul&gt;
+`;
+
+console.log(listItems);
+// &lt;ul&gt;
+//     &lt;li&gt;John&lt;/li&gt;
+//     &lt;li&gt;Jane&lt;/li&gt;
+//     &lt;li&gt;Bob&lt;/li&gt;
+// &lt;/ul&gt;
+
+// Conditional nesting
+const renderTable = (data, options = {}) =&gt; `
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            ${options.showId ? '&lt;th&gt;ID&lt;/th&gt;' : ''}
+            &lt;th&gt;Name&lt;/th&gt;
+            &lt;th&gt;Value&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        ${data.map(item =&gt; `
+            &lt;tr&gt;
+                ${options.showId ? `&lt;td&gt;${item.id}&lt;/td&gt;` : ''}
+                &lt;td&gt;${item.name}&lt;/td&gt;
+                &lt;td&gt;${item.value}&lt;/td&gt;
+            &lt;/tr&gt;
+        `).join('')}
+    &lt;/tbody&gt;
+&lt;/table&gt;
+`;</code></pre>
+
+        <h3> 5.5 Tagged Templates</h3>
+        <p>A more advanced feature that allows parsing template literals with a function.</p>
+        <pre><code>// Basic tagged template
+function highlight(strings, ...values) {
+    console.log(strings); // Array of string parts
+    console.log(values);  // Array of interpolated values
+    
+    let result = "";
+    strings.forEach((str, i) =&gt; {
+        result += str;
+        if (values[i]) {
+            result += `&lt;span class="highlight"&gt;${values[i]}&lt;/span&gt;`;
+        }
+    });
+    return result;
+}
+
+const name = "John";
+const action = "learning";
+const result = highlight`Hello, ${name} is ${action} JavaScript!`;
+console.log(result);
+// Hello, &lt;span class="highlight"&gt;John&lt;/span&gt; is &lt;span class="highlight"&gt;learning&lt;/span&gt; JavaScript!
+
+// Practical: Internationalization
+function i18n(strings, ...values) {
+    const translations = {
+        en: {
+            hello: "Hello",
+            name: "Name"
+        },
+        es: {
+            hello: "Hola",
+            name: "Nombre"
+        }
+    };
+    
+    const lang = "es"; // Could come from user preference
+    const translatedStrings = strings.map(s =&gt; {
+        return s.replace(/hello|name/gi, match =&gt; translations[lang][match.toLowerCase()] || match);
+    });
+    
+    return translatedStrings.reduce((result, str, i) =&gt; {
+        return result + str + (values[i] || "");
+    }, "");
+}
+
+console.log(i18n`hello, your name is ${name}`); // "Hola, your Nombre is John"
+
+// Practical: SQL query builder (prevents injection)
+function sql(strings, ...values) {
+    // Escape values to prevent SQL injection
+    const escapedValues = values.map(v =&gt; {
+        if (typeof v === "string") {
+            return `'${v.replace(/'/g, "''")}'`; // Escape single quotes
+        }
+        return v;
+    });
+    
+    return strings.reduce((query, str, i) =&gt; {
+        return query + str + (escapedValues[i] || "");
+    }, "");
+}
+
+const userInput = "O'Reilly";
+const query = sql`SELECT * FROM users WHERE name = ${userInput}`;
+console.log(query); // "SELECT * FROM users WHERE name = 'O''Reilly'"</code></pre>
+
+        <h3> 5.6 Raw Strings</h3>
+        <p>Access the raw string content using <code>String.raw</code>.</p>
+        <pre><code>// Normal template literal interprets escape sequences
+console.log(`Hello\nWorld`);        // Hello
+                                    // World
+
+// String.raw returns the raw string (escapes are not interpreted)
+console.log(String.raw`Hello\nWorld`); // "Hello\nWorld"
+
+// Useful for file paths
+const path = String.raw`C:\Users\name\documents`;
+console.log(path); // "C:\Users\name\documents"
+
+// Practical: Regular expressions
+const regexPattern = String.raw`\d+\.\d+`; // No need to double escape
+const regex = new RegExp(regexPattern);
+console.log(regex); // /\d+\.\d+/
+
+// Practical: Generating code
+const generateCode = (indent) => String.raw`
+function hello() {
+${"  ".repeat(indent)}console.log("Hello");
+}
+`;</code></pre>
+
+        <hr>
+
+        <!-- 6. ADVANCED STRING TECHNIQUES -->
+        <h2> 6. ADVANCED STRING TECHNIQUES</h2>
+
+        <h3> 6.1 Regular Expressions with Strings</h3>
+        <pre><code>// Testing patterns
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+console.log(emailPattern.test("user@example.com")); // true
+console.log(emailPattern.test("invalid-email"));    // false
+
+// Extracting matches
+const text = "Contact: john@email.com or jane@email.com";
+const emails = text.match(/[\w.-]+@[\w.-]+\.\w+/g);
+console.log(emails); // ["john@email.com", "jane@email.com"]
+
+// Capturing groups
+const dateStr = "Today is 2023-12-25";
+const datePattern = /(\d{4})-(\d{2})-(\d{2})/;
+const match = dateStr.match(datePattern);
+console.log(match); 
+// ["2023-12-25", "2023", "12", "25", index: 9, input: "Today is 2023-12-25"]
+
+// Named capture groups (ES2018)
+const namedPattern = /(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/;
+const namedMatch = dateStr.match(namedPattern);
+console.log(namedMatch.groups); // {year: "2023", month: "12", day: "25"}</code></pre>
+
+        <h3> 6.2 String to Number Conversions</h3>
+        <pre><code>// parseInt() - extracts integer from string
+console.log(parseInt("123"));        // 123
+console.log(parseInt("123.45"));     // 123
+console.log(parseInt("123px"));      // 123
+console.log(parseInt("abc123"));     // NaN
+console.log(parseInt("FF", 16));     // 255 (hexadecimal)
+
+// parseFloat() - extracts floating point
+console.log(parseFloat("123.45"));   // 123.45
+console.log(parseFloat("123.45px")); // 123.45
+console.log(parseFloat("12.34.56")); // 12.34
+
+// Number() - strict conversion
+console.log(Number("123"));          // 123
+console.log(Number("123.45"));       // 123.45
+console.log(Number("123px"));        // NaN
+console.log(Number(""));             // 0
+
+// Unary plus operator
+console.log(+"123");                 // 123
+console.log(+"123.45");              // 123.45
+console.log(+"abc");                 // NaN</code></pre>
+
+        <h3> 6.3 String Formatting</h3>
+        <pre><code>// Currency formatting
+const formatCurrency = (amount, currency = "USD") => {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency
+    }).format(amount);
+};
+
+console.log(formatCurrency(1234.56)); // "$1,234.56"
+console.log(formatCurrency(99.99, "EUR")); // "€99.99"
+
+// Number formatting with commas
+const number = 1234567.89;
+console.log(number.toLocaleString("en-US")); // "1,234,567.89"
+console.log(number.toLocaleString("de-DE")); // "1.234.567,89"
+
+// Percentage formatting
+const formatPercent = (value) => {
+    return new Intl.NumberFormat("en-US", {
+        style: "percent",
+        minimumFractionDigits: 1
+    }).format(value);
+};
+
+console.log(formatPercent(0.1234)); // "12.3%"</code></pre>
+
+        <h3> 6.4 Unicode and Internationalization</h3>
+        <pre><code>// Normalizing Unicode strings
+const combined = "e\u0301"; // e + combining accent
+const precomposed = "é";
+
+console.log(combined === precomposed); // false
+console.log(combined.normalize() === precomposed.normalize()); // true
+
+// Locale-aware comparison
+const names = ["André", "Ángel", "Alejandro"];
+names.sort((a, b) => a.localeCompare(b, "es"));
+console.log(names); // ["Alejandro", "André", "Ángel"] (Spanish ordering)
+
+// Pluralization
+const getPlural = (count, singular, plural) => {
+    return new Intl.PluralRules("en-US").select(count) === "one" 
+        ? `${count} ${singular}` 
+        : `${count} ${plural}`;
+};
+
+console.log(getPlural(1, "apple", "apples")); // "1 apple"
+console.log(getPlural(5, "apple", "apples")); // "5 apples"</code></pre>
+
+        <h3> 6.5 Performance Optimization</h3>
+        <pre><code>// For many string concatenations, use array join instead of +
+const buildStringSlow = (items) => {
+    let result = "";
+    for (let i = 0; i < items.length; i++) {
+        result += items[i]; // Slow for large loops
+    }
+    return result;
+};
+
+const buildStringFast = (items) => {
+    return items.join(""); // Much faster
+};
+
+// Use template literals for readability, not necessarily performance
+const largeArray = new Array(10000).fill("test");
+
+console.time("Concatenation");
+let result1 = "";
+for (let i = 0; i < largeArray.length; i++) {
+    result1 += largeArray[i];
+}
+console.timeEnd("Concatenation");
+
+console.time("Join");
+const result2 = largeArray.join("");
+console.timeEnd("Join");
+
+// For building complex strings, consider StringBuilder pattern
+class StringBuilder {
+    constructor() {
+        this.parts = [];
+    }
+    
+    append(str) {
+        this.parts.push(str);
+        return this;
+    }
+    
+    toString() {
+        return this.parts.join("");
+    }
+}
+
+const sb = new StringBuilder();
+sb.append("Hello").append(" ").append("World");
+console.log(sb.toString()); // "Hello World"</code></pre>
+
+        <hr>
+
+        <!-- 7. PRACTICAL EXAMPLES AND USE CASES -->
+        <h2> 7. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3> 7.1 Form Validation</h3>
+        <pre><code>class FormValidator {
+    static validateEmail(email) {
+        email = email.trim().toLowerCase();
+        
+        if (!email) {
+            return { valid: false, error: "Email is required" };
+        }
+        
+        if (!email.includes("@")) {
+            return { valid: false, error: "Email must contain @" };
+        }
+        
+        const [localPart, domain] = email.split("@");
+        
+        if (!localPart || !domain) {
+            return { valid: false, error: "Invalid email format" };
+        }
+        
+        if (!domain.includes(".")) {
+            return { valid: false, error: "Domain must contain a dot" };
+        }
+        
+        return { valid: true, value: email };
+    }
+    
+    static validatePassword(password) {
+        password = password.trim();
+        
+        if (password.length < 8) {
+            return { valid: false, error: "Password must be at least 8 characters" };
+        }
+        
+        if (!password.match(/[A-Z]/)) {
+            return { valid: false, error: "Password must contain an uppercase letter" };
+        }
+        
+        if (!password.match(/[a-z]/)) {
+            return { valid: false, error: "Password must contain a lowercase letter" };
+        }
+        
+        if (!password.match(/[0-9]/)) {
+            return { valid: false, error: "Password must contain a number" };
+        }
+        
+        return { valid: true, value: password };
+    }
+    
+    static validatePhone(phone) {
+        // Remove all non-digits
+        const cleaned = phone.replace(/\D/g, "");
+        
+        if (cleaned.length < 10) {
+            return { valid: false, error: "Phone number must have at least 10 digits" };
+        }
+        
+        // Format consistently
+        const formatted = cleaned.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+        
+        return { valid: true, value: formatted };
+    }
+}
+
+// Usage
+console.log(FormValidator.validateEmail("  USER@EXAMPLE.COM  "));
+// { valid: true, value: "user@example.com" }
+
+console.log(FormValidator.validatePassword("Pass123"));
+// { valid: false, error: "Password must be at least 8 characters" }
+
+console.log(FormValidator.validatePhone("1234567890"));
+// { valid: true, value: "(123) 456-7890" }</code></pre>
+
+        <h3> 7.2 URL and Query String Parser</h3>
+        <pre><code>class URLParser {
+    constructor(url) {
+        this.url = url;
+        this.parsed = new URL(url);
+    }
+    
+    getProtocol() {
+        return this.parsed.protocol.replace(":", "");
+    }
+    
+    getHostname() {
+        return this.parsed.hostname;
+    }
+    
+    getPath() {
+        return this.parsed.pathname;
+    }
+    
+    getQueryParams() {
+        const params = {};
+        for (const [key, value] of this.parsed.searchParams) {
+            params[key] = value;
+        }
+        return params;
+    }
+    
+    getHash() {
+        return this.parsed.hash.replace("#", "");
+    }
+    
+    static buildQueryString(params) {
+        return Object.entries(params)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join("&");
+    }
+    
+    static addQueryParam(url, key, value) {
+        const urlObj = new URL(url);
+        urlObj.searchParams.append(key, value);
+        return urlObj.toString();
+    }
+}
+
+// Usage
+const parser = new URLParser("https://example.com/path?name=John&age=30#section");
+console.log(parser.getProtocol());      // "https"
+console.log(parser.getHostname());      // "example.com"
+console.log(parser.getPath());          // "/path"
+console.log(parser.getQueryParams());   // {name: "John", age: "30"}
+
+const queryString = URLParser.buildQueryString({search: "javascript", page: 2});
+console.log(queryString); // "search=javascript&page=2"</code></pre>
+
+        <h3> 7.3 HTML Template Engine</h3>
+        <pre><code>class TemplateEngine {
+    constructor(template) {
+        this.template = template;
+    }
+    
+    render(data) {
+        return this.template.replace(/\{\{\s*([^}]+)\s*\}\}/g, (match, key) => {
+            key = key.trim();
+            return this._getValue(data, key) || "";
+        });
+    }
+    
+    _getValue(obj, path) {
+        return path.split(".").reduce((current, key) => {
+            return current && current[key] !== undefined ? current[key] : null;
+        }, obj);
+    }
+    
+    static escapeHTML(str) {
+        const htmlEntities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
+        
+        return String(str).replace(/[&<>"']/g, char => htmlEntities[char]);
+    }
+    
+    static createComponent(template, styles = "") {
+        return (props) => {
+            const engine = new TemplateEngine(template);
+            const content = engine.render(props);
+            
+            if (!styles) return content;
+            
+            return `
+                &lt;style&gt;${styles}&lt;/style&gt;
+                ${content}
+            `;
+        };
+    }
+}
+
+// Usage
+const userCardTemplate = `
+&lt;div class="card"&gt;
+    &lt;h2&gt;{{ name }}&lt;/h2&gt;
+    &lt;p&gt;Email: {{ email }}&lt;/p&gt;
+    &lt;p&gt;Role: {{ role }}&lt;/p&gt;
+    &lt;p&gt;Status: {{ isActive ? 'Active' : 'Inactive' }}&lt;/p&gt;
+&lt;/div&gt;
+`;
+
+const userCard = TemplateEngine.createComponent(userCardTemplate, `
+    .card { border: 1px solid #ccc; padding: 10px; }
+    h2 { color: blue; }
+`);
+
+const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Developer",
+    isActive: true
+};
+
+console.log(userCard(user));</code></pre>
+
+        <h3> 7.4 Text Processing Utilities</h3>
+        <pre><code>class TextProcessor {
+    // Slugify a string for URLs
+    static slugify(text) {
+        return text
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")           // Replace spaces with -
+            .replace(/[^\w\-]+/g, "")       // Remove all non-word chars
+            .replace(/\-\-+/g, "-")          // Replace multiple - with single -
+            .replace(/^-+/, "")              // Trim - from start
+            .replace(/-+$/, "");              // Trim - from end
+    }
+    
+    // Truncate text with ellipsis
+    static truncate(text, length, ellipsis = "...") {
+        if (text.length <= length) return text;
+        return text.substring(0, length - ellipsis.length) + ellipsis;
+    }
+    
+    // Capitalize first letter of each word
+    static titleCase(text) {
+        return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+    }
+    
+    // Count words
+    static wordCount(text) {
+        return text.trim().split(/\s+/).length;
+    }
+    
+    // Extract mentions (@username) from text
+    static extractMentions(text) {
+        const mentions = text.match(/@(\w+)/g) || [];
+        return mentions.map(mention => mention.slice(1));
+    }
+    
+    // Extract hashtags
+    static extractHashtags(text) {
+        const hashtags = text.match(/#(\w+)/g) || [];
+        return hashtags.map(tag => tag.slice(1));
+    }
+    
+    // Redact sensitive information
+    static redactSensitive(text) {
+        return text
+            .replace(/\b\d{16}\b/g, "*-*-*-*") // Credit cards
+            .replace(/\b\d{3}-\d{2}-\d{4}\b/g, "--*") // SSN
+            .replace(/\b[\w.-]+@[\w.-]+\.\w+\b/g, "[EMAIL REDACTED]"); // Emails
+    }
+    
+    // Generate reading time estimate
+    static readingTime(text, wordsPerMinute = 200) {
+        const words = this.wordCount(text);
+        const minutes = Math.ceil(words / wordsPerMinute);
+        return `${minutes} min read`;
+    }
+}
+
+// Usage
+const sampleText = "Hello World! This is a sample text with @user and #javascript";
+
+console.log(TextProcessor.slugify("Hello World! How are you?")); // "hello-world-how-are-you"
+console.log(TextProcessor.truncate("This is a very long text", 10)); // "This is..."
+console.log(TextProcessor.titleCase("hello world from javascript")); // "Hello World From Javascript"
+console.log(TextProcessor.extractMentions(sampleText)); // ["user"]
+console.log(TextProcessor.extractHashtags(sampleText)); // ["javascript"]</code></pre>
+
+        <hr>
+
+        <!-- 8. COMMON PITFALLS AND BEST PRACTICES -->
+        <h2> 8. COMMON PITFALLS AND BEST PRACTICES</h2>
+
+        <h3> 8.1 Common Mistakes</h3>
+        <pre><code>// 1. Forgetting strings are immutable
+let str = "Hello";
+str.toUpperCase(); // Returns new string, doesn't modify original
+console.log(str); // "Hello" (unchanged!)
+str = str.toUpperCase(); // Correct way
+
+// 2. Using == for string comparison
+const str1 = "hello";
+const str2 = new String("hello");
+console.log(str1 == str2);  // true (loose equality, type coercion)
+console.log(str1 === str2); // false (strict equality, different types)
+console.log(str1 === str2.toString()); // true (correct comparison)
+
+// 3. Not trimming user input
+const userInput = "  email@example.com  ";
+if (userInput === "email@example.com") {
+    // This won't execute!
+}
+if (userInput.trim() === "email@example.com") {
+    // This works
+}
+
+// 4. Case sensitivity issues
+const searchIn = "JavaScript is great";
+console.log(searchIn.includes("javascript")); // false
+console.log(searchIn.toLowerCase().includes("javascript")); // true
+
+// 5. Using indexOf for existence check
+const text = "Hello World";
+if (text.indexOf("World")) { // Bug! Returns 6, which is truthy
+    console.log("Found");
+}
+if (text.indexOf("Hello")) { // Bug! Returns 0, which is falsy
+    console.log("Not found"); // This will run incorrectly
+}
+// Correct way:
+if (text.includes("World")) { // Better
+    console.log("Found");
+}
+if (text.indexOf("Hello") !== -1) { // Traditional correct way
+    console.log("Found");
+}
+
+// 6. Confusing slice, substring, and substr
+const test = "hello world";
+console.log(test.slice(-5));      // "world"
+console.log(test.substring(-5));  // "hello world" (treats negative as 0)
+console.log(test.substr(-5, 3));  // "wor" (deprecated)
+
+// 7. Not handling emojis correctly
+const emojiStr = "Hello 🌍";
+console.log(emojiStr.length);      // 8 (not 7! 🌍 uses 2 code units)
+console.log(emojiStr.slice(0, 7)); // "Hello " (corrupts emoji)
+// Better approach for emojis:
+const chars = [...emojiStr];
+console.log(chars); // ["H", "e", "l", "l", "o", " ", "🌍"]</code></pre>
+
+        <h3> 8.2 Best Practices</h3>
+        <pre><code>// 1. Use template literals for string concatenation
+// Bad
+const name = "John";
+const greeting = "Hello, " + name + "! Welcome to " + site + ".";
+
+// Good
+const greeting = `Hello, ${name}! Welcome to ${site}.`;
+
+// 2. Use strict equality (===) for comparisons
+if (userInput.trim() === expectedValue) {
+    // Do something
+}
+
+// 3. Normalize strings before comparison
+const str1 = "café";
+const str2 = "cafe\u0301";
+console.log(str1 === str2); // false
+console.log(str1.normalize() === str2.normalize()); // true
+
+// 4. Use appropriate methods for intent
+// Check existence
+if (str.includes("substring")) { } // Clear intent
+// Get index
+const index = str.indexOf("substring");
+// Starts with
+if (str.startsWith("prefix")) { }
+
+// 5. Handle edge cases
+function safeStringOperation(str) {
+    if (!str) return ""; // Handle null, undefined, empty
+    if (typeof str !== "string") {
+        str = String(str); // Convert if needed
+    }
+    // Proceed with operation
+    return str.trim();
+}
+
+// 6. Use constants for magic strings
+// Bad
+if (status === "active") { }
+
+// Good
+const STATUS_ACTIVE = "active";
+if (status === STATUS_ACTIVE) { }
+
+// 7. Performance: Use array join for many concatenations
+// Bad (in loops)
+let result = "";
+for (const item of largeArray) {
+    result += item + ",";
+}
+
+// Good
+const parts = [];
+for (const item of largeArray) {
+    parts.push(item);
+}
+const result = parts.join(",");
+
+// 8. Escape user input for security
+const userProvided = "&lt;script&gt;alert('hack')&lt;/script&gt;";
+// For HTML
+const safe = userProvided.replace(/[&<>"]/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;'
+}[char]));</code></pre>
+
+        <hr>
+
+        <!-- 9. INTERVIEW QUESTIONS -->
+        <h2> 9. INTERVIEW QUESTIONS</h2>
+
+        <h3> 9.1 Basic Questions</h3>
+        <p><strong>Q1: What's the difference between <code>==</code> and <code>===</code> when comparing
+                strings?</strong></p>
+        <pre><code>// == performs type coercion, === does not
+console.log("5" == 5);   // true (string converted to number)
+console.log("5" === 5);  // false (different types)
+
+// Always use === for string comparison unless you specifically need coercion</code></pre>
+
+        <p><strong>Q2: How do you check if a string contains a substring?</strong></p>
+        <pre><code>const text = "Hello World";
+
+// Modern way
+console.log(text.includes("World")); // true
+
+// Older way
+console.log(text.indexOf("World") !== -1); // true
+
+// Case-insensitive
+console.log(text.toLowerCase().includes("world")); // true</code></pre>
+
+        <p><strong>Q3: What's the output of <code>"hello".repeat(2.7)</code>?</strong></p>
+        <pre><code>console.log("hello".repeat(2.7)); // "hellohello" (2.7 is floored to 2)
+console.log("hello".repeat(2.2)); // "hellohello" (2.2 floored to 2)</code></pre>
+
+        <h3> 9.2 Intermediate Questions</h3>
+        <p><strong>Q4: Write a function to reverse a string</strong></p>
+        <pre><code>// Method 1: Using array methods
+function reverseString(str) {
+    return str.split("").reverse().join("");
+}
+
+// Method 2: Using a loop
+function reverseString2(str) {
+    let reversed = "";
+    for (let i = str.length - 1; i >= 0; i--) {
+        reversed += str[i];
+    }
+    return reversed;
+}
+
+// Method 3: Using reduce
+function reverseString3(str) {
+    return str.split("").reduce((rev, char) => char + rev, "");
+}
+
+// Method 4: Using recursion
+function reverseString4(str) {
+    if (str === "") return "";
+    return reverseString4(str.substr(1)) + str.charAt(0);
+}
+
+console.log(reverseString("hello")); // "olleh"</code></pre>
+
+        <p><strong>Q5: How do you check if a string is a palindrome?</strong></p>
+        <pre><code>function isPalindrome(str) {
+    // Remove non-alphanumeric characters and convert to lowercase
+    const clean = str.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return clean === clean.split("").reverse().join("");
+}
+
+console.log(isPalindrome("racecar")); // true
+console.log(isPalindrome("A man, a plan, a canal: Panama")); // true
+console.log(isPalindrome("hello")); // false</code></pre>
+
+        <p><strong>Q6: Write a function to count vowels in a string</strong></p>
+        <pre><code>function countVowels(str) {
+    const matches = str.toLowerCase().match(/[aeiou]/g);
+    return matches ? matches.length : 0;
+}
+
+// Without regex
+function countVowels2(str) {
+    const vowels = new Set(["a", "e", "i", "o", "u"]);
+    return str
+        .toLowerCase()
+        .split("")
+        .filter(char => vowels.has(char))
+        .length;
+}
+
+console.log(countVowels("Hello World")); // 3</code></pre>
+
+        <h3> 9.3 Advanced Questions</h3>
+        <p><strong>Q7: Implement a function to truncate a string without cutting words</strong></p>
+        <pre><code>function truncateWords(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    
+    // Find the last space within the limit
+    let truncated = text.substr(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(" ");
+    
+    if (lastSpace > 0) {
+        truncated = truncated.substr(0, lastSpace);
+    }
+    
+    return truncated + "...";
+}
+
+console.log(truncateWords("The quick brown fox jumps over the lazy dog", 20));
+// "The quick brown..."</code></pre>
+
+        <p><strong>Q8: Create a function to find the most frequent character in a string</strong></p>
+        <pre><code>function mostFrequentChar(str) {
+    const freq = {};
+    let maxChar = "";
+    let maxCount = 0;
+    
+    for (const char of str) {
+        freq[char] = (freq[char] || 0) + 1;
+        
+        if (freq[char] > maxCount) {
+            maxCount = freq[char];
+            maxChar = char;
+        }
+    }
+    
+    return { char: maxChar, count: maxCount };
+}
+
+console.log(mostFrequentChar("javascript")); // { char: "a", count: 2 }</code></pre>
+
+        <p><strong>Q9: Implement string compression (e.g., "aaabbc" -> "a3b2c1")</strong></p>
+        <pre><code>function compressString(str) {
+    if (!str) return "";
+    
+    let compressed = "";
+    let count = 1;
+    
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === str[i + 1]) {
+            count++;
+        } else {
+            compressed += str[i] + count;
+            count = 1;
+        }
+    }
+    
+    // Return original if compressed isn't shorter
+    return compressed.length < str.length ? compressed : str;
+}
+
+console.log(compressString("aaabbc")); // "a3b2c1"
+console.log(compressString("abc")); // "abc" (compressed would be "a1b1c1" which is longer)</code></pre>
+
+        <p><strong>Q10: Implement a function to check if two strings are anagrams</strong></p>
+        <pre><code>function areAnagrams(str1, str2) {
+    const clean = (str) => {
+        return str
+            .toLowerCase()
+            .replace(/[^a-z]/g, "")
+            .split("")
+            .sort()
+            .join("");
+    };
+    
+    return clean(str1) === clean(str2);
+}
+
+// More efficient with character count
+function areAnagrams2(str1, str2) {
+    const clean1 = str1.toLowerCase().replace(/[^a-z]/g, "");
+    const clean2 = str2.toLowerCase().replace(/[^a-z]/g, "");
+    
+    if (clean1.length !== clean2.length) return false;
+    
+    const charCount = {};
+    
+    for (const char of clean1) {
+        charCount[char] = (charCount[char] || 0) + 1;
+    }
+    
+    for (const char of clean2) {
+        if (!charCount[char]) return false;
+        charCount[char]--;
+    }
+    
+    return true;
+}
+
+console.log(areAnagrams("listen", "silent")); // true
+console.log(areAnagrams("hello", "world")); // false</code></pre>
+
+        <hr>
+
+        <!-- 10. EXERCISES AND PROJECTS -->
+        <h2> 10. EXERCISES AND PROJECTS</h2>
+
+        <h3> 10.1 Beginner Exercises</h3>
+        <p><strong>Exercise 1: Username Generator</strong></p>
+        <pre><code>// Create a function that generates a username from a full name
+// Rules: lowercase, replace spaces with dots, add random number
+
+function generateUsername(fullName) {
+    const base = fullName
+        .toLowerCase()
+        .replace(/\s+/g, ".")
+        .replace(/[^a-z.]/g, "");
+    
+    const randomNum = Math.floor(Math.random() * 1000);
+    return `${base}${randomNum}`;
+}
+
+console.log(generateUsername("John Doe")); // "john.doe123"</code></pre>
+
+        <p><strong>Exercise 2: Email Obfuscator</strong></p>
+        <pre><code>// Hide part of an email for privacy
+
+function obfuscateEmail(email) {
+    const [localPart, domain] = email.split("@");
+    
+    if (localPart.length <= 3) {
+        return `${localPart.charAt(0)}@${domain}`;
+    }
+    
+    const visible = localPart.slice(0, 3);
+    return `${visible}@${domain}`;
+}
+
+console.log(obfuscateEmail("john.doe@example.com")); // "joh@example.com"</code></pre>
+
+        <h3> 10.2 Intermediate Exercises</h3>
+        <p><strong>Exercise 3: Password Strength Checker</strong></p>
+        <pre><code>class PasswordStrengthChecker {
+    static check(password) {
+        const checks = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            numbers: /[0-9]/.test(password),
+            special: /[^A-Za-z0-9]/.test(password)
+        };
+        
+        const score = Object.values(checks).filter(Boolean).length;
+        
+        let strength;
+        if (score <= 2) strength = "Weak";
+        else if (score <= 4) strength = "Medium";
+        else strength = "Strong";
+        
+        return {
+            strength,
+            checks,
+            score,
+            suggestions: this.getSuggestions(checks, password)
+        };
+    }
+    
+    static getSuggestions(checks, password) {
+        const suggestions = [];
+        
+        if (!checks.length) {
+            suggestions.push("Use at least 8 characters");
+        }
+        if (!checks.uppercase) {
+            suggestions.push("Add uppercase letters");
+        }
+        if (!checks.lowercase) {
+            suggestions.push("Add lowercase letters");
+        }
+        if (!checks.numbers) {
+            suggestions.push("Add numbers");
+        }
+        if (!checks.special) {
+            suggestions.push("Add special characters (!@#$%^&*)");
+        }
+        
+        return suggestions;
+    }
+}
+
+console.log(PasswordStrengthChecker.check("Pass123!"));</code></pre>
+
+        <p><strong>Exercise 4: Markdown to HTML Converter</strong></p>
+        <pre><code>class MarkdownConverter {
+    static convert(text) {
+        return text
+            .replace(/^ (.*$)/gim, '&lt;h3&gt;$1&lt;/h3&gt;')
+            .replace(/^ (.*$)/gim, '&lt;h2&gt;$1&lt;/h2&gt;')
+            .replace(/^# (.*$)/gim, '&lt;h1&gt;$1&lt;/h1&gt;')
+            .replace(/\*\*(.*?)\*\*/gim, '&lt;strong&gt;$1&lt;/strong&gt;')
+            .replace(/\*(.*?)\*/gim, '&lt;em&gt;$1&lt;/em&gt;')
+            .replace(/!\[(.*?)\]\((.*?)\)/gim, '&lt;img alt="$1" src="$2" /&gt;')
+            .replace(/\[(.*?)\]\((.*?)\)/gim, '&lt;a href="$2"&gt;$1&lt;/a&gt;')
+            .replace(/\n/gim, '&lt;br&gt;');
+    }
+    
+    static convertWithCodeBlocks(text) {
+        // Handle code blocks first
+        let inCodeBlock = false;
+        const lines = text.split('\n');
+        const processed = [];
+        
+        for (const line of lines) {
+            if (line.startsWith('```')) {
+                inCodeBlock = !inCodeBlock;
+                processed.push(inCodeBlock ? '&lt;pre&gt;&lt;code&gt;' : '&lt;/code&gt;&lt;/pre&gt;');
+            } else if (inCodeBlock) {
+                processed.push(line);
+            } else {
+                processed.push(this.convert(line));
+            }
+        }
+        
+        return processed.join('\n');
+    }
+}
+
+const markdown = `
+# Welcome
+This is bold and *italic* text.
+[Link](https://example.com)
+`;
+
+console.log(MarkdownConverter.convert(markdown));</code></pre>
+
+        <h3> 10.3 Advanced Projects</h3>
+        <p><strong>Project 1: Template String Parser</strong></p>
+        <pre><code>class TemplateParser {
+    constructor(template) {
+        this.template = template;
+        this.cache = new Map();
+    }
+    
+    parse(data) {
+        const cacheKey = JSON.stringify(data);
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey);
+        }
+        
+        const result = this.template.replace(/\$\{([^}]+)\}/g, (match, expression) => {
+            try {
+                // Safely evaluate expression with data context
+                const fn = new Function(...Object.keys(data), `return ${expression}`);
+                return fn(...Object.values(data));
+            } catch (e) {
+                console.error(`Error evaluating expression: ${expression}`, e);
+                return match;
+            }
+        });
+        
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+    
+    compile(data) {
+        const fnBody = `
+            const parts = [];
+            ${this.template.split(/\$\{[^}]+\}/).map((text, i) => {
+                return `parts.push(${JSON.stringify(text)});`;
+            }).join('\n')}
+            ${this.template.match(/\$\{([^}]+)\}/g)?.map((match, i) => {
+                const expr = match.slice(2, -1);
+                return `parts.push(${expr});`;
+            }).join('\n')}
+            return parts.join('');
+        `;
+        
+        return new Function(...Object.keys(data), fnBody);
+    }
+}
+
+// Usage
+const parser = new TemplateParser("Hello, ${name}! You are ${age} years old.");
+console.log(parser.parse({ name: "John", age: 30 }));</code></pre>
+
+        <p><strong>Project 2: Advanced String Formatter</strong></p>
+        <pre><code>class StringFormatter {
+    constructor() {
+        this.formatters = new Map();
+        this.initDefaultFormatters();
+    }
+    
+    initDefaultFormatters() {
+        this.registerFormatter('uppercase', str => str.toUpperCase());
+        this.registerFormatter('lowercase', str => str.toLowerCase());
+        this.registerFormatter('capitalize', str => 
+            str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+        );
+        this.registerFormatter('title', str => 
+            str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+        );
+        this.registerFormatter('trim', str => str.trim());
+        this.registerFormatter('slugify', str => 
+            str.toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]+/g, '')
+                .replace(/--+/g, '-')
+                .replace(/^-|-$/g, '')
+        );
+        this.registerFormatter('escapeHTML', str => 
+            str.replace(/[&<>"]/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;'
+            }[char]))
+        );
+    }
+    
+    registerFormatter(name, fn) {
+        this.formatters.set(name, fn);
+    }
+    
+    format(str, ...formatters) {
+        let result = String(str);
+        
+        for (const formatter of formatters) {
+            if (typeof formatter === 'function') {
+                result = formatter(result);
+            } else if (this.formatters.has(formatter)) {
+                result = this.formatters.get(formatter)(result);
+            }
+        }
+        
+        return result;
+    }
+    
+    createChain(str) {
+        const chain = {
+            value: str,
+            formatters: []
+        };
+        
+        const handler = {
+            get(target, prop) {
+                if (prop === 'value') {
+                    return target.value;
+                }
+                
+                if (prop === 'then') {
+                    return (resolve) => resolve(target.value);
+                }
+                
+                return (...args) => {
+                    target.formatters.push(prop);
+                    return new Proxy(target, handler);
+                };
+            },
+            
+            apply(target, thisArg, args) {
+                const formatter = formatters.get(args[0] || target.formatters[0]);
+                if (formatter) {
+                    target.value = formatter(target.value);
+                }
+                return new Proxy(target, handler);
+            }
+        };
+        
+        return new Proxy(chain, handler);
+    }
+}
+
+// Usage
+const formatter = new StringFormatter();
+console.log(formatter.format("  hello world  ", "trim", "uppercase"));
+console.log(formatter.format("hello world", "title")); // "Hello World"</code></pre>
+
+        <p><strong>Project 3: Internationalization System</strong></p>
+        <pre><code>class I18n {
+    constructor() {
+        this.translations = new Map();
+        this.fallbacks = new Map();
+        this.currentLocale = 'en';
+    }
+    
+    loadTranslations(locale, translations) {
+        this.translations.set(locale, translations);
+    }
+    
+    setFallback(locale, fallbackLocale) {
+        this.fallbacks.set(locale, fallbackLocale);
+    }
+    
+    setLocale(locale) {
+        this.currentLocale = locale;
+    }
+    
+    translate(key, params = {}) {
+        const translation = this.getTranslation(key);
+        if (!translation) return key;
+        
+        return this.interpolate(translation, params);
+    }
+    
+    getTranslation(key) {
+        // Try current locale
+        let translation = this.translations.get(this.currentLocale)?.[key];
+        
+        // Try fallback chain
+        if (!translation) {
+            let fallback = this.fallbacks.get(this.currentLocale);
+            while (fallback && !translation) {
+                translation = this.translations.get(fallback)?.[key];
+                fallback = this.fallbacks.get(fallback);
+            }
+        }
+        
+        return translation;
+    }
+    
+    interpolate(text, params) {
+        return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+            return params[key] !== undefined ? params[key] : match;
+        });
+    }
+    
+    pluralize(key, count, params = {}) {
+        const pluralKey = `${key}.${this.getPluralRule(count)}`;
+        return this.translate(pluralKey, { count, ...params });
+    }
+    
+    getPluralRule(count) {
+        // Simplified English plural rules
+        if (count === 1) return 'one';
+        return 'other';
+    }
+    
+    createFormatter(locale) {
+        return (strings, ...values) => {
+            return strings.reduce((result, str, i) => {
+                const value = values[i];
+                if (value && typeof value === 'object' && value.key) {
+                    return result + str + this.translate(value.key, value.params);
+                }
+                return result + str + (values[i] || '');
+            }, '');
+        };
+    }
+}
+
+// Usage
+const i18n = new I18n();
+
+i18n.loadTranslations('en', {
+    'welcome': 'Welcome, {{name}}!',
+    'items.one': '{{count}} item',
+    'items.other': '{{count}} items'
+});
+
+i18n.loadTranslations('es', {
+    'welcome': '¡Bienvenido, {{name}}!',
+    'items.one': '{{count}} artículo',
+    'items.other': '{{count}} artículos'
+});
+
+i18n.setLocale('es');
+console.log(i18n.translate('welcome', { name: 'Juan' })); // "¡Bienvenido, Juan!"
+
+const t = i18n.createFormatter('es');
+console.log(t`Hello ${ { key: 'welcome', params: { name: 'Maria' } } }`);</code></pre>
+
+        <hr>
+
+        <!-- QUICK REFERENCE CARD -->
+        <h2> QUICK REFERENCE CARD</h2>
+
+        <h3> String Methods Cheat Sheet</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>charAt(n)</code></td>
+                        <td>Returns character at index</td>
+                        <td><code>"Hello".charAt(1)</code></td>
+                        <td><code>"e"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>charCodeAt(n)</code></td>
+                        <td>Unicode of character</td>
+                        <td><code>"A".charCodeAt(0)</code></td>
+                        <td><code>65</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>concat(s)</code></td>
+                        <td>Joins strings</td>
+                        <td><code>"Hi".concat("!", "?")</code></td>
+                        <td><code>"Hi!?"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>endsWith(s)</code></td>
+                        <td>Checks ending</td>
+                        <td><code>"world".endsWith("ld")</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>includes(s)</code></td>
+                        <td>Checks if contains</td>
+                        <td><code>"Hello".includes("ell")</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>indexOf(s)</code></td>
+                        <td>First index</td>
+                        <td><code>"Hi Hi".indexOf("Hi")</code></td>
+                        <td><code>0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>lastIndexOf(s)</code></td>
+                        <td>Last index</td>
+                        <td><code>"Hi Hi".lastIndexOf("Hi")</code></td>
+                        <td><code>3</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>match(regex)</code></td>
+                        <td>Matches regex</td>
+                        <td><code>"a1b2".match(/\d+/)</code></td>
+                        <td><code>["1"]</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>padEnd(n, s)</code></td>
+                        <td>Pad at end</td>
+                        <td><code>"5".padEnd(3, "0")</code></td>
+                        <td><code>"500"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>padStart(n, s)</code></td>
+                        <td>Pad at start</td>
+                        <td><code>"5".padStart(3, "0")</code></td>
+                        <td><code>"005"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>repeat(n)</code></td>
+                        <td>Repeat string</td>
+                        <td><code>"Ha".repeat(3)</code></td>
+                        <td><code>"HaHaHa"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>replace(s, s2)</code></td>
+                        <td>Replace first</td>
+                        <td><code>"aab".replace("a", "c")</code></td>
+                        <td><code>"cab"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>replaceAll(s, s2)</code></td>
+                        <td>Replace all</td>
+                        <td><code>"aab".replaceAll("a", "c")</code></td>
+                        <td><code>"ccb"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>search(regex)</code></td>
+                        <td>Search index</td>
+                        <td><code>"Hi".search(/i/)</code></td>
+                        <td><code>1</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>slice(start, end)</code></td>
+                        <td>Extract part</td>
+                        <td><code>"hello".slice(1, 4)</code></td>
+                        <td><code>"ell"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>split(sep)</code></td>
+                        <td>Split to array</td>
+                        <td><code>"a,b".split(",")</code></td>
+                        <td><code>["a","b"]</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>startsWith(s)</code></td>
+                        <td>Checks start</td>
+                        <td><code>"Hello".startsWith("He")</code></td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>substring(s, e)</code></td>
+                        <td>Extract (no negatives)</td>
+                        <td><code>"hello".substring(1, 4)</code></td>
+                        <td><code>"ell"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>toLowerCase()</code></td>
+                        <td>To lowercase</td>
+                        <td><code>"Hello".toLowerCase()</code></td>
+                        <td><code>"hello"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>toUpperCase()</code></td>
+                        <td>To uppercase</td>
+                        <td><code>"Hello".toUpperCase()</code></td>
+                        <td><code>"HELLO"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>trim()</code></td>
+                        <td>Remove whitespace</td>
+                        <td><code>" hi ".trim()</code></td>
+                        <td><code>"hi"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>trimStart()</code></td>
+                        <td>Remove start whitespace</td>
+                        <td><code>" hi ".trimStart()</code></td>
+                        <td><code>"hi "</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>trimEnd()</code></td>
+                        <td>Remove end whitespace</td>
+                        <td><code>" hi ".trimEnd()</code></td>
+                        <td><code>" hi"</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3> Template Literals Quick Reference</h3>
+        <pre><code>// Basic
+`string text`
+
+// Multi-line
+`line 1
+line 2`
+
+// Interpolation
+`text ${expression} text`
+
+// Tagged
+tag`text ${expression} text`
+
+// Raw
+String.raw`text \n text`</code></pre>
+
+        <hr>
+
+        <!-- CONCLUSION -->
+        <h2> CONCLUSION</h2>
+        <p>This comprehensive guide covers everything from basic string creation to advanced template literal usage and
+            real-world applications. Strings are fundamental to JavaScript programming, and mastering them is essential
+            for any developer. The key takeaways are:</p>
+        <ol>
+            <li><strong>Strings are immutable</strong> - methods return new strings</li>
+            <li><strong>Template literals</strong> are the preferred way for complex strings</li>
+            <li><strong>Always consider edge cases</strong> (empty strings, emojis, Unicode)</li>
+            <li><strong>Use the right method for the right job</strong></li>
+            <li><strong>Performance matters</strong> for large-scale string operations</li>
+            <li><strong>Internationalization</strong> requires special attention</li>
+        </ol>
+        <p>Practice the exercises, understand the methods, and you'll be well-equipped to handle any string manipulation
+            task in JavaScript.</p>
+
+        <hr>
+        <footer>⚡ Complete guide: strings & template literals · every line preserved · block four deep dive</footer>
+    </div>
+</body>
+
+</html>

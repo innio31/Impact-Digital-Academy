@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Notes: Combining Flexbox with Media Queries</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            color: #1a2e4d;
+            background: #f5f9ff;
+        }
+
+        .notes-container {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px -20px #1e3b5c;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1d62a0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 3px solid #4c9fd8;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            border-left: 8px solid #7ac0f0;
+            padding-left: 1.2rem;
+            margin-top: 2.5rem;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            margin: 1.8rem 0 1rem;
+        }
+
+        pre {
+            background: #1e2f44;
+            color: #e4f0ff;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            border: 1px solid #618bb4;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            background: #eaf3fc;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #d3e6fc, #4c9fd8, #d3e6fc);
+            margin: 2rem 0;
+        }
+
+        .note {
+            background: #f0f7ff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #3079b3;
+        }
+
+        strong {
+            color: #1f4b8a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notes-container">
+        <h1>Putting It All Together: Combining Flexbox layouts with Media Queries to build a complete responsive
+            webpage.</h1>
+
+        <p>So far, you have learned two powerful tools:</p>
+        <ol>
+            <li><strong>Flexbox:</strong> For creating flexible one-dimensional layouts.</li>
+            <li><strong>Media Queries:</strong> For applying CSS styles based on screen size.</li>
+        </ol>
+
+        <p>On their own, they are useful, but their <strong>true power is unlocked when they are combined.</strong>
+            Media Queries allow you to change the rules of your Flexbox layout at different screen sizes, creating a
+            seamless experience on any device.</p>
+
+        <hr>
+
+        <h3> <strong>The Core Concept: Responsive Flexbox Layouts</strong></h3>
+
+        <p>The goal is to write a <strong>"mobile-first"</strong> base style (usually a simple, stacked layout) and then
+            use Media Queries to <strong>overwrite specific Flexbox properties</strong> for larger screens where more
+            space is available.</p>
+
+        <p>You are not choosing between Flexbox and Media Queries; you are using Media Queries to <strong>adapt</strong>
+            your Flexbox code.</p>
+
+        <hr>
+
+        <h3> <strong>Scenario 1: Adapting a Navigation Bar</strong></h3>
+
+        <p>A common pattern is a navigation bar that is stacked vertically on a phone and horizontal on a desktop.</p>
+
+        <p><strong>The HTML:</strong></p>
+        <pre><code>&lt;nav class="navbar"&gt;
+    &lt;a href="#" class="logo"&gt;MySite&lt;/a&gt;
+    &lt;ul class="nav-links"&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+
+        <p><strong>The CSS (Mobile First - Stacked):</strong></p>
+        <pre><code>.navbar {
+    display: flex;
+    flex-direction: column; /* Stacks logo and links vertically */
+    align-items: center;    /* Centers items in the column */
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column; /* Stacks the list items vertically */
+    align-items: center;
+    list-style: none;
+    width: 100%;
+}</code></pre>
+
+        <p><strong>The CSS (Larger Screens - Horizontal):</strong></p>
+        <pre><code>/* When the screen is 600px wide or larger... */
+@media (min-width: 600px) {
+    .navbar {
+        flex-direction: row;      /* Changes main axis to horizontal */
+        justify-content: space-between; /* Pushes logo and links apart */
+        align-items: center;
+    }
+
+    .nav-links {
+        flex-direction: row;      /* Makes the list items horizontal */
+        justify-content: flex-end; /* Aligns links to the right */
+        width: auto;              /* Allows the nav to shrink to fit content */
+    }
+    
+    .nav-links li {
+        margin-left: 20px; /* Adds space between horizontal links */
+    }
+}</code></pre>
+
+        <hr>
+
+        <h3> <strong>Scenario 2: Adapting a Card Gallery</strong></h3>
+
+        <p>A gallery of cards might show one card per row on a phone, two on a tablet, and three or four on a desktop.
+        </p>
+
+        <p><strong>The HTML:</strong></p>
+        <pre><code>&lt;section class="card-gallery"&gt;
+    &lt;div class="card"&gt;Card 1 Content&lt;/div&gt;
+    &lt;div class="card"&gt;Card 2 Content&lt;/div&gt;
+    &lt;div class="card"&gt;Card 3 Content&lt;/div&gt;
+    &lt;div class="card"&gt;Card 4 Content&lt;/div&gt;
+&lt;/section&gt;</code></pre>
+
+        <p><strong>The CSS (Mobile First - Single Column):</strong></p>
+        <pre><code>.card-gallery {
+    display: flex;
+    flex-direction: column; /* Stacks cards vertically */
+    gap: 20px; /* Adds space between stacked cards */
+}
+
+.card {
+    /* Card styling (background, border, padding) */
+    background-color: #f4f4f4;
+    padding: 1rem;
+}</code></pre>
+
+        <p><strong>The CSS (Larger Screens - Multi-Column):</strong></p>
+        <pre><code>/* For tablets: 2 columns */
+@media (min-width: 600px) {
+    .card-gallery {
+        flex-direction: row;      /* Allows items to sit side-by-side */
+        flex-wrap: wrap;          /* Allows items to wrap to the next line */
+    }
+
+    .card {
+        flex-basis: calc(50% - 10px); /* Each card takes roughly half the width minus half the gap */
+    }
+}
+
+/* For desktops: 3 columns */
+@media (min-width: 900px) {
+    .card {
+        flex-basis: calc(33.333% - 14px); /* Each card takes roughly one-third of the width */
+    }
+}</code></pre>
+
+        <hr>
+
+        <h3> <strong>Key Takeaways for Combining Flexbox & Media Queries</strong></h3>
+
+        <ol>
+            <li><strong>Start Mobile-First:</strong> Write your base CSS for the smallest screen (usually a single
+                column, stacked layout). This is simpler and forces you to prioritize content.</li>
+            <li><strong>Use <code>min-width</code> Breakpoints:</strong> Using <code>min-width</code> (applies styles
+                <em>above</em> a certain width) aligns perfectly with a mobile-first strategy.
+            </li>
+            <li><strong>Only Override What's Necessary:</strong> Inside your media query, you only need to rewrite the
+                Flexbox properties that change. You don't need to repeat <code>display: flex;</code> if it's already in
+                your base styles.</li>
+            <li><strong>Change the <code>flex-direction</code>:</strong> This is the most common and powerful change.
+                Switching from <code>column</code> to <code>row</code> is the foundation of most responsive layout
+                shifts.</li>
+            <li><strong>Adjust Sizing with <code>flex-basis</code>:</strong> When items wrap, use
+                <code>flex-basis</code> (often within a media query) to control how much space each item takes up on
+                different screen sizes.
+            </li>
+        </ol>
+
+        <div class="note">
+            <p>By combining these two techniques, you move from building pages that simply "shrink" to building pages
+                that <strong>re-structure themselves</strong> to provide the optimal user experience on any screen.</p>
+        </div>
+    </div>
+</body>
+
+</html>

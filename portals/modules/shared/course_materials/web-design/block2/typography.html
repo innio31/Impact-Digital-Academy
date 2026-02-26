@@ -1,0 +1,3575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STYLING TEXT & FONTS IN CSS</title>
+    <style>
+        /* ===== reset / base (preserving exact notes layout) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fa;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1e2b37;
+            padding: 2rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -20px #1e3a5f;
+            padding: 2.5rem 2.8rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #0d3b4c;
+            font-weight: 650;
+            line-height: 1.3;
+            margin-top: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 12px solid #1f7a8c;
+            padding-left: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #b5d8e8;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #155a6b;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #1d6d7a;
+        }
+
+        hr {
+            margin: 2.5rem 0;
+            border: 2px dashed #9ec5d9;
+        }
+
+        p,
+        li,
+        blockquote {
+            margin-bottom: 1rem;
+            color: #1f3a47;
+        }
+
+        code,
+        pre {
+            background: #e9f0f5;
+            border-radius: 10px;
+            padding: 0.2rem 0.6rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            border: 1px solid #bdd3e3;
+        }
+
+        pre {
+            padding: 1.2rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 8px #d4e2ed;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #c9dde9;
+        }
+
+        th {
+            background: #1f7a8c;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        td {
+            background: #f3f9ff;
+            padding: 0.9rem 0.5rem;
+            border-bottom: 1px solid #c2dae8;
+        }
+
+        .note-block {
+            background: #e4f0f7;
+            border-radius: 1.6rem;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2b95b0;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .glossary-term {
+            font-weight: 700;
+            color: #004d66;
+        }
+
+        .source-line-preserve {
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <!-- ==================== COMPLETE NOTES : STYLING TEXT & FONTS IN CSS ==================== -->
+        <!-- EVERY LINE, HEADING, CODE BLOCK, TABLE, AND WORD PRESERVED EXACTLY AS PROVIDED -->
+
+        <h1>STYLING TEXT &amp; FONTS IN CSS</h1>
+
+        <h2>A Complete Guide to Core Typography Properties</h2>
+
+        <hr>
+
+        <h1>TABLE OF CONTENTS</h1>
+
+        <ol>
+            <li>Introduction to Web Typography</li>
+            <li>The <code>font-family</code> Property</li>
+            <li>The <code>font-size</code> Property</li>
+            <li>The <code>font-weight</code> Property</li>
+            <li>The <code>font-style</code> Property</li>
+            <li>The <code>line-height</code> Property</li>
+            <li>The <code>text-align</code> Property</li>
+            <li>The <code>text-decoration</code> Property</li>
+            <li>Combining Typography Properties</li>
+            <li>Best Practices and Accessibility</li>
+            <li>Practical Examples and Code Snippets</li>
+            <li>Common Pitfalls and Troubleshooting</li>
+            <li>Exercises and Practice Problems</li>
+            <li>Quick Reference Summary</li>
+        </ol>
+
+        <hr>
+
+        <h1>1. INTRODUCTION TO WEB TYPOGRAPHY</h1>
+
+        <h2>1.1 What is Typography?</h2>
+
+        <p>Typography is the art and technique of arranging type to make written language legible, readable, and
+            appealing when displayed. In web design, typography plays a crucial role in:</p>
+
+        <ul>
+            <li><strong>User Experience (UX):</strong> Good typography makes content easier to read and navigate</li>
+            <li><strong>Brand Identity:</strong> Font choices convey personality and tone</li>
+            <li><strong>Visual Hierarchy:</strong> Different text styles guide users through content</li>
+            <li><strong>Accessibility:</strong> Proper typography ensures content is accessible to all users</li>
+        </ul>
+
+        <h2>1.2 Why Typography Matters in Web Development</h2>
+
+        <pre><code>┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│   ⚫ 95% of web content is text                         │
+│   ⚫ Users form first impressions in 50ms               │
+│   ⚫ Readability affects time on site                   │
+│   ⚫ Typography impacts SEO and accessibility           │
+│   ⚫ Good typography increases conversion rates         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+
+        <h2>1.3 The CSS Typography Properties We'll Cover</h2>
+
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Purpose</th>
+                <th>Common Values</th>
+            </tr>
+            <tr>
+                <td><code>font-family</code></td>
+                <td>Defines the typeface</td>
+                <td>Arial, Helvetica, sans-serif</td>
+            </tr>
+            <tr>
+                <td><code>font-size</code></td>
+                <td>Sets text size</td>
+                <td>16px, 1.2em, 100%</td>
+            </tr>
+            <tr>
+                <td><code>font-weight</code></td>
+                <td>Controls text thickness</td>
+                <td>normal, bold, 400, 700</td>
+            </tr>
+            <tr>
+                <td><code>font-style</code></td>
+                <td>Applies italic or oblique</td>
+                <td>normal, italic, oblique</td>
+            </tr>
+            <tr>
+                <td><code>line-height</code></td>
+                <td>Sets space between lines</td>
+                <td>1.5, 24px, 150%</td>
+            </tr>
+            <tr>
+                <td><code>text-align</code></td>
+                <td>Positions text horizontally</td>
+                <td>left, center, right, justify</td>
+            </tr>
+            <tr>
+                <td><code>text-decoration</code></td>
+                <td>Adds decorative lines</td>
+                <td>none, underline, line-through</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h1>2. THE <code>font-family</code> PROPERTY</h1>
+
+        <h2>2.1 Definition and Purpose</h2>
+
+        <p>The <code>font-family</code> property specifies the typeface or font for an element. It can hold several font
+            names as a "fallback" system, where the browser tries each font until it finds one available on the user's
+            system.</p>
+
+        <h2>2.2 Syntax and Basic Usage</h2>
+
+        <pre><code>/* Basic syntax */
+selector {
+    font-family: "Font Name", generic-family, fallback;
+}
+
+/* Examples */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.special-text {
+    font-family: "Courier New", Courier, monospace;
+}
+</code></pre>
+
+        <h2>2.3 Types of Font Families</h2>
+
+        <h3>2.3.1 Generic Font Families</h3>
+
+        <p>CSS defines five generic font families that serve as absolute fallbacks:</p>
+
+        <table>
+            <tr>
+                <th>Generic Family</th>
+                <th>Description</th>
+                <th>Examples</th>
+            </tr>
+            <tr>
+                <td><code>serif</code></td>
+                <td>Fonts with small lines or strokes at the ends of characters</td>
+                <td>Times New Roman, Georgia, Garamond</td>
+            </tr>
+            <tr>
+                <td><code>sans-serif</code></td>
+                <td>Fonts without serifs (clean, modern look)</td>
+                <td>Arial, Helvetica, Verdana</td>
+            </tr>
+            <tr>
+                <td><code>monospace</code></td>
+                <td>All characters have the same width</td>
+                <td>Courier New, Consolas, Monaco</td>
+            </tr>
+            <tr>
+                <td><code>cursive</code></td>
+                <td>Fonts that mimic handwriting</td>
+                <td>Comic Sans MS, Brush Script</td>
+            </tr>
+            <tr>
+                <td><code>fantasy</code></td>
+                <td>Decorative fonts (rarely used for body text)</td>
+                <td>Impact, Papyrus</td>
+            </tr>
+        </table>
+
+        <h3>2.3.2 Web-Safe Fonts</h3>
+
+        <p>Web-safe fonts are fonts that come pre-installed on most operating systems:</p>
+
+        <pre><code>┌────────────────────────────────────────────────────┐
+│ WINDOWS            macOS            BOTH           │
+├────────────────────────────────────────────────────┤
+│ Arial              Helvetica        Arial          │
+│ Courier New        Courier          Courier New    │
+│ Georgia            Georgia          Georgia        │
+│ Times New Roman    Times            Times New Roman│
+│ Verdana            Verdana          Verdana        │
+│ Comic Sans MS                       Trebuchet MS   │
+│ Impact                               Impact        │
+└────────────────────────────────────────────────────┘
+</code></pre>
+
+        <h3>2.3.3 Web Fonts (Custom Fonts)</h3>
+
+        <p>Using <code>@font-face</code> or services like Google Fonts to use custom fonts:</p>
+
+        <pre><code>/* Using Google Fonts (in HTML) */
+&lt;link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"&gt;
+
+/* In CSS */
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Using @font-face */
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('fonts/myfont.woff2') format('woff2'),
+         url('fonts/myfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'MyCustomFont', Arial, sans-serif;
+}
+</code></pre>
+
+        <h2>2.4 Font Family Best Practices</h2>
+
+        <h3>2.4.1 Quoting Font Names</h3>
+
+        <pre><code>/* When to use quotes */
+font-family: "Times New Roman", serif;  /* Multiple words - quote */
+font-family: 'Helvetica Neue', sans-serif; /* Multiple words - quote */
+font-family: Arial, sans-serif;         /* Single word - no quote needed */
+font-family: "Arial", sans-serif;        /* Also valid, but unnecessary */
+</code></pre>
+
+        <h3>2.4.2 The Fallback Chain</h3>
+
+        <p>Always end with a generic family:</p>
+
+        <pre><code>/* Good */
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+/* Poor (no generic fallback) */
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
+</code></pre>
+
+        <h3>2.4.3 System Font Stacks</h3>
+
+        <p>Modern approach using native system fonts:</p>
+
+        <pre><code>/* System font stack */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+                 Roboto, Oxygen, Ubuntu, Cantarell, 
+                 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>3. THE <code>font-size</code> PROPERTY</h1>
+
+        <h2>3.1 Definition and Purpose</h2>
+
+        <p>The <code>font-size</code> property sets the size of the text. It's one of the most important properties for
+            readability and visual hierarchy.</p>
+
+        <h2>3.2 Absolute Units</h2>
+
+        <h3>3.2.1 Pixels (px)</h3>
+
+        <p>The most common unit, providing precise control:</p>
+
+        <pre><code>p {
+    font-size: 16px;  /* Standard paragraph size */
+}
+
+h1 {
+    font-size: 32px;  /* Heading size */
+}
+
+small {
+    font-size: 12px;  /* Small text */
+}
+</code></pre>
+
+        <p><strong>Pros and Cons of Pixels:</strong><br>
+            - ✅ Precise control<br>
+            - ✅ Predictable across devices<br>
+            - ❌ Not scalable for users with visual impairments (if user changes browser's default font size)<br>
+            - ❌ Less accessible for responsive design</p>
+
+        <h3>3.2.2 Points (pt)</h3>
+
+        <p>Used primarily for print stylesheets:</p>
+
+        <pre><code>@media print {
+    body {
+        font-size: 12pt;  /* Standard print size */
+    }
+}
+</code></pre>
+
+        <h2>3.3 Relative Units</h2>
+
+        <h3>3.3.1 em Units</h3>
+
+        <p>Relative to the parent element's font size:</p>
+
+        <pre><code>body {
+    font-size: 16px;  /* Base size */
+}
+
+.parent {
+    font-size: 20px;
+}
+
+.child {
+    font-size: 0.8em;  /* 16px (20px × 0.8) */
+}
+
+.grandchild {
+    font-size: 1.2em;  /* 19.2px (16px × 1.2) */
+}
+</code></pre>
+
+        <p><strong>The "em Compounding" Problem:</strong></p>
+
+        <pre><code>&lt;div style="font-size: 1.2em;"&gt;  &lt;!-- 19.2px --&gt;
+    &lt;div style="font-size: 1.2em;"&gt;  &lt;!-- 23.04px --&gt;
+        &lt;div style="font-size: 1.2em;"&gt;  &lt;!-- 27.648px --&gt;
+            Text gets progressively larger
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+        <h3>3.3.2 rem Units (Root em)</h3>
+
+        <p>Relative to the root (html) element's font size, avoiding compounding issues:</p>
+
+        <pre><code>html {
+    font-size: 16px;  /* Default browser size */
+}
+
+body {
+    font-size: 1rem;  /* 16px */
+}
+
+h1 {
+    font-size: 2rem;  /* 32px */
+}
+
+.nested {
+    font-size: 1.5rem;  /* 24px - unaffected by nesting */
+}
+</code></pre>
+
+        <p><strong>rem is now the preferred unit for most web projects:</strong></p>
+
+        <pre><code>html {
+    font-size: 16px;  /* Base */
+}
+
+/* Responsive scaling */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;  /* All rem units scale automatically */
+    }
+}
+
+h1 { font-size: 2.5rem; }  /* 40px on desktop, 35px on mobile */
+h2 { font-size: 2rem; }    /* 32px on desktop, 28px on mobile */
+p { font-size: 1rem; }     /* 16px on desktop, 14px on mobile */
+</code></pre>
+
+        <h3>3.3.3 Percentage (%)</h3>
+
+        <p>Relative to the parent element's size:</p>
+
+        <pre><code>body {
+    font-size: 16px;
+}
+
+p {
+    font-size: 100%;  /* 16px */
+}
+
+h1 {
+    font-size: 200%;  /* 32px */
+}
+
+.small {
+    font-size: 75%;   /* 12px (if parent is 16px) */
+}
+</code></pre>
+
+        <h3>3.3.4 Viewport Units</h3>
+
+        <p>Relative to the viewport size (useful for responsive typography):</p>
+
+        <pre><code>h1 {
+    font-size: 5vw;  /* 5% of viewport width */
+}
+
+.hero-text {
+    font-size: 10vmin;  /* 10% of the smaller viewport dimension */
+}
+
+.banner {
+    font-size: 4vmax;   /* 4% of the larger viewport dimension */
+}
+</code></pre>
+
+        <p><strong>Caution with viewport units:</strong></p>
+
+        <pre><code>/* Problem: Text can become too small on mobile */
+h1 {
+    font-size: 5vw;  /* On iPhone SE (375px): 18.75px - too small */
+}
+
+/* Solution: Use clamp() for responsive scaling */
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);  /* Min, preferred, max */
+}
+</code></pre>
+
+        <h2>3.4 Keyword Values</h2>
+
+        <h3>3.4.1 Absolute Size Keywords</h3>
+
+        <pre><code>p {
+    font-size: medium;  /* Default (usually 16px) */
+}
+
+.small-text {
+    font-size: small;
+}
+
+.large-text {
+    font-size: large;
+}
+
+/* Available keywords: xx-small, x-small, small, medium, 
+   large, x-large, xx-large, xxx-large */
+</code></pre>
+
+        <h3>3.4.2 Relative Size Keywords</h3>
+
+        <pre><code>p {
+    font-size: larger;   /* One step larger than parent */
+    font-size: smaller;  /* One step smaller than parent */
+}
+</code></pre>
+
+        <h2>3.5 Best Practices for Font Sizing</h2>
+
+        <h3>3.5.1 Recommended Font Sizes</h3>
+
+        <table>
+            <tr>
+                <th>Element</th>
+                <th>Recommended Size (rem)</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Body text</td>
+                <td>1rem (16px)</td>
+                <td>Base for readability</td>
+            </tr>
+            <tr>
+                <td>Small text</td>
+                <td>0.875rem (14px)</td>
+                <td>Captions, footnotes</td>
+            </tr>
+            <tr>
+                <td>h1</td>
+                <td>2.5rem (40px)</td>
+                <td>Main heading</td>
+            </tr>
+            <tr>
+                <td>h2</td>
+                <td>2rem (32px)</td>
+                <td>Section heading</td>
+            </tr>
+            <tr>
+                <td>h3</td>
+                <td>1.75rem (28px)</td>
+                <td>Sub-section</td>
+            </tr>
+            <tr>
+                <td>h4</td>
+                <td>1.5rem (24px)</td>
+                <td>Group heading</td>
+            </tr>
+            <tr>
+                <td>h5</td>
+                <td>1.25rem (20px)</td>
+                <td>Minor heading</td>
+            </tr>
+            <tr>
+                <td>h6</td>
+                <td>1rem (16px)</td>
+                <td>Smallest heading</td>
+            </tr>
+            <tr>
+                <td>Navigation</td>
+                <td>1rem (16px)</td>
+                <td>Easy to click</td>
+            </tr>
+            <tr>
+                <td>Buttons</td>
+                <td>1rem (16px)</td>
+                <td>Readable call-to-action</td>
+            </tr>
+        </table>
+
+        <h3>3.5.2 Responsive Typography Pattern</h3>
+
+        <pre><code>/* Modern responsive typography setup */
+html {
+    font-size: 16px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 17px;  /* Slightly larger on tablets */
+    }
+}
+
+@media (min-width: 1200px) {
+    html {
+        font-size: 18px;  /* Larger on desktops */
+    }
+}
+
+/* Or using viewport units with fallback */
+h1 {
+    font-size: 2rem;  /* Fallback */
+    font-size: clamp(2rem, 5vw, 4rem);  /* Modern browsers */
+}
+</code></pre>
+
+        <h3>3.5.3 The 62.5% Technique</h3>
+
+        <p>A popular technique for easier rem calculations:</p>
+
+        <pre><code>html {
+    font-size: 62.5%;  /* 16px × 0.625 = 10px */
+}
+
+/* Now 1rem = 10px */
+body {
+    font-size: 1.6rem;  /* 16px */
+}
+
+h1 {
+    font-size: 3.2rem;  /* 32px */
+}
+
+p {
+    font-size: 1.4rem;  /* 14px */
+}
+</code></pre>
+
+        <hr>
+
+        <h1>4. THE <code>font-weight</code> PROPERTY</h1>
+
+        <h2>4.1 Definition and Purpose</h2>
+
+        <p>The <code>font-weight</code> property controls the thickness or boldness of the text. It helps create visual
+            hierarchy and emphasis.</p>
+
+        <h2>4.2 Keyword Values</h2>
+
+        <pre><code>.normal-text {
+    font-weight: normal;  /* Standard weight (usually 400) */
+}
+
+.bold-text {
+    font-weight: bold;    /* Bold weight (usually 700) */
+}
+
+.lighter-text {
+    font-weight: lighter; /* Lighter than parent element */
+}
+
+.bolder-text {
+    font-weight: bolder;  /* Bolder than parent element */
+}
+</code></pre>
+
+        <h2>4.3 Numeric Values (100-900)</h2>
+
+        <p>CSS allows precise control with numeric values from 100 to 900:</p>
+
+        <pre><code>.thin {
+    font-weight: 100;  /* Thin / Hairline */
+}
+
+.extra-light {
+    font-weight: 200;  /* Extra Light / Ultra Light */
+}
+
+.light {
+    font-weight: 300;  /* Light */
+}
+
+.regular {
+    font-weight: 400;  /* Regular / Normal */
+}
+
+.medium {
+    font-weight: 500;  /* Medium */
+}
+
+.semi-bold {
+    font-weight: 600;  /* Semi Bold / Demi Bold */
+}
+
+.bold {
+    font-weight: 700;  /* Bold */
+}
+
+.extra-bold {
+    font-weight: 800;  /* Extra Bold / Ultra Bold */
+}
+
+.black {
+    font-weight: 900;  /* Black / Heavy */
+}
+</code></pre>
+
+        <h2>4.4 How Font Weight Works</h2>
+
+        <pre><code>Font Weight Mapping:
+┌─────────────────────────────────────┐
+│ 100 → Thin                           │
+│ 200 → Extra Light                     │
+│ 300 → Light                            │
+│ 400 → Regular / Normal                  │
+│ 500 → Medium                             │
+│ 600 → Semi Bold                           │
+│ 700 → Bold                                 │
+│ 800 → Extra Bold                            │
+│ 900 → Black / Heavy                          │
+└──────────────────────────────────────────────┘
+</code></pre>
+
+        <h2>4.5 Font Weight Availability</h2>
+
+        <p>Not all fonts have all weights available:</p>
+
+        <pre><code>/* If a font doesn't have weight 300, it will use the 
+   closest available weight */
+
+h1 {
+    font-family: 'SomeFont', sans-serif;
+    font-weight: 300;  /* May show as 400 if 300 unavailable */
+}
+</code></pre>
+
+        <h3>4.5.1 Checking Available Weights</h3>
+
+        <pre><code>/* With Google Fonts, specify which weights to load */
+&lt;link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet"&gt;
+
+/* Then use them */
+.light { font-weight: 300; }
+.regular { font-weight: 400; }
+.bold { font-weight: 700; }
+.black { font-weight: 900; }
+</code></pre>
+
+        <h2>4.6 Relative Weights: lighter and bolder</h2>
+
+        <pre><code>.container {
+    font-weight: 500;  /* Medium */
+}
+
+.container p {
+    font-weight: lighter;  /* 400 if available, otherwise lighter than 500 */
+}
+
+.container strong {
+    font-weight: bolder;   /* 700 if available, otherwise bolder than 500 */
+}
+</code></pre>
+
+        <h2>4.7 Best Practices for Font Weight</h2>
+
+        <h3>4.7.1 Creating Typographic Hierarchy</h3>
+
+        <pre><code>/* Good hierarchy using font-weight */
+h1 {
+    font-weight: 700;  /* Bold */
+}
+
+h2 {
+    font-weight: 600;  /* Semi-bold */
+}
+
+h3 {
+    font-weight: 500;  /* Medium */
+}
+
+p {
+    font-weight: 400;  /* Regular */
+}
+
+small, .caption {
+    font-weight: 300;  /* Light */
+}
+
+strong, b {
+    font-weight: 700;  /* Bold for emphasis */
+}
+</code></pre>
+
+        <h3>4.7.2 Combining with Font Size</h3>
+
+        <pre><code>.news-article {
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+.news-article .headline {
+    font-size: 2.2rem;
+    font-weight: 700;  /* Bold and large = very prominent */
+}
+
+.news-article .byline {
+    font-size: 0.9rem;
+    font-weight: 300;  /* Light and small = subtle */
+}
+
+.news-article .summary {
+    font-size: 1rem;
+    font-weight: 500;  /* Medium weight for emphasis */
+}
+</code></pre>
+
+        <h3>4.7.3 Accessibility Considerations</h3>
+
+        <pre><code>/* Avoid using font-weight alone to convey meaning */
+.error-message {
+    font-weight: 700;  /* Also use color, icon, or other indicators */
+    color: #d32f2f;
+}
+
+/* Ensure sufficient contrast with font weight */
+.light-text {
+    font-weight: 300;
+    color: #333;  /* Darker color for light weight to maintain contrast */
+}
+</code></pre>
+
+        <hr>
+
+        <h1>5. THE <code>font-style</code> PROPERTY</h1>
+
+        <h2>5.1 Definition and Purpose</h2>
+
+        <p>The <code>font-style</code> property specifies whether text should be displayed in a normal, italic, or
+            oblique style. It's primarily used for emphasis and to differentiate certain types of content.</p>
+
+        <h2>5.2 Available Values</h2>
+
+        <pre><code>.normal {
+    font-style: normal;  /* Standard upright text */
+}
+
+.italic {
+    font-style: italic;  /* Italic version of the font */
+}
+
+.oblique {
+    font-style: oblique; /* Slanted version of the normal font */
+}
+
+.oblique-10deg {
+    font-style: oblique 10deg; /* Oblique with specific angle */
+}
+</code></pre>
+
+        <h2>5.3 Italic vs. Oblique: Understanding the Difference</h2>
+
+        <pre><code>┌────────────────────────────────────────────────────────────┐
+│ ITALIC                        OBLIQUE                       │
+├────────────────────────────────────────────────────────────┤
+│ Designed separately           Algorithmically slanted       │
+│ Has unique characteristics    Just skewed version           │
+│ Usually more elegant          Can look distorted            │
+│ Available as separate font    Generated from regular        │
+└────────────────────────────────────────────────────────────┘
+</code></pre>
+
+        <p><strong>Visual Example:</strong></p>
+
+        <pre><code>Regular:    The quick brown fox
+Italic:     *The quick brown fox* (specially designed)
+Oblique:    \The quick brown fox\ (just tilted)
+</code></pre>
+
+        <h2>5.4 Practical Usage</h2>
+
+        <h3>5.4.1 Common Use Cases</h3>
+
+        <pre><code>/* Emphasis */
+em {
+    font-style: italic;
+}
+
+/* Quotes and citations */
+cite {
+    font-style: italic;
+}
+
+/* Foreign words */
+.foreign-word {
+    font-style: italic;
+}
+
+/* Book and movie titles */
+.movie-title {
+    font-style: italic;
+}
+
+/* Technical terms */
+.latin-term {
+    font-style: italic;
+}
+</code></pre>
+
+        <h3>5.4.2 Complete Example</h3>
+
+        <pre><code>&lt;article class="blog-post"&gt;
+    &lt;h1&gt;The Art of &lt;span class="foreign-word"&gt;Espresso&lt;/span&gt;&lt;/h1&gt;
+    &lt;p class="intro"&gt;
+        As &lt;cite&gt;James Hoffmann&lt;/cite&gt; writes in 
+        &lt;span class="movie-title"&gt;The World Atlas of Coffee&lt;/span&gt;:
+    &lt;/p&gt;
+    &lt;blockquote&gt;
+        &lt;p&gt;
+            &lt;em&gt;The perfect espresso&lt;/em&gt; requires attention to detail. 
+            The term &lt;span class="latin-term"&gt;créma&lt;/span&gt; refers to 
+            the golden foam on top.
+        &lt;/p&gt;
+    &lt;/blockquote&gt;
+&lt;/article&gt;
+</code></pre>
+
+        <pre><code>.blog-post {
+    font-family: Georgia, serif;
+    line-height: 1.6;
+}
+
+.foreign-word {
+    font-style: italic;
+    font-weight: 500;
+}
+
+cite {
+    font-style: italic;
+    font-weight: 300;
+}
+
+.movie-title {
+    font-style: italic;
+    text-decoration: underline;
+}
+
+em {
+    font-style: italic;
+    background-color: #fff3cd;
+    padding: 0 3px;
+}
+
+.latin-term {
+    font-style: italic;
+    font-family: 'Times New Roman', serif;
+}
+</code></pre>
+
+        <h2>5.5 Browser Support and Rendering</h2>
+
+        <pre><code>/* If italic isn't available */
+p {
+    font-style: italic;
+    /* Browser will simulate oblique if no italic font exists */
+}
+
+/* Fallback behavior */
+.fancy-text {
+    font-family: 'FancyFont', 'Times New Roman', serif;
+    font-style: italic;
+    /* If FancyFont has italic, use it
+       If not, use Times New Roman italic
+       If Times has no italic, simulate oblique */
+}
+</code></pre>
+
+        <h2>5.6 Best Practices</h2>
+
+        <h3>5.6.1 Semantic HTML vs. Visual Style</h3>
+
+        <pre><code>/* GOOD: Semantic with CSS */
+em {
+    font-style: italic;  /* em means emphasis */
+}
+
+/* BAD: Using italic for non-emphasized content */
+.photo-credit {
+    font-style: italic;  /* Better to use &lt;cite&gt; or specific class */
+}
+
+/* GOOD: Using specific class */
+.photo-credit {
+    font-style: italic;
+}
+</code></pre>
+
+        <h3>5.6.2 Readability Considerations</h3>
+
+        <pre><code>/* Avoid long passages in italic */
+.long-italic {
+    font-style: italic;  /* Hard to read in large blocks */
+}
+
+/* Use italic sparingly */
+.article p {
+    font-style: normal;  /* Body text should be normal */
+}
+
+.article p.important-note {
+    font-style: italic;  /* Short emphasis only */
+}
+</code></pre>
+
+        <h3>5.6.3 Combining with Other Properties</h3>
+
+        <pre><code>.special-text {
+    font-style: italic;
+    font-weight: 600;  /* Semi-bold italic */
+    font-family: 'Georgia', serif;  /* Serif fonts often have nice italics */
+}
+</code></pre>
+
+        <hr>
+
+        <h1>6. THE <code>line-height</code> PROPERTY</h1>
+
+        <h2>6.1 Definition and Purpose</h2>
+
+        <p>The <code>line-height</code> property controls the amount of space between lines of text. It significantly
+            affects readability and the overall visual texture of text blocks.</p>
+
+        <h2>6.2 Understanding Line Height</h2>
+
+        <pre><code>┌─────────────────────────────────────────────┐
+│                                             │
+│  This is the first line of text.            │←───┐
+│                                             │    │ line-height
+│  This is the second line of text.           │←───┘
+│                                             │
+│  This is the third line of text.            │
+│                                             │
+└─────────────────────────────────────────────┘
+
+Leading (pronounced "ledding") is the space between lines,
+traditionally measured from baseline to baseline.
+</code></pre>
+
+        <h2>6.3 Line Height Values</h2>
+
+        <h3>6.3.1 Unitless Numbers (Recommended)</h3>
+
+        <pre><code>p {
+    line-height: 1.5;  /* 1.5 × font-size */
+}
+
+/* Unitless is preferred because it scales with font-size */
+body {
+    font-size: 16px;
+    line-height: 1.5;  /* 24px computed */
+}
+
+h1 {
+    font-size: 32px;
+    line-height: 1.2;  /* 38.4px computed - tighter for headings */
+}
+</code></pre>
+
+        <h3>6.3.2 Length Values (px, em, rem)</h3>
+
+        <pre><code>p {
+    line-height: 24px;   /* Fixed pixel height */
+    line-height: 1.5em;  /* Relative to element's font-size */
+    line-height: 1.5rem; /* Relative to root font-size */
+}
+</code></pre>
+
+        <p><strong>Important Note on em and inheritance:</strong></p>
+
+        <pre><code>.container {
+    font-size: 20px;
+    line-height: 1.5em;  /* 30px */
+}
+
+.container p {
+    font-size: 16px;
+    /* line-height inherits 30px, not recalculated for 16px */
+    /* This can cause spacing issues! */
+}
+
+/* Better */
+.container {
+    font-size: 20px;
+    line-height: 1.5;  /* Unitless */
+}
+
+.container p {
+    font-size: 16px;
+    /* line-height recalculates: 16px × 1.5 = 24px */
+}
+</code></pre>
+
+        <h3>6.3.3 Percentage Values</h3>
+
+        <pre><code>p {
+    line-height: 150%;  /* 1.5 × font-size */
+}
+
+/* Percentage inherits the computed value, not the multiplier */
+body {
+    font-size: 16px;
+    line-height: 150%;  /* 24px computed */
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 150%;  /* Inherits 24px? No! 36px (24px × 1.5) */
+}
+</code></pre>
+
+        <h3>6.3.4 Normal Keyword</h3>
+
+        <pre><code>p {
+    line-height: normal;  /* Browser default (usually 1.2) */
+}
+
+/* normal is approximately 1.2, but varies by font and browser */
+</code></pre>
+
+        <h2>6.4 Recommended Line Heights</h2>
+
+        <table>
+            <tr>
+                <th>Text Type</th>
+                <th>Recommended Line Height</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Body text</td>
+                <td>1.5 - 1.6</td>
+                <td>Optimal readability</td>
+            </tr>
+            <tr>
+                <td>Headings</td>
+                <td>1.1 - 1.3</td>
+                <td>Tighter for larger text</td>
+            </tr>
+            <tr>
+                <td>Small text</td>
+                <td>1.5 - 1.8</td>
+                <td>More space improves readability</td>
+            </tr>
+            <tr>
+                <td>Long articles</td>
+                <td>1.6 - 1.8</td>
+                <td>Extra space for long reads</td>
+            </tr>
+            <tr>
+                <td>Navigation</td>
+                <td>1 - 1.2</td>
+                <td>Usually single lines</td>
+            </tr>
+            <tr>
+                <td>Buttons</td>
+                <td>1 - 1.2</td>
+                <td>Vertical centering</td>
+            </tr>
+        </table>
+
+        <h2>6.5 Practical Examples</h2>
+
+        <h3>6.5.1 Basic Text Spacing</h3>
+
+        <pre><code>/* Readable article */
+article {
+    font-size: 18px;
+    line-height: 1.6;  /* 28.8px - good for reading */
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Headings with appropriate spacing */
+h1 {
+    font-size: 48px;
+    line-height: 1.2;  /* 57.6px */
+    margin-bottom: 0.5em;
+}
+
+h2 {
+    font-size: 36px;
+    line-height: 1.3;  /* 46.8px */
+}
+
+/* Dense navigation */
+.nav-menu {
+    line-height: 1;  /* Exactly the font-size */
+}
+</code></pre>
+
+        <h3>6.5.2 Vertical Centering with Line Height</h3>
+
+        <pre><code>/* Centering single lines of text */
+.button {
+    height: 50px;
+    line-height: 50px;  /* Same as height */
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* Multiple lines need different approach */
+.notification {
+    padding: 15px 20px;  /* Use padding instead */
+    line-height: 1.5;
+}
+</code></pre>
+
+        <h3>6.5.3 Creating Vertical Rhythm</h3>
+
+        <pre><code>/* Consistent vertical spacing throughout page */
+:root {
+    --base-font-size: 16px;
+    --base-line-height: 1.5;
+    --rhythm: calc(var(--base-font-size) * var(--base-line-height));
+}
+
+body {
+    font-size: var(--base-font-size);
+    line-height: var(--base-line-height);
+}
+
+h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: var(--rhythm);
+}
+
+p {
+    margin-bottom: var(--rhythm);
+}
+
+.component {
+    margin-bottom: calc(var(--rhythm) * 2);
+}
+</code></pre>
+
+        <h2>6.6 Line Height and Accessibility</h2>
+
+        <pre><code>/* Ensure sufficient line spacing */
+body {
+    line-height: 1.5;  /* WCAG Success Criterion 1.4.8 */
+}
+
+/* For users who need more spacing */
+body.spaced {
+    line-height: 2;
+}
+
+/* Avoid too tight spacing */
+.tight-text {
+    line-height: 1.2;  /* Only for short text, not paragraphs */
+}
+</code></pre>
+
+        <h2>6.7 Troubleshooting Line Height Issues</h2>
+
+        <h3>6.7.1 Descenders Collision</h3>
+
+        <pre><code>/* Problem: Descenders of g, j, p, q, y touching next line */
+p {
+    line-height: 1.2;  /* Too tight for body text */
+    font-size: 24px;   /* Large text makes it worse */
+}
+
+/* Solution */
+p {
+    line-height: 1.5;  /* Give descenders room */
+}
+</code></pre>
+
+        <h3>6.7.2 Inline Elements and Line Height</h3>
+
+        <pre><code>/* Line height affects inline elements differently */
+p {
+    line-height: 2;
+}
+
+span.highlight {
+    background-color: yellow;
+    /* The span inherits line-height, but the background
+       only covers the content area, not the line height */
+}
+</code></pre>
+
+        <hr>
+
+        <h1>7. THE <code>text-align</code> PROPERTY</h1>
+
+        <h2>7.1 Definition and Purpose</h2>
+
+        <p>The <code>text-align</code> property controls the horizontal alignment of text within its containing element.
+            It's fundamental for creating visual structure and readability.</p>
+
+        <h2>7.2 Available Values</h2>
+
+        <pre><code>.left-text {
+    text-align: left;      /* Default in LTR languages */
+}
+
+.right-text {
+    text-align: right;     /* Default in RTL languages */
+}
+
+.center-text {
+    text-align: center;    /* Centered alignment */
+}
+
+.justified-text {
+    text-align: justify;   /* Spreads text to fill the line */
+}
+
+.start-text {
+    text-align: start;     /* left in LTR, right in RTL */
+}
+
+.end-text {
+    text-align: end;       /* right in LTR, left in RTL */
+}
+</code></pre>
+
+        <h2>7.3 Visual Examples</h2>
+
+        <pre><code>LEFT ALIGNMENT:
+┌─────────────────────┐
+│ This text is        │
+│ aligned to the left │
+│ side of the         │
+│ container.          │
+└─────────────────────┘
+
+RIGHT ALIGNMENT:
+┌─────────────────────┐
+│    This text is     │
+│ aligned to the right│
+│    side of the      │
+│      container.     │
+└─────────────────────┘
+
+CENTER ALIGNMENT:
+┌─────────────────────┐
+│   This text is      │
+│   aligned to the    │
+│    center of the    │
+│     container.      │
+└─────────────────────┘
+
+JUSTIFIED ALIGNMENT:
+┌─────────────────────┐
+│ This   text   is    │
+│ justified,    with  │
+│ extra    spacing    │
+│ between words.      │
+└─────────────────────┘
+</code></pre>
+
+        <h2>7.4 Practical Applications</h2>
+
+        <h3>7.4.1 Basic Text Alignment</h3>
+
+        <pre><code>/* Left-aligned body text (most common) */
+body {
+    text-align: left;
+}
+
+/* Centered headings */
+h1, h2, h3 {
+    text-align: center;
+}
+
+/* Right-aligned for specific purposes */
+.pull-quote {
+    text-align: right;
+    font-style: italic;
+    border-right: 3px solid #ccc;
+    padding-right: 20px;
+}
+
+/* Justified for newspapers/magazines */
+.news-article {
+    text-align: justify;
+}
+</code></pre>
+
+        <h3>7.4.2 Multi-language Support</h3>
+
+        <pre><code>/* Using start/end for internationalization */
+[dir="ltr"] .quote {
+    text-align: start;  /* Left in LTR languages */
+    border-inline-start: 3px solid #333;
+}
+
+[dir="rtl"] .quote {
+    text-align: start;  /* Right in RTL languages */
+    border-inline-start: 3px solid #333;
+}
+</code></pre>
+
+        <h2>7.5 Text Align and Layout</h2>
+
+        <h3>7.5.1 Combining with Other Properties</h3>
+
+        <pre><code>/* Centered text with max-width */
+.centered-block {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;  /* Centers the block itself */
+}
+
+/* Right-aligned with padding */
+.sidebar {
+    text-align: right;
+    padding-right: 30px;
+    border-right: 1px solid #ddd;
+}
+</code></pre>
+
+        <h3>7.5.2 Alignment in Different Contexts</h3>
+
+        <pre><code>/* Navigation menus */
+.nav-menu {
+    text-align: center;  /* Center the menu items */
+}
+
+.nav-menu li {
+    display: inline-block;  /* Items need to be inline for text-align to work */
+}
+
+/* Button text */
+.button {
+    text-align: center;  /* Center text inside button */
+    display: inline-block;
+}
+
+/* Form labels */
+.form-label {
+    text-align: right;
+    width: 150px;
+    display: inline-block;
+}
+</code></pre>
+
+        <h2>7.6 Justified Text Considerations</h2>
+
+        <h3>7.6.1 Problems with Justification</h3>
+
+        <pre><code>/* Justified text can create rivers of white space */
+.article {
+    text-align: justify;
+}
+
+/* Solution: Use hyphenation */
+.article {
+    text-align: justify;
+    hyphens: auto;  /* Enable hyphenation */
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+}
+</code></pre>
+
+        <h3>7.6.2 Controlling Justification</h3>
+
+        <pre><code>/* Fine-tuning justification */
+.article {
+    text-align: justify;
+    word-spacing: -0.05em;  /* Adjust word spacing */
+    letter-spacing: 0.02em;  /* Adjust letter spacing */
+}
+
+/* Better control with text-justify */
+.article {
+    text-align: justify;
+    text-justify: inter-word;  /* Justify by adjusting word spacing */
+    /* Other values: inter-character, auto, none */
+}
+</code></pre>
+
+        <h2>7.7 Best Practices</h2>
+
+        <h3>7.7.1 Readability Guidelines</h3>
+
+        <pre><code>/* Left alignment is most readable for long text */
+body {
+    text-align: left;
+}
+
+/* Center alignment for short text only */
+.hero-title {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Avoid justify on narrow columns */
+@media (max-width: 600px) {
+    .article {
+        text-align: left;  /* Switch to left on mobile */
+    }
+}
+</code></pre>
+
+        <h3>7.7.2 Alignment and Visual Hierarchy</h3>
+
+        <pre><code>/* Using alignment to create hierarchy */
+.page-header {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 20px;
+}
+
+.section-title {
+    text-align: left;
+    border-left: 4px solid #007bff;
+    padding-left: 15px;
+}
+
+.metadata {
+    text-align: right;
+    color: #666;
+    font-size: 0.9rem;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>8. THE <code>text-decoration</code> PROPERTY</h1>
+
+        <h2>8.1 Definition and Purpose</h2>
+
+        <p>The <code>text-decoration</code> property adds decorative lines to text. It's commonly used for links, but
+            has many other applications for visual enhancement.</p>
+
+        <h2>8.2 The Text Decoration Properties</h2>
+
+        <h3>8.2.1 Shorthand vs. Longhand</h3>
+
+        <pre><code>/* Shorthand (recommended for most cases) */
+.underlined {
+    text-decoration: underline wavy blue 2px;
+}
+
+/* Longhand properties */
+.link {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: #007bff;
+    text-decoration-thickness: 2px;
+}
+</code></pre>
+
+        <h2>8.3 text-decoration-line</h2>
+
+        <pre><code>/* Basic line values */
+.underline {
+    text-decoration-line: underline;  /* Line below text */
+}
+
+.overline {
+    text-decoration-line: overline;   /* Line above text */
+}
+
+.line-through {
+    text-decoration-line: line-through;  /* Line through text */
+}
+
+/* Multiple lines */
+.fancy {
+    text-decoration-line: underline overline;  /* Both above and below */
+}
+
+.none {
+    text-decoration-line: none;  /* Remove decoration (common on links) */
+}
+</code></pre>
+
+        <h2>8.4 text-decoration-style</h2>
+
+        <pre><code>.solid-underline {
+    text-decoration-line: underline;
+    text-decoration-style: solid;  /* Default */
+}
+
+.wavy-underline {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;    /* Wavy line */
+}
+
+.dotted-underline {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;  /* Dotted line */
+}
+
+.dashed-underline {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;  /* Dashed line */
+}
+
+.double-underline {
+    text-decoration-line: underline;
+    text-decoration-style: double;  /* Double line */
+}
+</code></pre>
+
+        <h2>8.5 text-decoration-color</h2>
+
+        <pre><code>/* Custom colors */
+.error {
+    text-decoration-line: line-through;
+    text-decoration-color: red;  /* Red line-through */
+}
+
+.link {
+    text-decoration-line: underline;
+    text-decoration-color: #007bff;  /* Blue underline */
+}
+
+/* CurrentColor (default) */
+.standard {
+    text-decoration-line: underline;
+    /* Uses the element's color */
+}
+</code></pre>
+
+        <h2>8.6 text-decoration-thickness</h2>
+
+        <pre><code>/* Thickness values */
+.thin-underline {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;  /* Thin line */
+}
+
+.thick-underline {
+    text-decoration-line: underline;
+    text-decoration-thickness: 3px;  /* Thick line */
+}
+
+.relative-thickness {
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.1em;  /* Relative to font size */
+}
+</code></pre>
+
+        <h2>8.7 Shorthand Examples</h2>
+
+        <pre><code>/* Complete shorthand: line | style | color | thickness */
+.link {
+    text-decoration: underline solid blue 2px;
+}
+
+.wavy-error {
+    text-decoration: line-through wavy red 3px;
+}
+
+.fancy-header {
+    text-decoration: underline overline double #333 1px;
+}
+
+/* Partial shorthand */
+.simple-link {
+    text-decoration: underline;  /* Uses defaults for others */
+}
+
+/* Remove decoration */
+.no-underline {
+    text-decoration: none;
+}
+</code></pre>
+
+        <h2>8.8 Practical Applications</h2>
+
+        <h3>8.8.1 Link Styling</h3>
+
+        <pre><code>/* Basic link styling */
+a {
+    text-decoration: none;  /* Remove default underline */
+    color: #007bff;
+}
+
+a:hover {
+    text-decoration: underline;  /* Add underline on hover */
+}
+
+/* More sophisticated link styling */
+.fancy-link {
+    text-decoration: none;
+    color: #333;
+    position: relative;
+}
+
+.fancy-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #007bff;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.fancy-link:hover::after {
+    transform: scaleX(1);  /* Animated underline */
+}
+</code></pre>
+
+        <h3>8.8.2 Strike-through for Completed Items</h3>
+
+        <pre><code>/* Todo list */
+.task.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+
+/* Sale prices */
+.price {
+    color: #999;
+    text-decoration: line-through wavy red;
+    font-size: 0.9em;
+}
+
+.sale-price {
+    color: #c00;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+</code></pre>
+
+        <h3>8.8.3 Decorative Headers</h3>
+
+        <pre><code>/* Fancy headers */
+h1 {
+    text-decoration: underline overline wavy #ff6b6b 3px;
+    text-underline-offset: 10px;  /* Space between text and line */
+}
+
+h2 {
+    text-decoration: underline double #4ecdc4 4px;
+    text-underline-offset: 8px;
+}
+</code></pre>
+
+        <h2>8.9 Advanced Text Decoration Properties</h2>
+
+        <h3>8.9.1 text-underline-offset</h3>
+
+        <pre><code>/* Control distance of underline from text */
+.link {
+    text-decoration: underline;
+    text-underline-offset: 3px;  /* 3px below text */
+}
+
+.link-large {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;  /* Relative to font size */
+}
+</code></pre>
+
+        <h3>8.9.2 text-underline-position</h3>
+
+        <pre><code>/* Control where underline appears */
+.under {
+    text-decoration: underline;
+    text-underline-position: under;  /* Below descenders */
+}
+
+.auto {
+    text-decoration: underline;
+    text-underline-position: auto;   /* Browser decides */
+}
+
+/* For CJK text */
+.cjk {
+    text-decoration: underline;
+    text-underline-position: under left;  /* Multiple values possible */
+}
+</code></pre>
+
+        <h2>8.10 Best Practices</h2>
+
+        <h3>8.10.1 Accessibility</h3>
+
+        <pre><code>/* Ensure underline is visible */
+a {
+    text-decoration: none;
+}
+
+/* Don't rely on color alone for links */
+a:focus, a:hover {
+    text-decoration: underline;  /* Add underline on interaction */
+}
+
+/* Sufficient contrast for underline */
+.warning {
+    text-decoration: line-through wavy #d32f2f 2px;
+    color: #333;  /* High contrast with background */
+}
+</code></pre>
+
+        <h3>8.10.2 Readability Considerations</h3>
+
+        <pre><code>/* Avoid overusing decorations */
+body {
+    text-decoration: none;  /* Default */
+}
+
+/* Use sparingly for emphasis */
+em {
+    font-style: italic;
+    /* Avoid underline on italic - can look cluttered */
+}
+
+/* Clear link indicators */
+article a {
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 123, 255, 0.5);
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 0.2s;
+}
+
+article a:hover {
+    text-decoration-color: #007bff;  /* Darken on hover */
+}
+</code></pre>
+
+        <h3>8.10.3 Browser Compatibility</h3>
+
+        <pre><code>/* Fallbacks for older browsers */
+.link {
+    text-decoration: underline;  /* Simple fallback */
+    text-decoration: underline solid blue 2px;  /* Modern browsers */
+}
+
+/* Feature query for modern properties */
+@supports (text-decoration-thickness: 1px) {
+    .link {
+        text-decoration: underline solid #007bff 2px;
+        text-underline-offset: 3px;
+    }
+}
+</code></pre>
+
+        <hr>
+
+        <h1>9. COMBINING TYPOGRAPHY PROPERTIES</h1>
+
+        <h2>9.1 Creating Typographic Systems</h2>
+
+        <h3>9.1.1 Complete Typography Example</h3>
+
+        <pre><code>/* Complete typography system */
+:root {
+    /* Base settings */
+    --base-font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 
+                        'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --base-font-size: 16px;
+    --base-line-height: 1.5;
+    --base-font-weight: 400;
+    
+    /* Heading settings */
+    --heading-font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+    --heading-font-weight: 700;
+    --heading-line-height: 1.2;
+    --heading-letter-spacing: -0.02em;
+}
+
+body {
+    font-family: var(--base-font-family);
+    font-size: var(--base-font-size);
+    line-height: var(--base-line-height);
+    font-weight: var(--base-font-weight);
+    color: #333;
+    text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading-font-family);
+    font-weight: var(--heading-font-weight);
+    line-height: var(--heading-line-height);
+    letter-spacing: var(--heading-letter-spacing);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 3rem;  /* 48px */
+    text-decoration: underline wavy #007bff 3px;
+    text-underline-offset: 10px;
+}
+
+h2 {
+    font-size: 2.5rem;  /* 40px */
+    border-left: 5px solid #007bff;
+    padding-left: 20px;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+p.lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.7;
+}
+
+small, .text-small {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: #666;
+}
+</code></pre>
+
+        <h2>9.2 Practical Combinations</h2>
+
+        <h3>9.2.1 Article Typography</h3>
+
+        <pre><code>&lt;article class="blog-post"&gt;
+    &lt;h1&gt;The Art of Typography in Web Design&lt;/h1&gt;
+    &lt;p class="byline"&gt;By &lt;span class="author"&gt;Jane Smith&lt;/span&gt; | &lt;time datetime="2024-01-15"&gt;January 15, 2024&lt;/time&gt;&lt;/p&gt;
+    
+    &lt;p class="intro"&gt;Typography is the foundation of good web design. It affects readability, user experience, and the overall aesthetic of your website.&lt;/p&gt;
+    
+    &lt;h2&gt;Understanding Type Classification&lt;/h2&gt;
+    &lt;p&gt;There are several categories of typefaces, each with its own characteristics and appropriate uses.&lt;/p&gt;
+    
+    &lt;h3&gt;Serif vs. Sans-Serif&lt;/h3&gt;
+    &lt;p&gt;Serif fonts, like &lt;span class="serif-example"&gt;Times New Roman&lt;/span&gt;, have small decorative lines at the ends of characters. Sans-serif fonts, like &lt;span class="sans-example"&gt;Arial&lt;/span&gt;, do not have these lines.&lt;/p&gt;
+    
+    &lt;blockquote&gt;
+        &lt;p&gt;Good typography is invisible. Bad typography is everywhere.&lt;/p&gt;
+        &lt;cite&gt;— A Web Designer&lt;/cite&gt;
+    &lt;/blockquote&gt;
+    
+    &lt;p class="footnote"&gt;* This article was updated for 2024 best practices.&lt;/p&gt;
+&lt;/article&gt;
+</code></pre>
+
+        <pre><code>.blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.7;
+    color: #2c3e50;
+}
+
+.blog-post h1 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #1a2634;
+}
+
+.byline {
+    text-align: center;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.author {
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px dotted #3498db;
+}
+
+.intro {
+    font-size: 1.3rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: #34495e;
+    border-left: 4px solid #3498db;
+    padding-left: 20px;
+    font-style: italic;
+}
+
+.blog-post h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.blog-post h3 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-style: normal;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.serif-example {
+    font-family: 'Times New Roman', serif;
+    font-weight: 400;
+    font-style: italic;
+    background: #f8f9fa;
+    padding: 2px 6px;
+}
+
+.sans-example {
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    background: #f8f9fa;
+    padding: 2px 6px;
+}
+
+blockquote {
+    margin: 40px 0;
+    padding: 20px 40px;
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.8;
+    color: #555;
+    border-left: 4px solid #3498db;
+    background: #f9f9f9;
+}
+
+blockquote cite {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 300;
+    text-align: right;
+    color: #7f8c8d;
+}
+
+.footnote {
+    margin-top: 40px;
+    font-size: 0.85rem;
+    font-weight: 300;
+    text-align: right;
+    font-style: italic;
+    border-top: 1px solid #ecf0f1;
+    padding-top: 20px;
+}
+</code></pre>
+
+        <h3>9.2.2 Card Component</h3>
+
+        <pre><code>.card {
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    background-color: #3498db;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+}
+
+.card-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+.card-link {
+    font-weight: 600;
+    text-decoration: none;
+    color: #3498db;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.card-link:hover {
+    border-bottom-color: #3498db;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>10. BEST PRACTICES AND ACCESSIBILITY</h1>
+
+        <h2>10.1 Readability Guidelines</h2>
+
+        <h3>10.1.1 Line Length</h3>
+
+        <pre><code>/* Optimal line length for readability */
+article {
+    max-width: 70ch;  /* Approximately 70 characters per line */
+    margin: 0 auto;
+}
+
+/* For mobile */
+@media (max-width: 768px) {
+    article {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+}
+</code></pre>
+
+        <h3>10.1.2 Font Size for Different Devices</h3>
+
+        <pre><code>/* Responsive font sizes */
+:root {
+    --font-size-base: 16px;
+    --font-size-scale: 1.2;
+}
+
+body {
+    font-size: var(--font-size-base);
+}
+
+@media (min-width: 768px) {
+    :root {
+        --font-size-base: 17px;
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --font-size-base: 18px;
+    }
+}
+
+/* Fluid typography with clamp */
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+}
+
+p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+}
+</code></pre>
+
+        <h2>10.2 Accessibility Considerations</h2>
+
+        <h3>10.2.1 WCAG Guidelines</h3>
+
+        <pre><code>/* WCAG 2.1 Success Criteria */
+
+/* 1.4.4 Resize text (Level AA) */
+html {
+    font-size: 100%;  /* Allow browser zoom */
+}
+
+/* 1.4.12 Text spacing (Level AA) */
+body {
+    line-height: 1.5;  /* Minimum 1.5 */
+    letter-spacing: 0.12em;  /* Optional improvements */
+    word-spacing: 0.16em;
+}
+
+p {
+    margin-bottom: 2rem;  /* Adequate spacing */
+}
+
+/* 1.4.8 Visual Presentation (Level AAA) */
+@media (min-width: 80ch) {
+    article {
+        max-width: 80ch;  /* Not exceeding 80 characters per line */
+        padding: 0 2em;
+    }
+    
+    p {
+        text-align: left;  /* Not justified for AAA */
+    }
+}
+</code></pre>
+
+        <h3>10.2.2 High Contrast Support</h3>
+
+        <pre><code>/* Ensure text remains readable in high contrast mode */
+@media (forced-colors: active) {
+    body {
+        forced-color-adjust: none;
+    }
+    
+    a {
+        text-decoration: underline;  /* Ensure links are visible */
+    }
+    
+    .button {
+        border: 1px solid currentColor;
+    }
+}
+</code></pre>
+
+        <h3>10.2.3 Focus Indicators</h3>
+
+        <pre><code>/* Clear focus indicators for keyboard navigation */
+a:focus-visible {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+    text-decoration: none;
+}
+
+/* Don't remove focus outlines without replacement */
+a:focus {
+    outline: none;  /* BAD */
+}
+
+a:focus {
+    outline: 3px solid #007bff;  /* GOOD */
+}
+</code></pre>
+
+        <h2>10.3 Performance Best Practices</h2>
+
+        <h3>10.3.1 Font Loading</h3>
+
+        <pre><code>/* Optimize font loading */
+@font-face {
+    font-family: 'MyWebFont';
+    src: url('webfont.woff2') format('woff2'),
+         url('webfont.woff') format('woff');
+    font-display: swap;  /* Show fallback font until custom loads */
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Font loading strategies */
+.fonts-loaded body {
+    font-family: 'MyWebFont', sans-serif;
+}
+</code></pre>
+
+        <h3>10.3.2 Limit Font Variations</h3>
+
+        <pre><code>/* Only load necessary weights */
+/* Good */
+&lt;link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"&gt;
+
+/* Bad - too many variations */
+&lt;link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"&gt;
+</code></pre>
+
+        <h2>10.4 Mobile Typography</h2>
+
+        <pre><code>/* Mobile-first typography */
+body {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+    body {
+        font-size: 17px;
+        line-height: 1.6;
+    }
+}
+
+/* Touch targets */
+.nav-link {
+    font-size: 1rem;
+    padding: 12px;  /* Minimum 44x44 tap target */
+}
+
+/* Readable on small screens */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+}
+</code></pre>
+
+        <hr>
+
+        <h1>11. PRACTICAL EXAMPLES AND CODE SNIPPETS</h1>
+
+        <h2>11.1 Complete Article Styling</h2>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Typography Showcase&lt;/title&gt;
+    &lt;link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet"&gt;
+    &lt;style&gt;
+        /* Base Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Typography System */
+        :root {
+            /* Font Families */
+            --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+            --font-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Font Sizes */
+            --text-xs: 0.75rem;   /* 12px */
+            --text-sm: 0.875rem;   /* 14px */
+            --text-base: 1rem;      /* 16px */
+            --text-lg: 1.125rem;    /* 18px */
+            --text-xl: 1.25rem;     /* 20px */
+            --text-2xl: 1.5rem;     /* 24px */
+            --text-3xl: 1.875rem;   /* 30px */
+            --text-4xl: 2.25rem;    /* 36px */
+            --text-5xl: 3rem;       /* 48px */
+            
+            /* Font Weights */
+            --weight-light: 300;
+            --weight-regular: 400;
+            --weight-medium: 500;
+            --weight-semibold: 600;
+            --weight-bold: 700;
+            --weight-extrabold: 800;
+            --weight-black: 900;
+            
+            /* Line Heights */
+            --leading-none: 1;
+            --leading-tight: 1.2;
+            --leading-normal: 1.5;
+            --leading-relaxed: 1.7;
+            --leading-loose: 2;
+            
+            /* Colors */
+            --color-text: #2d3748;
+            --color-text-light: #718096;
+            --color-primary: #4299e1;
+            --color-accent: #ed8936;
+            --color-border: #e2e8f0;
+            --color-bg: #ffffff;
+            --color-bg-alt: #f7fafc;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            font-weight: var(--weight-regular);
+            line-height: var(--leading-normal);
+            color: var(--color-text);
+            background: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-serif);
+            font-weight: var(--weight-bold);
+            line-height: var(--leading-tight);
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            color: #1a202c;
+        }
+        
+        h1 {
+            font-size: var(--text-5xl);
+            font-weight: var(--weight-black);
+            letter-spacing: -0.02em;
+            margin-top: 0;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: var(--text-4xl);
+            font-weight: var(--weight-bold);
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: var(--text-3xl);
+            font-weight: var(--weight-semibold);
+        }
+        
+        h4 {
+            font-size: var(--text-2xl);
+            font-weight: var(--weight-semibold);
+        }
+        
+        /* Paragraphs */
+        p {
+            margin-bottom: 1.5em;
+        }
+        
+        .lead {
+            font-size: var(--text-lg);
+            font-weight: var(--weight-light);
+            line-height: var(--leading-relaxed);
+            color: var(--color-text-light);
+        }
+        
+        /* Links */
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: var(--weight-medium);
+            transition: all 0.2s;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 2px;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1em 0 1.5em 1.5em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+            line-height: var(--leading-normal);
+        }
+        
+        /* Blockquotes */
+        blockquote {
+            margin: 2em 0;
+            padding: 1em 2em;
+            font-family: var(--font-serif);
+            font-size: var(--text-lg);
+            font-style: italic;
+            line-height: var(--leading-relaxed);
+            color: var(--color-text-light);
+            border-left: 4px solid var(--color-primary);
+            background: var(--color-bg-alt);
+        }
+        
+        blockquote p {
+            margin-bottom: 0.5em;
+        }
+        
+        blockquote cite {
+            display: block;
+            font-size: var(--text-sm);
+            font-style: normal;
+            font-weight: var(--weight-regular);
+            text-align: right;
+            color: var(--color-text-light);
+        }
+        
+        /* Code */
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            padding: 0.2em 0.4em;
+            background: var(--color-bg-alt);
+            border-radius: 3px;
+        }
+        
+        pre {
+            margin: 1.5em 0;
+            padding: 1em;
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Small text */
+        small {
+            font-size: var(--text-sm);
+            font-weight: var(--weight-light);
+            color: var(--color-text-light);
+        }
+        
+        /* Meta information */
+        .meta {
+            font-size: var(--text-sm);
+            font-weight: var(--weight-regular);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-light);
+        }
+        
+        /* Footer */
+        .article-footer {
+            margin-top: 3em;
+            padding-top: 1em;
+            font-size: var(--text-sm);
+            text-align: center;
+            border-top: 1px solid var(--color-border);
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;article class="container"&gt;
+        &lt;h1&gt;The Art of Typography in Web Design&lt;/h1&gt;
+        &lt;p class="meta"&gt;By Jane Smith · 15 min read · January 15, 2024&lt;/p&gt;
+        
+        &lt;p class="lead"&gt;Typography is more than just choosing fonts—it's a crucial element of design that affects readability, user experience, and the overall aesthetic of your website.&lt;/p&gt;
+        
+        &lt;h2&gt;The Foundations of Good Typography&lt;/h2&gt;
+        &lt;p&gt;When we talk about typography on the web, we're referring to the style and appearance of printed matter. It involves the selection of typefaces, point sizes, line lengths, line-spacing (leading), and letter-spacing (tracking).&lt;/p&gt;
+        
+        &lt;h3&gt;Type Classification&lt;/h3&gt;
+        &lt;p&gt;Typefaces can be broadly classified into several categories:&lt;/p&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;strong&gt;Serif:&lt;/strong&gt; Fonts with small lines or strokes attached to the end of larger strokes (e.g., &lt;span style="font-family: Georgia, serif;"&gt;Georgia, Times New Roman&lt;/span&gt;)&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;Sans-serif:&lt;/strong&gt; Fonts without serifs, offering a cleaner appearance (e.g., &lt;span style="font-family: Arial, sans-serif;"&gt;Arial, Helvetica&lt;/span&gt;)&lt;/li&gt;
+            &lt;li&gt;&lt;strong&gt;Monospace:&lt;/strong&gt; Fonts where each character occupies the same horizontal space (e.g., &lt;code&gt;Courier New, Consolas&lt;/code&gt;)&lt;/li&gt;
+        &lt;/ul&gt;
+        
+        &lt;blockquote&gt;
+            &lt;p&gt;Typography is the craft of endowing human language with a durable visual form.&lt;/p&gt;
+            &lt;cite&gt;— Robert Bringhurst, The Elements of Typographic Style&lt;/cite&gt;
+        &lt;/blockquote&gt;
+        
+        &lt;h2&gt;Readability and Legibility&lt;/h2&gt;
+        &lt;p&gt;While these terms are often used interchangeably, they have distinct meanings:&lt;/p&gt;
+        
+        &lt;h4&gt;Legibility&lt;/h4&gt;
+        &lt;p&gt;How easily individual characters can be distinguished from one another. This is influenced by typeface design, size, and weight.&lt;/p&gt;
+        
+        &lt;h4&gt;Readability&lt;/h4&gt;
+        &lt;p&gt;How easily blocks of text can be read. This is affected by line length, line height, and contrast.&lt;/p&gt;
+        
+        &lt;pre&gt;&lt;code&gt;/* Optimal settings for readability */
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 70ch;
+    margin: 0 auto;
+}&lt;/code&gt;&lt;/pre&gt;
+        
+        &lt;h2&gt;Responsive Typography&lt;/h2&gt;
+        &lt;p&gt;In today's multi-device world, typography must adapt to different screen sizes. Using relative units like &lt;code&gt;rem&lt;/code&gt; and &lt;code&gt;vw&lt;/code&gt; helps create fluid typography.&lt;/p&gt;
+        
+        &lt;div class="article-footer"&gt;
+            &lt;small&gt;© 2024 Web Design Mastery. All rights reserved.&lt;/small&gt;
+        &lt;/div&gt;
+    &lt;/article&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h2>11.2 Navigation Bar Typography</h2>
+
+        <pre><code>/* Navigation typography */
+.navbar {
+    background: #2d3748;
+    padding: 1rem 2rem;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    display: inline-block;
+    margin-left: 2rem;
+}
+
+.nav-link {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.nav-link:hover {
+    color: #fff;
+    border-bottom-color: #4299e1;
+}
+
+.nav-link.active {
+    color: #fff;
+    border-bottom-color: #4299e1;
+}
+
+/* Mobile navigation */
+@media (max-width: 768px) {
+    .nav-item {
+        display: block;
+        margin: 1rem 0;
+    }
+    
+    .nav-link {
+        display: block;
+        text-align: center;
+    }
+}
+</code></pre>
+
+        <h2>11.3 Form Typography</h2>
+
+        <pre><code>/* Form typography */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #4a5568;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2d3748;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #4299e1;
+}
+
+.form-input::placeholder {
+    color: #a0aec0;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.form-error {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #e53e3e;
+    font-weight: 500;
+}
+
+.form-help {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #718096;
+}
+
+/* Button typography */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    color: #fff;
+    background: #4299e1;
+}
+
+.btn-primary:hover {
+    background: #3182ce;
+}
+
+.btn-secondary {
+    color: #4a5568;
+    background: #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>12. COMMON PITFALLS AND TROUBLESHOOTING</h1>
+
+        <h2>12.1 Font Loading Issues</h2>
+
+        <h3>12.1.1 Flash of Unstyled Text (FOUT)</h3>
+
+        <pre><code>/* Problem: Text appears in fallback font, then switches */
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.woff2');
+    /* No font-display specified */
+}
+
+/* Solution 1: Use font-display */
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.woff2');
+    font-display: swap;  /* Show fallback, then swap */
+}
+
+/* Solution 2: Use font loading API (advanced) */
+document.fonts.ready.then(function() {
+    document.documentElement.classList.add('fonts-loaded');
+});
+</code></pre>
+
+        <h3>12.1.2 Flash of Invisible Text (FOIT)</h3>
+
+        <pre><code>/* Problem: Text invisible while font loads */
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.woff2');
+    /* Browser may hide text up to 3 seconds */
+}
+
+/* Solution: Use font-display */
+@font-face {
+    font-family: 'CustomFont';
+    src: url('font.woff2');
+    font-display: fallback;  /* Short FOIT then swap */
+}
+</code></pre>
+
+        <h2>12.2 Line Height Problems</h2>
+
+        <h3>12.2.1 Vertical Spacing Issues</h3>
+
+        <pre><code>/* Problem: Images breaking line height */
+p {
+    line-height: 1.5;
+}
+
+p img {
+    height: 100px;  /* Increases line height unexpectedly */
+}
+
+/* Solution */
+p img {
+    height: 100px;
+    display: block;  /* Remove from text flow */
+    margin: 10px 0;
+}
+</code></pre>
+
+        <h3>12.2.2 Button Text Alignment</h3>
+
+        <pre><code>/* Problem: Text not centered vertically */
+.button {
+    height: 50px;
+    font-size: 16px;
+    /* line-height not specified */
+}
+
+/* Solution */
+.button {
+    height: 50px;
+    font-size: 16px;
+    line-height: 50px;  /* Match height for single line */
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* Better solution for multi-line */
+.button {
+    padding: 15px 20px;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+</code></pre>
+
+        <h2>12.3 Text Decoration Issues</h2>
+
+        <h3>12.3.1 Underline Too Close to Text</h3>
+
+        <pre><code>/* Problem: Underline touching descenders */
+.link {
+    text-decoration: underline;
+    /* Underline touches 'g', 'j', 'p', 'q', 'y' */
+}
+
+/* Solution */
+.link {
+    text-decoration: underline;
+    text-underline-offset: 3px;  /* Add space */
+    text-decoration-thickness: 2px;
+}
+</code></pre>
+
+        <h3>12.3.2 Multi-line Underline</h3>
+
+        <pre><code>/* Problem: Underline broken across lines */
+.multi-line {
+    text-decoration: underline;
+    /* Underline may appear under each line separately */
+}
+
+/* Solution: Use border-bottom for multi-line */
+.multi-line {
+    text-decoration: none;
+    border-bottom: 2px solid #000;
+    padding-bottom: 2px;
+    display: inline;  /* Border will span multiple lines */
+}
+</code></pre>
+
+        <h2>12.4 Font Weight Issues</h2>
+
+        <h3>12.4.1 Weight Not Available</h3>
+
+        <pre><code>/* Problem: Weight doesn't exist in font */
+p {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 450;  /* Not a standard weight */
+}
+
+/* Solution: Use available weights */
+p {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;  /* Use standard weight */
+}
+
+/* Or load the specific weight */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+</code></pre>
+
+        <h3>12.4.2 Synthetic Bold</h3>
+
+        <pre><code>/* Problem: Browser synthesizes bold */
+p {
+    font-family: 'LightFont', sans-serif;
+    font-weight: 700;  /* Font doesn't have bold - browser fakes it */
+}
+
+/* Solution: Use appropriate font */
+p {
+    font-family: 'LightFont', sans-serif;
+    font-weight: 300;  /* Use available weight */
+}
+
+/* Or use a font family with bold version */
+p {
+    font-family: 'LightFont', 'BoldFont', sans-serif;
+    font-weight: 700;
+}
+</code></pre>
+
+        <h2>12.5 Responsive Typography Issues</h2>
+
+        <h3>12.5.1 Text Too Small on Mobile</h3>
+
+        <pre><code>/* Problem: Fixed sizes don't scale */
+h1 {
+    font-size: 48px;  /* Too large on mobile? */
+}
+
+/* Solution 1: Media queries */
+h1 {
+    font-size: 32px;
+}
+
+@media (min-width: 768px) {
+    h1 {
+        font-size: 48px;
+    }
+}
+
+/* Solution 2: Viewport units with clamp */
+h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+}
+
+/* Solution 3: rem scaling */
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;  /* All rem units scale */
+    }
+}
+</code></pre>
+
+        <h3>12.5.2 Text Overflow on Small Screens</h3>
+
+        <pre><code>/* Problem: Long words break layout */
+.long-word {
+    /* Text overflows container */
+}
+
+/* Solution */
+.long-word {
+    overflow-wrap: break-word;  /* Break long words */
+    word-wrap: break-word;       /* Older browsers */
+    word-break: break-word;      /* Additional support */
+}
+
+/* For URLs */
+.url {
+    word-break: break-all;  /* Break anywhere if needed */
+}
+</code></pre>
+
+        <hr>
+
+        <h1>13. EXERCISES AND PRACTICE PROBLEMS</h1>
+
+        <h2>13.1 Beginner Exercises</h2>
+
+        <h3>Exercise 1: Basic Text Styling</h3>
+
+        <p><strong>Task:</strong> Style a paragraph with the following specifications:<br>
+            - Font: Arial or any sans-serif<br>
+            - Size: 18px<br>
+            - Weight: Normal (400)<br>
+            - Style: Normal<br>
+            - Line height: 1.6<br>
+            - Alignment: Left<br>
+            - Decoration: None</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.6;
+    text-align: left;
+    text-decoration: none;
+}
+</code></pre>
+
+        <h3>Exercise 2: Link Styling</h3>
+
+        <p><strong>Task:</strong> Create styles for links with the following:<br>
+            - Normal state: Blue, no underline<br>
+            - Hover state: Dark blue, underline<br>
+            - Visited state: Purple</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>a:link {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #004080;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #800080;
+}
+</code></pre>
+
+        <h3>Exercise 3: Heading Hierarchy</h3>
+
+        <p><strong>Task:</strong> Style headings with:<br>
+            - h1: 32px, bold, centered<br>
+            - h2: 24px, semi-bold, left-aligned, underline<br>
+            - h3: 20px, italic, normal weight</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>h1 {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: underline;
+}
+
+h3 {
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 400;
+}
+</code></pre>
+
+        <h2>13.2 Intermediate Exercises</h2>
+
+        <h3>Exercise 4: Article Typography</h3>
+
+        <p><strong>Task:</strong> Create a complete article styling system:<br>
+            - Body: 16px, 1.6 line height, 70ch max-width<br>
+            - First paragraph: Larger, lighter weight<br>
+            - Blockquotes: Italic, left border, different background<br>
+            - Code: Monospace, light background<br>
+            - Footnotes: Small, right-aligned</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>article {
+    max-width: 70ch;
+    margin: 0 auto;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+article p:first-of-type {
+    font-size: 1.2rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #555;
+}
+
+blockquote {
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+    font-style: italic;
+    border-left: 4px solid #0066cc;
+    background: #f5f5f5;
+}
+
+code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    background: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.footnote {
+    margin-top: 3rem;
+    font-size: 0.8rem;
+    text-align: right;
+    color: #777;
+}
+</code></pre>
+
+        <h3>Exercise 5: Navigation Menu</h3>
+
+        <p><strong>Task:</strong> Style a navigation menu with:<br>
+            - Uppercase letters<br>
+            - Letter spacing: 1px<br>
+            - Bold weight<br>
+            - Underline on hover<br>
+            - Responsive (stack on mobile)</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>.nav {
+    font-family: 'Arial', sans-serif;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.nav-link:hover {
+    border-bottom-color: #0066cc;
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+</code></pre>
+
+        <h2>13.3 Advanced Exercises</h2>
+
+        <h3>Exercise 6: Complete Typography System</h3>
+
+        <p><strong>Task:</strong> Build a complete typography system with:<br>
+            - CSS custom properties<br>
+            - Responsive font sizes<br>
+            - Multiple font families<br>
+            - Proper vertical rhythm<br>
+            - Accessibility considerations</p>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>:root {
+    /* Base */
+    --font-base: 16px;
+    --font-scale: 1.2;
+    
+    /* Font families */
+    --font-primary: 'Merriweather', Georgia, serif;
+    --font-secondary: 'Open Sans', Arial, sans-serif;
+    --font-code: 'Fira Code', 'Courier New', monospace;
+    
+    /* Base sizes */
+    --text-base: 1rem;
+    --text-md: calc(var(--text-base) * var(--font-scale));
+    --text-lg: calc(var(--text-md) * var(--font-scale));
+    --text-xl: calc(var(--text-lg) * var(--font-scale));
+    --text-2xl: calc(var(--text-xl) * var(--font-scale));
+    
+    /* Weights */
+    --weight-light: 300;
+    --weight-regular: 400;
+    --weight-bold: 700;
+    --weight-black: 900;
+    
+    /* Line heights */
+    --leading-tight: 1.2;
+    --leading-base: 1.5;
+    --leading-loose: 1.8;
+    
+    /* Spacing */
+    --rhythm: calc(var(--text-base) * var(--leading-base));
+}
+
+html {
+    font-size: var(--font-base);
+}
+
+@media (min-width: 768px) {
+    :root {
+        --font-base: 17px;
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --font-base: 18px;
+    }
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-base);
+    color: #333;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-secondary);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    margin-top: calc(var(--rhythm) * 2);
+    margin-bottom: var(--rhythm);
+}
+
+h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: var(--text-xl);
+    border-bottom: 2px solid #eee;
+    padding-bottom: calc(var(--rhythm) / 2);
+}
+
+h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+}
+
+h4 {
+    font-size: var(--text-md);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+p {
+    margin-bottom: var(--rhythm);
+}
+
+code, pre {
+    font-family: var(--font-code);
+}
+
+/* Accessibility */
+@media (prefers-contrast: high) {
+    body {
+        color: #000;
+        background: #fff;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+</code></pre>
+
+        <hr>
+
+        <h1>14. QUICK REFERENCE SUMMARY</h1>
+
+        <h2>14.1 Property Cheat Sheet</h2>
+
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Description</th>
+                <th>Common Values</th>
+                <th>Default</th>
+            </tr>
+            <tr>
+                <td><code>font-family</code></td>
+                <td>Typeface</td>
+                <td><code>Arial, sans-serif</code></td>
+                <td>Browser dependent</td>
+            </tr>
+            <tr>
+                <td><code>font-size</code></td>
+                <td>Text size</td>
+                <td><code>16px</code>, <code>1rem</code>, <code>100%</code></td>
+                <td><code>medium</code> (≈16px)</td>
+            </tr>
+            <tr>
+                <td><code>font-weight</code></td>
+                <td>Thickness</td>
+                <td><code>normal</code>, <code>bold</code>, <code>400</code></td>
+                <td><code>normal</code> (400)</td>
+            </tr>
+            <tr>
+                <td><code>font-style</code></td>
+                <td>Italic/normal</td>
+                <td><code>normal</code>, <code>italic</code></td>
+                <td><code>normal</code></td>
+            </tr>
+            <tr>
+                <td><code>line-height</code></td>
+                <td>Line spacing</td>
+                <td><code>1.5</code>, <code>24px</code>, <code>150%</code></td>
+                <td><code>normal</code> (≈1.2)</td>
+            </tr>
+            <tr>
+                <td><code>text-align</code></td>
+                <td>Horizontal alignment</td>
+                <td><code>left</code>, <code>center</code>, <code>right</code></td>
+                <td><code>left</code> (LTR)</td>
+            </tr>
+            <tr>
+                <td><code>text-decoration</code></td>
+                <td>Decorative lines</td>
+                <td><code>underline</code>, <code>none</code></td>
+                <td><code>none</code></td>
+            </tr>
+        </table>
+
+        <h2>14.2 Recommended Values</h2>
+
+        <h3>Body Text</h3>
+
+        <pre><code>body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+}
+</code></pre>
+
+        <h3>Headings</h3>
+
+        <pre><code>h1 { font-size: 2.5rem; line-height: 1.2; font-weight: 700; }
+h2 { font-size: 2rem; line-height: 1.3; font-weight: 600; }
+h3 { font-size: 1.75rem; line-height: 1.4; font-weight: 600; }
+h4 { font-size: 1.5rem; line-height: 1.4; font-weight: 500; }
+h5 { font-size: 1.25rem; line-height: 1.5; font-weight: 500; }
+h6 { font-size: 1rem; line-height: 1.5; font-weight: 600; text-transform: uppercase; }
+</code></pre>
+
+        <h3>Links</h3>
+
+        <pre><code>a {
+    color: #0066cc;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+}
+
+a:hover {
+    text-decoration-thickness: 2px;
+}
+</code></pre>
+
+        <h2>14.3 Common Pitfalls to Avoid</h2>
+
+        <ol>
+            <li>❌ <strong>Using pixels exclusively</strong> → Use <code>rem</code> for better accessibility</li>
+            <li>❌ <strong>Forgetting fallback fonts</strong> → Always end with a generic family</li>
+            <li>❌ <strong>Line height too tight</strong> → Minimum 1.5 for body text</li>
+            <li>❌ <strong>Removing focus outlines</strong> → Replace with visible indicators</li>
+            <li>❌ <strong>Fixed font sizes</strong> → Make them responsive</li>
+            <li>❌ <strong>Overusing <code>!important</code></strong> → Use specific selectors instead</li>
+            <li>❌ <strong>Ignoring vertical rhythm</strong> → Maintain consistent spacing</li>
+        </ol>
+
+        <h2>14.4 Browser Support</h2>
+
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Chrome</th>
+                <th>Firefox</th>
+                <th>Safari</th>
+                <th>Edge</th>
+                <th>IE</th>
+            </tr>
+            <tr>
+                <td>font-family</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>font-size</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>font-weight</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>font-style</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>line-height</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>text-align</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>text-decoration (basic)</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>text-decoration-* (advanced)</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+            </tr>
+        </table>
+
+        <h2>14.5 Tools and Resources</h2>
+
+        <h3>Online Resources</h3>
+        <ul>
+            <li><strong>Google Fonts</strong> - Free web fonts</li>
+            <li><strong>MDN Web Docs</strong> - Comprehensive documentation</li>
+            <li><strong>Can I Use</strong> - Browser support tables</li>
+            <li><strong>Type Scale</strong> - Visual type scale generator</li>
+        </ul>
+
+        <h3>CSS Tools</h3>
+        <ul>
+            <li><strong>Modern Font Stack</strong> - System font stacks</li>
+            <li><strong>Clamp Calculator</strong> - Fluid typography tool</li>
+            <li><strong>Contrast Checker</strong> - Accessibility verification</li>
+        </ul>
+
+        <h3>Browser Extensions</h3>
+        <ul>
+            <li><strong>WhatFont</strong> - Identify fonts on any website</li>
+            <li><strong>Accessibility Insights</strong> - Check accessibility</li>
+            <li><strong>Pixel Perfect</strong> - Measure typography</li>
+        </ul>
+
+        <hr>
+
+        <p><em>This comprehensive guide covers all the core typography properties in CSS. Practice regularly, experiment
+                with different combinations, and always consider readability and accessibility in your designs. Good
+                typography is the foundation of great web design!</em></p>
+
+        <!-- END OF STUDY NOTES: EVERY LINE FROM SOURCE MATERIAL IS INCLUDED ABOVE -->
+
+    </div> <!-- document-wrapper -->
+</body>
+
+</html>

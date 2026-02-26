@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Web Design: media queries & breakpoints – complete notes</title>
+    <style>
+        /* minimalist base for readability — preserves all source text */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f2f5f9;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            color: #01243c;
+        }
+
+        .notes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 45px -40px #0b3450;
+            padding: 2.5rem 2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c2d9f0, #ffffff, #c2d9f0);
+            margin: 2rem 0;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #0b3f61;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 650;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            border-left: 12px solid #2673b3;
+            padding-left: 1.2rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            border-bottom: 3px solid #9ec3e7;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.7rem;
+            color: #145a8a;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            color: #1d5f96;
+            margin-bottom: 0.5rem;
+        }
+
+        p,
+        li,
+        figcaption {
+            font-size: 1.05rem;
+            color: #152e42;
+        }
+
+        pre,
+        code,
+        .code-block {
+            background: #e9f2fc;
+            border-radius: 18px;
+            padding: 1rem 1.5rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            border-left: 6px solid #2e79b9;
+            margin: 1.5rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: inset 0 0 0 1px #c1daf5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px #d4e2f0;
+        }
+
+        th {
+            background: #1f6290;
+            color: white;
+            padding: 0.9rem 1rem;
+            font-weight: 600;
+        }
+
+        td {
+            background: #f6fbfe;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #b7d3ed;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        ul,
+        ol {
+            margin: 1rem 0 1.5rem 1.8rem;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .badge {
+            background: #1b6b9e;
+            color: white;
+            font-size: 0.8rem;
+            border-radius: 40px;
+            padding: 0.2rem 1.2rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        blockquote {
+            background: #eaf4fc;
+            border-left: 10px solid #3584c7;
+            padding: 1.2rem 2rem;
+            border-radius: 30px;
+            font-style: italic;
+            margin: 2rem 0;
+        }
+
+        .featured-card {
+            background: #f1f9ff;
+            border: 2px solid #b4d7fc;
+            border-radius: 32px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        hr.sep {
+            margin: 3rem 0;
+            background: #b0cef0;
+        }
+
+        footer.note-footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #296597;
+            font-size: 1rem;
+            border-top: 2px dashed #aac6e5;
+            padding-top: 2rem;
+        }
+
+        .inline-code {
+            background: #e3effa;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-family: monospace;
+            color: #064d82;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notes-container">
+
+        <!-- COMPLETE CONTENT – EXACTLY AS PROVIDED, LINE BY LINE, NO OMISSIONS -->
+
+        <h1>RESPONSIVE WEB DESIGN: MEDIA QUERIES &amp; BREAKPOINTS</h1>
+
+        <hr class="sep" />
+
+        <h1>PART ONE: FOUNDATIONS OF RESPONSIVE WEB DESIGN</h1>
+
+        <h2>Chapter 1: Understanding Responsive Web Design (RWD)</h2>
+
+        <h3>1.1 What is Responsive Web Design?</h3>
+
+        <p>Responsive Web Design is an approach to web design that makes web pages render well on a variety of devices
+            and window or screen sizes. It is not a separate technology—it is a set of techniques and philosophies that
+            ensure content looks and functions beautifully regardless of whether it's viewed on a 27-inch desktop
+            monitor, a 13-inch laptop, a 10-inch tablet, or a 5-inch smartphone.</p>
+
+        <p>The term was coined by Ethan Marcotte in 2010, and it fundamentally changed how we build for the web. Before
+            RWD, websites typically had separate desktop and mobile versions (using "m-dot" sites like m.example.com).
+            This approach was inefficient, harder to maintain, and provided a poor user experience when switching
+            between devices.</p>
+
+        <h3>1.2 The Three Core Principles of RWD</h3>
+
+        <p>According to Marcotte, RWD relies on three core technical components:</p>
+
+        <ol>
+            <li><strong>Fluid Grids</strong> - Layouts that use relative units (%, em, rem, vw) instead of fixed units
+                (px)</li>
+            <li><strong>Flexible Images</strong> - Images that scale within their containing elements</li>
+            <li><strong>Media Queries</strong> - CSS rules that apply styles conditionally based on device
+                characteristics</li>
+        </ol>
+
+        <h3>1.3 Why RWD Matters: The Mobile Revolution</h3>
+
+        <p>The need for RWD became critical with the explosion of mobile internet usage. Consider these statistics:</p>
+        <ul>
+            <li>Mobile devices now account for approximately half of all web traffic globally</li>
+            <li>Google uses mobile-first indexing (prioritizing the mobile version of content for ranking)</li>
+            <li>Users expect seamless experiences across all their devices</li>
+            <li>Maintaining separate codebases for different devices is unsustainable</li>
+        </ul>
+
+        <h3>1.4 The Evolution: From Desktop-Only to Mobile-First</h3>
+
+        <p><strong>The Old Way (Graceful Degradation):</strong><br />
+            Designers would create complex desktop layouts first, then try to "shrink" them down for smaller screens.
+            This often resulted in:</p>
+        <ul>
+            <li>Tiny, unreadable text</li>
+            <li>Horizontal scrolling</li>
+            <li>Hidden or cut-off content</li>
+            <li>Slow load times on mobile networks</li>
+        </ul>
+
+        <p><strong>The Modern Way (Mobile-First Design):</strong><br />
+            Mobile-first design, a concept popularized by Luke Wroblewski, reverses this approach. You design for the
+            smallest screen first, then progressively enhance for larger screens.</p>
+
+        <p><strong>Benefits of Mobile-First Design:</strong></p>
+        <ul>
+            <li><strong>Performance Focus:</strong> Forces you to prioritize essential content and functionality</li>
+            <li><strong>Simpler Code:</strong> Starting with basic styles means less CSS to override later</li>
+            <li><strong>Better User Experience:</strong> Ensures mobile users aren't an afterthought</li>
+            <li><strong>Future-Friendly:</strong> Easier to adapt to new devices with varying screen sizes</li>
+        </ul>
+
+        <h2>Chapter 2: The Viewport Meta Tag</h2>
+
+        <h3>2.1 What is the Viewport?</h3>
+
+        <p>The viewport is the user's visible area of a web page. It varies with the device—it will be smaller on a
+            mobile phone than on a computer screen. Before mobile devices, web pages were designed for computer screens
+            only, and it was common for pages to have fixed-width designs.</p>
+
+        <p>When mobile devices arrived, they tried to solve the problem of displaying desktop-optimized sites by using a
+            "virtual viewport" that was typically 980px wide (wider than the actual screen). This meant users had to
+            pinch and zoom to see content—a frustrating experience.</p>
+
+        <h3>2.2 The Viewport Meta Tag Solution</h3>
+
+        <p>The viewport meta tag gives the browser instructions on how to control the page's dimensions and scaling. It
+            was introduced by Apple for the iPhone and is now supported by all mobile browsers.</p>
+
+        <p>Here's the standard implementation that should appear in the <code class="inline-code">&lt;head&gt;</code>
+            section of every responsive webpage:</p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Responsive Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Page content --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>2.3 Breaking Down the Viewport Properties</h3>
+
+        <p>The <code class="inline-code">content</code> attribute can include several directives:</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Description</th>
+                        <th>Example Values</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>width</code></td>
+                        <td>Sets the width of the viewport</td>
+                        <td><code>device-width</code>, <code>800</code> (pixels)</td>
+                    </tr>
+                    <tr>
+                        <td><code>initial-scale</code></td>
+                        <td>Initial zoom level when page loads</td>
+                        <td><code>1.0</code>, <code>2.0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>minimum-scale</code></td>
+                        <td>Minimum allowed zoom level</td>
+                        <td><code>0.5</code>, <code>1.0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>maximum-scale</code></td>
+                        <td>Maximum allowed zoom level</td>
+                        <td><code>2.0</code>, <code>3.0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>user-scalable</code></td>
+                        <td>Whether user can zoom</td>
+                        <td><code>yes</code>, <code>no</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><strong>Best Practice Recommendation:</strong></p>
+        <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+</code></pre>
+
+        <p>This combination:</p>
+        <ul>
+            <li><code>width=device-width</code> - Sets the viewport width to match the device's screen width</li>
+            <li><code>initial-scale=1.0</code> - Sets the initial zoom level to 1.0 (no zoom)</li>
+        </ul>
+
+        <h3>2.4 Common Mistakes to Avoid</h3>
+
+        <p><strong>Mistake 1: Disabling User Scaling</strong></p>
+        <pre><code>&lt;!-- BAD: Prevents accessibility --&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;
+</code></pre>
+        <p>This violates WCAG accessibility guidelines by preventing users with visual impairments from zooming.</p>
+
+        <p><strong>Mistake 2: Forgetting the Viewport Tag Altogether</strong><br />
+            Without this tag, mobile browsers will attempt to render the page as if on a desktop, typically at 980px
+            width, forcing users to zoom and pan.</p>
+
+        <p><strong>Mistake 3: Setting Fixed Widths</strong></p>
+        <pre><code>&lt;!-- BAD: Defeats responsive design --&gt;
+&lt;meta name="viewport" content="width=1024"&gt;
+</code></pre>
+        <p>This forces the viewport to be 1024px wide, causing horizontal scroll on smaller devices.</p>
+
+        <hr />
+
+        <h1>PART TWO: MEDIA QUERIES - THE ADAPTIVE ENGINE</h1>
+
+        <h2>Chapter 3: Introduction to Media Queries</h2>
+
+        <h3>3.1 What Are Media Queries?</h3>
+
+        <p>Media queries are a CSS3 feature that allows content rendering to adapt to conditions such as screen
+            resolution, viewport width, device orientation, and even user preferences like color scheme. They are the
+            conditional logic of responsive design—the "if statements" of CSS.</p>
+
+        <p>A media query consists of:</p>
+        <ol>
+            <li>An optional <strong>media type</strong> (screen, print, all)</li>
+            <li>One or more <strong>expressions</strong> that check for specific conditions</li>
+            <li>A block of <strong>CSS rules</strong> that apply when conditions are met</li>
+        </ol>
+
+        <h3>3.2 The @media Rule Syntax</h3>
+
+        <p>The basic syntax structure:</p>
+
+        <pre><code>@media media-type and (condition: value) {
+    /* CSS rules that apply when condition is true */
+    selector {
+        property: value;
+    }
+}
+</code></pre>
+
+        <p><strong>Example:</strong></p>
+        <pre><code>@media screen and (max-width: 600px) {
+    body {
+        background-color: lightblue;
+    }
+    
+    .sidebar {
+        display: none;
+    }
+}
+</code></pre>
+
+        <p>This query says: "If this page is being viewed on a screen AND the viewport width is 600 pixels or less,
+            apply these styles."</p>
+
+        <h3>3.3 Media Types</h3>
+
+        <p>Media types describe the general category of device:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Media Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>all</code></td>
+                    <td>Suitable for all devices (default)</td>
+                </tr>
+                <tr>
+                    <td><code>screen</code></td>
+                    <td>Intended primarily for screens (computers, phones, tablets)</td>
+                </tr>
+                <tr>
+                    <td><code>print</code></td>
+                    <td>Intended for paged material and documents viewed on screen in print preview mode</td>
+                </tr>
+                <tr>
+                    <td><code>speech</code></td>
+                    <td>Intended for screen readers</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Example of print-specific styles:</strong></p>
+        <pre><code>@media print {
+    nav, footer, .advertisement {
+        display: none;
+    }
+    
+    body {
+        font-size: 12pt;
+        color: black;
+        background: white;
+    }
+    
+    a::after {
+        content: " (" attr(href) ")";
+    }
+}
+</code></pre>
+
+        <h3>3.4 Logical Operators in Media Queries</h3>
+
+        <p>Media queries support logical operators to combine multiple conditions:</p>
+
+        <p><strong>1. AND Operator:</strong></p>
+        <pre><code>/* Target screens with width between 600px and 900px */
+@media screen and (min-width: 600px) and (max-width: 900px) {
+    .container {
+        width: 80%;
+    }
+}
+</code></pre>
+
+        <p><strong>2. OR (Comma-Separated) Operator:</strong></p>
+        <pre><code>/* Target portrait orientation OR screens smaller than 480px */
+@media (orientation: portrait), (max-width: 480px) {
+    .sidebar {
+        float: none;
+        width: 100%;
+    }
+}
+</code></pre>
+
+        <p><strong>3. NOT Operator:</strong></p>
+        <pre><code>/* Target all screen devices EXCEPT printers */
+@media not print and (screen) {
+    /* Note: 'not' applies to the entire media query */
+}
+</code></pre>
+
+        <p><strong>4. ONLY Operator:</strong></p>
+        <pre><code>/* Prevent older browsers from misinterpreting the query */
+@media only screen and (min-width: 768px) {
+    /* Styles */
+}
+</code></pre>
+        <p>The <code>only</code> keyword prevents older browsers that don't support media queries from applying the
+            styles.</p>
+
+        <h2>Chapter 4: Media Query Features</h2>
+
+        <h3>4.1 Width-Based Features</h3>
+
+        <p>The most commonly used media features for responsive design relate to viewport width:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>width</code></td>
+                    <td>Exact viewport width (rarely used)</td>
+                </tr>
+                <tr>
+                    <td><code>min-width</code></td>
+                    <td>Minimum viewport width (most common)</td>
+                </tr>
+                <tr>
+                    <td><code>max-width</code></td>
+                    <td>Maximum viewport width (most common)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Practical Examples:</strong></p>
+
+        <pre><code>/* Small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    /* Styles for phones */
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    /* Styles for tablets */
+}
+
+/* Large devices (desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    /* Styles for desktops */
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    /* Styles for large screens */
+}
+</code></pre>
+
+        <h3>4.2 Height-Based Features</h3>
+
+        <p>Sometimes you need to consider viewport height, especially for fixed elements or full-screen experiences:</p>
+
+        <pre><code>/* Short viewports */
+@media (max-height: 500px) {
+    .header {
+        position: static;
+        height: auto;
+    }
+}
+
+/* Tall viewports */
+@media (min-height: 1000px) {
+    .hero-section {
+        height: 90vh;
+    }
+}
+
+/* Combining width and height */
+@media (min-width: 768px) and (min-height: 600px) {
+    .modal {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+</code></pre>
+
+        <h3>4.3 Orientation</h3>
+
+        <p>The <code>orientation</code> feature checks whether the device is in landscape or portrait mode:</p>
+
+        <pre><code>/* Portrait mode (height > width) */
+@media (orientation: portrait) {
+    .gallery-item {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Landscape mode (width > height) */
+@media (orientation: landscape) {
+    .gallery-item {
+        width: 33.33%;
+        float: left;
+    }
+}
+</code></pre>
+
+        <p>This is particularly useful for tablets and mobile devices where users frequently rotate their screens.</p>
+
+        <h3>4.4 Resolution and Pixel Density</h3>
+
+        <p>Modern devices have varying pixel densities. The <code>resolution</code> feature helps serve appropriate
+            assets:</p>
+
+        <pre><code>/* Low-resolution screens */
+@media (max-resolution: 72dpi) {
+    .logo {
+        background-image: url('logo-lowres.png');
+    }
+}
+
+/* High-resolution screens (Retina displays) */
+@media (min-resolution: 192dpi) {
+    .logo {
+        background-image: url('logo-hires.png');
+    }
+}
+
+/* Using dppx (dots per pixel) - more intuitive */
+@media (min-resolution: 2dppx) {
+    /* For screens with 2x pixel density */
+}
+</code></pre>
+
+        <h3>4.5 User Preference Features</h3>
+
+        <p>Modern CSS respects user preferences set at the operating system level:</p>
+
+        <p><strong>Dark/Light Mode:</strong></p>
+        <pre><code>/* Light mode default */
+body {
+    background: white;
+    color: black;
+}
+
+/* Dark mode preference */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #121212;
+        color: #eee;
+    }
+    
+    a {
+        color: #bb86fc;
+    }
+}
+
+/* Light mode preference */
+@media (prefers-color-scheme: light) {
+    body {
+        background: #f5f5f5;
+        color: #333;
+    }
+}
+</code></pre>
+
+        <p><strong>Reduced Motion:</strong></p>
+        <pre><code>/* Default animations */
+.button {
+    transition: transform 0.3s ease;
+}
+
+.button:hover {
+    transform: scale(1.1);
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .button {
+        transition: none;
+    }
+    
+    .button:hover {
+        transform: none;
+    }
+}
+</code></pre>
+
+        <p><strong>High Contrast:</strong></p>
+        <pre><code>@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid black;
+        box-shadow: none;
+    }
+    
+    button {
+        border: 2px solid currentColor;
+    }
+}
+</code></pre>
+
+        <h3>4.6 Interaction Media Features</h3>
+
+        <p>These features detect the presence and accuracy of pointing devices:</p>
+
+        <pre><code>/* Device has a fine pointer (mouse) */
+@media (pointer: fine) {
+    button:hover {
+        background-color: darkblue;
+    }
+}
+
+/* Device has a coarse pointer (touch) */
+@media (pointer: coarse) {
+    button {
+        padding: 15px 20px; /* Larger touch target */
+    }
+}
+
+/* Device can hover over elements */
+@media (hover: hover) {
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+}
+
+/* Device cannot hover (touch) */
+@media (hover: none) {
+    .dropdown-content {
+        display: none; /* Hide until tapped */
+    }
+}
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 5: Breakpoints - The Art of Knowing When to Adapt</h2>
+
+        <h3>5.1 What Are Breakpoints?</h3>
+
+        <p>Breakpoints are specific viewport widths where your layout needs to change to accommodate different screen
+            sizes. They are the points at which a media query condition becomes true, triggering new styles.</p>
+
+        <p>Think of breakpoints like the joints in a responsive design skeleton—they're where the layout "breaks" and
+            reorganizes itself for optimal viewing.</p>
+
+        <h3>5.2 Common Breakpoint Values</h3>
+
+        <p>While you should let your content determine breakpoints, here are commonly used values based on popular
+            devices:</p>
+
+        <pre><code>/* Mobile-First Approach (using min-width) */
+/* Base styles: For mobile devices (0-600px) */
+
+/* Small tablets and large phones (600px and up) */
+@media screen and (min-width: 600px) {
+    /* Styles for larger phones/small tablets */
+}
+
+/* Tablets (768px and up) */
+@media screen and (min-width: 768px) {
+    /* Styles for tablets */
+}
+
+/* Desktops and laptops (992px and up) */
+@media screen and (min-width: 992px) {
+    /* Styles for desktops */
+}
+
+/* Large desktops (1200px and up) */
+@media screen and (min-width: 1200px) {
+    /* Styles for large desktops */
+}
+
+/* Extra large desktops (1400px and up) */
+@media screen and (min-width: 1400px) {
+    /* Styles for ultra-wide screens */
+}
+</code></pre>
+
+        <h3>5.3 Desktop-First vs. Mobile-First Breakpoints</h3>
+
+        <p><strong>Desktop-First Approach (using max-width):</strong></p>
+        <pre><code>/* Base styles: For desktop */
+
+@media screen and (max-width: 1199px) {
+    /* Large tablets/small desktops */
+}
+
+@media screen and (max-width: 991px) {
+    /* Tablets */
+}
+
+@media screen and (max-width: 767px) {
+    /* Large phones */
+}
+
+@media screen and (max-width: 479px) {
+    /* Small phones */
+}
+</code></pre>
+
+        <p><strong>Mobile-First Approach (using min-width) - RECOMMENDED:</strong></p>
+        <pre><code>/* Base styles: For mobile */
+
+@media screen and (min-width: 480px) {
+    /* Small tablets */
+}
+
+@media screen and (min-width: 768px) {
+    /* Tablets */
+}
+
+@media screen and (min-width: 992px) {
+    /* Desktops */
+}
+
+@media screen and (min-width: 1200px) {
+    /* Large desktops */
+}
+</code></pre>
+
+        <p><strong>Why Mobile-First is Preferred:</strong></p>
+        <ol>
+            <li><strong>Progressive Enhancement:</strong> All devices get basic styles; advanced devices get
+                enhancements</li>
+            <li><strong>Simpler CSS:</strong> No need to override complex desktop styles</li>
+            <li><strong>Performance:</strong> Mobile devices (often slower) get simpler layouts by default</li>
+            <li><strong>Future-Friendly:</strong> Easier to accommodate new, larger screens</li>
+        </ol>
+
+        <h3>5.4 Content-Driven Breakpoints</h3>
+
+        <p>The most effective approach is to let your content determine breakpoints, not device sizes. Add breakpoints
+            where your design naturally breaks:</p>
+
+        <pre><code>/* Base styles for all screen sizes */
+.card {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* When cards start looking too wide on a line */
+@media screen and (min-width: 600px) {
+    .card {
+        width: 48%;
+        float: left;
+        margin-right: 4%;
+    }
+    
+    .card:nth-child(2n) {
+        margin-right: 0;
+    }
+}
+
+/* When two cards per line look too stretched */
+@media screen and (min-width: 1000px) {
+    .card {
+        width: 31%;
+        margin-right: 3.5%;
+    }
+    
+    .card:nth-child(2n) {
+        margin-right: 3.5%;
+    }
+    
+    .card:nth-child(3n) {
+        margin-right: 0;
+    }
+}
+</code></pre>
+
+        <h3>5.5 Breakpoint Best Practices</h3>
+
+        <p><strong>DO:</strong></p>
+        <ul>
+            <li>Start with base styles for the smallest screen</li>
+            <li>Add breakpoints when content demands it</li>
+            <li>Use relative units (em, rem) for breakpoints when possible</li>
+            <li>Test on real devices, not just browser resize</li>
+        </ul>
+
+        <p><strong>DON'T:</strong></p>
+        <ul>
+            <li>Target specific devices (iPhone X, Galaxy S20)</li>
+            <li>Create too many breakpoints (3-4 is usually sufficient)</li>
+            <li>Use arbitrary pixel values without testing</li>
+            <li>Forget that users can zoom, changing effective breakpoints</li>
+        </ul>
+
+        <h3>5.6 Using em/rem for Breakpoints</h3>
+
+        <p>Some developers prefer using <code>em</code> for breakpoints to respect user's font size settings:</p>
+
+        <pre><code>/* 1em typically = 16px, so 45em = 720px */
+@media screen and (min-width: 45em) {
+    /* Tablet styles */
+}
+
+@media screen and (min-width: 60em) {
+    /* Desktop styles (960px) */
+}
+
+@media screen and (min-width: 75em) {
+    /* Large desktop styles (1200px) */
+}
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 6: Practical Layout Transformations</h2>
+
+        <h3>6.1 Navigation Patterns</h3>
+
+        <p>Navigation is often the first element to break on smaller screens:</p>
+
+        <p><strong>Horizontal to Hamburger Menu:</strong></p>
+        <pre><code>/* Base mobile styles */
+.nav-menu {
+    display: none; /* Hide by default on mobile */
+}
+
+.hamburger-icon {
+    display: block; /* Show hamburger on mobile */
+}
+
+.nav-menu.active {
+    display: block; /* Show when toggled */
+}
+
+/* Desktop styles */
+@media screen and (min-width: 768px) {
+    .hamburger-icon {
+        display: none; /* Hide hamburger on desktop */
+    }
+    
+    .nav-menu {
+        display: block; /* Always show on desktop */
+    }
+    
+    .nav-menu li {
+        display: inline-block;
+        margin-right: 20px;
+    }
+}
+</code></pre>
+
+        <h3>6.2 Multi-Column Layouts</h3>
+
+        <p>Columns typically stack vertically on mobile:</p>
+
+        <pre><code>/* Base: Single column on mobile */
+.main-content {
+    width: 100%;
+}
+
+.sidebar {
+    width: 100%;
+    margin-top: 30px;
+}
+
+/* Tablet: Two columns */
+@media screen and (min-width: 600px) {
+    .main-content {
+        width: 60%;
+        float: left;
+    }
+    
+    .sidebar {
+        width: 35%;
+        float: right;
+        margin-top: 0;
+    }
+}
+
+/* Desktop: Three columns */
+@media screen and (min-width: 1000px) {
+    .main-content {
+        width: 50%;
+    }
+    
+    .sidebar-primary {
+        width: 25%;
+        float: left;
+    }
+    
+    .sidebar-secondary {
+        width: 25%;
+        float: right;
+    }
+}
+</code></pre>
+
+        <h3>6.3 Font Size Scaling</h3>
+
+        <p>Text should be readable at all screen sizes:</p>
+
+        <pre><code>/* Base mobile sizes */
+body {
+    font-size: 16px; /* Minimum readable size */
+}
+
+h1 {
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+}
+
+/* Larger screens can handle bigger text */
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 20px;
+    }
+    
+    h1 {
+        font-size: 3rem;
+    }
+}
+</code></pre>
+
+        <h3>6.4 Image and Media Handling</h3>
+
+        <p>Images need to scale appropriately:</p>
+
+        <pre><code>/* Base: Images fill width on mobile */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Desktop: Images can be smaller */
+@media screen and (min-width: 1000px) {
+    .featured-image {
+        max-width: 80%;
+        margin: 0 auto;
+        display: block;
+    }
+}
+</code></pre>
+
+        <h3>6.5 Table Transformations</h3>
+
+        <p>Tables are notoriously difficult on small screens:</p>
+
+        <pre><code>/* Base: Make tables scrollable on mobile */
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    min-width: 500px; /* Forces scroll on small screens */
+}
+
+/* Alternative: Stack table on mobile */
+@media screen and (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    td {
+        position: relative;
+        padding-left: 50%;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+}
+</code></pre>
+
+        <h3>6.6 Form Adaptations</h3>
+
+        <p>Forms should be easy to use on any device:</p>
+
+        <pre><code>/* Base: Full-width inputs on mobile */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px; /* Larger touch target */
+    margin-bottom: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 15px; /* Large touch target */
+}
+
+/* Desktop: More compact forms */
+@media screen and (min-width: 600px) {
+    .form-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .form-row label {
+        width: 150px;
+        margin-right: 15px;
+    }
+    
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+        flex: 1;
+        width: auto;
+        margin-bottom: 0;
+    }
+    
+    button {
+        width: auto;
+        padding: 10px 30px;
+        margin-left: 165px; /* Align with inputs */
+    }
+}
+</code></pre>
+
+        <h3>6.7 Card Layouts</h3>
+
+        <p>Cards are a versatile component that adapt well:</p>
+
+        <pre><code>.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -10px; /* For gutters */
+}
+
+/* Base: Single column */
+.card {
+    width: 100%;
+    padding: 20px;
+    margin: 10px;
+    box-sizing: border-box;
+}
+
+/* Two columns */
+@media screen and (min-width: 600px) {
+    .card {
+        width: calc(50% - 20px);
+    }
+}
+
+/* Three columns */
+@media screen and (min-width: 900px) {
+    .card {
+        width: calc(33.333% - 20px);
+    }
+}
+
+/* Four columns */
+@media screen and (min-width: 1200px) {
+    .card {
+        width: calc(25% - 20px);
+    }
+}
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 7: Advanced Media Query Strategies</h2>
+
+        <h3>7.1 Range Syntax (Modern Browsers)</h3>
+
+        <p>Modern CSS supports a more intuitive range syntax:</p>
+
+        <pre><code>/* Traditional way */
+@media (min-width: 600px) and (max-width: 900px) {
+    /* Styles */
+}
+
+/* Modern range syntax */
+@media (600px &lt;= width &lt;= 900px) {
+    /* Styles */
+}
+
+/* Greater than or equal to 600px */
+@media (width &gt;= 600px) {
+    /* Styles */
+}
+
+/* Less than or equal to 900px */
+@media (width &lt;= 900px) {
+    /* Styles */
+}
+</code></pre>
+
+        <h3>7.2 Multiple Breakpoint Strategy</h3>
+
+        <p>Complex layouts might need multiple simultaneous breakpoints:</p>
+
+        <pre><code>/* Base mobile: Single column */
+.grid {
+    display: grid;
+    gap: 20px;
+}
+
+/* Tablet: 2 columns */
+@media (width &gt;= 600px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: 3 columns with sidebar */
+@media (width &gt;= 900px) {
+    .grid {
+        grid-template-columns: 200px 1fr 1fr;
+    }
+    
+    .sidebar {
+        grid-column: 1;
+        grid-row: 1 / span 3;
+    }
+}
+
+/* Large desktop: 4 columns */
+@media (width &gt;= 1200px) {
+    .grid {
+        grid-template-columns: 200px repeat(3, 1fr);
+    }
+}
+
+/* Extra wide: Max width container */
+@media (width &gt;= 1400px) {
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+}
+</code></pre>
+
+        <h3>7.3 Combining with Modern Layout Techniques</h3>
+
+        <p>Media queries work beautifully with Flexbox and CSS Grid:</p>
+
+        <pre><code>/* Base mobile: Stack everything */
+.page {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Desktop: Complex grid layout */
+@media (width &gt;= 900px) {
+    .page {
+        display: grid;
+        grid-template-areas: 
+            "header header header"
+            "nav content sidebar"
+            "footer footer footer";
+        grid-template-columns: 200px 1fr 250px;
+        gap: 20px;
+    }
+    
+    .header { grid-area: header; }
+    .nav { grid-area: nav; }
+    .main { grid-area: content; }
+    .sidebar { grid-area: sidebar; }
+    .footer { grid-area: footer; }
+}
+
+/* Large desktop: Wider sidebars */
+@media (width &gt;= 1200px) {
+    .page {
+        grid-template-columns: 250px 1fr 300px;
+    }
+}
+</code></pre>
+
+        <h3>7.4 Container Queries (Modern Approach)</h3>
+
+        <p>While media queries look at the viewport, container queries look at a parent container's size—a game-changer
+            for component-based design:</p>
+
+        <pre><code>/* Define a container */
+.card-container {
+    container-type: inline-size;
+    container-name: card;
+}
+
+/* Query the container's size */
+@container card (min-width: 400px) {
+    .card {
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-image {
+        width: 150px;
+        margin-right: 20px;
+    }
+}
+
+@container card (min-width: 600px) {
+    .card {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+    }
+}
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 8: Testing and Debugging Media Queries</h2>
+
+        <h3>8.1 Browser Developer Tools</h3>
+
+        <p>All modern browsers have excellent tools for testing responsive designs:</p>
+
+        <p><strong>Chrome DevTools:</strong><br />
+            1. Open DevTools (F12 or Right-click → Inspect)<br />
+            2. Click the "Toggle Device Toolbar" icon (or Ctrl+Shift+M)<br />
+            3. Select from predefined devices or drag handles to resize<br />
+            4. View media query bars at the top of the viewport</p>
+
+        <p><strong>Firefox Developer Tools:</strong><br />
+            1. Open Responsive Design Mode (Ctrl+Shift+M)<br />
+            2. See all media queries in the sidebar<br />
+            3. Click any query to jump to that viewport size</p>
+
+        <h3>8.2 Physical Device Testing</h3>
+
+        <p>Browser tools are helpful, but nothing beats testing on real devices:</p>
+
+        <ul>
+            <li>Test on various screen sizes (phone, tablet, laptop, desktop)</li>
+            <li>Test in both portrait and landscape orientations</li>
+            <li>Test with different font sizes (accessibility settings)</li>
+            <li>Test on slow connections (simulate in dev tools)</li>
+        </ul>
+
+        <h3>8.3 Common Media Query Mistakes</h3>
+
+        <p><strong>Mistake 1: Overlapping Breakpoints</strong></p>
+        <pre><code>/* BAD: Overlapping conditions */
+@media (max-width: 768px) { /* Styles */ }
+@media (min-width: 768px) { /* Styles */ }
+/* At exactly 768px, both apply - unpredictable */
+</code></pre>
+
+        <p><strong>Solution:</strong></p>
+        <pre><code>/* GOOD: No overlap */
+@media (max-width: 767px) { /* Mobile styles */ }
+@media (min-width: 768px) { /* Desktop styles */ }
+</code></pre>
+
+        <p><strong>Mistake 2: Not Resetting Styles</strong></p>
+        <pre><code>/* BAD: Mobile styles persist */
+.menu-item {
+    display: block; /* For mobile */
+}
+
+@media (min-width: 768px) {
+    .menu-item {
+        /* Forgot to change display property */
+    }
+}
+</code></pre>
+
+        <p><strong>Mistake 3: Complex Selectors in Media Queries</strong></p>
+        <pre><code>/* BAD: Hard to maintain */
+@media (min-width: 768px) {
+    body.homepage header nav ul li a {
+        font-size: 18px;
+    }
+}
+</code></pre>
+
+        <h3>8.4 Performance Considerations</h3>
+
+        <p>Media queries don't add significant performance overhead, but what's inside them matters:</p>
+
+        <pre><code>/* BAD: Loading large images on mobile */
+.hero {
+    background-image: url('huge-desktop-image.jpg');
+}
+
+@media (max-width: 768px) {
+    .hero {
+        background-image: url('huge-desktop-image.jpg'); /* Same large image! */
+    }
+}
+
+/* GOOD: Serve appropriately sized images */
+.hero {
+    background-image: url('mobile-image.jpg');
+}
+
+@media (min-width: 769px) {
+    .hero {
+        background-image: url('desktop-image.jpg');
+    }
+}
+
+/* EVEN BETTER: Use srcset for images */
+&lt;img src="small.jpg"
+     srcset="medium.jpg 600w,
+             large.jpg 1200w"
+     sizes="(max-width: 600px) 100vw,
+            (max-width: 1200px) 50vw,
+            33vw"
+     alt="Responsive image"&gt;
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 9: Real-World Examples and Case Studies</h2>
+
+        <h3>9.1 Complete Responsive Layout Example</h3>
+
+        <p>Here's a comprehensive example combining everything:</p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Responsive News Site&lt;/title&gt;
+    &lt;style&gt;
+        /* RESET &amp; BASE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* MOBILE FIRST STYLES */
+        .container {
+            width: 100%;
+            padding: 0 15px;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        .nav-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .nav-menu {
+            display: none;
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .nav-menu.active {
+            display: block;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0;
+        }
+        
+        .main-content {
+            padding: 2rem 0;
+        }
+        
+        .featured-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            background: #f1f3f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+        
+        /* TABLET STYLES (600px and up) */
+        @media screen and (min-width: 600px) {
+            .nav-toggle {
+                display: none;
+            }
+            
+            .nav-menu {
+                display: block !important;
+                margin-top: 0;
+            }
+            
+            .nav-menu li {
+                display: inline-block;
+                margin-right: 1.5rem;
+                margin-bottom: 0;
+            }
+            
+            .nav-menu a {
+                padding: 0;
+            }
+            
+            .card-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .card {
+                flex: 0 0 calc(50% - 0.75rem);
+            }
+            
+            .card:nth-child(odd) {
+                margin-right: 1.5rem;
+            }
+        }
+        
+        /* DESKTOP STYLES (900px and up) */
+        @media screen and (min-width: 900px) {
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 30px;
+            }
+            
+            .content-wrapper {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
+            }
+            
+            .sidebar {
+                margin-top: 0;
+            }
+            
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .card {
+                flex: 0 0 calc(33.333% - 1rem);
+            }
+            
+            .card:nth-child(odd) {
+                margin-right: 0;
+            }
+            
+            .card:not(:nth-child(3n)) {
+                margin-right: 1.5rem;
+            }
+        }
+        
+        /* LARGE DESKTOP STYLES (1200px and up) */
+        @media screen and (min-width: 1200px) {
+            body {
+                font-size: 18px;
+            }
+            
+            .container {
+                padding: 0 40px;
+            }
+            
+            .featured-card {
+                padding: 2.5rem;
+            }
+        }
+        
+        /* DARK MODE SUPPORT */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a;
+                color: #e0e0e0;
+            }
+            
+            .card {
+                background: #2d2d2d;
+                border-color: #404040;
+            }
+            
+            .sidebar {
+                background: #2d2d2d;
+            }
+            
+            .featured-card {
+                background: #2d2d2d;
+            }
+        }
+        
+        /* PRINT STYLES */
+        @media print {
+            .nav-menu,
+            .sidebar,
+            .footer {
+                display: none;
+            }
+            
+            body {
+                font-size: 12pt;
+                color: black;
+                background: white;
+            }
+            
+            a::after {
+                content: " (" attr(href) ")";
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header class="header"&gt;
+        &lt;div class="container"&gt;
+            &lt;button class="nav-toggle" onclick="toggleNav()"&gt;☰&lt;/button&gt;
+            &lt;ul class="nav-menu" id="navMenu"&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;News&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Sports&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Entertainment&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Technology&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+    
+    &lt;main class="container"&gt;
+        &lt;div class="content-wrapper"&gt;
+            &lt;div class="main-content"&gt;
+                &lt;article class="featured-card"&gt;
+                    &lt;h2&gt;Featured Story&lt;/h2&gt;
+                    &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;
+                &lt;/article&gt;
+                
+                &lt;div class="card-grid"&gt;
+                    &lt;div class="card"&gt;
+                        &lt;h3&gt;News Item 1&lt;/h3&gt;
+                        &lt;p&gt;Brief description of the news item...&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card"&gt;
+                        &lt;h3&gt;News Item 2&lt;/h3&gt;
+                        &lt;p&gt;Brief description of the news item...&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;div class="card"&gt;
+                        &lt;h3&gt;News Item 3&lt;/h3&gt;
+                        &lt;p&gt;Brief description of the news item...&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;aside class="sidebar"&gt;
+                &lt;h3&gt;Popular Stories&lt;/h3&gt;
+                &lt;ul&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Story 1&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Story 2&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Story 3&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/aside&gt;
+        &lt;/div&gt;
+    &lt;/main&gt;
+    
+    &lt;footer class="footer"&gt;
+        &lt;div class="container"&gt;
+            &lt;p&gt;&amp;copy; 2024 Responsive News. All rights reserved.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+    
+    &lt;script&gt;
+        function toggleNav() {
+            var nav = document.getElementById('navMenu');
+            nav.classList.toggle('active');
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <hr />
+
+        <h2>Chapter 10: Best Practices and Guidelines</h2>
+
+        <h3>10.1 The Golden Rules of Responsive Design</h3>
+
+        <ol>
+            <li><strong>Start Small, Then Progress</strong>
+                <ul>
+                    <li>Begin with mobile styles</li>
+                    <li>Add complexity as screen space increases</li>
+                </ul>
+            </li>
+            <li><strong>Content Determines Breakpoints</strong>
+                <ul>
+                    <li>Don't use standard device sizes blindly</li>
+                    <li>Add breakpoints where your design breaks</li>
+                </ul>
+            </li>
+            <li><strong>Test on Real Devices</strong>
+                <ul>
+                    <li>Emulators are helpful but not sufficient</li>
+                    <li>Test on various screen sizes and orientations</li>
+                </ul>
+            </li>
+            <li><strong>Think in Relative Units</strong>
+                <ul>
+                    <li>Use em, rem, %, vw, vh</li>
+                    <li>Avoid fixed pixel values where possible</li>
+                </ul>
+            </li>
+            <li><strong>Optimize Performance</strong>
+                <ul>
+                    <li>Serve appropriately sized images</li>
+                    <li>Consider mobile data limitations</li>
+                    <li>Minify CSS and JavaScript</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>10.2 Accessibility Considerations</h3>
+
+        <pre><code>/* Respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Ensure touch targets are large enough */
+@media (pointer: coarse) {
+    button, a, .clickable {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Maintain readability */
+@media (max-width: 400px) {
+    body {
+        font-size: 16px; /* Never smaller than 16px on mobile */
+    }
+}
+</code></pre>
+
+        <h3>10.3 Future-Proofing Your Responsive Designs</h3>
+
+        <ol>
+            <li><strong>Use Modern CSS Features</strong>
+                <ul>
+                    <li>CSS Grid and Flexbox</li>
+                    <li>CSS Custom Properties (variables)</li>
+                    <li>Container Queries when appropriate</li>
+                </ul>
+            </li>
+            <li><strong>Plan for Unknown Devices</strong>
+                <ul>
+                    <li>Design systems that adapt, not specific layouts</li>
+                    <li>Test with extreme viewport sizes</li>
+                </ul>
+            </li>
+            <li><strong>Document Your Breakpoints</strong></li>
+        </ol>
+
+        <pre><code>/* Breakpoint Legend:
+   - 0-599px: Mobile (base styles)
+   - 600-899px: Tablet portrait
+   - 900-1199px: Tablet landscape/small desktop
+   - 1200px+: Large desktop
+*/
+</code></pre>
+
+        <hr />
+
+        <h2>Conclusion</h2>
+
+        <p>Media queries are the cornerstone of responsive web design, allowing us to create experiences that adapt
+            seamlessly across the incredible variety of devices people use today. By understanding the syntax, mastering
+            breakpoints, and following best practices, you can build websites that not only look great on every screen
+            but also respect user preferences and provide optimal performance.</p>
+
+        <p>Remember that responsive design is not just about making things fit—it's about creating the best possible
+            experience for every user, regardless of how they access your content. The viewport meta tag sets the stage,
+            and media queries are the actors that perform the adaptation, but thoughtful design is the director that
+            ensures everything works together harmoniously.</p>
+
+        <p>As you continue your web development journey, keep experimenting with different approaches, stay updated on
+            new CSS features, and always test your designs on real devices. The web is for everyone, and responsive
+            design is how we make that promise a reality.</p>
+
+        <hr />
+
+        <h2>Appendix: Quick Reference</h2>
+
+        <h3>Media Query Cheat Sheet</h3>
+
+        <pre><code>/* Viewport width */
+@media (min-width: 600px) {}
+@media (max-width: 899px) {}
+@media (600px &lt;= width &lt;= 899px) {}
+
+/* Viewport height */
+@media (min-height: 500px) {}
+@media (max-height: 800px) {}
+
+/* Orientation */
+@media (orientation: portrait) {}
+@media (orientation: landscape) {}
+
+/* Device characteristics */
+@media (pointer: fine) {}      /* Mouse */
+@media (pointer: coarse) {}    /* Touch */
+@media (hover: hover) {}       /* Can hover */
+@media (hover: none) {}        /* Cannot hover */
+
+/* User preferences */
+@media (prefers-color-scheme: dark) {}
+@media (prefers-color-scheme: light) {}
+@media (prefers-reduced-motion: reduce) {}
+@media (prefers-contrast: high) {}
+
+/* Resolution */
+@media (min-resolution: 192dpi) {}
+@media (min-resolution: 2dppx) {}
+
+/* Media types */
+@media print {}
+@media screen {}
+@media speech {}
+
+/* Combining conditions */
+@media screen and (min-width: 600px) and (orientation: landscape) {}
+
+/* Multiple queries (OR) */
+@media (max-width: 600px), (orientation: portrait) {}
+</code></pre>
+
+        <h3>Common Breakpoint Ranges</h3>
+
+        <pre><code>Mobile:       0px - 599px
+Tablet:       600px - 899px
+Desktop:      900px - 1199px
+Large Desktop: 1200px+
+</code></pre>
+
+        <h3>Viewport Meta Tag Template</h3>
+        <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+</code></pre>
+
+        <!-- every line above is preserved exactly as provided, no omissions -->
+
+        <footer class="note-footer">
+            📐 Responsive Web Design: Media Queries & Breakpoints – complete unabridged notes
+        </footer>
+
+    </div> <!-- notes-container -->
+</body>
+
+</html>

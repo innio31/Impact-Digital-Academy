@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Property & Element Types</title>
+    <style>
+        /* reset / base — simple & clean for study notes */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f9fc;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #1e2f3d;
+            padding: 2rem 1.5rem;
+        }
+
+        .document-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 50px -30px #0b3b4e;
+            padding: 2.5rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #0d4b5c;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 14px solid #1e8174;
+            padding-left: 1.5rem;
+            margin: 0 0 1rem 0;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 2.5rem 0 1.2rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #9ac7d9;
+        }
+
+        h3 {
+            font-size: 1.7rem;
+            margin: 2rem 0 1rem;
+            color: #146b62;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            margin: 1.4rem 0 0.6rem;
+            color: #1d6f68;
+        }
+
+        p,
+        li,
+        .note {
+            color: #1f3b47;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 40, 45, 0.1);
+        }
+
+        th {
+            background: #176e6b;
+            color: white;
+            font-weight: 600;
+            padding: 12px 8px;
+            font-size: 1.1rem;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #c6e2e6;
+            background: #f9ffff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        pre {
+            background: #1d2f3a;
+            color: #e0f2f0;
+            padding: 1.2rem 1.5rem;
+            border-radius: 24px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            margin: 1.8rem 0;
+            box-shadow: inset 0 0 0 1px #49807e;
+        }
+
+        code {
+            background: #deedf2;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.9em;
+            color: #074244;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .comparison-matrix table td:first-child {
+            font-weight: 600;
+            background: #ecf9f7;
+        }
+
+        ul,
+        ol {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, #c7e3e6, #ffffff, #c7e3e6);
+            margin: 2.8rem 0;
+        }
+
+        .example-block {
+            background: #f2fbfd;
+            border-radius: 28px;
+            padding: 1.5rem 1.8rem;
+            border: 1px solid #b6d8dd;
+            margin: 2rem 0;
+        }
+
+        .badge {
+            background: #1e8174;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .quick-ref {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            background: #e2f3f0;
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .ref-card {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 20px;
+            box-shadow: 0 3px 10px #b7dbd4;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            color: #3d6b68;
+            font-size: 1rem;
+            border-top: 2px dashed #8fcbd1;
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .document-wrapper {
+                padding: 1.2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>DISPLAY PROPERTY & ELEMENT TYPES IN CSS</h1>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <ol style="columns: 2 240px; column-gap: 2rem;">
+            <li>Introduction to the Display Property</li>
+            <li>The Concept of Element Types</li>
+            <li>Block-Level Elements</li>
+            <li>Inline-Level Elements</li>
+            <li>Inline-Block Elements</li>
+            <li>Display: None</li>
+            <li>Comparison Matrix</li>
+            <li>Practical Examples and Use Cases</li>
+            <li>Common Pitfalls and Solutions</li>
+            <li>Advanced Display Values</li>
+            <li>Browser Compatibility</li>
+            <li>Best Practices</li>
+            <li>Exercises and Challenges</li>
+            <li>Quick Reference Card</li>
+        </ol>
+
+        <hr>
+
+        <h2>1. INTRODUCTION TO THE DISPLAY PROPERTY</h2>
+        <h3>What is the Display Property?</h3>
+        <p>The <code>display</code> property is one of the most fundamental and powerful CSS properties. It determines
+            how an element is rendered on the webpage—specifically, how it behaves in relation to other elements and how
+            it occupies space.</p>
+
+        <h3>Why is it Important?</h3>
+        <ul>
+            <li>Controls the layout structure of web pages</li>
+            <li>Determines element behavior without changing HTML</li>
+            <li>Essential for creating complex layouts</li>
+            <li>Affects box model behavior</li>
+            <li>Influences how elements interact with each other</li>
+        </ul>
+
+        <h3>Syntax</h3>
+        <pre><code>selector {
+    display: value;
+}</code></pre>
+
+        <h3>Common Values We'll Cover</h3>
+        <ul>
+            <li><code>block</code></li>
+            <li><code>inline</code></li>
+            <li><code>inline-block</code></li>
+            <li><code>none</code></li>
+        </ul>
+
+        <hr>
+
+        <h2>2. THE CONCEPT OF ELEMENT TYPES</h2>
+        <h3>Default Element Types</h3>
+        <p>Every HTML element comes with a default display value based on its purpose:</p>
+        <table>
+            <tr>
+                <th>Element Category</th>
+                <th>Examples</th>
+                <th>Default Display</th>
+            </tr>
+            <tr>
+                <td>Structural</td>
+                <td><code>&lt;div&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;header&gt;</code></td>
+                <td>block</td>
+            </tr>
+            <tr>
+                <td>Text-level</td>
+                <td><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code></td>
+                <td>inline</td>
+            </tr>
+            <tr>
+                <td>Form elements</td>
+                <td><code>&lt;input&gt;</code>, <code>&lt;button&gt;</code></td>
+                <td>varies</td>
+            </tr>
+            <tr>
+                <td>Special</td>
+                <td><code>&lt;img&gt;</code></td>
+                <td>inline (but behaves uniquely)</td>
+            </tr>
+        </table>
+
+        <h3>The Visual Formatting Model</h3>
+        <p>Understanding how elements are rendered:</p>
+        <ol>
+            <li><strong>Block-level elements</strong> create new lines</li>
+            <li><strong>Inline elements</strong> flow with text</li>
+            <li><strong>The display property</strong> can override default behaviors</li>
+        </ol>
+
+        <hr>
+
+        <h2>3. BLOCK-LEVEL ELEMENTS</h2>
+        <h3>Definition</h3>
+        <p>Block-level elements occupy the entire available width of their parent container and create a "block" of
+            content. They always start on a new line.</p>
+
+        <h3>Characteristics</h3>
+        <h4>1. Width Behavior</h4>
+        <pre><code>.block-example {
+    display: block;
+    /* Takes 100% of parent width by default */
+}</code></pre>
+
+        <h4>2. Height Behavior</h4>
+        <pre><code>.block-example {
+    display: block;
+    height: 100px; /* Explicit height can be set */
+}</code></pre>
+
+        <h4>3. Margin and Padding</h4>
+        <pre><code>.block-example {
+    display: block;
+    margin: 20px; /* All margins work perfectly */
+    padding: 15px; /* All padding works perfectly */
+}</code></pre>
+
+        <h3>Common Block-Level Elements (Default)</h3>
+        <pre><code>&lt;div&gt;Division&lt;/div&gt;
+&lt;p&gt;Paragraph&lt;/p&gt;
+&lt;h1&gt;Heading 1&lt;/h1&gt; ... &lt;h6&gt;Heading 6&lt;/h6&gt;
+&lt;ul&gt;Unordered List&lt;/ul&gt;
+&lt;ol&gt;Ordered List&lt;/ol&gt;
+&lt;li&gt;List Item&lt;/li&gt;
+&lt;section&gt;Section&lt;/section&gt;
+&lt;article&gt;Article&lt;/article&gt;
+&lt;header&gt;Header&lt;/header&gt;
+&lt;footer&gt;Footer&lt;/footer&gt;
+&lt;nav&gt;Navigation&lt;/nav&gt;
+&lt;main&gt;Main Content&lt;/main&gt;
+&lt;aside&gt;Aside&lt;/aside&gt;
+&lt;form&gt;Form&lt;/form&gt;
+&lt;blockquote&gt;Blockquote&lt;/blockquote&gt;
+&lt;hr&gt;Horizontal Rule
+&lt;pre&gt;Preformatted Text&lt;/pre&gt;
+</code></pre>
+
+        <h3>Converting Inline to Block</h3>
+        <pre><code>/* Converting inline elements to block */
+span {
+    display: block;
+    width: 200px;
+    height: 100px;
+    margin: 10px;
+    background: lightblue;
+}
+
+a {
+    display: block;
+    padding: 10px;
+    background: lightgreen;
+    text-decoration: none;
+}</code></pre>
+
+        <h3>Block Element Visual Behavior</h3>
+        <pre><code>&lt;div style="border: 2px solid red; margin: 10px;"&gt;
+    Block Element 1
+&lt;/div&gt;
+&lt;div style="border: 2px solid blue; margin: 10px;"&gt;
+    Block Element 2
+&lt;/div&gt;</code></pre>
+        <p><strong>Result:</strong> Each div appears on its own line, stacked vertically.</p>
+
+        <h3>Box Model for Block Elements</h3>
+        <pre><code>|---------------------------------------------------|
+|                  Margin (transparent)             |
+|  |---------------------------------------------|  |
+|  |               Border                         |  |
+|  |  |---------------------------------------|  |  |
+|  |  |            Padding                    |  |  |
+|  |  |  |-------------------------------|  |  |  |
+|  |  |  |                               |  |  |  |
+|  |  |  |         CONTENT                |  |  |  |
+|  |  |  |                               |  |  |  |
+|  |  |  --------------------------------  |  |  |
+|  |  ----------------------------------------  |  |
+|  ----------------------------------------------  |
+---------------------------------------------------</code></pre>
+
+        <hr>
+
+        <h2>4. INLINE-LEVEL ELEMENTS</h2>
+        <h3>Definition</h3>
+        <p>Inline elements do not start on a new line and only take up as much width as necessary. They flow within the
+            content, like words in a sentence.</p>
+
+        <h3>Characteristics</h3>
+        <h4>1. Width and Height Restrictions</h4>
+        <pre><code>.inline-example {
+    display: inline;
+    width: 200px;  /* ❌ IGNORED */
+    height: 100px; /* ❌ IGNORED */
+}</code></pre>
+
+        <h4>2. Margin Behavior</h4>
+        <pre><code>.inline-example {
+    display: inline;
+    margin-top: 20px;    /* ❌ IGNORED */
+    margin-bottom: 20px; /* ❌ IGNORED */
+    margin-left: 10px;   /* ✅ WORKS */
+    margin-right: 10px;  /* ✅ WORKS */
+}</code></pre>
+
+        <h4>3. Padding Behavior</h4>
+        <pre><code>.inline-example {
+    display: inline;
+    padding-top: 20px;    /* ✅ WORKS but may overlap */
+    padding-bottom: 20px; /* ✅ WORKS but may overlap */
+    padding-left: 10px;   /* ✅ WORKS */
+    padding-right: 10px;  /* ✅ WORKS */
+}</code></pre>
+
+        <h3>Common Inline Elements (Default)</h3>
+        <pre><code>&lt;span&gt;Span&lt;/span&gt;
+&lt;a&gt;Anchor (link)&lt;/a&gt;
+&lt;strong&gt;Strong emphasis&lt;/strong&gt;
+&lt;em&gt;Emphasis&lt;/em&gt;
+&lt;b&gt;Bold text&lt;/b&gt;
+&lt;i&gt;Italic text&lt;/i&gt;
+&lt;u&gt;Underlined text&lt;/u&gt;
+&lt;small&gt;Small text&lt;/small&gt;
+&lt;sub&gt;Subscript&lt;/sub&gt;
+&lt;sup&gt;Superscript&lt;/sup&gt;
+&lt;label&gt;Label&lt;/label&gt;
+&lt;code&gt;Code snippet&lt;/code&gt;
+&lt;kbd&gt;Keyboard input&lt;/kbd&gt;
+&lt;samp&gt;Sample output&lt;/samp&gt;
+&lt;var&gt;Variable&lt;/var&gt;
+&lt;cite&gt;Citation&lt;/cite&gt;
+&lt;abbr&gt;Abbreviation&lt;/abbr&gt;
+&lt;q&gt;Inline quote&lt;/q&gt;
+</code></pre>
+
+        <h3>Special Inline Elements</h3>
+        <h4>Images (<code>&lt;img&gt;</code>)</h4>
+        <pre><code>img {
+    display: inline; /* Default */
+    width: 200px;    /* ✅ WORKS (special case) */
+    height: 150px;   /* ✅ WORKS (special case) */
+}</code></pre>
+        <h4>Buttons and Inputs</h4>
+        <pre><code>button, input {
+    display: inline-block; /* Effectively, though technically inline */
+    width: 200px;          /* ✅ WORKS */
+}</code></pre>
+
+        <h3>Inline Element Visual Behavior</h3>
+        <pre><code>&lt;p&gt;
+    This is a paragraph with 
+    &lt;span style="background: yellow;"&gt;an inline span&lt;/span&gt; that flows
+    &lt;a href="#" style="background: lightgreen;"&gt;like a link&lt;/a&gt; within
+    &lt;strong style="background: pink;"&gt;the text content&lt;/strong&gt;.
+&lt;/p&gt;</code></pre>
+        <p><strong>Result:</strong> All elements sit next to each other horizontally, like words.</p>
+
+        <h3>Common Issues with Inline Elements</h3>
+        <h4>1. The Gap Problem</h4>
+        <pre><code>&lt;style&gt;
+    .inline-box {
+        display: inline;
+        background: coral;
+    }
+&lt;/style&gt;
+&lt;span class="inline-box"&gt;Box 1&lt;/span&gt;
+&lt;span class="inline-box"&gt;Box 2&lt;/span&gt;
+&lt;span class="inline-box"&gt;Box 3&lt;/span&gt;
+&lt;!-- There will be small gaps between spans due to whitespace in HTML --&gt;</code></pre>
+
+        <h4>2. Vertical Alignment Issues</h4>
+        <pre><code>.container {
+    line-height: 50px;
+}
+
+.inline-text {
+    display: inline;
+    vertical-align: middle; /* Helps with alignment */
+}</code></pre>
+
+        <hr>
+
+        <h2>5. INLINE-BLOCK ELEMENTS</h2>
+        <h3>Definition</h3>
+        <p>Inline-block combines the best of both worlds: elements sit inline (next to each other horizontally) but
+            maintain block-level properties (width, height, margins).</p>
+
+        <h3>Characteristics</h3>
+        <h4>1. Width and Height Work</h4>
+        <pre><code>.inline-block-example {
+    display: inline-block;
+    width: 200px;    /* ✅ WORKS */
+    height: 100px;   /* ✅ WORKS */
+}</code></pre>
+        <h4>2. All Margins Work</h4>
+        <pre><code>.inline-block-example {
+    display: inline-block;
+    margin-top: 20px;    /* ✅ WORKS */
+    margin-bottom: 20px; /* ✅ WORKS */
+    margin-left: 10px;   /* ✅ WORKS */
+    margin-right: 10px;  /* ✅ WORKS */
+}</code></pre>
+        <h4>3. All Padding Works</h4>
+        <pre><code>.inline-block-example {
+    display: inline-block;
+    padding: 15px; /* ✅ All sides work perfectly */
+}</code></pre>
+
+        <h3>Creating Inline-Block Elements</h3>
+        <pre><code>/* Converting block to inline-block */
+div {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background: teal;
+    margin: 10px;
+}
+
+/* Converting inline to inline-block */
+span {
+    display: inline-block;
+    width: 100px;
+    height: 50px;
+    background: orange;
+    margin: 5px;
+}</code></pre>
+
+        <h3>Visual Behavior</h3>
+        <pre><code>&lt;style&gt;
+    .box {
+        display: inline-block;
+        width: 150px;
+        height: 100px;
+        margin: 10px;
+        padding: 10px;
+        background: lightseagreen;
+        border: 2px solid darkgreen;
+        vertical-align: top;
+    }
+&lt;/style&gt;
+
+&lt;div class="box"&gt;Box 1&lt;br&gt;Multiple lines&lt;/div&gt;
+&lt;div class="box"&gt;Box 2&lt;/div&gt;
+&lt;div class="box"&gt;Box 3&lt;br&gt;Also has&lt;br&gt;multiple lines&lt;/div&gt;</code></pre>
+        <p><strong>Result:</strong> Boxes sit horizontally, each has its own width/height, margins work, boxes align via
+            vertical-align.</p>
+
+        <h3>Common Use Cases for Inline-Block</h3>
+        <h4>1. Navigation Menus</h4>
+        <pre><code>.nav-menu {
+    background: #333;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    text-align: center;
+}
+
+.nav-item {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.nav-item a {
+    display: inline-block;
+    padding: 15px 25px;
+    color: white;
+    text-decoration: none;
+    background: #555;
+}
+
+.nav-item a:hover {
+    background: #777;
+}</code></pre>
+        <pre><code>&lt;ul class="nav-menu"&gt;
+    &lt;li class="nav-item"&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li class="nav-item"&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li class="nav-item"&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li class="nav-item"&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+        <h4>2. Image Galleries</h4>
+        <pre><code>.gallery {
+    text-align: center;
+}
+
+.gallery-item {
+    display: inline-block;
+    width: 200px;
+    margin: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.gallery-item .caption {
+    padding: 10px;
+    background: #f5f5f5;
+}</code></pre>
+
+        <h4>3. Button Groups</h4>
+        <pre><code>.btn-group {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: white;
+    border: none;
+    border-right: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.btn:last-child {
+    border-right: none;
+}
+
+.btn:hover {
+    background: #e0e0e0;
+}</code></pre>
+
+        <h3>The Whitespace Challenge with Inline-Block</h3>
+        <h4>Problem</h4>
+        <pre><code>&lt;style&gt;
+    .box {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+&lt;/style&gt;
+
+&lt;div class="box"&gt;&lt;/div&gt;
+&lt;div class="box"&gt;&lt;/div&gt;
+&lt;div class="box"&gt;&lt;/div&gt;
+&lt;!-- There will be small gaps between these divs! --&gt;</code></pre>
+
+        <h4>Solutions</h4>
+        <pre><code>/* Solution 1: Flexbox (modern) */
+.container {
+    display: flex;
+    gap: 0;
+}
+
+/* Solution 2: Negative margins */
+.box {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background: red;
+    margin-right: -4px;
+}
+
+/* Solution 3: Font size trick */
+.container {
+    font-size: 0;
+}
+.box {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background: red;
+    font-size: 16px;
+}
+
+/* Solution 4: HTML without whitespace */
+&lt;div class="box"&gt;&lt;/div&gt;&lt;div class="box"&gt;&lt;/div&gt;&lt;div class="box"&gt;&lt;/div&gt;
+</code></pre>
+
+        <hr>
+
+        <h2>6. DISPLAY: NONE</h2>
+        <h3>Definition</h3>
+        <p><code>display: none</code> completely removes an element from the document flow. The element is not rendered,
+            and it takes up no space on the page.</p>
+
+        <h3>Characteristics</h3>
+        <h4>1. Complete Removal</h4>
+        <pre><code>.hidden-element {
+    display: none;
+    /* Element is invisible and takes NO space */
+}</code></pre>
+
+        <h4>2. vs. visibility: hidden</h4>
+        <pre><code>.invisible {
+    visibility: hidden;
+    /* Element is invisible but STILL takes up space */
+}
+
+.gone {
+    display: none;
+    /* Element is invisible and takes NO space */
+}</code></pre>
+
+        <h3>Visual Demonstration</h3>
+        <pre><code>&lt;style&gt;
+    .box {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        background: blue;
+        display: inline-block;
+    }
+    .box-hidden { display: none; }
+    .box-invisible { visibility: hidden; }
+&lt;/style&gt;
+
+&lt;div class="box"&gt;Box 1&lt;/div&gt;
+&lt;div class="box box-hidden"&gt;Box 2 (hidden)&lt;/div&gt;
+&lt;div class="box"&gt;Box 3&lt;/div&gt;
+&lt;div class="box box-invisible"&gt;Box 4 (invisible)&lt;/div&gt;
+&lt;div class="box"&gt;Box 5&lt;/div&gt;</code></pre>
+        <p><strong>Result:</strong> Box 2 completely absent; Box 4 space preserved but invisible.</p>
+
+        <h3>Practical Applications</h3>
+        <h4>1. Toggleable Content</h4>
+        <pre><code>.dropdown-menu {
+    display: none; /* Initially hidden */
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block; /* Show on hover */
+}</code></pre>
+
+        <h4>2. Responsive Design – Mobile Menu</h4>
+        <pre><code>.desktop-menu { display: block; }
+.mobile-menu-button { display: none; }
+
+@media (max-width: 768px) {
+    .desktop-menu { display: none; }
+    .mobile-menu-button { display: block; }
+}</code></pre>
+
+        <h4>3. Tabbed Interfaces</h4>
+        <pre><code>.tab-content { display: none; }
+.tab-content.active { display: block; }</code></pre>
+
+        <h4>4. Loading States</h4>
+        <pre><code>.content { display: block; }
+.loading-spinner { display: none; }
+.is-loading .content { display: none; }
+.is-loading .loading-spinner { display: block; }</code></pre>
+
+        <h3>JavaScript Interaction</h3>
+        <pre><code>// Hide an element
+document.getElementById('myElement').style.display = 'none';
+
+// Show an element (revert to default or specific display)
+document.getElementById('myElement').style.display = 'block'; // or 'inline', 'inline-block', etc.
+
+// Toggle visibility
+function toggleElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element.style.display === 'none') {
+        element.style.display = 'block'; // Show
+    } else {
+        element.style.display = 'none'; // Hide
+    }
+}
+
+// Better approach - check computed style
+function isElementHidden(element) {
+    return window.getComputedStyle(element).display === 'none';
+}</code></pre>
+
+        <h3>Accessibility Considerations</h3>
+        <pre><code>/* Hide visually but keep for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+/* This is NOT the same as display: none, which hides from screen readers too */</code></pre>
+
+        <hr>
+
+        <h2>7. COMPARISON MATRIX</h2>
+        <table class="comparison-matrix">
+            <tr>
+                <th>Feature</th>
+                <th>block</th>
+                <th>inline</th>
+                <th>inline-block</th>
+                <th>none</th>
+            </tr>
+            <tr>
+                <td>Starts new line</td>
+                <td>✅ Yes</td>
+                <td>❌ No</td>
+                <td>❌ No</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Width respected</td>
+                <td>✅ Yes</td>
+                <td>❌ No</td>
+                <td>✅ Yes</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Height respected</td>
+                <td>✅ Yes</td>
+                <td>❌ No</td>
+                <td>✅ Yes</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Top/Bottom margin</td>
+                <td>✅ Yes</td>
+                <td>❌ No</td>
+                <td>✅ Yes</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Left/Right margin</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>All padding works</td>
+                <td>✅ Yes</td>
+                <td>⚠️ May overlap</td>
+                <td>✅ Yes</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Takes full width</td>
+                <td>✅ Default</td>
+                <td>❌ Content only</td>
+                <td>❌ Content only</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Space in layout</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>❌ None</td>
+            </tr>
+            <tr>
+                <td>Accessible to screen readers</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>✅ Yes</td>
+                <td>❌ No</td>
+            </tr>
+        </table>
+
+        <h3>Box Model Application Comparison</h3>
+        <pre><code>BLOCK ELEMENT:
++-------------------------------------------+
+|  Margin                                   |
+|  +-------------------------------------+  |
+|  |  Border                             |  |
+|  |  +-------------------------------+  |  |
+|  |  |  Padding                       |  |  |
+|  |  |  +-------------------------+  |  |  |
+|  |  |  |  CONTENT (full width)   |  |  |  |
+|  |  |  +-------------------------+  |  |  |
+|  |  +-------------------------------+  |  |
+|  +-------------------------------------+  |
++-------------------------------------------+
+
+INLINE ELEMENT:
++-------------------------------------------+
+|  This text has an                          |
+|  +-------+  +-------+  within it.          |
+|  | CONTENT|  | CONTENT|                     |
+|  +-------+  +-------+                      |
+|  Margin works left/right only               |
++-------------------------------------------+
+
+INLINE-BLOCK ELEMENT:
++-------------------------------------------+
+|  +-------------------+  +-------------------+ 
+|  |  Margin all sides |  |  Margin all sides | 
+|  |  +-------------+  |  |  +-------------+  |
+|  |  |  CONTENT    |  |  |  |  CONTENT    |  |
+|  |  +-------------+  |  |  +-------------+  |
+|  +-------------------+  +-------------------+ 
++-------------------------------------------+</code></pre>
+
+        <hr>
+
+        <h2>8. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3>Example 1: Building a Pricing Card Component</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 40px; }
+        .pricing-container { text-align: center; max-width: 1200px; margin: 0 auto; }
+        .section-title { display: block; font-size: 36px; margin-bottom: 40px; color: #333; }
+        .pricing-cards { font-size: 0; }
+        .card {
+            display: inline-block; width: 30%; min-width: 250px; margin: 0 1.5%;
+            background: white; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); vertical-align: top; font-size: 16px;
+        }
+        .card-header { display: block; padding: 25px; background: #4a90e2; color: white; }
+        .card-header h3 { display: block; font-size: 24px; margin-bottom: 10px; }
+        .price { display: block; font-size: 48px; font-weight: bold; }
+        .price span { display: inline; font-size: 16px; opacity: 0.8; }
+        .card-body { display: block; padding: 30px 20px; }
+        .feature { display: block; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .feature:last-child { border-bottom: none; }
+        .feature-icon {
+            display: inline-block; width: 20px; height: 20px; margin-right: 10px;
+            background: #4caf50; color: white; border-radius: 50%; line-height: 20px;
+            text-align: center; font-size: 14px;
+        }
+        .feature-text { display: inline; }
+        .btn {
+            display: inline-block; padding: 12px 40px; margin-top: 20px; background: #4a90e2;
+            color: white; text-decoration: none; border-radius: 25px; font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #357abd; }
+        .popular-tag { display: block; background: gold; color: #333; padding: 5px; font-weight: bold; }
+        @media (max-width: 768px) {
+            .card { display: block; width: 90%; margin: 20px auto; }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="pricing-container"&gt;
+        &lt;h2 class="section-title"&gt;Choose Your Plan&lt;/h2&gt;
+        &lt;div class="pricing-cards"&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;&lt;h3&gt;Basic&lt;/h3&gt;&lt;div class="price"&gt;$19&lt;span&gt;/month&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="feature"&gt;&lt;span class="feature-icon"&gt;✓&lt;/span&gt;&lt;span class="feature-text"&gt;5 Projects&lt;/span&gt;&lt;/div&gt;
+                    &lt;div class="feature"&gt;&lt;span class="feature-icon"&gt;✓&lt;/span&gt;&lt;span class="feature-text"&gt;10GB Storage&lt;/span&gt;&lt;/div&gt;
+                    &lt;div class="feature"&gt;&lt;span class="feature-icon"&gt;✓&lt;/span&gt;&lt;span class="feature-text"&gt;Basic Support&lt;/span&gt;&lt;/div&gt;
+                    &lt;a href="#" class="btn"&gt;Get Started&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card"&gt;
+                &lt;span class="popular-tag"&gt;MOST POPULAR&lt;/span&gt;
+                &lt;div class="card-header"&gt;&lt;h3&gt;Pro&lt;/h3&gt;&lt;div class="price"&gt;$49&lt;span&gt;/month&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="feature"&gt;✓ Unlimited Projects&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ 100GB Storage&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ Priority Support&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ Advanced Analytics&lt;/div&gt;
+                    &lt;a href="#" class="btn"&gt;Get Started&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;&lt;h3&gt;Enterprise&lt;/h3&gt;&lt;div class="price"&gt;$99&lt;span&gt;/month&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div class="feature"&gt;✓ Unlimited Everything&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ 1TB Storage&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ 24/7 Phone Support&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ Custom Solutions&lt;/div&gt;
+                    &lt;div class="feature"&gt;✓ SLA Guarantee&lt;/div&gt;
+                    &lt;a href="#" class="btn"&gt;Contact Sales&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Example 2: Blog Post Layout</h3>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        body { font-family: Georgia, serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { display: block; text-align: center; padding: 40px 0; border-bottom: 3px solid #e67e22; margin-bottom: 40px; }
+        h1 { display: block; font-size: 42px; margin-bottom: 10px; }
+        .post-meta { display: block; color: #666; }
+        .author, .date, .category { display: inline; padding: 0 5px; }
+        .author { font-weight: bold; color: #e67e22; }
+        .date:before, .category:before { content: "•"; display: inline; margin: 0 8px; color: #e67e22; }
+        article { display: block; }
+        p { display: block; margin: 20px 0; }
+        strong, em, a { display: inline; }
+        a { color: #e67e22; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .highlight-box {
+            display: inline-block; background: #f9f9f9; border-left: 4px solid #e67e22;
+            padding: 15px 20px; margin: 10px 0; font-style: italic;
+        }
+        .tag {
+            display: inline-block; background: #f0f0f0; padding: 3px 10px; margin: 2px 3px;
+            border-radius: 15px; font-size: 12px; color: #666;
+        }
+        .share-button {
+            display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center;
+            background: #333; color: white; border-radius: 50%; margin: 0 5px; text-decoration: none;
+        }
+        .share-button:hover { background: #e67e22; }
+        footer { display: block; margin-top: 60px; padding: 30px 0; border-top: 1px solid #ddd; text-align: center; color: #666; }
+        @media print { .share-buttons, .comments { display: none; } }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;h1&gt;The Art of Web Design&lt;/h1&gt;
+        &lt;div class="post-meta"&gt;
+            &lt;span class="author"&gt;Jane Smith&lt;/span&gt;
+            &lt;span class="date"&gt;February 26, 2026&lt;/span&gt;
+            &lt;span class="category"&gt;Design&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+    &lt;article&gt;
+        &lt;p&gt;In the world of web development, understanding the &lt;strong&gt;display property&lt;/strong&gt; is crucial. It's like the &lt;em&gt;foundation&lt;/em&gt; of a house - everything else builds upon it.&lt;/p&gt;
+        &lt;div class="highlight-box"&gt;"The display property determines how elements are rendered on the page - whether they stack vertically like blocks, flow horizontally like text, or combine both behaviors."&lt;/div&gt;
+        &lt;p&gt;For more insights, check out our &lt;a href="#"&gt;complete CSS guide&lt;/a&gt; and join the discussion.&lt;/p&gt;
+        &lt;div&gt;
+            &lt;span class="tag"&gt;CSS&lt;/span&gt;&lt;span class="tag"&gt;Web Design&lt;/span&gt;&lt;span class="tag"&gt;Frontend&lt;/span&gt;&lt;span class="tag"&gt;Tutorial&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="share-buttons"&gt;
+            &lt;a href="#" class="share-button"&gt;F&lt;/a&gt;
+            &lt;a href="#" class="share-button"&gt;T&lt;/a&gt;
+            &lt;a href="#" class="share-button"&gt;L&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/article&gt;
+    &lt;footer&gt;&lt;p&gt;&copy; 2026 Web Design Blog. All rights reserved.&lt;/p&gt;&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <h2>9. COMMON PITFALLS AND SOLUTIONS</h2>
+        <h3>Pitfall 1: Trying to Set Width on Inline Elements</h3>
+        <pre><code>/* Problem */
+a {
+    display: inline;
+    width: 200px;  /* ❌ IGNORED */
+    height: 50px;  /* ❌ IGNORED */
+    margin: 20px;  /* ❌ Only left/right margins work */
+}
+
+/* Solutions */
+a {
+    display: inline-block; /* ✅ Works perfectly */
+    width: 200px; height: 50px; margin: 20px;
+}
+/* or */
+a {
+    display: inline;
+    padding: 10px 20px; line-height: 50px; background: #f0f0f0;
+}</code></pre>
+
+        <h3>Pitfall 2: Unexpected Gaps with Inline-Block</h3>
+        <pre><code>/* Solutions listed earlier (flex, negative margin, font-size, html minify) */</code></pre>
+
+        <h3>Pitfall 3: Vertical Alignment Issues</h3>
+        <pre><code>.container {
+    height: 100px; line-height: 100px; background: #f0f0f0;
+}
+.child {
+    display: inline-block; height: 50px; vertical-align: middle; background: red;
+}
+/* Common vertical-align values: top, middle, bottom, baseline */</code></pre>
+
+        <h3>Pitfall 4: Collapsing Margins with Block Elements</h3>
+        <pre><code>/* Solution: flex gap, overflow: auto, pseudo-elements etc. */
+.container {
+    display: flex; flex-direction: column; gap: 20px;
+}</code></pre>
+
+        <h3>Pitfall 5: Display: None vs Hidden for Accessibility</h3>
+        <pre><code>.sr-only { position: absolute; width: 1px; height: 1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }</code></pre>
+
+        <hr>
+
+        <h2>10. ADVANCED DISPLAY VALUES</h2>
+        <pre><code>.container { display: flex; }                /* flexible box layout */
+.container { display: grid; }                /* grid layout */
+.element { display: table; display: table-row; display: table-cell; }
+.parent { display: contents; }               /* children become children of next parent */
+.container { display: flow-root; }            /* new block formatting context */</code></pre>
+
+        <hr>
+
+        <h2>11. BROWSER COMPATIBILITY</h2>
+        <table>
+            <tr>
+                <th>Display Value</th>
+                <th>Chrome</th>
+                <th>Firefox</th>
+                <th>Safari</th>
+                <th>Edge</th>
+                <th>IE</th>
+            </tr>
+            <tr>
+                <td>block</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td>inline</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td>inline-block</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅*</td>
+            </tr>
+            <tr>
+                <td>none</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+            </tr>
+        </table>
+        <p>*IE8+ supports inline-block</p>
+        <h3>Fallbacks for Older Browsers</h3>
+        <pre><code>.element {
+    display: inline; /* Fallback */
+    display: inline-block; /* Modern */
+    zoom: 1; /* Trigger hasLayout for IE7 */
+    *display: inline; /* IE7 hack */
+}</code></pre>
+
+        <hr>
+
+        <h2>12. BEST PRACTICES</h2>
+        <ol>
+            <li><strong>Use Semantic HTML First</strong> – nav, ul, li instead of generic divs</li>
+            <li><strong>Reset Box-Sizing</strong> – <code>* { box-sizing: border-box; }</code></li>
+            <li><strong>Use Modern Layout Methods</strong> – flexbox &amp; grid over inline-block hacks</li>
+            <li><strong>Be Mobile-First</strong> – block on mobile, inline-block on larger screens</li>
+            <li><strong>Consider Accessibility</strong> – don't hide critical content with display:none; use focus
+                indicators</li>
+        </ol>
+
+        <hr>
+
+        <h2>13. EXERCISES AND CHALLENGES</h2>
+        <ul>
+            <li><strong>Exercise 1:</strong> Identify Display Types – predict layout from given HTML.</li>
+            <li><strong>Exercise 2:</strong> Create a Horizontal Menu using inline-block, responsive.</li>
+            <li><strong>Exercise 3:</strong> Build a Profile Card using block, inline, inline-block.</li>
+            <li><strong>Exercise 4:</strong> Fix the Layout – three equal columns with inline-block.</li>
+            <li><strong>Exercise 5:</strong> Toggle Content – button toggles paragraph block/none.</li>
+        </ul>
+
+        <hr>
+
+        <h2>14. QUICK REFERENCE CARD</h2>
+        <div class="quick-ref">
+            <div class="ref-card"><strong>block</strong> – new line, full width, all margins/padding</div>
+            <div class="ref-card"><strong>inline</strong> – no new line, width/height ignored, only L/R margin</div>
+            <div class="ref-card"><strong>inline-block</strong> – inline but width/height/margins work</div>
+            <div class="ref-card"><strong>none</strong> – removed from layout, inaccessible</div>
+        </div>
+
+        <h3>Default Display Values</h3>
+        <p><strong>Block:</strong> div, p, h1-h6, ul, ol, li, section, article, header, footer, nav, main, form,
+            blockquote</p>
+        <p><strong>Inline:</strong> span, a, strong, em, b, i, u, small, sub, sup, label, code, q</p>
+        <p><strong>Inline-block (by default):</strong> img, button, input, textarea, select</p>
+
+        <h3>CSS Snippet Library</h3>
+        <pre><code>/* Horizontal navigation */
+.nav li { display: inline-block; margin: 0 10px; }
+
+/* Image gallery */
+.gallery img { display: inline-block; width: 200px; height: 150px; object-fit: cover; margin: 10px; }
+
+/* Clearfix for floats (legacy) */
+.clearfix::after { content: ""; display: table; clear: both; }
+
+/* Centering with text-align */
+.parent { text-align: center; }
+.child { display: inline-block; text-align: left; }
+
+/* Remove whitespace gap */
+.parent { font-size: 0; }
+.child { display: inline-block; font-size: 16px; }
+
+/* Toggle element */
+.hidden { display: none; }
+.visible { display: block; }</code></pre>
+
+        <h3>Common Patterns</h3>
+        <pre><code>/* Two-column layout */
+.column { display: inline-block; width: 48%; margin: 1%; vertical-align: top; }
+
+/* Button styling */
+.button { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+
+/* Badge/Count */
+.badge { display: inline-block; min-width: 20px; height: 20px; padding: 0 5px; background: red; color: white; border-radius: 10px; text-align: center; line-height: 20px; }</code></pre>
+
+        <hr>
+
+        <h2>SUMMARY</h2>
+        <p>The <code>display</code> property is fundamental to CSS layout:</p>
+        <ul>
+            <li><strong>block</strong> – Creates full-width elements that stack vertically. Perfect for main structural
+                containers.</li>
+            <li><strong>inline</strong> – Elements flow within text, only taking necessary space. Ideal for text-level
+                styling.</li>
+            <li><strong>inline-block</strong> – Best of both worlds: elements sit horizontally but maintain block-level
+                sizing. Excellent for navigation, galleries, and grid-like layouts.</li>
+            <li><strong>none</strong> – Completely removes elements from the page. Useful for toggleable content and
+                responsive designs.</li>
+        </ul>
+        <p>Remember: choose the right display value, consider default behaviors, use modern layout when appropriate, and
+            test across browsers.</p>
+
+        <footer>© Display Property & Element Types</footer>
+    </div> <!-- document-wrapper -->
+</body>
+
+</html>

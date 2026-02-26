@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tables: COMPLETE study notes · every line preserved</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #d9eaf2;
+            color: #1a2b32;
+            line-height: 1.55;
+            padding: 2rem 1.5rem;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -18px #0c3845;
+            padding: 3rem 2.8rem;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #003d4d, #176f7c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            border-left: 12px solid #2c8b9a;
+            padding-left: 1.8rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #0f5b68;
+            margin: 2.2rem 0 1rem;
+            border-bottom: 3px solid #66c2b0;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #1b6f7a;
+            margin: 2rem 0 0.8rem;
+            padding-left: 0.8rem;
+            border-left: 8px solid #8fd1c6;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #1a6672;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .toc {
+            background: #ebf7fa;
+            border-radius: 2rem;
+            padding: 2rem 2.2rem;
+            margin: 2rem 0 2.5rem;
+            border: 1px solid #b1dae7;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #51b6af;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.8rem 1.2rem;
+            list-style: none;
+        }
+
+        .toc-grid li {
+            margin-left: 1.4rem;
+            font-size: 1.05rem;
+        }
+
+        pre {
+            background: #1e3138;
+            color: #e4f0f5;
+            padding: 1.4rem 1.8rem;
+            border-radius: 1.8rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            margin: 1.5rem 0;
+            border: 1px solid #699ca8;
+            box-shadow: inset 0 0 10px #0e3943;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        code {
+            background: #e0f0f3;
+            color: #034b5a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.4rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(18, 78, 88, 0.15);
+        }
+
+        th {
+            background: #21737e;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 1.2rem;
+            font-size: 1.05rem;
+            border-right: 1px solid #8fc2cd;
+        }
+
+        td {
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #bfdee8;
+            background: #f9feff;
+        }
+
+        table tr:last-child td {
+            border-bottom: 1px solid #bfdee8;
+        }
+
+        caption {
+            caption-side: bottom;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            color: #1f6872;
+            font-weight: 500;
+        }
+
+        .example-box {
+            background: #f3fafd;
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            border: 1px solid #b2dae5;
+            margin: 1.8rem 0;
+            box-shadow: 0 12px 25px -16px #1f5f6b;
+        }
+
+        .note {
+            background: #fef9e7;
+            border-left: 12px solid #eba45e;
+            padding: 1.5rem 2rem;
+            border-radius: 2rem;
+            margin: 2rem 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 3px solid #b1d7df;
+            margin: 2.5rem 0;
+        }
+
+        footer {
+            margin-top: 3.8rem;
+            text-align: center;
+            color: #3e6d78;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            background: #227482;
+            color: white;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.8rem 0;
+        }
+
+        /* Interactive exercise styles */
+        .exercise-container {
+            margin: 2rem 0;
+            border: 2px solid #3598a5;
+            border-radius: 2rem;
+            overflow: hidden;
+        }
+
+        .exercise-toggle {
+            background: #e1f2f5;
+            padding: 1.2rem 2rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #0a4b56;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #3598a5;
+            transition: 0.2s;
+        }
+
+        .exercise-toggle:hover {
+            background: #c5e7ed;
+        }
+
+        .exercise-toggle .arrow {
+            font-size: 1.8rem;
+            transition: transform 0.3s;
+        }
+
+        .exercise-content {
+            display: none;
+            padding: 2rem;
+            background: #f6fbfe;
+            border-top: 1px solid #9acfdb;
+        }
+
+        .exercise-content.show {
+            display: block;
+        }
+
+        .exercise-toggle.active .arrow {
+            transform: rotate(90deg);
+        }
+
+        .exercise-note {
+            font-size: 0.95rem;
+            color: #217e8c;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .exercise-solution {
+            background: #e7f3f0;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 8px solid #308a7c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>HTML TABLES: A COMPREHENSIVE GUIDE</h1>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ul class="toc-grid">
+                <li>1. Introduction to HTML Tables</li>
+                <li>2. Basic Table Structure</li>
+                <li>3. Table Elements in Detail</li>
+                <li>4. Table Sections (thead, tbody, tfoot)</li>
+                <li>5. Merging Cells (colspan and rowspan)</li>
+                <li>6. Table Attributes and Styling</li>
+                <li>7. Accessibility and Best Practices</li>
+                <li>8. Advanced Table Techniques</li>
+                <li>9. Common Table Examples</li>
+                <li>10. Practice Exercises and Solutions</li>
+            </ul>
+        </div>
+
+        <!-- 1. INTRODUCTION TO HTML TABLES -->
+        <h2>1. INTRODUCTION TO HTML TABLES</h2>
+
+        <h3>1.1 What are HTML Tables?</h3>
+        <p>HTML tables are structured elements used to display data in rows and columns. They organize information in a
+            grid-like format, making it easy to compare and analyze related data points.</p>
+
+        <h3>1.2 When to Use Tables</h3>
+        <p><strong>Appropriate Uses:</strong></p>
+        <ul>
+            <li>Financial data (sales reports, budgets)</li>
+            <li>Schedules and timetables</li>
+            <li>Product comparison charts</li>
+            <li>Statistical data</li>
+            <li>Calendars</li>
+            <li>Pricing matrices</li>
+            <li>Sports league standings</li>
+            <li>Exam results</li>
+        </ul>
+        <p><strong>When NOT to Use Tables:</strong></p>
+        <ul>
+            <li>Page layout (use CSS Grid or Flexbox instead)</li>
+            <li>Creating forms</li>
+            <li>Simple lists</li>
+        </ul>
+
+        <h3>1.3 Historical Context</h3>
+        <ul>
+            <li><strong>1990s:</strong> Tables were misused for page layout</li>
+            <li><strong>2000s:</strong> CSS emerged, separating presentation from structure</li>
+            <li><strong>Today:</strong> Tables are used exclusively for tabular data</li>
+        </ul>
+
+        <hr>
+
+        <!-- 2. BASIC TABLE STRUCTURE -->
+        <h2>2. BASIC TABLE STRUCTURE</h2>
+
+        <h3>2.1 The Minimal Table</h3>
+        <pre><code>&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Cell 1&lt;/td&gt;
+        &lt;td&gt;Cell 2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Cell 3&lt;/td&gt;
+        &lt;td&gt;Cell 4&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Rendered Result:</strong></p>
+        <table>
+            <tr>
+                <td>Cell 1</td>
+                <td>Cell 2</td>
+            </tr>
+            <tr>
+                <td>Cell 3</td>
+                <td>Cell 4</td>
+            </tr>
+        </table>
+
+        <h3>2.2 Adding Headers with &lt;th&gt;</h3>
+        <pre><code>&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Age&lt;/th&gt;
+        &lt;th&gt;City&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;John Doe&lt;/td&gt;
+        &lt;td&gt;25&lt;/td&gt;
+        &lt;td&gt;New York&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Jane Smith&lt;/td&gt;
+        &lt;td&gt;30&lt;/td&gt;
+        &lt;td&gt;Los Angeles&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Rendered Result:</strong></p>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>City</th>
+            </tr>
+            <tr>
+                <td>John Doe</td>
+                <td>25</td>
+                <td>New York</td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>30</td>
+                <td>Los Angeles</td>
+            </tr>
+        </table>
+
+        <h3>2.3 Table with a Caption</h3>
+        <pre><code>&lt;table&gt;
+    &lt;caption&gt;Employee Directory 2024&lt;/caption&gt;
+    &lt;tr&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Department&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;101&lt;/td&gt;
+        &lt;td&gt;Alice Johnson&lt;/td&gt;
+        &lt;td&gt;Engineering&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <table>
+            <caption>Employee Directory 2024</caption>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+            </tr>
+            <tr>
+                <td>101</td>
+                <td>Alice Johnson</td>
+                <td>Engineering</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <!-- 3. TABLE ELEMENTS IN DETAIL -->
+        <h2>3. TABLE ELEMENTS IN DETAIL</h2>
+
+        <h3>3.1 &lt;table&gt; - The Container</h3>
+        <p>The &lt;table&gt; element wraps the entire table content.</p>
+        <p><strong>Attributes:</strong></p>
+        <ul>
+            <li><code>border</code> (deprecated in HTML5, use CSS)</li>
+            <li><code>cellpadding</code> (deprecated)</li>
+            <li><code>cellspacing</code> (deprecated)</li>
+            <li><code>width</code> (deprecated)</li>
+            <li><code>summary</code> (deprecated in HTML5)</li>
+        </ul>
+        <p><strong>Modern Usage:</strong></p>
+        <pre><code>&lt;table class="data-table"&gt;
+    &lt;!-- table content --&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>3.2 &lt;tr&gt; - Table Row</h3>
+        <p>Defines a row of cells in a table.</p>
+        <p><strong>Characteristics:</strong></p>
+        <ul>
+            <li>Container for &lt;td&gt; and &lt;th&gt; elements</li>
+            <li>Can contain any number of cells</li>
+            <li>Cannot be empty</li>
+        </ul>
+        <pre><code>&lt;tr class="highlight-row"&gt;
+    &lt;td&gt;Content&lt;/td&gt;
+    &lt;td&gt;More content&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+
+        <h3>3.3 &lt;td&gt; - Table Data Cell</h3>
+        <p>Represents a standard data cell.</p>
+        <p><strong>Attributes:</strong></p>
+        <ul>
+            <li><code>colspan</code>: Number of columns the cell spans</li>
+            <li><code>rowspan</code>: Number of rows the cell spans</li>
+            <li><code>headers</code>: Associates the cell with header cells (for accessibility)</li>
+            <li><code>scope</code> (better used on &lt;th&gt;)</li>
+        </ul>
+        <pre><code>&lt;td colspan="2" headers="name"&gt;John Doe&lt;/td&gt;
+&lt;td rowspan="2"&gt;Details&lt;/td&gt;</code></pre>
+
+        <h3>3.4 &lt;th&gt; - Table Header Cell</h3>
+        <p>Represents a header cell, typically bold and centered by default.</p>
+        <p><strong>Attributes:</strong></p>
+        <ul>
+            <li><code>scope</code>: Specifies if it's a header for a <code>col</code>, <code>row</code>,
+                <code>colgroup</code>, or <code>rowgroup</code></li>
+            <li><code>abbr</code>: Provides an abbreviated version of the content</li>
+            <li><code>colspan</code>, <code>rowspan</code>: Same as &lt;td&gt;</li>
+        </ul>
+        <pre><code>&lt;th scope="col"&gt;Column Header&lt;/th&gt;
+&lt;th scope="row"&gt;Row Header&lt;/th&gt;
+&lt;th abbr="Q1"&gt;First Quarter 2024&lt;/th&gt;</code></pre>
+
+        <h3>3.5 &lt;caption&gt; - Table Caption</h3>
+        <p>Provides a title or description for the table.</p>
+        <p><strong>Rules:</strong></p>
+        <ul>
+            <li>Must be the first child of &lt;table&gt;</li>
+            <li>Only one caption per table</li>
+            <li>Can be styled with <code>caption-side</code> CSS property</li>
+        </ul>
+        <pre><code>&lt;table&gt;
+    &lt;caption&gt;Monthly Sales Report - Q1 2024&lt;/caption&gt;
+    &lt;!-- table content --&gt;
+&lt;/table&gt;</code></pre>
+
+        <hr>
+
+        <!-- 4. TABLE SECTIONS (thead, tbody, tfoot) -->
+        <h2>4. TABLE SECTIONS (thead, tbody, tfoot)</h2>
+
+        <h3>4.1 &lt;thead&gt; - Table Header Section</h3>
+        <p>Groups the header content in a table.</p>
+        <p><strong>Characteristics:</strong></p>
+        <ul>
+            <li>Must contain one or more &lt;tr&gt; elements</li>
+            <li>Only one &lt;thead&gt; per table</li>
+            <li>Appears at the top of the table when printed across multiple pages</li>
+        </ul>
+        <pre><code>&lt;thead&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Product&lt;/th&gt;
+        &lt;th&gt;Price&lt;/th&gt;
+        &lt;th&gt;Quantity&lt;/th&gt;
+        &lt;th&gt;Total&lt;/th&gt;
+    &lt;/tr&gt;
+&lt;/thead&gt;</code></pre>
+
+        <h3>4.2 &lt;tbody&gt; - Table Body Section</h3>
+        <p>Groups the main content of the table.</p>
+        <p><strong>Characteristics:</strong></p>
+        <ul>
+            <li>Can have multiple &lt;tbody&gt; sections</li>
+            <li>Useful for grouping related rows</li>
+            <li>Each &lt;tbody&gt; can have its own styling</li>
+        </ul>
+        <pre><code>&lt;tbody class="electronics"&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Laptop&lt;/td&gt;
+        &lt;td&gt;$999&lt;/td&gt;
+        &lt;td&gt;5&lt;/td&gt;
+        &lt;td&gt;$4,995&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tbody class="accessories"&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Mouse&lt;/td&gt;
+        &lt;td&gt;$25&lt;/td&gt;
+        &lt;td&gt;10&lt;/td&gt;
+        &lt;td&gt;$250&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/tbody&gt;</code></pre>
+
+        <h3>4.3 &lt;tfoot&gt; - Table Footer Section</h3>
+        <p>Groups the footer content in a table.</p>
+        <p><strong>Characteristics:</strong></p>
+        <ul>
+            <li>Must contain one or more &lt;tr&gt; elements</li>
+            <li>Only one &lt;tfoot&gt; per table</li>
+            <li>Appears at the bottom when printing across pages</li>
+            <li>Can be placed before or after &lt;tbody&gt; in HTML (but renders at bottom)</li>
+        </ul>
+        <pre><code>&lt;tfoot&gt;
+    &lt;tr&gt;
+        &lt;td colspan="3"&gt;Grand Total&lt;/td&gt;
+        &lt;td&gt;$5,245&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/tfoot&gt;</code></pre>
+
+        <h3>4.4 Complete Example with All Sections</h3>
+        <pre><code>&lt;table&gt;
+    &lt;caption&gt;2024 Sales Report&lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Quarter&lt;/th&gt;
+            &lt;th&gt;Product&lt;/th&gt;
+            &lt;th&gt;Units Sold&lt;/th&gt;
+            &lt;th&gt;Revenue&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody class="q1"&gt;
+        &lt;tr&gt;
+            &lt;th rowspan="2"&gt;Q1&lt;/th&gt;
+            &lt;td&gt;Laptops&lt;/td&gt;
+            &lt;td&gt;150&lt;/td&gt;
+            &lt;td&gt;$150,000&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Tablets&lt;/td&gt;
+            &lt;td&gt;200&lt;/td&gt;
+            &lt;td&gt;$80,000&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tbody class="q2"&gt;
+        &lt;tr&gt;
+            &lt;th rowspan="2"&gt;Q2&lt;/th&gt;
+            &lt;td&gt;Laptops&lt;/td&gt;
+            &lt;td&gt;180&lt;/td&gt;
+            &lt;td&gt;$180,000&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Tablets&lt;/td&gt;
+            &lt;td&gt;220&lt;/td&gt;
+            &lt;td&gt;$88,000&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="3"&gt;Total Revenue&lt;/td&gt;
+            &lt;td&gt;$498,000&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+
+        <hr>
+
+        <!-- 5. MERGING CELLS (colspan and rowspan) -->
+        <h2>5. MERGING CELLS (colspan and rowspan)</h2>
+
+        <h3>5.1 Understanding colspan</h3>
+        <p>The <code>colspan</code> attribute merges cells horizontally across multiple columns.</p>
+        <p><strong>Syntax:</strong></p>
+        <pre><code>&lt;td colspan="number_of_columns"&gt;Content&lt;/td&gt;
+&lt;th colspan="number_of_columns"&gt;Content&lt;/th&gt;</code></pre>
+
+        <p><strong>Example 1: Simple colspan</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th colspan="2"&gt;Contact Information&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;John Doe&lt;/td&gt;
+        &lt;td&gt;john@email.com&lt;/td&gt;
+        &lt;td&gt;555-1234&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Rendered Result:</strong></p>
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th colspan="2">Contact Information</th>
+            </tr>
+            <tr>
+                <td>John Doe</td>
+                <td>john@email.com</td>
+                <td>555-1234</td>
+            </tr>
+        </table>
+
+        <p><strong>Example 2: Complex colspan for Headers</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th colspan="3"&gt;Employee Information&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Department&lt;/th&gt;
+        &lt;th&gt;Salary&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Jane Smith&lt;/td&gt;
+        &lt;td&gt;Marketing&lt;/td&gt;
+        &lt;td&gt;$75,000&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>5.2 Understanding rowspan</h3>
+        <p>The <code>rowspan</code> attribute merges cells vertically across multiple rows.</p>
+        <p><strong>Syntax:</strong></p>
+        <pre><code>&lt;td rowspan="number_of_rows"&gt;Content&lt;/td&gt;
+&lt;th rowspan="number_of_rows"&gt;Content&lt;/th&gt;</code></pre>
+
+        <p><strong>Example 1: Simple rowspan</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Department&lt;/th&gt;
+        &lt;th&gt;Employee&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td rowspan="3"&gt;Engineering&lt;/td&gt;
+        &lt;td&gt;Alice Chen&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Bob Wilson&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Carol Davis&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td rowspan="2"&gt;Marketing&lt;/td&gt;
+        &lt;td&gt;David Brown&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Eva Green&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Rendered Result:</strong></p>
+        <table border="1">
+            <tr>
+                <th>Department</th>
+                <th>Employee</th>
+            </tr>
+            <tr>
+                <td rowspan="3">Engineering</td>
+                <td>Alice Chen</td>
+            </tr>
+            <tr>
+                <td>Bob Wilson</td>
+            </tr>
+            <tr>
+                <td>Carol Davis</td>
+            </tr>
+            <tr>
+                <td rowspan="2">Marketing</td>
+                <td>David Brown</td>
+            </tr>
+            <tr>
+                <td>Eva Green</td>
+            </tr>
+        </table>
+
+        <h3>5.3 Combining colspan and rowspan</h3>
+
+        <p><strong>Example 1: Schedule Table</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;caption&gt;Weekly Class Schedule&lt;/caption&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Time&lt;/th&gt;
+        &lt;th&gt;Monday&lt;/th&gt;
+        &lt;th&gt;Tuesday&lt;/th&gt;
+        &lt;th&gt;Wednesday&lt;/th&gt;
+        &lt;th&gt;Thursday&lt;/th&gt;
+        &lt;th&gt;Friday&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;9:00 - 10:30&lt;/th&gt;
+        &lt;td&gt;Math&lt;/td&gt;
+        &lt;td&gt;Physics&lt;/td&gt;
+        &lt;td&gt;Math&lt;/td&gt;
+        &lt;td&gt;Physics&lt;/td&gt;
+        &lt;td rowspan="2"&gt;Lab&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;10:45 - 12:15&lt;/th&gt;
+        &lt;td&gt;English&lt;/td&gt;
+        &lt;td&gt;Chemistry&lt;/td&gt;
+        &lt;td&gt;English&lt;/td&gt;
+        &lt;td&gt;Chemistry&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;12:15 - 1:30&lt;/th&gt;
+        &lt;td colspan="5" style="text-align: center;"&gt;Lunch Break&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;1:30 - 3:00&lt;/th&gt;
+        &lt;td&gt;History&lt;/td&gt;
+        &lt;td rowspan="2"&gt;Art&lt;/td&gt;
+        &lt;td&gt;History&lt;/td&gt;
+        &lt;td rowspan="2"&gt;Music&lt;/td&gt;
+        &lt;td&gt;Sports&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;3:15 - 4:45&lt;/th&gt;
+        &lt;td&gt;Study Hall&lt;/td&gt;
+        &lt;td&gt;Study Hall&lt;/td&gt;
+        &lt;td&gt;Sports&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Example 2: Invoice Table</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;caption&gt;INVOICE #INV-2024-001&lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th colspan="4"&gt;ABC Company&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th colspan="4"&gt;123 Business St, City, State 12345&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th colspan="4"&gt;Phone: (555) 123-4567 | Email: info@abccompany.com&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th colspan="2"&gt;Bill To:&lt;/th&gt;
+            &lt;th colspan="2"&gt;Invoice Date:&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan="2"&gt;John Smith&lt;br&gt;456 Customer Ave&lt;br&gt;City, State 67890&lt;/td&gt;
+            &lt;td colspan="2"&gt;March 15, 2024&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Item #&lt;/th&gt;
+            &lt;th&gt;Description&lt;/th&gt;
+            &lt;th&gt;Quantity&lt;/th&gt;
+            &lt;th&gt;Unit Price&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;001&lt;/td&gt;
+            &lt;td&gt;Web Design Services&lt;/td&gt;
+            &lt;td&gt;20 hours&lt;/td&gt;
+            &lt;td&gt;$75.00&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;002&lt;/td&gt;
+            &lt;td&gt;Hosting Setup&lt;/td&gt;
+            &lt;td&gt;1&lt;/td&gt;
+            &lt;td&gt;$150.00&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;003&lt;/td&gt;
+            &lt;td&gt;Domain Registration&lt;/td&gt;
+            &lt;td&gt;2 years&lt;/td&gt;
+            &lt;td&gt;$25.00&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="3" style="text-align: right;"&gt;&lt;strong&gt;Subtotal:&lt;/strong&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;strong&gt;$1,675.00&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan="3" style="text-align: right;"&gt;Tax (10%):&lt;/td&gt;
+            &lt;td&gt;$167.50&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan="3" style="text-align: right;"&gt;&lt;strong&gt;Total:&lt;/strong&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;strong&gt;$1,842.50&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan="4" style="text-align: center;"&gt;Thank you for your business!&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>5.4 Important Rules for Cell Merging</h3>
+
+        <p><strong>Rule 1: Adjust Row Count</strong><br>
+            When using rowspan, subsequent rows must have fewer cells:</p>
+
+        <pre><code>&lt;!-- CORRECT --&gt;
+&lt;tr&gt;
+    &lt;td rowspan="2"&gt;Merged cell&lt;/td&gt;
+    &lt;td&gt;Cell 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;!-- Only one cell needed because the first is spanned from above --&gt;
+    &lt;td&gt;Cell 3&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;!-- INCORRECT --&gt;
+&lt;tr&gt;
+    &lt;td rowspan="2"&gt;Merged cell&lt;/td&gt;
+    &lt;td&gt;Cell 2&lt;/td&gt;
+    &lt;td&gt;Cell 3&lt;/td&gt;  &lt;!-- This will create 4 columns --&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td&gt;Cell 4&lt;/td&gt;
+    &lt;td&gt;Cell 5&lt;/td&gt;  &lt;!-- Rowspan cell only spans one column --&gt;
+&lt;/tr&gt;</code></pre>
+
+        <p><strong>Rule 2: colspan Affects Column Count</strong></p>
+        <pre><code>&lt;!-- This table has 4 columns --&gt;
+&lt;tr&gt;
+    &lt;td&gt;1&lt;/td&gt;
+    &lt;td&gt;2&lt;/td&gt;
+    &lt;td&gt;3&lt;/td&gt;
+    &lt;td&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;!-- This row also has 4 columns (1 + colspan=3) --&gt;
+&lt;tr&gt;
+    &lt;td&gt;1&lt;/td&gt;
+    &lt;td colspan="3"&gt;Merged (covers 2,3,4)&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+
+        <p><strong>Rule 3: Total Columns Must Be Consistent</strong></p>
+        <pre><code>&lt;!-- Valid table - both rows have 4 columns --&gt;
+&lt;tr&gt;
+    &lt;th colspan="2"&gt;Personal Info&lt;/th&gt;
+    &lt;th colspan="2"&gt;Contact Info&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td&gt;First&lt;/td&gt;
+    &lt;td&gt;Last&lt;/td&gt;
+    &lt;td&gt;Email&lt;/td&gt;
+    &lt;td&gt;Phone&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;!-- Invalid table - inconsistent columns --&gt;
+&lt;tr&gt;
+    &lt;td colspan="3"&gt;This spans 3 columns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td&gt;This&lt;/td&gt;
+    &lt;td&gt;table&lt;/td&gt;  &lt;!-- Only 2 columns, but previous row had 3 --&gt;
+&lt;/tr&gt;</code></pre>
+
+        <h3>5.5 Complex Merging Patterns</h3>
+
+        <p><strong>Pattern 1: Nested Headers</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;tr&gt;
+        &lt;th rowspan="2"&gt;Department&lt;/th&gt;
+        &lt;th colspan="4"&gt;Performance Metrics&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Q1&lt;/th&gt;
+        &lt;th&gt;Q2&lt;/th&gt;
+        &lt;th&gt;Q3&lt;/th&gt;
+        &lt;th&gt;Q4&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th rowspan="2"&gt;Sales&lt;/th&gt;
+        &lt;td&gt;$100K&lt;/td&gt;
+        &lt;td&gt;$120K&lt;/td&gt;
+        &lt;td&gt;$110K&lt;/td&gt;
+        &lt;td&gt;$130K&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;95%&lt;/td&gt;
+        &lt;td&gt;98%&lt;/td&gt;
+        &lt;td&gt;92%&lt;/td&gt;
+        &lt;td&gt;97%&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <p><strong>Pattern 2: Calendar Layout</strong></p>
+        <pre><code>&lt;table border="1"&gt;
+    &lt;caption&gt;March 2024&lt;/caption&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Sun&lt;/th&gt;
+        &lt;th&gt;Mon&lt;/th&gt;
+        &lt;th&gt;Tue&lt;/th&gt;
+        &lt;th&gt;Wed&lt;/th&gt;
+        &lt;th&gt;Thu&lt;/th&gt;
+        &lt;th&gt;Fri&lt;/th&gt;
+        &lt;th&gt;Sat&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td colspan="6"&gt;(Previous month days)&lt;/td&gt;
+        &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;2&lt;/td&gt;
+        &lt;td&gt;3&lt;/td&gt;
+        &lt;td&gt;4&lt;/td&gt;
+        &lt;td&gt;5&lt;/td&gt;
+        &lt;td&gt;6&lt;/td&gt;
+        &lt;td&gt;7&lt;/td&gt;
+        &lt;td&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;9&lt;/td&gt;
+        &lt;td&gt;10&lt;/td&gt;
+        &lt;td&gt;11&lt;/td&gt;
+        &lt;td&gt;12&lt;/td&gt;
+        &lt;td&gt;13&lt;/td&gt;
+        &lt;td&gt;14&lt;/td&gt;
+        &lt;td&gt;15&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;16&lt;/td&gt;
+        &lt;td&gt;17&lt;/td&gt;
+        &lt;td&gt;18&lt;/td&gt;
+        &lt;td&gt;19&lt;/td&gt;
+        &lt;td&gt;20&lt;/td&gt;
+        &lt;td&gt;21&lt;/td&gt;
+        &lt;td&gt;22&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;23&lt;/td&gt;
+        &lt;td&gt;24&lt;/td&gt;
+        &lt;td&gt;25&lt;/td&gt;
+        &lt;td&gt;26&lt;/td&gt;
+        &lt;td&gt;27&lt;/td&gt;
+        &lt;td&gt;28&lt;/td&gt;
+        &lt;td&gt;29&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;30&lt;/td&gt;
+        &lt;td&gt;31&lt;/td&gt;
+        &lt;td colspan="5"&gt;(Next month days)&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+        <hr>
+
+        <!-- 6. TABLE ATTRIBUTES AND STYLING -->
+        <h2>6. TABLE ATTRIBUTES AND STYLING</h2>
+
+        <h3>6.1 Deprecated Attributes (Use CSS Instead)</h3>
+        <table>
+            <tr>
+                <th>Deprecated</th>
+                <th>CSS Replacement</th>
+            </tr>
+            <tr>
+                <td><code>border="1"</code></td>
+                <td><code>border: 1px solid black;</code></td>
+            </tr>
+            <tr>
+                <td><code>cellpadding="10"</code></td>
+                <td><code>padding: 10px;</code> on <code>&lt;td&gt;</code> and <code>&lt;th&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>cellspacing="5"</code></td>
+                <td><code>border-collapse: separate; border-spacing: 5px;</code></td>
+            </tr>
+            <tr>
+                <td><code>width="500"</code></td>
+                <td><code>width: 500px;</code></td>
+            </tr>
+            <tr>
+                <td><code>align="center"</code></td>
+                <td><code>margin: 0 auto;</code> or <code>text-align: center;</code></td>
+            </tr>
+            <tr>
+                <td><code>bgcolor="#f0f0f0"</code></td>
+                <td><code>background-color: #f0f0f0;</code></td>
+            </tr>
+        </table>
+
+        <h3>6.2 Modern CSS Styling for Tables</h3>
+
+        <p><strong>Basic Table Styling:</strong></p>
+        <pre><code>/* Table container */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Cells */
+th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Header styling */
+th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Alternate row coloring */
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Caption styling */
+caption {
+    caption-side: top;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Footer styling */
+tfoot {
+    background-color: #e9e9e9;
+    font-weight: bold;
+}
+
+/* Responsive tables */
+@media screen and (max-width: 600px) {
+    table {
+        border: 0;
+    }
+    
+    table thead {
+        display: none;
+    }
+    
+    table tr {
+        margin-bottom: 10px;
+        display: block;
+        border: 1px solid #ddd;
+    }
+    
+    table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    
+    table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+}</code></pre>
+
+        <h3>6.3 Advanced Table Styling Techniques</h3>
+
+        <p><strong>Striped Columns:</strong></p>
+        <pre><code>td:nth-child(even), th:nth-child(even) {
+    background-color: #f2f2f2;
+}</code></pre>
+
+        <p><strong>Rounded Corners:</strong></p>
+        <pre><code>table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th:first-child {
+    border-top-left-radius: 10px;
+}
+
+th:last-child {
+    border-top-right-radius: 10px;
+}
+
+tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}</code></pre>
+
+        <p><strong>Fancy Header:</strong></p>
+        <pre><code>thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: 3px solid #4a5568;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}</code></pre>
+
+        <hr>
+
+        <!-- 7. ACCESSIBILITY AND BEST PRACTICES -->
+        <h2>7. ACCESSIBILITY AND BEST PRACTICES</h2>
+
+        <h3>7.1 Using scope Attribute</h3>
+        <p>The <code>scope</code> attribute improves screen reader navigation:</p>
+        <pre><code>&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th scope="col"&gt;Product&lt;/th&gt;
+            &lt;th scope="col"&gt;Price&lt;/th&gt;
+            &lt;th scope="col"&gt;Availability&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Laptop&lt;/th&gt;
+            &lt;td&gt;$999&lt;/td&gt;
+            &lt;td&gt;In Stock&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Mouse&lt;/th&gt;
+            &lt;td&gt;$25&lt;/td&gt;
+            &lt;td&gt;Out of Stock&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>7.2 Using headers and id Attributes</h3>
+        <p>For complex tables with merged cells:</p>
+        <pre><code>&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th id="product"&gt;Product&lt;/th&gt;
+            &lt;th id="q1"&gt;Q1&lt;/th&gt;
+            &lt;th id="q2"&gt;Q2&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th id="laptop" headers="product"&gt;Laptop&lt;/th&gt;
+            &lt;td headers="laptop q1"&gt;150&lt;/td&gt;
+            &lt;td headers="laptop q2"&gt;180&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>7.3 Accessibility Checklist</h3>
+        <ul>
+            <li>[ ] Use <code>&lt;caption&gt;</code> to describe the table purpose</li>
+            <li>[ ] Use <code>&lt;th&gt;</code> for header cells with appropriate <code>scope</code></li>
+            <li>[ ] Avoid using tables for layout</li>
+            <li>[ ] Ensure sufficient color contrast</li>
+            <li>[ ] Test with screen readers</li>
+            <li>[ ] Provide a text summary for complex tables</li>
+            <li>[ ] Use <code>aria-describedby</code> to link to additional descriptions</li>
+        </ul>
+
+        <h3>7.4 Best Practices Summary</h3>
+
+        <p><strong>DO:</strong></p>
+        <ul>
+            <li>Use semantic elements (<code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>,
+                <code>&lt;tfoot&gt;</code>)</li>
+            <li>Include a <code>&lt;caption&gt;</code></li>
+            <li>Use <code>scope</code> attributes</li>
+            <li>Keep tables simple when possible</li>
+            <li>Make tables responsive</li>
+            <li>Test on multiple devices</li>
+        </ul>
+
+        <p><strong>DON'T:</strong></p>
+        <ul>
+            <li>Use tables for layout</li>
+            <li>Overuse cell merging</li>
+            <li>Create overly complex tables</li>
+            <li>Forget about mobile users</li>
+            <li>Ignore accessibility</li>
+        </ul>
+
+        <hr>
+
+        <!-- 8. ADVANCED TABLE TECHNIQUES -->
+        <h2>8. ADVANCED TABLE TECHNIQUES</h2>
+
+        <h3>8.1 Sortable Tables with JavaScript</h3>
+        <pre><code>&lt;table id="sortableTable"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th onclick="sortTable(0)"&gt;Name ▼&lt;/th&gt;
+            &lt;th onclick="sortTable(1)"&gt;Age ▼&lt;/th&gt;
+            &lt;th onclick="sortTable(2)"&gt;Score ▼&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;Alice&lt;/td&gt;&lt;td&gt;25&lt;/td&gt;&lt;td&gt;85&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Bob&lt;/td&gt;&lt;td&gt;30&lt;/td&gt;&lt;td&gt;92&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Charlie&lt;/td&gt;&lt;td&gt;22&lt;/td&gt;&lt;td&gt;78&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;script&gt;
+function sortTable(columnIndex) {
+    const table = document.getElementById('sortableTable');
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+    
+    rows.sort((a, b) =&gt; {
+        const aVal = a.cells[columnIndex].textContent;
+        const bVal = b.cells[columnIndex].textContent;
+        return isNaN(aVal) ? 
+            aVal.localeCompare(bVal) : 
+            aVal - bVal;
+    });
+    
+    tbody.append(...rows);
+}
+&lt;/script&gt;</code></pre>
+
+        <h3>8.2 Filterable Tables</h3>
+        <pre><code>&lt;input type="text" id="filterInput" placeholder="Search..."&gt;
+&lt;table id="filterableTable"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Name&lt;/th&gt;
+            &lt;th&gt;Department&lt;/th&gt;
+            &lt;th&gt;Location&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;&lt;td&gt;John&lt;/td&gt;&lt;td&gt;Engineering&lt;/td&gt;&lt;td&gt;NY&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Jane&lt;/td&gt;&lt;td&gt;Marketing&lt;/td&gt;&lt;td&gt;CA&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;script&gt;
+document.getElementById('filterInput').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#filterableTable tbody tr');
+    
+    rows.forEach(row =&gt; {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+&lt;/script&gt;</code></pre>
+
+        <h3>8.3 Editable Tables</h3>
+        <pre><code>&lt;table id="editableTable"&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td contenteditable="true"&gt;Click to edit&lt;/td&gt;
+            &lt;td contenteditable="true"&gt;Double-click to edit&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+
+        <hr>
+
+        <!-- 9. COMMON TABLE EXAMPLES -->
+        <h2>9. COMMON TABLE EXAMPLES</h2>
+
+        <h3>9.1 Pricing Table</h3>
+        <pre><code>&lt;table class="pricing-table"&gt;
+    &lt;caption&gt;Choose Your Plan&lt;/caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Features&lt;/th&gt;
+            &lt;th&gt;Basic&lt;/th&gt;
+            &lt;th&gt;Pro&lt;/th&gt;
+            &lt;th&gt;Enterprise&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Price&lt;/th&gt;
+            &lt;td&gt;$10/month&lt;/td&gt;
+            &lt;td&gt;$25/month&lt;/td&gt;
+            &lt;td&gt;$50/month&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Users&lt;/th&gt;
+            &lt;td&gt;1 user&lt;/td&gt;
+            &lt;td&gt;5 users&lt;/td&gt;
+            &lt;td&gt;Unlimited&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Storage&lt;/th&gt;
+            &lt;td&gt;10GB&lt;/td&gt;
+            &lt;td&gt;50GB&lt;/td&gt;
+            &lt;td&gt;200GB&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Support&lt;/th&gt;
+            &lt;td&gt;Email&lt;/td&gt;
+            &lt;td&gt;Email + Chat&lt;/td&gt;
+            &lt;td&gt;24/7 Phone&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="4"&gt;* All plans include free updates&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>9.2 Employee Timesheet</h3>
+        <pre><code>&lt;table&gt;
+    &lt;caption&gt;Employee Timesheet - Week 12&lt;/caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th rowspan="2"&gt;Employee&lt;/th&gt;
+            &lt;th colspan="5"&gt;Hours Worked&lt;/th&gt;
+            &lt;th rowspan="2"&gt;Total&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Mon&lt;/th&gt;
+            &lt;th&gt;Tue&lt;/th&gt;
+            &lt;th&gt;Wed&lt;/th&gt;
+            &lt;th&gt;Thu&lt;/th&gt;
+            &lt;th&gt;Fri&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Sarah Johnson&lt;/th&gt;
+            &lt;td&gt;8&lt;/td&gt;
+            &lt;td&gt;8&lt;/td&gt;
+            &lt;td&gt;8.5&lt;/td&gt;
+            &lt;td&gt;8&lt;/td&gt;
+            &lt;td&gt;7.5&lt;/td&gt;
+            &lt;td&gt;40&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Michael Chen&lt;/th&gt;
+            &lt;td&gt;7.5&lt;/td&gt;
+            &lt;td&gt;8&lt;/td&gt;
+            &lt;td&gt;9&lt;/td&gt;
+            &lt;td&gt;8&lt;/td&gt;
+            &lt;td&gt;7.5&lt;/td&gt;
+            &lt;td&gt;40&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Daily Total&lt;/th&gt;
+            &lt;td&gt;15.5&lt;/td&gt;
+            &lt;td&gt;16&lt;/td&gt;
+            &lt;td&gt;17.5&lt;/td&gt;
+            &lt;td&gt;16&lt;/td&gt;
+            &lt;td&gt;15&lt;/td&gt;
+            &lt;td&gt;80&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+
+        <h3>9.3 Grade Sheet</h3>
+        <pre><code>&lt;table&gt;
+    &lt;caption&gt;Student Grade Report - Fall 2024&lt;/caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th rowspan="2"&gt;Student&lt;/th&gt;
+            &lt;th colspan="4"&gt;Assignments&lt;/th&gt;
+            &lt;th rowspan="2"&gt;Midterm&lt;/th&gt;
+            &lt;th rowspan="2"&gt;Final&lt;/th&gt;
+            &lt;th rowspan="2"&gt;Final Grade&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th&gt;A1&lt;/th&gt;
+            &lt;th&gt;A2&lt;/th&gt;
+            &lt;th&gt;A3&lt;/th&gt;
+            &lt;th&gt;A4&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Emma Watson&lt;/th&gt;
+            &lt;td&gt;85&lt;/td&gt;
+            &lt;td&gt;90&lt;/td&gt;
+            &lt;td&gt;88&lt;/td&gt;
+            &lt;td&gt;92&lt;/td&gt;
+            &lt;td&gt;87&lt;/td&gt;
+            &lt;td&gt;91&lt;/td&gt;
+            &lt;td&gt;89% (A-)&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;James Smith&lt;/th&gt;
+            &lt;td&gt;75&lt;/td&gt;
+            &lt;td&gt;82&lt;/td&gt;
+            &lt;td&gt;79&lt;/td&gt;
+            &lt;td&gt;85&lt;/td&gt;
+            &lt;td&gt;80&lt;/td&gt;
+            &lt;td&gt;83&lt;/td&gt;
+            &lt;td&gt;81% (B-)&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="8"&gt;* Final grade includes participation&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+
+        <hr>
+
+        <!-- 10. PRACTICE EXERCISES AND SOLUTIONS - INTERACTIVE -->
+        <h2>10. PRACTICE EXERCISES AND SOLUTIONS</h2>
+
+        <!-- Exercise 1 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(1)">
+                <span>📋 Exercise 1: Create a Basic Product Catalog</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-1" class="exercise-content">
+                <p><strong>Challenge:</strong> Create a table with product information including name, price, and
+                    availability.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table&gt;
+    &lt;caption&gt;Product Catalog 2024&lt;/caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Product ID&lt;/th&gt;
+            &lt;th&gt;Product Name&lt;/th&gt;
+            &lt;th&gt;Price&lt;/th&gt;
+            &lt;th&gt;Availability&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;P001&lt;/td&gt;
+            &lt;td&gt;Wireless Mouse&lt;/td&gt;
+            &lt;td&gt;$24.99&lt;/td&gt;
+            &lt;td&gt;In Stock&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;P002&lt;/td&gt;
+            &lt;td&gt;Mechanical Keyboard&lt;/td&gt;
+            &lt;td&gt;$89.99&lt;/td&gt;
+            &lt;td&gt;Out of Stock&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;P003&lt;/td&gt;
+            &lt;td&gt;USB-C Hub&lt;/td&gt;
+            &lt;td&gt;$45.50&lt;/td&gt;
+            &lt;td&gt;In Stock&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(2)">
+                <span>📋 Exercise 2: Create a Schedule with Merged Cells</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-2" class="exercise-content">
+                <p><strong>Challenge:</strong> Create a weekly schedule showing classes with some spanning multiple
+                    days.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table&gt;
+    &lt;caption&gt;Workshop Schedule&lt;/caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Time&lt;/th&gt;
+            &lt;th&gt;Monday&lt;/th&gt;
+            &lt;th&gt;Tuesday&lt;/th&gt;
+            &lt;th&gt;Wednesday&lt;/th&gt;
+            &lt;th&gt;Thursday&lt;/th&gt;
+            &lt;th&gt;Friday&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;9:00 - 10:30&lt;/td&gt;
+            &lt;td&gt;HTML Basics&lt;/td&gt;
+            &lt;td&gt;CSS Styling&lt;/td&gt;
+            &lt;td&gt;HTML Basics&lt;/td&gt;
+            &lt;td&gt;CSS Styling&lt;/td&gt;
+            &lt;td rowspan="2"&gt;Project Work&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;10:45 - 12:15&lt;/td&gt;
+            &lt;td&gt;JavaScript&lt;/td&gt;
+            &lt;td&gt;Responsive Design&lt;/td&gt;
+            &lt;td&gt;JavaScript&lt;/td&gt;
+            &lt;td&gt;Responsive Design&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;12:15 - 1:30&lt;/td&gt;
+            &lt;td colspan="5"&gt;Lunch Break&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;1:30 - 3:00&lt;/td&gt;
+            &lt;td&gt;React Intro&lt;/td&gt;
+            &lt;td&gt;State Management&lt;/td&gt;
+            &lt;td&gt;React Hooks&lt;/td&gt;
+            &lt;td&gt;Routing&lt;/td&gt;
+            &lt;td&gt;Project Review&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(3)">
+                <span>📋 Exercise 3: Financial Report with Complex Headers</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-3" class="exercise-content">
+                <p><strong>Challenge:</strong> Create a quarterly financial report with nested headers and totals.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table&gt;
+    &lt;caption&gt;Q1 2024 Financial Report&lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th rowspan="2"&gt;Category&lt;/th&gt;
+            &lt;th colspan="3"&gt;Q1 2024&lt;/th&gt;
+            &lt;th rowspan="2"&gt;Total&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th&gt;January&lt;/th&gt;
+            &lt;th&gt;February&lt;/th&gt;
+            &lt;th&gt;March&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Revenue&lt;/th&gt;
+            &lt;td&gt;$50,000&lt;/td&gt;
+            &lt;td&gt;$55,000&lt;/td&gt;
+            &lt;td&gt;$62,000&lt;/td&gt;
+            &lt;td&gt;$167,000&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Expenses&lt;/th&gt;
+            &lt;td&gt;$30,000&lt;/td&gt;
+            &lt;td&gt;$32,000&lt;/td&gt;
+            &lt;td&gt;$35,000&lt;/td&gt;
+            &lt;td&gt;$97,000&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;Profit&lt;/th&gt;
+            &lt;td&gt;$20,000&lt;/td&gt;
+            &lt;td&gt;$23,000&lt;/td&gt;
+            &lt;td&gt;$27,000&lt;/td&gt;
+            &lt;td&gt;$70,000&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="4"&gt;Quarterly Growth&lt;/td&gt;
+            &lt;td&gt;+35%&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(4)">
+                <span>📋 Exercise 4: Create a Timetable with Multiple Merges</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-4" class="exercise-content">
+                <p><strong>Challenge:</strong> Create a conference timetable with multiple session tracks.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table&gt;
+    &lt;caption&gt;Web Dev Conference 2024 - Day 1&lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Time&lt;/th&gt;
+            &lt;th&gt;Track A (Beginner)&lt;/th&gt;
+            &lt;th&gt;Track B (Intermediate)&lt;/th&gt;
+            &lt;th&gt;Track C (Advanced)&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;9:00 - 10:00&lt;/td&gt;
+            &lt;td colspan="3"&gt;Keynote: Future of Web Development&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;10:15 - 11:15&lt;/td&gt;
+            &lt;td&gt;HTML &amp; CSS Basics&lt;/td&gt;
+            &lt;td&gt;Flexbox Masterclass&lt;/td&gt;
+            &lt;td&gt;CSS Grid Advanced&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;11:30 - 12:30&lt;/td&gt;
+            &lt;td&gt;JavaScript Fundamentals&lt;/td&gt;
+            &lt;td&gt;Async JavaScript&lt;/td&gt;
+            &lt;td&gt;Performance Optimization&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;12:30 - 2:00&lt;/td&gt;
+            &lt;td colspan="3"&gt;Networking Lunch&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;2:00 - 3:30&lt;/td&gt;
+            &lt;td rowspan="2"&gt;React Workshop&lt;br&gt;(Part 1 &amp; 2)&lt;/td&gt;
+            &lt;td&gt;Node.js Basics&lt;/td&gt;
+            &lt;td&gt;WebAssembly Intro&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;3:45 - 5:00&lt;/td&gt;
+            &lt;td&gt;Express Framework&lt;/td&gt;
+            &lt;td&gt;Microservices Pattern&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;5:00 - 6:00&lt;/td&gt;
+            &lt;td colspan="3"&gt;Panel Discussion: Career Paths in Web Dev&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="4"&gt;* All times are in local time (EST)&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 5 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(5)">
+                <span>📋 Exercise 5: Medical Appointment Schedule</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-5" class="exercise-content">
+                <p><strong>Challenge:</strong> Create a doctor's appointment schedule with merged cells for
+                    appointments.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table&gt;
+    &lt;caption&gt;Dr. Smith's Clinic - Daily Schedule&lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Time&lt;/th&gt;
+            &lt;th&gt;Patient Name&lt;/th&gt;
+            &lt;th&gt;Appointment Type&lt;/th&gt;
+            &lt;th&gt;Room&lt;/th&gt;
+            &lt;th&gt;Status&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td rowspan="2"&gt;9:00 - 10:00&lt;/td&gt;
+            &lt;td&gt;John Doe&lt;/td&gt;
+            &lt;td&gt;Check-up&lt;/td&gt;
+            &lt;td&gt;101&lt;/td&gt;
+            &lt;td rowspan="2"&gt;Completed&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Jane Smith&lt;/td&gt;
+            &lt;td&gt;Follow-up&lt;/td&gt;
+            &lt;td&gt;102&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;10:00 - 11:00&lt;/td&gt;
+            &lt;td&gt;Mike Johnson&lt;/td&gt;
+            &lt;td colspan="2"&gt;Emergency - X-Ray Required&lt;/td&gt;
+            &lt;td&gt;In Progress&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td rowspan="3"&gt;11:00 - 12:30&lt;/td&gt;
+            &lt;td&gt;Sarah Williams&lt;/td&gt;
+            &lt;td&gt;Consultation&lt;/td&gt;
+            &lt;td&gt;101&lt;/td&gt;
+            &lt;td rowspan="3"&gt;Waiting&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Robert Brown&lt;/td&gt;
+            &lt;td&gt;Vaccination&lt;/td&gt;
+            &lt;td&gt;103&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Emily Davis&lt;/td&gt;
+            &lt;td&gt;Test Results&lt;/td&gt;
+            &lt;td&gt;102&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;12:30 - 2:00&lt;/td&gt;
+            &lt;td colspan="4"&gt;Lunch Break&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="5"&gt;Total Patients Today: 8 | Next Available: 2:00 PM&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 6 -->
+        <div class="exercise-container">
+            <div class="exercise-toggle" onclick="toggleExercise(6)">
+                <span>📋 Exercise 6: Create a Nutrition Facts Label</span>
+                <span class="arrow">▶</span>
+            </div>
+            <div id="exercise-6" class="exercise-content">
+                <p><strong>Challenge:</strong> Design a nutrition facts table similar to food labels.</p>
+                <div class="exercise-solution">
+                    <p><strong>Solution:</strong></p>
+                    <pre><code>&lt;table style="border-collapse: collapse; width: 300px; font-family: Arial;"&gt;
+    &lt;caption style="font-size: 24px; font-weight: bold; text-align: left;"&gt;
+        Nutrition Facts
+    &lt;/caption&gt;
+    
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th colspan="2" style="border-bottom: 5px solid black; padding: 5px 0;"&gt;
+                Serving Size 1 cup (228g)
+            &lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th colspan="2" style="border-bottom: 2px solid black; padding: 5px 0;"&gt;
+                Servings Per Container 2
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td colspan="2" style="border-bottom: 5px solid black; padding: 5px 0;"&gt;
+                &lt;strong&gt;Amount Per Serving&lt;/strong&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Calories&lt;/strong&gt; 250&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;Calories from Fat 110&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td colspan="2" style="border-bottom: 2px solid black; padding: 3px 0;"&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td colspan="2"&gt;&lt;strong&gt;% Daily Value*&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Total Fat&lt;/strong&gt; 12g&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;&lt;strong&gt;18%&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td style="padding-left: 20px;"&gt;Saturated Fat 3g&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;15%&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td style="padding-left: 20px;"&gt;Trans Fat 0g&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Cholesterol&lt;/strong&gt; 30mg&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;&lt;strong&gt;10%&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Sodium&lt;/strong&gt; 470mg&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;&lt;strong&gt;20%&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Total Carbohydrate&lt;/strong&gt; 31g&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;&lt;strong&gt;10%&lt;/strong&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td style="padding-left: 20px;"&gt;Dietary Fiber 0g&lt;/td&gt;
+            &lt;td style="text-align: right;"&gt;0%&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td style="padding-left: 20px;"&gt;Sugars 5g&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td&gt;&lt;strong&gt;Protein&lt;/strong&gt; 5g&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        
+        &lt;tr&gt;
+            &lt;td colspan="2" style="border-top: 5px solid black; padding-top: 5px;"&gt;
+                Vitamin A 4% • Vitamin C 2%
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td colspan="2"&gt;
+                Calcium 15% • Iron 4%
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+    
+    &lt;tfoot&gt;
+        &lt;tr&gt;
+            &lt;td colspan="2" style="border-top: 1px solid black; margin-top: 5px; font-size: 10px;"&gt;
+                * Percent Daily Values are based on a 2,000 calorie diet.
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- COMMON MISTAKES AND SOLUTIONS -->
+        <h2>COMMON MISTAKES AND SOLUTIONS</h2>
+
+        <h3>Mistake 1: Incorrect Column Count</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>&lt;tr&gt;
+    &lt;td&gt;Cell 1&lt;/td&gt;
+    &lt;td&gt;Cell 2&lt;/td&gt;
+    &lt;td&gt;Cell 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td colspan="2"&gt;Merged cell&lt;/td&gt;
+    &lt;!-- Missing a cell --&gt;
+&lt;/tr&gt;</code></pre>
+
+        <p><strong>Solution:</strong></p>
+        <pre><code>&lt;tr&gt;
+    &lt;td&gt;Cell 1&lt;/td&gt;
+    &lt;td&gt;Cell 2&lt;/td&gt;
+    &lt;td&gt;Cell 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td colspan="2"&gt;Merged cell&lt;/td&gt;
+    &lt;td&gt;&lt;/td&gt;  &lt;!-- Empty cell to maintain column count --&gt;
+&lt;/tr&gt;</code></pre>
+
+        <h3>Mistake 2: Overlapping Spans</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>&lt;tr&gt;
+    &lt;td rowspan="2"&gt;Rowspan 2&lt;/td&gt;
+    &lt;td&gt;Cell 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td rowspan="2"&gt;This overlaps with the first rowspan&lt;/td&gt;
+    &lt;td&gt;Cell 3&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+
+        <p><strong>Solution:</strong> Plan your table structure on paper first, ensuring spans don't conflict.</p>
+
+        <h3>Mistake 3: Nested Tables Without Proper Structure</h3>
+        <p><strong>Solution:</strong></p>
+        <pre><code>&lt;td&gt;
+    &lt;table&gt;
+        &lt;!-- Nested table content --&gt;
+    &lt;/table&gt;
+&lt;/td&gt;</code></pre>
+
+        <hr>
+
+        <!-- QUICK REFERENCE CARD -->
+        <h2>QUICK REFERENCE CARD</h2>
+
+        <table>
+            <tr>
+                <th>Element</th>
+                <th>Description</th>
+                <th>Required Attributes</th>
+                <th>Optional Attributes</th>
+            </tr>
+            <tr>
+                <td><code>&lt;table&gt;</code></td>
+                <td>Table container</td>
+                <td>None</td>
+                <td>(Use CSS for styling)</td>
+            </tr>
+            <tr>
+                <td><code>&lt;tr&gt;</code></td>
+                <td>Table row</td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td><code>&lt;th&gt;</code></td>
+                <td>Header cell</td>
+                <td>None</td>
+                <td><code>colspan</code>, <code>rowspan</code>, <code>scope</code>, <code>headers</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;td&gt;</code></td>
+                <td>Data cell</td>
+                <td>None</td>
+                <td><code>colspan</code>, <code>rowspan</code>, <code>headers</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;thead&gt;</code></td>
+                <td>Header section</td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td><code>&lt;tbody&gt;</code></td>
+                <td>Body section</td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td><code>&lt;tfoot&gt;</code></td>
+                <td>Footer section</td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td><code>&lt;caption&gt;</code></td>
+                <td>Table caption</td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+        </table>
+
+        <p><strong>Common colspan/rowspan values:</strong></p>
+        <ul>
+            <li><code>colspan="2"</code> → Spans 2 columns</li>
+            <li><code>rowspan="3"</code> → Spans 3 rows</li>
+            <li><code>colspan="0"</code> → Spans to the end of the row (not widely supported)</li>
+        </ul>
+
+        <hr>
+
+        <!-- SUMMARY -->
+        <h2>SUMMARY</h2>
+
+        <p>HTML tables are powerful tools for displaying structured data. Key takeaways:</p>
+
+        <ol>
+            <li><strong>Use semantic structure</strong> (<code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>,
+                <code>&lt;tfoot&gt;</code>) for better organization and accessibility</li>
+            <li><strong>Apply <code>scope</code> attributes</strong> to improve screen reader navigation</li>
+            <li><strong>Use <code>colspan</code> and <code>rowspan</code></strong> to create complex layouts with merged
+                cells</li>
+            <li><strong>Always include a <code>&lt;caption&gt;</code></strong> to describe the table purpose</li>
+            <li><strong>Style with CSS</strong> rather than deprecated HTML attributes</li>
+            <li><strong>Test responsiveness</strong> to ensure tables work on all devices</li>
+            <li><strong>Validate your HTML</strong> to catch structural errors</li>
+        </ol>
+
+        <p>Remember: Tables are for tabular data, not page layout. Keep them as simple as possible while effectively
+            communicating your data.</p>
+
+        <footer>
+            📘 complete HTML tables study guide · every line preserved · interactive exercises
+        </footer>
+
+    </div> <!-- document-wrapper -->
+
+    <script>
+        function toggleExercise(num) {
+            const content = document.getElementById(`exercise-${num}`);
+            const toggle = content.previousElementSibling;
+
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                toggle.classList.remove('active');
+                toggle.querySelector('.arrow').textContent = '▶';
+            } else {
+                content.classList.add('show');
+                toggle.classList.add('active');
+                toggle.querySelector('.arrow').textContent = '▼';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

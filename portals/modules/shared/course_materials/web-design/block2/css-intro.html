@@ -1,0 +1,5417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to CSS & Selectors · complete notes</title>
+    <style>
+        /* ===== reset / base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f5fa;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a2b3c;
+            padding: 2rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -20px #0a2e4b;
+            padding: 2.2rem 2rem;
+        }
+
+        /* headings & hierarchy */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #0d3b4c;
+            font-weight: 650;
+            line-height: 1.3;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 12px solid #1f7a8c;
+            padding-left: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #b5d8e8;
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #155a6b;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #1d6d7a;
+        }
+
+        hr {
+            margin: 2.5rem 0;
+            border: 2px dashed #9ec5d9;
+        }
+
+        p,
+        li,
+        blockquote {
+            margin-bottom: 1rem;
+            color: #1f3a47;
+        }
+
+        code,
+        pre {
+            background: #e9f0f5;
+            border-radius: 10px;
+            padding: 0.2rem 0.6rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            border: 1px solid #bdd3e3;
+        }
+
+        pre {
+            padding: 1.2rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 8px #d4e2ed;
+        }
+
+        /* tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #c9dde9;
+        }
+
+        th {
+            background: #1f7a8c;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        td {
+            background: #f3f9ff;
+            padding: 0.9rem 0.5rem;
+            border-bottom: 1px solid #c2dae8;
+        }
+
+        .note-block {
+            background: #e4f0f7;
+            border-radius: 1.6rem;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2b95b0;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        /* glossary & definition terms */
+        .glossary-term {
+            font-weight: 700;
+            color: #004d66;
+        }
+
+        /* keep everything exactly as text */
+        .source-line-preserve {
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <!-- CONTENT START: EXACT COPY OF PROVIDED STUDY NOTES, EVERY LINE PRESERVED -->
+
+        <h1>INTRODUCTION TO CSS & SELECTORS</h1>
+
+        <h2>A COMPREHENSIVE GUIDE</h2>
+
+        <hr>
+
+        <h1>TABLE OF CONTENTS</h1>
+
+        <ol>
+            <li><strong>Introduction to CSS</strong>
+                <ul>
+                    <li>What is CSS?</li>
+                    <li>The Purpose of CSS</li>
+                    <li>History and Evolution of CSS</li>
+                    <li>How CSS Works with HTML</li>
+                    <li>The Separation of Concerns Principle</li>
+                </ul>
+            </li>
+            <li><strong>CSS Syntax</strong>
+                <ul>
+                    <li>Basic Syntax Structure</li>
+                    <li>Understanding Selectors, Properties, and Values</li>
+                    <li>CSS Rulesets</li>
+                    <li>CSS Comments</li>
+                    <li>Whitespace and Formatting</li>
+                </ul>
+            </li>
+            <li><strong>Methods of Implementing CSS</strong>
+                <ul>
+                    <li>Inline CSS</li>
+                    <li>Internal (Embedded) CSS</li>
+                    <li>External CSS</li>
+                    <li>Comparison Table: Pros and Cons</li>
+                    <li>Which Method to Choose?</li>
+                </ul>
+            </li>
+            <li><strong>CSS Selectors - Deep Dive</strong>
+                <ul>
+                    <li>What are Selectors?</li>
+                    <li>Selector Specificity</li>
+                    <li>Selector Performance</li>
+                </ul>
+            </li>
+            <li><strong>Basic Selectors</strong>
+                <ul>
+                    <li>Universal Selector (*)</li>
+                    <li>Type (Element) Selector</li>
+                    <li>Class Selector</li>
+                    <li>ID Selector</li>
+                    <li>Grouping Selector</li>
+                </ul>
+            </li>
+            <li><strong>Practical Examples and Applications</strong>
+                <ul>
+                    <li>Combining Basic Selectors</li>
+                    <li>Common Use Cases</li>
+                    <li>Best Practices</li>
+                </ul>
+            </li>
+            <li><strong>Common Mistakes and How to Avoid Them</strong>
+                <ul>
+                    <li>Selector Errors</li>
+                    <li>Implementation Errors</li>
+                    <li>Specificity Issues</li>
+                </ul>
+            </li>
+            <li><strong>Hands-On Exercises</strong>
+                <ul>
+                    <li>Exercise 1: Implementing All Three CSS Methods</li>
+                    <li>Exercise 2: Practicing Basic Selectors</li>
+                    <li>Exercise 3: Selector Challenge</li>
+                </ul>
+            </li>
+            <li><strong>Review Questions and Answers</strong></li>
+            <li><strong>Glossary of Terms</strong></li>
+        </ol>
+
+        <hr>
+
+        <h1>1. INTRODUCTION TO CSS</h1>
+
+        <h2>What is CSS?</h2>
+
+        <p>CSS stands for <strong>Cascading Style Sheets</strong>. It is a stylesheet language used to describe the
+            presentation of a document written in HTML or XML. CSS defines how elements should be rendered on screen, on
+            paper, in speech, or on other media.</p>
+
+        <p>In simple terms:</p>
+        <ul>
+            <li><strong>HTML</strong> is the structure and content (the nouns)</li>
+            <li><strong>CSS</strong> is the presentation and styling (the adjectives)</li>
+        </ul>
+
+        <pre><code>&lt;!-- HTML provides structure --&gt;
+&lt;p&gt;This is a paragraph.&lt;/p&gt;
+
+&lt;!-- CSS adds style --&gt;
+&lt;style&gt;
+  p {
+    color: blue;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+  }
+&lt;/style&gt;
+</code></pre>
+
+        <h2>The Purpose of CSS</h2>
+
+        <h3>1. <strong>Visual Styling</strong></h3>
+        <p>CSS controls the visual appearance of web elements:</p>
+        <ul>
+            <li><strong>Colors</strong>: Text color, background color, border colors</li>
+            <li><strong>Typography</strong>: Fonts, sizes, weights, line heights, spacing</li>
+            <li><strong>Layout</strong>: Positioning, sizing, margins, padding</li>
+            <li><strong>Effects</strong>: Shadows, gradients, animations, transitions</li>
+        </ul>
+
+        <h3>2. <strong>Separation of Content from Presentation</strong></h3>
+        <p>This is the most important purpose of CSS. By separating content (HTML) from presentation (CSS), we gain
+            numerous benefits:</p>
+        <ul>
+            <li><strong>Maintainability</strong>: Change the entire look of a website by modifying one CSS file</li>
+            <li><strong>Accessibility</strong>: Users can override styles for better readability</li>
+            <li><strong>Device Compatibility</strong>: Same HTML can be styled differently for screen, print, or mobile
+            </li>
+            <li><strong>Faster Development</strong>: Consistent styling across multiple pages</li>
+            <li><strong>Cleaner Code</strong>: HTML becomes cleaner and more readable</li>
+        </ul>
+
+        <h3>3. <strong>Consistency Across Pages</strong></h3>
+        <p>CSS ensures that styling remains consistent throughout an entire website:</p>
+
+        <pre><code>/* One rule affects every h1 on every page */
+h1 {
+  color: #2c3e50;
+  font-family: 'Helvetica', sans-serif;
+  border-bottom: 2px solid #3498db;
+}
+</code></pre>
+
+        <h3>4. <strong>Responsive Design</strong></h3>
+        <p>CSS enables websites to adapt to different screen sizes and devices:</p>
+
+        <pre><code>/* Styles adapt based on screen width */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+}
+</code></pre>
+
+        <h3>5. <strong>User Experience Enhancements</strong></h3>
+        <p>CSS adds interactivity and visual feedback:</p>
+
+        <pre><code>/* Button hover effect improves user experience */
+.button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+</code></pre>
+
+        <h3>6. <strong>Accessibility Improvements</strong></h3>
+        <p>CSS can make content more accessible:</p>
+
+        <pre><code>/* High contrast mode for better readability */
+.high-contrast {
+  background-color: black;
+  color: white;
+}
+
+/* Respecting user preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</code></pre>
+
+        <h3>7. <strong>Performance Optimization</strong></h3>
+        <p>CSS can improve perceived performance:</p>
+        <ul>
+            <li>Loading styles separately allows content to be displayed faster</li>
+            <li>CSS sprites reduce server requests</li>
+            <li>Critical CSS can be inlined for above-the-fold content</li>
+        </ul>
+
+        <h2>History and Evolution of CSS</h2>
+
+        <h3><strong>CSS1 (1996)</strong></h3>
+        <ul>
+            <li>First official CSS specification</li>
+            <li>Basic styling: fonts, colors, margins, borders</li>
+            <li>Limited selectors and properties</li>
+        </ul>
+
+        <h3><strong>CSS2 (1998)</strong></h3>
+        <ul>
+            <li>Added positioning, z-index, media types</li>
+            <li>Introduced more selectors (child, adjacent sibling)</li>
+            <li>Added support for different media (print, screen)</li>
+        </ul>
+
+        <h3><strong>CSS3 (1999 onwards - modular)</strong></h3>
+        <ul>
+            <li>Split into modules that evolve independently</li>
+            <li>Introduced:
+                <ul>
+                    <li>Selectors Level 3</li>
+                    <li>Media Queries</li>
+                    <li>Flexbox</li>
+                    <li>Grid</li>
+                    <li>Animations and Transitions</li>
+                    <li>Gradients</li>
+                    <li>Web Fonts</li>
+                    <li>Rounded corners, shadows, transformations</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3><strong>CSS4 (ongoing)</strong></h3>
+        <ul>
+            <li>Not a single version but ongoing module updates</li>
+            <li>New selectors (:has(), :is(), :where())</li>
+            <li>Container queries</li>
+            <li>Cascade layers</li>
+            <li>More advanced features</li>
+        </ul>
+
+        <h2>How CSS Works with HTML</h2>
+
+        <p>Understanding the relationship between HTML and CSS is crucial:</p>
+
+        <h3>The Rendering Process</h3>
+
+        <ol>
+            <li><strong>Browser loads HTML</strong> - Downloads the HTML document</li>
+            <li><strong>HTML is parsed</strong> - Browser creates the DOM (Document Object Model)</li>
+            <li><strong>CSS is loaded and parsed</strong> - Browser creates the CSSOM (CSS Object Model)</li>
+            <li><strong>Render Tree is constructed</strong> - DOM + CSSOM combined</li>
+            <li><strong>Layout</strong> - Elements are positioned on the page</li>
+            <li><strong>Paint</strong> - Elements are visually displayed</li>
+        </ol>
+
+        <h3>The Cascade Algorithm</h3>
+
+        <p>The "C" in CSS stands for Cascading, which refers to how styles are applied when multiple rules conflict. The
+            cascade follows this order:</p>
+
+        <ol>
+            <li><strong>Importance</strong> - <code>!important</code> overrides normal declarations</li>
+            <li><strong>Specificity</strong> - More specific selectors override general ones</li>
+            <li><strong>Source Order</strong> - Later rules override earlier ones (within same specificity)</li>
+        </ol>
+
+        <pre><code>/* Example of cascade in action */
+p {
+  color: blue; /* Would be overridden by later rule */
+}
+
+p {
+  color: red; /* This wins due to source order */
+}
+
+#special-paragraph {
+  color: green; /* This wins due to higher specificity */
+}
+
+p {
+  color: purple !important; /* This wins due to importance */
+}
+</code></pre>
+
+        <h2>The Separation of Concerns Principle</h2>
+
+        <p>Separation of concerns is a design principle that separates a program into distinct sections, each addressing
+            a separate concern. In web development:</p>
+
+        <h3>Three Layers of Web Development</h3>
+
+        <ol>
+            <li><strong>Content Layer (HTML)</strong></li>
+        </ol>
+        <pre><code>&lt;article&gt;
+  &lt;h1&gt;Article Title&lt;/h1&gt;
+  &lt;p&gt;Article content goes here...&lt;/p&gt;
+  &lt;button&gt;Read More&lt;/button&gt;
+&lt;/article&gt;
+</code></pre>
+
+        <ol start="2">
+            <li><strong>Presentation Layer (CSS)</strong></li>
+        </ol>
+        <pre><code>article {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  color: #333;
+  font-size: 2em;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+}
+</code></pre>
+
+        <ol start="3">
+            <li><strong>Behavior Layer (JavaScript)</strong></li>
+        </ol>
+        <pre><code>document.querySelector('button').addEventListener('click', function() {
+  // Load more content
+});
+</code></pre>
+
+        <h3>Benefits of Separation</h3>
+
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Without CSS (Old Way)</th>
+                <th>With CSS (Modern Way)</th>
+            </tr>
+            <tr>
+                <td>HTML</td>
+                <td><code>&lt;font color="red"&gt;Text&lt;/font&gt;</code></td>
+                <td><code>&lt;p class="warning"&gt;Text&lt;/p&gt;</code></td>
+            </tr>
+            <tr>
+                <td>Styling</td>
+                <td>Mixed with content</td>
+                <td>Separate CSS file</td>
+            </tr>
+            <tr>
+                <td>Updates</td>
+                <td>Change every page</td>
+                <td>Change one file</td>
+            </tr>
+            <tr>
+                <td>Readability</td>
+                <td>Cluttered HTML</td>
+                <td>Clean, semantic HTML</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h1>2. CSS SYNTAX</h1>
+
+        <h2>Basic Syntax Structure</h2>
+
+        <p>CSS has a simple and straightforward syntax. Every CSS rule follows the same basic pattern:</p>
+
+        <pre><code>selector {
+  property: value;
+  another-property: value;
+}
+</code></pre>
+
+        <p>Let's break this down:</p>
+
+        <h3>Visual Representation</h3>
+
+        <pre><code>      selector
+         ↓
+      h1 {
+    →   color: blue;    ← declaration
+ prop ↑   font-size: 20px;  ↑ value
+      }
+</code></pre>
+
+        <h3>Anatomy of a CSS Rule</h3>
+
+        <pre><code>/* This entire block is a CSS rule */
+p {                           /* Opening brace */
+  color: red;                 /* Declaration */
+  font-size: 16px;            /* Declaration */
+  line-height: 1.5;           /* Declaration */
+  margin-bottom: 10px;        /* Declaration */
+}                             /* Closing brace */
+</code></pre>
+
+        <h2>Understanding Selectors, Properties, and Values</h2>
+
+        <h3>1. <strong>Selectors</strong></h3>
+
+        <p>Selectors are patterns used to select the HTML elements you want to style.</p>
+
+        <pre><code>/* Element selector */
+h1 { }
+
+/* Class selector */
+.highlight { }
+
+/* ID selector */
+#header { }
+
+/* Multiple selectors */
+h1, h2, h3 { }
+</code></pre>
+
+        <h3>2. <strong>Properties</strong></h3>
+
+        <p>Properties are the styling aspects you want to change. They are predefined words in CSS.</p>
+
+        <pre><code>/* Common properties */
+color           /* Text color */
+font-size       /* Size of text */
+background      /* Background color or image */
+margin          /* Space outside element */
+padding         /* Space inside element */
+border          /* Border around element */
+display         /* How element is displayed */
+position        /* Positioning method */
+</code></pre>
+
+        <h3>3. <strong>Values</strong></h3>
+
+        <p>Values specify the exact styling for a property. Different properties accept different types of values.</p>
+
+        <pre><code>/* Color values */
+color: red;                    /* Keyword */
+color: #ff0000;                /* Hexadecimal */
+color: rgb(255, 0, 0);         /* RGB */
+color: rgba(255, 0, 0, 0.5);   /* RGB with opacity */
+color: hsl(0, 100%, 50%);      /* HSL */
+
+/* Length values */
+font-size: 16px;               /* Pixels */
+font-size: 1.2em;              /* Relative to parent */
+width: 50%;                    /* Percentage */
+height: 100vh;                 /* Viewport height */
+margin: 10px;                  /* Pixels */
+
+/* Keyword values */
+display: block;                /* Block-level element */
+display: inline;               /* Inline element */
+position: relative;            /* Relative positioning */
+float: left;                   /* Float left */
+
+/* Multiple values */
+margin: 10px 20px;             /* Top/bottom, left/right */
+border: 1px solid black;       /* Width, style, color */
+font: bold 16px Arial;         /* Weight, size, family */
+</code></pre>
+
+        <h2>CSS Rulesets</h2>
+
+        <p>A ruleset (or rule) is the combination of a selector and its declarations.</p>
+
+        <h3>Complete Ruleset Example</h3>
+
+        <pre><code>/* This entire block is a ruleset */
+.card {
+  /* Declaration block starts */
+  width: 300px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  /* Declaration block ends */
+}
+</code></pre>
+
+        <h3>Multiple Rulesets</h3>
+
+        <pre><code>/* Multiple rulesets can be combined */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}
+</code></pre>
+
+        <h2>CSS Comments</h2>
+
+        <p>Comments are used to explain your code, make notes, or temporarily disable certain rules.</p>
+
+        <h3>Single-Line Comments</h3>
+
+        <pre><code>/* This is a single-line comment */
+h1 {
+  color: blue; /* This comment explains the color choice */
+}
+
+/* You can also comment out entire rules */
+/* h2 {
+  font-size: 24px;
+} */
+</code></pre>
+
+        <h3>Multi-Line Comments</h3>
+
+        <pre><code>/*
+  This is a multi-line comment.
+  It can span multiple lines.
+  Often used to document sections of code.
+*/
+
+/* 
+ * Main header styling
+ * Uses gradient background
+ * Added for visual appeal
+ */
+.header {
+  background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+  padding: 20px 0;
+}
+</code></pre>
+
+        <h3>Best Practices for Comments</h3>
+
+        <pre><code>/* ========================================
+   TYPOGRAPHY STYLES
+   ======================================== */
+
+/* Headings - using system fonts for performance */
+h1, h2, h3 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Body text - optimized for readability */
+body {
+  font-size: 16px;  /* Base size for easy reading */
+  line-height: 1.5;  /* Gold ratio for line height */
+}
+
+/* TODO: Refactor button styles for better accessibility */
+/* .button {
+  min-height: 44px;
+  min-width: 44px;
+} */
+
+/* FIXME: Hover effect not working in IE11 */
+.button:hover {
+  opacity: 0.8;
+}
+</code></pre>
+
+        <h2>Whitespace and Formatting</h2>
+
+        <p>Proper formatting makes CSS more readable and maintainable.</p>
+
+        <h3>One-Line Format (Not Recommended)</h3>
+
+        <pre><code>/* Hard to read and maintain */
+.container {max-width:1200px;margin:0 auto;padding:0 15px;}
+h1 {color:#333;font-size:2em;margin-bottom:0.5em;}
+p {color:#666;font-size:1em;line-height:1.5;}
+</code></pre>
+
+        <h3>Multi-Line Format (Recommended)</h3>
+
+        <pre><code>/* Easy to read and maintain */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+h1 {
+  color: #333;
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+p {
+  color: #666;
+  font-size: 1em;
+  line-height: 1.5;
+}
+</code></pre>
+
+        <h3>Consistent Spacing</h3>
+
+        <pre><code>/* Good spacing practices */
+.nav-menu {
+  display: flex;           /* One space after colon */
+  list-style: none;        /* Semicolon at end */
+  margin: 0;               /* Space after comma in values */
+  padding: 20px 30px;      /* Values grouped logically */
+}
+
+/* Properties grouped by category */
+.card {
+  /* Box model properties */
+  width: 300px;
+  height: 400px;
+  margin: 20px;
+  padding: 15px;
+  
+  /* Visual properties */
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  
+  /* Typography */
+  font-family: 'Helvetica', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  
+  /* Effects */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+</code></pre>
+
+        <h3>Common Formatting Styles</h3>
+
+        <pre><code>/* Style 1: Allman style (braces on new line) */
+.container
+{
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Style 2: K&R style (braces on same line) - Most common */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Style 3: Compact style */
+.container { max-width: 1200px; margin: 0 auto; }
+</code></pre>
+
+        <h3>Organizing CSS Properties</h3>
+
+        <pre><code>/* Logical order of properties */
+.element {
+  /* Positioning */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  
+  /* Box model */
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 10px;
+  padding: 20px;
+  
+  /* Background and borders */
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  
+  /* Typography */
+  color: #333;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.5;
+  text-align: center;
+  
+  /* Visual effects */
+  opacity: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  
+  /* Miscellaneous */
+  cursor: pointer;
+  overflow: hidden;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>3. METHODS OF IMPLEMENTING CSS</h1>
+
+        <p>There are three primary ways to apply CSS to HTML documents. Each method has its own use cases, advantages,
+            and disadvantages.</p>
+
+        <h2>1. Inline CSS</h2>
+
+        <p>Inline CSS is applied directly to HTML elements using the <code>style</code> attribute.</p>
+
+        <h3>Syntax</h3>
+
+        <pre><code>&lt;element style="property: value; property: value;"&gt;Content&lt;/element&gt;
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>&lt;!-- Basic inline styling --&gt;
+&lt;p style="color: blue; font-size: 16px;"&gt;This is blue text.&lt;/p&gt;
+
+&lt;!-- Multiple properties --&gt;
+&lt;div style="
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+"&gt;
+  &lt;h1 style="color: #333; margin-top: 0;"&gt;Inline CSS Example&lt;/h1&gt;
+  &lt;p style="color: #666; line-height: 1.5;"&gt;
+    This paragraph is styled with inline CSS.
+  &lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- Dynamic styling with JavaScript --&gt;
+&lt;button 
+  onclick="this.style.backgroundColor='#4CAF50'; this.style.color='white';"
+  style="padding: 10px 20px; border: none; cursor: pointer;"
+&gt;
+  Click Me
+&lt;/button&gt;
+</code></pre>
+
+        <h3>Use Cases for Inline CSS</h3>
+
+        <ol>
+            <li><strong>Email Templates</strong></li>
+        </ol>
+        <pre><code>&lt;!-- Email clients often strip external CSS --&gt;
+&lt;table style="width: 100%; max-width: 600px; margin: 0 auto;"&gt;
+  &lt;tr&gt;
+    &lt;td style="padding: 20px; background-color: #f8f8f8;"&gt;
+      &lt;h1 style="color: #333;"&gt;Welcome!&lt;/h1&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</code></pre>
+
+        <ol start="2">
+            <li><strong>Dynamic Styling with JavaScript</strong></li>
+        </ol>
+        <pre><code>&lt;div id="message" style="display: none;"&gt;Error message&lt;/div&gt;
+&lt;script&gt;
+  // Show message when needed
+  document.getElementById('message').style.display = 'block';
+&lt;/script&gt;
+</code></pre>
+
+        <ol start="3">
+            <li><strong>Testing or Quick Prototypes</strong></li>
+        </ol>
+        <pre><code>&lt;!-- Quick style test without creating CSS files --&gt;
+&lt;p style="color: red; font-weight: bold;"&gt;Test this style!&lt;/p&gt;
+</code></pre>
+
+        <ol start="4">
+            <li><strong>CMS Content where CSS files can't be modified</strong></li>
+        </ol>
+        <pre><code>&lt;!-- Override styles in limited environments --&gt;
+&lt;div style="margin: 20px 0; padding: 15px; background: #ffd700;"&gt;
+  Important announcement
+&lt;/div&gt;
+</code></pre>
+
+        <h3>Pros and Cons of Inline CSS</h3>
+
+        <table>
+            <tr>
+                <th>Pros</th>
+                <th>Cons</th>
+            </tr>
+            <tr>
+                <td>Highest specificity (overrides other styles)</td>
+                <td>No separation of concerns</td>
+            </tr>
+            <tr>
+                <td>Quick to apply</td>
+                <td>Cannot reuse styles</td>
+            </tr>
+            <tr>
+                <td>Useful for testing</td>
+                <td>Increases HTML file size</td>
+            </tr>
+            <tr>
+                <td>No additional HTTP requests</td>
+                <td>Harder to maintain</td>
+            </tr>
+            <tr>
+                <td>Good for email templates</td>
+                <td>No media queries</td>
+            </tr>
+            <tr>
+                <td>JavaScript friendly</td>
+                <td>Pseudo-classes (:hover) don't work</td>
+            </tr>
+            <tr>
+                <td>Overrides external styles</td>
+                <td>No animations or keyframes</td>
+            </tr>
+        </table>
+
+        <h2>2. Internal (Embedded) CSS</h2>
+
+        <p>Internal CSS is placed within the <code>&lt;style&gt;</code> tag in the <code>&lt;head&gt;</code> section of
+            an HTML document.</p>
+
+        <h3>Syntax</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    selector {
+      property: value;
+      property: value;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- HTML content --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Internal CSS Example&lt;/title&gt;
+  &lt;style&gt;
+    /* Global styles for this page */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    
+    p {
+      color: #34495e;
+      margin-bottom: 15px;
+    }
+    
+    .highlight {
+      background-color: #f1c40f;
+      padding: 5px;
+      border-radius: 3px;
+    }
+    
+    #special-note {
+      background-color: #e74c3c;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;h1&gt;Welcome to My Page&lt;/h1&gt;
+    &lt;p&gt;This page uses internal CSS.&lt;/p&gt;
+    &lt;p class="highlight"&gt;This paragraph has a highlight class.&lt;/p&gt;
+    &lt;p id="special-note"&gt;This paragraph has a special ID.&lt;/p&gt;
+    &lt;a href="#"&gt;This is a link&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Use Cases for Internal CSS</h3>
+
+        <ol>
+            <li><strong>Single-Page Websites</strong></li>
+        </ol>
+        <pre><code>&lt;style&gt;
+  /* All styles for a one-page site */
+  .hero { height: 100vh; background: linear-gradient(...); }
+  .features { display: flex; ... }
+  .footer { background: #333; color: white; ... }
+&lt;/style&gt;
+</code></pre>
+
+        <ol start="2">
+            <li><strong>Quick Prototypes</strong></li>
+        </ol>
+        <pre><code>&lt;style&gt;
+  /* Rapid development without managing files */
+  * { box-sizing: border-box; }
+  .container { display: flex; ... }
+&lt;/style&gt;
+</code></pre>
+
+        <ol start="3">
+            <li><strong>Email Templates (for web view)</strong></li>
+        </ol>
+        <pre><code>&lt;style&gt;
+  /* Fallback styles for email web views */
+  @media screen and (max-width: 600px) {
+    .container { width: 100% !important; }
+  }
+&lt;/style&gt;
+</code></pre>
+
+        <ol start="4">
+            <li><strong>Learning and Teaching</strong></li>
+        </ol>
+        <pre><code>&lt;style&gt;
+  /* All CSS in one place for learning */
+  .example-1 { ... }
+  .example-2 { ... }
+&lt;/style&gt;
+</code></pre>
+
+        <ol start="5">
+            <li><strong>Content Management Systems</strong></li>
+        </ol>
+        <pre><code>&lt;style&gt;
+  /* Page-specific overrides */
+  .page-id-5 .header {
+    background-image: url('custom-image.jpg');
+  }
+&lt;/style&gt;
+</code></pre>
+
+        <h3>Pros and Cons of Internal CSS</h3>
+
+        <table>
+            <tr>
+                <th>Pros</th>
+                <th>Cons</th>
+            </tr>
+            <tr>
+                <td>Styles only affect one page</td>
+                <td>Increases page load time</td>
+            </tr>
+            <tr>
+                <td>No additional HTTP requests</td>
+                <td>Not reusable across pages</td>
+            </tr>
+            <tr>
+                <td>Higher specificity than external</td>
+                <td>Mixes content with presentation</td>
+            </tr>
+            <tr>
+                <td>Can use all CSS features</td>
+                <td>Larger HTML file</td>
+            </tr>
+            <tr>
+                <td>Good for single-page sites</td>
+                <td>Caching not as effective</td>
+            </tr>
+            <tr>
+                <td>Page-specific overrides</td>
+                <td>Maintenance issues with many pages</td>
+            </tr>
+            <tr>
+                <td>Works without external files</td>
+                <td>Cannot be used by multiple pages</td>
+            </tr>
+        </table>
+
+        <h2>3. External CSS</h2>
+
+        <p>External CSS is stored in separate <code>.css</code> files and linked to HTML documents using the
+            <code>&lt;link&gt;</code> tag.</p>
+
+        <h3>Syntax</h3>
+
+        <p><strong>HTML file (index.html):</strong></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;link rel="stylesheet" type="text/css" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- HTML content --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <p><strong>CSS file (styles.css):</strong></p>
+        <pre><code>/* All your CSS rules go here */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+</code></pre>
+
+        <h3>Multiple External Stylesheets</h3>
+
+        <pre><code>&lt;!-- Linking multiple CSS files --&gt;
+&lt;head&gt;
+  &lt;!-- Reset or normalize CSS --&gt;
+  &lt;link rel="stylesheet" href="normalize.css"&gt;
+  
+  &lt;!-- Main stylesheet --&gt;
+  &lt;link rel="stylesheet" href="main.css"&gt;
+  
+  &lt;!-- Responsive styles --&gt;
+  &lt;link rel="stylesheet" href="responsive.css"&gt;
+  
+  &lt;!-- Print styles --&gt;
+  &lt;link rel="stylesheet" href="print.css" media="print"&gt;
+  
+  &lt;!-- Conditional styles for specific pages --&gt;
+  &lt;link rel="stylesheet" href="homepage.css"&gt;
+&lt;/head&gt;
+</code></pre>
+
+        <h3>Advanced External CSS Techniques</h3>
+
+        <h4>1. <strong>Importing CSS within CSS</strong></h4>
+
+        <pre><code>/* main.css */
+@import url('reset.css');
+@import url('typography.css');
+@import url('layout.css');
+
+/* Your main styles */
+body {
+  background-color: #f4f4f4;
+}
+</code></pre>
+
+        <h4>2. <strong>Media-Specific Stylesheets</strong></h4>
+
+        <pre><code>&lt;!-- Different styles for different devices --&gt;
+&lt;link rel="stylesheet" href="desktop.css" media="screen and (min-width: 1024px)"&gt;
+&lt;link rel="stylesheet" href="tablet.css" media="screen and (max-width: 1023px)"&gt;
+&lt;link rel="stylesheet" href="mobile.css" media="screen and (max-width: 767px)"&gt;
+&lt;link rel="stylesheet" href="print.css" media="print"&gt;
+</code></pre>
+
+        <h4>3. <strong>Alternate Stylesheets</strong></h4>
+
+        <pre><code>&lt;!-- User-selectable alternate styles --&gt;
+&lt;link rel="stylesheet" href="default.css" title="Default Style"&gt;
+&lt;link rel="alternate stylesheet" href="dark.css" title="Dark Theme"&gt;
+&lt;link rel="alternate stylesheet" href="high-contrast.css" title="High Contrast"&gt;
+</code></pre>
+
+        <h4>4. <strong>Preloading Critical CSS</strong></h4>
+
+        <pre><code>&lt;!-- Preload critical CSS for better performance --&gt;
+&lt;link rel="preload" href="critical.css" as="style"&gt;
+&lt;link rel="stylesheet" href="critical.css"&gt;
+
+&lt;!-- Defer non-critical CSS --&gt;
+&lt;link rel="preload" href="non-critical.css" as="style" onload="this.onload=null;this.rel='stylesheet'"&gt;
+&lt;noscript&gt;&lt;link rel="stylesheet" href="non-critical.css"&gt;&lt;/noscript&gt;
+</code></pre>
+
+        <h3>Example: Complete External CSS Setup</h3>
+
+        <p><strong>HTML File (index.html):</strong></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;External CSS Example&lt;/title&gt;
+  
+  &lt;!-- Google Fonts (external resource) --&gt;
+  &lt;link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"&gt;
+  
+  &lt;!-- Font Awesome Icons --&gt;
+  &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"&gt;
+  
+  &lt;!-- Our main stylesheet --&gt;
+  &lt;link rel="stylesheet" href="css/main.css"&gt;
+  
+  &lt;!-- Page-specific styles --&gt;
+  &lt;link rel="stylesheet" href="css/home.css"&gt;
+  
+  &lt;!-- Responsive styles loaded last to override --&gt;
+  &lt;link rel="stylesheet" href="css/responsive.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="site-header"&gt;
+    &lt;!-- Header content --&gt;
+  &lt;/header&gt;
+  
+  &lt;main class="main-content"&gt;
+    &lt;!-- Page content --&gt;
+  &lt;/main&gt;
+  
+  &lt;footer class="site-footer"&gt;
+    &lt;!-- Footer content --&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <p><strong>CSS File (main.css):</strong></p>
+        <pre><code>/* ========================================
+   MAIN STYLESHEET - style.css
+   Author: Your Name
+   Version: 1.0
+   ======================================== */
+
+/* ----------------------------------------
+   RESET & BASE STYLES
+   ---------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+}
+
+/* ----------------------------------------
+   TYPOGRAPHY
+   ---------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5em;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 { font-size: 2.5em; }
+h2 { font-size: 2em; }
+h3 { font-size: 1.75em; }
+h4 { font-size: 1.5em; }
+h5 { font-size: 1.25em; }
+h6 { font-size: 1em; }
+
+p {
+  margin-bottom: 1em;
+}
+
+/* ----------------------------------------
+   LAYOUT
+   ---------------------------------------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ----------------------------------------
+   HEADER STYLES
+   ---------------------------------------- */
+.site-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ----------------------------------------
+   NAVIGATION
+   ---------------------------------------- */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.nav-menu a:hover {
+  color: #3498db;
+}
+
+/* ----------------------------------------
+   BUTTONS
+   ---------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(52,152,219,0.3);
+}
+</code></pre>
+
+        <h3>Pros and Cons of External CSS</h3>
+
+        <table>
+            <tr>
+                <th>Pros</th>
+                <th>Cons</th>
+            </tr>
+            <tr>
+                <td><strong>Reusable</strong> across multiple pages</td>
+                <td>Additional HTTP requests</td>
+            </tr>
+            <tr>
+                <td><strong>Cachable</strong> by browsers</td>
+                <td>Pages may render unstyled initially</td>
+            </tr>
+            <tr>
+                <td><strong>Maintainable</strong> - one file to rule them all</td>
+                <td>Requires additional file management</td>
+            </tr>
+            <tr>
+                <td><strong>Separation of concerns</strong></td>
+                <td>Can be overridden by inline/internal</td>
+            </tr>
+            <tr>
+                <td><strong>Better organization</strong></td>
+                <td>Multiple files can become complex</td>
+            </tr>
+            <tr>
+                <td><strong>Cachable</strong> across pages</td>
+                <td>Must ensure correct file paths</td>
+            </tr>
+            <tr>
+                <td><strong>Version control friendly</strong></td>
+                <td>Dependency management needed</td>
+            </tr>
+            <tr>
+                <td><strong>Can be minified</strong></td>
+                <td>More initial setup required</td>
+            </tr>
+            <tr>
+                <td><strong>Conditional loading possible</strong></td>
+                <td>Risk of broken links</td>
+            </tr>
+            <tr>
+                <td><strong>CDN delivery possible</strong></td>
+                <td>Loading order matters</td>
+            </tr>
+        </table>
+
+        <h2>Comparison Table: Pros and Cons</h2>
+
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Inline CSS</th>
+                <th>Internal CSS</th>
+                <th>External CSS</th>
+            </tr>
+            <tr>
+                <td><strong>Where to use</strong></td>
+                <td><code>style</code> attribute</td>
+                <td><code>&lt;style&gt;</code> tag in head</td>
+                <td><code>.css</code> file linked via <code>&lt;link&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>Reusability</strong></td>
+                <td>None - single element only</td>
+                <td>Single page only</td>
+                <td>Multiple pages</td>
+            </tr>
+            <tr>
+                <td><strong>Specificity</strong></td>
+                <td>Highest</td>
+                <td>Medium</td>
+                <td>Lowest</td>
+            </tr>
+            <tr>
+                <td><strong>Loading</strong></td>
+                <td>Immediate</td>
+                <td>Immediate</td>
+                <td>Delayed (async)</td>
+            </tr>
+            <tr>
+                <td><strong>Caching</strong></td>
+                <td>Not cached</td>
+                <td>Not cached</td>
+                <td>Cached by browser</td>
+            </tr>
+            <tr>
+                <td><strong>Maintenance</strong></td>
+                <td>Very difficult</td>
+                <td>Difficult for multiple pages</td>
+                <td>Easy</td>
+            </tr>
+            <tr>
+                <td><strong>File size</strong></td>
+                <td>Increases HTML</td>
+                <td>Increases HTML</td>
+                <td>Separate, can be optimized</td>
+            </tr>
+            <tr>
+                <td><strong>HTTP Requests</strong></td>
+                <td>None</td>
+                <td>None</td>
+                <td>One or more</td>
+            </tr>
+            <tr>
+                <td><strong>Best for</strong></td>
+                <td>Quick tests, emails</td>
+                <td>Single-page sites</td>
+                <td>Multi-page websites</td>
+            </tr>
+            <tr>
+                <td><strong>Pseudo-classes</strong></td>
+                <td>Limited support</td>
+                <td>Full support</td>
+                <td>Full support</td>
+            </tr>
+            <tr>
+                <td><strong>Media Queries</strong></td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Animations</strong></td>
+                <td>Limited</td>
+                <td>Yes</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Fast initial render</td>
+                <td>Fast initial render</td>
+                <td>May have FOUC*</td>
+            </tr>
+            <tr>
+                <td><strong>Debugging</strong></td>
+                <td>Difficult</td>
+                <td>Moderate</td>
+                <td>Easy</td>
+            </tr>
+        </table>
+
+        <p>*FOUC = Flash of Unstyled Content</p>
+
+        <h2>Which Method to Choose?</h2>
+
+        <h3>Decision Framework</h3>
+
+        <pre><code class="language-mermaid">graph TD
+    A[How many pages?] --&gt;|Single Page| B{Need dynamic?}
+    A --&gt;|Multiple Pages| C[External CSS]
+    
+    B --&gt;|Yes| D{Quick prototype?}
+    B --&gt;|No| E[Internal CSS]
+    
+    D --&gt;|Yes| F[Inline CSS]
+    D --&gt;|No| G[Internal CSS]
+    
+    C --&gt; H{Performance critical?}
+    H --&gt;|Yes| I[Optimized External + Critical CSS]
+    H --&gt;|No| J[External CSS]
+</code></pre>
+
+        <h3>Guidelines for Choosing</h3>
+
+        <ol>
+            <li>
+                <p><strong>Choose External CSS when:</strong></p>
+                <ul>
+                    <li>Building multi-page websites</li>
+                    <li>Working in a team</li>
+                    <li>Need consistent branding across sites</li>
+                    <li>Performance is important (caching benefits)</li>
+                    <li>Following best practices</li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>Choose Internal CSS when:</strong></p>
+                <ul>
+                    <li>Creating single-page websites</li>
+                    <li>Prototyping quickly</li>
+                    <li>Sending HTML emails (with inline fallbacks)</li>
+                    <li>Working in restricted environments</li>
+                    <li>Need page-specific overrides</li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>Choose Inline CSS when:</strong></p>
+                <ul>
+                    <li>Styling HTML emails</li>
+                    <li>Testing specific elements</li>
+                    <li>JavaScript needs dynamic styling</li>
+                    <li>CMS restricts CSS access</li>
+                    <li>Need to override all other styles</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Best Practice Recommendation</h3>
+
+        <p>For professional web development, use <strong>External CSS</strong> as your primary method, with occasional
+            <strong>Internal CSS</strong> for page-specific styles, and <strong>Inline CSS</strong> only when absolutely
+            necessary (like emails or JavaScript manipulation).</p>
+
+        <pre><code>&lt;!-- Professional approach --&gt;
+&lt;head&gt;
+  &lt;!-- External CSS (primary) --&gt;
+  &lt;link rel="stylesheet" href="main.css"&gt;
+  &lt;link rel="stylesheet" href="theme.css"&gt;
+  
+  &lt;!-- Internal CSS (page-specific overrides) --&gt;
+  &lt;style&gt;
+    .homepage-hero {
+      background-image: url('home-specific.jpg');
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Inline CSS (rare, only when necessary) --&gt;
+  &lt;div style="display: none;" id="temp-message"&gt;
+    Temporary message
+  &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+
+        <hr>
+
+        <h1>4. CSS SELECTORS - DEEP DIVE</h1>
+
+        <h2>What are Selectors?</h2>
+
+        <p>Selectors are patterns used to select and target HTML elements for styling. They are the bridge between your
+            HTML content and CSS styling rules.</p>
+
+        <h3>The Role of Selectors</h3>
+
+        <pre><code>/* Selector targets specific elements */
+selector {
+  /* Styles applied to selected elements */
+  property: value;
+}
+</code></pre>
+
+        <p>Think of selectors as:</p>
+        <ul>
+            <li><strong>Addresses</strong> that locate specific elements in your HTML</li>
+            <li><strong>Filters</strong> that separate which elements get which styles</li>
+            <li><strong>Labels</strong> that identify elements by their characteristics</li>
+        </ul>
+
+        <h3>How Browsers Interpret Selectors</h3>
+
+        <ol>
+            <li>Browser reads HTML and builds DOM tree</li>
+            <li>Browser reads CSS and parses selectors</li>
+            <li>Browser matches selectors to DOM elements</li>
+            <li>Styles are applied based on matches</li>
+        </ol>
+
+        <pre><code>HTML DOM Tree:              CSS Selectors:
+html                        html { }
+├── head                    head { }
+├── body                    body { }
+    ├── header              header { }
+    ├── main                main { }
+    │   ├── article         article { }
+    │   └── aside           aside { }
+    └── footer              footer { }
+</code></pre>
+
+        <h2>Selector Specificity</h2>
+
+        <p>Specificity determines which CSS rule is applied when multiple rules target the same element.</p>
+
+        <h3>Specificity Hierarchy</h3>
+
+        <ol>
+            <li><strong>Inline styles</strong> - Highest (1000 points)</li>
+            <li><strong>ID selectors</strong> - Very high (100 points)</li>
+            <li><strong>Class selectors</strong> - Medium (10 points)</li>
+            <li><strong>Element selectors</strong> - Low (1 point)</li>
+        </ol>
+
+        <h3>Specificity Calculation</h3>
+
+        <pre><code>/* Specificity: 0,0,1 (1 point) */
+p { color: blue; }
+
+/* Specificity: 0,1,0 (10 points) */
+.text { color: green; }
+
+/* Specificity: 1,0,0 (100 points) */
+#main { color: red; }
+
+/* Specificity: 1,1,1 (111 points) */
+#main p.text { color: purple; }
+</code></pre>
+
+        <h3>Specificity Examples</h3>
+
+        <pre><code>&lt;p id="special" class="highlight"&gt;What color will this be?&lt;/p&gt;
+</code></pre>
+
+        <pre><code>/* Rule 1: Specificity 0,1,0 (10) */
+.highlight { color: blue; }
+
+/* Rule 2: Specificity 1,0,0 (100) */
+#special { color: red; }
+
+/* Rule 3: Specificity 0,0,1 (1) */
+p { color: green; }
+
+/* Result: Red wins due to highest specificity */
+</code></pre>
+
+        <h3>Specificity Chart</h3>
+
+        <table>
+            <tr>
+                <th>Selector Pattern</th>
+                <th>Example</th>
+                <th>Specificity</th>
+            </tr>
+            <tr>
+                <td>Inline style</td>
+                <td><code>style="color: red;"</code></td>
+                <td>1000</td>
+            </tr>
+            <tr>
+                <td>ID selector</td>
+                <td><code>#header</code></td>
+                <td>100</td>
+            </tr>
+            <tr>
+                <td>Class selector</td>
+                <td><code>.menu</code></td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Attribute selector</td>
+                <td><code>[type="text"]</code></td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Pseudo-class</td>
+                <td><code>:hover</code></td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Element selector</td>
+                <td><code>div</code></td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Pseudo-element</td>
+                <td><code>::before</code></td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Universal</td>
+                <td><code>*</code></td>
+                <td>0</td>
+            </tr>
+        </table>
+
+        <h3>Important Notes on Specificity</h3>
+
+        <ol>
+            <li>
+                <p><strong>!important overrides everything</strong></p>
+                <pre><code>p {
+  color: red !important; /* Overrides all */
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Equal specificity: last one wins</strong></p>
+                <pre><code>.text { color: blue; }
+.text { color: green; } /* This wins */
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Context doesn't affect specificity</strong></p>
+                <pre><code>/* Both have same specificity (0,0,1) */
+p { color: blue; }
+body p { color: red; } /* Still 0,0,1? No! */
+</code></pre>
+                <p>Actually, <code>body p</code> has specificity 0,0,2 (2 element selectors)</p>
+            </li>
+        </ol>
+
+        <h2>Selector Performance</h2>
+
+        <p>Different selectors have different performance characteristics.</p>
+
+        <h3>Performance Hierarchy (Fastest to Slowest)</h3>
+
+        <ol>
+            <li><strong>ID selectors</strong> - <code>#header</code></li>
+            <li><strong>Element selectors</strong> - <code>div</code></li>
+            <li><strong>Class selectors</strong> - <code>.menu</code></li>
+            <li><strong>Adjacent selectors</strong> - <code>div + p</code></li>
+            <li><strong>Child selectors</strong> - <code>ul &gt; li</code></li>
+            <li><strong>Descendant selectors</strong> - <code>div span</code></li>
+            <li><strong>Universal selectors</strong> - <code>*</code></li>
+            <li><strong>Attribute selectors</strong> - <code>[type="text"]</code></li>
+            <li><strong>Pseudo-classes</strong> - <code>:nth-child()</code></li>
+        </ol>
+
+        <h3>Performance Best Practices</h3>
+
+        <pre><code>/* GOOD - Simple and fast */
+#sidebar { }
+.nav-item { }
+h2 { }
+
+/* BAD - Overly complex and slow */
+* div &gt; ul li:first-child + .item { }
+
+/* ACCEPTABLE - Complex but necessary */
+.sidebar .nav-menu li.active &gt; a { }
+</code></pre>
+
+        <h3>Modern Browsers and Performance</h3>
+
+        <p>Modern browsers are extremely fast at matching selectors. Focus on:</p>
+        <ul>
+            <li><strong>Maintainability</strong> over micro-optimizations</li>
+            <li><strong>Specificity</strong> management</li>
+            <li><strong>Readability</strong> for team collaboration</li>
+            <li><strong>Avoiding</strong> overly complex selectors</li>
+        </ul>
+
+        <hr>
+
+        <h1>5. BASIC SELECTORS</h1>
+
+        <h2>1. Universal Selector (*)</h2>
+
+        <p>The universal selector matches every element on the page.</p>
+
+        <h3>Syntax</h3>
+        <pre><code>* {
+  property: value;
+}
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>/* Reset margins and padding for all elements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Apply a default font to everything */
+* {
+  font-family: Arial, sans-serif;
+}
+
+/* Debugging - outline all elements */
+* {
+  outline: 1px solid red;
+}
+
+/* Apply styles to all elements within a container */
+.container * {
+  color: #333;
+}
+</code></pre>
+
+        <h3>Common Use Cases</h3>
+
+        <ol>
+            <li>
+                <p><strong>CSS Reset</strong></p>
+                <pre><code>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Debugging Layout</strong></p>
+                <pre><code>/* See the boundaries of all elements */
+* {
+  background-color: rgba(255,0,0,0.1) !important;
+  outline: 1px solid red !important;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Inheriting Properties</strong></p>
+                <pre><code>/* Force all elements to inherit box-sizing */
+* {
+  box-sizing: inherit;
+}
+</code></pre>
+            </li>
+        </ol>
+
+        <h3>Pros and Cons</h3>
+
+        <table>
+            <tr>
+                <th>Pros</th>
+                <th>Cons</th>
+            </tr>
+            <tr>
+                <td>Quick reset</td>
+                <td>Performance impact with many elements</td>
+            </tr>
+            <tr>
+                <td>Easy debugging</td>
+                <td>Can override specific styles</td>
+            </tr>
+            <tr>
+                <td>Applies globally</td>
+                <td>May cause unintended consequences</td>
+            </tr>
+        </table>
+
+        <h2>2. Type (Element) Selector</h2>
+
+        <p>Type selectors target HTML elements by their tag name.</p>
+
+        <h3>Syntax</h3>
+        <pre><code>element {
+  property: value;
+}
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>/* Style all paragraphs */
+p {
+  line-height: 1.6;
+  margin-bottom: 1em;
+  color: #333;
+}
+
+/* Style all headings */
+h1, h2, h3 {
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Style all links */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+/* Style all images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Style all lists */
+ul, ol {
+  margin-left: 20px;
+  margin-bottom: 1em;
+}
+</code></pre>
+
+        <h3>Complete HTML Example</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Type selectors */
+    body {
+      font-family: 'Helvetica', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-top: 30px;
+    }
+    
+    p {
+      margin-bottom: 15px;
+    }
+    
+    a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul {
+      background-color: #f8f9fa;
+      padding: 20px 40px;
+      border-radius: 5px;
+    }
+    
+    li {
+      margin-bottom: 5px;
+    }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Main Heading&lt;/h1&gt;
+  &lt;p&gt;This is a paragraph with a &lt;a href="#"&gt;link inside&lt;/a&gt;.&lt;/p&gt;
+  
+  &lt;h2&gt;Subheading&lt;/h2&gt;
+  &lt;p&gt;Another paragraph here.&lt;/p&gt;
+  
+  &lt;ul&gt;
+    &lt;li&gt;List item 1&lt;/li&gt;
+    &lt;li&gt;List item 2&lt;/li&gt;
+    &lt;li&gt;List item 3&lt;/li&gt;
+  &lt;/ul&gt;
+  
+  &lt;button&gt;Click Me&lt;/button&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Best Practices for Type Selectors</h3>
+
+        <ol>
+            <li>
+                <p><strong>Use for base styles</strong></p>
+                <pre><code>/* Base typography */
+body { font-family: base-font; }
+h1 { font-size: 2em; }
+p { line-height: 1.5; }
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Combine with classes for variation</strong></p>
+                <pre><code>/* Default button style */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+}
+
+/* Variations using classes */
+button.primary {
+  background-color: blue;
+  color: white;
+}
+
+button.secondary {
+  background-color: gray;
+  color: black;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Avoid overgeneralization</strong></p>
+                <pre><code>/* BAD - Affects all divs, including layout divs */
+div {
+  margin: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+
+/* GOOD - Target specific content divs */
+.content-box {
+  margin: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+</code></pre>
+            </li>
+        </ol>
+
+        <h2>3. Class Selector</h2>
+
+        <p>Class selectors target elements with a specific class attribute. Classes are reusable and can be applied to
+            multiple elements.</p>
+
+        <h3>Syntax</h3>
+        <pre><code>.classname {
+  property: value;
+}
+</code></pre>
+
+        <h3>HTML Usage</h3>
+        <pre><code>&lt;element class="classname"&gt;Content&lt;/element&gt;
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>/* Basic class selectors */
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+
+.important {
+  color: red;
+  font-size: 1.2em;
+  border: 2px solid red;
+  padding: 10px;
+}
+
+.center {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+</code></pre>
+
+        <h3>Multiple Classes on One Element</h3>
+
+        <pre><code>&lt;!-- Element with multiple classes --&gt;
+&lt;p class="highlight important center"&gt;
+  This paragraph has multiple classes
+&lt;/p&gt;
+</code></pre>
+
+        <pre><code>/* Styles combine from all classes */
+.highlight { background: yellow; }
+.important { color: red; border: 2px solid red; }
+.center { text-align: center; }
+</code></pre>
+
+        <h3>Complete HTML Example</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Card component */
+    .card {
+      width: 300px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .card-title {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .card-content {
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    .card-footer {
+      margin-top: 15px;
+      text-align: right;
+    }
+    
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .badge-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .badge-warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+    
+    .badge-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    /* Alerts */
+    .alert {
+      padding: 15px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    
+    .alert-info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .text-center { text-align: center; }
+    .text-large { font-size: 1.5em; }
+    .mt-20 { margin-top: 20px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card"&gt;
+    &lt;h2 class="card-title"&gt;Card Title&lt;/h2&gt;
+    &lt;div class="card-content"&gt;
+      &lt;p&gt;This is card content.&lt;/p&gt;
+      &lt;span class="badge badge-success"&gt;Completed&lt;/span&gt;
+      &lt;span class="badge badge-warning"&gt;Pending&lt;/span&gt;
+      &lt;span class="badge badge-danger"&gt;Failed&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="card-footer"&gt;
+      &lt;button class="button"&gt;View Details&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="alert alert-info text-center"&gt;
+    This is an informational message.
+  &lt;/div&gt;
+  
+  &lt;div class="alert alert-success text-center text-large"&gt;
+    Success! Your changes were saved.
+  &lt;/div&gt;
+  
+  &lt;p class="text-center mt-20"&gt;
+    This paragraph is centered with top margin.
+  &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Common Class Naming Conventions</h3>
+
+        <ol>
+            <li>
+                <p><strong>BEM (Block Element Modifier)</strong></p>
+                <pre><code>.block { }
+.block__element { }
+.block--modifier { }
+
+/* Example */
+.button { }
+.button__icon { }
+.button--large { }
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Utility Classes</strong></p>
+                <pre><code>.text-center { text-align: center; }
+.mt-10 { margin-top: 10px; }
+.p-20 { padding: 20px; }
+.hidden { display: none; }
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Component-Based</strong></p>
+                <pre><code>.navbar { }
+.sidebar { }
+.modal { }
+.dropdown { }
+</code></pre>
+            </li>
+        </ol>
+
+        <h3>Class Selector Best Practices</h3>
+
+        <pre><code>/* GOOD - Descriptive class names */
+.error-message { color: red; }
+.product-card { border: 1px solid #ddd; }
+.nav-link { color: #333; }
+
+/* BAD - Vague class names */
+.red { color: red; } /* What if text changes to blue? */
+.box { border: 1px solid #ddd; } /* Too generic */
+.style1 { color: #333; } /* Meaningless */
+
+/* GOOD - Reusable utility classes */
+.text-center { text-align: center; }
+.w-100 { width: 100%; }
+.mb-20 { margin-bottom: 20px; }
+
+/* GOOD - State classes */
+.is-active { font-weight: bold; }
+.has-error { border-color: red; }
+.is-hidden { display: none; }
+</code></pre>
+
+        <h2>4. ID Selector</h2>
+
+        <p>ID selectors target a unique element with a specific ID attribute. IDs must be unique within a page.</p>
+
+        <h3>Syntax</h3>
+        <pre><code>#idname {
+  property: value;
+}
+</code></pre>
+
+        <h3>HTML Usage</h3>
+        <pre><code>&lt;element id="idname"&gt;Content&lt;/element&gt;
+</code></pre>
+
+        <h3>Important Rules for IDs</h3>
+
+        <ol>
+            <li><strong>Must be unique</strong> - Only one element per ID per page</li>
+            <li><strong>Case-sensitive</strong> - <code>#Header</code> and <code>#header</code> are different</li>
+            <li><strong>Cannot start with a number</strong> - <code>#1header</code> is invalid</li>
+            <li><strong>No spaces allowed</strong> - Use hyphens or underscores</li>
+        </ol>
+
+        <h3>Examples</h3>
+
+        <pre><code>/* Basic ID selectors */
+#header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#sidebar {
+  width: 300px;
+  float: right;
+  background-color: #f4f4f4;
+  padding: 15px;
+}
+
+#footer {
+  background-color: #222;
+  color: #999;
+  text-align: center;
+  padding: 30px;
+  clear: both;
+}
+
+#logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+#navigation {
+  background-color: #444;
+  padding: 10px;
+}
+</code></pre>
+
+        <h3>Complete HTML Example</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Layout IDs */
+    #page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    #header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      position: relative;
+    }
+    
+    #logo {
+      font-size: 28px;
+      font-weight: bold;
+      display: inline-block;
+    }
+    
+    #tagline {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+    
+    #navigation {
+      background-color: #4a5568;
+      padding: 10px 20px;
+    }
+    
+    #navigation ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    #navigation li {
+      display: inline;
+      margin-right: 20px;
+    }
+    
+    #navigation a {
+      color: white;
+      text-decoration: none;
+    }
+    
+    #navigation a:hover {
+      color: #cbd5e0;
+    }
+    
+    #content-wrapper {
+      display: flex;
+      padding: 20px;
+    }
+    
+    #main-content {
+      flex: 3;
+      padding-right: 20px;
+    }
+    
+    #sidebar {
+      flex: 1;
+      background-color: #f7fafc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    
+    #sidebar h3 {
+      color: #2d3748;
+      border-bottom: 2px solid #cbd5e0;
+      padding-bottom: 10px;
+    }
+    
+    #footer {
+      background-color: #2d3748;
+      color: #cbd5e0;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+    
+    #copyright {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #718096;
+    }
+    
+    /* Section IDs */
+    #introduction {
+      background-color: #ebf4ff;
+      padding: 20px;
+      border-left: 4px solid #4299e1;
+      margin-bottom: 20px;
+    }
+    
+    #conclusion {
+      background-color: #f0fff4;
+      padding: 20px;
+      border-left: 4px solid #48bb78;
+      margin-top: 20px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="page"&gt;
+    &lt;header id="header"&gt;
+      &lt;div id="logo"&gt;MyWebsite&lt;/div&gt;
+      &lt;div id="tagline"&gt;Your tagline goes here&lt;/div&gt;
+    &lt;/header&gt;
+    
+    &lt;nav id="navigation"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#introduction"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#main-content"&gt;Content&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#conclusion"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#footer"&gt;Footer&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+    
+    &lt;div id="content-wrapper"&gt;
+      &lt;main id="main-content"&gt;
+        &lt;section id="introduction"&gt;
+          &lt;h2&gt;Introduction&lt;/h2&gt;
+          &lt;p&gt;This is the introduction section identified by #introduction.&lt;/p&gt;
+        &lt;/section&gt;
+        
+        &lt;article&gt;
+          &lt;h2&gt;Main Article&lt;/h2&gt;
+          &lt;p&gt;This is the main content area identified by #main-content.&lt;/p&gt;
+          &lt;p&gt;Notice how each ID is unique and used only once.&lt;/p&gt;
+        &lt;/article&gt;
+        
+        &lt;section id="conclusion"&gt;
+          &lt;h2&gt;Conclusion&lt;/h2&gt;
+          &lt;p&gt;This is the conclusion section identified by #conclusion.&lt;/p&gt;
+        &lt;/section&gt;
+      &lt;/main&gt;
+      
+      &lt;aside id="sidebar"&gt;
+        &lt;h3&gt;Sidebar&lt;/h3&gt;
+        &lt;p&gt;This sidebar is identified by #sidebar.&lt;/p&gt;
+        &lt;ul&gt;
+          &lt;li&gt;Related link 1&lt;/li&gt;
+          &lt;li&gt;Related link 2&lt;/li&gt;
+          &lt;li&gt;Related link 3&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/aside&gt;
+    &lt;/div&gt;
+    
+    &lt;footer id="footer"&gt;
+      &lt;p&gt;&amp;copy; 2023 MyWebsite&lt;/p&gt;
+      &lt;p id="copyright"&gt;All rights reserved.&lt;/p&gt;
+    &lt;/footer&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>ID vs Class Comparison</h3>
+
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>ID Selector</th>
+                <th>Class Selector</th>
+            </tr>
+            <tr>
+                <td><strong>Syntax</strong></td>
+                <td><code>#name</code></td>
+                <td><code>.name</code></td>
+            </tr>
+            <tr>
+                <td><strong>Uniqueness</strong></td>
+                <td>Must be unique</td>
+                <td>Can be reused</td>
+            </tr>
+            <tr>
+                <td><strong>JavaScript</strong></td>
+                <td><code>getElementById()</code></td>
+                <td><code>getElementsByClassName()</code></td>
+            </tr>
+            <tr>
+                <td><strong>Specificity</strong></td>
+                <td>Very high (100)</td>
+                <td>Medium (10)</td>
+            </tr>
+            <tr>
+                <td><strong>Usage</strong></td>
+                <td>One per page</td>
+                <td>Multiple per page</td>
+            </tr>
+            <tr>
+                <td><strong>Override</strong></td>
+                <td>Difficult</td>
+                <td>Easy</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Fastest</td>
+                <td>Fast</td>
+            </tr>
+            <tr>
+                <td><strong>Best for</strong></td>
+                <td>Unique page sections</td>
+                <td>Reusable components</td>
+            </tr>
+        </table>
+
+        <h3>When to Use ID Selectors</h3>
+
+        <ol>
+            <li>
+                <p><strong>Page Sections</strong></p>
+                <pre><code>#header { }
+#main-content { }
+#sidebar { }
+#footer { }
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Navigation Anchors</strong></p>
+                <pre><code>&lt;section id="contact"&gt;Contact Form&lt;/section&gt;
+&lt;a href="#contact"&gt;Go to Contact&lt;/a&gt;
+</code></pre>
+            </li>
+            <li>
+                <p><strong>JavaScript Hooks</strong></p>
+                <pre><code>&lt;div id="app"&gt;&lt;/div&gt;
+&lt;button id="submit-form"&gt;Submit&lt;/button&gt;
+&lt;form id="login-form"&gt;&lt;/form&gt;
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Form Elements</strong></p>
+                <pre><code>&lt;input type="text" id="username"&gt;
+&lt;label for="username"&gt;Username&lt;/label&gt;
+</code></pre>
+            </li>
+        </ol>
+
+        <h3>ID Selector Best Practices</h3>
+
+        <pre><code>/* GOOD - Using IDs for unique page sections */
+#header { }
+#footer { }
+#main-nav { }
+
+/* BAD - Using IDs for reusable components */
+#button { } /* What if you need multiple buttons? */
+#card { } /* Cards should be reusable */
+
+/* GOOD - Combining IDs with classes */
+#sidebar .widget { }
+#sidebar .widget-title { }
+#sidebar .widget-content { }
+
+/* BAD - Overly specific with IDs */
+#header #logo #logo-text { }
+/* This is unnecessary and hard to maintain */
+</code></pre>
+
+        <h2>5. Grouping Selector</h2>
+
+        <p>The grouping selector allows you to apply the same styles to multiple selectors, reducing code repetition.
+        </p>
+
+        <h3>Syntax</h3>
+        <pre><code>selector1, selector2, selector3 {
+  property: value;
+}
+</code></pre>
+
+        <h3>Examples</h3>
+
+        <pre><code>/* Basic grouping */
+h1, h2, h3 {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  margin-top: 1.5em;
+}
+
+/* Grouping different types of selectors */
+h1, .title, #main-title {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+/* Grouping elements with their hover states */
+a, button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+a:hover, button:hover {
+  opacity: 0.8;
+}
+
+/* Grouping for form elements */
+input, textarea, select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+</code></pre>
+
+        <h3>Complete HTML Example</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Grouping for typography */
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Grouping headings */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+      color: #2d3748;
+    }
+    
+    /* Grouping form elements */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      transition: border-color 0.15s ease-in-out;
+    }
+    
+    /* Grouping focus states */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+    }
+    
+    /* Grouping buttons */
+    .btn-primary,
+    .btn-secondary,
+    .btn-success {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #4299e1;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #718096;
+      color: white;
+    }
+    
+    .btn-success {
+      background-color: #48bb78;
+      color: white;
+    }
+    
+    /* Grouping hover states */
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Grouping utility classes */
+    .text-center,
+    .text-left,
+    .text-right {
+      display: block;
+    }
+    
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+    
+    /* Grouping spacing utilities */
+    .mt-1, .mt-2, .mt-3 { margin-top: 0; }  /* Reset first */
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    
+    /* Grouping error states */
+    .error-text,
+    .error-message,
+    .form-error {
+      color: #e53e3e;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    
+    /* Grouping success states */
+    .success-text,
+    .success-message,
+    .form-success {
+      color: #38a169;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;h1&gt;Main Title&lt;/h1&gt;
+    &lt;h2&gt;Subtitle&lt;/h2&gt;
+    &lt;h3&gt;Section Heading&lt;/h3&gt;
+    
+    &lt;form&gt;
+      &lt;div&gt;
+        &lt;label for="name"&gt;Name:&lt;/label&gt;
+        &lt;input type="text" id="name" placeholder="Enter your name"&gt;
+      &lt;/div&gt;
+      
+      &lt;div&gt;
+        &lt;label for="email"&gt;Email:&lt;/label&gt;
+        &lt;input type="email" id="email" placeholder="Enter your email"&gt;
+      &lt;/div&gt;
+      
+      &lt;div&gt;
+        &lt;label for="message"&gt;Message:&lt;/label&gt;
+        &lt;textarea id="message" rows="4"&gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+      
+      &lt;div&gt;
+        &lt;label for="country"&gt;Country:&lt;/label&gt;
+        &lt;select id="country"&gt;
+          &lt;option&gt;Select country&lt;/option&gt;
+          &lt;option&gt;USA&lt;/option&gt;
+          &lt;option&gt;Canada&lt;/option&gt;
+          &lt;option&gt;UK&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+      
+      &lt;div&gt;
+        &lt;button class="btn-primary"&gt;Submit&lt;/button&gt;
+        &lt;button class="btn-secondary"&gt;Cancel&lt;/button&gt;
+        &lt;button class="btn-success"&gt;Save&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+    
+    &lt;div class="mt-3"&gt;
+      &lt;p class="error-message"&gt;This is an error message&lt;/p&gt;
+      &lt;p class="success-message"&gt;This is a success message&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Benefits of Grouping Selectors</h3>
+
+        <ol>
+            <li>
+                <p><strong>Reduces Code Duplication</strong></p>
+                <pre><code>/* Without grouping - repetitive */
+h1 { font-family: Arial; }
+h2 { font-family: Arial; }
+h3 { font-family: Arial; }
+
+/* With grouping - DRY */
+h1, h2, h3 { font-family: Arial; }
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Easier Maintenance</strong></p>
+                <pre><code>/* Change once, affects all */
+h1, h2, h3, .title {
+  color: #333;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Cleaner Code</strong></p>
+                <pre><code>/* All form elements share base styles */
+input, textarea, select {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+}
+</code></pre>
+            </li>
+        </ol>
+
+        <h3>Common Grouping Patterns</h3>
+
+        <ol>
+            <li>
+                <p><strong>Reset Styles</strong></p>
+                <pre><code>body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Typography</strong></p>
+                <pre><code>h1, h2, h3, h4, h5, h6 {
+  font-family: 'Heading Font', sans-serif;
+}
+
+p, li, blockquote {
+  line-height: 1.6;
+  color: #4a5568;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Interactive Elements</strong></p>
+                <pre><code>a, button, .clickable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Form Elements</strong></p>
+                <pre><code>input, textarea, select {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+}
+</code></pre>
+            </li>
+        </ol>
+
+        <h3>Grouping Selector Tips</h3>
+
+        <pre><code>/* GOOD - Logical grouping */
+.site-header, 
+.site-footer,
+.main-navigation {
+  width: 100%;
+}
+
+/* GOOD - Related elements */
+.card-title,
+.card-content,
+.card-footer {
+  padding: 1rem;
+}
+
+/* AVOID - Unrelated elements grouped */
+.header, 
+.footer p,
+.sidebar h3 {
+  /* This grouping doesn't make sense */
+}
+
+/* GOOD - Vendor prefixes grouped */
+.element {
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+</code></pre>
+
+        <hr>
+
+        <h1>6. PRACTICAL EXAMPLES AND APPLICATIONS</h1>
+
+        <h2>Combining Basic Selectors</h2>
+
+        <h3>Example 1: Navigation Menu</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Navigation styles using multiple selectors */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .navbar {
+      background-color: #2c3e50;
+      padding: 1rem;
+    }
+    
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .nav-item {
+      margin-left: 20px;
+    }
+    
+    .nav-item a {
+      color: white;
+      text-decoration: none;
+      padding: 5px 10px;
+      transition: all 0.3s;
+    }
+    
+    .nav-item a:hover {
+      background-color: #34495e;
+      border-radius: 4px;
+    }
+    
+    /* Different style for active page */
+    .nav-item.active a {
+      background-color: #e74c3c;
+      border-radius: 4px;
+    }
+    
+    /* Style for special link */
+    #special-link {
+      font-weight: bold;
+      border: 2px solid #f1c40f;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav class="navbar"&gt;
+    &lt;ul class="nav-list"&gt;
+      &lt;li class="nav-item active"&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="nav-item"&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="nav-item"&gt;&lt;a href="#"&gt;Services&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="nav-item"&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+      &lt;li class="nav-item"&gt;&lt;a href="#" id="special-link"&gt;Special&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Example 2: Card Component</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Card component with multiple selector types */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    /* Card container */
+    .card {
+      width: 350px;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    /* Card image */
+    .card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    /* Card content */
+    .card-content {
+      padding: 20px;
+    }
+    
+    .card-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .card-text {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    /* Different card styles using classes */
+    .card.featured {
+      border: 2px solid gold;
+      transform: scale(1.02);
+    }
+    
+    .card.urgent .card-title {
+      color: red;
+    }
+    
+    .card.urgent .badge {
+      background-color: red;
+      color: white;
+    }
+    
+    /* Badge styling */
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+    
+    /* Button styling */
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    
+    /* ID selector for specific card */
+    #featured-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    #featured-card .card-title,
+    #featured-card .card-text {
+      color: white;
+    }
+    
+    #featured-card .btn {
+      background-color: white;
+      color: #764ba2;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Regular card --&gt;
+  &lt;div class="card"&gt;
+    &lt;img src="https://via.placeholder.com/350x200" alt="Placeholder" class="card-img"&gt;
+    &lt;div class="card-content"&gt;
+      &lt;h2 class="card-title"&gt;Regular Card&lt;/h2&gt;
+      &lt;p class="card-text"&gt;This is a regular card with basic styling.&lt;/p&gt;
+      &lt;span class="badge"&gt;New&lt;/span&gt;
+      &lt;span class="badge"&gt;Popular&lt;/span&gt;
+      &lt;a href="#" class="btn"&gt;Read More&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;!-- Featured card using class --&gt;
+  &lt;div class="card featured"&gt;
+    &lt;img src="https://via.placeholder.com/350x200" alt="Placeholder" class="card-img"&gt;
+    &lt;div class="card-content"&gt;
+      &lt;h2 class="card-title"&gt;Featured Card&lt;/h2&gt;
+      &lt;p class="card-text"&gt;This card has a gold border.&lt;/p&gt;
+      &lt;span class="badge"&gt;Featured&lt;/span&gt;
+      &lt;a href="#" class="btn"&gt;Read More&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;!-- Urgent card using class --&gt;
+  &lt;div class="card urgent"&gt;
+    &lt;img src="https://via.placeholder.com/350x200" alt="Placeholder" class="card-img"&gt;
+    &lt;div class="card-content"&gt;
+      &lt;h2 class="card-title"&gt;Urgent Card&lt;/h2&gt;
+      &lt;p class="card-text"&gt;This card has urgent styling.&lt;/p&gt;
+      &lt;span class="badge"&gt;Urgent&lt;/span&gt;
+      &lt;a href="#" class="btn"&gt;Read More&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  
+  &lt;!-- Card with ID styling --&gt;
+  &lt;div class="card" id="featured-card"&gt;
+    &lt;img src="https://via.placeholder.com/350x200" alt="Placeholder" class="card-img"&gt;
+    &lt;div class="card-content"&gt;
+      &lt;h2 class="card-title"&gt;ID Card&lt;/h2&gt;
+      &lt;p class="card-text"&gt;This card is styled with an ID selector.&lt;/p&gt;
+      &lt;span class="badge"&gt;Special&lt;/span&gt;
+      &lt;a href="#" class="btn"&gt;Read More&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h3>Example 3: Form with Multiple Selectors</h3>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    /* Form styling with various selectors */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    /* Form container */
+    .form-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 500px;
+      padding: 40px;
+    }
+    
+    /* Form title */
+    .form-title {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+    
+    /* Form group */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    /* Labels */
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    /* Input fields - multiple selectors */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e1e1;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    /* Input focus states */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Radio and checkbox groups */
+    .radio-group,
+    .checkbox-group {
+      margin: 10px 0;
+    }
+    
+    .radio-option,
+    .checkbox-option {
+      margin-right: 20px;
+    }
+    
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Error states */
+    .error-message {
+      color: #e53e3e;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    input:invalid + .error-message {
+      display: block;
+    }
+    
+    /* Success message */
+    #success-message {
+      text-align: center;
+      color: #38a169;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0fff4;
+      border-radius: 6px;
+      display: none;
+    }
+    
+    /* Different states for specific inputs */
+    #username:valid {
+      border-color: #38a169;
+    }
+    
+    #username:invalid {
+      border-color: #e53e3e;
+    }
+    
+    /* Required field indicator */
+    .required::after {
+      content: " *";
+      color: #e53e3e;
+      font-weight: bold;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="form-container"&gt;
+    &lt;h2 class="form-title"&gt;Create Account&lt;/h2&gt;
+    
+    &lt;form id="signup-form"&gt;
+      &lt;div class="form-group"&gt;
+        &lt;label for="username" class="required"&gt;Username&lt;/label&gt;
+        &lt;input type="text" id="username" placeholder="Choose a username" required minlength="3"&gt;
+        &lt;div class="error-message"&gt;Username must be at least 3 characters&lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;label for="email" class="required"&gt;Email&lt;/label&gt;
+        &lt;input type="email" id="email" placeholder="your@email.com" required&gt;
+        &lt;div class="error-message"&gt;Please enter a valid email&lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;label for="password" class="required"&gt;Password&lt;/label&gt;
+        &lt;input type="password" id="password" placeholder="Create a password" required minlength="6"&gt;
+        &lt;div class="error-message"&gt;Password must be at least 6 characters&lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;label for="country"&gt;Country&lt;/label&gt;
+        &lt;select id="country"&gt;
+          &lt;option value=""&gt;Select your country&lt;/option&gt;
+          &lt;option value="us"&gt;United States&lt;/option&gt;
+          &lt;option value="ca"&gt;Canada&lt;/option&gt;
+          &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;label&gt;Gender&lt;/label&gt;
+        &lt;div class="radio-group"&gt;
+          &lt;label class="radio-option"&gt;
+            &lt;input type="radio" name="gender" value="male"&gt; Male
+          &lt;/label&gt;
+          &lt;label class="radio-option"&gt;
+            &lt;input type="radio" name="gender" value="female"&gt; Female
+          &lt;/label&gt;
+          &lt;label class="radio-option"&gt;
+            &lt;input type="radio" name="gender" value="other"&gt; Other
+          &lt;/label&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;label for="bio"&gt;Bio&lt;/label&gt;
+        &lt;textarea id="bio" rows="3" placeholder="Tell us about yourself"&gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+      
+      &lt;div class="form-group"&gt;
+        &lt;div class="checkbox-group"&gt;
+          &lt;label class="checkbox-option"&gt;
+            &lt;input type="checkbox" name="terms" required&gt;
+            &lt;span class="required"&gt;I agree to the Terms and Conditions&lt;/span&gt;
+          &lt;/label&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;button type="submit" class="submit-btn"&gt;Sign Up&lt;/button&gt;
+      
+      &lt;div id="success-message"&gt;
+        Account created successfully!
+      &lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h2>Common Use Cases</h2>
+
+        <h3>1. <strong>CSS Reset/Normalize</strong></h3>
+        <pre><code>/* Basic reset using multiple selectors */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: sans-serif;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+</code></pre>
+
+        <h3>2. <strong>Typography System</strong></h3>
+        <pre><code>/* Typography using multiple selectors */
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p, ul, ol {
+  margin-bottom: 1rem;
+}
+
+.text-large { font-size: 1.25rem; }
+.text-small { font-size: 0.875rem; }
+.text-bold { font-weight: 700; }
+.text-center { text-align: center; }
+</code></pre>
+
+        <h3>3. <strong>Button System</strong></h3>
+        <pre><code>/* Button system with multiple selectors */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-outline:hover {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</code></pre>
+
+        <h3>4. <strong>Layout System</strong></h3>
+        <pre><code>/* Layout using multiple selectors */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -1rem;
+}
+
+.col {
+  flex: 1;
+  padding: 0 1rem;
+}
+
+/* Responsive columns */
+.col-4 {
+  width: 33.333%;
+  padding: 0 1rem;
+}
+
+.col-6 {
+  width: 50%;
+  padding: 0 1rem;
+}
+
+/* Header, main, footer */
+.site-header,
+.site-footer {
+  background-color: #1f2937;
+  color: white;
+  padding: 2rem 0;
+}
+
+.main-content {
+  min-height: 70vh;
+  padding: 3rem 0;
+}
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+</code></pre>
+
+        <h2>Best Practices Summary</h2>
+
+        <h3>1. <strong>Selector Organization</strong></h3>
+        <pre><code>/* Organize selectors by function */
+/* 1. Reset & Base Styles */
+* { }
+body { }
+
+/* 2. Typography */
+h1, h2, h3 { }
+p { }
+
+/* 3. Layout */
+.container { }
+.row { }
+
+/* 4. Components */
+.navbar { }
+.card { }
+.btn { }
+
+/* 5. Utilities */
+.text-center { }
+.mt-20 { }
+</code></pre>
+
+        <h3>2. <strong>Specificity Management</strong></h3>
+        <pre><code>/* Keep specificity low */
+/* GOOD */
+.nav-link { }
+.card-title { }
+
+/* BAD - Too specific */
+body header nav ul li a.nav-link { }
+
+/* GOOD - Use classes for components */
+.widget { }
+.widget-title { }
+.widget-content { }
+</code></pre>
+
+        <h3>3. <strong>Naming Conventions</strong></h3>
+        <pre><code>/* BEM naming */
+.card { }
+.card__title { }
+.card__content { }
+.card__footer { }
+.card--featured { }
+
+/* Utility classes */
+.u-text-center { }
+.u-margin-top { }
+.u-hidden { }
+
+/* State classes */
+.is-active { }
+.is-hidden { }
+.has-error { }
+</code></pre>
+
+        <h3>4. <strong>Comments for Organization</strong></h3>
+        <pre><code>/* ========================================
+   COMPONENT: Card
+   ======================================== */
+
+.card { }
+
+/* Card Elements */
+.card__header { }
+.card__body { }
+.card__footer { }
+
+/* Card Modifiers */
+.card--compact { }
+.card--featured { }
+
+/* ========================================
+   COMPONENT: Button
+   ======================================== */
+</code></pre>
+
+        <hr>
+
+        <h1>7. COMMON MISTAKES AND HOW TO AVOID THEM</h1>
+
+        <h2>Selector Errors</h2>
+
+        <h3>Mistake 1: Overly Specific Selectors</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>body div.container #main-content article p.intro {
+  color: blue;
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>.intro {
+  color: blue;
+}
+/* OR */
+.container .intro {
+  color: blue;
+}
+</code></pre>
+
+        <h3>Mistake 2: Using IDs for Reusable Styles</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>#button {
+  padding: 10px 20px;
+  background-color: blue;
+}
+/* Can't reuse this style */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>.btn {
+  padding: 10px 20px;
+  background-color: blue;
+}
+/* Reusable across multiple elements */
+</code></pre>
+
+        <h3>Mistake 3: Not Using Classes When Needed</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>header div ul li a {
+  color: blue;
+}
+/* Fragile - breaks if HTML structure changes */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>.nav-link {
+  color: blue;
+}
+/* Robust - independent of HTML structure */
+</code></pre>
+
+        <h2>Implementation Errors</h2>
+
+        <h3>Mistake 4: Inline CSS Overuse</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>&lt;p style="color: red; font-size: 16px; margin: 10px;"&gt;Text&lt;/p&gt;
+&lt;p style="color: red; font-size: 16px; margin: 10px;"&gt;Another text&lt;/p&gt;
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>&lt;style&gt;
+  .highlighted-text {
+    color: red;
+    font-size: 16px;
+    margin: 10px;
+  }
+&lt;/style&gt;
+&lt;p class="highlighted-text"&gt;Text&lt;/p&gt;
+&lt;p class="highlighted-text"&gt;Another text&lt;/p&gt;
+</code></pre>
+
+        <h3>Mistake 5: Mixing Implementation Methods</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>&lt;head&gt;
+  &lt;style&gt;
+    p { color: red; }
+  &lt;/style&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p style="color: blue;"&gt;Text&lt;/p&gt;
+&lt;/body&gt;
+&lt;!-- Confusing - multiple sources for same element --&gt;
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>&lt;head&gt;
+  &lt;!-- Stick to one primary method --&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p&gt;Text&lt;/p&gt;
+&lt;/body&gt;
+</code></pre>
+
+        <h3>Mistake 6: Forgetting the Cascade</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* styles.css */
+p {
+  color: red;
+}
+
+/* later in same file or another stylesheet */
+p {
+  color: blue;
+}
+/* Which one wins? (blue - later in source order) */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Be intentional about order */
+/* Base styles first */
+p {
+  color: red;
+}
+
+/* Overrides later */
+.highlight p {
+  color: blue;
+}
+</code></pre>
+
+        <h2>Specificity Issues</h2>
+
+        <h3>Mistake 7: Overusing !important</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>.text {
+  color: blue !important;
+}
+
+.special-text {
+  color: red; /* Won't work because of !important */
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Use specificity instead of !important */
+.text {
+  color: blue;
+}
+
+.special-text {
+  color: red;
+}
+
+/* Or if necessary, use more specific selector */
+.container .text {
+  color: blue;
+}
+</code></pre>
+
+        <h3>Mistake 8: Not Understanding Specificity</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* Expecting this to work */
+.nav-item {
+  color: blue;
+}
+
+#main-nav .nav-item {
+  color: red; /* This will override because ID is more specific */
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Keep specificity consistent */
+.nav-item {
+  color: blue;
+}
+
+.main-nav .nav-item {
+  color: red; /* Use class instead of ID */
+}
+</code></pre>
+
+        <h2>Performance Issues</h2>
+
+        <h3>Mistake 9: Universal Selector in Key Places</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* Applied to EVERY element on every interaction */
+* {
+  transition: all 0.3s ease;
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Target only elements that need transitions */
+.btn,
+.nav-link,
+.card {
+  transition: all 0.3s ease;
+}
+</code></pre>
+
+        <h3>Mistake 10: Deep Nesting</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>.main-content .sidebar .widget .list li a span {
+  color: red;
+}
+/* Hard to read, slow to match */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>.widget-link span {
+  color: red;
+}
+/* Simple and fast */
+</code></pre>
+
+        <h2>Syntax Errors</h2>
+
+        <h3>Mistake 11: Missing Semicolons</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>p {
+  color: red
+  font-size: 16px
+}
+/* Second property won't work */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>p {
+  color: red;
+  font-size: 16px;
+}
+</code></pre>
+
+        <h3>Mistake 12: Incorrect Selector Syntax</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* Forgetting the dot for classes */
+header {
+  background: blue;
+}
+
+/* Forgetting the # for IDs */
+main {
+  padding: 20px;
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>.header {
+  background: blue;
+}
+
+#main-content {
+  padding: 20px;
+}
+</code></pre>
+
+        <h3>Mistake 13: Invalid Property Values</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>p {
+  color: bluee; /* Typo */
+  font-size: 16; /* Missing unit */
+  margin: 10px 20; /* Mixed units */
+}
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>p {
+  color: blue;
+  font-size: 16px;
+  margin: 10px 20px;
+}
+</code></pre>
+
+        <h2>Maintenance Errors</h2>
+
+        <h3>Mistake 14: Not Using Comments</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* No comments */
+.h-100 { height: 100px; }
+.w-50 { width: 50px; }
+.m-10 { margin: 10px; }
+/* What do these do? */
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Height utilities */
+.h-100 { height: 100px; } /* Fixed height */
+.h-auto { height: auto; } /* Auto height */
+
+/* Width utilities */  
+.w-50 { width: 50px; } /* Fixed width */
+.w-full { width: 100%; } /* Full width */
+</code></pre>
+
+        <h3>Mistake 15: Inconsistent Naming</h3>
+
+        <p><strong>BAD:</strong></p>
+        <pre><code>/* Inconsistent naming */
+.red-text { color: red; }
+.blueText { color: blue; }
+.green_text { color: green; }
+</code></pre>
+
+        <p><strong>GOOD:</strong></p>
+        <pre><code>/* Consistent naming (BEM) */
+.text-red { color: red; }
+.text-blue { color: blue; }
+.text-green { color: green; }
+</code></pre>
+
+        <hr>
+
+        <h1>8. HANDS-ON EXERCISES</h1>
+
+        <h2>Exercise 1: Implementing All Three CSS Methods</h2>
+
+        <p><strong>Objective:</strong> Create a simple webpage that demonstrates all three methods of implementing CSS.
+        </p>
+
+        <p><strong>Instructions:</strong></p>
+
+        <ol>
+            <li>Create an HTML file with the following structure:</li>
+            <li>Use inline CSS to style one element</li>
+            <li>Use internal CSS to style multiple elements</li>
+            <li>Link to an external CSS file</li>
+        </ol>
+
+        <p><strong>Solution:</strong></p>
+
+        <p><strong>HTML File (index.html):</strong></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;CSS Methods Exercise&lt;/title&gt;
+  
+  &lt;!-- External CSS --&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+  
+  &lt;!-- Internal CSS --&gt;
+  &lt;style&gt;
+    .internal-styled {
+      background-color: #e6f3ff;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    
+    .internal-styled h2 {
+      color: #0056b3;
+      font-family: Arial, sans-serif;
+    }
+    
+    .internal-styled p {
+      color: #333;
+      line-height: 1.6;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;h1&gt;CSS Methods Demonstration&lt;/h1&gt;
+    
+    &lt;!-- Inline CSS --&gt;
+    &lt;div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;"&gt;
+      &lt;h2 style="color: #856404; margin-top: 0;"&gt;This uses Inline CSS&lt;/h2&gt;
+      &lt;p style="color: #856404; margin-bottom: 0;"&gt;
+        This entire section is styled using inline CSS directly in the HTML elements.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- Internal CSS --&gt;
+    &lt;div class="internal-styled"&gt;
+      &lt;h2&gt;This uses Internal CSS&lt;/h2&gt;
+      &lt;p&gt;
+        This section is styled using internal CSS in the &amp;lt;style&amp;gt; tag within the head.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- External CSS --&gt;
+    &lt;div class="external-styled"&gt;
+      &lt;h2&gt;This uses External CSS&lt;/h2&gt;
+      &lt;p&gt;
+        This section is styled using an external CSS file linked to this document.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- Combination of methods --&gt;
+    &lt;div class="external-styled" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;"&gt;
+      &lt;h2 style="color: white; border-bottom-color: rgba(255,255,255,0.3);"&gt;This combines methods&lt;/h2&gt;
+      &lt;p&gt;
+        This uses external CSS for base styles, internal CSS might override some, 
+        and inline CSS for specific properties.
+      &lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <p><strong>CSS File (styles.css):</strong></p>
+        <pre><code>/* External CSS - styles.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #343a40;
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #007bff;
+}
+
+/* External styled section */
+.external-styled {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+}
+
+.external-styled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+}
+
+.external-styled h2 {
+  color: #721c24;
+  font-family: 'Arial', sans-serif;
+  margin-top: 0;
+  border-bottom: 1px solid #dc3545;
+  padding-bottom: 10px;
+}
+
+.external-styled p {
+  color: #721c24;
+  margin-bottom: 0;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+}
+</code></pre>
+
+        <h2>Exercise 2: Practicing Basic Selectors</h2>
+
+        <p><strong>Objective:</strong> Create a webpage that demonstrates all basic selectors and their combinations.
+        </p>
+
+        <p><strong>Instructions:</strong></p>
+
+        <ol>
+            <li>Create an HTML page with various elements</li>
+            <li>Use element selectors, class selectors, ID selectors, universal selector, and grouping</li>
+            <li>Show how they interact and override each other</li>
+        </ol>
+
+        <p><strong>Solution:</strong></p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;CSS Selectors Practice&lt;/title&gt;
+  &lt;style&gt;
+    /* Universal Selector - subtle effect */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Element Selectors */
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+    }
+    
+    h2 {
+      color: #34495e;
+      margin: 20px 0 10px;
+    }
+    
+    p {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    /* Class Selectors */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .highlight {
+      background-color: #fffacd;
+      padding: 5px;
+      border-radius: 3px;
+    }
+    
+    .warning {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .info {
+      background-color: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .box {
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+    
+    /* ID Selectors */
+    #main-title {
+      font-size: 3em;
+      color: #e74c3c;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      border-bottom: 3px solid #e74c3c;
+    }
+    
+    #special-paragraph {
+      font-size: 1.2em;
+      font-style: italic;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+      background-color: #ecf0f1;
+    }
+    
+    #unique-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    /* Grouping Selectors */
+    h1, h2, h3 {
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    
+    .warning, .info, .success {
+      margin: 15px 0;
+      font-weight: 500;
+    }
+    
+    /* Combining Selectors */
+    .container .highlight {
+      border: 1px solid #ffd700;
+    }
+    
+    .container &gt; p {
+      font-size: 1.1em;
+    }
+    
+    h2 + p {
+      font-weight: bold;
+      color: #16a085;
+    }
+    
+    /* Demonstrating specificity */
+    .text {
+      color: blue;
+    }
+    
+    p.text {
+      color: green;
+    }
+    
+    #specific-demo {
+      color: red;
+    }
+    
+    /* Navigation styles */
+    .nav {
+      background-color: #34495e;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+    
+    .nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .nav a {
+      color: white;
+      text-decoration: none;
+      padding: 5px 10px;
+    }
+    
+    .nav a:hover {
+      background-color: #2c3e50;
+      border-radius: 3px;
+    }
+    
+    /* Card styles */
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      background-color: white;
+    }
+    
+    .card-title {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .card-content {
+      color: #666;
+    }
+    
+    .card-footer {
+      margin-top: 15px;
+      text-align: right;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container"&gt;
+    &lt;h1 id="main-title"&gt;CSS Selectors Demo&lt;/h1&gt;
+    
+    &lt;!-- Navigation --&gt;
+    &lt;nav class="nav"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#element"&gt;Element&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#class"&gt;Class&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#id"&gt;ID&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#group"&gt;Grouping&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+    
+    &lt;!-- Element Selector Section --&gt;
+    &lt;section id="element"&gt;
+      &lt;h2&gt;Element Selectors&lt;/h2&gt;
+      &lt;p&gt;This paragraph is styled with an element selector (p).&lt;/p&gt;
+      &lt;p&gt;So is this one. All p elements get the same base styles.&lt;/p&gt;
+      &lt;h3&gt;This h3 is also styled by element selector.&lt;/h3&gt;
+    &lt;/section&gt;
+    
+    &lt;!-- Class Selector Section --&gt;
+    &lt;section id="class"&gt;
+      &lt;h2&gt;Class Selectors&lt;/h2&gt;
+      &lt;p class="highlight"&gt;This paragraph uses the .highlight class.&lt;/p&gt;
+      &lt;p class="warning"&gt;This uses the .warning class.&lt;/p&gt;
+      &lt;p class="info"&gt;This uses the .info class.&lt;/p&gt;
+      &lt;p class="success"&gt;This uses the .success class.&lt;/p&gt;
+      
+      &lt;!-- Multiple classes --&gt;
+      &lt;p class="highlight warning"&gt;This has both highlight and warning classes!&lt;/p&gt;
+    &lt;/section&gt;
+    
+    &lt;!-- ID Selector Section --&gt;
+    &lt;section id="id"&gt;
+      &lt;h2&gt;ID Selectors&lt;/h2&gt;
+      &lt;p id="special-paragraph"&gt;This paragraph uses #special-paragraph ID.&lt;/p&gt;
+      &lt;div id="unique-box" class="box"&gt;
+        This div uses #unique-box ID and .box class.
+      &lt;/div&gt;
+    &lt;/section&gt;
+    
+    &lt;!-- Specificity Demo --&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Specificity Demo&lt;/h2&gt;
+      &lt;p class="text" id="specific-demo" style="color: purple;"&gt;
+        This text demonstrates specificity: inline (purple) &gt; ID (red) &gt; class+element (green) &gt; class (blue)
+      &lt;/p&gt;
+    &lt;/section&gt;
+    
+    &lt;!-- Card Component --&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Card Component&lt;/h2&gt;
+      &lt;div class="card"&gt;
+        &lt;h3 class="card-title"&gt;Card Title&lt;/h3&gt;
+        &lt;div class="card-content"&gt;
+          &lt;p&gt;This card uses multiple class selectors.&lt;/p&gt;
+          &lt;p class="highlight"&gt;This content is highlighted.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="card-footer"&gt;
+          &lt;button class="btn"&gt;Read More&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+    
+    &lt;!-- Selector Combination Demo --&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Selector Combinations&lt;/h2&gt;
+      &lt;div class="demo"&gt;
+        &lt;p&gt;Direct child of .demo (using &gt; selector) - bold and teal&lt;/p&gt;
+        &lt;div&gt;
+          &lt;p&gt;Nested paragraph - not affected by &gt; selector&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;p&gt;Another direct child - also bold and teal&lt;/p&gt;
+      &lt;/div&gt;
+      
+      &lt;h2&gt;This is an h2&lt;/h2&gt;
+      &lt;p&gt;This paragraph comes right after an h2 (+ selector) - bold and teal&lt;/p&gt;
+      &lt;p&gt;This paragraph does not come right after an h2 - normal style&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <h2>Exercise 3: Selector Challenge</h2>
+
+        <p><strong>Objective:</strong> Apply the correct selectors based on given requirements.</p>
+
+        <p><strong>Instructions:</strong> Style the following HTML structure using the specified selectors.</p>
+
+        <p><strong>HTML Structure:</strong></p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Selector Challenge&lt;/title&gt;
+  &lt;style&gt;
+    /* TODO: Add your CSS here */
+    
+    /* 1. Use universal selector to set box-sizing to border-box */
+    
+    /* 2. Use element selectors to style body, headings, and paragraphs */
+    
+    /* 3. Create a class called "product-card" for product containers */
+    
+    /* 4. Create classes for different badges (new, sale, popular) */
+    
+    /* 5. Use ID selector for a featured product */
+    
+    /* 6. Use grouping for button styles */
+    
+    /* 7. Create a navigation menu with class selectors */
+    
+    /* 8. Style form elements with element selectors */
+    
+    /* 9. Add hover effects using pseudo-classes */
+    
+    /* 10. Create a responsive layout with media queries */
+    
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header id="main-header"&gt;
+    &lt;h1&gt;Product Store&lt;/h1&gt;
+    &lt;nav class="main-nav"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#" class="nav-link"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#" class="nav-link active"&gt;Products&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#" class="nav-link"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#" class="nav-link"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+  
+  &lt;main class="container"&gt;
+    &lt;h2&gt;Featured Products&lt;/h2&gt;
+    
+    &lt;div class="product-grid"&gt;
+      &lt;!-- Regular product --&gt;
+      &lt;div class="product-card"&gt;
+        &lt;img src="product1.jpg" alt="Product 1" class="product-image"&gt;
+        &lt;h3 class="product-title"&gt;Basic Product&lt;/h3&gt;
+        &lt;p class="product-price"&gt;$29.99&lt;/p&gt;
+        &lt;span class="badge new"&gt;New&lt;/span&gt;
+        &lt;button class="btn btn-primary"&gt;Add to Cart&lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Sale product --&gt;
+      &lt;div class="product-card"&gt;
+        &lt;img src="product2.jpg" alt="Product 2" class="product-image"&gt;
+        &lt;h3 class="product-title"&gt;Sale Product&lt;/h3&gt;
+        &lt;p class="product-price"&gt;&lt;span class="original-price"&gt;$49.99&lt;/span&gt; $34.99&lt;/p&gt;
+        &lt;span class="badge sale"&gt;Sale&lt;/span&gt;
+        &lt;button class="btn btn-primary"&gt;Add to Cart&lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Popular product --&gt;
+      &lt;div class="product-card"&gt;
+        &lt;img src="product3.jpg" alt="Product 3" class="product-image"&gt;
+        &lt;h3 class="product-title"&gt;Popular Product&lt;/h3&gt;
+        &lt;p class="product-price"&gt;$39.99&lt;/p&gt;
+        &lt;span class="badge popular"&gt;Popular&lt;/span&gt;
+        &lt;button class="btn btn-primary"&gt;Add to Cart&lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- Featured product (using ID) --&gt;
+      &lt;div class="product-card" id="featured-product"&gt;
+        &lt;img src="product4.jpg" alt="Product 4" class="product-image"&gt;
+        &lt;h3 class="product-title"&gt;Featured Product&lt;/h3&gt;
+        &lt;p class="product-price"&gt;$59.99&lt;/p&gt;
+        &lt;span class="badge popular"&gt;Editor's Choice&lt;/span&gt;
+        &lt;button class="btn btn-primary"&gt;Add to Cart&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- Newsletter signup --&gt;
+    &lt;section class="newsletter"&gt;
+      &lt;h3&gt;Sign Up for Updates&lt;/h3&gt;
+      &lt;form&gt;
+        &lt;input type="email" placeholder="Enter your email"&gt;
+        &lt;button type="submit" class="btn btn-secondary"&gt;Subscribe&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+  
+  &lt;footer class="main-footer"&gt;
+    &lt;p&gt;&amp;copy; 2023 Product Store&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+        <p><strong>Solution CSS:</strong></p>
+        <pre><code>/* 1. Universal selector */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. Element selectors */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+h1, h2, h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* 3. Product card class */
+.product-card {
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.product-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.product-price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #27ae60;
+  margin-bottom: 1rem;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #95a5a6;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+/* 4. Badge classes */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.badge.new {
+  background-color: #3498db;
+  color: white;
+}
+
+.badge.sale {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.badge.popular {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+/* 5. ID selector for featured product */
+#featured-product {
+  border: 2px solid gold;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+}
+
+#featured-product .product-title {
+  color: #c47b2c;
+}
+
+/* 6. Grouping for buttons */
+.btn,
+button[type="submit"],
+.btn-primary,
+.btn-secondary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.btn-primary,
+button[type="submit"] {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-primary:hover,
+button[type="submit"]:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(52,152,219,0.3);
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
+  transform: translateY(-2px);
+}
+
+/* 7. Navigation styles */
+.main-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.main-header h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s;
+}
+
+.nav-link:hover {
+  background-color: #34495e;
+  border-radius: 4px;
+}
+
+.nav-link.active {
+  background-color: #e74c3c;
+  border-radius: 4px;
+}
+
+/* 8. Form elements */
+input[type="email"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem;
+  border: 2px solid #e1e1e1;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-right: 1rem;
+}
+
+input[type="email"]:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+}
+
+/* 9. Hover effects */
+.product-card:hover .product-title {
+  color: #3498db;
+}
+
+.product-card:hover .btn-primary {
+  background-color: #2980b9;
+}
+
+/* 10. Responsive layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.newsletter {
+  text-align: center;
+  padding: 3rem;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.main-footer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #34495e;
+  color: white;
+  margin-top: 2rem;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  
+  .main-nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  input[type="email"] {
+    max-width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .product-card {
+    padding: 1rem;
+  }
+  
+  .newsletter {
+    padding: 1.5rem;
+  }
+}
+</code></pre>
+
+        <hr>
+
+        <h1>9. REVIEW QUESTIONS AND ANSWERS</h1>
+
+        <h2>Section 1: CSS Basics</h2>
+
+        <p><strong>Q1: What does CSS stand for and what is its purpose?</strong></p>
+
+        <p><strong>A:</strong> CSS stands for <strong>Cascading Style Sheets</strong>. Its purpose is to control the
+            presentation and layout of HTML documents. It separates content (HTML) from presentation, allowing for:</p>
+        <ul>
+            <li>Consistent styling across multiple pages</li>
+            <li>Easier maintenance</li>
+            <li>Better accessibility</li>
+            <li>Responsive design</li>
+            <li>Improved user experience</li>
+        </ul>
+
+        <hr>
+
+        <p><strong>Q2: What are the three ways to implement CSS? Explain each briefly.</strong></p>
+
+        <p><strong>A:</strong> The three ways to implement CSS are:</p>
+
+        <ol>
+            <li>
+                <p><strong>Inline CSS</strong>: Applied directly to HTML elements using the <code>style</code> attribute
+                </p>
+                <pre><code>&lt;p style="color: red;"&gt;Text&lt;/p&gt;
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Internal CSS</strong>: Placed within <code>&lt;style&gt;</code> tags in the HTML
+                    <code>&lt;head&gt;</code></p>
+                <pre><code>&lt;style&gt;
+  p { color: red; }
+&lt;/style&gt;
+</code></pre>
+            </li>
+            <li>
+                <p><strong>External CSS</strong>: Stored in separate <code>.css</code> files linked to HTML</p>
+                <pre><code>&lt;link rel="stylesheet" href="styles.css"&gt;
+</code></pre>
+            </li>
+        </ol>
+
+        <hr>
+
+        <p><strong>Q3: What are the advantages and disadvantages of external CSS?</strong></p>
+
+        <p><strong>A:</strong></p>
+
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li>Reusable across multiple pages</li>
+            <li>Cachable by browsers (faster loading)</li>
+            <li>Easier maintenance</li>
+            <li>Separates content from presentation</li>
+            <li>Better organization</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li>Additional HTTP requests</li>
+            <li>Pages may render unstyled initially (FOUC)</li>
+            <li>Requires proper file management</li>
+            <li>Loading order matters</li>
+        </ul>
+
+        <hr>
+
+        <h2>Section 2: CSS Syntax</h2>
+
+        <p><strong>Q4: What is the basic syntax of a CSS rule?</strong></p>
+
+        <p><strong>A:</strong> The basic syntax is:</p>
+        <pre><code>selector {
+  property: value;
+  another-property: value;
+}
+</code></pre>
+
+        <p>For example:</p>
+        <pre><code>h1 {
+  color: blue;
+  font-size: 20px;
+}
+</code></pre>
+
+        <hr>
+
+        <p><strong>Q5: How do you write comments in CSS?</strong></p>
+
+        <p><strong>A:</strong> CSS comments are written using <code>/* */</code>:</p>
+        <pre><code>/* This is a single-line comment */
+
+/*
+  This is a
+  multi-line
+  comment
+*/
+</code></pre>
+
+        <hr>
+
+        <h2>Section 3: CSS Selectors</h2>
+
+        <p><strong>Q6: What is the difference between class and ID selectors?</strong></p>
+
+        <p><strong>A:</strong></p>
+
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Class Selector</th>
+                <th>ID Selector</th>
+            </tr>
+            <tr>
+                <td>Syntax</td>
+                <td><code>.classname</code></td>
+                <td><code>#idname</code></td>
+            </tr>
+            <tr>
+                <td>Uniqueness</td>
+                <td>Can be used multiple times</td>
+                <td>Must be unique per page</td>
+            </tr>
+            <tr>
+                <td>Specificity</td>
+                <td>Medium (10)</td>
+                <td>High (100)</td>
+            </tr>
+            <tr>
+                <td>JavaScript</td>
+                <td><code>getElementsByClassName()</code></td>
+                <td><code>getElementById()</code></td>
+            </tr>
+            <tr>
+                <td>Use case</td>
+                <td>Reusable styles</td>
+                <td>Unique page elements</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <p><strong>Q7: What is the universal selector and when would you use it?</strong></p>
+
+        <p><strong>A:</strong> The universal selector (<code>*</code>) selects all elements on the page. Common uses
+            include:</p>
+        <ul>
+            <li>CSS resets</li>
+            <li>Setting <code>box-sizing: border-box</code> on all elements</li>
+            <li>Debugging (temporarily outlining all elements)</li>
+            <li>Applying base styles globally</li>
+        </ul>
+
+        <p>Example:</p>
+        <pre><code>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+</code></pre>
+
+        <hr>
+
+        <p><strong>Q8: How do you group multiple selectors that share the same styles?</strong></p>
+
+        <p><strong>A:</strong> Use commas to separate selectors:</p>
+        <pre><code>h1, h2, h3 {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+</code></pre>
+
+        <hr>
+
+        <p><strong>Q9: What is selector specificity and how is it calculated?</strong></p>
+
+        <p><strong>A:</strong> Specificity determines which CSS rule applies when multiple rules target the same
+            element. It's calculated as:</p>
+
+        <ul>
+            <li>Inline styles: 1000 points</li>
+            <li>ID selectors: 100 points</li>
+            <li>Class selectors: 10 points</li>
+            <li>Element selectors: 1 point</li>
+        </ul>
+
+        <p>Example:</p>
+        <pre><code>p { color: blue; }           /* Specificity: 1 */
+.text { color: green; }      /* Specificity: 10 */
+#main { color: red; }        /* Specificity: 100 */
+</code></pre>
+
+        <hr>
+
+        <h2>Section 4: Practical Application</h2>
+
+        <p><strong>Q10: When would you use inline CSS?</strong></p>
+
+        <p><strong>A:</strong> Inline CSS is appropriate for:</p>
+        <ul>
+            <li>HTML email templates</li>
+            <li>Quick testing or prototyping</li>
+            <li>Dynamic styling with JavaScript</li>
+            <li>CMS environments with limited CSS access</li>
+            <li>Overriding other styles when necessary</li>
+        </ul>
+
+        <hr>
+
+        <p><strong>Q11: What's the best practice for organizing CSS in a large project?</strong></p>
+
+        <p><strong>A:</strong> Best practices include:</p>
+        <ul>
+            <li>Use external CSS files</li>
+            <li>Organize by component/module</li>
+            <li>Follow a naming convention (BEM, etc.)</li>
+            <li>Use comments to document sections</li>
+            <li>Keep specificity low</li>
+            <li>Avoid <code>!important</code></li>
+            <li>Group related properties</li>
+            <li>Use a preprocessor (Sass/Less) for large projects</li>
+        </ul>
+
+        <hr>
+
+        <p><strong>Q12: What happens if two rules have the same specificity?</strong></p>
+
+        <p><strong>A:</strong> When two rules have the same specificity, the one that appears <strong>later</strong> in
+            the source code wins (cascade order).</p>
+
+        <pre><code>p { color: blue; }
+p { color: red; } /* This wins */
+</code></pre>
+
+        <hr>
+
+        <h2>Section 5: Common Mistakes</h2>
+
+        <p><strong>Q13: Why should you avoid overly specific selectors?</strong></p>
+
+        <p><strong>A:</strong> Overly specific selectors:</p>
+        <ul>
+            <li>Are hard to maintain</li>
+            <li>Make overriding styles difficult</li>
+            <li>Decrease performance</li>
+            <li>Create tight coupling with HTML structure</li>
+            <li>Reduce reusability</li>
+        </ul>
+
+        <p>BAD: <code>body div.container #main-content article p.intro</code><br>
+            GOOD: <code>.intro</code></p>
+
+        <hr>
+
+        <p><strong>Q14: What's wrong with using <code>!important</code> frequently?</strong></p>
+
+        <p><strong>A:</strong> Overusing <code>!important</code>:</p>
+        <ul>
+            <li>Breaks the natural cascade</li>
+            <li>Makes debugging difficult</li>
+            <li>Creates specificity wars</li>
+            <li>Reduces maintainability</li>
+            <li>Makes overrides nearly impossible</li>
+        </ul>
+
+        <p>Instead, use proper specificity and source order.</p>
+
+        <hr>
+
+        <p><strong>Q15: How can you avoid CSS conflicts in large projects?</strong></p>
+
+        <p><strong>A:</strong> To avoid conflicts:</p>
+        <ul>
+            <li>Use a naming convention (BEM)</li>
+            <li>Keep selectors simple</li>
+            <li>Avoid IDs for styling</li>
+            <li>Use specific parent containers</li>
+            <li>Organize CSS by component</li>
+            <li>Use CSS methodologies (OOCSS, SMACSS)</li>
+            <li>Consider CSS-in-JS for component-based apps</li>
+        </ul>
+
+        <hr>
+
+        <h2>Section 6: Advanced Concepts</h2>
+
+        <p><strong>Q16: Can you combine multiple class selectors?</strong></p>
+
+        <p><strong>A:</strong> Yes, elements can have multiple classes:</p>
+        <pre><code>&lt;p class="highlight warning important"&gt;Text&lt;/p&gt;
+</code></pre>
+        <p>Styles from all classes are combined. If properties conflict, later classes in the CSS override earlier ones.
+        </p>
+
+        <hr>
+
+        <p><strong>Q17: How do pseudo-classes differ from regular classes?</strong></p>
+
+        <p><strong>A:</strong> Pseudo-classes target elements based on their state or position, not their class
+            attribute:</p>
+        <pre><code>/* Regular class */
+.highlight { }
+
+/* Pseudo-class */
+a:hover { }           /* Hover state */
+li:first-child { }    /* Position */
+input:focus { }       /* Focus state */
+</code></pre>
+
+        <hr>
+
+        <p><strong>Q18: What is the cascade in CSS?</strong></p>
+
+        <p><strong>A:</strong> The cascade is the algorithm that determines which styles apply when multiple rules
+            conflict. It considers:</p>
+        <ol>
+            <li>Importance (<code>!important</code>)</li>
+            <li>Specificity</li>
+            <li>Source order</li>
+            <li>Inheritance</li>
+        </ol>
+
+        <hr>
+
+        <h1>10. GLOSSARY OF TERMS</h1>
+
+        <h2>A</h2>
+        <ul>
+            <li><span class="glossary-term">Attribute</span>: Additional information in HTML tags that modify elements
+            </li>
+            <li><span class="glossary-term">Alternate Stylesheet</span>: Additional CSS file users can select</li>
+        </ul>
+
+        <h2>B</h2>
+        <ul>
+            <li><span class="glossary-term">Block Element</span>: Element that takes full width and starts on new line
+            </li>
+            <li><span class="glossary-term">Box Model</span>: CSS concept describing element spacing (content, padding,
+                border, margin)</li>
+            <li><span class="glossary-term">Browser DevTools</span>: Built-in browser tools for debugging CSS</li>
+        </ul>
+
+        <h2>C</h2>
+        <ul>
+            <li><span class="glossary-term">Cascade</span>: Algorithm determining which styles apply when rules conflict
+            </li>
+            <li><span class="glossary-term">Class</span>: Reusable identifier for HTML elements</li>
+            <li><span class="glossary-term">CSS</span>: Cascading Style Sheets - language for styling web documents</li>
+            <li><span class="glossary-term">CSSOM</span>: CSS Object Model - browser's representation of CSS</li>
+        </ul>
+
+        <h2>D</h2>
+        <ul>
+            <li><span class="glossary-term">Declaration</span>: Property-value pair in CSS</li>
+            <li><span class="glossary-term">DOM</span>: Document Object Model - browser's representation of HTML</li>
+            <li><span class="glossary-term">DRY</span>: Don't Repeat Yourself - coding principle</li>
+        </ul>
+
+        <h2>E</h2>
+        <ul>
+            <li><span class="glossary-term">Element Selector</span>: Selects by HTML tag name</li>
+            <li><span class="glossary-term">External CSS</span>: CSS in separate file linked to HTML</li>
+            <li><span class="glossary-term">Embedded CSS</span>: See Internal CSS</li>
+        </ul>
+
+        <h2>F</h2>
+        <ul>
+            <li><span class="glossary-term">FOUC</span>: Flash of Unstyled Content - unstyled page appears briefly</li>
+            <li><span class="glossary-term">Fallback</span>: Alternative style if primary isn't supported</li>
+        </ul>
+
+        <h2>G</h2>
+        <ul>
+            <li><span class="glossary-term">Grouping Selector</span>: Selecting multiple elements with commas</li>
+            <li><span class="glossary-term">Global Styles</span>: Styles applying throughout website</li>
+        </ul>
+
+        <h2>H</h2>
+        <ul>
+            <li><span class="glossary-term">HTML</span>: HyperText Markup Language - structure of web pages</li>
+            <li><span class="glossary-term">HTTP Request</span>: Browser request for files (including CSS)</li>
+        </ul>
+
+        <h2>I</h2>
+        <ul>
+            <li><span class="glossary-term">ID</span>: Unique identifier for single element</li>
+            <li><span class="glossary-term">Inline CSS</span>: CSS in <code>style</code> attribute</li>
+            <li><span class="glossary-term">Internal CSS</span>: CSS in <code>&lt;style&gt;</code> tag</li>
+            <li><span class="glossary-term">Import</span>: <code>@import</code> rule for including CSS files</li>
+        </ul>
+
+        <h2>J</h2>
+        <ul>
+            <li><span class="glossary-term">JavaScript</span>: Programming language for web behavior</li>
+        </ul>
+
+        <h2>K</h2>
+        <ul>
+            <li><span class="glossary-term">Keyframe</span>: Point in CSS animation</li>
+        </ul>
+
+        <h2>L</h2>
+        <ul>
+            <li><span class="glossary-term">Link</span>: <code>&lt;link&gt;</code> tag for connecting external CSS</li>
+        </ul>
+
+        <h2>M</h2>
+        <ul>
+            <li><span class="glossary-term">Maintainability</span>: Ease of updating code</li>
+            <li><span class="glossary-term">Media Query</span>: CSS for responsive design</li>
+            <li><span class="glossary-term">Minification</span>: Removing unnecessary characters from CSS</li>
+        </ul>
+
+        <h2>N</h2>
+        <ul>
+            <li><span class="glossary-term">Naming Convention</span>: Systematic naming of classes (e.g., BEM)</li>
+            <li><span class="glossary-term">Nested Selector</span>: Selector inside another selector</li>
+        </ul>
+
+        <h2>O</h2>
+        <ul>
+            <li><span class="glossary-term">Override</span>: Later styles replacing earlier ones</li>
+        </ul>
+
+        <h2>P</h2>
+        <ul>
+            <li><span class="glossary-term">Property</span>: Styling aspect being changed (e.g., <code>color</code>)
+            </li>
+            <li><span class="glossary-term">Pseudo-class</span>: Special state of element (<code>:hover</code>)</li>
+            <li><span class="glossary-term">Parser</span>: Browser component reading CSS</li>
+        </ul>
+
+        <h2>R</h2>
+        <ul>
+            <li><span class="glossary-term">Rule</span>: Complete CSS instruction (selector + declarations)</li>
+            <li><span class="glossary-term">Ruleset</span>: See Rule</li>
+            <li><span class="glossary-term">Responsive Design</span>: Design adapting to screen sizes</li>
+            <li><span class="glossary-term">Reset</span>: CSS removing default browser styles</li>
+        </ul>
+
+        <h2>S</h2>
+        <ul>
+            <li><span class="glossary-term">Selector</span>: Pattern selecting elements to style</li>
+            <li><span class="glossary-term">Specificity</span>: Importance weight of selector</li>
+            <li><span class="glossary-term">Syntax</span>: Rules for writing CSS</li>
+            <li><span class="glossary-term">Source Order</span>: Order of CSS rules in file</li>
+        </ul>
+
+        <h2>T</h2>
+        <ul>
+            <li><span class="glossary-term">Type Selector</span>: See Element Selector</li>
+        </ul>
+
+        <h2>U</h2>
+        <ul>
+            <li><span class="glossary-term">Universal Selector</span>: <code>*</code> - selects all elements</li>
+            <li><span class="glossary-term">Utility Class</span>: Single-purpose class (e.g., <code>.text-center</code>)
+            </li>
+        </ul>
+
+        <h2>V</h2>
+        <ul>
+            <li><span class="glossary-term">Value</span>: Setting for property (e.g., <code>blue</code>)</li>
+            <li><span class="glossary-term">Vendor Prefix</span>: Browser-specific CSS (<code>-webkit-</code>,
+                <code>-moz-</code>)</li>
+        </ul>
+
+        <h2>W</h2>
+        <ul>
+            <li><span class="glossary-term">W3C</span>: World Wide Web Consortium - sets CSS standards</li>
+            <li><span class="glossary-term">Whitespace</span>: Spaces, tabs, newlines in code</li>
+        </ul>
+
+        <h2>X</h2>
+        <ul>
+            <li><span class="glossary-term">XHTML</span>: Stricter HTML version</li>
+        </ul>
+
+        <h2>Y</h2>
+        <ul>
+            <li><span class="glossary-term">YAML</span>: Data format, not CSS-related</li>
+        </ul>
+
+        <h2>Z</h2>
+        <ul>
+            <li><span class="glossary-term">Z-index</span>: Layering of elements</li>
+        </ul>
+
+        <hr>
+
+        <h1>CONCLUSION</h1>
+
+        <p>Congratulations! You've completed this comprehensive guide to CSS Introduction and Selectors. You've learned:
+        </p>
+
+        <p>✅ What CSS is and why it's essential<br>
+            ✅ The three methods of implementing CSS<br>
+            ✅ CSS syntax structure<br>
+            ✅ Basic selectors (universal, element, class, ID, grouping)<br>
+            ✅ How to combine selectors effectively<br>
+            ✅ Best practices and common mistakes<br>
+            ✅ Practical applications with real examples</p>
+
+        <h2>Next Steps</h2>
+
+        <p>After mastering these fundamentals, you're ready to move on to:</p>
+
+        <ol>
+            <li><strong>CSS Box Model</strong> - Understanding spacing and sizing</li>
+            <li><strong>Typography</strong> - Advanced text styling</li>
+            <li><strong>Colors and Backgrounds</strong> - Visual design</li>
+            <li><strong>Layouts</strong> - Flexbox and Grid</li>
+            <li><strong>Responsive Design</strong> - Media queries</li>
+            <li><strong>Animations</strong> - Transitions and keyframes</li>
+            <li><strong>CSS Preprocessors</strong> - Sass, Less</li>
+            <li><strong>CSS Frameworks</strong> - Bootstrap, Tailwind</li>
+        </ol>
+
+        <h2>Key Takeaways</h2>
+
+        <p>Remember these core principles:</p>
+        <ul>
+            <li><strong>Separate concerns</strong> - Keep HTML structure separate from CSS styling</li>
+            <li><strong>Use classes for reusable styles</strong> - Avoid IDs for styling</li>
+            <li><strong>Keep specificity low</strong> - Make your CSS maintainable</li>
+            <li><strong>Follow naming conventions</strong> - Write code others can read</li>
+            <li><strong>Practice regularly</strong> - The best way to learn CSS is by building</li>
+        </ul>
+
+        <hr>
+
+        <p><em>"CSS is not just about making things look pretty; it's about creating structure, hierarchy, and meaning
+                through visual design."</em></p>
+
+        <p><strong>Happy Styling!</strong> 🎨</p>
+
+        <!-- CONTENT END: exact copy from provided study notes -->
+
+    </div>
+</body>
+
+</html>

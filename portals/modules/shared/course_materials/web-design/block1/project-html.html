@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>final project · semantic & accessible business page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #d9e9ef;
+            color: #1d2b35;
+            line-height: 1.5;
+            padding: 1.8rem;
+        }
+
+        .project-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 3rem;
+            box-shadow: 0 25px 40px -18px #0f4452;
+            overflow: hidden;
+            padding: 2.8rem 3rem;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 750;
+            background: linear-gradient(135deg, #006a76, #12645a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            border-bottom: 4px solid #319f95;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-project {
+            background: #1f7a84;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding: 0.3rem 2.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 0.2rem 0 1.8rem;
+        }
+
+        .brief-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 2.2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .card-brief {
+            background: #eff7fb;
+            border-radius: 2.2rem;
+            padding: 2rem 2.2rem;
+            border: 1px solid #b2dae8;
+            box-shadow: 0 10px 20px -12px #226878;
+        }
+
+        .card-brief h2 {
+            font-size: 2rem;
+            color: #0c6575;
+            border-bottom: 4px solid #3eb7a8;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .requirement-list {
+            list-style: none;
+        }
+
+        .requirement-list li {
+            margin: 1.1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: 1.15rem;
+        }
+
+        .requirement-list li::before {
+            content: "✓";
+            background: #25887c;
+            color: white;
+            font-weight: bold;
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sticky-note {
+            background: #fff6e0;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border: 2px dashed #399e8f;
+            margin: 1rem 0;
+        }
+
+        .sticky-note p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0a554e;
+        }
+
+        .pill-highlight {
+            background: white;
+            border: 1px solid #319f95;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0a5e68;
+            display: inline-block;
+            margin: 0.2rem 0.3rem;
+        }
+
+        .step-section {
+            margin: 2.8rem 0 2rem;
+        }
+
+        .step-section h3 {
+            font-size: 2.2rem;
+            color: #0e5f6b;
+            border-left: 12px solid #56bfb0;
+            padding-left: 1.5rem;
+            margin: 2.2rem 0 1.8rem;
+        }
+
+        .three-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+        }
+
+        .milestone-card {
+            background: #f5fcff;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border-bottom: 8px solid #298880;
+            box-shadow: 0 10px 16px -14px #1a5e66;
+        }
+
+        .milestone-card h4 {
+            font-size: 1.8rem;
+            color: #1e707b;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block {
+            background: #e2f0f2;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.2rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            border: 1px solid #6fb7c1;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin: 1rem 0;
+        }
+
+        .content-spec {
+            background: #dcf0f0;
+            border-radius: 1.8rem;
+            padding: 2rem;
+            margin: 2.2rem 0;
+        }
+
+        .spec-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            justify-content: space-between;
+        }
+
+        .spec-item {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.6rem;
+            flex: 1 1 280px;
+            border-left: 10px solid #14837c;
+        }
+
+        .spec-item p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #0c4c57;
+        }
+
+        .accent-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f0fbfd;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            box-shadow: 0 6px 14px #bddde6;
+            margin: 2rem 0;
+        }
+
+        .accent-table th {
+            background: #1f6d79;
+            color: white;
+            font-size: 1.2rem;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .accent-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #b3dbe3;
+        }
+
+        .accent-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .checklist-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem 1.8rem;
+            background: #fafff7;
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 2px solid #279f8f;
+        }
+
+        .checklist-mini div {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+
+        .checklist-mini div::before {
+            content: "▢";
+            font-size: 1.5rem;
+            color: #157569;
+        }
+
+        .btn-download {
+            background: #085f6b;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 1.2rem 3rem;
+            border-radius: 60px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 18px -6px #0e4e56;
+            text-decoration: none;
+            border: 2px solid #a2e0d9;
+            transition: 0.15s;
+        }
+
+        .btn-download:hover {
+            background: #21818b;
+            transform: scale(1.02);
+        }
+
+        .footer-note {
+            background: #e1f2f5;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 3rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        hr {
+            border: 2px solid #b6dee5;
+            margin: 2rem 0;
+        }
+
+        small {
+            color: #3e6c73;
+        }
+
+        .emph-num {
+            background: #1a6c74;
+            color: white;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="project-container">
+        <h1>🧩 final project · small business homepage</h1>
+        <div class="badge-project">semantic HTML · full accessibility · no CSS required (but allowed)</div>
+
+        <!-- quick context + weight -->
+        <div class="brief-grid">
+            <div class="card-brief">
+                <h2>📋 context & weight</h2>
+                <p style="font-size:1.2rem; margin-bottom: 2rem;">build a <strong>semantic, inclusive</strong> homepage
+                    for a local coffee shop / bookstore / bakery (your choice). This project wraps up the HTML block —
+                    every concept from structure, lists, tables, forms, and accessibility must appear.</p>
+                <div style="background:#c9e3e9; border-radius:1.8rem; padding:1.5rem;">
+                    <span style="font-weight:700; font-size:1.9rem; color:#085e68;">30%</span> <span
+                        style="font-size:1.3rem;">of module grade</span><br>
+                    <span>deliverable: single <code>business-homepage.html</code> (validate with W3C validator).</span>
+                </div>
+            </div>
+            <div class="card-brief">
+                <h2>🎯 quick checklist</h2>
+                <ul style="list-style:none;">
+                    <li style="margin:0.8rem 0;">✔️ semantic layout (header, nav, main, etc.)</li>
+                    <li style="margin:0.8rem 0;">✔️ navigation with at least 4 links</li>
+                    <li style="margin:0.8rem 0;">✔️ images with alt text</li>
+                    <li style="margin:0.8rem 0;">✔️ data table (opening hours / menu prices)</li>
+                    <li style="margin:0.8rem 0;">✔️ working form (contact / reservation)</li>
+                    <li style="margin:0.8rem 0;">✔️ proper labels, fieldsets, landmarks</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- content requirements : detailed steps -->
+        <div class="step-section">
+            <h3>📌 step‑by‑step — what your page must include</h3>
+            <div class="three-cards">
+                <div class="milestone-card">
+                    <h4>🏗️ 1. structure & semantics</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li><code>&lt;header&gt;</code> (business name, logo)</li>
+                        <li><code>&lt;nav&gt;</code> with 4+ links (home, menu, contact, …)</li>
+                        <li><code>&lt;main&gt;</code> and <code>&lt;article&gt;</code> / <code>&lt;section&gt;</code>
+                        </li>
+                        <li><code>&lt;footer&gt;</code> (address, copyright)</li>
+                        <li>at least one <code>&lt;aside&gt;</code> (promo, hours snippet)</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h4>🖼️ 2. images & lists</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li>at least 2 images (hero, product) with descriptive <code>alt</code></li>
+                        <li>unordered list (features, services)</li>
+                        <li>ordered list (top drinks / steps / ranking)</li>
+                        <li>description list (glossary or pair of terms)</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h4>📊 3. table (data)</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li>must use <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code></li>
+                        <li>include <code>colspan</code> or <code>rowspan</code> (e.g. merged lunch hours)</li>
+                        <li>add <code>&lt;caption&gt;</code> and scope attributes</li>
+                        <li>example: opening hours / price list / event schedule</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="three-cards" style="margin-top: 1.8rem;">
+                <div class="milestone-card">
+                    <h4>📮 4. accessible form</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li>form with <code>method="post"</code> (action="#")</li>
+                        <li>fields: name, email, date picker (or select), radio/checkbox</li>
+                        <li>each input has <code>&lt;label&gt;</code> + <code>for/id</code></li>
+                        <li><code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code> for group</li>
+                        <li>use <code>required</code>, <code>placeholder</code>, <code>autocomplete</code></li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h4>♿ 5. a11y & landmarks</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li>all images have meaningful <code>alt</code></li>
+                        <li>landmark roles (banner, navigation, main, complementary)</li>
+                        <li>use <code>aria-label</code> or <code>aria-labelledby</code> if needed</li>
+                        <li>link text is descriptive (avoid "click here")</li>
+                    </ul>
+                </div>
+                <div class="milestone-card">
+                    <h4>🔗 6. extras & hyperlinks</h4>
+                    <ul style="margin-left:1.3rem; color:#235e67;">
+                        <li>at least one same‑page link (id, e.g. back to top)</li>
+                        <li>include <code>mailto:</code> (contact) and external (Instagram)</li>
+                        <li>valid <code>lang</code> attribute, meta charset, viewport</li>
+                        <li>title attribute on abbreviation? (bonus)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- example content block / suggested structure -->
+        <div class="content-spec">
+            <h3 style="color: #0b5e68; font-size: 2rem; display: flex; gap: 10px;">📦 recommended content outline</h3>
+            <div class="spec-flex">
+                <div class="spec-item">
+                    <p>☕ café “bean & leaf” (example)</p>
+                    <span class="pill-highlight">header + nav</span> <span class="pill-highlight">hero image</span><br>
+                    — intro section with list of specials.<br>
+                    — <strong>table</strong>: coffee prices with colspan for “mug size”.<br>
+                    — reservation form (fieldset: contact, preference).
+                </div>
+                <div class="spec-item">
+                    <p>📖 bookstore “chapter one”</p>
+                    <span class="pill-highlight">aside (events)</span> <span class="pill-highlight">description list
+                        (genres)</span><br>
+                    — staff picks as ordered list.<br>
+                    — table: book club schedule (rowspan for series).<br>
+                    — sign‑up form with checkbox (genres) and label.
+                </div>
+                <div class="spec-item">
+                    <p>🥖 bakery “golden crumb”</p>
+                    <span class="pill-highlight">images with alt</span> <span class="pill-highlight">daily menu
+                        list</span><br>
+                    — table: allergen info (colspan header).<br>
+                    — order form (pastry selection, radio pickup/delivery).<br>
+                    — footer with address, mailto, and nav.
+                </div>
+            </div>
+        </div>
+
+        <!-- grading / evaluation table -->
+        <h3 style="font-size: 2rem; margin: 2rem 0 0.8rem; color: #0b6070;">📋 grading breakdown</h3>
+        <table class="accent-table">
+            <thead>
+                <tr>
+                    <th>criterion</th>
+                    <th>description</th>
+                    <th>points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>semantic structure</td>
+                    <td>header, nav, main, article/section, footer, aside</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>table (advanced)</td>
+                    <td>colspan/rowspan, thead, tbody, caption, scope</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td>accessible form</td>
+                    <td>labels, fieldset, required, placeholder, correct types</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>images & lists</td>
+                    <td>alt text, at least one of each list type (ul, ol, dl)</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>links & navigation</td>
+                    <td>internal/external, mailto, consistent nav</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>a11y & landmarks</td>
+                    <td>aria / semantic landmarks, alt, link text, lang</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td>code quality & validation</td>
+                    <td>no errors, indentation, comments optional</td>
+                    <td>10</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- hands-on checklist mini -->
+        <div style="background:#f1f9fd; border-radius: 2rem; padding: 2rem; margin: 2rem 0;">
+            <h4 style="color: #085e6b; font-size: 1.8rem;">✅ pre‑submission checklist</h4>
+            <div class="checklist-mini">
+                <div><span>doctype html, lang, meta</span></div>
+                <div><span>all images have <code>alt</code></span></div>
+                <div><span>clickable nav (not empty)</span></div>
+                <div><span>table includes scope / caption</span></div>
+                <div><span>every form control has label</span></div>
+                <div><span>fieldset/legend used</span></div>
+                <div><span>no orphaned heading levels</span></div>
+                <div><span>footer with contact / legal</span></div>
+                <div><span>test with keyboard (focus)</span></div>
+                <div><span>run W3C validator</span></div>
+            </div>
+            <p style="margin-top: 1.5rem; background:#bfe2e9; padding: 1rem; border-radius: 2rem;">
+                ⭐ extra credit: add a tiny <code>&lt;details&gt;</code> with summary (FAQ snippet) + microdata
+                (schema.org/restaurant).
+            </p>
+        </div>
+
+        <!-- stub: mock html helper (just illustrative) -->
+        <div style="background:#e0f2f0; border-radius: 2rem; padding: 1.8rem; margin: 2.5rem 0;">
+            <span style="font-size: 1.9rem;">📎 minimal template snippet (reminder)</span>
+            <div class="code-block">
+                &lt;header&gt; &lt;h1&gt;Sweet Bean&lt;/h1&gt; &lt;nav&gt;…&lt;/nav&gt; &lt;/header&gt; <br>
+                &lt;main&gt; &lt;section&gt; &lt;h2&gt;…&lt;/h2&gt; &lt;img src="..." alt="pouring coffee"&gt;
+                &lt;/section&gt; <br>
+                &lt;table&gt; &lt;caption&gt; opening&lt;/caption&gt; … &lt;/table&gt; <br>
+                &lt;form&gt; &lt;fieldset&gt; &lt;legend&gt;make a reservation&lt;/legend&gt; … &lt;/fieldset&gt;
+                &lt;/form&gt; <br>
+                &lt;/main&gt; &lt;aside&gt; … &lt;/aside&gt; &lt;footer&gt; … &lt;/footer&gt;
+            </div>
+        </div>
+
+        <!-- call to action / download brief? not actually download but link back -->
+        <div class="footer-note">
+            <div>
+                <span style="font-weight: 700; font-size: 2rem; color: #1e6a75;">🚀 ready to code?</span><br>
+                <span style="font-size: 1.2rem;">keep this brief open — use it as your checklist.</span>
+            </div>
+            <!-- dummy button for consistency -->
+            <a href="#" class="btn-download" style="pointer-events:none; background:#3a8d99;">📋 start building</a>
+        </div>
+
+        <!-- anchor for same‑page link demo (top) -->
+        <div id="top-offset"></div>
+        <hr>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="#top-offset" style="background:#e9f3f5; padding: 0.8rem 1.8rem; border-radius: 60px;">↑ back to top
+                (same‑page link example)</a>
+            <a href="mailto:instructor@example.com"
+                style="background:#e9f3f5; padding: 0.8rem 1.8rem; border-radius: 60px;">📧 instructor mail (mailto
+                demo)</a>
+            <span style="background:#e9f3f5; padding: 0.8rem 1.8rem; border-radius: 60px;">✅ W3C validate before
+                submit</span>
+        </div>
+        <footer style="margin-top: 2.8rem; text-align: center; color: #3e6d74;">
+            HTML foundations · project brief — v1.0 · accessible page required
+        </footer>
+    </div> <!-- end project container -->
+</body>
+
+</html>

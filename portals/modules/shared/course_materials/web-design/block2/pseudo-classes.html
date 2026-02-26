@@ -1,0 +1,2756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Advanced CSS Selectors · Complete Reference</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e3f0ea;
+            color: #1d3a31;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guide-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 40px -20px #114e3b;
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+        }
+
+        /* ===== TYPOGRAPHY (fluid) ===== */
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(145deg, #166b52, #0f5f66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0.5rem 0 0.2rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: #19755e;
+            border-left: 8px solid #41b89a;
+            padding-left: 1.2rem;
+            margin: 2.5rem 0 1.5rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 4vw, 1.9rem);
+            color: #1d6d58;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px dashed #7fdac2;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+            color: #1f6d5b;
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 600;
+        }
+
+        p,
+        li {
+            font-size: clamp(1rem, 2.8vw, 1.1rem);
+            color: #1d3a31;
+            margin-bottom: 0.8rem;
+        }
+
+        /* ===== CODE BLOCKS (fully scrollable on mobile) ===== */
+        pre {
+            background: #1e2f2a;
+            color: #e0f2e9;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            background: #def3e9;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #0a4d3a;
+            word-break: break-word;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* ===== TABLES (responsive) ===== */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 40, 30, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            min-width: 500px;
+        }
+
+        th {
+            background: #257a65;
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #b8e0d2;
+            background: #f9fffc;
+        }
+
+        /* ===== BADGES & LINKS ===== */
+        .index-link {
+            display: inline-block;
+            background: #1d8268;
+            color: white;
+            padding: 0.7rem 2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 1rem 0 1.5rem;
+            border: 2px solid white;
+            box-shadow: 0 8px 14px -8px #0a3d30;
+            transition: 0.2s;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+        }
+
+        .index-link:hover {
+            background: #156b54;
+            transform: translateY(-3px);
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background: white;
+            border: 1px solid #48b79d;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin: 0.3rem;
+            color: #176b57;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #c0e6da, #ffffff, #c0e6da);
+            margin: 2.5rem 0;
+        }
+
+        .bottom-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 2.5rem 0 1rem;
+        }
+
+        .bottom-nav a {
+            background: #e2f2ea;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #16644f;
+            font-weight: 500;
+            border: 1px solid #b1d9cb;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #2d6b5c;
+            border-top: 2px solid #c0e6da;
+            padding-top: 2rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.8rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .note-highlight {
+            background: #ebf9f2;
+            padding: 1.5rem;
+            border-radius: 1.8rem;
+            border-left: 8px solid #308570;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="guide-container">
+
+        <!-- link back to original index / block 2 page -->
+        <a href="index.html" class="index-link">📄 ← Return to Block 2 · CSS Styling & Box Model (index)</a>
+
+        <h1>COMPREHENSIVE GUIDE: ADVANCED CSS SELECTORS</h1>
+        <h2>Mastering Grouping, Descendant Selectors, Pseudo-classes, and Link Styling</h2>
+
+        <hr>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 1.5rem 0;">
+            <span class="topic-tag">1. INTRODUCTION</span>
+            <span class="topic-tag">2. GROUPING SELECTORS</span>
+            <span class="topic-tag">3. DESCENDANT SELECTORS</span>
+            <span class="topic-tag">4. PSEUDO-CLASSES</span>
+            <span class="topic-tag">5. :LINK / :VISITED</span>
+            <span class="topic-tag">6. PRACTICAL EXAMPLES</span>
+            <span class="topic-tag">7. PITFALLS & BEST PRACTICES</span>
+            <span class="topic-tag">8. EXERCISES</span>
+        </div>
+
+        <hr>
+
+        <!-- 1. INTRODUCTION -->
+        <h2>1. INTRODUCTION TO CSS SELECTORS</h2>
+        <h3>1.1 What Are CSS Selectors?</h3>
+        <p>CSS selectors are patterns used to select and style HTML elements on a web page. They are the bridge between
+            your HTML structure and your CSS styling rules. Understanding selectors deeply is fundamental to writing
+            efficient, maintainable, and powerful CSS.</p>
+
+        <h4>The Basic Syntax</h4>
+        <pre><code>selector {
+    property: value;
+    property: value;
+}</code></pre>
+
+        <h4>Categories of Selectors We'll Cover</h4>
+        <ol>
+            <li><strong>Grouping Selectors</strong> - Apply same styles to multiple elements</li>
+            <li><strong>Descendant Selectors</strong> - Target elements based on their ancestry</li>
+            <li><strong>Pseudo-classes</strong> - Style elements based on state or position</li>
+            <li><strong>Link-specific Pseudo-classes</strong> - Special states for hyperlinks</li>
+        </ol>
+
+        <h3>1.2 The Cascade and Specificity</h3>
+        <pre><code>/* Different specificity levels */
+element { }                    /* Low specificity (0,0,1) */
+.class { }                     /* Medium specificity (0,1,0) */
+#id { }                        /* High specificity (1,0,0) */
+element.class { }              /* Combined specificity (0,1,1) */</code></pre>
+
+        <hr>
+
+        <!-- 2. GROUPING SELECTORS -->
+        <h2>2. GROUPING SELECTORS</h2>
+        <h3>2.1 Understanding Selector Grouping</h3>
+        <p>Selector grouping allows you to apply the same styles to multiple elements without repeating yourself. This
+            follows the DRY (Don't Repeat Yourself) principle fundamental to clean code.</p>
+
+        <h4>Without Grouping (Inefficient)</h4>
+        <pre><code>h1 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}</code></pre>
+
+        <h4>With Grouping (Efficient)</h4>
+        <pre><code>h1, h2, h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}</code></pre>
+
+        <h3>2.2 Syntax and Rules</h3>
+        <pre><code>selector1, selector2, selector3 {
+    property: value;
+}</code></pre>
+
+        <h4>Whitespace in Grouping</h4>
+        <pre><code>/* All valid formats */
+h1, h2, h3 { }                    /* No extra spaces */
+h1,h2,h3 { }                       /* No spaces at all */
+h1 , h2 , h3 { }                   /* Spaces after commas */
+h1, 
+h2, 
+h3 { }                             /* Each on new line */</code></pre>
+
+        <h3>2.3 Combining Different Selector Types</h3>
+        <pre><code>/* Mixing element, class, and ID selectors */
+h1, .title, #main-heading {
+    font-weight: bold;
+    color: navy;
+}
+
+/* Grouping complex selectors */
+article p, .content p, #main p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Grouping with pseudo-classes */
+button:hover, .btn:hover, #submit-btn:hover {
+    background-color: darkblue;
+    cursor: pointer;
+}</code></pre>
+
+        <h3>2.4 Practical Applications</h3>
+        <pre><code>/* Typography Reset */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Form Element Styling */
+input, textarea, select, button {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+
+/* Responsive Design Grouping */
+/* Mobile styles */
+h1, h2, h3, p {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    h1, h2, h3, p {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}</code></pre>
+
+        <h3>2.5 Advanced Grouping Techniques</h3>
+        <pre><code>/* Grouping with Attribute Selectors */
+input[type="text"], input[type="email"], input[type="password"] {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+/* Grouping with Pseudo-elements */
+h1::before, h2::before, h3::before {
+    content: "► ";
+    color: red;
+    font-size: 0.8em;
+}</code></pre>
+
+        <h3>2.6 Common Mistakes with Grouping</h3>
+        <h4>Mistake 1: Forgetting the Comma</h4>
+        <pre><code>/* Wrong - tries to select "h2 h3" as descendant */
+h1 h2 h3 {
+    color: red;
+}
+
+/* Correct - groups all three */
+h1, h2, h3 {
+    color: red;
+}</code></pre>
+
+        <h4>Mistake 2: Over-grouping</h4>
+        <pre><code>/* Bad practice - too broad */
+h1, .menu, #footer, p, div span {
+    color: blue;
+}
+
+/* Better - group logically related elements */
+h1, h2, h3 {
+    color: blue;
+}
+.menu-link, .footer-link {
+    color: blue;
+}</code></pre>
+
+        <hr>
+
+        <!-- 3. DESCENDANT SELECTORS -->
+        <h2>3. DESCENDANT SELECTORS</h2>
+        <h3>3.1 Understanding Descendant Selectors</h3>
+        <p>Descendant selectors target elements that are nested within other elements, regardless of the nesting depth.
+            They're one of the most powerful and commonly used selector types in CSS.</p>
+
+        <h4>Basic Concept</h4>
+        <pre><code>ancestor descendant {
+    property: value;
+}</code></pre>
+
+        <h4>Visual Representation</h4>
+        <pre><code>&lt;div class="container"&gt;                    ← Ancestor
+    &lt;p&gt;Direct child&lt;/p&gt;                     ← Descendant
+    &lt;div&gt;
+        &lt;p&gt;Nested deeper&lt;/p&gt;                 ← Descendant (still selected)
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h3>3.2 Syntax and Behavior</h3>
+        <h4>Simple Descendant Selection</h4>
+        <pre><code>/* Selects all paragraphs inside any article */
+article p {
+    color: #333;
+    line-height: 1.5;
+}</code></pre>
+
+        <h4>Multiple Levels Deep</h4>
+        <pre><code>/* Selects spans inside paragraphs inside articles */
+article p span {
+    font-weight: bold;
+    color: red;
+}</code></pre>
+
+        <h4>HTML Example</h4>
+        <pre><code>&lt;article&gt;
+    &lt;h2&gt;Title&lt;/h2&gt;
+    &lt;p&gt;This paragraph is selected. &lt;span&gt;This span is selected&lt;/span&gt;&lt;/p&gt;
+    &lt;div&gt;
+        &lt;p&gt;This paragraph is also selected. &lt;span&gt;This span is selected too&lt;/span&gt;&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/article&gt;
+&lt;p&gt;This paragraph is NOT selected&lt;/p&gt;</code></pre>
+
+        <h3>3.3 Combining with Classes and IDs</h3>
+        <h4>Class-Based Descendant Selection</h4>
+        <pre><code>/* Selects links only within navigation */
+.nav-menu a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+}
+
+/* Selects paragraphs inside content areas */
+.content p, .blog-post p {
+    margin-bottom: 20px;
+    text-align: justify;
+}</code></pre>
+
+        <h4>ID-Based Descendant Selection</h4>
+        <pre><code>/* Target specific sections */
+#sidebar .widget {
+    background: #f5f5f5;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+#footer .copyright {
+    font-size: 0.9em;
+    color: #666;
+}</code></pre>
+
+        <h3>3.4 Complex Descendant Patterns</h3>
+        <h4>Multiple Ancestors</h4>
+        <pre><code>/* Very specific targeting */
+body main article .content p {
+    font-size: 16px;
+}</code></pre>
+
+        <h4>Mixing Selector Types</h4>
+        <pre><code>/* Combining element, class, and descendant */
+ul.nav-menu li a {
+    display: block;
+    padding: 10px 15px;
+}
+
+div[role="main"] article:first-child p {
+    font-size: 1.2em;
+}</code></pre>
+
+        <h3>3.5 Practical Applications</h3>
+        <h4>Article/Blog Styling</h4>
+        <pre><code>/* Article content styling */
+.article-body {
+    font-family: Georgia, serif;
+}
+
+.article-body p {
+    margin-bottom: 1.5em;
+    line-height: 1.8;
+}
+
+.article-body blockquote {
+    margin: 2em 40px;
+    padding-left: 20px;
+    border-left: 4px solid #ccc;
+    font-style: italic;
+}
+
+.article-body img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+}</code></pre>
+
+        <h4>Navigation Menus</h4>
+        <pre><code>/* Horizontal navigation */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin: 0 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+}
+
+nav ul li a:hover {
+    background: #333;
+    color: white;
+    border-radius: 4px;
+}</code></pre>
+
+        <h4>Form Layouts</h4>
+        <pre><code>/* Form field styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group .help-text {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 4px;
+}</code></pre>
+
+        <h3>3.6 Performance Considerations</h3>
+        <h4>Efficiency Hierarchy</h4>
+        <pre><code>/* Most efficient */
+.child-class { }                    /* Direct class selection */
+
+/* Efficient */
+.parent .child-class { }            /* Descendant with class */
+
+/* Less efficient */
+div p span { }                      /* Multiple element selectors */
+
+/* Least efficient */
+* .some-class { }                    /* Universal selector */</code></pre>
+
+        <h4>Optimization Tips</h4>
+        <pre><code>/* Too broad - inefficient */
+body * p { }
+
+/* Better */
+.content p { }
+
+/* Hard to maintain and potentially inefficient */
+body main article section .content p span { }
+
+/* Better - use a class */
+.highlight { }</code></pre>
+
+        <h3>3.7 Descendant vs. Child Selectors</h3>
+        <h4>Descendant (space) - Any level</h4>
+        <pre><code>/* Selects all spans inside div, any depth */
+div span {
+    color: red;
+}</code></pre>
+
+        <h4>Child (>) - Direct children only</h4>
+        <pre><code>/* Selects only spans that are direct children of div */
+div > span {
+    color: red;
+}</code></pre>
+
+        <h4>Comparison Example</h4>
+        <pre><code>&lt;div&gt;
+    &lt;span&gt;This is red (child selector and descendant)&lt;/span&gt;
+    &lt;p&gt;
+        &lt;span&gt;This is red (descendant only, not child)&lt;/span&gt;
+    &lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+        <hr>
+
+        <!-- 4. PSEUDO-CLASSES -->
+        <h2>4. PSEUDO-CLASSES FOR INTERACTIVITY</h2>
+        <h3>4.1 Introduction to Pseudo-classes</h3>
+        <p>Pseudo-classes are keywords added to selectors that specify a special state of the selected element(s). They
+            begin with a colon (<code>:</code>) and allow you to style elements based on information that can't be
+            deduced from the document tree alone.</p>
+
+        <h4>Basic Syntax</h4>
+        <pre><code>selector:pseudo-class {
+    property: value;
+}</code></pre>
+
+        <h3>4.2 The :hover Pseudo-class</h3>
+        <p>The <code>:hover</code> pseudo-class is triggered when the user interacts with an element using a pointing
+            device (like a mouse), but does not necessarily activate it.</p>
+
+        <h4>Basic Hover Effects</h4>
+        <pre><code>/* Button hover effect */
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+}</code></pre>
+
+        <h4>Advanced Hover Applications</h4>
+        <h5>Card Hover Effects</h5>
+        <pre><code>.card {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    border-color: #3498db;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform: scale(1.02);
+}
+
+.card:hover .card-title {
+    color: #3498db;
+}
+
+.card:hover .card-image {
+    transform: scale(1.05);
+}</code></pre>
+
+        <h5>Image Gallery Hover Effects</h5>
+        <pre><code>.gallery-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-item img {
+    width: 100%;
+    transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-item .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .overlay {
+    opacity: 1;
+}</code></pre>
+
+        <h5>Menu Item Animations</h5>
+        <pre><code>/* Underline animation on hover */
+.nav-link {
+    position: relative;
+    text-decoration: none;
+    color: #333;
+    padding: 5px 0;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    color: #3498db;
+}</code></pre>
+
+        <h4>Hover on Different Elements</h4>
+        <h5>Table Row Hover</h5>
+        <pre><code>tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+tr:hover td {
+    color: #333;
+}</code></pre>
+
+        <h5>Dropdown Menus with Hover</h5>
+        <pre><code>.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}</code></pre>
+
+        <h3>4.3 The :focus Pseudo-class</h3>
+        <p>The <code>:focus</code> pseudo-class applies when an element has received focus, either through keyboard
+            navigation (Tab key) or by clicking/tapping on it.</p>
+
+        <h4>Basic Focus Styles</h4>
+        <pre><code>/* Input focus styling */
+input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52,152,219,0.5);
+}
+
+/* Textarea focus */
+textarea:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Button focus */
+button:focus {
+    outline: 3px solid rgba(52,152,219,0.5);
+    outline-offset: 2px;
+}</code></pre>
+
+        <h4>Advanced Focus Applications</h4>
+        <h5>Form Field Focus Effects</h5>
+        <pre><code>.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+}
+
+.form-group:focus-within label {
+    color: #3498db;
+    font-weight: bold;
+}</code></pre>
+
+        <h5>Accessible Focus Indicators</h5>
+        <pre><code>/* Custom focus ring for better visibility */
+a:focus, button:focus {
+    outline: 3px solid #4A90E2;
+    outline-offset: 3px;
+}
+
+/* Remove default outline but provide alternative */
+.custom-focus:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #4A90E2;
+}
+
+/* High contrast focus for accessibility */
+@media (prefers-reduced-motion: no-preference) {
+    :focus {
+        transition: outline-offset 0.2s ease;
+        outline-offset: 5px;
+    }
+}</code></pre>
+
+        <h5>Navigation with Focus</h5>
+        <pre><code>/* Skip to content link - accessibility feature */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #333;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* Focus styles for navigation */
+.nav-menu a:focus {
+    background-color: #333;
+    color: white;
+    text-decoration: underline;
+}</code></pre>
+
+        <h4>Combining :hover and :focus</h4>
+        <pre><code>/* Consistent styling for both states */
+button:hover, button:focus {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Different styling for each state */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.card:focus-within {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.card:focus-within .card-header {
+    background-color: #f0f8ff;
+}</code></pre>
+
+        <h3>4.4 Advanced Pseudo-class Combinations</h3>
+        <h4>Sequential Interaction</h4>
+        <pre><code>/* Step-by-step interaction */
+.button {
+    background: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+}
+
+.button:hover {
+    background: #2980b9;
+    transform: scale(1.02);
+}
+
+.button:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}
+
+.button:active {
+    transform: scale(0.98);
+    background: #1f618d;
+}</code></pre>
+
+        <h4>Form Validation States with Focus</h4>
+        <pre><code>input:focus:invalid {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231,76,60,0.1);
+}
+
+input:focus:valid {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+}
+
+input:focus:required {
+    border-left: 4px solid #f39c12;
+}</code></pre>
+
+        <h3>4.5 Mobile and Touch Considerations</h3>
+        <h4>Touch Device Handling</h4>
+        <pre><code>/* Disable hover effects on touch devices */
+@media (hover: hover) {
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+}
+
+@media (hover: none) {
+    .card:active {
+        opacity: 0.7;
+    }
+}
+
+/* Focus visible for keyboard users only */
+:focus-visible {
+    outline: 3px solid #3498db;
+    outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}</code></pre>
+
+        <h3>4.6 Accessibility Considerations</h3>
+        <h4>Don't Rely Solely on Color</h4>
+        <pre><code>/* Bad - relies only on color change */
+.link {
+    color: blue;
+}
+
+.link:hover {
+    color: red;
+}
+
+/* Good - adds underline for clarity */
+.link {
+    color: blue;
+    text-decoration: none;
+}
+
+.link:hover,
+.link:focus {
+    text-decoration: underline;
+    color: darkblue;
+}</code></pre>
+
+        <h4>Sufficient Contrast</h4>
+        <pre><code>/* Ensure hover/focus states meet WCAG contrast requirements */
+.button {
+    background: #3498db;
+    color: white;
+}
+
+.button:hover,
+.button:focus {
+    background: #2980b9; /* Darker but still accessible */
+    /* Contrast ratio should be at least 3:1 for UI components */
+}</code></pre>
+
+        <hr>
+
+        <!-- 5. LINK PSEUDO-CLASSES -->
+        <h2>5. STYLING LINKS WITH :LINK AND :VISITED</h2>
+        <h3>5.1 Understanding Link Pseudo-classes</h3>
+        <p>The four main link states are:</p>
+        <ul>
+            <li><strong>:link</strong> - Unvisited links</li>
+            <li><strong>:visited</strong> - Visited links</li>
+            <li><strong>:hover</strong> - Links being hovered over</li>
+            <li><strong>:active</strong> - Links being clicked/activated</li>
+        </ul>
+
+        <h3>5.2 The :link Pseudo-class</h3>
+        <p>The <code>:link</code> pseudo-class selects links that haven't been visited by the user. It's the default
+            state of a link.</p>
+
+        <h4>Basic Usage</h4>
+        <pre><code>/* Style for all unvisited links */
+a:link {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* More specific targeting */
+.nav-menu a:link {
+    color: #333;
+    font-size: 16px;
+    padding: 10px 15px;
+}
+
+.footer a:link {
+    color: #666;
+    font-size: 14px;
+    border-bottom: 1px dotted #999;
+}</code></pre>
+
+        <h4>Comprehensive Example</h4>
+        <pre><code>/* Complete unvisited link styling */
+a:link {
+    /* Color and typography */
+    color: #2980b9;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    
+    /* Text decoration */
+    text-decoration: none;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    
+    /* Spacing */
+    padding: 2px 4px;
+    margin: 0 2px;
+    
+    /* Background and border */
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+    
+    /* Transitions for smooth effects */
+    transition: all 0.3s ease;
+}
+
+/* Different link styles for different contexts */
+.article-content a:link {
+    color: #c0392b;
+    border-bottom: 1px solid #c0392b;
+}
+
+.menu a:link {
+    color: #2c3e50;
+    font-weight: 600;
+    padding: 10px 20px;
+    display: inline-block;
+}</code></pre>
+
+        <h3>5.3 The :visited Pseudo-class</h3>
+        <p>The <code>:visited</code> pseudo-class selects links that the user has already visited. Due to privacy
+            concerns, the styling capabilities for visited links are limited.</p>
+
+        <h4>Privacy Restrictions</h4>
+        <p>For privacy reasons, browsers severely limit which CSS properties can be used with <code>:visited</code>. You
+            can only style:</p>
+        <ul>
+            <li><code>color</code></li>
+            <li><code>background-color</code></li>
+            <li><code>border-color</code> (and its separate properties)</li>
+            <li><code>outline-color</code></li>
+            <li><code>column-rule-color</code></li>
+            <li>The color parts of <code>fill</code> and <code>stroke</code></li>
+        </ul>
+
+        <h4>Basic Usage</h4>
+        <pre><code>/* Simple visited link styling */
+a:visited {
+    color: #7f8c8d;  /* Gray */
+}
+
+/* More detailed but safe styling */
+a:link {
+    color: #2980b9;
+    border-bottom: 2px solid #2980b9;
+}
+
+a:visited {
+    color: #7f8c8d;
+    border-bottom-color: #7f8c8d;
+}
+
+/* Different contexts */
+.nav-menu a:visited {
+    color: #7f8c8d;
+}
+
+.article-content a:visited {
+    color: #7f8c8d;
+    border-bottom-color: #7f8c8d;
+}</code></pre>
+
+        <h4>What Works and What Doesn't</h4>
+        <pre><code>a:visited {
+    /* These properties work */
+    color: purple;
+    background-color: transparent;
+    border-color: purple;
+    outline-color: purple;
+    
+    /* These properties DO NOT work (will be ignored) */
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 5px;
+    display: block;
+    width: 200px;
+    height: 50px;
+    transform: scale(1.1);
+    opacity: 0.5;
+}</code></pre>
+
+        <h3>5.4 The Complete Link Styling Pattern</h3>
+        <h4>The LVHA Order (LoVe HAte)</h4>
+        <p>The order of link pseudo-classes in your CSS is crucial for them to work correctly:</p>
+        <pre><code>/* Correct order - LoVe HAte */
+a:link    { }  /* Unvisited links */
+a:visited { }  /* Visited links */
+a:hover   { }  /* Hover state */
+a:active  { }  /* Active/clicked state */</code></pre>
+
+        <h4>Why This Order Matters</h4>
+        <pre><code>/* If order is wrong, styles may not apply correctly */
+a:hover {
+    color: red;
+}
+a:link {
+    color: blue;  /* This will override hover because it comes later */
+}
+/* Hover would never show because :link overrides it */</code></pre>
+
+        <h4>Complete Example with All States</h4>
+        <pre><code>/* Base link styling */
+a {
+    /* Base styles for all links */
+    text-decoration: none;
+    padding: 5px 10px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+/* Unvisited links */
+a:link {
+    color: #2980b9;
+    background-color: transparent;
+    border-bottom: 2px solid #2980b9;
+}
+
+/* Visited links */
+a:visited {
+    color: #8e44ad;
+    border-bottom-color: #8e44ad;
+}
+
+/* Hover state */
+a:hover {
+    color: #e67e22;
+    border-bottom-color: #e67e22;
+    background-color: rgba(230, 126, 34, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Active state (while clicking) */
+a:active {
+    color: #c0392b;
+    border-bottom-color: #c0392b;
+    transform: translateY(0);
+}</code></pre>
+
+        <h3>5.5 Advanced Link Styling Patterns</h3>
+        <h4>Button-style Links</h4>
+        <pre><code>.button-link {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.button-link:link {
+    background-color: #3498db;
+    color: white;
+    border: 2px solid #3498db;
+}
+
+.button-link:visited {
+    background-color: #8e44ad;
+    border-color: #8e44ad;
+}
+
+.button-link:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.button-link:active {
+    transform: translateY(0);
+    box-shadow: none;
+}</code></pre>
+
+        <h4>Card Links with Icons</h4>
+        <pre><code>.card-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.card-link:link {
+    color: #333;
+    background: white;
+}
+
+.card-link:visited {
+    color: #666;
+    background: #f9f9f9;
+    border-color: #ccc;
+}
+
+.card-link:hover {
+    border-color: #3498db;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+}
+
+.card-link:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.card-link:hover .card-icon {
+    transform: scale(1.1);
+    color: #3498db;
+}</code></pre>
+
+        <h4>Breadcrumb Navigation</h4>
+        <pre><code>.breadcrumb {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li::after {
+    content: '/';
+    margin: 0 10px;
+    color: #999;
+}
+
+.breadcrumb li:last-child::after {
+    content: '';
+}
+
+.breadcrumb a:link {
+    color: #2980b9;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.breadcrumb a:visited {
+    color: #7f8c8d;
+}
+
+.breadcrumb a:hover {
+    background-color: #f0f0f0;
+    text-decoration: underline;
+}
+
+.breadcrumb a:active {
+    background-color: #e0e0e0;
+}
+
+.breadcrumb .current {
+    color: #333;
+    font-weight: bold;
+}</code></pre>
+
+        <h3>5.6 Navigation Menu with All States</h3>
+        <h4>Complete Navigation Example</h4>
+        <pre><code>/* Main navigation styling */
+.main-nav {
+    background: #2c3e50;
+    padding: 15px 0;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.main-nav a {
+    display: block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Unvisited links */
+.main-nav a:link {
+    color: #ecf0f1;
+    background: transparent;
+}
+
+/* Visited links */
+.main-nav a:visited {
+    color: #bdc3c7;
+}
+
+/* Hover state */
+.main-nav a:hover {
+    background: #34495e;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Active state */
+.main-nav a:active {
+    background: #1e2b38;
+    transform: translateY(0);
+}
+
+/* Current page indicator */
+.main-nav a.current {
+    background: #3498db;
+    color: white;
+    pointer-events: none;
+}
+
+/* Focus state for accessibility */
+.main-nav a:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}</code></pre>
+
+        <h3>5.7 Link Underline Animations</h3>
+        <h4>Creative Underline Effects</h4>
+        <pre><code>/* Animated underline from left */
+.animated-link {
+    position: relative;
+    text-decoration: none;
+    padding-bottom: 3px;
+}
+
+.animated-link:link {
+    color: #333;
+}
+
+.animated-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #3498db;
+    transition: width 0.3s ease;
+}
+
+.animated-link:hover::after {
+    width: 100%;
+}
+
+/* Centered underline */
+.center-underline {
+    position: relative;
+    text-decoration: none;
+}
+
+.center-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #e74c3c;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.center-underline:hover::after {
+    width: 100%;
+}
+
+/* Double underline */
+.double-underline {
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition: all 0.3s ease;
+}
+
+.double-underline:hover {
+    border-bottom-color: #27ae60;
+    box-shadow: inset 0 -4px 0 #27ae60;
+}</code></pre>
+
+        <h3>5.8 External Link Indicators</h3>
+        <pre><code>/* Add icon for external links */
+a[target="_blank"]:link::after {
+    content: '↗';
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+}
+
+a[target="_blank"]:hover::after {
+    transform: translate(2px, -2px);
+}
+
+/* Different styling for external links */
+.external-link:link {
+    color: #16a085;
+    border-bottom: 1px dashed #16a085;
+}
+
+.external-link:visited {
+    color: #1abc9c;
+    border-bottom-color: #1abc9c;
+}
+
+.external-link:hover {
+    border-bottom-style: solid;
+}</code></pre>
+
+        <h3>5.9 Download Links</h3>
+        <pre><code>/* Style for download links */
+a[download]:link {
+    color: #27ae60;
+    position: relative;
+    padding-left: 25px;
+}
+
+a[download]:link::before {
+    content: '↓';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+}
+
+a[download]:visited {
+    color: #2ecc71;
+}
+
+a[download]:hover {
+    text-decoration: underline;
+}
+
+/* Different file types */
+a[href$=".pdf"]:link::after {
+    content: '[PDF]';
+    color: #e74c3c;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+a[href$=".doc"]:link::after,
+a[href$=".docx"]:link::after {
+    content: '[DOC]';
+    color: #3498db;
+    margin-left: 5px;
+}</code></pre>
+
+        <h3>5.10 Accessibility Best Practices for Links</h3>
+        <h4>Ensure Visibility</h4>
+        <pre><code>/* High contrast focus states */
+a:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 3px;
+    background-color: #fff;
+    color: #000;
+}
+
+/* Ensure visited links are distinguishable */
+a:link {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #663399;
+}
+
+/* Skip relying only on color */
+a:link {
+    text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+    text-decoration: none;
+    background-color: #f0f0f0;
+}</code></pre>
+
+        <h4>Link Text Best Practices</h4>
+        <pre><code>/* Hide link text accessibly */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Better link text */
+.read-more:link {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.read-more:link::after {
+    content: ' about this topic';  /* Provides context for screen readers */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+}</code></pre>
+
+        <hr>
+
+        <!-- 6. PRACTICAL EXAMPLES -->
+        <h2>6. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3>6.1 Complete Blog Post Styling</h3>
+        <pre><code>/* Blog post container */
+.blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Georgia', serif;
+    line-height: 1.8;
+}
+
+/* Headers with grouping */
+.blog-post h1,
+.blog-post h2,
+.blog-post h3 {
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.blog-post h1:first-child {
+    margin-top: 0;
+}
+
+/* Paragraphs with descendant selectors */
+.blog-post p {
+    margin-bottom: 1.5em;
+    color: #34495e;
+}
+
+.blog-post p:first-of-type::first-letter {
+    font-size: 3em;
+    float: left;
+    margin-right: 10px;
+    color: #3498db;
+    font-weight: bold;
+}
+
+/* Links within blog post */
+.blog-post a:link {
+    color: #2980b9;
+    text-decoration: none;
+    border-bottom: 1px solid #2980b9;
+    transition: all 0.2s ease;
+}
+
+.blog-post a:visited {
+    color: #8e44ad;
+    border-bottom-color: #8e44ad;
+}
+
+.blog-post a:hover {
+    color: #e67e22;
+    border-bottom-color: #e67e22;
+    background-color: rgba(230, 126, 34, 0.05);
+    padding: 0 2px;
+}
+
+.blog-post a:focus {
+    outline: 2px solid #f39c12;
+    outline-offset: 2px;
+}
+
+.blog-post a:active {
+    color: #c0392b;
+    border-bottom-color: #c0392b;
+}
+
+/* Blockquotes */
+.blog-post blockquote {
+    margin: 2em 40px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-left: 4px solid #3498db;
+    font-style: italic;
+}
+
+.blog-post blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Images */
+.blog-post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.blog-post img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Code blocks */
+.blog-post code {
+    font-family: 'Courier New', monospace;
+    background: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.blog-post pre {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.blog-post pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}</code></pre>
+
+        <h3>6.2 E-commerce Product Card</h3>
+        <pre><code>/* Product card container */
+.product-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    position: relative;
+}
+
+.product-card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    border-color: #3498db;
+}
+
+.product-card:focus-within {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Product image */
+.product-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
+}
+
+/* Quick view overlay */
+.quick-view {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background: rgba(52, 152, 219, 0.9);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    transition: bottom 0.3s ease;
+    cursor: pointer;
+}
+
+.product-card:hover .quick-view {
+    bottom: 0;
+}
+
+.quick-view:hover {
+    background: #2980b9;
+}
+
+/* Product info */
+.product-info {
+    padding: 20px;
+}
+
+.product-title {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.product-title a:link {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.product-title a:visited {
+    color: #7f8c8d;
+}
+
+.product-title a:hover {
+    color: #3498db;
+}
+
+.product-title a:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Price */
+.product-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 10px 0;
+}
+
+.original-price {
+    font-size: 16px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+
+/* Rating */
+.product-rating {
+    color: #f39c12;
+    margin: 10px 0;
+}
+
+.product-rating span:last-child {
+    color: #666;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+/* Add to cart button */
+.add-to-cart {
+    width: 100%;
+    padding: 12px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.add-to-cart:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}
+
+.add-to-cart:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.add-to-cart:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}</code></pre>
+
+        <h3>6.3 Interactive Form with Validation</h3>
+        <pre><code>/* Form container */
+.registration-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.form-group:focus-within label {
+    color: #3498db;
+}
+
+/* Input fields */
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:hover {
+    border-color: #b0b0b0;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+/* Validation states */
+.form-group input:focus:invalid {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-group input:focus:valid {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.form-group input:required {
+    border-left: 4px solid #f39c12;
+}
+
+/* Error messages */
+.error-message {
+    display: none;
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.form-group input:invalid:not(:placeholder-shown) + .error-message {
+    display: block;
+}
+
+/* Success indicator */
+.form-group::after {
+    content: '✓';
+    position: absolute;
+    right: 10px;
+    top: 40px;
+    color: #27ae60;
+    font-size: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-group input:valid + .error-message + .form-group::after {
+    opacity: 1;
+}</code></pre>
+
+        <hr>
+
+        <!-- 7. PITFALLS AND BEST PRACTICES -->
+        <h2>7. COMMON PITFALLS AND BEST PRACTICES</h2>
+
+        <h3>7.1 Common Mistakes</h3>
+        <h4>Mistake 1: Over-specificity</h4>
+        <pre><code>/* Bad - too specific, hard to override */
+body div.container main article p.intro {
+    color: blue;
+}
+
+/* Good - use classes effectively */
+.intro-text {
+    color: blue;
+}</code></pre>
+
+        <h4>Mistake 2: Forgetting the LVHA Order</h4>
+        <pre><code>/* Bad - incorrect order */
+a:hover {
+    color: red;
+}
+a:link {
+    color: blue;  /* This overrides hover */
+}
+a:visited {
+    color: purple;
+}
+
+/* Good - proper LVHA order */
+a:link { color: blue; }
+a:visited { color: purple; }
+a:hover { color: red; }
+a:active { color: orange; }</code></pre>
+
+        <h4>Mistake 3: Neglecting Focus States</h4>
+        <pre><code>/* Bad - removes focus outline without alternative */
+a:focus {
+    outline: none;
+}
+
+/* Good - provides custom focus indicator */
+a:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}
+
+/* Alternative - only remove for mouse users */
+a:focus:not(:focus-visible) {
+    outline: none;
+}
+a:focus-visible {
+    outline: 3px solid #f39c12;
+}</code></pre>
+
+        <h4>Mistake 4: Relying Solely on Color</h4>
+        <pre><code>/* Bad - color-only indicator */
+a:link { color: blue; }
+a:visited { color: purple; }
+
+/* Good - multiple indicators */
+a:link {
+    color: blue;
+    text-decoration: underline;
+}
+a:visited {
+    color: purple;
+    text-decoration: underline wavy;
+}</code></pre>
+
+        <h3>7.2 Best Practices</h3>
+        <h4>Practice 1: Use Meaningful Class Names</h4>
+        <pre><code>/* Bad */
+.red-text { color: red; }
+.big-font { font-size: 24px; }
+
+/* Good */
+.error-message { 
+    color: red; 
+    font-size: 14px;
+}
+.article-title { 
+    font-size: 24px;
+    font-weight: bold;
+}</code></pre>
+
+        <h4>Practice 2: Keep Selectors Shallow</h4>
+        <pre><code>/* Bad - too deep */
+body > div.container > main > article > section > p {
+    margin-bottom: 20px;
+}
+
+/* Good - use class */
+.article-content p {
+    margin-bottom: 20px;
+}</code></pre>
+
+        <h4>Practice 3: Group Related Styles</h4>
+        <pre><code>/* Bad - scattered styles */
+h1 { color: blue; }
+/* 50 lines later */
+h2 { color: blue; }
+/* 100 lines later */
+h3 { color: blue; }
+
+/* Good - grouped */
+h1, h2, h3 {
+    color: blue;
+    font-family: 'Arial', sans-serif;
+}</code></pre>
+
+        <h4>Practice 4: Mobile-First Approach</h4>
+        <pre><code>/* Bad - desktop-first */
+.element {
+    width: 960px;
+    margin: 0 auto;
+}
+@media (max-width: 768px) {
+    .element {
+        width: 100%;
+    }
+}
+
+/* Good - mobile-first */
+.element {
+    width: 100%;
+    padding: 0 15px;
+}
+@media (min-width: 768px) {
+    .element {
+        width: 750px;
+        margin: 0 auto;
+    }
+}
+@media (min-width: 1024px) {
+    .element {
+        width: 960px;
+    }
+}</code></pre>
+
+        <h3>7.3 Performance Optimization</h3>
+        <h4>Efficient Selectors</h4>
+        <pre><code>/* Less efficient */
+div > ul > li > a {
+    color: blue;
+}
+
+/* More efficient */
+.nav-link {
+    color: blue;
+}</code></pre>
+
+        <h4>Limit Use of Universal Selector</h4>
+        <pre><code>/* Bad - affects every element */
+* {
+    box-sizing: border-box;
+}
+
+/* Good - more targeted */
+html {
+    box-sizing: border-box;
+}
+*, *::before, *::after {
+    box-sizing: inherit;
+}</code></pre>
+
+        <h3>7.4 Accessibility Checklist</h3>
+        <pre><code>/* Complete accessible link styling */
+.accessible-link {
+    /* Ensure sufficient contrast */
+    color: #0066cc; /* Contrast ratio of at least 4.5:1 */
+    
+    /* Don't rely on color alone */
+    text-decoration: underline;
+    
+    /* Provide hover/focus indicators */
+    transition: all 0.2s ease;
+}
+
+.accessible-link:hover {
+    color: #004999;
+    background-color: #f0f7ff;
+}
+
+.accessible-link:focus {
+    /* Never remove outline without replacement */
+    outline: 3px solid #f39c12;
+    outline-offset: 3px;
+    
+    /* Ensure focus state is visible */
+    background-color: #fff;
+    color: #000;
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}</code></pre>
+
+        <hr>
+
+        <!-- 8. EXERCISES -->
+        <h2>8. EXERCISES AND CHALLENGES</h2>
+
+        <h3>Exercise 1: Basic Selector Practice</h3>
+        <p><strong>Task:</strong> Style the following HTML using grouping, descendant, and pseudo-class selectors.</p>
+        <pre><code>&lt;nav class="main-nav"&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#services"&gt;Services&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;main&gt;
+    &lt;section class="content"&gt;
+        &lt;h2&gt;Welcome&lt;/h2&gt;
+        &lt;p&gt;This is a &lt;a href="#example"&gt;sample paragraph&lt;/a&gt; with a link.&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/main&gt;
+
+&lt;footer&gt;
+    &lt;p&gt;&copy; 2024 &lt;a href="#privacy"&gt;Privacy Policy&lt;/a&gt;&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+
+        <p><strong>Requirements:</strong></p>
+        <ol>
+            <li>Group all headings (h1, h2, h3) with consistent font family and color</li>
+            <li>Style navigation links with hover and focus states</li>
+            <li>Style footer links differently from content links</li>
+            <li>Add visited state styling for all links</li>
+        </ol>
+
+        <h4>Solution:</h4>
+        <pre><code>/* Grouping headings */
+h1, h2, h3 {
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Navigation styling */
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a:link {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+}
+
+.main-nav a:visited {
+    color: #666;
+}
+
+.main-nav a:hover {
+    background: #333;
+    color: white;
+    border-radius: 4px;
+}
+
+.main-nav a:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}
+
+/* Content links */
+.content a:link {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+.content a:visited {
+    color: #8e44ad;
+}
+
+.content a:hover {
+    color: #e67e22;
+}
+
+/* Footer links */
+footer a:link {
+    color: #7f8c8d;
+    text-decoration: none;
+    border-bottom: 1px dotted #7f8c8d;
+}
+
+footer a:visited {
+    color: #95a5a6;
+    border-bottom-color: #95a5a6;
+}
+
+footer a:hover {
+    color: #2c3e50;
+    border-bottom-style: solid;
+}</code></pre>
+
+        <h3>Exercise 2: Interactive Card Component</h3>
+        <p><strong>Task:</strong> Create a product card with interactive elements.</p>
+        <pre><code>&lt;div class="product-card"&gt;
+    &lt;div class="product-image"&gt;
+        &lt;img src="product.jpg" alt="Product Name"&gt;
+        &lt;div class="sale-badge"&gt;Sale!&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="product-info"&gt;
+        &lt;h3 class="product-title"&gt;
+            &lt;a href="#product1"&gt;Premium Headphones&lt;/a&gt;
+        &lt;/h3&gt;
+        &lt;p class="product-price"&gt;$99.99&lt;/p&gt;
+        &lt;div class="product-rating"&gt;
+            ★★★★☆
+        &lt;/div&gt;
+        &lt;button class="add-to-cart"&gt;Add to Cart&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <p><strong>Requirements:</strong></p>
+        <ol>
+            <li>Add hover effect to scale image</li>
+            <li>Style link in all states</li>
+            <li>Style button with hover, focus, active states</li>
+            <li>Make sale badge appear on hover</li>
+            <li>Add focus-within styling to card</li>
+        </ol>
+
+        <h4>Solution:</h4>
+        <pre><code>.product-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.product-card:hover {
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+}
+
+.product-card:focus-within {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
+}
+
+.sale-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .sale-badge {
+    opacity: 1;
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-title {
+    margin: 0 0 10px;
+}
+
+.product-title a:link {
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.product-title a:visited {
+    color: #7f8c8d;
+}
+
+.product-title a:hover {
+    color: #3498db;
+    text-decoration: underline;
+}
+
+.product-title a:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 10px 0;
+}
+
+.product-rating {
+    color: #f39c12;
+    margin-bottom: 15px;
+}
+
+.add-to-cart {
+    width: 100%;
+    padding: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+}
+
+.add-to-cart:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}
+
+.add-to-cart:active {
+    transform: translateY(0);
+    box-shadow: none;
+}</code></pre>
+
+        <h3>Exercise 3: Complex Navigation Menu</h3>
+        <p><strong>Task:</strong> Create a dropdown navigation menu with all interactive states.</p>
+        <pre><code>&lt;nav class="navbar"&gt;
+    &lt;ul class="nav-menu"&gt;
+        &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li class="dropdown"&gt;
+            &lt;a href="#products"&gt;Products&lt;/a&gt;
+            &lt;ul class="dropdown-menu"&gt;
+                &lt;li&gt;&lt;a href="#electronics"&gt;Electronics&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#clothing"&gt;Clothing&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#books"&gt;Books&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/li&gt;
+        &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+
+        <p><strong>Requirements:</strong></p>
+        <ol>
+            <li>Style all navigation links with hover, focus, visited states</li>
+            <li>Create dropdown that appears on hover</li>
+            <li>Add active state for current page</li>
+            <li>Ensure keyboard accessibility</li>
+            <li>Style dropdown items appropriately</li>
+        </ol>
+
+        <h4>Solution:</h4>
+        <pre><code>.navbar {
+    background: #2c3e50;
+    padding: 15px 0;
+}
+
+.nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.nav-menu > li {
+    position: relative;
+    margin: 0 10px;
+}
+
+/* Top level links */
+.nav-menu > li > a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-menu > li > a:link {
+    color: #ecf0f1;
+}
+
+.nav-menu > li > a:visited {
+    color: #bdc3c7;
+}
+
+.nav-menu > li > a:hover {
+    background: #34495e;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.nav-menu > li > a:focus {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+    background: #34495e;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: white;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Dropdown items */
+.dropdown-menu li {
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:link {
+    color: #2c3e50;
+}
+
+.dropdown-menu a:visited {
+    color: #7f8c8d;
+}
+
+.dropdown-menu a:hover {
+    background: #f5f5f5;
+    padding-left: 25px;
+    color: #3498db;
+}
+
+.dropdown-menu a:focus {
+    outline: none;
+    background: #f0f0f0;
+    color: #3498db;
+    padding-left: 25px;
+}
+
+/* Active state for current page */
+.nav-menu .active > a {
+    background: #3498db;
+    color: white;
+}
+
+.nav-menu .active > a:hover {
+    background: #2980b9;
+}
+
+/* Keyboard navigation focus */
+.nav-menu a:focus-visible {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+    z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-direction: column;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: #f5f5f5;
+        display: none;
+    }
+    
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+}</code></pre>
+
+        <h3>Challenge: Build a Complete Interactive Component</h3>
+        <p><strong>Final Challenge:</strong> Combine everything you've learned to build an interactive image gallery
+            with thumbnails, captions, and lightbox functionality using only HTML and CSS (no JavaScript).</p>
+
+        <h4>Starter HTML:</h4>
+        <pre><code>&lt;div class="gallery"&gt;
+    &lt;div class="gallery-item"&gt;
+        &lt;img src="image1-thumb.jpg" alt="Description 1"&gt;
+        &lt;div class="caption"&gt;Beautiful Sunset&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+        &lt;img src="image2-thumb.jpg" alt="Description 2"&gt;
+        &lt;div class="caption"&gt;Mountain View&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="gallery-item"&gt;
+        &lt;img src="image3-thumb.jpg" alt="Description 3"&gt;
+        &lt;div class="caption"&gt;Ocean Waves&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h4>Sample Solution Approach:</h4>
+        <pre><code>/* Gallery container */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Gallery items - grouping with common properties */
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+/* Hover effect on items */
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Images within gallery - descendant selector */
+.gallery-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+/* Captions - descendant selector */
+.gallery-item .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 20px 10px 10px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    text-align: center;
+    font-size: 16px;
+}
+
+.gallery-item:hover .caption {
+    transform: translateY(0);
+}
+
+/* Focus states for keyboard navigation */
+.gallery-item:focus-within {
+    outline: 3px solid #3498db;
+    outline-offset: 3px;
+}
+
+/* If you add links */
+.gallery-item a:link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.gallery-item a:focus {
+    outline: none;
+}
+
+.gallery-item a:focus-visible {
+    outline: 3px solid #f39c12;
+    outline-offset: 2px;
+}</code></pre>
+
+        <hr>
+
+        <h2>CONCLUSION</h2>
+        <h3>Key Takeaways</h3>
+        <ol>
+            <li><strong>Grouping Selectors</strong> help you write DRY, maintainable CSS by applying the same styles to
+                multiple elements.</li>
+            <li><strong>Descendant Selectors</strong> allow you to target elements based on their context within the
+                HTML structure, providing powerful but precise styling control.</li>
+            <li><strong>Pseudo-classes</strong> like <code>:hover</code> and <code>:focus</code> bring interactivity to
+                your designs and are crucial for good user experience and accessibility.</li>
+            <li><strong>Link pseudo-classes</strong> (<code>:link</code>, <code>:visited</code>, <code>:hover</code>,
+                <code>:active</code>) must be used in the correct LVHA order to work properly and provide visual
+                feedback about link states.</li>
+            <li><strong>Accessibility</strong> should always be considered when styling interactive elements. Never rely
+                solely on color, always provide visible focus indicators, and ensure sufficient contrast.</li>
+            <li><strong>Performance</strong> matters. Write efficient selectors and avoid unnecessary specificity wars.
+            </li>
+        </ol>
+
+        <h3>Next Steps</h3>
+        <ul>
+            <li>Practice combining these selectors in real projects</li>
+            <li>Experiment with creating your own interactive components</li>
+            <li>Learn about more advanced pseudo-classes like <code>:nth-child()</code>, <code>:not()</code>, and
+                <code>:is()</code></li>
+            <li>Study CSS frameworks to see how they implement these concepts</li>
+            <li>Always test your interactive elements with keyboard navigation</li>
+        </ul>
+
+        <p><em>Remember: Great CSS is not just about making things look pretty—it's about creating intuitive,
+                accessible, and performant experiences for all users.</em></p>
+
+        <hr>
+
+        <!-- bottom navigation (simple) -->
+        <div class="bottom-nav">
+            <a href="#top">↑ back to top</a>
+            <a href="index.html">📄 Block 2 index</a>
+        </div>
+
+        <footer>
+            🧠 Advanced CSS Selectors · complete reference · mobile friendly · every line preserved
+        </footer>
+    </div>
+</body>
+
+</html>
