@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Lists & Images: Complete Study Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f5f0;
+            color: #1e2b32;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px #2c4a52;
+            padding: 3rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #1b4e5e;
+            border-bottom: 4px solid #2f928a;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #0d6272;
+            border-left: 10px solid #239989;
+            padding-left: 1.5rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #1b727d;
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #266d74;
+            margin: 1.5rem 0 1rem;
+        }
+
+        pre {
+            background: #1e2b32;
+            color: #e5eef5;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            border: 1px solid #3a6b71;
+        }
+
+        code {
+            background: #eef1f3;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(12, 60, 70, 0.1);
+        }
+
+        th {
+            background: #1b727d;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #b6dbe6;
+            background: #f6fcfd;
+        }
+
+        ul,
+        ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .toc {
+            background: #f2f8fe;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2rem 0 3rem;
+            border: 1px solid #b7dbe8;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-left-color: #1b727d;
+        }
+
+        .toc ol {
+            margin-bottom: 0;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #cde3e9, #eef8f5, #cde3e9);
+            margin: 2.5rem 0;
+        }
+
+        .note {
+            background: #e1f0eb;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 8px solid #1c7e8c;
+        }
+
+        figure {
+            margin: 2rem 0;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: #3a6b71;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <h1>HTML Lists & Images: A Comprehensive Guide</h1>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ol>
+                <li><a href="#introduction-to-html-lists">Introduction to HTML Lists</a></li>
+                <li><a href="#unordered-lists-ul">Unordered Lists</a></li>
+                <li><a href="#ordered-lists-ol">Ordered Lists</a></li>
+                <li><a href="#description-lists-dl">Description Lists</a></li>
+                <li><a href="#nested-lists">Nested Lists</a></li>
+                <li><a href="#styling-lists-with-css">Styling Lists with CSS</a></li>
+                <li><a href="#introduction-to-images-in-html">Introduction to Images in HTML</a></li>
+                <li><a href="#the-image-element-img">The Image Element</a></li>
+                <li><a href="#image-attributes-in-depth">Image Attributes in Depth</a></li>
+                <li><a href="#image-formats-and-optimization">Image Formats and Optimization</a></li>
+                <li><a href="#accessibility-and-best-practices">Accessibility and Best Practices</a></li>
+                <li><a href="#practical-examples-and-use-cases">Practical Examples and Use Cases</a></li>
+                <li><a href="#common-mistakes-and-troubleshooting">Common Mistakes and Troubleshooting</a></li>
+                <li><a href="#advanced-techniques">Advanced Techniques</a></li>
+                <li><a href="#practice-exercises">Practice Exercises</a></li>
+            </ol>
+        </div>
+
+        <hr>
+
+        <!-- 1. Introduction to HTML Lists -->
+        <h2 id="introduction-to-html-lists">1. Introduction to HTML Lists</h2>
+        <p>Lists are fundamental building blocks in web development, used to organize and present information in a
+            structured, readable format. HTML provides three main types of lists, each serving a specific purpose in
+            content organization.</p>
+
+        <h3>Why Use Lists?</h3>
+        <ul>
+            <li><strong>Improved Readability:</strong> Break complex information into digestible chunks</li>
+            <li><strong>Semantic Meaning:</strong> Convey the relationship between pieces of information</li>
+            <li><strong>Accessibility:</strong> Screen readers can announce list context (e.g., "List of 5 items")</li>
+            <li><strong>SEO Benefits:</strong> Search engines understand structured content better</li>
+            <li><strong>Visual Hierarchy:</strong> Create organized, scannable content</li>
+        </ul>
+
+        <h3>The Three List Types Overview</h3>
+        <table>
+            <tr>
+                <th>List Type</th>
+                <th>HTML Tag</th>
+                <th>Purpose</th>
+                <th>Example Use Case</th>
+            </tr>
+            <tr>
+                <td>Unordered List</td>
+                <td><code>&lt;ul&gt;</code></td>
+                <td>Items with no specific order</td>
+                <td>Shopping lists, features, bullet points</td>
+            </tr>
+            <tr>
+                <td>Ordered List</td>
+                <td><code>&lt;ol&gt;</code></td>
+                <td>Items in a specific sequence</td>
+                <td>Instructions, rankings, step-by-step guides</td>
+            </tr>
+            <tr>
+                <td>Description List</td>
+                <td><code>&lt;dl&gt;</code></td>
+                <td>Term-description pairs</td>
+                <td>Glossaries, metadata, Q&amp;A sections</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <!-- 2. Unordered Lists -->
+        <h2 id="unordered-lists-ul">2. Unordered Lists (<code>&lt;ul&gt;</code>)</h2>
+        <p>Unordered lists are used when the sequence of items doesn't matter. They are typically displayed with bullet
+            points by default.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre>&lt;ul&gt;
+    &lt;li&gt;First item&lt;/li&gt;
+    &lt;li&gt;Second item&lt;/li&gt;
+    &lt;li&gt;Third item&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <p><strong>Browser Output:</strong></p>
+        <ul>
+            <li>First item</li>
+            <li>Second item</li>
+            <li>Third item</li>
+        </ul>
+
+        <h3>The <code>&lt;li&gt;</code> Element</h3>
+        <p>The <code>&lt;li&gt;</code> (list item) element represents a single item in a list. Key points:</p>
+        <ul>
+            <li>Must be a direct child of <code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, or <code>&lt;menu&gt;</code>
+            </li>
+            <li>Can contain any HTML content (text, images, links, even other lists)</li>
+            <li>Can have its own attributes and styling</li>
+        </ul>
+
+        <h3>Bullet Point Types (Using CSS)</h3>
+        <p>While the <code>type</code> attribute is deprecated in HTML5, we control bullet styles with CSS:</p>
+        <pre>&lt;ul style="list-style-type: disc;"&gt;
+    &lt;li&gt;Disc bullet (default)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul style="list-style-type: circle;"&gt;
+    &lt;li&gt;Circle bullet&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul style="list-style-type: square;"&gt;
+    &lt;li&gt;Square bullet&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul style="list-style-type: none;"&gt;
+    &lt;li&gt;No bullet&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h3>Practical Examples</h3>
+
+        <h4>Example 1: Feature List</h4>
+        <pre>&lt;ul&gt;
+    &lt;li&gt;&lt;strong&gt;4K Ultra HD&lt;/strong&gt; - Crystal clear resolution&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;HDR Support&lt;/strong&gt; - Vibrant colors and contrast&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Smart TV Platform&lt;/strong&gt; - Access to streaming apps&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Voice Control&lt;/strong&gt; - Hands-free operation&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h4>Example 2: Navigation Menu</h4>
+        <pre>&lt;nav&gt;
+    &lt;ul style="list-style-type: none; padding: 0;"&gt;
+        &lt;li&gt;&lt;a href="/home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/about"&gt;About Us&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/services"&gt;Services&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</pre>
+
+        <hr>
+
+        <!-- 3. Ordered Lists -->
+        <h2 id="ordered-lists-ol">3. Ordered Lists (<code>&lt;ol&gt;</code>)</h2>
+        <p>Ordered lists are used when the sequence of items is important. They are displayed with numbers, letters, or
+            Roman numerals by default.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre>&lt;ol&gt;
+    &lt;li&gt;First step&lt;/li&gt;
+    &lt;li&gt;Second step&lt;/li&gt;
+    &lt;li&gt;Third step&lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <p><strong>Browser Output:</strong></p>
+        <ol>
+            <li>First step</li>
+            <li>Second step</li>
+            <li>Third step</li>
+        </ol>
+
+        <h3>Ordered List Attributes</h3>
+
+        <h4>1. <code>type</code> Attribute (Deprecated but still supported)</h4>
+        <p>Specifies the numbering type:</p>
+        <pre>&lt;ol type="1"&gt;  &lt;!-- Default. Numbers: 1, 2, 3 --&gt;
+    &lt;li&gt;Item 1&lt;/li&gt;
+    &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ol type="A"&gt;  &lt;!-- Uppercase letters: A, B, C --&gt;
+    &lt;li&gt;Item A&lt;/li&gt;
+    &lt;li&gt;Item B&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ol type="a"&gt;  &lt;!-- Lowercase letters: a, b, c --&gt;
+    &lt;li&gt;Item a&lt;/li&gt;
+    &lt;li&gt;Item b&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ol type="I"&gt;  &lt;!-- Uppercase Roman: I, II, III --&gt;
+    &lt;li&gt;Item I&lt;/li&gt;
+    &lt;li&gt;Item II&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ol type="i"&gt;  &lt;!-- Lowercase Roman: i, ii, iii --&gt;
+    &lt;li&gt;Item i&lt;/li&gt;
+    &lt;li&gt;Item ii&lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <h4>2. <code>start</code> Attribute</h4>
+        <p>Defines the starting value of the list:</p>
+        <pre>&lt;ol start="5"&gt;
+    &lt;li&gt;Item 5&lt;/li&gt;
+    &lt;li&gt;Item 6&lt;/li&gt;
+    &lt;li&gt;Item 7&lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <p><strong>Output:</strong></p>
+        <ol start="5">
+            <li>Item 5</li>
+            <li>Item 6</li>
+            <li>Item 7</li>
+        </ol>
+
+        <h4>3. <code>reversed</code> Attribute</h4>
+        <p>Reverses the order of the list:</p>
+        <pre>&lt;ol reversed&gt;
+    &lt;li&gt;Top item (counts down)&lt;/li&gt;
+    &lt;li&gt;Middle item&lt;/li&gt;
+    &lt;li&gt;Bottom item&lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <p><strong>Output:</strong></p>
+        <ol reversed>
+            <li>Top item (counts down)</li>
+            <li>Middle item</li>
+            <li>Bottom item</li>
+        </ol>
+
+        <h3>Practical Examples</h3>
+
+        <h4>Example 1: Recipe Instructions</h4>
+        <pre>&lt;h3&gt;How to Make Perfect Scrambled Eggs&lt;/h3&gt;
+&lt;ol&gt;
+    &lt;li&gt;Crack 3 eggs into a bowl&lt;/li&gt;
+    &lt;li&gt;Add a splash of milk and whisk thoroughly&lt;/li&gt;
+    &lt;li&gt;Melt butter in a non-stick pan over medium heat&lt;/li&gt;
+    &lt;li&gt;Pour in the egg mixture and stir gently with a spatula&lt;/li&gt;
+    &lt;li&gt;Cook until eggs are softly set, about 3-4 minutes&lt;/li&gt;
+    &lt;li&gt;Season with salt and pepper before serving&lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <h4>Example 2: Multi-stage Process</h4>
+        <pre>&lt;h3&gt;Website Launch Checklist&lt;/h3&gt;
+&lt;ol type="A"&gt;
+    &lt;li&gt;&lt;strong&gt;Pre-Launch&lt;/strong&gt;
+        &lt;ol type="i"&gt;
+            &lt;li&gt;Complete content writing&lt;/li&gt;
+            &lt;li&gt;Test all links and forms&lt;/li&gt;
+            &lt;li&gt;Optimize images&lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Launch Day&lt;/strong&gt;
+        &lt;ol type="i" start="4"&gt;
+            &lt;li&gt;Deploy to production server&lt;/li&gt;
+            &lt;li&gt;Monitor error logs&lt;/li&gt;
+            &lt;li&gt;Verify DNS propagation&lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <hr>
+
+        <!-- 4. Description Lists -->
+        <h2 id="description-lists-dl">4. Description Lists (<code>&lt;dl&gt;</code>)</h2>
+        <p>Description lists (formerly called definition lists) are used for name-value groups, such as terms and
+            definitions, metadata, or Q&amp;A pairs.</p>
+
+        <h3>Basic Structure</h3>
+        <ul>
+            <li><code>&lt;dl&gt;</code> - The description list container</li>
+            <li><code>&lt;dt&gt;</code> - Description term (the name or term)</li>
+            <li><code>&lt;dd&gt;</code> - Description details (the value or definition)</li>
+        </ul>
+
+        <h3>Basic Syntax</h3>
+        <pre>&lt;dl&gt;
+    &lt;dt&gt;HTML&lt;/dt&gt;
+    &lt;dd&gt;HyperText Markup Language - the standard markup language for web documents.&lt;/dd&gt;
+    
+    &lt;dt&gt;CSS&lt;/dt&gt;
+    &lt;dd&gt;Cascading Style Sheets - a language for describing the presentation of web pages.&lt;/dd&gt;
+    
+    &lt;dt&gt;JavaScript&lt;/dt&gt;
+    &lt;dd&gt;A programming language that enables interactive web pages.&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+
+        <p><strong>Browser Output:</strong></p>
+        <dl>
+            <dt>HTML</dt>
+            <dd>HyperText Markup Language - the standard markup language for web documents.</dd>
+            <dt>CSS</dt>
+            <dd>Cascading Style Sheets - a language for describing the presentation of web pages.</dd>
+            <dt>JavaScript</dt>
+            <dd>A programming language that enables interactive web pages.</dd>
+        </dl>
+
+        <h3>Multiple Terms and Descriptions</h3>
+        <p>A single term can have multiple descriptions:</p>
+        <pre>&lt;dl&gt;
+    &lt;dt&gt;Color&lt;/dt&gt;
+    &lt;dd&gt;The property of objects that depends on the light they reflect.&lt;/dd&gt;
+    &lt;dd&gt;In web design, specified using hex, RGB, or HSL values.&lt;/dd&gt;
+    
+    &lt;dt&gt;Font&lt;/dt&gt;
+    &lt;dd&gt;A set of printable or displayable text characters in a specific style.&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+
+        <p>Multiple terms can share a description:</p>
+        <pre>&lt;dl&gt;
+    &lt;dt&gt;Mozilla Firefox&lt;/dt&gt;
+    &lt;dt&gt;Google Chrome&lt;/dt&gt;
+    &lt;dt&gt;Apple Safari&lt;/dt&gt;
+    &lt;dd&gt;Modern web browsers that support HTML5 and CSS3 features.&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+
+        <h3>Practical Examples</h3>
+
+        <h4>Example 1: Product Specifications</h4>
+        <pre>&lt;dl&gt;
+    &lt;dt&gt;Product Name&lt;/dt&gt;
+    &lt;dd&gt;UltraBook Pro X1&lt;/dd&gt;
+    
+    &lt;dt&gt;Processor&lt;/dt&gt;
+    &lt;dd&gt;Intel Core i7-1165G7 (4 cores, up to 4.7 GHz)&lt;/dd&gt;
+    
+    &lt;dt&gt;Memory&lt;/dt&gt;
+    &lt;dd&gt;16GB LPDDR4x RAM&lt;/dd&gt;
+    
+    &lt;dt&gt;Storage&lt;/dt&gt;
+    &lt;dd&gt;512GB NVMe SSD&lt;/dd&gt;
+    
+    &lt;dt&gt;Display&lt;/dt&gt;
+    &lt;dd&gt;14-inch 4K OLED, 100% DCI-P3 color gamut&lt;/dd&gt;
+    
+    &lt;dt&gt;Battery Life&lt;/dt&gt;
+    &lt;dd&gt;Up to 15 hours of video playback&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+
+        <h4>Example 2: FAQ Section</h4>
+        <pre>&lt;section&gt;
+    &lt;h2&gt;Frequently Asked Questions&lt;/h2&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;Q: What payment methods do you accept?&lt;/dt&gt;
+        &lt;dd&gt;A: We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay.&lt;/dd&gt;
+        
+        &lt;dt&gt;Q: How long does shipping take?&lt;/dt&gt;
+        &lt;dd&gt;A: Standard shipping takes 3-5 business days. Express shipping (1-2 business days) is available at checkout.&lt;/dd&gt;
+        
+        &lt;dt&gt;Q: Can I return an item?&lt;/dt&gt;
+        &lt;dd&gt;A: Yes, we offer free returns within 30 days of purchase. Items must be unused and in original packaging.&lt;/dd&gt;
+    &lt;/dl&gt;
+&lt;/section&gt;</pre>
+
+        <hr>
+
+        <!-- 5. Nested Lists -->
+        <h2 id="nested-lists">5. Nested Lists</h2>
+        <p>Lists can be nested inside other lists to create hierarchical structures.</p>
+
+        <h3>Nested Unordered Lists</h3>
+        <pre>&lt;ul&gt;
+    &lt;li&gt;Fruits
+        &lt;ul&gt;
+            &lt;li&gt;Tropical
+                &lt;ul&gt;
+                    &lt;li&gt;Mango&lt;/li&gt;
+                    &lt;li&gt;Pineapple&lt;/li&gt;
+                    &lt;li&gt;Papaya&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/li&gt;
+            &lt;li&gt;Citrus
+                &lt;ul&gt;
+                    &lt;li&gt;Orange&lt;/li&gt;
+                    &lt;li&gt;Lemon&lt;/li&gt;
+                    &lt;li&gt;Grapefruit&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;Vegetables
+        &lt;ul&gt;
+            &lt;li&gt;Leafy Greens
+                &lt;ul&gt;
+                    &lt;li&gt;Spinach&lt;/li&gt;
+                    &lt;li&gt;Kale&lt;/li&gt;
+                    &lt;li&gt;Lettuce&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h3>Nested Ordered Lists</h3>
+        <pre>&lt;ol&gt;
+    &lt;li&gt;Prepare the workspace
+        &lt;ol type="a"&gt;
+            &lt;li&gt;Clear the desk&lt;/li&gt;
+            &lt;li&gt;Gather all materials&lt;/li&gt;
+            &lt;li&gt;Ensure proper lighting&lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/li&gt;
+    &lt;li&gt;Start the project
+        &lt;ol type="a" start="4"&gt;
+            &lt;li&gt;Open the software&lt;/li&gt;
+            &lt;li&gt;Create a new file&lt;/li&gt;
+            &lt;li&gt;Save with appropriate name&lt;/li&gt;
+        &lt;/ol&gt;
+    &lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <h3>Mixed List Types</h3>
+        <pre>&lt;ol&gt;
+    &lt;li&gt;Learn Web Development
+        &lt;ul&gt;
+            &lt;li&gt;HTML for structure&lt;/li&gt;
+            &lt;li&gt;CSS for styling&lt;/li&gt;
+            &lt;li&gt;JavaScript for interactivity
+                &lt;ol type="i"&gt;
+                    &lt;li&gt;Variables and data types&lt;/li&gt;
+                    &lt;li&gt;Functions and scope&lt;/li&gt;
+                    &lt;li&gt;DOM manipulation&lt;/li&gt;
+                &lt;/ol&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;Build Projects
+        &lt;ul&gt;
+            &lt;li&gt;Personal website&lt;/li&gt;
+            &lt;li&gt;Todo application&lt;/li&gt;
+            &lt;li&gt;E-commerce site&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/li&gt;
+&lt;/ol&gt;</pre>
+
+        <hr>
+
+        <!-- 6. Styling Lists with CSS -->
+        <h2 id="styling-lists-with-css">6. Styling Lists with CSS</h2>
+
+        <h3>Basic List Styling Properties</h3>
+
+        <h4><code>list-style-type</code></h4>
+        <pre>/* Unordered list styles */
+ul {
+    list-style-type: disc;    /* Default */
+    list-style-type: circle;  /* Hollow circle */
+    list-style-type: square;  /* Solid square */
+    list-style-type: none;    /* No marker */
+}
+
+/* Ordered list styles */
+ol {
+    list-style-type: decimal;          /* 1, 2, 3... */
+    list-style-type: decimal-leading-zero; /* 01, 02, 03... */
+    list-style-type: lower-alpha;       /* a, b, c... */
+    list-style-type: upper-alpha;       /* A, B, C... */
+    list-style-type: lower-roman;       /* i, ii, iii... */
+    list-style-type: upper-roman;       /* I, II, III... */
+}</pre>
+
+        <h4><code>list-style-position</code></h4>
+        <pre>ul {
+    list-style-position: outside; /* Default - marker outside content */
+    list-style-position: inside;  /* Marker inside content block */
+}</pre>
+
+        <h4><code>list-style-image</code></h4>
+        <pre>ul {
+    list-style-image: url('custom-bullet.png');
+    /* Fallback if image fails */
+    list-style-type: square;
+}</pre>
+
+        <h4>Shorthand Property</h4>
+        <pre>ul {
+    /* list-style: type position image */
+    list-style: square inside url('bullet.png');
+}</pre>
+
+        <h3>Advanced Styling Examples</h3>
+
+        <h4>Example 1: Custom Bullets with Pseudo-elements</h4>
+        <pre>.custom-list {
+    list-style: none;
+    padding: 0;
+}
+
+.custom-list li {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 10px;
+}
+
+.custom-list li::before {
+    content: "✓";  /* Checkmark */
+    color: green;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}</pre>
+
+        <h4>Example 2: Styled Ordered List</h4>
+        <pre>.styled-ol {
+    counter-reset: custom-counter;
+    list-style: none;
+}
+
+.styled-ol li {
+    counter-increment: custom-counter;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 40px;
+}
+
+.styled-ol li::before {
+    content: counter(custom-counter);
+    background: #007bff;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+}</pre>
+
+        <h4>Example 3: Horizontal Navigation</h4>
+        <pre>.horizontal-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+    background: #333;
+    padding: 15px;
+}
+
+.horizontal-nav li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+.horizontal-nav li a:hover {
+    background: #555;
+    border-radius: 4px;
+}</pre>
+
+        <hr>
+
+        <!-- 7. Introduction to Images in HTML -->
+        <h2 id="introduction-to-images-in-html">7. Introduction to Images in HTML</h2>
+        <p>Images are essential for creating engaging and visually appealing web pages. HTML provides robust support for
+            embedding images with various attributes for control and optimization.</p>
+
+        <h3>Why Use Images?</h3>
+        <ul>
+            <li><strong>Visual Communication:</strong> Convey ideas quickly and effectively</li>
+            <li><strong>User Engagement:</strong> Capture attention and improve user experience</li>
+            <li><strong>Brand Identity:</strong> Reinforce brand through logos and visual elements</li>
+            <li><strong>Content Enhancement:</strong> Illustrate concepts and provide examples</li>
+            <li><strong>Accessibility:</strong> When used with proper alt text, images can convey information to all
+                users</li>
+        </ul>
+
+        <hr>
+
+        <!-- 8. The Image Element -->
+        <h2 id="the-image-element-img">8. The Image Element (<code>&lt;img&gt;</code>)</h2>
+        <p>The <code>&lt;img&gt;</code> element is an empty (void) element, meaning it has no closing tag and contains
+            no content. It embeds an image into the document.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre>&lt;img src="path/to/image.jpg" alt="Descriptive text"&gt;</pre>
+
+        <h3>Key Characteristics</h3>
+        <ul>
+            <li><strong>Inline element:</strong> By default, behaves like inline elements</li>
+            <li><strong>Replaced element:</strong> Content is replaced by external resource</li>
+            <li><strong>Self-closing:</strong> No closing tag needed</li>
+            <li><strong>Must have attributes:</strong> At minimum, <code>src</code> and <code>alt</code> should be
+                present</li>
+        </ul>
+
+        <h3>Supported Image Formats</h3>
+        <table>
+            <tr>
+                <th>Format</th>
+                <th>Type</th>
+                <th>Best For</th>
+                <th>Pros</th>
+                <th>Cons</th>
+            </tr>
+            <tr>
+                <td>JPEG/JPG</td>
+                <td>Raster</td>
+                <td>Photographs, complex images</td>
+                <td>Small file size, 16.7M colors</td>
+                <td>No transparency, lossy compression</td>
+            </tr>
+            <tr>
+                <td>PNG</td>
+                <td>Raster</td>
+                <td>Logos, screenshots, transparency</td>
+                <td>Lossless, transparency support</td>
+                <td>Larger file size</td>
+            </tr>
+            <tr>
+                <td>GIF</td>
+                <td>Raster</td>
+                <td>Simple animations</td>
+                <td>Animation support, transparency</td>
+                <td>Limited colors (256), large file size</td>
+            </tr>
+            <tr>
+                <td>SVG</td>
+                <td>Vector</td>
+                <td>Icons, logos, illustrations</td>
+                <td>Scalable, small file size, code-based</td>
+                <td>Not for complex photographs</td>
+            </tr>
+            <tr>
+                <td>WebP</td>
+                <td>Raster</td>
+                <td>Modern web images</td>
+                <td>Superior compression, transparency, animation</td>
+                <td>Limited browser support (modern only)</td>
+            </tr>
+            <tr>
+                <td>AVIF</td>
+                <td>Raster</td>
+                <td>Next-gen web images</td>
+                <td>Excellent compression, HDR support</td>
+                <td>Very limited browser support</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <!-- 9. Image Attributes in Depth -->
+        <h2 id="image-attributes-in-depth">9. Image Attributes in Depth</h2>
+
+        <h3>1. <code>src</code> Attribute (Source)</h3>
+        <p>Specifies the path to the image file.</p>
+
+        <h4>Absolute URL:</h4>
+        <pre>&lt;img src="https://example.com/images/logo.png" alt="Company Logo"&gt;</pre>
+
+        <h4>Relative URL:</h4>
+        <pre>&lt;!-- Same directory --&gt;
+&lt;img src="image.jpg" alt="Description"&gt;
+
+&lt;!-- Subdirectory --&gt;
+&lt;img src="images/photo.jpg" alt="Description"&gt;
+
+&lt;!-- Parent directory --&gt;
+&lt;img src="../images/photo.jpg" alt="Description"&gt;</pre>
+
+        <h4>Root-relative URL:</h4>
+        <pre>&lt;img src="/assets/images/logo.png" alt="Logo"&gt;</pre>
+
+        <h3>2. <code>alt</code> Attribute (Alternative Text)</h3>
+        <p>Provides alternative information if the image cannot be displayed or for screen readers.</p>
+
+        <h4>Guidelines for alt text:</h4>
+        <ul>
+            <li>Be descriptive and accurate</li>
+            <li>Keep it concise (under 125 characters)</li>
+            <li>Include keywords naturally</li>
+            <li>Don't start with "Image of..." or "Picture of..."</li>
+            <li>Leave empty (<code>alt=""</code>) for decorative images</li>
+        </ul>
+
+        <h4>Examples by Context:</h4>
+        <table>
+            <tr>
+                <th>Image Type</th>
+                <th>Good Alt Text</th>
+                <th>Bad Alt Text</th>
+            </tr>
+            <tr>
+                <td>Product photo</td>
+                <td>"MacBook Pro 16-inch Space Gray on wooden desk"</td>
+                <td>"laptop"</td>
+            </tr>
+            <tr>
+                <td>Logo</td>
+                <td>"CompanyName"</td>
+                <td>"logo.png"</td>
+            </tr>
+            <tr>
+                <td>Chart/Graph</td>
+                <td>"Bar chart showing 50% sales increase in Q4 2023"</td>
+                <td>"sales chart"</td>
+            </tr>
+            <tr>
+                <td>Decorative</td>
+                <td><code>alt=""</code></td>
+                <td>"spacer image"</td>
+            </tr>
+            <tr>
+                <td>Photo of person</td>
+                <td>"Jane Smith, CEO, speaking at Tech Conference 2023"</td>
+                <td>"woman speaking"</td>
+            </tr>
+            <tr>
+                <td>Screenshot</td>
+                <td>"Screenshot of weather app showing 72°F and sunny"</td>
+                <td>"app screenshot"</td>
+            </tr>
+        </table>
+
+        <h4>Implementation Examples:</h4>
+        <pre>&lt;!-- Informative image --&gt;
+&lt;img src="iphone-15-pro.jpg" alt="iPhone 15 Pro in blue titanium showing the camera array"&gt;
+
+&lt;!-- Decorative image --&gt;
+&lt;img src="background-pattern.png" alt="" role="presentation"&gt;
+
+&lt;!-- Functional image (as link) --&gt;
+&lt;a href="/products"&gt;
+    &lt;img src="product-catalog.jpg" alt="View our product catalog"&gt;
+&lt;/a&gt;
+
+&lt;!-- Complex image requiring long description --&gt;
+&lt;img src="company-growth-chart.png" alt="Company growth chart 2020-2024" 
+     longdesc="chart-description.html"&gt;</pre>
+
+        <h3>3. <code>width</code> and <code>height</code> Attributes</h3>
+        <p>Specify the dimensions of the image in pixels.</p>
+
+        <h4>Purpose:</h4>
+        <ul>
+            <li>Reserve space to prevent layout shifts (Cumulative Layout Shift - CLS)</li>
+            <li>Provide intrinsic dimensions for browsers</li>
+            <li>Can be overridden by CSS</li>
+        </ul>
+
+        <h4>Syntax:</h4>
+        <pre>&lt;!-- Both width and height specified --&gt;
+&lt;img src="photo.jpg" alt="Description" width="800" height="600"&gt;
+
+&lt;!-- Only width specified (height auto-calculated) --&gt;
+&lt;img src="photo.jpg" alt="Description" width="800"&gt;
+
+&lt;!-- Only height specified (width auto-calculated) --&gt;
+&lt;img src="photo.jpg" alt="Description" height="600"&gt;</pre>
+
+        <h4>Best Practices:</h4>
+        <pre>&lt;!-- Always include width and height to prevent layout shift --&gt;
+&lt;img src="hero-image.jpg" alt="Mountain landscape" width="1200" height="600"&gt;
+
+&lt;!-- Use CSS for responsive images, but keep HTML attributes as fallback --&gt;
+&lt;img src="responsive-image.jpg" alt="Description" width="800" height="600"
+     style="max-width: 100%; height: auto;"&gt;</pre>
+
+        <h4>Responsive Approach with CSS:</h4>
+        <pre>&lt;img src="image.jpg" alt="Description" width="1600" height="900"
+     style="width: 100%; height: auto; max-width: 1600px;"&gt;</pre>
+
+        <h3>4. Additional Important Attributes</h3>
+
+        <h4><code>loading</code> Attribute</h4>
+        <p>Controls lazy loading behavior:</p>
+        <pre>&lt;!-- Eager loading (default) - load immediately --&gt;
+&lt;img src="hero.jpg" alt="Hero" loading="eager"&gt;
+
+&lt;!-- Lazy loading - load when near viewport --&gt;
+&lt;img src="gallery-image.jpg" alt="Gallery" loading="lazy"&gt;</pre>
+
+        <h4><code>fetchpriority</code> Attribute</h4>
+        <p>Hints to browser about image priority:</p>
+        <pre>&lt;!-- High priority - load quickly --&gt;
+&lt;img src="lcp-image.jpg" alt="Main content" fetchpriority="high"&gt;
+
+&lt;!-- Low priority - can load later --&gt;
+&lt;img src="footer-image.jpg" alt="Footer" fetchpriority="low"&gt;</pre>
+
+        <h4><code>decoding</code> Attribute</h4>
+        <p>Suggests how browser should decode the image:</p>
+        <pre>&lt;!-- Synchronous decoding --&gt;
+&lt;img src="critical.jpg" alt="Critical" decoding="sync"&gt;
+
+&lt;!-- Asynchronous decoding (default for most) --&gt;
+&lt;img src="async.jpg" alt="Async" decoding="async"&gt;</pre>
+
+        <h4><code>referrerpolicy</code> Attribute</h4>
+        <p>Controls referrer information sent when fetching the image:</p>
+        <pre>&lt;img src="external-site.com/image.jpg" alt="External" 
+     referrerpolicy="no-referrer"&gt;</pre>
+
+        <hr>
+
+        <!-- 10. Image Formats and Optimization -->
+        <h2 id="image-formats-and-optimization">10. Image Formats and Optimization</h2>
+
+        <h3>Choosing the Right Format</h3>
+
+        <h4>Decision Tree:</h4>
+        <ol>
+            <li>Is it a photograph? → Use JPEG or WebP</li>
+            <li>Does it need transparency? → Use PNG or WebP</li>
+            <li>Is it a simple graphic/icon? → Use SVG</li>
+            <li>Does it need animation? → Use GIF or WebP</li>
+            <li>Is file size critical? → Use WebP or AVIF</li>
+        </ol>
+
+        <h3>Optimization Techniques</h3>
+
+        <h4>1. Resolution and Dimensions:</h4>
+        <pre>&lt;!-- Serve appropriately sized images --&gt;
+&lt;img src="image-800x600.jpg" alt="Responsive" width="800" height="600"&gt;</pre>
+
+        <h4>2. Compression Tools:</h4>
+        <ul>
+            <li><strong>JPEG:</strong> TinyJPG, JPEG Optimizer</li>
+            <li><strong>PNG:</strong> TinyPNG, PNGGauntlet</li>
+            <li><strong>SVG:</strong> SVGO, SVGOMG</li>
+            <li><strong>General:</strong> ImageOptim, Squoosh</li>
+        </ul>
+
+        <h4>3. Responsive Images with <code>srcset</code>:</h4>
+        <pre>&lt;img src="small.jpg" 
+     srcset="small.jpg 500w,
+             medium.jpg 1000w,
+             large.jpg 1500w"
+     sizes="(max-width: 600px) 500px,
+            (max-width: 1200px) 1000px,
+            1500px"
+     alt="Responsive image"&gt;</pre>
+
+        <h4>4. Picture Element for Art Direction:</h4>
+        <pre>&lt;picture&gt;
+    &lt;source media="(max-width: 799px)" srcset="portrait.jpg"&gt;
+    &lt;source media="(min-width: 800px)" srcset="landscape.jpg"&gt;
+    &lt;img src="default.jpg" alt="Art directed image"&gt;
+&lt;/picture&gt;</pre>
+
+        <h4>5. Modern Formats with Fallbacks:</h4>
+        <pre>&lt;picture&gt;
+    &lt;source type="image/avif" srcset="image.avif"&gt;
+    &lt;source type="image/webp" srcset="image.webp"&gt;
+    &lt;img src="image.jpg" alt="Fallback image"&gt;
+&lt;/picture&gt;</pre>
+
+        <hr>
+
+        <!-- 11. Accessibility and Best Practices -->
+        <h2 id="accessibility-and-best-practices">11. Accessibility and Best Practices</h2>
+
+        <h3>Accessibility Guidelines</h3>
+
+        <h4>1. Always Provide Alt Text:</h4>
+        <pre>&lt;!-- Good --&gt;
+&lt;img src="chart.png" alt="Quarterly sales chart showing 20% increase"&gt;
+
+&lt;!-- Better for complex images --&gt;
+&lt;img src="infographic.jpg" alt="Infographic: 5 steps to web accessibility" 
+     longdesc="infographic-description.html"&gt;
+
+&lt;!-- Decorative images --&gt;
+&lt;img src="divider.png" alt="" role="presentation"&gt;</pre>
+
+        <h4>2. Use ARIA When Appropriate:</h4>
+        <pre>&lt;!-- Image as icon with text --&gt;
+&lt;button&gt;
+    &lt;img src="search-icon.svg" alt="" aria-hidden="true"&gt;
+    &lt;span&gt;Search&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;!-- Image with caption --&gt;
+&lt;figure&gt;
+    &lt;img src="team-photo.jpg" alt="Development team in meeting room"&gt;
+    &lt;figcaption&gt;Weekly sprint planning meeting&lt;/figcaption&gt;
+&lt;/figure&gt;</pre>
+
+        <h4>3. Color Contrast:</h4>
+        <pre>&lt;!-- Ensure text over images has sufficient contrast --&gt;
+&lt;div style="position: relative;"&gt;
+    &lt;img src="background.jpg" alt=""&gt;
+    &lt;div style="position: absolute; background: rgba(0,0,0,0.7); color: white;"&gt;
+        Text with good contrast
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+
+        <h3>Performance Best Practices</h3>
+
+        <h4>1. Image Dimensions:</h4>
+        <pre>&lt;!-- Always specify dimensions --&gt;
+&lt;img src="photo.jpg" alt="Description" width="800" height="600"&gt;</pre>
+
+        <h4>2. Lazy Loading:</h4>
+        <pre>&lt;!-- Below the fold images --&gt;
+&lt;img src="gallery-image.jpg" alt="Gallery" loading="lazy" width="400" height="300"&gt;</pre>
+
+        <h4>3. Preload Critical Images:</h4>
+        <pre>&lt;head&gt;
+    &lt;link rel="preload" as="image" href="hero-image.jpg"&gt;
+&lt;/head&gt;</pre>
+
+        <h4>4. Use Modern Formats:</h4>
+        <pre>&lt;picture&gt;
+    &lt;source type="image/webp" srcset="image.webp"&gt;
+    &lt;img src="image.jpg" alt="Description"&gt;
+&lt;/picture&gt;</pre>
+
+        <hr>
+
+        <!-- 12. Practical Examples and Use Cases -->
+        <h2 id="practical-examples-and-use-cases">12. Practical Examples and Use Cases</h2>
+
+        <h3>Example 1: Product Gallery with Thumbnails</h3>
+        <pre>&lt;div class="product-gallery"&gt;
+    &lt;!-- Main image --&gt;
+    &lt;img src="product-main.jpg" alt="Product main view" 
+         width="600" height="400" id="main-image"&gt;
+    
+    &lt;!-- Thumbnails --&gt;
+    &lt;div class="thumbnail-container"&gt;
+        &lt;img src="product-thumb1.jpg" alt="Product front view" 
+             width="100" height="75" 
+             onclick="document.getElementById('main-image').src='product-main.jpg'"&gt;
+        
+        &lt;img src="product-thumb2.jpg" alt="Product side view" 
+             width="100" height="75"
+             onclick="document.getElementById('main-image').src='product-side.jpg'"&gt;
+        
+        &lt;img src="product-thumb3.jpg" alt="Product back view" 
+             width="100" height="75"
+             onclick="document.getElementById('main-image').src='product-back.jpg'"&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+
+        <h3>Example 2: Recipe Page with Lists and Images</h3>
+        <pre>&lt;article class="recipe"&gt;
+    &lt;h1&gt;Classic Chocolate Chip Cookies&lt;/h1&gt;
+    
+    &lt;img src="chocolate-chip-cookies.jpg" 
+         alt="Golden brown chocolate chip cookies on a cooling rack" 
+         width="800" height="450"&gt;
+    
+    &lt;h2&gt;Ingredients&lt;/h2&gt;
+    &lt;ul class="ingredients"&gt;
+        &lt;li&gt;&lt;img src="flour-icon.svg" alt="" width="20" height="20"&gt; 2 1/4 cups all-purpose flour&lt;/li&gt;
+        &lt;li&gt;&lt;img src="butter-icon.svg" alt="" width="20" height="20"&gt; 1 cup unsalted butter, softened&lt;/li&gt;
+        &lt;li&gt;&lt;img src="sugar-icon.svg" alt="" width="20" height="20"&gt; 3/4 cup granulated sugar&lt;/li&gt;
+        &lt;li&gt;&lt;img src="brown-sugar-icon.svg" alt="" width="20" height="20"&gt; 3/4 cup brown sugar&lt;/li&gt;
+        &lt;li&gt;&lt;img src="egg-icon.svg" alt="" width="20" height="20"&gt; 2 large eggs&lt;/li&gt;
+        &lt;li&gt;&lt;img src="chocolate-icon.svg" alt="" width="20" height="20"&gt; 2 cups chocolate chips&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;h2&gt;Instructions&lt;/h2&gt;
+    &lt;ol class="instructions"&gt;
+        &lt;li&gt;
+            &lt;img src="preheat-oven.jpg" alt="Oven preheating" width="300" height="200"&gt;
+            &lt;p&gt;Preheat oven to 375°F (190°C).&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;img src="mix-butter-sugar.jpg" alt="Mixing butter and sugar" width="300" height="200"&gt;
+            &lt;p&gt;Cream together butter and sugars until smooth.&lt;/p&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;img src="add-eggs.jpg" alt="Adding eggs to mixture" width="300" height="200"&gt;
+            &lt;p&gt;Beat in eggs one at a time.&lt;/p&gt;
+        &lt;/li&gt;
+    &lt;/ol&gt;
+    
+    &lt;h2&gt;Baking Tips&lt;/h2&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;Room Temperature Ingredients&lt;/dt&gt;
+        &lt;dd&gt;Ensure butter and eggs are at room temperature for better mixing.&lt;/dd&gt;
+        
+        &lt;dt&gt;Don't Overmix&lt;/dt&gt;
+        &lt;dd&gt;Mix just until ingredients combine to avoid tough cookies.&lt;/dd&gt;
+        
+        &lt;dt&gt;Cooling Time&lt;/dt&gt;
+        &lt;dd&gt;Let cookies rest on baking sheet for 5 minutes before transferring.&lt;/dd&gt;
+    &lt;/dl&gt;
+&lt;/article&gt;</pre>
+
+        <h3>Example 3: Team Member Directory</h3>
+        <pre>&lt;section class="team-directory"&gt;
+    &lt;h2&gt;Our Team&lt;/h2&gt;
+    
+    &lt;ul class="team-list"&gt;
+        &lt;li class="team-member"&gt;
+            &lt;img src="team/john-doe.jpg" 
+                 alt="John Doe - CEO and Founder" 
+                 width="200" height="200"&gt;
+            &lt;h3&gt;John Doe&lt;/h3&gt;
+            &lt;p&gt;CEO &amp; Founder&lt;/p&gt;
+            &lt;dl&gt;
+                &lt;dt&gt;Expertise&lt;/dt&gt;
+                &lt;dd&gt;Strategic Planning, Business Development&lt;/dd&gt;
+                &lt;dt&gt;Experience&lt;/dt&gt;
+                &lt;dd&gt;15+ years in tech industry&lt;/dd&gt;
+            &lt;/dl&gt;
+        &lt;/li&gt;
+        
+        &lt;li class="team-member"&gt;
+            &lt;img src="team/jane-smith.jpg" 
+                 alt="Jane Smith - Lead Developer" 
+                 width="200" height="200"&gt;
+            &lt;h3&gt;Jane Smith&lt;/h3&gt;
+            &lt;p&gt;Lead Developer&lt;/p&gt;
+            &lt;dl&gt;
+                &lt;dt&gt;Expertise&lt;/dt&gt;
+                &lt;dd&gt;Full-stack Development, Architecture&lt;/dd&gt;
+                &lt;dt&gt;Experience&lt;/dt&gt;
+                &lt;dd&gt;10+ years in software development&lt;/dd&gt;
+            &lt;/dl&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/section&gt;</pre>
+
+        <hr>
+
+        <!-- 13. Common Mistakes and Troubleshooting -->
+        <h2 id="common-mistakes-and-troubleshooting">13. Common Mistakes and Troubleshooting</h2>
+
+        <h3>List-Related Mistakes</h3>
+
+        <h4>Mistake 1: Incorrect Nesting</h4>
+        <pre>&lt;!-- Wrong --&gt;
+&lt;ul&gt;
+    &lt;li&gt;Item 1&lt;/li&gt;
+    &lt;li&gt;Item 2
+        More text here  &lt;!-- Text should be inside &lt;li&gt; --&gt;
+    &lt;li&gt;Item 3&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Correct --&gt;
+&lt;ul&gt;
+    &lt;li&gt;Item 1&lt;/li&gt;
+    &lt;li&gt;Item 2
+        More text here  &lt;!-- Now inside &lt;li&gt; --&gt;
+    &lt;/li&gt;
+    &lt;li&gt;Item 3&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h4>Mistake 2: Missing Closing Tags</h4>
+        <pre>&lt;!-- Wrong --&gt;
+&lt;ul&gt;
+    &lt;li&gt;Item 1
+    &lt;li&gt;Item 2
+&lt;/ul&gt;
+
+&lt;!-- Correct --&gt;
+&lt;ul&gt;
+    &lt;li&gt;Item 1&lt;/li&gt;
+    &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h4>Mistake 3: Invalid Children</h4>
+        <pre>&lt;!-- Wrong - direct children must be &lt;li&gt; --&gt;
+&lt;ul&gt;
+    &lt;div&gt;Not allowed&lt;/div&gt;
+    &lt;li&gt;Allowed item&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Correct --&gt;
+&lt;ul&gt;
+    &lt;li&gt;
+        &lt;div&gt;Now allowed inside &lt;li&gt;&lt;/div&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+        <h3>Image-Related Mistakes</h3>
+
+        <h4>Mistake 1: Missing Alt Text</h4>
+        <pre>&lt;!-- Wrong --&gt;
+&lt;img src="logo.png"&gt;
+
+&lt;!-- Correct --&gt;
+&lt;img src="logo.png" alt="Company Name"&gt;
+&lt;img src="decorative.png" alt=""&gt;</pre>
+
+        <h4>Mistake 2: Incorrect Paths</h4>
+        <pre>&lt;!-- Common path issues --&gt;
+&lt;img src="images/photo.jpg"&gt;  &lt;!-- Check case sensitivity --&gt;
+&lt;img src="./images/photo.jpg"&gt; &lt;!-- Relative path --&gt;
+&lt;img src="/images/photo.jpg"&gt;  &lt;!-- Root-relative path --&gt;
+&lt;img src="../images/photo.jpg"&gt; &lt;!-- Parent directory --&gt;
+
+&lt;!-- Debugging tip: Open browser dev tools to see 404 errors --&gt;</pre>
+
+        <h4>Mistake 3: Missing Width/Height</h4>
+        <pre>&lt;!-- Can cause layout shift --&gt;
+&lt;img src="image.jpg" alt="Description"&gt;
+
+&lt;!-- Better - prevents CLS --&gt;
+&lt;img src="image.jpg" alt="Description" width="800" height="600"&gt;</pre>
+
+        <h4>Mistake 4: Pixelated Images</h4>
+        <pre>&lt;!-- Don't upscale small images --&gt;
+&lt;img src="100x100.jpg" width="500" height="500" alt="Pixelated"&gt;
+
+&lt;!-- Use appropriately sized images --&gt;
+&lt;img src="500x500.jpg" width="500" height="500" alt="Crisp"&gt;</pre>
+
+        <hr>
+
+        <!-- 14. Advanced Techniques -->
+        <h2 id="advanced-techniques">14. Advanced Techniques</h2>
+
+        <h3>1. Image Sprites</h3>
+        <p>Combine multiple images into one for performance:</p>
+        <pre>.sprite {
+    background-image: url('sprite.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.sprite-home { 
+    width: 50px; 
+    height: 50px; 
+    background-position: 0 0; 
+}
+
+.sprite-search { 
+    width: 50px; 
+    height: 50px; 
+    background-position: -50px 0; 
+}</pre>
+
+        <h3>2. CSS Background Images</h3>
+        <p>For decorative images that aren't content-essential:</p>
+        <pre>.hero-section {
+    background-image: url('hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 500px;
+}</pre>
+
+        <h3>3. Figure and Figcaption</h3>
+        <p>For images with captions:</p>
+        <pre>&lt;figure&gt;
+    &lt;img src="architecture.jpg" 
+         alt="Modern building with glass facade" 
+         width="800" height="500"&gt;
+    &lt;figcaption&gt;Figure 1: Downtown Innovation Hub, completed 2023&lt;/figcaption&gt;
+&lt;/figure&gt;</pre>
+
+        <h3>4. Image Maps</h3>
+        <p>Create clickable areas on images:</p>
+        <pre>&lt;img src="world-map.jpg" alt="World map" usemap="#worldmap" width="800" height="400"&gt;
+
+&lt;map name="worldmap"&gt;
+    &lt;area shape="rect" coords="0,0,100,100" href="north-america.html" alt="North America"&gt;
+    &lt;area shape="circle" coords="200,150,50" href="europe.html" alt="Europe"&gt;
+    &lt;area shape="poly" coords="300,200,350,180,400,200,375,250,325,250" 
+          href="asia.html" alt="Asia"&gt;
+&lt;/map&gt;</pre>
+
+        <h3>5. Lazy Loading with Intersection Observer</h3>
+        <pre>// Advanced lazy loading
+const images = document.querySelectorAll('img[data-src]');
+
+const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            observer.unobserve(img);
+        }
+    });
+});
+
+images.forEach(img => imageObserver.observe(img));</pre>
+
+        <hr>
+
+        <!-- 15. Practice Exercises -->
+        <h2 id="practice-exercises">15. Practice Exercises</h2>
+
+        <h3>Exercise 1: Build a Navigation Menu</h3>
+        <p>Create a responsive navigation menu using an unordered list with:</p>
+        <ul>
+            <li>Home, About, Services, Products, Contact items</li>
+            <li>Dropdown submenu for Services (Web Design, Development, SEO)</li>
+            <li>Custom styling with CSS (no bullets, horizontal on desktop)</li>
+        </ul>
+
+        <h3>Exercise 2: Recipe Page</h3>
+        <p>Create a complete recipe page including:</p>
+        <ul>
+            <li>Ordered list for ingredients</li>
+            <li>Unordered list for optional toppings</li>
+            <li>Description list for cooking terms</li>
+            <li>At least 3 images with proper alt text</li>
+            <li>Responsive image handling</li>
+        </ul>
+
+        <h3>Exercise 3: Product Comparison Table</h3>
+        <p>Using description lists, create a product comparison for:</p>
+        <ul>
+            <li>Three different smartphones</li>
+            <li>Include specs: display, camera, battery, price</li>
+            <li>Add product images for each phone</li>
+        </ul>
+
+        <h3>Exercise 4: Image Gallery</h3>
+        <p>Build an image gallery with:</p>
+        <ul>
+            <li>Grid layout of thumbnail images</li>
+            <li>Click thumbnails to display larger version</li>
+            <li>Lazy loading for off-screen images</li>
+            <li>Proper alt text for accessibility</li>
+            <li>Captions for each image</li>
+        </ul>
+
+        <h3>Exercise 5: Company Team Page</h3>
+        <p>Create a team page with:</p>
+        <ul>
+            <li>Profile pictures for each team member</li>
+            <li>Description lists for each member's details</li>
+            <li>Social media links as images/icons</li>
+            <li>Responsive layout that adapts to screen size</li>
+        </ul>
+
+        <h3>Exercise 6: Step-by-Step Tutorial</h3>
+        <p>Build a tutorial page with:</p>
+        <ul>
+            <li>Ordered list for steps (using Roman numerals)</li>
+            <li>Images demonstrating each step</li>
+            <li>Nested lists for sub-steps</li>
+            <li>Description list for terminology</li>
+        </ul>
+
+        <h3>Exercise 7: E-commerce Product Card</h3>
+        <p>Create a product card including:</p>
+        <ul>
+            <li>Product image with zoom on hover</li>
+            <li>Unordered list of features</li>
+            <li>Description list for specifications</li>
+            <li>Rating stars as image sprites</li>
+        </ul>
+
+        <h3>Exercise 8: Accessibility Audit</h3>
+        <p>Take a previous project and:</p>
+        <ul>
+            <li>Add missing alt text to all images</li>
+            <li>Ensure proper list semantics</li>
+            <li>Test with screen reader</li>
+            <li>Document improvements made</li>
+        </ul>
+
+        <hr>
+
+        <!-- Summary Checklist -->
+        <h2>Summary Checklist</h2>
+
+        <h3>For Lists:</h3>
+        <ul>
+            <li>Used appropriate list type (<code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;dl&gt;</code>)
+            </li>
+            <li>All list items are properly nested</li>
+            <li>List markup is semantically correct</li>
+            <li>Considered accessibility for screen readers</li>
+            <li>Styled lists appropriately with CSS</li>
+            <li>Tested nested lists for proper indentation</li>
+        </ul>
+
+        <h3>For Images:</h3>
+        <ul>
+            <li>All images have <code>alt</code> attributes (empty for decorative)</li>
+            <li><code>src</code> paths are correct and accessible</li>
+            <li><code>width</code> and <code>height</code> attributes are specified</li>
+            <li>Images are optimized for web (file size, dimensions)</li>
+            <li>Considered responsive images with <code>srcset</code></li>
+            <li>Used appropriate image format (JPEG, PNG, WebP, SVG)</li>
+            <li>Implemented lazy loading where appropriate</li>
+            <li>Tested with images disabled to verify alt text</li>
+            <li>Ensured sufficient color contrast for text over images</li>
+            <li>Used <code>&lt;picture&gt;</code> element for art direction when needed</li>
+        </ul>
+
+        <hr>
+
+        <!-- Additional Resources -->
+        <h2>Additional Resources</h2>
+
+        <h3>Documentation</h3>
+        <ul>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul">MDN Web Docs: List elements</a>
+            </li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img">MDN Web Docs: Images</a></li>
+            <li><a href="https://www.w3.org/WAI/tips/developing/">W3C Accessibility Guidelines</a></li>
+        </ul>
+
+        <h3>Validation Tools</h3>
+        <ul>
+            <li><a href="https://validator.w3.org/">W3C HTML Validator</a></li>
+            <li><a href="https://wave.webaim.org/">WebAIM WAVE</a> - Accessibility evaluation</li>
+            <li><a href="https://developers.google.com/web/tools/lighthouse">Google Lighthouse</a></li>
+        </ul>
+
+        <h3>Image Optimization Tools</h3>
+        <ul>
+            <li><a href="https://squoosh.app/">Squoosh</a></li>
+            <li><a href="https://tinypng.com/">TinyPNG</a></li>
+            <li><a href="https://jakearchibald.github.io/svgomg/">SVGOMG</a></li>
+        </ul>
+
+        <h3>Practice Platforms</h3>
+        <ul>
+            <li><a href="https://codepen.io/">CodePen</a></li>
+            <li><a href="https://jsfiddle.net/">JSFiddle</a></li>
+            <li><a href="https://www.frontendmentor.io/">Frontend Mentor</a></li>
+        </ul>
+
+        <p>This comprehensive guide covers everything from basic syntax to advanced techniques for HTML lists and
+            images. Practice regularly with the exercises provided, and always keep accessibility and performance in
+            mind when implementing these elements in your web projects.</p>
+
+        <hr>
+        <p style="text-align: right; color: #3a6b71;"><em>End of Guide</em></p>
+    </div>
+</body>
+
+</html>

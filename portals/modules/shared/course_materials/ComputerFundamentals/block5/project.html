@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>CorelDRAW DTP · complete workshop & projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e8e0d0;
+            color: #2f2a1f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #5f4d3a;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #3b4b5e, #165a4c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #1d6d5e;
+            border-left: 6px solid #2c9c84;
+            padding-left: 1.5rem;
+            margin-bottom: 2.2rem;
+            font-weight: 390;
+        }
+
+        .banner {
+            background: #165a4c20;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 1rem 0 3rem;
+            border: 2px dashed #308a70;
+            text-align: center;
+        }
+
+        .banner h2 {
+            font-size: 2.2rem;
+            color: #0a5f4e;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .project-card {
+            background: #ebf6f1;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border-left: 8px solid #36ab90;
+            box-shadow: 0 12px 24px -12px #256454;
+        }
+
+        .project-card h3 {
+            font-size: 1.9rem;
+            color: #1a755f;
+            margin-bottom: 1rem;
+        }
+
+        .project-card ol,
+        .project-card ul {
+            margin-left: 1.5rem;
+        }
+
+        .step-block {
+            background: #e2f0e9;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+        }
+
+        .step-block h4 {
+            font-size: 1.6rem;
+            color: #0b4f43;
+            margin-bottom: 0.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 70, 50, 0.08);
+        }
+
+        th {
+            background: #147561;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c0e2d6;
+            background: #f9fffc;
+        }
+
+        .badge {
+            background: #1c7f69;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .mini-card {
+            background: #e9f4ef;
+            border: 1px solid #b7dfd1;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .def-item {
+            background: #dcf0e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #37a48a;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #246b5a;
+            border-top: 1px dashed #b1d9cc;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>🎓 CORELDRAW DTP · PROJECT WORKSHOP</h1>
+        <div class="subhead">Complete hands‑on projects · step‑by‑step guide · using all 5 modules</div>
+
+        <!-- banner : resources summary -->
+        <div class="banner">
+            <h2>📚 your toolkit – 5 core modules</h2>
+            <p style="font-size:1.2rem;">interface · objects · color · text · import + arrange → now combine them</p>
+        </div>
+
+        <!-- ========== STEP 0 : MODULE REFRESH (quick recap) ========= -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">🧰 quick reference – tools you just mastered</h4>
+            <div class="def-grid">
+                <div class="def-item"><strong>🖌️ interface</strong><br>Pick, Shape, Zoom, Property bar, Dockers</div>
+                <div class="def-item"><strong>⬛ objects</strong><br>rectangle, ellipse, bezier, convert to curves
+                    (Ctrl+Q), duplicate</div>
+                <div class="def-item"><strong>🎨 color</strong><br>uniform fill (Shift+F11), outline (F12), fountain
+                    (F11), CMYK/RGB</div>
+                <div class="def-item"><strong>🔤 text</strong><br>artistic (F8), paragraph, fit to path, formatting
+                    (Ctrl+T)</div>
+                <div class="def-item"><strong>📦 import/arrange</strong><br>Ctrl+I, PowerClip, group (Ctrl+G), lock,
+                    order (Object > Order)</div>
+            </div>
+        </div>
+
+        <!-- ========== STEP 1 : HANDS-ON LOGO RECREATION ========= -->
+        <section>
+            <h2>🔹 ACTIVITY 1 · HANDS-ON: RECREATE LOGOS WITH BASIC SHAPES</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>🎯 target: simple icon / logo</h3>
+                    <p><span class="badge">step by step</span></p>
+                    <ol>
+                        <li><strong>analyse</strong> – pick a famous logo (Apple, Twitter bird, or a geometric icon).
+                            Identify core shapes: circles, rectangles, triangles.</li>
+                        <li><strong>create document</strong> – <kbd>Ctrl+N</kbd>, A4, RGB (if digital) or CMYK (if for
+                            print).</li>
+                        <li><strong>draw base shapes</strong> – use Rectangle (F6) / Ellipse (F7). Hold <kbd>Ctrl</kbd>
+                            for perfect circles/squares.</li>
+                        <li><strong>combine & weld</strong> – select overlapping shapes, then <strong>Object &gt;
+                                Shaping &gt; Weld</strong> (or use property bar).</li>
+                        <li><strong>convert to curves</strong> – <kbd>Ctrl+Q</kbd> to tweak individual nodes with Shape
+                            Tool (F10).</li>
+                        <li><strong>add color</strong> – uniform fill (left‑click palette) or fountain fill
+                            (<kbd>F11</kbd>).</li>
+                        <li><strong>refine</strong> – group all parts (<kbd>Ctrl+G</kbd>). Save as
+                            <code>logo_recreation.cdr</code>.</li>
+                    </ol>
+                    <p><em>💡 tip: use guidelines (drag from ruler) for symmetry.</em></p>
+                </div>
+                <div class="project-card">
+                    <h3>⭐ variations to try</h3>
+                    <ul>
+                        <li>Recycle symbol (three arrows) – use polygon tool + rotate duplicates.</li>
+                        <li>Wifi icon – three arcs drawn with ellipse tool + trim.</li>
+                        <li>Abstract leaf – organic shape: freehand + shape tool smoothing.</li>
+                    </ul>
+                    <p style="margin-top:1rem;"><strong>🔍 check:</strong> did you use <kbd>Ctrl+D</kbd> to duplicate?
+                        try step‑and‑repeat for patterns.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== STEP 2 : PROFESSIONAL BUSINESS CARD ========= -->
+        <section>
+            <h2>🔹 ACTIVITY 2 · PRACTICAL: DESIGN A BUSINESS CARD</h2>
+            <div class="step-block">
+                <h4>📇 specifications – standard 90×50 mm (3.5×2 inch) with bleeds</h4>
+                <ol>
+                    <li><strong>set up</strong> – Layout &gt; Page Setup &gt; Width 90mm, Height 50mm. Add bleed 3mm
+                        (File &gt; Document Properties).</li>
+                    <li><strong>background</strong> – draw rectangle 96×56mm (includes bleed). Fill with uniform or
+                        subtle fountain fill. <em>Lock it (<kbd>Object &gt; Lock</kbd>)</em>.</li>
+                    <li><strong>logo placement</strong> – import (Ctrl+I) your logo from activity 1 or draw a simple
+                        mark. Scale proportionally (hold Shift).</li>
+                    <li><strong>text insertion</strong> – use Artistic Text (F8) for name, title. Paragraph text frame
+                        for contact details.</li>
+                    <li><strong>formatting</strong> – serif for name (e.g., Garamond 14pt bold), sans‑serif for details
+                        (Helvetica 8pt). Color from your brand palette.</li>
+                    <li><strong>alignment & distribution</strong> – select multiple objects, then <strong>Object &gt;
+                            Align and Distribute</strong> (or use docker).</li>
+                    <li><strong>finishing touch</strong> – add a thin outline (F12) to important elements? maybe a small
+                        graphic line.</li>
+                    <li><strong>final group & export</strong> – group all (Ctrl+G). Save master .cdr, then export PDF
+                        (print‑ready) and PNG (web).</li>
+                </ol>
+            </div>
+            <table>
+                <tr>
+                    <th>element</th>
+                    <th>example content</th>
+                    <th>font/color hint</th>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>ANNA KOWALSKI</td>
+                    <td>14pt bold, #1D6D5E</td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td>senior designer</td>
+                    <td>10pt caps, 40% black</td>
+                </tr>
+                <tr>
+                    <td>Company</td>
+                    <td>creativ8 studio</td>
+                    <td>logo color, 12pt</td>
+                </tr>
+                <tr>
+                    <td>contact</td>
+                    <td>anna@... · +123 4567</td>
+                    <td>8pt sans, gray</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ========== STEP 3 : TYPOGRAPHY + COLOR WORKSHOP (FLYER HEADLINE) ========= -->
+        <section>
+            <h2>🔹 ACTIVITY 3 · WORKSHOP: 3 MOODS – 1 HEADLINE</h2>
+            <p><strong>brief:</strong> same phrase “SUMMER FEST” – create three different versions using only type &
+                color harmony.</p>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h4>🌿 natural / organic</h4>
+                    <ul>
+                        <li>font: serif (Georgia) or handwritten script</li>
+                        <li>colors: analogous greens, browns, warm yellow</li>
+                        <li>effect: subtle gradient fountain fill</li>
+                    </ul>
+                </div>
+                <div class="project-card">
+                    <h4>⚡ energetic / youthful</h4>
+                    <ul>
+                        <li>font: bold sans (Futura / Montserrat)</li>
+                        <li>colors: complementary (orange + blue) or triadic</li>
+                        <li>extrude or shadow effect (interactive shadow tool)</li>
+                    </ul>
+                </div>
+                <div class="project-card">
+                    <h4>✨ elegant / premium</h4>
+                    <ul>
+                        <li>font: script + light serif combination</li>
+                        <li>colors: monochromatic purple / gold, metallics (simulate with fountain)</li>
+                        <li>outline behind fill (F12, check “behind fill”)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-block">
+                <h4>🛠️ how to:</h4>
+                <ol>
+                    <li>Create three separate Artboard pages (right‑click page tab → “insert page after”).</li>
+                    <li>Type “SUMMER FEST” with Artistic Text tool (F8). Duplicate across pages.</li>
+                    <li>Apply different font pairings (see above). Use Text Properties docker (<kbd>Ctrl+T</kbd>).</li>
+                    <li>Experiment with Color Harmonies docker (<kbd>Window &gt; Dockers &gt; Color Harmonies</kbd>).
+                    </li>
+                    <li>Add extra effect (shadow, contour, envelope).</li>
+                    <li>Write 2‑line mood description on each page.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ========== STEP 4 : CASE STUDY – ONE‑PAGE FLYER ========= -->
+        <section>
+            <h2>🔹 ACTIVITY 4 · CASE STUDY: SCHOOL / COMMUNITY EVENT FLYER</h2>
+            <p><strong>brief:</strong> A5 flyer (148×210mm) for “Autumn Bazaar · 25 Oct 2026”. Combine images, text,
+                shapes.</p>
+            <ul>
+                <li><strong>1. Place image:</strong> <kbd>Ctrl+I</kbd> (use a photo of pumpkins / autumn leaves).
+                    PowerClip into a circle: select image → Object &gt; PowerClip &gt; Place Inside Frame → click
+                    circle.</li>
+                <li><strong>2. Edit PowerClip content:</strong> <kbd>Ctrl</kbd>+click to resize image inside the circle.
+                </li>
+                <li><strong>3. Headline with effect:</strong> “Autumn Bazaar” – fit text to path (circle) or use
+                    envelope distortion.</li>
+                <li><strong>4. Paragraph text:</strong> draw paragraph frame, paste details (time, stalls, music).
+                    Format 2 columns (<kbd>Text &gt; Columns</kbd>).</li>
+                <li><strong>5. Colored shapes behind text:</strong> draw semi‑transparent rectangles, send to back
+                    (<kbd>Object &gt; Order &gt; To Back of Layer</kbd>).</li>
+                <li><strong>6. Lock background elements</strong> after placement to avoid accidental moves.</li>
+            </ul>
+            <p><span class="badge">pro tip</span> Use <strong>drop cap</strong> on first paragraph for style: Text &gt;
+                Drop Cap.</p>
+        </section>
+
+        <!-- ========== STEP 5 : FINAL ASSESSMENT – TRIFOLD BROCHURE ========= -->
+        <section>
+            <h2>📋 ASSESSMENT · TRIFOLD BROCHURE (PRACTICAL ASSIGNMENT)</h2>
+            <div class="step-block">
+                <h4>📐 brief: design a trifold brochure for a small business / non‑profit</h4>
+                <p><strong>size:</strong> letter / A4 landscape, folded into three panels (front cover, inside flap,
+                    back).</p>
+                <p><strong>requirements – must include:</strong></p>
+                <ul>
+                    <li>✔ at least one imported photo (place & crop with PowerClip or Shape Tool).</li>
+                    <li>✔ vector logo / icon created using basic shapes (grouped).</li>
+                    <li>✔ headline with artistic text + a fountain fill or color gradient.</li>
+                    <li>✔ paragraph text frames (linked across panels) with consistent formatting.</li>
+                    <li>✔ color scheme following a harmony (complementary, analogous etc.) – describe on a separate
+                        layer.</li>
+                    <li>✔ outlines used intentionally (e.g., on headings or graphic elements).</li>
+                    <li>✔ correct arrangement (grouped elements, locked guides, layers named).</li>
+                    <li>✔ final export as print‑ready PDF (with bleeds) + a flattened JPEG preview.</li>
+                </ul>
+                <p><strong>submission:</strong> .cdr source + PDF + a short paragraph explaining your design choices.
+                </p>
+            </div>
+            <table>
+                <tr>
+                    <th>criterion</th>
+                    <th>points</th>
+                </tr>
+                <tr>
+                    <td>correct trifold dimensions & guides</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>color harmony & typography hierarchy</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>proper use of PowerClip / image import</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td>object management (group, lock, order)</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>fountain / uniform fills + outlines</td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td>file organisation (layers, clean)</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>PDF export & reflection note</td>
+                    <td>10</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ========== QUIZ (terminology + tools) ========= -->
+        <section>
+            <h2>📝 SHORT QUIZ · terminology & CorelDRAW tools</h2>
+            <div class="def-grid">
+                <div class="def-item"><strong>1.</strong> difference between RGB and CMYK? <br> <em>RGB additive /
+                        screen; CMYK subtractive / print</em></div>
+                <div class="def-item"><strong>2.</strong> what does <kbd>Ctrl+Q</kbd> do? <br> <em>convert selected
+                        object to curves</em></div>
+                <div class="def-item"><strong>3.</strong> name two ways to apply a fountain fill. <br> <em>F11 or
+                        interactive fill tool</em></div>
+                <div class="def-item"><strong>4.</strong> what is PowerClip? <br> <em>place content inside a vector
+                        container</em></div>
+                <div class="def-item"><strong>5.</strong> how to edit text inside a PowerClip? <br>
+                    <kbd>Ctrl</kbd>+click to enter container</div>
+                <div class="def-item"><strong>6.</strong> which docker shows object stacking? <br> <em>Object
+                        Manager</em></div>
+                <div class="def-item"><strong>7.</strong> spot colour vs process? <br> <em>premixed ink (pantone) vs
+                        CMYK build</em></div>
+                <div class="def-item"><strong>8.</strong> shortcut for paragraph / artistic text conversion? <br>
+                    <kbd>Ctrl+F8</kbd></div>
+                <div class="def-item"><strong>9.</strong> what does “behind fill” in outline pen do? <br> <em>places
+                        outline behind object fill</em></div>
+                <div class="def-item"><strong>10.</strong> what is the 60‑30‑10 rule? <br> <em>color distribution: 60%
+                        dominant, 30% secondary, 10% accent</em></div>
+            </div>
+            <p style="margin-top:1rem;">✔ short answer quiz – review your module notes to verify every answer.</p>
+        </section>
+
+        <!-- ========== DELIVERABLES CHECKLIST ========= -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ final project checklist – what to submit</h4>
+            <div class="def-grid">
+                <div class="def-item">☐ logo recreation (.cdr)</div>
+                <div class="def-item">☐ business card (.cdr + PDF)</div>
+                <div class="def-item">☐ three‑mood headline file</div>
+                <div class="def-item">☐ one‑page event flyer</div>
+                <div class="def-item">☐ trifold brochure (.cdr + PDF + reflection)</div>
+                <div class="def-item">☐ completed quiz (written / digital)</div>
+            </div>
+            <p style="margin-top:1.5rem;"><strong>🎯 learning outcomes achieved:</strong> create & manipulate objects,
+                apply color models, use text tools, import graphics, arrange with grouping/layering, and output
+                print‑ready files.</p>
+        </div>
+
+        <footer>
+            📘 DTP & secretarial studies · comprehensive project page · all five guides integrated · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

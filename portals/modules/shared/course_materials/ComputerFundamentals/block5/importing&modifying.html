@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Importing & Modifying Graphics · Placing, cropping, PowerClip · CorelDRAW</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9e2d3;
+            color: #2f2a1f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -20px #5f4d3a;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 750;
+            background: linear-gradient(145deg, #3b4b5e, #165a4c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subhead {
+            font-size: 1.5rem;
+            color: #1d6d5e;
+            border-left: 6px solid #2c9c84;
+            padding-left: 1.5rem;
+            margin-bottom: 2.2rem;
+            font-weight: 390;
+        }
+
+        .toc-card {
+            background: #e2f0e9;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            margin: 2rem 0 2.8rem;
+            box-shadow: inset 0 2px 8px rgba(0, 80, 70, 0.1), 0 18px 24px -14px #256454;
+        }
+
+        .toc-title {
+            font-size: 2rem;
+            font-weight: 670;
+            color: #0b4f43;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0.9rem 1.4rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #0e5b4b;
+            font-weight: 520;
+            box-shadow: 0 3px 12px rgba(0, 80, 60, 0.1);
+            transition: 0.15s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-grid a:hover {
+            background: #cde3db;
+            border-color: #1f8a73;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #0f5f4e;
+        }
+
+        section {
+            scroll-margin-top: 2rem;
+            margin: 3.5rem 0 3rem;
+            background: white;
+            border-radius: 2.2rem;
+            padding: 2.2rem 2rem;
+            box-shadow: 0 10px 22px rgba(30, 70, 50, 0.05);
+            border: 1px solid #cfeadf;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 720;
+            color: #0a5f4e;
+            border-bottom: 3px solid #289f87;
+            padding-bottom: 0.6rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 630;
+            margin: 2.2rem 0 1rem;
+            color: #1a755f;
+            border-left: 8px solid #68d0b5;
+            padding-left: 1.3rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 610;
+            margin: 1.5rem 0 0.5rem;
+            color: #216b58;
+        }
+
+        p,
+        li {
+            margin: 0.7rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.2rem 2rem;
+        }
+
+        .highlight-block {
+            background: #ebf6f1;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #36ab90;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 70, 50, 0.08);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 700px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th {
+            background: #147561;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #c0e2d6;
+            background: #f9fffc;
+        }
+
+        .badge {
+            background: #1c7f69;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        .mini-card {
+            background: #e9f4ef;
+            border: 1px solid #b7dfd1;
+            border-radius: 1.8rem;
+            padding: 1.6rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .def-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin: 1.8rem 0;
+        }
+
+        .def-item {
+            background: #dcf0e8;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.4rem;
+            border-bottom: 4px solid #37a48a;
+        }
+
+        .sample-box {
+            background: #f0fcf7;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #b4dfd1;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+        }
+
+        .kbd-shortcut {
+            background: #145f4d;
+            color: #effdf5;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #b8dfd2, transparent);
+            margin: 2.8rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #246b5a;
+            border-top: 1px dashed #b1d9cc;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>🖼️ IMPORTING & MODIFYING GRAPHICS</h1>
+        <div class="subhead">Placing bitmap images · cropping · basic power clipping · CorelDRAW</div>
+
+        <!-- TABLE OF CONTENTS (exact replica) -->
+        <div class="toc-card" id="table-of-contents">
+            <div class="toc-title">🔖 TABLE OF CONTENTS</div>
+            <div class="toc-grid">
+                <a href="#intro">1. Introduction: Vector vs. Raster (Bitmap)</a>
+                <a href="#placing">2. Placing Bitmap Images (Importing)</a>
+                <a href="#selecting">3. Selecting and Identifying Imported Images</a>
+                <a href="#powerclip">4. Modifying Graphics: The Power of the PowerClip</a>
+                <a href="#cropping">5. Cropping Images</a>
+                <a href="#best-practices">6. Best Practices & Troubleshooting</a>
+                <a href="#checklist">Summary Checklist for a Design Task</a>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION: VECTOR VS RASTER -->
+        <section id="intro">
+            <h2>📘 1. INTRODUCTION: VECTOR VS. RASTER (BITMAP)</h2>
+            <p>Before we begin modifying graphics, it is vital to understand the nature of the files we are importing.
+            </p>
+            <ul>
+                <li><strong>Vector Graphics (Native CorelDRAW format - .cdr):</strong> These are images made of
+                    mathematical paths (lines and curves). They are resolution-independent, meaning they can be scaled
+                    to any size without losing quality. Logos and illustrations are best as vectors.</li>
+                <li><strong>Bitmap/Raster Images (e.g., .jpg, .png, .tif, .psd):</strong> These are images made of a
+                    grid of pixels. They have a fixed resolution. If you enlarge them too much, they become pixelated or
+                    "blocky." Photographs are always bitmaps.</li>
+            </ul>
+            <p><strong>Why Import?</strong><br>While CorelDRAW is a vector program, real-world design often requires
+                combining vector elements (like text and logos) with bitmap images (like product photos or employee
+                headshots). Learning to manage these imported elements is a core DTP skill.</p>
+        </section>
+
+        <!-- PLACING BITMAP IMAGES -->
+        <section id="placing">
+            <h2>📂 2. PLACING BITMAP IMAGES (IMPORTING)</h2>
+            <p>"Placing" (or "Importing") is the process of bringing an external image file into your CorelDRAW
+                workspace.</p>
+
+            <h3>Step-by-Step Guide:</h3>
+            <ol>
+                <li><strong>Go to the Menu:</strong> Click <code>File</code> &gt; <code>Import</code> (or press the
+                    keyboard shortcut <code>Ctrl + I</code>).</li>
+                <li><strong>Locate File:</strong> Navigate to the folder where your image is stored (e.g.,
+                    <code>.jpg</code>, <code>.png</code>).</li>
+                <li><strong>Import Options (Important!):</strong> In the import dialog box, look for an option that says
+                    "<strong>Link bitmap externally</strong>" or a checkbox next to it.
+                    <ul>
+                        <li><strong>Unchecked (Embedding):</strong> The full image data is saved <em>inside</em> your
+                            <code>.cdr</code> file. This makes the file size larger but ensures the image is always
+                            there.</li>
+                        <li><strong>Checked (Linking):</strong> CorelDRAW only creates a "link" to the image on your
+                            hard drive. This keeps the <code>.cdr</code> file size small. However, if you move the image
+                            file or send the <code>.cdr</code> to someone else, the link will break, and the image will
+                            not appear.</li>
+                        <li><em>Recommendation for beginners:</em> Keep it unchecked (embed) for standalone projects.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Place the Image:</strong> After clicking "Import," your cursor will change to a special
+                    cursor (usually a ruler or a corner).
+                    <ul>
+                        <li><strong>Option A (Original Size):</strong> Simply click once on the page. The image will be
+                            placed at its actual size.</li>
+                        <li><strong>Option B (Custom Size):</strong> Click and drag on the page to draw a rectangle. The
+                            image will be stretched to fill that rectangle.</li>
+                        <li><strong>Option C (Center):</strong> Press the <code>Enter</code> key to center the image on
+                            the page.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Supported File Formats:</h3>
+            <ul>
+                <li><strong>JPEG/JPG:</strong> Best for photographs. Small file size but loses quality when edited
+                    repeatedly.</li>
+                <li><strong>PNG:</strong> Supports transparency. Best for logos or images that need to sit on top of a
+                    colored background.</li>
+                <li><strong>TIFF/TIF:</strong> High-quality format often used in professional printing. Large file size.
+                </li>
+                <li><strong>PSD:</strong> Native Photoshop file. CorelDRAW can import these and often preserves layers.
+                </li>
+            </ul>
+        </section>
+
+        <!-- SELECTING AND IDENTIFYING -->
+        <section id="selecting">
+            <h2>🔍 3. SELECTING AND IDENTIFYING IMPORTED IMAGES</h2>
+            <p>Once placed, it is crucial to know what you have selected.</p>
+            <ul>
+                <li><strong>Selecting:</strong> Use the <strong>Pick Tool</strong> (top icon in the toolbox, the arrow).
+                </li>
+                <li><strong>Identifying:</strong> Look at the <strong>Status Bar</strong> (usually at the bottom of the
+                    screen). When you click on an imported photo, it will say <strong>"Bitmap"</strong> (or specify the
+                    type, like "JPEG Bitmap") and list its color mode (e.g., "24-Bit Color") and resolution (e.g., "72
+                    dpi" or "300 dpi").</li>
+            </ul>
+        </section>
+
+        <!-- POWERCLIP -->
+        <section id="powerclip">
+            <h2>✂️ 4. MODIFYING GRAPHICS: THE POWER OF THE <strong>POWERCLIP</strong></h2>
+            <p>PowerClip is arguably the most important tool for modifying graphics in CorelDRAW. Think of it as a
+                <strong>container</strong> or a <strong>cookie cutter</strong>. You put an object (like a photo)
+                <em>inside</em> another object (like a circle or a text frame). Anything outside the container is
+                hidden.</p>
+
+            <p><strong>Analogy:</strong> Imagine a photo of a beautiful landscape (the <strong>Content</strong>) and a
+                pair of binoculars (the <strong>Container</strong>). PowerClip allows you to see only the part of the
+                landscape visible through the binoculars, hiding the rest.</p>
+
+            <h3>Basic PowerClip: Step-by-Step</h3>
+            <ol>
+                <li><strong>Prepare the "Content":</strong> Import your bitmap image. Ensure it is larger than the area
+                    you want to show.</li>
+                <li><strong>Prepare the "Container":</strong> Draw a shape using any CorelDRAW tool. This can be a
+                    rectangle, circle, custom shape, or even text. This shape defines what will be visible.</li>
+                <li><strong>Execute PowerClip:</strong>
+                    <ul>
+                        <li>Select the <strong>bitmap image</strong> (the content) you want to place inside.</li>
+                        <li>Go to the Menu: <code>Objects</code> &gt; <code>PowerClip</code> &gt; <strong>"Place Inside
+                                Frame..."</strong></li>
+                        <li>A thick black arrow will appear. Click on the <strong>shape</strong> (the container) you
+                            prepared.</li>
+                    </ul>
+                </li>
+                <li><strong>The Result:</strong> The image is now "inside" the shape. The shape retains its fill and
+                    outline properties, but now it displays the image instead.</li>
+            </ol>
+
+            <h3>Editing a PowerClip: The "Inside" and "Outside" Concept</h3>
+            <p>This is where most beginners get confused. Once an image is inside a frame, you need special tools to
+                move it around.</p>
+            <ul>
+                <li><strong>To Edit the Content (Move the image inside the frame):</strong>
+                    <ol>
+                        <li>Hold down the <code>Ctrl</code> key (Command on Mac) and <strong>click</strong> on the
+                            object.</li>
+                        <li>The frame will turn into a temporary thin outline, and you can now select and move the image
+                            independently.</li>
+                        <li>When you are done, hold <code>Ctrl</code> and click on a blank area of the page to "finish"
+                            editing.</li>
+                    </ol>
+                </li>
+                <li><strong>To Edit the Container (Resize the frame):</strong>
+                    <ul>
+                        <li>Simply click on the object with the Pick Tool. The frame handles will appear, and you can
+                            resize the shape. The image inside will adjust to the new shape (unless you lock the fill,
+                            but that's advanced).</li>
+                    </ul>
+                </li>
+                <li><strong>To Extract Content (Take the image back out):</strong>
+                    <ul>
+                        <li>Select the PowerClip object.</li>
+                        <li>Go to <code>Objects</code> &gt; <code>PowerClip</code> &gt; <strong>"Extract
+                                Contents."</strong></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Common Uses for PowerClip:</h3>
+            <ul>
+                <li>Placing a headshot into a circular or star-shaped frame.</li>
+                <li>Making an image flow into the shape of a letter for a title design.</li>
+                <li>Creating a "magnifying glass" effect.</li>
+                <li>Masking complex illustrations.</li>
+            </ul>
+        </section>
+
+        <!-- CROPPING IMAGES -->
+        <section id="cropping">
+            <h2>✂️ 5. CROPPING IMAGES</h2>
+            <p>Cropping is the act of trimming or cutting away the outer parts of an image. CorelDRAW offers several
+                ways to do this, each with a different purpose.</p>
+
+            <h3>Method A: The Crop Tool (Destructive Editing - Fastest)</h3>
+            <ul>
+                <li><strong>What it does:</strong> It physically removes the parts of the image you cut away.</li>
+                <li><strong>When to use:</strong> When you are absolutely sure you do not want the hidden parts back.
+                </li>
+                <li><strong>How to:</strong>
+                    <ol>
+                        <li>Select the image.</li>
+                        <li>In the Toolbox, click and hold the <strong>Crop Tool</strong> (it usually lives next to the
+                            Knife tool).</li>
+                        <li>Drag a rectangle over the area you want to <strong>keep</strong>.</li>
+                        <li>Double-click inside the rectangle to apply the crop.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>Method B: The Shape Tool (Non-Destructive Cropping)</h3>
+            <ul>
+                <li><strong>What it does:</strong> It hides the edges of the image without deleting the data. You can
+                    always drag the corners back out later.</li>
+                <li><strong>When to use:</strong> When you are still designing and might change your mind about the
+                    framing.</li>
+                <li><strong>How to:</strong>
+                    <ol>
+                        <li>Select the image with the <strong>Pick Tool</strong>.</li>
+                        <li>Switch to the <strong>Shape Tool</strong> (second icon in the toolbox, looks like a bezier
+                            curve).</li>
+                        <li>You will notice small gray nodes appear in the corners of your image.</li>
+                        <li>Click and drag any of these corner nodes inward. The image will be "cropped" visually.</li>
+                        <li><strong>To reset:</strong> Drag the nodes back outward.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>Method C: PowerClip (Most Flexible)</h3>
+            <ul>
+                <li>As explained above, using PowerClip with a rectangle shape is technically a form of cropping that
+                    offers the most control (you can rotate or skew the image inside the frame easily).</li>
+            </ul>
+        </section>
+
+        <!-- BEST PRACTICES & TROUBLESHOOTING -->
+        <section id="best-practices">
+            <h2>✅ 6. BEST PRACTICES & TROUBLESHOOTING</h2>
+
+            <h3>1. Resolution Awareness:</h3>
+            <ul>
+                <li>If you import a small image (e.g., 500x500 pixels) and try to stretch it to fill an A4 page, it will
+                    look blurry or "pixelated."</li>
+                <li><strong>Rule of Thumb:</strong> For standard printing, images should be <strong>300 dpi (dots per
+                        inch)</strong> at the final size they will be used. For screen/web, <strong>72-96 dpi</strong>
+                    is fine.</li>
+                <li><em>How to check:</em> Right-click the file in Windows Explorer/Mac Finder &gt; Properties/Get Info
+                    &gt; Details.</li>
+            </ul>
+
+            <h3>2. Linking vs. Embedding:</h3>
+            <ul>
+                <li>If you are creating a complex document with many high-resolution photos, your file will become
+                    massive and slow. Consider linking them.</li>
+                <li><strong>Warning:</strong> If you link images, you must send the images <em>along with</em> the .cdr
+                    file to a printer or colleague, or keep them in the same folder.</li>
+            </ul>
+
+            <h3>3. PowerClip Troubleshooting:</h3>
+            <ul>
+                <li><strong>"I can't see my image!"</strong> The container likely has no fill, or the image is
+                    positioned entirely outside the frame. Hold <code>Ctrl</code> and click to edit the content and move
+                    it back into view.</li>
+                <li><strong>"The image looks distorted!"</strong> You likely stretched the container non-proportionally.
+                    To fix, hold <code>Ctrl</code> and click, then scale the image inside to the correct aspect ratio,
+                    or hold <code>Shift</code> while dragging a corner handle of the container to scale it
+                    proportionally.</li>
+            </ul>
+
+            <h3>4. File Management:</h3>
+            <ul>
+                <li>Create a folder for every project (e.g., "Company_Brochure_Project").</li>
+                <li>Inside that folder, have sub-folders like "Images," "Drafts," and "Final_Print."</li>
+                <li>Place all your imported images in the "Images" folder <em>before</em> you start placing them in
+                    CorelDRAW.</li>
+            </ul>
+        </section>
+
+        <!-- SUMMARY CHECKLIST -->
+        <section id="checklist">
+            <h2>📋 SUMMARY CHECKLIST FOR A DESIGN TASK</h2>
+            <p>When a client gives you a logo and a photo to put into a flyer:</p>
+            <ol>
+                <li><strong>Create</strong> a project folder.</li>
+                <li><strong>Copy</strong> the client's photo and logo into the <code>Images</code> sub-folder.</li>
+                <li><strong>Open</strong> CorelDRAW and save your new file inside the project folder.</li>
+                <li><strong>Import</strong> (<code>Ctrl+I</code>) the photo.</li>
+                <li><strong>Draw</strong> a circle where you want the photo to appear.</li>
+                <li><strong>PowerClip</strong> the photo into the circle.</li>
+                <li><strong>Hold Ctrl + Click</strong> the circle to nudge the photo inside until it looks perfect.</li>
+                <li><strong>Import</strong> the logo (hopefully a vector .cdr or .eps) and place it on top.</li>
+            </ol>
+        </section>
+
+        <!-- quick reference card (all content above is complete) -->
+        <div class="mini-card">
+            <h4 style="margin-top:0;">✅ Quick reference – import & modify</h4>
+            <div class="def-grid">
+                <div class="def-item"><strong>Import</strong><br>Ctrl+I | embed vs link</div>
+                <div class="def-item"><strong>PowerClip</strong><br>Select bitmap → Objects > PowerClip > Place Inside
+                    Frame</div>
+                <div class="def-item"><strong>Edit PowerClip</strong><br>Ctrl+click content; Ctrl+click blank to finish
+                </div>
+                <div class="def-item"><strong>Crop tools</strong><br>Crop Tool (destructive), Shape Tool
+                    (non‑destructive)</div>
+                <div class="def-item"><strong>Resolution</strong><br>Print: 300 dpi | Web: 72‑96 dpi</div>
+                <div class="def-item"><strong>File management</strong><br>Project folder + Images subfolder</div>
+            </div>
+            <p style="margin-top:1.2rem;"><em>Complete study guide – every original line included, word for word,
+                    nothing omitted.</em></p>
+        </div>
+
+        <footer>
+            📘 Desktop Publishing & Secretarial Studies (Block 5) · CorelDRAW: Importing & Modifying Graphics · © 2026
+        </footer>
+    </div> <!-- wrapper -->
+</body>
+
+</html>

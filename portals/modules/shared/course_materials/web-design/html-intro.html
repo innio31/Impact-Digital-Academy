@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPREHENSIVE STUDY NOTES · Introduction to HTML & Document Structure</title>
+    <style>
+        /* clean, readable style — preserving all content verbatim */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #eef3f7;
+            color: #1e2f3a;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+        }
+
+        .notes-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -25px #1e4b5c;
+            padding: 3rem 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #003d4d, #07645e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #0b8f8a;
+            padding-left: 1.8rem;
+            margin: 0 0 0.25rem 0;
+            letter-spacing: -0.01em;
+        }
+
+        h1 small {
+            font-size: 1.3rem;
+            font-weight: 400;
+            background: none;
+            -webkit-text-fill-color: #2e6b79;
+            color: #2e6b79;
+            display: block;
+            margin-top: 0.2rem;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            font-weight: 650;
+            color: #0c5768;
+            margin: 2.5rem 0 1rem;
+            border-bottom: 4px solid #72bfc0;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: #116d78;
+            margin: 2rem 0 0.8rem;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1f6d79;
+            margin: 1.5rem 0 0.3rem;
+        }
+
+        .table-of-contents {
+            background: #e2f1f2;
+            border-radius: 2rem;
+            padding: 2rem 2.5rem;
+            margin: 2rem 0 2.5rem;
+            border: 1px solid #9ad0d6;
+        }
+
+        .table-of-contents h2 {
+            margin-top: 0;
+            border-bottom: 3px solid #3f9d99;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 0.5rem 1.5rem;
+        }
+
+        .toc-grid li {
+            margin-left: 1.5rem;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, #b9e1e4, #ffffff, #b9e1e4);
+            margin: 2rem 0;
+        }
+
+        pre {
+            background: #1e2b33;
+            color: #e2eef3;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 0 10px #0e1a20;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #d6ecf0;
+            color: #034b59;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.4rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(5, 80, 90, 0.1);
+        }
+
+        th {
+            background: #1f737d;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        td {
+            background: #f7fdfe;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #c3e1e9;
+        }
+
+        .example-box {
+            background: #f1f9fc;
+            border-left: 8px solid #289994;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin: 1.8rem 0;
+        }
+
+        .badge {
+            background: #187b82;
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 40px;
+            padding: 0.2rem 1.2rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1rem 1.8rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #386e7a;
+            border-top: 2px solid #cbe7ec;
+            padding-top: 2rem;
+        }
+
+        .kbd {
+            background: #edf4f7;
+            border-radius: 6px;
+            padding: 0.1rem 0.5rem;
+            font-family: monospace;
+            border: 1px solid #8ab3c2;
+        }
+
+        .note {
+            background: #fffde7;
+            border-radius: 1rem;
+            padding: 1rem 2rem;
+            border-left: 8px solid #f4b836;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notes-container">
+
+        <h1>Introduction to HTML & Document Structure</h1>
+
+        <hr>
+
+        <!-- TABLE OF CONTENTS - exactly as provided -->
+        <h2>TABLE OF CONTENTS</h2>
+        <ol>
+            <li>Introduction to HTML</li>
+            <li>The Role of HTML in Web Development</li>
+            <li>Basic HTML Document Structure</li>
+            <li>Understanding Elements and Tags</li>
+            <li>Headings in HTML (h1 to h6)</li>
+            <li>Paragraphs and Text Content</li>
+            <li>Practical Examples and Best Practices</li>
+            <li>Common Mistakes and How to Avoid Them</li>
+            <li>Exercises and Self-Assessment</li>
+            <li>Additional Resources</li>
+        </ol>
+
+        <hr>
+
+        <!-- 1. INTRODUCTION TO HTML - every word -->
+        <h2>1. INTRODUCTION TO HTML</h2>
+
+        <h3>1.1 What is HTML?</h3>
+        <p><strong>HTML (HyperText Markup Language)</strong> is the standard markup language used to create web pages.
+            It forms the structural foundation of every website on the internet. Think of HTML as the skeleton or
+            framework of a building—it provides the structure upon which everything else is built.</p>
+
+        <h3>1.2 A Brief History of HTML</h3>
+        <table>
+            <tr>
+                <th>Version</th>
+                <th>Year</th>
+                <th>Key Features</th>
+            </tr>
+            <tr>
+                <td>HTML 1.0</td>
+                <td>1991</td>
+                <td>Basic tags, no tables or forms</td>
+            </tr>
+            <tr>
+                <td>HTML 2.0</td>
+                <td>1995</td>
+                <td>Standardized core features</td>
+            </tr>
+            <tr>
+                <td>HTML 3.2</td>
+                <td>1997</td>
+                <td>Tables, applets, text flow</td>
+            </tr>
+            <tr>
+                <td>HTML 4.01</td>
+                <td>1999</td>
+                <td>Cascading Style Sheets (CSS) support</td>
+            </tr>
+            <tr>
+                <td>XHTML 1.0</td>
+                <td>2000</td>
+                <td>Stricter, XML-based syntax</td>
+            </tr>
+            <tr>
+                <td>HTML5</td>
+                <td>2014</td>
+                <td>Semantic elements, multimedia, APIs</td>
+            </tr>
+        </table>
+
+        <p><strong>HTML5</strong> is the current standard and brings:</p>
+        <ul>
+            <li>Native audio and video support</li>
+            <li>Canvas for drawing graphics</li>
+            <li>Semantic elements (article, section, nav)</li>
+            <li>Better form controls</li>
+            <li>Improved accessibility features</li>
+        </ul>
+
+        <h3>1.3 How HTML Works with Other Technologies</h3>
+        <pre>
+┌─────────────────────────────────────┐
+│         CONTENT (HTML)              │
+│  "This is a heading. This is text." │
+├─────────────────────────────────────┤
+│         PRESENTATION (CSS)           │
+│  "Make the heading blue and big.     │
+│   Add spacing around the text."      │
+├─────────────────────────────────────┤
+│       INTERACTIVITY (JavaScript)     │
+│  "When user clicks heading, hide it. │
+│   Validate the form on submit."      │
+└─────────────────────────────────────┘
+</pre>
+
+        <ul>
+            <li><strong>HTML</strong>: Structure and content (nouns)</li>
+            <li><strong>CSS</strong>: Styling and layout (adjectives)</li>
+            <li><strong>JavaScript</strong>: Behavior and interactivity (verbs)</li>
+        </ul>
+
+        <hr>
+
+        <!-- 2. THE ROLE OF HTML IN WEB DEVELOPMENT -->
+        <h2>2. THE ROLE OF HTML IN WEB DEVELOPMENT</h2>
+
+        <h3>2.1 Primary Functions of HTML</h3>
+
+        <h4>2.1.1 Content Structuring</h4>
+        <p>HTML organizes content into a logical hierarchy, making it understandable for both humans and machines.</p>
+
+        <p><strong>Example:</strong></p>
+        <pre>
+&lt;article&gt;
+    &lt;h1&gt;Breaking News: Major Discovery&lt;/h1&gt;
+    &lt;p&gt;Scientists have discovered a new species in the Amazon rainforest.&lt;/p&gt;
+    &lt;p&gt;The discovery was made during a three-year expedition.&lt;/p&gt;
+&lt;/article&gt;
+</pre>
+
+        <h4>2.1.2 Semantic Meaning</h4>
+        <p>HTML gives meaning to content, which helps:</p>
+        <ul>
+            <li><strong>Search Engines</strong>: Understand what your content is about (SEO)</li>
+            <li><strong>Screen Readers</strong>: Help visually impaired users navigate</li>
+            <li><strong>Browsers</strong>: Render content appropriately</li>
+            <li><strong>Developers</strong>: Maintain and understand code</li>
+        </ul>
+
+        <h4>2.1.3 Accessibility Foundation</h4>
+        <p>Proper HTML ensures web content is accessible to everyone, including people with disabilities.</p>
+
+        <p><strong>Accessible vs. Inaccessible Example:</strong></p>
+        <pre>
+&lt;!-- Inaccessible - no meaning --&gt;
+&lt;div class="big-text"&gt;Welcome&lt;/div&gt;
+&lt;div class="small-text"&gt;Click here&lt;/div&gt;
+
+&lt;!-- Accessible - semantic meaning --&gt;
+&lt;h1&gt;Welcome&lt;/h1&gt;
+&lt;button&gt;Click here&lt;/button&gt;
+</pre>
+
+        <h3>2.2 HTML in the Web Ecosystem</h3>
+        <pre>
+User Types URL → Browser Requests Page → Server Sends HTML
+         ↓
+Browser Receives HTML
+         ↓
+Browser Parses HTML (creates DOM)
+         ↓
+Browser Requests CSS, JavaScript, Images
+         ↓
+Browser Renders Complete Page
+</pre>
+
+        <h3>2.3 Key Concepts in HTML</h3>
+        <table>
+            <tr>
+                <th>Concept</th>
+                <th>Description</th>
+                <th>Importance</th>
+            </tr>
+            <tr>
+                <td><strong>Markup</strong></td>
+                <td>Annotating text with tags</td>
+                <td>Distinguishes content from structure</td>
+            </tr>
+            <tr>
+                <td><strong>Elements</strong></td>
+                <td>Building blocks of HTML pages</td>
+                <td>Creates the actual page structure</td>
+            </tr>
+            <tr>
+                <td><strong>Tags</strong></td>
+                <td>Markers that define elements</td>
+                <td>Tell browsers how to display content</td>
+            </tr>
+            <tr>
+                <td><strong>Attributes</strong></td>
+                <td>Additional information about elements</td>
+                <td>Provide extra configuration</td>
+            </tr>
+            <tr>
+                <td><strong>DOM</strong></td>
+                <td>Document Object Model (tree structure)</td>
+                <td>How browsers represent the page</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <!-- 3. BASIC HTML DOCUMENT STRUCTURE -->
+        <h2>3. BASIC HTML DOCUMENT STRUCTURE</h2>
+
+        <h3>3.1 The Minimal HTML5 Document</h3>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, World!&lt;/h1&gt;
+    &lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h3>3.2 Detailed Breakdown of Each Component</h3>
+
+        <h4>3.2.1 The DOCTYPE Declaration</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+</pre>
+        <p><strong>Purpose:</strong> Tells the browser which version of HTML the page is written in.</p>
+        <p><strong>Key Points:</strong></p>
+        <ul>
+            <li>Must be the very first line of every HTML document</li>
+            <li>Not case-sensitive, but typically written in uppercase</li>
+            <li>For HTML5, it's simple and easy to remember</li>
+            <li>Without it, browsers may render pages in "quirks mode" (inconsistent rendering)</li>
+        </ul>
+
+        <p><strong>Historical Context:</strong></p>
+        <pre>
+&lt;!-- HTML 4.01 Strict --&gt;
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;!-- XHTML 1.0 Strict --&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+
+&lt;!-- HTML5 (current standard) --&gt;
+&lt;!DOCTYPE html&gt;
+</pre>
+
+        <h4>3.2.2 The HTML Element</h4>
+        <pre>
+&lt;html lang="en"&gt;
+    &lt;!-- All content goes here --&gt;
+&lt;/html&gt;
+</pre>
+        <p><strong>Purpose:</strong> The root element that wraps all content on the entire page.</p>
+        <p><strong>Important Attributes:</strong></p>
+        <ul>
+            <li><strong>lang</strong>: Specifies the language of the document (important for accessibility and search
+                engines)
+                <ul>
+                    <li><code>en</code> = English</li>
+                    <li><code>es</code> = Spanish</li>
+                    <li><code>fr</code> = French</li>
+                    <li><code>ar</code> = Arabic</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Best Practice:</strong> Always include the <code>lang</code> attribute for accessibility.</p>
+
+        <h4>3.2.3 The HEAD Element</h4>
+        <pre>
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="description" content="Free web tutorials"&gt;
+    &lt;meta name="keywords" content="HTML, CSS, JavaScript"&gt;
+    &lt;meta name="author" content="John Doe"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My Website - Home Page&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+    &lt;script src="script.js" defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+</pre>
+        <p><strong>Purpose:</strong> Contains meta-information about the document—data that describes the data.</p>
+
+        <p><strong>What Goes in the Head:</strong></p>
+        <table>
+            <tr>
+                <th>Element</th>
+                <th>Purpose</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><code>&lt;title&gt;</code></td>
+                <td>Page title (appears in browser tab)</td>
+                <td><code>&lt;title&gt;Home | My Site&lt;/title&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;meta&gt;</code></td>
+                <td>Metadata (character set, description, etc.)</td>
+                <td><code>&lt;meta charset="UTF-8"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;link&gt;</code></td>
+                <td>Links to external resources (CSS, icons)</td>
+                <td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;style&gt;</code></td>
+                <td>Internal CSS styles</td>
+                <td><code>&lt;style&gt;body {color: blue;}&lt;/style&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;script&gt;</code></td>
+                <td>JavaScript code or links</td>
+                <td><code>&lt;script src="app.js"&gt;&lt;/script&gt;</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;base&gt;</code></td>
+                <td>Base URL for relative links</td>
+                <td><code>&lt;base href="https://example.com/"&gt;</code></td>
+            </tr>
+        </table>
+
+        <p><strong>Critical Meta Tags Explained:</strong></p>
+        <pre>
+&lt;!-- Character encoding - should be UTF-8 for universal character support --&gt;
+&lt;meta charset="UTF-8"&gt;
+
+&lt;!-- Viewport settings for responsive design on mobile devices --&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+
+&lt;!-- SEO: Description shown in search results (150-160 characters) --&gt;
+&lt;meta name="description" content="Learn HTML basics with our comprehensive guide. Perfect for beginners starting their web development journey."&gt;
+
+&lt;!-- SEO: Keywords (less important now, but still used) --&gt;
+&lt;meta name="keywords" content="HTML, tutorial, beginners, web development"&gt;
+
+&lt;!-- Author information --&gt;
+&lt;meta name="author" content="Your Name"&gt;
+
+&lt;!-- Refresh/redirect (use with caution!) --&gt;
+&lt;meta http-equiv="refresh" content="30"&gt; &lt;!-- Refresh every 30 seconds --&gt;
+</pre>
+
+        <h4>3.2.4 The BODY Element</h4>
+        <pre>
+&lt;body&gt;
+    &lt;!-- All visible content goes here --&gt;
+    &lt;header&gt;
+        &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+        &lt;nav&gt;
+            &lt;a href="/"&gt;Home&lt;/a&gt;
+            &lt;a href="/about"&gt;About&lt;/a&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        &lt;article&gt;
+            &lt;h2&gt;Blog Post Title&lt;/h2&gt;
+            &lt;p&gt;Blog post content...&lt;/p&gt;
+        &lt;/article&gt;
+    &lt;/main&gt;
+    
+    &lt;footer&gt;
+        &lt;p&gt;&amp;copy; 2024 My Website&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+</pre>
+        <p><strong>Purpose:</strong> Contains all the visible content of a web page—everything that users see when they
+            visit your site.</p>
+        <p><strong>What Can Go in the Body:</strong></p>
+        <ul>
+            <li>Text content (headings, paragraphs, lists)</li>
+            <li>Multimedia (images, videos, audio)</li>
+            <li>Forms for user input</li>
+            <li>Interactive elements (buttons, links)</li>
+            <li>Structural elements (headers, footers, sections)</li>
+        </ul>
+
+        <hr>
+
+        <!-- 4. UNDERSTANDING ELEMENTS AND TAGS -->
+        <h2>4. UNDERSTANDING ELEMENTS AND TAGS</h2>
+
+        <h3>4.1 What Are HTML Tags?</h3>
+        <p><strong>Tags</strong> are the hidden keywords within a web page that define how the browser must format and
+            display the content.</p>
+
+        <p><strong>Tag Syntax:</strong></p>
+        <pre>
+&lt;opening-tag attribute="value"&gt;Content&lt;/closing-tag&gt;
+</pre>
+
+        <p><strong>Types of Tags:</strong></p>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Format</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><strong>Paired Tags</strong></td>
+                <td><code>&lt;tag&gt;</code>content<code>&lt;/tag&gt;</code></td>
+                <td><code>&lt;p&gt;This is a paragraph.&lt;/p&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>Self-closing Tags</strong></td>
+                <td><code>&lt;tag&gt;</code> or <code>&lt;tag /&gt;</code></td>
+                <td><code>&lt;img src="image.jpg" alt="description"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>Void Elements</strong></td>
+                <td>Elements with no content</td>
+                <td><code>&lt;br&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;input&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>4.2 Anatomy of an HTML Element</h3>
+        <pre>
+┌─────────────┐
+│   &lt;p class="intro"&gt;Hello, world!&lt;/p&gt;   │
+└─────────────┘
+  ↑            ↑                   ↑
+  │            │                   │
+Opening      Attribute           Closing
+Tag          with Value            Tag
+              │
+           Content
+</pre>
+
+        <h3>4.3 Element Categories</h3>
+
+        <h4>4.3.1 Block-level Elements</h4>
+        <ul>
+            <li>Create "blocks" of content</li>
+            <li>Start on a new line</li>
+            <li>Take up the full width available</li>
+        </ul>
+        <pre>
+&lt;div&gt;
+    &lt;h1&gt;This is a block-level heading&lt;/h1&gt;
+    &lt;p&gt;This paragraph is also block-level and starts on a new line.&lt;/p&gt;
+    &lt;p&gt;Another paragraph, notice how each paragraph is on its own line.&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+        <p><strong>Common Block Elements:</strong></p>
+        <ul>
+            <li><code>&lt;div&gt;</code> - Generic container</li>
+            <li><code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code> - Headings</li>
+            <li><code>&lt;p&gt;</code> - Paragraphs</li>
+            <li><code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code> - Lists</li>
+            <li><code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;section&gt;</code> - Semantic
+                containers</li>
+        </ul>
+
+        <h4>4.3.2 Inline Elements</h4>
+        <ul>
+            <li>Do not start on a new line</li>
+            <li>Only take up as much width as necessary</li>
+            <li>Flow within block elements</li>
+        </ul>
+        <pre>
+&lt;p&gt;This is a paragraph with &lt;strong&gt;inline&lt;/strong&gt; elements like 
+   &lt;a href="#"&gt;links&lt;/a&gt;, &lt;em&gt;emphasized text&lt;/em&gt;, and 
+   &lt;span class="highlight"&gt;spans&lt;/span&gt;.&lt;/p&gt;
+</pre>
+        <p><strong>Common Inline Elements:</strong></p>
+        <ul>
+            <li><code>&lt;span&gt;</code> - Generic inline container</li>
+            <li><code>&lt;a&gt;</code> - Links</li>
+            <li><code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code> - Text emphasis</li>
+            <li><code>&lt;img&gt;</code> - Images</li>
+            <li><code>&lt;button&gt;</code> - Buttons</li>
+        </ul>
+
+        <h4>4.3.3 Empty (Void) Elements</h4>
+        <ul>
+            <li>Have no content</li>
+            <li>Cannot have closing tags</li>
+            <li>Can have attributes</li>
+        </ul>
+        <pre>
+&lt;!-- Line break --&gt;
+&lt;br&gt;
+
+&lt;!-- Horizontal rule --&gt;
+&lt;hr&gt;
+
+&lt;!-- Image (self-closing syntax) --&gt;
+&lt;img src="photo.jpg" alt="Description"&gt;
+
+&lt;!-- Input field --&gt;
+&lt;input type="text" name="username"&gt;
+</pre>
+
+        <h3>4.4 Element Relationships</h3>
+        <p>Understanding how elements relate to each other is crucial for CSS and JavaScript.</p>
+        <pre>
+&lt;html&gt;
+    &lt;head&gt;           &lt;!-- Child of html --&gt;
+        &lt;title&gt;      &lt;!-- Child of head, descendant of html --&gt;
+            Page Title  &lt;!-- Text node, descendant of title --&gt;
+        &lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;           &lt;!-- Child of html --&gt;
+        &lt;h1&gt;         &lt;!-- Child of body, descendant of html --&gt;
+            Heading  &lt;!-- Text node, descendant of h1 --&gt;
+        &lt;/h1&gt;
+        &lt;p&gt;          &lt;!-- Sibling of h1, child of body --&gt;
+            Text     &lt;!-- Text node, descendant of p --&gt;
+        &lt;/p&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p><strong>Relationship Terminology:</strong></p>
+        <ul>
+            <li><strong>Parent</strong>: The direct container of an element (e.g., <code>body</code> is parent of
+                <code>h1</code>)
+            </li>
+            <li><strong>Child</strong>: An element directly inside another (e.g., <code>h1</code> is child of
+                <code>body</code>)
+            </li>
+            <li><strong>Sibling</strong>: Elements sharing the same parent (e.g., <code>h1</code> and <code>p</code> are
+                siblings)</li>
+            <li><strong>Ancestor</strong>: Any element that contains another (e.g., <code>html</code> is ancestor of
+                <code>p</code>)
+            </li>
+            <li><strong>Descendant</strong>: Any element inside another (e.g., <code>p</code> is descendant of
+                <code>html</code>)
+            </li>
+        </ul>
+
+        <h3>4.5 HTML Attributes</h3>
+        <p>Attributes provide additional information about HTML elements.</p>
+        <p><strong>Basic Syntax:</strong></p>
+        <pre>
+&lt;element attribute="value"&gt;content&lt;/element&gt;
+</pre>
+
+        <h4>4.5.1 Global Attributes (Work with any element)</h4>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Purpose</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><strong>class</strong></td>
+                <td>For CSS styling and JavaScript selection</td>
+                <td><code>&lt;p class="highlight error"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>id</strong></td>
+                <td>Unique identifier for an element</td>
+                <td><code>&lt;div id="main-content"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>style</strong></td>
+                <td>Inline CSS styling</td>
+                <td><code>&lt;p style="color: blue;"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>title</strong></td>
+                <td>Tooltip text on hover</td>
+                <td><code>&lt;abbr title="HyperText Markup Language"&gt;HTML&lt;/abbr&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>lang</strong></td>
+                <td>Language of element content</td>
+                <td><code>&lt;p lang="es"&gt;Hola&lt;/p&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>dir</strong></td>
+                <td>Text direction</td>
+                <td><code>&lt;p dir="rtl"&gt;نص عربي&lt;/p&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>data-*</strong></td>
+                <td>Custom data attributes</td>
+                <td><code>&lt;div data-user-id="12345"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>tabindex</strong></td>
+                <td>Keyboard navigation order</td>
+                <td><code>&lt;button tabindex="1"&gt;</code></td>
+            </tr>
+            <tr>
+                <td><strong>hidden</strong></td>
+                <td>Hide an element</td>
+                <td><code>&lt;div hidden&gt;Secret message&lt;/div&gt;</code></td>
+            </tr>
+        </table>
+
+        <h4>4.5.2 Event Handler Attributes (for JavaScript)</h4>
+        <pre>
+&lt;button onclick="alert('Clicked!')"&gt;Click Me&lt;/button&gt;
+&lt;input onchange="updateValue(this.value)"&gt;
+&lt;form onsubmit="return validateForm()"&gt;
+&lt;div onmouseover="highlight(this)"&gt;
+</pre>
+        <p>Common event attributes:</p>
+        <ul>
+            <li><code>onclick</code> - When element is clicked</li>
+            <li><code>onload</code> - When page/element finishes loading</li>
+            <li><code>onmouseover</code> - When mouse moves over element</li>
+            <li><code>onchange</code> - When form input changes</li>
+            <li><code>onsubmit</code> - When form is submitted</li>
+        </ul>
+
+        <hr>
+
+        <!-- 5. HEADINGS IN HTML (H1 TO H6) -->
+        <h2>5. HEADINGS IN HTML (H1 TO H6)</h2>
+
+        <h3>5.1 The Heading Hierarchy</h3>
+        <p>HTML provides six levels of headings, from <code>&lt;h1&gt;</code> (most important) to
+            <code>&lt;h6&gt;</code> (least important).
+        </p>
+        <pre>
+&lt;h1&gt;Main Page Title (Most Important)&lt;/h1&gt;
+&lt;h2&gt;Section Heading&lt;/h2&gt;
+&lt;h3&gt;Sub-section Heading&lt;/h3&gt;
+&lt;h4&gt;Sub-sub-section Heading&lt;/h4&gt;
+&lt;h5&gt;Minor Heading&lt;/h5&gt;
+&lt;h6&gt;Smallest Heading (Least Important)&lt;/h6&gt;
+</pre>
+
+        <h3>5.2 Visual Representation of Heading Sizes</h3>
+        <pre>
+┌────────────────────────────────────┐
+│ h1: Main Title (largest)           │ 32px (default)
+├────────────────────────────────────┤
+│   h2: Section Title                │ 24px
+├────────────────────────────────────┤
+│       h3: Sub-section               │ 20px
+├────────────────────────────────────┤
+│           h4: Minor heading         │ 18px
+├────────────────────────────────────┤
+│               h5: Small heading     │ 16px
+├────────────────────────────────────┤
+│                   h6: Tiny heading  │ 14px (smallest)
+└────────────────────────────────────┘
+</pre>
+        <p><em>Note: These sizes are browser defaults and can be changed with CSS.</em></p>
+
+        <h3>5.3 Proper Heading Structure</h3>
+
+        <h4>5.3.1 Correct Hierarchy (Good)</h4>
+        <pre>
+&lt;article&gt;
+    &lt;h1&gt;The Complete Guide to Coffee Brewing&lt;/h1&gt;
+    
+    &lt;h2&gt;Introduction to Coffee&lt;/h2&gt;
+    &lt;p&gt;Coffee is a brewed drink prepared from roasted coffee beans...&lt;/p&gt;
+    
+    &lt;h2&gt;Brewing Methods&lt;/h2&gt;
+    
+    &lt;h3&gt;Pour-Over Method&lt;/h3&gt;
+    &lt;p&gt;The pour-over method involves...&lt;/p&gt;
+    
+    &lt;h3&gt;French Press&lt;/h3&gt;
+    &lt;p&gt;The French press method...&lt;/p&gt;
+    
+    &lt;h2&gt;Choosing Coffee Beans&lt;/h2&gt;
+    
+    &lt;h3&gt;Arabica vs Robusta&lt;/h3&gt;
+    &lt;p&gt;Arabica beans are known for...&lt;/p&gt;
+    
+    &lt;h4&gt;Arabica Varieties&lt;/h4&gt;
+    &lt;p&gt;Common Arabica varieties include...&lt;/p&gt;
+&lt;/article&gt;
+</pre>
+
+        <h4>5.3.2 Incorrect Hierarchy (Bad)</h4>
+        <pre>
+&lt;article&gt;
+    &lt;h3&gt;Wrong - Starting with h3 skips levels&lt;/h3&gt;
+    
+    &lt;h5&gt;Even worse - inconsistent hierarchy&lt;/h5&gt;
+    
+    &lt;h2&gt;This creates confusion about importance&lt;/h2&gt;
+    
+    &lt;h1&gt;Multiple h1 elements are also problematic&lt;/h1&gt;
+&lt;/article&gt;
+</pre>
+
+        <h3>5.4 SEO and Accessibility Importance</h3>
+
+        <h4>5.4.1 For Search Engines</h4>
+        <p>Search engines use headings to understand your content structure:</p>
+        <pre>
+Google's Perspective:
+┌─────────────────────────────────┐
+│ &lt;h1&gt;Best Coffee Shops in NYC&lt;/h1&gt;│ ← Main topic
+├─────────────────────────────────┤
+│   &lt;h2&gt;Manhattan&lt;/h2&gt;            │ ← Subtopic
+│   &lt;h2&gt;Brooklyn&lt;/h2&gt;             │ ← Subtopic
+│       &lt;h3&gt;Williamsburg&lt;/h3&gt;     │ ← Sub-subtopic
+│       &lt;h3&gt;DUMBO&lt;/h3&gt;            │ ← Sub-subtopic
+└─────────────────────────────────┘
+</pre>
+        <p><strong>SEO Best Practices:</strong></p>
+        <ul>
+            <li>Only one <code>&lt;h1&gt;</code> per page</li>
+            <li>Don't skip heading levels (h1 → h3 without h2 is bad)</li>
+            <li>Include relevant keywords in headings</li>
+            <li>Keep headings descriptive and concise</li>
+        </ul>
+
+        <h4>5.4.2 For Accessibility (Screen Readers)</h4>
+        <p>Screen reader users often navigate by headings:</p>
+        <pre>
+Screen Reader Announcement:
+"Heading level 1: The Complete Guide to Coffee Brewing"
+"Heading level 2: Introduction to Coffee"
+"Heading level 2: Brewing Methods"
+"Heading level 3: Pour-Over Method"
+"Heading level 3: French Press"
+"Heading level 2: Choosing Coffee Beans"
+</pre>
+        <p><strong>Keyboard Shortcut for Screen Reader Users:</strong></p>
+        <ul>
+            <li>Press 'H' to jump between headings</li>
+            <li>Press '1' to jump to next h1</li>
+            <li>Press '2' to jump to next h2, etc.</li>
+        </ul>
+
+        <h3>5.5 Styling Headings with CSS</h3>
+        <p>While styling is CSS territory, it's important to understand the relationship:</p>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* Changing heading appearance */
+        h1 {
+            color: #2c3e50;
+            font-family: 'Arial', sans-serif;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+            font-family: 'Arial', sans-serif;
+            margin-top: 30px;
+        }
+        
+        h3 {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        /* You can change sizes, but maintain hierarchy visually */
+        .custom-headings h1 {
+            font-size: 3rem;
+        }
+        
+        .custom-headings h2 {
+            font-size: 2.5rem;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Styled Main Heading&lt;/h1&gt;
+    &lt;h2&gt;Styled Section Heading&lt;/h2&gt;
+    &lt;h3&gt;Styled Sub-section&lt;/h3&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h3>5.6 Common Heading Patterns</h3>
+
+        <h4>5.6.1 Article/Blog Post</h4>
+        <pre>
+&lt;article&gt;
+    &lt;h1&gt;10 Tips for Better Sleep&lt;/h1&gt;
+    &lt;p&gt;Published: January 15, 2024&lt;/p&gt;
+    
+    &lt;h2&gt;1. Maintain a Consistent Schedule&lt;/h2&gt;
+    &lt;p&gt;Going to bed and waking up at the same time...&lt;/p&gt;
+    
+    &lt;h2&gt;2. Create a Relaxing Bedtime Routine&lt;/h2&gt;
+    &lt;p&gt;A warm bath or reading can signal your body...&lt;/p&gt;
+    
+    &lt;h3&gt;Sample Bedtime Routine&lt;/h3&gt;
+    &lt;ul&gt;
+        &lt;li&gt;9:00 PM - Dim lights&lt;/li&gt;
+        &lt;li&gt;9:30 PM - Read a book&lt;/li&gt;
+        &lt;li&gt;10:00 PM - Lights out&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/article&gt;
+</pre>
+
+        <h4>5.6.2 Product Page</h4>
+        <pre>
+&lt;main&gt;
+    &lt;h1&gt;iPhone 15 Pro - Detailed Review&lt;/h1&gt;
+    
+    &lt;h2&gt;Key Specifications&lt;/h2&gt;
+    &lt;ul&gt;
+        &lt;li&gt;A17 Pro chip&lt;/li&gt;
+        &lt;li&gt;Titanium design&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;h2&gt;Camera System&lt;/h2&gt;
+    
+    &lt;h3&gt;Main Camera&lt;/h3&gt;
+    &lt;p&gt;48MP main camera with...&lt;/p&gt;
+    
+    &lt;h3&gt;Telephoto Lens&lt;/h3&gt;
+    &lt;p&gt;5x optical zoom...&lt;/p&gt;
+    
+    &lt;h2&gt;Battery Life&lt;/h2&gt;
+    &lt;p&gt;Up to 29 hours of video playback...&lt;/p&gt;
+&lt;/main&gt;
+</pre>
+
+        <h4>5.6.3 Documentation Page</h4>
+        <pre>
+&lt;main&gt;
+    &lt;h1&gt;JavaScript Array Methods Documentation&lt;/h1&gt;
+    
+    &lt;h2&gt;Array Iteration Methods&lt;/h2&gt;
+    
+    &lt;h3&gt;forEach()&lt;/h3&gt;
+    &lt;p&gt;Executes a function for each array element...&lt;/p&gt;
+    
+    &lt;h3&gt;map()&lt;/h3&gt;
+    &lt;p&gt;Creates a new array with function results...&lt;/p&gt;
+    
+    &lt;h3&gt;filter()&lt;/h3&gt;
+    &lt;p&gt;Creates array with elements that pass a test...&lt;/p&gt;
+    
+    &lt;h4&gt;Common filter() Examples&lt;/h4&gt;
+    &lt;pre&gt;&lt;code&gt;const numbers = [1, 2, 3, 4];
+const even = numbers.filter(n =&gt; n % 2 === 0);&lt;/code&gt;&lt;/pre&gt;
+    
+    &lt;h2&gt;Array Transformation Methods&lt;/h2&gt;
+    &lt;!-- Content continues --&gt;
+&lt;/main&gt;
+</pre>
+
+        <h3>5.7 Heading Tips and Best Practices</h3>
+        <table>
+            <tr>
+                <th>Do's</th>
+                <th>Don'ts</th>
+            </tr>
+            <tr>
+                <td>✅ Use one <code>&lt;h1&gt;</code> per page</td>
+                <td>❌ Use multiple <code>&lt;h1&gt;</code> tags</td>
+            </tr>
+            <tr>
+                <td>✅ Maintain logical hierarchy</td>
+                <td>❌ Skip heading levels</td>
+            </tr>
+            <tr>
+                <td>✅ Make headings descriptive</td>
+                <td>❌ Use headings just for bold text</td>
+            </tr>
+            <tr>
+                <td>✅ Include keywords naturally</td>
+                <td>❌ Stuff keywords in headings</td>
+            </tr>
+            <tr>
+                <td>✅ Use headings to outline content</td>
+                <td>❌ Use headings for styling only</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <!-- 6. PARAGRAPHS AND TEXT CONTENT -->
+        <h2>6. PARAGRAPHS AND TEXT CONTENT</h2>
+
+        <h3>6.1 The Paragraph Element (<code>&lt;p&gt;</code>)</h3>
+        <p>The <code>&lt;p&gt;</code> element represents a paragraph of text. It's one of the most commonly used HTML
+            elements.</p>
+        <p><strong>Basic Syntax:</strong></p>
+        <pre>
+&lt;p&gt;This is a paragraph of text. It can contain multiple sentences and can span multiple lines in the code, but the browser will render it as a single block of text.&lt;/p&gt;
+</pre>
+
+        <h3>6.2 Paragraph Characteristics</h3>
+
+        <h4>6.2.1 Default Styling</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        /* Default browser styles for paragraphs (simplified) */
+        p {
+            display: block;        /* Takes full width */
+            margin-top: 1em;       /* Space above */
+            margin-bottom: 1em;     /* Space below */
+            margin-left: 0;
+            margin-right: 0;
+            line-height: 1.5;       /* Space between lines */
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;First paragraph - notice the space above and below.&lt;/p&gt;
+    &lt;p&gt;Second paragraph - there's automatic spacing between paragraphs.&lt;/p&gt;
+    &lt;p&gt;Third paragraph - this spacing improves readability.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h4>6.2.2 Visual Output:</h4>
+        <pre>
+First paragraph - notice the space above and below. (margin)
+
+Second paragraph - there's automatic spacing between paragraphs. (margin)
+
+Third paragraph - this spacing improves readability. (margin)
+</pre>
+
+        <h3>6.3 Paragraph Best Practices</h3>
+
+        <h4>6.3.1 Keep Paragraphs Focused</h4>
+        <p><strong>Good:</strong></p>
+        <pre>
+&lt;p&gt;Coffee is a brewed drink prepared from roasted coffee beans, the seeds of berries from certain Coffea species. The genus Coffea is native to tropical Africa and Madagascar, the Comoros, Mauritius, and Réunion in the Indian Ocean.&lt;/p&gt;
+
+&lt;p&gt;Coffee plants are now cultivated in over 70 countries, primarily in the equatorial regions of the Americas, Southeast Asia, India, and Africa. The two most commonly grown are the highly regarded arabica, and the less sophisticated but stronger and more hardy robusta.&lt;/p&gt;
+</pre>
+        <p><strong>Bad (Too Long):</strong></p>
+        <pre>
+&lt;p&gt;Coffee is a brewed drink prepared from roasted coffee beans, the seeds of berries from certain Coffea species. The genus Coffea is native to tropical Africa and Madagascar, the Comoros, Mauritius, and Réunion in the Indian Ocean. Coffee plants are now cultivated in over 70 countries, primarily in the equatorial regions of the Americas, Southeast Asia, India, and Africa. The two most commonly grown are the highly regarded arabica, and the less sophisticated but stronger and more hardy robusta. Coffee cultivation first took place in southern Arabia; the earliest credible evidence of coffee-drinking appears in the middle of the 15th century in the Sufi shrines of Yemen. In the Horn of Africa and Yemen, coffee was used in local religious ceremonies. As these ceremonies conflicted with the beliefs of the Christian church, the Ethiopian Church banned coffee until the reign of Emperor Menelik II. The beverage was also banned in Ottoman Turkey during the 17th century for political reasons and was associated with rebellious political activities in Europe.&lt;/p&gt;
+</pre>
+
+        <h3>6.4 Line Breaks vs. Paragraphs</h3>
+
+        <h4>6.4.1 Using <code>&lt;br&gt;</code> for Line Breaks</h4>
+        <pre>
+&lt;!-- Address example - correct use of line breaks --&gt;
+&lt;p&gt;
+    John Doe&lt;br&gt;
+    123 Main Street&lt;br&gt;
+    New York, NY 10001&lt;br&gt;
+    United States
+&lt;/p&gt;
+
+&lt;!-- Poetry - correct use of line breaks --&gt;
+&lt;p&gt;
+    Roses are red,&lt;br&gt;
+    Violets are blue,&lt;br&gt;
+    HTML is fun,&lt;br&gt;
+    And so are you!
+&lt;/p&gt;
+</pre>
+
+        <h4>6.4.2 DON'T Use <code>&lt;br&gt;</code> for Spacing</h4>
+        <p><strong>Wrong:</strong></p>
+        <pre>
+&lt;p&gt;This is the first paragraph.&lt;/p&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;p&gt;This is way too far from the first paragraph.&lt;/p&gt;
+</pre>
+        <p><strong>Correct (use CSS margin):</strong></p>
+        <pre>
+&lt;p style="margin-bottom: 3em;"&gt;This is the first paragraph.&lt;/p&gt;
+&lt;p&gt;This paragraph has proper spacing via CSS.&lt;/p&gt;
+</pre>
+
+        <h3>6.5 Text Formatting Within Paragraphs</h3>
+
+        <h4>6.5.1 Inline Text Elements</h4>
+        <pre>
+&lt;p&gt;
+    This paragraph contains 
+    &lt;strong&gt;strong importance&lt;/strong&gt;, 
+    &lt;em&gt;emphasized text&lt;/em&gt;, 
+    &lt;mark&gt;highlighted text&lt;/mark&gt;,
+    &lt;small&gt;small text&lt;/small&gt;,
+    &lt;del&gt;deleted text&lt;/del&gt;,
+    &lt;ins&gt;inserted text&lt;/ins&gt;,
+    &lt;sub&gt;subscript&lt;/sub&gt; and 
+    &lt;sup&gt;superscript&lt;/sup&gt;.
+&lt;/p&gt;
+</pre>
+
+        <h4>6.5.2 Quotations</h4>
+        <pre>
+&lt;!-- Short inline quotation --&gt;
+&lt;p&gt;
+    As Albert Einstein once said, 
+    &lt;q&gt;Imagination is more important than knowledge.&lt;/q&gt;
+&lt;/p&gt;
+
+&lt;!-- Longer block quotation --&gt;
+&lt;blockquote cite="https://example.com/source"&gt;
+    &lt;p&gt;The most beautiful experience we can have is the mysterious. 
+    It is the fundamental emotion which stands at the cradle of 
+    true art and true science.&lt;/p&gt;
+    &lt;footer&gt;—Albert Einstein, &lt;cite&gt;The World As I See It&lt;/cite&gt;&lt;/footer&gt;
+&lt;/blockquote&gt;
+</pre>
+
+        <h4>6.5.3 Abbreviations and Definitions</h4>
+        <pre>
+&lt;p&gt;
+    The &lt;abbr title="World Health Organization"&gt;WHO&lt;/abbr&gt; was 
+    founded in 1948.
+&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;dfn&gt;HTML&lt;/dfn&gt; is the standard markup language for 
+    creating web pages.
+&lt;/p&gt;
+</pre>
+
+        <h3>6.6 Preformatted Text</h3>
+        <p>The <code>&lt;pre&gt;</code> element preserves both spaces and line breaks:</p>
+        <pre>
+&lt;pre&gt;
+    This text will appear
+    exactly as I type it,
+        including these indents
+    and line
+    breaks.
+&lt;/pre&gt;
+</pre>
+        <p><strong>Use Case: Code Examples</strong></p>
+        <pre>
+&lt;pre&gt;&lt;code&gt;
+function greet(name) {
+    if (name) {
+        return `Hello, ${name}!`;
+    }
+    return "Hello, world!";
+}
+&lt;/code&gt;&lt;/pre&gt;
+</pre>
+
+        <h3>6.7 Combining Headings and Paragraphs</h3>
+
+        <h4>6.7.1 Article Structure</h4>
+        <pre>
+&lt;article&gt;
+    &lt;h1&gt;The Benefits of Regular Exercise&lt;/h1&gt;
+    
+    &lt;p&gt;Regular physical activity is one of the most important things 
+    you can do for your health. Everyone can experience the health 
+    benefits of physical activity – age, abilities, ethnicity, shape, 
+    or size do not matter.&lt;/p&gt;
+    
+    &lt;h2&gt;Immediate Benefits&lt;/h2&gt;
+    
+    &lt;p&gt;Some benefits of physical activity on brain health happen right 
+    after a session of moderate-to-vigorous physical activity. These 
+    benefits include improved thinking or cognition for children 6 to 
+    13 years of age and reduced short-term feelings of anxiety for 
+    adults.&lt;/p&gt;
+    
+    &lt;h3&gt;Weight Management&lt;/h3&gt;
+    
+    &lt;p&gt;Both eating patterns and physical activity routines play a 
+    critical role in weight management. You gain weight when you 
+    consume more calories through eating and drinking than the amount 
+    of calories you burn.&lt;/p&gt;
+    
+    &lt;p&gt;To maintain your weight, work your way up to 150 minutes a 
+    week of moderate physical activity, which could include dancing 
+    or yard work.&lt;/p&gt;
+&lt;/article&gt;
+</pre>
+
+        <h4>6.7.2 Landing Page Section</h4>
+        <pre>
+&lt;section&gt;
+    &lt;h2&gt;Our Services&lt;/h2&gt;
+    
+    &lt;h3&gt;Web Development&lt;/h3&gt;
+    &lt;p&gt;We create responsive, modern websites tailored to your 
+    business needs. Our team uses the latest technologies to ensure 
+    fast, secure, and scalable solutions.&lt;/p&gt;
+    
+    &lt;h3&gt;Mobile Apps&lt;/h3&gt;
+    &lt;p&gt;From iOS to Android, we build native and cross-platform 
+    applications that provide seamless user experiences across all 
+    devices.&lt;/p&gt;
+    
+    &lt;h3&gt;Cloud Solutions&lt;/h3&gt;
+    &lt;p&gt;Leverage the power of cloud computing with our expert 
+    consulting and implementation services. We'll help you migrate, 
+    optimize, and manage your cloud infrastructure.&lt;/p&gt;
+&lt;/section&gt;
+</pre>
+
+        <h3>6.8 Accessibility Considerations for Text</h3>
+
+        <h4>6.8.1 Readable Line Length</h4>
+        <pre>
+&lt;!-- Good - readable line length (45-75 characters) --&gt;
+&lt;p style="max-width: 65ch;"&gt;
+    Studies show that optimal line length for readability is between 
+    45 and 75 characters per line. This makes text easier to read 
+    and reduces eye strain. Using the 'ch' unit in CSS helps 
+    maintain this ideal length.
+&lt;/p&gt;
+
+&lt;!-- Bad - too wide, hard to read --&gt;
+&lt;p style="width: 100%;"&gt;
+    This paragraph stretches across the entire screen, making it very difficult to read because your eyes have to travel too far from the end of one line to the beginning of the next. This causes reader fatigue and reduces comprehension.
+&lt;/p&gt;
+</pre>
+
+        <h4>6.8.2 Sufficient Contrast</h4>
+        <pre>
+&lt;!-- Good contrast --&gt;
+&lt;p style="color: #333; background: #fff;"&gt;
+    This text has good contrast with its background.
+&lt;/p&gt;
+
+&lt;!-- Bad contrast - hard to read --&gt;
+&lt;p style="color: #ccc; background: #fff;"&gt;
+    This light gray text on white is difficult to read.
+&lt;/p&gt;
+
+&lt;!-- Even worse - accessibility disaster --&gt;
+&lt;p style="color: #ff0000; background: #00ff00;"&gt;
+    Red on green is nearly impossible for colorblind users to read.
+&lt;/p&gt;
+</pre>
+
+        <hr>
+
+        <!-- 7. PRACTICAL EXAMPLES AND BEST PRACTICES -->
+        <h2>7. PRACTICAL EXAMPLES AND BEST PRACTICES</h2>
+
+        <h3>7.1 Complete HTML Document Examples</h3>
+
+        <h4>7.1.1 Personal Blog Post</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;meta name="description" content="A beginner's guide to hiking the Pacific Crest Trail - tips, gear, and preparation"&gt;
+    &lt;meta name="author" content="Alex Johnson"&gt;
+    &lt;title&gt;Hiking the PCT: A Beginner's Guide | Trail Tales Blog&lt;/title&gt;
+    
+    &lt;style&gt;
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        
+        .author-info {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .tip-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;h1&gt;Hiking the Pacific Crest Trail: A Beginner's Guide&lt;/h1&gt;
+        &lt;p class="author-info"&gt;By Alex Johnson | Published: March 15, 2024 | 10 min read&lt;/p&gt;
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        &lt;p&gt;The Pacific Crest Trail (PCT) stretches 2,650 miles from Mexico to Canada, passing through California, Oregon, and Washington. For many hikers, completing this trail is a dream. But where do you start? This guide will walk you through everything you need to know as a beginner.&lt;/p&gt;
+        
+        &lt;div class="tip-box"&gt;
+            &lt;strong&gt;Pro Tip:&lt;/strong&gt; Start with a "section hike" rather than attempting the entire trail at once. Choose a 50-100 mile segment that's accessible and within your comfort zone.
+        &lt;/div&gt;
+        
+        &lt;h2&gt;Essential Gear for Your Hike&lt;/h2&gt;
+        
+        &lt;h3&gt;The Big Three: Backpack, Tent, Sleeping Bag&lt;/h3&gt;
+        &lt;p&gt;Your backpack should be lightweight but durable, typically in the 50-70 liter range for multi-day trips. For tents, look for freestanding models that are easy to set up. When it comes to sleeping bags, consider the season and expected temperatures. A 20°F bag is versatile for most three-season hiking.&lt;/p&gt;
+        
+        &lt;h3&gt;Footwear: The Most Important Choice&lt;/h3&gt;
+        &lt;p&gt;Trail runners have become increasingly popular for thru-hiking due to their lightweight nature and quick-drying properties. However, some hikers still prefer the ankle support of traditional hiking boots. The best choice is whatever is most comfortable for &lt;em&gt;your&lt;/em&gt; feet.&lt;/p&gt;
+        
+        &lt;h2&gt;Training and Preparation&lt;/h2&gt;
+        &lt;p&gt;Don't underestimate the physical demands of long-distance hiking. Start training at least 3 months before your trip:&lt;/p&gt;
+        
+        &lt;ul&gt;
+            &lt;li&gt;Begin with day hikes carrying a loaded pack&lt;/li&gt;
+            &lt;li&gt;Gradually increase distance and elevation gain&lt;/li&gt;
+            &lt;li&gt;Incorporate stair climbing for strength training&lt;/li&gt;
+            &lt;li&gt;Practice setting up your tent in various conditions&lt;/li&gt;
+        &lt;/ul&gt;
+        
+        &lt;h2&gt;Permits and Regulations&lt;/h2&gt;
+        &lt;p&gt;Many sections of the PCT require permits. For thru-hikers, a single Pacific Crest Trail Permit covers the entire trail. For section hikers, you may need individual permits from national forests and parks along your route. &lt;strong&gt;Always check current regulations before you go.&lt;/strong&gt;&lt;/p&gt;
+        
+        &lt;h2&gt;Water and Food Strategies&lt;/h2&gt;
+        
+        &lt;h3&gt;Water Sources&lt;/h3&gt;
+        &lt;p&gt;Water is the heaviest item you'll carry. Learn to read water reports and plan your carries accordingly. In the desert sections, you might need to carry up to 6 liters between sources. Always treat your water with filters or tablets.&lt;/p&gt;
+        
+        &lt;h3&gt;Food Planning&lt;/h3&gt;
+        &lt;p&gt;Plan for 2-3 resupply points per week. Mail drops to post offices along the trail can work, but many hikers prefer buying food at towns along the way. Aim for 1.5-2 pounds of food per day, with a focus on calorie-dense options.&lt;/p&gt;
+        
+        &lt;h2&gt;Trail Etiquette and Leave No Trace&lt;/h2&gt;
+        &lt;p&gt;The hiking community thrives on mutual respect. Yield to uphill hikers, step aside for faster traffic, and always pack out what you pack in. Follow Leave No Trace principles to preserve the trail for future generations.&lt;/p&gt;
+        
+        &lt;hr&gt;
+        
+        &lt;p&gt;&lt;em&gt;Ready to start your adventure? Remember that every experienced thru-hiker was once a beginner. The most important step is the first one out the door.&lt;/em&gt;&lt;/p&gt;
+    &lt;/main&gt;
+    
+    &lt;footer&gt;
+        &lt;p&gt;© 2024 Trail Tales Blog. All rights reserved. | &lt;a href="/contact"&gt;Contact&lt;/a&gt; | &lt;a href="/privacy"&gt;Privacy Policy&lt;/a&gt;&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h4>7.1.2 Business Landing Page</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;meta name="description" content="DigitalBloom - Full-service digital marketing agency helping businesses grow online"&gt;
+    &lt;title&gt;DigitalBloom | Digital Marketing Agency&lt;/title&gt;
+    
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.5rem;
+            color: #2d3748;
+        }
+        
+        h3 {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+        
+        section {
+            padding: 80px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .service-card p {
+            color: #718096;
+        }
+        
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;h1&gt;DigitalBloom&lt;/h1&gt;
+        &lt;p style="font-size: 1.25rem; max-width: 600px; margin: 0 auto;"&gt;We help businesses flourish in the digital landscape through strategic marketing and innovative solutions.&lt;/p&gt;
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        &lt;section&gt;
+            &lt;div class="container"&gt;
+                &lt;h2&gt;Our Services&lt;/h2&gt;
+                
+                &lt;div class="services-grid"&gt;
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Search Engine Optimization&lt;/h3&gt;
+                        &lt;p&gt;Increase your visibility in search results and drive organic traffic to your website. Our data-driven approach ensures sustainable, long-term growth.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Social Media Management&lt;/h3&gt;
+                        &lt;p&gt;Build meaningful connections with your audience across all major platforms. We create engaging content that tells your brand's story.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Content Marketing&lt;/h3&gt;
+                        &lt;p&gt;Attract and retain customers through valuable, relevant content. From blog posts to videos, we help you establish authority in your industry.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Pay-Per-Click Advertising&lt;/h3&gt;
+                        &lt;p&gt;Get immediate results with targeted ad campaigns. We optimize your spend to maximize ROI and reach qualified leads.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Email Marketing&lt;/h3&gt;
+                        &lt;p&gt;Nurture leads and build customer loyalty with personalized email campaigns. Our strategies focus on engagement and conversion.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class="service-card"&gt;
+                        &lt;h3&gt;Web Analytics&lt;/h3&gt;
+                        &lt;p&gt;Make data-driven decisions with comprehensive analytics and reporting. We help you understand your audience and optimize performance.&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+        
+        &lt;section style="background: #f7fafc;"&gt;
+            &lt;div class="container"&gt;
+                &lt;h2&gt;Why Choose DigitalBloom?&lt;/h2&gt;
+                
+                &lt;div style="max-width: 800px; margin: 0 auto;"&gt;
+                    &lt;p style="font-size: 1.1rem; margin-bottom: 20px;"&gt;We're not just another marketing agency. We're your dedicated partners in growth, committed to delivering measurable results and building lasting relationships.&lt;/p&gt;
+                    
+                    &lt;p&gt;Our team combines creative expertise with technical know-how to create integrated marketing strategies that work. We take the time to understand your unique challenges and opportunities, crafting customized solutions that align with your business goals.&lt;/p&gt;
+                    
+                    &lt;p style="margin-top: 20px;"&gt;Whether you're a startup looking to establish your online presence or an established brand seeking to expand, we have the tools and experience to help you succeed.&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
+    &lt;/main&gt;
+    
+    &lt;footer&gt;
+        &lt;p&gt;© 2024 DigitalBloom. All rights reserved. | 123 Business Ave, Suite 100, San Francisco, CA 94105 | (555) 123-4567&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h3>7.2 Common Patterns and Templates</h3>
+
+        <h4>7.2.1 Navigation Structure</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Navigation Patterns&lt;/title&gt;
+    &lt;style&gt;
+        /* Basic navigation styling */
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #333;
+        }
+        
+        /* Breadcrumb styling */
+        .breadcrumb {
+            padding: 10px 0;
+            list-style: none;
+        }
+        
+        .breadcrumb li {
+            display: inline;
+        }
+        
+        .breadcrumb li+li:before {
+            content: "/ ";
+            padding: 0 5px;
+            color: #999;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Main Navigation --&gt;
+    &lt;header&gt;
+        &lt;h1&gt;MySite&lt;/h1&gt;
+        &lt;nav aria-label="Main navigation"&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="/about"&gt;About&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="/services"&gt;Services&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="/blog"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="/contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+    
+    &lt;!-- Breadcrumb Navigation --&gt;
+    &lt;nav aria-label="Breadcrumb"&gt;
+        &lt;ul class="breadcrumb"&gt;
+            &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="/blog"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="/blog/categories"&gt;Categories&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;Web Development&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+    
+    &lt;main&gt;
+        &lt;h1&gt;Web Development Articles&lt;/h1&gt;
+        &lt;!-- Content --&gt;
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h4>7.2.2 Article with Sidebar</h4>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Article with Sidebar&lt;/title&gt;
+    &lt;style&gt;
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        article {
+            grid-column: 1;
+        }
+        
+        aside {
+            grid-column: 2;
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            aside {
+                grid-column: 1;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="content-wrapper"&gt;
+        &lt;main&gt;
+            &lt;article&gt;
+                &lt;h1&gt;The Future of Artificial Intelligence&lt;/h1&gt;
+                &lt;p&gt;Published on &lt;time datetime="2024-03-15"&gt;March 15, 2024&lt;/time&gt; by &lt;a href="/author/jane-doe"&gt;Jane Doe&lt;/a&gt;&lt;/p&gt;
+                
+                &lt;p&gt;Artificial intelligence has evolved rapidly over the past decade, transforming industries and reshaping how we live and work. From generative AI to autonomous systems, the possibilities seem endless. But what does the future hold?&lt;/p&gt;
+                
+                &lt;h2&gt;Current State of AI&lt;/h2&gt;
+                &lt;p&gt;Today, AI powers everything from recommendation engines to medical diagnosis tools. Large language models can write, code, and create art. Self-driving cars navigate our streets. The pace of innovation shows no signs of slowing.&lt;/p&gt;
+                
+                &lt;h2&gt;Emerging Trends&lt;/h2&gt;
+                
+                &lt;h3&gt;Generative AI&lt;/h3&gt;
+                &lt;p&gt;Tools like GPT-4 and DALL-E are just the beginning. Future systems will be more accurate, more creative, and more integrated into our daily tools.&lt;/p&gt;
+                
+                &lt;h3&gt;AI in Healthcare&lt;/h3&gt;
+                &lt;p&gt;Drug discovery, personalized medicine, and early disease detection are areas where AI promises to save lives and reduce costs.&lt;/p&gt;
+                
+                &lt;h2&gt;Ethical Considerations&lt;/h2&gt;
+                &lt;p&gt;With great power comes great responsibility. Issues of bias, privacy, and job displacement must be addressed as AI becomes more prevalent.&lt;/p&gt;
+            &lt;/article&gt;
+        &lt;/main&gt;
+        
+        &lt;aside&gt;
+            &lt;h2&gt;About the Author&lt;/h2&gt;
+            &lt;p&gt;Jane Doe is a technology writer and AI researcher with over 10 years of experience covering emerging technologies. She holds a PhD in Computer Science from Stanford University.&lt;/p&gt;
+            
+            &lt;h2&gt;Related Articles&lt;/h2&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Understanding Machine Learning Basics&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;The Ethics of Autonomous Systems&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;How AI is Transforming Healthcare&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Career Guide: Becoming an AI Engineer&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            
+            &lt;h2&gt;Categories&lt;/h2&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Artificial Intelligence&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Machine Learning&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Tech Ethics&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#"&gt;Future of Work&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/aside&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <hr>
+
+        <!-- 8. COMMON MISTAKES AND HOW TO AVOID THEM -->
+        <h2>8. COMMON MISTAKES AND HOW TO AVOID THEM</h2>
+
+        <h3>8.1 Document Structure Mistakes</h3>
+
+        <h4>Mistake 1: Missing DOCTYPE</h4>
+        <pre>
+&lt;!-- BAD - No DOCTYPE --&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;Content&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!-- GOOD - With DOCTYPE --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;p&gt;Content&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p><strong>Why it matters:</strong> Without DOCTYPE, browsers enter "quirks mode" and render pages
+            inconsistently.</p>
+
+        <h4>Mistake 2: Missing Character Encoding</h4>
+        <pre>
+&lt;!-- BAD - Special characters may not display correctly --&gt;
+&lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;!-- GOOD - UTF-8 ensures all characters display properly --&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+</pre>
+
+        <h4>Mistake 3: Missing Language Attribute</h4>
+        <pre>
+&lt;!-- BAD - Screen readers don't know which language to use --&gt;
+&lt;html&gt;
+
+&lt;!-- GOOD - Screen readers use correct pronunciation --&gt;
+&lt;html lang="en"&gt;
+</pre>
+
+        <h3>8.2 Heading Mistakes</h3>
+
+        <h4>Mistake 4: Skipping Heading Levels</h4>
+        <pre>
+&lt;!-- BAD - Jumping from h1 to h3 --&gt;
+&lt;h1&gt;Main Title&lt;/h1&gt;
+&lt;h3&gt;Sub-section&lt;/h3&gt;  &lt;!-- h2 is missing! --&gt;
+
+&lt;!-- GOOD - Proper hierarchy --&gt;
+&lt;h1&gt;Main Title&lt;/h1&gt;
+&lt;h2&gt;Section&lt;/h2&gt;
+&lt;h3&gt;Sub-section&lt;/h3&gt;
+</pre>
+
+        <h4>Mistake 5: Multiple H1 Elements</h4>
+        <pre>
+&lt;!-- BAD - Multiple main headings --&gt;
+&lt;body&gt;
+    &lt;h1&gt;Site Title&lt;/h1&gt;
+    &lt;h1&gt;Another Important Heading&lt;/h1&gt;  &lt;!-- Second h1 --&gt;
+&lt;/body&gt;
+
+&lt;!-- GOOD - Only one h1 --&gt;
+&lt;body&gt;
+    &lt;h1&gt;Site Title&lt;/h1&gt;
+    &lt;h2&gt;Section Heading&lt;/h2&gt;
+    &lt;h2&gt;Another Section&lt;/h2&gt;
+&lt;/body&gt;
+</pre>
+
+        <h4>Mistake 6: Using Headings for Styling Only</h4>
+        <pre>
+&lt;!-- BAD - Using h1 just because it's big --&gt;
+&lt;p&gt;Welcome to our site!&lt;/p&gt;
+&lt;h1&gt;Contact Information&lt;/h1&gt;  &lt;!-- This should be an h2 if it's a section --&gt;
+&lt;p&gt;Email: info@example.com&lt;/p&gt;
+
+&lt;!-- GOOD - Using appropriate heading levels --&gt;
+&lt;h1&gt;Welcome to Our Site&lt;/h1&gt;
+&lt;h2&gt;Contact Information&lt;/h2&gt;
+&lt;p&gt;Email: info@example.com&lt;/p&gt;
+</pre>
+
+        <h3>8.3 Paragraph Mistakes</h3>
+
+        <h4>Mistake 7: Using <code>&lt;br&gt;</code> for Paragraph Spacing</h4>
+        <pre>
+&lt;!-- BAD - Using line breaks for spacing --&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;p&gt;This is another paragraph.&lt;/p&gt;
+
+&lt;!-- GOOD - Let paragraphs do their job --&gt;
+&lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;p&gt;This is another paragraph.&lt;/p&gt;
+
+&lt;!-- Or use CSS for custom spacing --&gt;
+&lt;p style="margin-bottom: 2em;"&gt;First paragraph&lt;/p&gt;
+&lt;p&gt;Second paragraph with spacing above via CSS.&lt;/p&gt;
+</pre>
+
+        <h4>Mistake 8: Nesting Block Elements in Paragraphs</h4>
+        <pre>
+&lt;!-- BAD - Can't put block elements inside p --&gt;
+&lt;p&gt;
+    Some text here.
+    &lt;h2&gt;This is invalid&lt;/h2&gt;  &lt;!-- h2 cannot be inside p --&gt;
+    More text.
+&lt;/p&gt;
+
+&lt;!-- GOOD - Close p before starting new block --&gt;
+&lt;p&gt;Some text here.&lt;/p&gt;
+&lt;h2&gt;This is correct&lt;/h2&gt;
+&lt;p&gt;More text.&lt;/p&gt;
+</pre>
+
+        <h4>Mistake 9: Empty Paragraphs for Spacing</h4>
+        <pre>
+&lt;!-- BAD - Empty paragraphs --&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Real content here&lt;/p&gt;
+
+&lt;!-- GOOD - Use CSS margin instead --&gt;
+&lt;p style="margin-top: 3em;"&gt;Real content here&lt;/p&gt;
+</pre>
+
+        <h3>8.4 Accessibility Mistakes</h3>
+
+        <h4>Mistake 10: Missing Alt Text on Images</h4>
+        <pre>
+&lt;!-- BAD - No alt text --&gt;
+&lt;img src="logo.png"&gt;
+
+&lt;!-- GOOD - Descriptive alt text --&gt;
+&lt;img src="logo.png" alt="Company Name Logo"&gt;
+
+&lt;!-- For decorative images, empty alt is acceptable --&gt;
+&lt;img src="decorative-line.png" alt="" role="presentation"&gt;
+</pre>
+
+        <h4>Mistake 11: Using Improper Semantic Elements</h4>
+        <pre>
+&lt;!-- BAD - All divs, no structure --&gt;
+&lt;div class="header"&gt;
+    &lt;div class="title"&gt;Site Title&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="main"&gt;
+    &lt;div class="article"&gt;Content&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- GOOD - Semantic HTML5 elements --&gt;
+&lt;header&gt;
+    &lt;h1&gt;Site Title&lt;/h1&gt;
+&lt;/header&gt;
+&lt;main&gt;
+    &lt;article&gt;
+        &lt;h2&gt;Article Title&lt;/h2&gt;
+        &lt;p&gt;Content&lt;/p&gt;
+    &lt;/article&gt;
+&lt;/main&gt;
+</pre>
+
+        <h4>Mistake 12: Poor Link Text</h4>
+        <pre>
+&lt;!-- BAD - Uninformative link text --&gt;
+&lt;p&gt;For more information, &lt;a href="/click-here"&gt;click here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!-- GOOD - Descriptive link text --&gt;
+&lt;p&gt;Read our &lt;a href="/guide"&gt;complete guide to hiking&lt;/a&gt; for more information.&lt;/p&gt;
+
+&lt;!-- Or better yet --&gt;
+&lt;p&gt;&lt;a href="/guide"&gt;Read our complete guide to hiking&lt;/a&gt; for tips and advice.&lt;/p&gt;
+</pre>
+
+        <h3>8.5 Validation and Best Practices Checklist</h3>
+        <p>Use this checklist to ensure your HTML is correct:</p>
+        <pre>
+□ DOCTYPE declaration present at the top
+□ html tag has lang attribute
+□ meta charset="UTF-8" in head
+□ title element is present and descriptive
+□ Only one h1 per page
+□ Heading hierarchy is logical (no skipped levels)
+□ All images have alt attributes
+□ All form inputs have associated labels
+□ Links have descriptive text (not "click here")
+□ No block elements inside inline elements (like p)
+□ All tags are properly closed/nested
+□ Use semantic elements where appropriate
+□ Indentation is consistent for readability
+□ No inline styles (use CSS classes instead)
+□ All special characters are escaped (&amp;amp; for &amp;)
+</pre>
+
+        <hr>
+
+        <!-- 9. EXERCISES AND SELF-ASSESSMENT -->
+        <h2>9. EXERCISES AND SELF-ASSESSMENT</h2>
+
+        <h3>9.1 Beginner Exercises</h3>
+
+        <h4>Exercise 1: Basic Document Structure</h4>
+        <p>Create a complete HTML document with:</p>
+        <ul>
+            <li>Proper DOCTYPE</li>
+            <li>HTML tag with English language</li>
+            <li>Head with title "My First Web Page"</li>
+            <li>Body with an h1 and two paragraphs</li>
+        </ul>
+        <p><strong>Expected Solution:</strong></p>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My First Web Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to My Page&lt;/h1&gt;
+    &lt;p&gt;This is my first paragraph. I'm learning HTML and it's exciting!&lt;/p&gt;
+    &lt;p&gt;This is my second paragraph. I can't wait to learn CSS next.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+        <h4>Exercise 2: Create a Recipe Page</h4>
+        <p>Create an HTML page for a recipe with:</p>
+        <ul>
+            <li>Main title (h1)</li>
+            <li>Three sections (ingredients, instructions, tips) using h2</li>
+            <li>Ingredients as an unordered list</li>
+            <li>Instructions as an ordered list</li>
+            <li>Tips as paragraphs</li>
+        </ul>
+        <p><strong>Check your work:</strong></p>
+        <ul>
+            <li>[ ] Is there only one h1?</li>
+            <li>[ ] Are all headings in correct order (h1 → h2)?</li>
+            <li>[ ] Are lists properly structured?</li>
+            <li>[ ] Is the content easy to read?</li>
+        </ul>
+
+        <h3>9.2 Intermediate Exercises</h3>
+
+        <h4>Exercise 3: Build a Personal Profile Page</h4>
+        <p>Create a personal profile page that includes:</p>
+        <ul>
+            <li>Header with your name (h1) and a tagline</li>
+            <li>An "About Me" section with paragraphs</li>
+            <li>A "Skills" section with headings and lists</li>
+            <li>A "Contact" section with address-like formatting</li>
+            <li>Proper semantic structure (header, main, section, footer)</li>
+        </ul>
+
+        <h4>Exercise 4: Create a Blog Post</h4>
+        <p>Write a blog post about a topic you're interested in. Include:</p>
+        <ul>
+            <li>Article title (h1)</li>
+            <li>Author and date</li>
+            <li>Multiple sections with appropriate headings</li>
+            <li>At least one blockquote</li>
+            <li>Some inline formatting (strong, em, etc.)</li>
+            <li>A "Related Posts" section in an aside</li>
+        </ul>
+
+        <h3>9.3 Advanced Exercise</h3>
+
+        <h4>Exercise 5: Complete Website Homepage</h4>
+        <p>Create a complete homepage for a fictional business:</p>
+        <ul>
+            <li>Proper document structure</li>
+            <li>Header with logo (text) and navigation</li>
+            <li>Hero section with h1 and call-to-action</li>
+            <li>Services/features section with h2 and cards</li>
+            <li>About section with paragraphs</li>
+            <li>Testimonials section</li>
+            <li>Footer with copyright and links</li>
+            <li>All semantic HTML5 elements used appropriately</li>
+        </ul>
+
+        <h3>9.4 Self-Assessment Questions</h3>
+
+        <p><strong>Question 1:</strong> What is the purpose of the <code>&lt;!DOCTYPE html&gt;</code> declaration?</p>
+        <p><strong>Answer:</strong> It tells the browser which version of HTML the page is using. For HTML5, it ensures
+            the browser renders the page in standards mode, not quirks mode.</p>
+        <hr>
+        <p><strong>Question 2:</strong> Why should there only be one <code>&lt;h1&gt;</code> per page?</p>
+        <p><strong>Answer:</strong> The h1 represents the main heading/topic of the entire page. Having multiple h1
+            elements confuses search engines and screen readers about the primary content of the page.</p>
+        <hr>
+        <p><strong>Question 3:</strong> What's the difference between a block-level element and an inline element?</p>
+        <p><strong>Answer:</strong> Block-level elements (like p and h1) start on a new line and take up the full width
+            available. Inline elements (like strong and a) flow within the text and only take up as much width as
+            necessary.</p>
+        <hr>
+        <p><strong>Question 4:</strong> Why is it important to use semantic HTML elements (like article, section, nav)
+            instead of just divs?</p>
+        <p><strong>Answer:</strong> Semantic elements provide meaning to the content structure. They help:</p>
+        <ul>
+            <li>Search engines understand the page better</li>
+            <li>Screen readers navigate the content</li>
+            <li>Other developers understand your code</li>
+            <li>Browsers provide default styling where appropriate</li>
+        </ul>
+        <hr>
+        <p><strong>Question 5:</strong> What information should go in the <code>&lt;head&gt;</code> section versus the
+            <code>&lt;body&gt;</code>?
+        </p>
+        <p><strong>Answer:</strong> The head contains meta-information about the document (title, character set, CSS
+            links, etc.). The body contains all visible content that users see on the page.</p>
+
+        <h3>9.5 Code Review Practice</h3>
+        <p>Find and fix the errors in this HTML:</p>
+        <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Error Page
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;H1&gt;Welcome to My Site&lt;/H1&gt;
+    &lt;H3&gt;About Me&lt;/H2&gt;
+    &lt;p&gt;I love coding.
+    &lt;h2&gt;My Hobbies&lt;/h3&gt;
+    &lt;p&gt;
+        &lt;ul&gt;
+            &lt;li&gt;Reading
+            &lt;li&gt;Hiking
+        &lt;/ul&gt;
+    &lt;/p&gt;
+    &lt;img src="photo.jpg"&gt;
+    &lt;p&gt;For more info, &lt;a href="/info"&gt;click here&lt;/a&gt;.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+        <p><strong>Errors Found:</strong></p>
+        <ol>
+            <li>Missing closing <code>&lt;/title&gt;</code> tag</li>
+            <li>Missing <code>lang</code> attribute in <code>&lt;html&gt;</code></li>
+            <li>Inconsistent heading hierarchy (H1 → H3 → H2)</li>
+            <li>Inconsistent heading capitalization</li>
+            <li>Mismatched heading tags (<code>&lt;H3&gt;</code>...<code>&lt;/H2&gt;</code>)</li>
+            <li>Unclosed <code>&lt;p&gt;</code> tag before the list</li>
+            <li>List items missing closing <code>&lt;/li&gt;</code> tags</li>
+            <li>List is inside a paragraph (invalid nesting)</li>
+            <li>Image missing <code>alt</code> attribute</li>
+            <li>Uninformative link text ("click here")</li>
+        </ol>
+
+        <hr>
+
+        <!-- 10. ADDITIONAL RESOURCES -->
+        <h2>10. ADDITIONAL RESOURCES</h2>
+
+        <h3>10.1 Official Documentation and Standards</h3>
+        <table>
+            <tr>
+                <th>Resource</th>
+                <th>Description</th>
+                <th>URL</th>
+            </tr>
+            <tr>
+                <td><strong>MDN Web Docs</strong></td>
+                <td>The definitive resource for HTML documentation</td>
+                <td>developer.mozilla.org</td>
+            </tr>
+            <tr>
+                <td><strong>W3C HTML Specification</strong></td>
+                <td>Official HTML standard</td>
+                <td>w3.org/TR/html52/</td>
+            </tr>
+            <tr>
+                <td><strong>WHATWG HTML Living Standard</strong></td>
+                <td>Living standard maintained by browser vendors</td>
+                <td>html.spec.whatwg.org</td>
+            </tr>
+            <tr>
+                <td><strong>W3C Validator</strong></td>
+                <td>Validate your HTML code</td>
+                <td>validator.w3.org</td>
+            </tr>
+        </table>
+
+        <h3>10.2 Learning Platforms</h3>
+        <ul>
+            <li><strong>freeCodeCamp</strong> - Free interactive HTML/CSS curriculum</li>
+            <li><strong>Codecademy</strong> - Interactive HTML courses</li>
+            <li><strong>Khan Academy</strong> - Intro to HTML/CSS</li>
+            <li><strong>The Odin Project</strong> - Comprehensive web development path</li>
+        </ul>
+
+        <h3>10.3 Reference Websites</h3>
+        <ul>
+            <li><strong>HTML.com</strong> - Beginner-friendly tutorials</li>
+            <li><strong>W3Schools</strong> - Quick references and examples</li>
+            <li><strong>CSS-Tricks</strong> - Articles and guides (includes HTML)</li>
+            <li><strong>HTML Reference</strong> - Visual reference of HTML elements</li>
+        </ul>
+
+        <h3>10.4 Accessibility Resources</h3>
+        <ul>
+            <li><strong>WebAIM</strong> - Articles and tools for web accessibility</li>
+            <li><strong>W3C Web Accessibility Initiative (WAI)</strong> - Guidelines and resources</li>
+            <li><strong>A11Y Project</strong> - Accessibility checklist and patterns</li>
+            <li><strong>axe DevTools</strong> - Browser extension for accessibility testing</li>
+        </ul>
+
+        <h3>10.5 Practice Projects</h3>
+        <p><strong>Beginner Projects:</strong></p>
+        <ul>
+            <li>Personal portfolio page</li>
+            <li>Recipe collection</li>
+            <li>Travel blog</li>
+            <li>Business card website</li>
+        </ul>
+        <p><strong>Intermediate Projects:</strong></p>
+        <ul>
+            <li>Product landing page</li>
+            <li>News article layout</li>
+            <li>Event invitation page</li>
+            <li>Restaurant menu</li>
+        </ul>
+        <p><strong>Advanced Projects:</strong></p>
+        <ul>
+            <li>Multi-page informational website</li>
+            <li>Documentation site</li>
+            <li>Online resume with multiple sections</li>
+            <li>Photo gallery with captions</li>
+        </ul>
+
+        <h3>10.6 Glossary of Key Terms</h3>
+        <table>
+            <tr>
+                <th>Term</th>
+                <th>Definition</th>
+            </tr>
+            <tr>
+                <td><strong>Attribute</strong></td>
+                <td>Additional information about an HTML element</td>
+            </tr>
+            <tr>
+                <td><strong>Block-level element</strong></td>
+                <td>Element that starts on a new line and takes full width</td>
+            </tr>
+            <tr>
+                <td><strong>CSS</strong></td>
+                <td>Cascading Style Sheets - language for styling HTML</td>
+            </tr>
+            <tr>
+                <td><strong>DOM</strong></td>
+                <td>Document Object Model - tree representation of HTML</td>
+            </tr>
+            <tr>
+                <td><strong>Element</strong></td>
+                <td>An individual component of HTML (opening tag + content + closing tag)</td>
+            </tr>
+            <tr>
+                <td><strong>HTML</strong></td>
+                <td>HyperText Markup Language - standard language for web pages</td>
+            </tr>
+            <tr>
+                <td><strong>Hyperlink</strong></td>
+                <td>A link from one web page to another</td>
+            </tr>
+            <tr>
+                <td><strong>Inline element</strong></td>
+                <td>Element that doesn't start a new line</td>
+            </tr>
+            <tr>
+                <td><strong>Markup</strong></td>
+                <td>Annotations that structure content</td>
+            </tr>
+            <tr>
+                <td><strong>Nesting</strong></td>
+                <td>Placing one HTML element inside another</td>
+            </tr>
+            <tr>
+                <td><strong>Semantic HTML</strong></td>
+                <td>Using elements for their meaning, not just appearance</td>
+            </tr>
+            <tr>
+                <td><strong>Tag</strong></td>
+                <td>The markup that defines an element</td>
+            </tr>
+            <tr>
+                <td><strong>Void element</strong></td>
+                <td>Element with no content (self-closing)</td>
+            </tr>
+            <tr>
+                <td><strong>W3C</strong></td>
+                <td>World Wide Web Consortium - sets web standards</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>CONCLUSION</h2>
+        <p>HTML is the foundation of all web development. Mastering these basics—document structure, elements, tags,
+            headings, and paragraphs—gives you the power to create well-structured, accessible, and semantic web pages.
+            Remember:</p>
+        <ul>
+            <li><strong>Always</strong> include the DOCTYPE and character encoding</li>
+            <li><strong>Use</strong> semantic HTML elements appropriately</li>
+            <li><strong>Structure</strong> your headings logically (h1 → h6)</li>
+            <li><strong>Keep</strong> paragraphs focused on single ideas</li>
+            <li><strong>Test</strong> your code with validators and accessibility tools</li>
+            <li><strong>Practice</strong> regularly to reinforce your learning</li>
+        </ul>
+        <p>The web is built on HTML. By understanding these fundamentals, you're taking the first step toward becoming a
+            proficient web developer. Keep coding, keep learning, and don't hesitate to refer to the resources provided
+            when you need help.</p>
+
+        <hr>
+
+        <p><em>"The web is not a platform. It's a universe of information. HTML is the language we use to explore
+                it."</em></p>
+
+        <footer>
+            📘 HTML block – Web Development· every page includes accessibility notes<br>
+            © 2025 – comprehensive study notes · word for word from original content
+        </footer>
+
+    </div> <!-- notes-container -->
+</body>
+
+</html>

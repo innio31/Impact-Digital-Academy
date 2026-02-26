@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Graphic Design & CorelDRAW · DTP Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2eadb;
+            color: #2e2b23;
+            line-height: 1.6;
+            padding: 1.5rem;
+        }
+
+        .landing-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 3rem;
+            box-shadow: 0 30px 50px -25px #5a4e3a;
+            overflow: hidden;
+            padding: 2.5rem 2.8rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 750;
+            background: linear-gradient(150deg, #1d4f4a, #4f6d3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .block-badge {
+            background: #2c6e5c;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 500;
+            padding: 0.2rem 2rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .subhead {
+            font-size: 1.6rem;
+            color: #42634b;
+            border-left: 8px solid #78a55a;
+            padding-left: 1.8rem;
+            margin: 1rem 0 2.5rem;
+            font-weight: 360;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 2.2fr 1.2fr;
+            gap: 2.2rem;
+            margin: 2.8rem 0 2rem;
+        }
+
+        .card {
+            background: #f4f9f2;
+            border-radius: 2.2rem;
+            padding: 1.8rem 2.2rem;
+            border: 1px solid #cfeadb;
+            box-shadow: 0 12px 28px -15px #486644;
+        }
+
+        .card h2 {
+            font-size: 2rem;
+            color: #185f4b;
+            border-bottom: 3px solid #70b28c;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .learning-list {
+            list-style: none;
+        }
+
+        .learning-list li {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: 1.1rem;
+        }
+
+        .learning-list li::before {
+            content: "🎯";
+            font-size: 1.3rem;
+        }
+
+        .topic-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .topic-tag {
+            background: white;
+            border: 1px solid #7cb69c;
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1a6049;
+            box-shadow: 0 4px 10px #d8ecdd;
+        }
+
+        .resource-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            margin: 1.8rem 0 0.8rem;
+        }
+
+        .resource-block {
+            background: #e2f0e6;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.8rem;
+            border-left: 8px solid #318067;
+        }
+
+        .resource-block p {
+            font-weight: 600;
+            color: #0f5b47;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 1rem;
+        }
+
+        .page-link {
+            background: white;
+            text-decoration: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 60px;
+            color: #1b5b4a;
+            font-weight: 550;
+            border: 1px solid #abd6c0;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            box-shadow: 0 3px 10px #e7f0e5;
+        }
+
+        .page-link:hover {
+            background: #cde9dd;
+            border-color: #267a62;
+            transform: scale(1.02);
+        }
+
+        .topic-section {
+            margin: 3.5rem 0 2.5rem;
+        }
+
+        .topic-section h3 {
+            font-size: 2.2rem;
+            color: #235f47;
+            border-left: 10px solid #9ecfaa;
+            padding-left: 1.5rem;
+            margin: 2.5rem 0 1.8rem;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .topic-card {
+            background: #f6fcf5;
+            border-radius: 2rem;
+            padding: 1.6rem;
+            border: 1px solid #b7ddc9;
+        }
+
+        .topic-card h4 {
+            font-size: 1.6rem;
+            color: #236449;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px dashed #98caaf;
+            padding-bottom: 0.6rem;
+        }
+
+        .dot-list {
+            list-style: none;
+        }
+
+        .dot-list li {
+            margin: 0.6rem 0;
+            padding-left: 1.8rem;
+            position: relative;
+        }
+
+        .dot-list li::before {
+            content: "●";
+            color: #358067;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+
+        .activity-case {
+            background: #ebefd7;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2.8rem 0;
+            border: 2px solid #7fa665;
+        }
+
+        .flex-act {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .act-item {
+            background: white;
+            border-radius: 1.6rem;
+            padding: 1.5rem;
+            flex: 1 1 220px;
+            border-bottom: 6px solid #5f9b77;
+        }
+
+        .badge {
+            background: #1c7f69;
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.2rem 1.5rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 70, 40, 0.1);
+        }
+
+        th {
+            background: #387a63;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1.1rem;
+        }
+
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #b9e0cf;
+            background: #f7fffa;
+        }
+
+        .footer-links {
+            background: #e0efe5;
+            border-radius: 2rem;
+            padding: 2rem 2.2rem;
+            margin: 3rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-project {
+            background: #165a4c;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 14px -6px #2a5d48;
+            border: 2px solid white;
+        }
+
+        .btn-project:hover {
+            background: #1d7563;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #b8dfd2, #f2eadb, #b8dfd2);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            color: #4f715b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-wrapper">
+        <!-- main header -->
+        <h1>🖌️ INTRODUCTION TO GRAPHIC DESIGN & CORELDRAW</h1>
+        <div class="block-badge">desktop publishing · secretarial studies</div>
+        <div class="subhead">master design principles, vector tools, and professional print workflows</div>
+
+        <!-- quick overview + learning objectives -->
+        <div class="overview-grid">
+            <div class="card">
+                <h2>📌 learning objectives</h2>
+                <ul class="learning-list">
+                    <li>Understand fundamental graphic design principles for print and screen.</li>
+                    <li>Navigate the CorelDRAW interface and its core tools.</li>
+                    <li>Create simple vector graphics and layouts for business materials.</li>
+                    <li>Prepare documents for print and digital export.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📘 core topics</h2>
+                <div class="topic-cloud">
+                    <span class="topic-tag">design elements</span>
+                    <span class="topic-tag">balance & hierarchy</span>
+                    <span class="topic-tag">CMYK / RGB</span>
+                    <span class="topic-tag">color harmonies</span>
+                    <span class="topic-tag">serif vs sans</span>
+                    <span class="topic-tag">leading/kerning</span>
+                    <span class="topic-tag">raster vs vector</span>
+                    <span class="topic-tag">toolbox / dockers</span>
+                    <span class="topic-tag">shapes & curves</span>
+                    <span class="topic-tag">fountain fills</span>
+                    <span class="topic-tag">artistic text</span>
+                    <span class="topic-tag">group / lock</span>
+                    <span class="topic-tag">powerclip</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- quick navigation to all pages (the 5 modules + new project page) -->
+        <div class="resource-links">
+            <div class="resource-block">
+                <p>📄 full module pages (click to open detailed notes)</p>
+                <div class="page-grid">
+                    <a href="intro.html" class="page-link" target="_blank">🎨 1. design fundamentals</a>
+                    <a href="interface&workspace.html" class="page-link" target="_blank">🖱️ 2. interface &
+                        workspace</a>
+                    <a href="objects.html" class="page-link" target="_blank">⬛ 3. create & manipulate objects</a>
+                    <a href="colour.html" class="page-link" target="_blank">🌈 4. working with color</a>
+                    <a href="text_tools.html" class="page-link" target="_blank">🔤 5. text tools</a>
+                    <a href="importing&modifying.html" class="page-link" target="_blank">📂 6. import & modify</a>
+                    <a href="arranging_objects.html" class="page-link" target="_blank">📦 7. arranging objects</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- detailed topic breakdown – exactly matching your list -->
+        <div class="topic-section">
+            <h3>🔹 graphic design fundamentals</h3>
+            <div class="mini-grid">
+                <div class="topic-card">
+                    <h4>✶ elements</h4>
+                    <ul class="dot-list">
+                        <li>line, shape, color, texture</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>⚖️ principles</h4>
+                    <ul class="dot-list">
+                        <li>balance, contrast, alignment, repetition, hierarchy</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🎨 color theory</h4>
+                    <ul class="dot-list">
+                        <li>CMYK vs RGB · color harmonies · spot color</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🔤 typography basics</h4>
+                    <ul class="dot-list">
+                        <li>serif / sans‑serif · pairing · leading, kerning, tracking</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🖼️ image formats</h4>
+                    <ul class="dot-list">
+                        <li>raster (JPEG, PNG, TIFF) · vector (AI, CDR, SVG) · DPI/PPI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="topic-section">
+            <h3>🛠️ core CorelDRAW skills (topic deep‑links)</h3>
+            <div class="mini-grid">
+                <div class="topic-card">
+                    <h4>🖥️ interface</h4>
+                    <ul class="dot-list">
+                        <li>toolbox · property bar · dockers · color palette · page setup</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>✏️ creating objects</h4>
+                    <ul class="dot-list">
+                        <li>basic shapes, lines, curves · select, move, scale, rotate, skew, duplicate</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🎭 working with color</h4>
+                    <ul class="dot-list">
+                        <li>uniform fills · outline colors · fountain fills (gradients)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📝 text tools</h4>
+                    <ul class="dot-list">
+                        <li>artistic text · paragraph text · formatting</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>📦 arranging objects</h4>
+                    <ul class="dot-list">
+                        <li>group, ungroup, lock · object order (layering basics)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🌄 import & modify</h4>
+                    <ul class="dot-list">
+                        <li>place bitmap · crop · basic powerclip</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITIES block (hands-on / practical / workshop / case study) -->
+        <div class="activity-case">
+            <h2 style="color: #1C4D3A; border-bottom: 3px solid #79b092; padding-bottom: 0.8rem;">🧪 activities &
+                workshop</h2>
+            <div class="flex-act">
+                <div class="act-item"><span class="badge">hands‑on</span><strong>recreate simple logos</strong><br>basic
+                    shapes & lines – apple, twitter, leaf</div>
+                <div class="act-item"><span class="badge">practical</span><strong>professional business
+                        card</strong><br>name, title, company, graphic element</div>
+                <div class="act-item"><span class="badge">workshop</span><strong>3 moods – one
+                        headline</strong><br>typography + color harmonies (flyer headline)</div>
+                <div class="act-item"><span class="badge">case study</span><strong>one‑page
+                        flyer</strong><br>school/community event: images, text, shapes</div>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT block + quiz -->
+        <div style="background: #e7f0e3; border-radius: 2.2rem; padding: 2rem; margin: 2.8rem 0;">
+            <h2 style="color: #194f44;">📋 assessment</h2>
+            <table>
+                <tr>
+                    <th>type</th>
+                    <th>description</th>
+                    <th>link / format</th>
+                </tr>
+                <tr>
+                    <td><strong>practical assignment</strong></td>
+                    <td>design a trifold brochure for a small business/non‑profit, including text, images, color scheme
+                        following design principles.</td>
+                    <td>see project page</td>
+                </tr>
+                <tr>
+                    <td><strong>short quiz</strong></td>
+                    <td>graphic design terminology + CorelDRAW tools</td>
+                    <td>15 questions (sample below)</td>
+                </tr>
+            </table>
+
+            <!-- mini quiz preview (exactly from your description) -->
+            <div style="background: white; border-radius: 2rem; padding: 1.8rem; margin: 1.5rem 0;">
+                <h4 style="color: #105f49;">✏️ quiz sample – do you know?</h4>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem;">
+                    <div>• RGB vs CMYK difference?</div>
+                    <div>• what does <kbd>Ctrl+Q</kbd> do?</div>
+                    <div>• two ways to apply fountain fill?</div>
+                    <div>• what is PowerClip?</div>
+                    <div>• spot color vs process?</div>
+                    <div>• shortcut paragraph/artistic text conversion?</div>
+                </div>
+            </div>
+        </div>
+
+        <!--  FINAL PROJECT PAGE – prominently linked (the project.html you just created) -->
+        <div class="footer-links">
+            <div>
+                <span style="font-size: 2rem; font-weight: 700; color: #144f41;">🧩 integrated project</span><br>
+                <span style="font-size: 1.2rem;">step‑by‑step guide, exercises, and full project brief</span>
+            </div>
+            <a href="project.html" class="btn-project" target="_blank">🚀 open project page →</a>
+        </div>
+
+        <!-- extra navigation: all pages again (quick) -->
+        <hr>
+        <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; margin: 2rem 0;">
+            <a href="intro.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">design fundamentals</a>
+            <a href="interface&workspace.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">interface</a>
+            <a href="objects.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">objects</a>
+            <a href="colour.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">color</a>
+            <a href="text_tools.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">text</a>
+            <a href="importing&modifying.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">import</a>
+            <a href="arranging_objects.html" target="_blank"
+                style="background:#E6F0E9; padding:0.7rem 1.5rem; border-radius:40px;">arrange</a>
+        </div>
+
+        <footer>
+            📘 complete learning path · DTP & secretarial studies · all pages ready for use
+        </footer>
+    </div> <!-- landing-wrapper -->
+</body>
+
+</html>

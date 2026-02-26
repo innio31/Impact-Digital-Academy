@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic HTML5 – complete study notes</title>
+    <style>
+        /* minimal styling for readability – does not alter content */
+        body {
+            background: #f5fafd;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1e2b32;
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #005073;
+            margin-top: 2rem;
+            border-bottom: 2px solid #71c7b8;
+            padding-bottom: 0.3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            border-bottom-width: 4px;
+        }
+
+        pre {
+            background: #1e2b32;
+            color: #e5eef5;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            overflow-x: auto;
+            border-left: 6px solid #239989;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: #d7ecf2;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #025f6b;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1.5rem 0;
+            background: #ffffff;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(12, 60, 70, 0.1);
+        }
+
+        th {
+            background: #176f79;
+            color: white;
+            padding: 0.8rem 1rem;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #b7dbe8;
+        }
+
+        ul,
+        ol {
+            margin: 0.8rem 0 1.5rem 1.5rem;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #cde3e9, #239989, #cde3e9);
+            margin: 2rem 0;
+        }
+
+        .note-block {
+            background: #f2f8fe;
+            border-radius: 1.8rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid #b7dbe8;
+            margin: 2rem 0;
+        }
+
+        .badge-inline {
+            background: #0d6272;
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ##################################################################### -->
+    <!-- EXACT, COMPLETE STUDY NOTES — EVERY WORD, CODE SNIPPET, TABLE, LIST  -->
+    <!-- ##################################################################### -->
+
+    <h1>Semantic HTML5: Structuring Web Pages for SEO and Accessibility</h1>
+
+    <h2>Table of Contents</h2>
+    <ol>
+        <li>Introduction to Semantic HTML</li>
+        <li>The Importance of Semantic HTML</li>
+        <li>Core Semantic Structural Elements</li>
+        <li>Proper Document Structure</li>
+        <li>Semantic HTML and SEO</li>
+        <li>Semantic HTML and Accessibility</li>
+        <li>Headings and Document Outline</li>
+        <li>Lists and Tables</li>
+        <li>Forms and Interactive Elements</li>
+        <li>Common Mistakes and Best Practices</li>
+        <li>ARIA Landmarks and Semantic HTML</li>
+        <li>Practical Examples and Code Snippets</li>
+        <li>Validation and Testing Tools</li>
+        <li>Conclusion</li>
+    </ol>
+
+    <hr>
+
+    <h2>1. Introduction to Semantic HTML</h2>
+    <p>Semantic HTML refers to the practice of using HTML markup to reinforce the meaning—or semantics—of the content
+        within web pages, rather than merely defining its appearance . The core principle is selecting the most
+        appropriate HTML element for each piece of content based on its purpose and meaning.</p>
+
+    <h3>1.1 What Does "Semantic" Mean?</h3>
+    <p>In the context of HTML, semantics refers to the meaning of a word or element. When we talk about semantic HTML,
+        we're discussing elements that carry inherent meaning about the content they contain . For example:</p>
+    <ul>
+        <li>A <code>&lt;button&gt;</code> element clearly indicates interactive functionality</li>
+        <li>An <code>&lt;h1&gt;</code> element signifies the most important heading on the page</li>
+        <li>A <code>&lt;nav&gt;</code> element explicitly marks navigation links</li>
+    </ul>
+
+    <h3>1.2 Semantic vs. Non-Semantic Elements</h3>
+    <p><strong>Non-semantic elements</strong> like <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code> tell nothing
+        about their content. They are generic containers that require additional attributes (like classes or IDs) to
+        convey any meaning about what they contain .</p>
+    <p><strong>Semantic elements</strong> clearly describe their meaning to both the browser and the developer. They
+        provide built-in context that helps browsers, search engines, and assistive technologies understand the
+        structure and purpose of content .</p>
+
+    <h3>1.3 The Evolution from HTML4 to HTML5</h3>
+    <p>HTML5 introduced a wide range of new semantic elements to address the limitations of HTML4, which relied heavily
+        on generic <code>&lt;div&gt;</code> elements with class attributes like "header," "footer," or "nav." These new
+        elements provide standardized ways to mark up common page sections .</p>
+    <p><strong>HTML4 approach:</strong></p>
+    <pre>&lt;div id="header"&gt;
+  &lt;h1&gt;Website Title&lt;/h1&gt;
+&lt;/div&gt;
+&lt;div class="nav"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id="main"&gt;
+  &lt;div class="article"&gt;
+    &lt;h2&gt;Article Title&lt;/h2&gt;
+    &lt;p&gt;Article content...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="footer"&gt;
+  &lt;p&gt;Copyright information&lt;/p&gt;
+&lt;/div&gt;</pre>
+    <p><strong>HTML5 semantic approach:</strong></p>
+    <pre>&lt;header&gt;
+  &lt;h1&gt;Website Title&lt;/h1&gt;
+&lt;/header&gt;
+&lt;nav&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+&lt;main&gt;
+  &lt;article&gt;
+    &lt;h2&gt;Article Title&lt;/h2&gt;
+    &lt;p&gt;Article content...&lt;/p&gt;
+  &lt;/article&gt;
+&lt;/main&gt;
+&lt;footer&gt;
+  &lt;p&gt;Copyright information&lt;/p&gt;
+&lt;/footer&gt;</pre>
+
+    <hr>
+
+    <h2>2. The Importance of Semantic HTML</h2>
+    <p>Semantic HTML provides numerous benefits that extend far beyond just code organization. These benefits impact
+        search engine optimization, accessibility, development efficiency, and long-term maintainability .</p>
+
+    <h3>2.1 Benefits for Search Engine Optimization (SEO)</h3>
+    <p>Search engines rely heavily on HTML structure to understand webpage content. Semantic HTML provides clear signals
+        about content importance and relationships .</p>
+    <p><strong>Key SEO benefits include:</strong></p>
+    <ul>
+        <li><strong>Improved crawling and indexing</strong>: Semantic elements help search engine bots understand page
+            structure more efficiently</li>
+        <li><strong>Keyword relevance</strong>: Content within headings (<code>&lt;h1&gt;</code>,
+            <code>&lt;h2&gt;</code>, etc.) carries more weight for search rankings</li>
+        <li><strong>Rich snippets eligibility</strong>: Proper structure enables better search result displays</li>
+        <li><strong>Structured data compatibility</strong>: Semantic HTML provides a foundation for implementing schema
+            markup</li>
+    </ul>
+
+    <h3>2.2 Benefits for Accessibility</h3>
+    <p>Accessibility is perhaps where semantic HTML provides its most profound impact. Users with disabilities,
+        particularly those using screen readers, depend on proper HTML semantics to navigate and understand web content
+        .</p>
+    <p><strong>Key accessibility benefits include:</strong></p>
+    <ul>
+        <li><strong>Screen reader navigation</strong>: Users can jump between landmarks, headings, and lists</li>
+        <li><strong>Context provision</strong>: Semantic elements announce their role (e.g., "navigation landmark,"
+            "heading level 2")</li>
+        <li><strong>Keyboard operability</strong>: Elements like <code>&lt;button&gt;</code> provide built-in keyboard
+            interaction</li>
+        <li><strong>Reduced need for ARIA</strong>: Proper semantics eliminate the need for additional ARIA attributes
+            in many cases</li>
+    </ul>
+
+    <h3>2.3 Benefits for Developers and Maintenance</h3>
+    <p>Semantic HTML significantly improves the development experience and long-term code maintainability .</p>
+    <ul>
+        <li><strong>Code readability</strong>: Other developers can understand the code structure immediately</li>
+        <li><strong>Easier styling</strong>: Clear selectors based on element purpose rather than presentational classes
+        </li>
+        <li><strong>Built-in browser behavior</strong>: Many semantic elements provide default behaviors without
+            JavaScript</li>
+        <li><strong>Future-proofing</strong>: Following standards ensures compatibility with future technologies</li>
+        <li><strong>Team collaboration</strong>: Standardized structure improves team efficiency</li>
+    </ul>
+
+    <h3>2.4 Benefits for Mobile and Multi-Device Support</h3>
+    <p>Semantic HTML contributes to better performance and adaptability across different devices .</p>
+    <ul>
+        <li><strong>Smaller file sizes</strong>: Less need for excessive <code>&lt;div&gt;</code> elements and classes
+        </li>
+        <li><strong>Responsive design foundation</strong>: Clear structure facilitates CSS layout</li>
+        <li><strong>Cross-device compatibility</strong>: Semantic elements work consistently across browsers</li>
+    </ul>
+
+    <hr>
+
+    <h2>3. Core Semantic Structural Elements</h2>
+    <p>HTML5 introduced several key semantic elements that define the major structural regions of a webpage.
+        Understanding each element's purpose and proper usage is essential for creating well-structured documents .</p>
+
+    <h3>3.1 <code>&lt;header&gt;</code></h3>
+    <p>The <code>&lt;header&gt;</code> element represents introductory content or a group of navigational aids. It
+        typically contains headings, logos, taglines, and sometimes navigation .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Can be used multiple times per page (within different sections)</li>
+        <li>When used as a page header (direct child of <code>&lt;body&gt;</code>), it represents the site header</li>
+        <li>When used within <code>&lt;article&gt;</code> or <code>&lt;section&gt;</code>, it represents that section's
+            header</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;header&gt;
+  &lt;h1&gt;My Website&lt;/h1&gt;
+  &lt;img src="logo.png" alt="Website Logo"&gt;
+  &lt;p&gt;Tagline or description&lt;/p&gt;
+&lt;/header&gt;</pre>
+    <p><strong>Important notes:</strong></p>
+    <ul>
+        <li>The <code>&lt;header&gt;</code> element does not create a landmark when nested within
+            <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>,
+            <code>&lt;nav&gt;</code>, or <code>&lt;section&gt;</code></li>
+        <li>For the page header, ensure it's a direct child of <code>&lt;body&gt;</code> to create a banner landmark
+        </li>
+    </ul>
+
+    <h3>3.2 <code>&lt;nav&gt;</code></h3>
+    <p>The <code>&lt;nav&gt;</code> element represents a section of a page that links to other pages or to parts within
+        the page—sections intended for navigation .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Use for primary navigation blocks</li>
+        <li>Can be used multiple times (main navigation, breadcrumbs, table of contents)</li>
+        <li>Should contain a list of links (typically <code>&lt;ul&gt;</code> with <code>&lt;li&gt;</code>)</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;nav aria-label="Main Navigation"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/about"&gt;About Us&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/services"&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</pre>
+    <p><strong>Best practices:</strong></p>
+    <ul>
+        <li>Limit to 3 navigation landmarks per page</li>
+        <li>Provide accessible names when multiple <code>&lt;nav&gt;</code> elements exist</li>
+        <li>Not all link collections need <code>&lt;nav&gt;</code> (e.g., footer links may not require it)</li>
+    </ul>
+
+    <h3>3.3 <code>&lt;main&gt;</code></h3>
+    <p>The <code>&lt;main&gt;</code> element represents the dominant content of the <code>&lt;body&gt;</code> of a
+        document. The main content area consists of content that is directly related to or expands upon the central
+        topic of the document .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Use only once per page</li>
+        <li>Should be a direct child of <code>&lt;body&gt;</code></li>
+        <li>Exclude content that repeats across pages (site headers, navigation, footers)</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;body&gt;
+  &lt;header&gt;Site header&lt;/header&gt;
+  &lt;nav&gt;Main navigation&lt;/nav&gt;
+  
+  &lt;main&gt;
+    &lt;h1&gt;Page Title&lt;/h1&gt;
+    &lt;p&gt;Unique content for this page...&lt;/p&gt;
+  &lt;/main&gt;
+  
+  &lt;footer&gt;Site footer&lt;/footer&gt;
+&lt;/body&gt;</pre>
+    <p><strong>Important notes:</strong></p>
+    <ul>
+        <li>Cannot be nested within <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>,
+            <code>&lt;footer&gt;</code>, <code>&lt;header&gt;</code>, or <code>&lt;nav&gt;</code></li>
+        <li>Creates a <code>main</code> landmark for assistive technology</li>
+    </ul>
+
+    <h3>3.4 <code>&lt;article&gt;</code></h3>
+    <p>The <code>&lt;article&gt;</code> element represents a self-contained composition in a document, page,
+        application, or site that is intended to be independently distributable or reusable .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Content that makes sense on its own (blog posts, news articles, forum posts, comments)</li>
+        <li>Can be nested (comments within a blog post article)</li>
+        <li>Each article should have a heading</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;article&gt;
+  &lt;header&gt;
+    &lt;h2&gt;Blog Post Title&lt;/h2&gt;
+    &lt;p&gt;Published on &lt;time datetime="2026-02-25"&gt;February 25, 2026&lt;/time&gt;&lt;/p&gt;
+  &lt;/header&gt;
+  
+  &lt;p&gt;Blog post content...&lt;/p&gt;
+  
+  &lt;section&gt;
+    &lt;h3&gt;Comments&lt;/h3&gt;
+    &lt;article&gt;
+      &lt;h4&gt;User Comment&lt;/h4&gt;
+      &lt;p&gt;Comment content...&lt;/p&gt;
+    &lt;/article&gt;
+  &lt;/section&gt;
+&lt;/article&gt;</pre>
+
+    <h3>3.5 <code>&lt;section&gt;</code></h3>
+    <p>The <code>&lt;section&gt;</code> element represents a generic standalone section of a document, which doesn't
+        have a more specific semantic element to represent it. Sections should always have a heading .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Group thematically related content</li>
+        <li>Always include a heading (<code>&lt;h1&gt;</code>-<code>&lt;h6&gt;</code>)</li>
+        <li>Use when the content could be in its own outline</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;section&gt;
+  &lt;h2&gt;Contact Information&lt;/h2&gt;
+  &lt;p&gt;Email: example@example.com&lt;/p&gt;
+  &lt;p&gt;Phone: (555) 123-4567&lt;/p&gt;
+&lt;/section&gt;</pre>
+    <p><strong>Distinguishing <code>&lt;article&gt;</code> and <code>&lt;section&gt;</code>:</strong></p>
+    <ul>
+        <li>Use <code>&lt;article&gt;</code> for self-contained, reusable content</li>
+        <li>Use <code>&lt;section&gt;</code> for grouping thematic content within a page or article</li>
+    </ul>
+
+    <h3>3.6 <code>&lt;aside&gt;</code></h3>
+    <p>The <code>&lt;aside&gt;</code> element represents a portion of a document whose content is only indirectly
+        related to the document's main content .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Sidebars</li>
+        <li>Pull quotes</li>
+        <li>Advertising</li>
+        <li>Related links</li>
+        <li>Author biographies</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;main&gt;
+  &lt;article&gt;
+    &lt;h2&gt;Main Article&lt;/h2&gt;
+    &lt;p&gt;Article content...&lt;/p&gt;
+  &lt;/article&gt;
+  
+  &lt;aside&gt;
+    &lt;h2&gt;Related Articles&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Related post 1&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Related post 2&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/aside&gt;
+&lt;/main&gt;</pre>
+    <p><strong>Important notes:</strong></p>
+    <ul>
+        <li>Creates a <code>complementary</code> landmark when used appropriately</li>
+        <li>Should be related to the surrounding content, not completely separate</li>
+    </ul>
+
+    <h3>3.7 <code>&lt;footer&gt;</code></h3>
+    <p>The <code>&lt;footer&gt;</code> element represents a footer for its nearest ancestor sectioning content or
+        sectioning root element. A footer typically contains information about its section such as who wrote it, links
+        to related documents, copyright data, and similar .</p>
+    <p><strong>Proper usage:</strong></p>
+    <ul>
+        <li>Can be used multiple times per page</li>
+        <li>When used as page footer (direct child of <code>&lt;body&gt;</code>), represents site footer</li>
+        <li>When used within <code>&lt;article&gt;</code> or <code>&lt;section&gt;</code>, represents that section's
+            footer</li>
+    </ul>
+    <p><strong>Example:</strong></p>
+    <pre>&lt;footer&gt;
+  &lt;p&gt;© 2026 My Website. All rights reserved.&lt;/p&gt;
+  &lt;nav aria-label="Footer Navigation"&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/privacy"&gt;Privacy Policy&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/terms"&gt;Terms of Service&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+&lt;/footer&gt;</pre>
+    <p><strong>Important notes:</strong></p>
+    <ul>
+        <li>The <code>&lt;footer&gt;</code> element does not create a landmark when nested within
+            <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>,
+            <code>&lt;nav&gt;</code>, or <code>&lt;section&gt;</code></li>
+        <li>For the page footer, ensure it's a direct child of <code>&lt;body&gt;</code> to create a
+            <code>contentinfo</code> landmark</li>
+    </ul>
+
+    <h3>3.8 Summary of Semantic Elements</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Purpose</th>
+                <th>Landmark Role</th>
+                <th>Usage Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&lt;header&gt;</code></td>
+                <td>Introductory content</td>
+                <td><code>banner</code> (when page header)</td>
+                <td>Multiple</td>
+            </tr>
+            <tr>
+                <td><code>&lt;nav&gt;</code></td>
+                <td>Navigation links</td>
+                <td><code>navigation</code></td>
+                <td>1-3 per page</td>
+            </tr>
+            <tr>
+                <td><code>&lt;main&gt;</code></td>
+                <td>Primary page content</td>
+                <td><code>main</code></td>
+                <td>Once per page</td>
+            </tr>
+            <tr>
+                <td><code>&lt;article&gt;</code></td>
+                <td>Self-contained content</td>
+                <td>None (section)</td>
+                <td>Multiple</td>
+            </tr>
+            <tr>
+                <td><code>&lt;section&gt;</code></td>
+                <td>Thematic grouping</td>
+                <td><code>region</code> (when named)</td>
+                <td>Multiple</td>
+            </tr>
+            <tr>
+                <td><code>&lt;aside&gt;</code></td>
+                <td>Indirectly related content</td>
+                <td><code>complementary</code></td>
+                <td>Multiple</td>
+            </tr>
+            <tr>
+                <td><code>&lt;footer&gt;</code></td>
+                <td>Footer information</td>
+                <td><code>contentinfo</code> (when page footer)</td>
+                <td>Multiple</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>4. Proper Document Structure</h2>
+    <p>Creating a well-structured HTML document involves more than just using the right elements—it requires
+        understanding how these elements relate to each other and how to organize them effectively .</p>
+
+    <h3>4.1 Basic Page Structure</h3>
+    <p>Every HTML document should follow a basic structural pattern:</p>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Document Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;!-- Site header content --&gt;
+  &lt;/header&gt;
+  
+  &lt;nav&gt;
+    &lt;!-- Main navigation --&gt;
+  &lt;/nav&gt;
+  
+  &lt;main&gt;
+    &lt;!-- Unique page content --&gt;
+  &lt;/main&gt;
+  
+  &lt;footer&gt;
+    &lt;!-- Site footer content --&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <h3>4.2 Nesting and Relationships</h3>
+    <p>Understanding how semantic elements can be nested is crucial for proper document structure .</p>
+    <p><strong>Valid nesting patterns:</strong></p>
+    <pre>&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;Site Title&lt;/h1&gt;
+    &lt;nav&gt;
+      &lt;!-- Navigation --&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+  
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;header&gt;
+        &lt;h2&gt;Article Title&lt;/h2&gt;
+      &lt;/header&gt;
+      
+      &lt;section&gt;
+        &lt;h3&gt;Section 1&lt;/h3&gt;
+        &lt;p&gt;Content...&lt;/p&gt;
+      &lt;/section&gt;
+      
+      &lt;section&gt;
+        &lt;h3&gt;Section 2&lt;/h3&gt;
+        &lt;p&gt;Content...&lt;/p&gt;
+      &lt;/section&gt;
+      
+      &lt;footer&gt;
+        &lt;p&gt;Article footer&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/article&gt;
+    
+    &lt;aside&gt;
+      &lt;h3&gt;Related Content&lt;/h3&gt;
+      &lt;!-- Related links --&gt;
+    &lt;/aside&gt;
+  &lt;/main&gt;
+  
+  &lt;footer&gt;
+    &lt;p&gt;Site footer&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;</pre>
+
+    <h3>4.3 The Importance of Source Order</h3>
+    <p>Source order—the order in which elements appear in the HTML document—significantly impacts both accessibility and
+        SEO .</p>
+    <p><strong>Key considerations:</strong></p>
+    <ul>
+        <li><strong>Screen reader flow</strong>: Content is read in source order</li>
+        <li><strong>Focus order</strong>: Keyboard navigation follows source order</li>
+        <li><strong>Search engine crawling</strong>: Bots process content in source order</li>
+        <li><strong>Mobile experience</strong>: Content order should make sense without CSS</li>
+    </ul>
+    <p><strong>Best practice:</strong> Structure HTML so that the most important content appears first in the source,
+        even if CSS positions it elsewhere visually.</p>
+
+    <h3>4.4 Single-Page Applications and Semantic Structure</h3>
+    <p>Modern frameworks like React and Vue can work effectively with semantic HTML when implemented correctly .</p>
+    <pre>// React example with semantic HTML
+function App() {
+  return (
+    &lt;div className="App"&gt;
+      &lt;header&gt;
+        &lt;h1&gt;My App&lt;/h1&gt;
+      &lt;/header&gt;
+      &lt;nav&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+      &lt;main&gt;
+        &lt;Routes&gt;
+          &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+        &lt;/Routes&gt;
+      &lt;/main&gt;
+      &lt;footer&gt;
+        &lt;p&gt;© 2026&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+
+    <hr>
+
+    <h2>5. Semantic HTML and SEO</h2>
+    <p>Search engines rely heavily on HTML structure to understand, rank, and display content. Semantic HTML provides
+        clear signals that improve search visibility .</p>
+
+    <h3>5.1 How Search Engines Use Semantic Structure</h3>
+    <p>Search engines employ sophisticated algorithms that analyze HTML structure to determine:</p>
+    <ul>
+        <li>Content hierarchy and importance</li>
+        <li>Topic relevance and focus</li>
+        <li>Document organization</li>
+        <li>Relationship between different content sections</li>
+    </ul>
+
+    <h3>5.2 Semantic Elements That Impact SEO</h3>
+    <p><strong>Critical elements for SEO:</strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>SEO Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&lt;title&gt;</code></td>
+                <td>Primary ranking factor, search result headline</td>
+            </tr>
+            <tr>
+                <td><code>&lt;h1&gt;</code></td>
+                <td>Secondary importance, page topic indicator</td>
+            </tr>
+            <tr>
+                <td><code>&lt;h2&gt;</code>-<code>&lt;h6&gt;</code></td>
+                <td>Content hierarchy and subtopics</td>
+            </tr>
+            <tr>
+                <td><code>&lt;a&gt;</code> with meaningful text</td>
+                <td>Link equity and context</td>
+            </tr>
+            <tr>
+                <td><code>&lt;main&gt;</code></td>
+                <td>Primary content focus</td>
+            </tr>
+            <tr>
+                <td><code>&lt;article&gt;</code></td>
+                <td>Self-contained content for indexing</td>
+            </tr>
+            <tr>
+                <td><code>&lt;header&gt;</code></td>
+                <td>Site/brand context</td>
+            </tr>
+            <tr>
+                <td><code>&lt;nav&gt;</code></td>
+                <td>Site structure understanding</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>5.3 Comparing Semantic and Non-Semantic Markup</h3>
+    <p><strong>Non-semantic approach:</strong></p>
+    <pre>&lt;div class="header"&gt;
+  &lt;div class="title"&gt;Welcome to My Site&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="main"&gt;
+  &lt;div class="post"&gt;
+    &lt;div class="post-title"&gt;Blog Post&lt;/div&gt;
+    &lt;div class="post-content"&gt;Content...&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+    <p><strong>Semantic approach:</strong></p>
+    <pre>&lt;header&gt;
+  &lt;h1&gt;Welcome to My Site&lt;/h1&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;article&gt;
+    &lt;h2&gt;Blog Post&lt;/h2&gt;
+    &lt;p&gt;Content...&lt;/p&gt;
+  &lt;/article&gt;
+&lt;/main&gt;</pre>
+    <p>The semantic version provides clear signals to search engines about content hierarchy and importance, potentially
+        improving rankings .</p>
+
+    <h3>5.4 Structured Data and Semantic HTML</h3>
+    <p>Semantic HTML provides an excellent foundation for implementing structured data (schema.org), which can lead to
+        rich search results .</p>
+    <pre>&lt;article itemscope itemtype="https://schema.org/Article"&gt;
+  &lt;h2 itemprop="headline"&gt;Article Title&lt;/h2&gt;
+  &lt;p itemprop="author"&gt;Author Name&lt;/p&gt;
+  &lt;time itemprop="datePublished" datetime="2026-02-25"&gt;Feb 25, 2026&lt;/time&gt;
+  &lt;div itemprop="articleBody"&gt;
+    &lt;p&gt;Article content...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</pre>
+
+    <h3>5.5 Measuring SEO Improvements</h3>
+    <p>Developers can use various tools to assess the SEO impact of semantic HTML :</p>
+    <ul>
+        <li><strong>Google Search Console</strong>: Monitor indexing and search performance</li>
+        <li><strong>Lighthouse SEO audits</strong>: Automated semantic structure checks</li>
+        <li><strong>W3C Validator</strong>: Ensure valid HTML for optimal crawling</li>
+        <li><strong>Core Web Vitals</strong>: Semantic HTML contributes to performance</li>
+    </ul>
+
+    <hr>
+
+    <h2>6. Semantic HTML and Accessibility</h2>
+    <p>Accessibility is perhaps where semantic HTML provides its most critical benefits. Proper semantics create a
+        robust foundation for assistive technologies .</p>
+
+    <h3>6.1 How Assistive Technologies Use Semantics</h3>
+    <p>Screen readers and other assistive technologies rely on the accessibility tree—a modified version of the DOM that
+        contains accessibility-related information for each element .</p>
+    <p>When semantic HTML is used:</p>
+    <ul>
+        <li>Elements automatically expose their role, state, and properties</li>
+        <li>Users can navigate using landmarks, headings, and lists</li>
+        <li>Content context is preserved and announced</li>
+    </ul>
+
+    <h3>6.2 The Accessibility Tree</h3>
+    <p>The accessibility tree is built from the DOM and provides assistive technologies with essential information about
+        each element .</p>
+    <p><strong>What semantic elements contribute:</strong></p>
+    <ul>
+        <li><strong>Role</strong>: The element's purpose (e.g., "button," "navigation," "heading")</li>
+        <li><strong>Name</strong>: Accessible name (from content or associated label)</li>
+        <li><strong>Value</strong>: Current value (for form controls)</li>
+        <li><strong>State</strong>: Checked, expanded, disabled, etc.</li>
+    </ul>
+
+    <h3>6.3 Landmark Regions for Navigation</h3>
+    <p>Semantic structural elements create ARIA landmarks that screen reader users can quickly navigate between .</p>
+    <p><strong>Landmark mapping:</strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th>HTML Element</th>
+                <th>ARIA Landmark Role</th>
+                <th>Purpose</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&lt;header&gt;</code> (page-level)</td>
+                <td><code>banner</code></td>
+                <td>Site header</td>
+            </tr>
+            <tr>
+                <td><code>&lt;nav&gt;</code></td>
+                <td><code>navigation</code></td>
+                <td>Navigation links</td>
+            </tr>
+            <tr>
+                <td><code>&lt;main&gt;</code></td>
+                <td><code>main</code></td>
+                <td>Primary content</td>
+            </tr>
+            <tr>
+                <td><code>&lt;section&gt;</code> (with name)</td>
+                <td><code>region</code></td>
+                <td>Thematic grouping</td>
+            </tr>
+            <tr>
+                <td><code>&lt;aside&gt;</code></td>
+                <td><code>complementary</code></td>
+                <td>Supporting content</td>
+            </tr>
+            <tr>
+                <td><code>&lt;footer&gt;</code> (page-level)</td>
+                <td><code>contentinfo</code></td>
+                <td>Site footer</td>
+            </tr>
+            <tr>
+                <td><code>&lt;form&gt;</code> (with name)</td>
+                <td><code>form</code></td>
+                <td>Form container</td>
+            </tr>
+            <tr>
+                <td><code>search</code> (no HTML element)</td>
+                <td><code>search</code></td>
+                <td>Search functionality</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>6.4 Screen Reader Navigation Features</h3>
+    <p>Screen readers provide various navigation features that rely on semantic HTML :</p>
+    <p><strong>Common screen reader navigation commands:</strong></p>
+    <ul>
+        <li><strong>Headings list</strong>: Jump between all headings on the page</li>
+        <li><strong>Landmarks list</strong>: Navigate between page regions</li>
+        <li><strong>Links list</strong>: Browse all links</li>
+        <li><strong>Form controls list</strong>: Access all interactive elements</li>
+        <li><strong>Next/previous heading</strong>: Navigate by heading level</li>
+    </ul>
+
+    <h3>6.5 Providing Accessible Names</h3>
+    <p>When multiple landmarks of the same type exist, provide unique accessible names :</p>
+    <pre>&lt;nav aria-label="Main Menu"&gt;
+  &lt;!-- Primary navigation --&gt;
+&lt;/nav&gt;
+
+&lt;nav aria-label="Breadcrumb"&gt;
+  &lt;!-- Breadcrumb navigation --&gt;
+&lt;/nav&gt;
+
+&lt;nav aria-label="Footer Links"&gt;
+  &lt;!-- Footer navigation --&gt;
+&lt;/nav&gt;</pre>
+
+    <h3>6.6 Descriptive Link Text</h3>
+    <p>Link text should be meaningful out of context :</p>
+    <p><strong>Poor link text:</strong></p>
+    <pre>&lt;p&gt;To learn more about responsive design, &lt;a href="/responsive"&gt;click here&lt;/a&gt;.&lt;/p&gt;</pre>
+    <p><strong>Good link text:</strong></p>
+    <pre>&lt;p&gt;Learn more about &lt;a href="/responsive"&gt;responsive design techniques&lt;/a&gt;.&lt;/p&gt;</pre>
+
+    <hr>
+
+    <h2>7. Headings and Document Outline</h2>
+    <p>Proper heading structure is fundamental to both SEO and accessibility. Headings create the document outline and
+        provide navigation cues .</p>
+
+    <h3>7.1 Heading Levels and Hierarchy</h3>
+    <p>HTML provides six heading levels (<code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>), representing
+        decreasing importance .</p>
+    <p><strong>Proper heading hierarchy:</strong></p>
+    <pre>&lt;h1&gt;Page Title (Most Important)&lt;/h1&gt;
+&lt;h2&gt;Major Section&lt;/h2&gt;
+&lt;h3&gt;Subsection&lt;/h3&gt;
+&lt;h4&gt;Sub-subsection&lt;/h4&gt;
+&lt;h2&gt;Another Major Section&lt;/h2&gt;
+&lt;h3&gt;Its Subsection&lt;/h3&gt;</pre>
+
+    <h3>7.2 Importance of Proper Heading Order</h3>
+    <p>Heading levels should not be skipped :</p>
+    <p><strong>Incorrect:</strong></p>
+    <pre>&lt;h1&gt;Main Title&lt;/h1&gt;
+&lt;h3&gt;Subsection&lt;/h3&gt; &lt;!-- Skipped h2 --&gt;</pre>
+    <p><strong>Correct:</strong></p>
+    <pre>&lt;h1&gt;Main Title&lt;/h1&gt;
+&lt;h2&gt;Major Section&lt;/h2&gt;
+&lt;h3&gt;Subsection&lt;/h3&gt;</pre>
+
+    <h3>7.3 Screen Reader Heading Navigation</h3>
+    <p>Screen reader users often navigate by headings to understand page structure and find content .</p>
+    <p><strong>Benefits of good heading structure:</strong></p>
+    <ul>
+        <li>Users can generate a list of all headings</li>
+        <li>They can jump between headings of the same or different levels</li>
+        <li>Headings provide context about content relationships</li>
+    </ul>
+
+    <h3>7.4 Heading Best Practices</h3>
+    <p><strong>Do's and Don'ts:</strong></p>
+    <ul>
+        <li>✅ Use one <code>&lt;h1&gt;</code> per page (typically)</li>
+        <li>✅ Maintain hierarchical order</li>
+        <li>✅ Make headings descriptive and concise</li>
+        <li>✅ Include headings for each <code>&lt;section&gt;</code> and <code>&lt;article&gt;</code></li>
+        <li>❌ Don't use headings for styling only</li>
+        <li>❌ Don't skip heading levels</li>
+        <li>❌ Don't use multiple <code>&lt;h1&gt;</code> elements without good reason</li>
+    </ul>
+
+    <h3>7.5 Visually Hidden Headings</h3>
+    <p>Sometimes headings benefit screen reader users but aren't needed visually. CSS can hide them accessibly :</p>
+    <pre>.visually-hidden {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}</pre>
+    <pre>&lt;section&gt;
+  &lt;h2 class="visually-hidden"&gt;Featured Products&lt;/h2&gt;
+  &lt;!-- Section content --&gt;
+&lt;/section&gt;</pre>
+
+    <hr>
+
+    <h2>8. Lists and Tables</h2>
+    <p>Lists and tables are fundamental content structures that require proper semantic markup for accessibility .</p>
+
+    <h3>8.1 Semantic List Types</h3>
+    <p>HTML provides three types of lists, each with specific semantics :</p>
+    <p><strong>Ordered lists (<code>&lt;ol&gt;</code>):</strong> For sequential or prioritized items</p>
+    <pre>&lt;ol&gt;
+  &lt;li&gt;First step&lt;/li&gt;
+  &lt;li&gt;Second step&lt;/li&gt;
+  &lt;li&gt;Third step&lt;/li&gt;
+&lt;/ol&gt;</pre>
+    <p><strong>Unordered lists (<code>&lt;ul&gt;</code>):</strong> For items without inherent order</p>
+    <pre>&lt;ul&gt;
+  &lt;li&gt;Apples&lt;/li&gt;
+  &lt;li&gt;Bananas&lt;/li&gt;
+  &lt;li&gt;Oranges&lt;/li&gt;
+&lt;/ul&gt;</pre>
+    <p><strong>Description lists (<code>&lt;dl&gt;</code>):</strong> For name-value groups</p>
+    <pre>&lt;dl&gt;
+  &lt;dt&gt;HTML&lt;/dt&gt;
+  &lt;dd&gt;HyperText Markup Language&lt;/dd&gt;
+  &lt;dt&gt;CSS&lt;/dt&gt;
+  &lt;dd&gt;Cascading Style Sheets&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+
+    <h3>8.2 Accessibility Benefits of Lists</h3>
+    <p>Screen readers announce list information to users :</p>
+    <ul>
+        <li>"List of 5 items"</li>
+        <li>"Numbered list, 3 items"</li>
+        <li>"Description list with 2 terms"</li>
+    </ul>
+
+    <h3>8.3 Proper Table Structure</h3>
+    <p>Tables should be used for data, not layout :</p>
+    <pre>&lt;table&gt;
+  &lt;caption&gt;Monthly Savings&lt;/caption&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th scope="col"&gt;Month&lt;/th&gt;
+      &lt;th scope="col"&gt;Savings&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th scope="row"&gt;January&lt;/th&gt;
+      &lt;td&gt;$100&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th scope="row"&gt;February&lt;/th&gt;
+      &lt;td&gt;$150&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;th scope="row"&gt;Total&lt;/th&gt;
+      &lt;td&gt;$250&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;</pre>
+
+    <h3>8.4 Table Accessibility Features</h3>
+    <p><strong>Essential table elements:</strong></p>
+    <ul>
+        <li><code>&lt;caption&gt;</code>: Provides table title/description</li>
+        <li><code>&lt;th&gt;</code>: Identifies header cells</li>
+        <li><code>scope="col"</code>: Column headers</li>
+        <li><code>scope="row"</code>: Row headers</li>
+        <li><code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code>: Structural grouping</li>
+    </ul>
+
+    <hr>
+
+    <h2>9. Forms and Interactive Elements</h2>
+    <p>Forms are critical interactive components that require careful semantic markup for accessibility .</p>
+
+    <h3>9.1 Form Structure</h3>
+    <p>Proper form markup ensures all users can understand and complete forms:</p>
+    <pre>&lt;form&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;Personal Information&lt;/legend&gt;
+    
+    &lt;div&gt;
+      &lt;label for="name"&gt;Full Name:&lt;/label&gt;
+      &lt;input type="text" id="name" name="name" required&gt;
+    &lt;/div&gt;
+    
+    &lt;div&gt;
+      &lt;label for="email"&gt;Email Address:&lt;/label&gt;
+      &lt;input type="email" id="email" name="email" required&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;fieldset&gt;
+    &lt;legend&gt;Preferences&lt;/legend&gt;
+    
+    &lt;div&gt;
+      &lt;input type="checkbox" id="newsletter" name="newsletter"&gt;
+      &lt;label for="newsletter"&gt;Subscribe to newsletter&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  
+  &lt;button type="submit"&gt;Submit Form&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+    <h3>9.2 Labels and Associations</h3>
+    <p>Every form control should have an associated label :</p>
+    <p><strong>Method 1: Implicit association (wrapping)</strong></p>
+    <pre>&lt;label&gt;
+  Name: &lt;input type="text" name="name"&gt;
+&lt;/label&gt;</pre>
+    <p><strong>Method 2: Explicit association (recommended)</strong></p>
+    <pre>&lt;label for="email"&gt;Email:&lt;/label&gt;
+&lt;input type="email" id="email" name="email"&gt;</pre>
+
+    <h3>9.3 Fieldset and Legend</h3>
+    <p>Use <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> to group related form controls :</p>
+    <pre>&lt;fieldset&gt;
+  &lt;legend&gt;Shipping Method&lt;/legend&gt;
+  
+  &lt;div&gt;
+    &lt;input type="radio" id="standard" name="shipping" value="standard"&gt;
+    &lt;label for="standard"&gt;Standard (3-5 days)&lt;/label&gt;
+  &lt;/div&gt;
+  
+  &lt;div&gt;
+    &lt;input type="radio" id="express" name="shipping" value="express"&gt;
+    &lt;label for="express"&gt;Express (1-2 days)&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/fieldset&gt;</pre>
+
+    <h3>9.4 Buttons vs. Divs</h3>
+    <p>Always use semantic button elements for interactive actions :</p>
+    <p><strong>Poor accessibility:</strong></p>
+    <pre>&lt;div class="button" onclick="submitForm()"&gt;Submit&lt;/div&gt;</pre>
+    <p><strong>Good accessibility:</strong></p>
+    <pre>&lt;button type="submit"&gt;Submit Form&lt;/button&gt;</pre>
+    <p><strong>Benefits of <code>&lt;button&gt;</code>:</strong></p>
+    <ul>
+        <li>Keyboard focusable by default</li>
+        <li>Enter/Space activates</li>
+        <li>Proper role exposed to assistive technology</li>
+        <li>Built-in form submission behavior</li>
+    </ul>
+
+    <hr>
+
+    <h2>10. Common Mistakes and Best Practices</h2>
+    <p>Understanding common errors helps avoid accessibility and SEO pitfalls .</p>
+
+    <h3>10.1 Common Semantic HTML Mistakes</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Mistake</th>
+                <th>Problem</th>
+                <th>Solution</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Multiple <code>&lt;main&gt;</code> elements</td>
+                <td>Invalid HTML, confuses assistive tech</td>
+                <td>Use only one <code>&lt;main&gt;</code> per page</td>
+            </tr>
+            <tr>
+                <td>Skipping heading levels</td>
+                <td>Breaks document outline</td>
+                <td>Maintain hierarchical order</td>
+            </tr>
+            <tr>
+                <td>Using <code>&lt;div&gt;</code> for buttons</td>
+                <td>No keyboard accessibility</td>
+                <td>Use <code>&lt;button&gt;</code> element</td>
+            </tr>
+            <tr>
+                <td>Missing form labels</td>
+                <td>Screen readers can't identify controls</td>
+                <td>Add <code>&lt;label&gt;</code> for each control</td>
+            </tr>
+            <tr>
+                <td>Empty or generic link text</td>
+                <td>No context for screen reader users</td>
+                <td>Use descriptive link text</td>
+            </tr>
+            <tr>
+                <td>Missing <code>alt</code> on images</td>
+                <td>Screen readers can't describe images</td>
+                <td>Add meaningful <code>alt</code> attributes</td>
+            </tr>
+            <tr>
+                <td>Incorrect landmark nesting</td>
+                <td>Confuses navigation structure</td>
+                <td>Follow proper nesting rules</td>
+            </tr>
+            <tr>
+                <td>Section without heading</td>
+                <td>Lacks thematic identification</td>
+                <td>Add heading to each section</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>10.2 Best Practices Summary</h3>
+    <p><strong>Do:</strong></p>
+    <ul>
+        <li>Use semantic elements according to their intended purpose</li>
+        <li>Maintain proper heading hierarchy</li>
+        <li>Provide descriptive link text</li>
+        <li>Include <code>alt</code> attributes for images</li>
+        <li>Associate labels with form controls</li>
+        <li>Use lists for related items</li>
+        <li>Validate your HTML regularly</li>
+    </ul>
+    <p><strong>Don't:</strong></p>
+    <ul>
+        <li>Use <code>&lt;div&gt;</code> when semantic elements exist</li>
+        <li>Skip heading levels</li>
+        <li>Use "click here" for links</li>
+        <li>Leave <code>alt</code> attributes empty (unless decorative)</li>
+        <li>Use tables for layout</li>
+        <li>Rely solely on ARIA when HTML semantics suffice</li>
+    </ul>
+
+    <h3>10.3 Validation and Testing</h3>
+    <p>Regular validation ensures semantic correctness :</p>
+    <ul>
+        <li><strong>W3C HTML Validator</strong>: Check for valid HTML</li>
+        <li><strong>Lighthouse</strong>: Automated accessibility audits</li>
+        <li><strong>WAVE</strong>: Visual accessibility evaluation</li>
+        <li><strong>Screen reader testing</strong>: Manual testing with NVDA, VoiceOver, etc.</li>
+        <li><strong>Keyboard testing</strong>: Ensure full keyboard operability</li>
+    </ul>
+
+    <hr>
+
+    <h2>11. ARIA Landmarks and Semantic HTML</h2>
+    <p>ARIA (Accessible Rich Internet Applications) provides additional semantics when HTML elements are insufficient .
+    </p>
+
+    <h3>11.1 When to Use ARIA</h3>
+    <p><strong>ARIA should be used when:</strong></p>
+    <ul>
+        <li>No semantic HTML element exists for the purpose</li>
+        <li>Custom widgets are created with JavaScript</li>
+        <li>Relationships need to be programmatically expressed</li>
+        <li>Live regions need to be announced</li>
+    </ul>
+    <p><strong>First rule of ARIA:</strong> Don't use ARIA if a native HTML element exists .</p>
+
+    <h3>11.2 HTML vs. ARIA Landmarks</h3>
+    <p>HTML semantic elements map to ARIA landmark roles automatically :</p>
+    <table>
+        <thead>
+            <tr>
+                <th>HTML Element</th>
+                <th>ARIA Role</th>
+                <th>When to Use ARIA Instead</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&lt;header&gt;</code> (page)</td>
+                <td><code>role="banner"</code></td>
+                <td>Non-HTML5 pages</td>
+            </tr>
+            <tr>
+                <td><code>&lt;nav&gt;</code></td>
+                <td><code>role="navigation"</code></td>
+                <td>Backward compatibility</td>
+            </tr>
+            <tr>
+                <td><code>&lt;main&gt;</code></td>
+                <td><code>role="main"</code></td>
+                <td>Backward compatibility</td>
+            </tr>
+            <tr>
+                <td><code>&lt;section&gt;</code> (with name)</td>
+                <td><code>role="region"</code></td>
+                <td>When section can't be used</td>
+            </tr>
+            <tr>
+                <td><code>&lt;aside&gt;</code></td>
+                <td><code>role="complementary"</code></td>
+                <td>Backward compatibility</td>
+            </tr>
+            <tr>
+                <td><code>&lt;footer&gt;</code> (page)</td>
+                <td><code>role="contentinfo"</code></td>
+                <td>Backward compatibility</td>
+            </tr>
+            <tr>
+                <td><code>&lt;form&gt;</code> (with name)</td>
+                <td><code>role="form"</code></td>
+                <td>Legacy support</td>
+            </tr>
+            <tr>
+                <td>No HTML element</td>
+                <td><code>role="search"</code></td>
+                <td>Search forms</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>11.3 ARIA Example for Search Landmark</h3>
+    <p>Since no HTML element exists for search, ARIA is appropriate:</p>
+    <pre>&lt;form role="search" aria-label="Site Search"&gt;
+  &lt;label for="search"&gt;Search:&lt;/label&gt;
+  &lt;input type="search" id="search" name="q"&gt;
+  &lt;button type="submit"&gt;Go&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+    <h3>11.4 ARIA Descriptions</h3>
+    <p>Use <code>aria-describedby</code> to provide additional descriptions :</p>
+    <pre>&lt;button aria-describedby="trash-desc"&gt;Move to Trash&lt;/button&gt;
+&lt;p id="trash-desc"&gt;Items in trash are deleted after 30 days.&lt;/p&gt;</pre>
+
+    <hr>
+
+    <h2>12. Practical Examples and Code Snippets</h2>
+
+    <h3>12.1 Complete Semantic HTML Page Example</h3>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Semantic Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;My Website&lt;/h1&gt;
+    &lt;img src="logo.png" alt="My Website Logo"&gt;
+    &lt;p&gt;Your source for semantic HTML knowledge&lt;/p&gt;
+  &lt;/header&gt;
+
+  &lt;nav aria-label="Main Navigation"&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/about"&gt;About&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/blog"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/nav&gt;
+
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;header&gt;
+        &lt;h2&gt;Understanding Semantic HTML&lt;/h2&gt;
+        &lt;p&gt;Published on &lt;time datetime="2026-02-25"&gt;February 25, 2026&lt;/time&gt;&lt;/p&gt;
+      &lt;/header&gt;
+
+      &lt;p&gt;Semantic HTML is the foundation of accessible and SEO-friendly websites...&lt;/p&gt;
+
+      &lt;section&gt;
+        &lt;h3&gt;Why Semantics Matter&lt;/h3&gt;
+        &lt;p&gt;Using the right elements for the right job provides numerous benefits...&lt;/p&gt;
+        
+        &lt;ul&gt;
+          &lt;li&gt;Improved accessibility for screen reader users&lt;/li&gt;
+          &lt;li&gt;Better search engine understanding&lt;/li&gt;
+          &lt;li&gt;Easier code maintenance&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/section&gt;
+
+      &lt;section&gt;
+        &lt;h3&gt;Key Semantic Elements&lt;/h3&gt;
+        &lt;p&gt;The most important semantic elements include:&lt;/p&gt;
+        
+        &lt;dl&gt;
+          &lt;dt&gt;&amp;lt;header&amp;gt;&lt;/dt&gt;
+          &lt;dd&gt;Introductory content or navigational aids&lt;/dd&gt;
+          
+          &lt;dt&gt;&amp;lt;nav&amp;gt;&lt;/dt&gt;
+          &lt;dd&gt;Major navigation links&lt;/dd&gt;
+          
+          &lt;dt&gt;&amp;lt;main&amp;gt;&lt;/dt&gt;
+          &lt;dd&gt;Primary page content&lt;/dd&gt;
+          
+          &lt;dt&gt;&amp;lt;article&amp;gt;&lt;/dt&gt;
+          &lt;dd&gt;Self-contained, reusable content&lt;/dd&gt;
+        &lt;/dl&gt;
+      &lt;/section&gt;
+
+      &lt;footer&gt;
+        &lt;p&gt;Written by &lt;a href="/author/john"&gt;John Doe&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt;Tags: &lt;a href="/tag/html"&gt;HTML&lt;/a&gt;, &lt;a href="/tag/semantics"&gt;Semantics&lt;/a&gt;&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/article&gt;
+
+    &lt;aside&gt;
+      &lt;h3&gt;Related Articles&lt;/h3&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="/article/css-accessibility"&gt;CSS and Accessibility&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/article/aria-basics"&gt;ARIA Basics&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/article/seo-best-practices"&gt;SEO Best Practices&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+
+      &lt;h3&gt;Subscribe to Newsletter&lt;/h3&gt;
+      &lt;form&gt;
+        &lt;div&gt;
+          &lt;label for="newsletter-email"&gt;Email:&lt;/label&gt;
+          &lt;input type="email" id="newsletter-email" name="email" required&gt;
+        &lt;/div&gt;
+        &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/aside&gt;
+  &lt;/main&gt;
+
+  &lt;footer&gt;
+    &lt;p&gt;© 2026 My Website. All rights reserved.&lt;/p&gt;
+    &lt;nav aria-label="Footer Links"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="/privacy"&gt;Privacy Policy&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/terms"&gt;Terms of Service&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/sitemap"&gt;Sitemap&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <h3>12.2 Blog Post Template</h3>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Blog Post | My Blog&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;My Blog&lt;/h1&gt;
+    &lt;nav aria-label="Blog Navigation"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/categories"&gt;Categories&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/about"&gt;About&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;header&gt;
+        &lt;h2&gt;10 Semantic HTML Best Practices&lt;/h2&gt;
+        &lt;p&gt;Published on &lt;time datetime="2026-02-24"&gt;February 24, 2026&lt;/time&gt; by &lt;a href="/author/jane"&gt;Jane Smith&lt;/a&gt;&lt;/p&gt;
+      &lt;/header&gt;
+
+      &lt;p&gt;Semantic HTML is crucial for modern web development. Here are ten best practices to follow...&lt;/p&gt;
+
+      &lt;section&gt;
+        &lt;h3&gt;1. Use the Right Element for the Job&lt;/h3&gt;
+        &lt;p&gt;Always choose the most appropriate HTML element...&lt;/p&gt;
+      &lt;/section&gt;
+
+      &lt;section&gt;
+        &lt;h3&gt;2. Maintain Heading Hierarchy&lt;/h3&gt;
+        &lt;p&gt;Don't skip heading levels...&lt;/p&gt;
+        
+        &lt;h4&gt;Example of Proper Hierarchy&lt;/h4&gt;
+        &lt;pre&gt;&lt;code&gt;&amp;lt;h1&amp;gt;Page Title&amp;lt;/h1&amp;gt;
+&amp;lt;h2&amp;gt;Section&amp;lt;/h2&amp;gt;
+&amp;lt;h3&amp;gt;Subsection&amp;lt;/h3&amp;gt;
+&amp;lt;h2&amp;gt;Another Section&amp;lt;/h2&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+      &lt;/section&gt;
+
+      &lt;section&gt;
+        &lt;h3&gt;3. Provide Descriptive Link Text&lt;/h3&gt;
+        &lt;p&gt;Avoid generic phrases like "click here"...&lt;/p&gt;
+      &lt;/section&gt;
+
+      &lt;footer&gt;
+        &lt;p&gt;Categories: &lt;a href="/category/html"&gt;HTML&lt;/a&gt;, &lt;a href="/category/accessibility"&gt;Accessibility&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt;Tags: &lt;a href="/tag/semantics"&gt;semantics&lt;/a&gt;, &lt;a href="/tag/best-practices"&gt;best practices&lt;/a&gt;&lt;/p&gt;
+      &lt;/footer&gt;
+    &lt;/article&gt;
+
+    &lt;section aria-label="Comments"&gt;
+      &lt;h3&gt;Comments (3)&lt;/h3&gt;
+      
+      &lt;article&gt;
+        &lt;h4&gt;Comment by &lt;a href="/user/mike"&gt;Mike Johnson&lt;/a&gt;&lt;/h4&gt;
+        &lt;p&gt;Great article! Very helpful for my project.&lt;/p&gt;
+        &lt;footer&gt;
+          &lt;p&gt;Posted on &lt;time datetime="2026-02-24T15:30"&gt;February 24, 2026 at 3:30 PM&lt;/time&gt;&lt;/p&gt;
+        &lt;/footer&gt;
+      &lt;/article&gt;
+
+      &lt;form&gt;
+        &lt;h4&gt;Add a Comment&lt;/h4&gt;
+        &lt;div&gt;
+          &lt;label for="comment-name"&gt;Name:&lt;/label&gt;
+          &lt;input type="text" id="comment-name" name="name" required&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label for="comment-email"&gt;Email:&lt;/label&gt;
+          &lt;input type="email" id="comment-email" name="email" required&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label for="comment-content"&gt;Comment:&lt;/label&gt;
+          &lt;textarea id="comment-content" name="content" rows="4" required&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        &lt;button type="submit"&gt;Post Comment&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;aside&gt;
+    &lt;h3&gt;About the Author&lt;/h3&gt;
+    &lt;img src="author.jpg" alt="Jane Smith"&gt;
+    &lt;p&gt;Jane Smith is a front-end developer specializing in accessibility and semantic HTML.&lt;/p&gt;
+    
+    &lt;h3&gt;Popular Posts&lt;/h3&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/post/css-grid-guide"&gt;CSS Grid: Complete Guide&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/post/aria-basics"&gt;ARIA Basics for Beginners&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/aside&gt;
+
+  &lt;footer&gt;
+    &lt;p&gt;© 2026 My Blog. All rights reserved.&lt;/p&gt;
+    &lt;nav aria-label="Footer"&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="/privacy"&gt;Privacy&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/terms"&gt;Terms&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/rss"&gt;RSS Feed&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <hr>
+
+    <h2>13. Validation and Testing Tools</h2>
+    <p>Ensuring semantic correctness requires regular testing with appropriate tools .</p>
+
+    <h3>13.1 HTML Validation Tools</h3>
+    <p><strong>W3C HTML Validator</strong></p>
+    <ul>
+        <li>Validates HTML syntax and structure</li>
+        <li>Identifies missing required attributes</li>
+        <li>Flags deprecated elements</li>
+        <li>URL: https://validator.w3.org/</li>
+    </ul>
+
+    <h3>13.2 Accessibility Testing Tools</h3>
+    <p><strong>Lighthouse (Chrome DevTools)</strong></p>
+    <ul>
+        <li>Automated accessibility audits</li>
+        <li>Checks for semantic issues</li>
+        <li>Provides actionable recommendations</li>
+    </ul>
+    <p><strong>WAVE (Web Accessibility Evaluation Tool)</strong></p>
+    <ul>
+        <li>Visual representation of accessibility features</li>
+        <li>Identifies missing form labels</li>
+        <li>Checks heading structure</li>
+        <li>URL: https://wave.webaim.org/</li>
+    </ul>
+    <p><strong>axe DevTools</strong></p>
+    <ul>
+        <li>Comprehensive accessibility testing</li>
+        <li>Integrates with browser DevTools</li>
+        <li>Provides detailed issue explanations</li>
+    </ul>
+
+    <h3>13.3 Manual Testing Methods</h3>
+    <p><strong>Keyboard Testing</strong></p>
+    <ul>
+        <li>Tab through all interactive elements</li>
+        <li>Ensure visible focus indicators</li>
+        <li>Verify logical focus order</li>
+    </ul>
+    <p><strong>Screen Reader Testing</strong></p>
+    <ul>
+        <li>NVDA (Windows, free)</li>
+        <li>VoiceOver (Mac, built-in)</li>
+        <li>JAWS (Windows, commercial)</li>
+    </ul>
+    <p><strong>Screen Reader Testing Checklist :</strong></p>
+    <ul>
+        <li>[ ] Navigate by headings (H key in NVDA)</li>
+        <li>[ ] Navigate by landmarks (D key in NVDA)</li>
+        <li>[ ] Navigate by links (K key in NVDA)</li>
+        <li>[ ] Navigate by form fields (F key in NVDA)</li>
+        <li>[ ] Verify all content is announced correctly</li>
+        <li>[ ] Check that dynamic content updates are announced</li>
+    </ul>
+
+    <hr>
+
+    <h2>14. Conclusion</h2>
+    <p>Semantic HTML5 provides the foundation for creating web pages that are accessible, SEO-friendly, and
+        maintainable. By using elements according to their intended purpose, developers create a robust structure that
+        benefits all users.</p>
+
+    <h3>Key Takeaways</h3>
+    <ol>
+        <li><strong>Semantic elements</strong> like <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>,
+            <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>,
+            <code>&lt;aside&gt;</code>, and <code>&lt;footer&gt;</code> provide inherent meaning about content</li>
+        <li><strong>SEO benefits</strong> include improved crawling, better keyword recognition, and enhanced structured
+            data eligibility</li>
+        <li><strong>Accessibility benefits</strong> encompass screen reader navigation, landmark regions, and keyboard
+            operability</li>
+        <li><strong>Proper heading structure</strong> creates a logical document outline essential for navigation</li>
+        <li><strong>Lists and tables</strong> require proper semantic markup for assistive technology interpretation
+        </li>
+        <li><strong>Forms</strong> need proper labels, fieldsets, and semantic buttons</li>
+        <li><strong>ARIA</strong> supplements HTML semantics but should not replace native elements</li>
+        <li><strong>Validation and testing</strong> ensure semantic correctness and accessibility</li>
+    </ol>
+
+    <h3>Final Recommendations</h3>
+    <ul>
+        <li>Always choose the most appropriate HTML element for content</li>
+        <li>Maintain proper heading hierarchy without skipping levels</li>
+        <li>Provide descriptive text for links and images</li>
+        <li>Test with keyboard navigation and screen readers</li>
+        <li>Validate HTML regularly</li>
+        <li>Stay updated with evolving standards and best practices</li>
+    </ul>
+    <p>Semantic HTML is not just a technical requirement—it's a commitment to creating a web that works for everyone,
+        regardless of how they access it. By embracing semantic principles, developers contribute to a more inclusive
+        and discoverable web.</p>
+
+    <hr>
+
+    <h2>References</h2>
+    <ol>
+        <li>Semantic HTML: The Technical Key to Better SEO and Accessibility</li>
+        <li>ARIA: aria-describedby attribute - MDN Web Docs</li>
+        <li>Semantics and Navigating Content - web.dev</li>
+        <li>Structuring Documents - MDN Web Docs</li>
+        <li>HTML Tag Semantics - Baidu Baike</li>
+        <li>Microformats - MDN Web Docs</li>
+        <li>Content Structure - web.dev (Japanese)</li>
+        <li>Structuring a Page with ARIA Landmarks - Orange Accessibility Guidelines</li>
+        <li>Semantics - Baidu Baike</li>
+        <li>HTML: A Good Basis for Accessibility - MDN Web Docs</li>
+    </ol>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- END OF NOTES — EVERY LINE, EVERY SNIPPET, EVERY TABLE IS HERE  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+</body>
+
+</html>
