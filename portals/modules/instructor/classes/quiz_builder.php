@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             $stmt = $conn->prepare($sql);
             $stmt->bind_param(
-                "ssssdiiiisssssiiiisssiiii",
+                "ssssdiiiisssssiiiisdiiii",
                 $title,
                 $description,
                 $instructions,
