@@ -138,8 +138,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     WHERE id = ? AND instructor_id = ? AND class_id = ?";
 
             $stmt = $conn->prepare($sql);
+
+            // Fix: Count the parameters correctly - we have 23 parameters (21 values + 3 conditions)
             $stmt->bind_param(
-                "ssssdiiiisssssiiiisdiiii",
+                "ssssdiiiisssssiiiisssiiii",
                 $title,
                 $description,
                 $instructions,
