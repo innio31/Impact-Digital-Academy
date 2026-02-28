@@ -97,13 +97,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $available_from = null;
     if (!empty($_POST['available_from'])) {
         $datetime = trim($_POST['available_from']);
+
         // Check if it's a valid datetime format
+        if (strpos($datetime, 'T') !== false) {
+            // Convert HTML5 datetime-local format to MySQL format
+            $datetime = str_replace('T', ' ', $datetime);
+        }
+
+        // Validate the datetime
         $timestamp = strtotime($datetime);
-        if ($timestamp !== false) {
+        if ($timestamp !== false && $timestamp > 0) {
             $available_from = date('Y-m-d H:i:s', $timestamp);
         } else {
             error_log("Invalid available_from format received: " . $datetime);
-            // Don't update this field if invalid
             $available_from = null;
         }
     }
@@ -111,8 +117,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $available_to = null;
     if (!empty($_POST['available_to'])) {
         $datetime = trim($_POST['available_to']);
+
+        if (strpos($datetime, 'T') !== false) {
+            $datetime = str_replace('T', ' ', $datetime);
+        }
+
         $timestamp = strtotime($datetime);
-        if ($timestamp !== false) {
+        if ($timestamp !== false && $timestamp > 0) {
             $available_to = date('Y-m-d H:i:s', $timestamp);
         } else {
             error_log("Invalid available_to format received: " . $datetime);
@@ -123,8 +134,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $due_date = null;
     if (!empty($_POST['due_date'])) {
         $datetime = trim($_POST['due_date']);
+
+        if (strpos($datetime, 'T') !== false) {
+            $datetime = str_replace('T', ' ', $datetime);
+        }
+
         $timestamp = strtotime($datetime);
-        if ($timestamp !== false) {
+        if ($timestamp !== false && $timestamp > 0) {
             $due_date = date('Y-m-d H:i:s', $timestamp);
         } else {
             error_log("Invalid due_date format received: " . $datetime);
