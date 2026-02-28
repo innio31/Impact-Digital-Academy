@@ -79,9 +79,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $shuffle_options = isset($_POST['shuffle_options']) ? 1 : 0;
     $show_correct_answers = isset($_POST['show_correct_answers']) ? 1 : 0;
     $show_points = isset($_POST['show_points']) ? 1 : 0;
-    $available_from = !empty($_POST['available_from']) ? $_POST['available_from'] : null;
-    $available_to = !empty($_POST['available_to']) ? $_POST['available_to'] : null;
-    $due_date = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
+    // Handle datetime fields properly
+    $available_from = null;
+    if (!empty($_POST['available_from'])) {
+        $datetime = $_POST['available_from'];
+        // Ensure it's a valid datetime format
+        if (strtotime($datetime) !== false) {
+            $available_from = date('Y-m-d H:i:s', strtotime($datetime));
+        }
+    }
+
+    $available_to = null;
+    if (!empty($_POST['available_to'])) {
+        $datetime = $_POST['available_to'];
+        if (strtotime($datetime) !== false) {
+            $available_to = date('Y-m-d H:i:s', strtotime($datetime));
+        }
+    }
+
+    $due_date = null;
+    if (!empty($_POST['due_date'])) {
+        $datetime = $_POST['due_date'];
+        if (strtotime($datetime) !== false) {
+            $due_date = date('Y-m-d H:i:s', strtotime($datetime));
+        }
+    }
     $auto_submit = isset($_POST['auto_submit']) ? 1 : 0;
     $is_published = isset($_POST['is_published']) ? 1 : 0;
 
@@ -517,7 +539,11 @@ function formatDateForInput($date)
     if (empty($date) || $date === '0000-00-00 00:00:00') {
         return '';
     }
-    return date('Y-m-d\TH:i', strtotime($date));
+    // If it's already in a valid format
+    if (strtotime($date) !== false) {
+        return date('Y-m-d\TH:i', strtotime($date));
+    }
+    return '';
 }
 
 // Function to get question type label
