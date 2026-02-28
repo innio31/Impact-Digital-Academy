@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📦 Ultimate guide · React props · parent to child</title>
+    <link rel="icon" href="../../../../public/images/favicon.ico">
+
     <style>
         * {
             margin: 0;
@@ -238,7 +240,8 @@
         <div class="step-box">
             <h4>Step 1: Define a Child Component That Can Accept Props</h4>
             <p>A functional component receives props as its first parameter. By convention, this parameter is named
-                <code>props</code>. It's simply an object containing all the data passed from the parent .</p>
+                <code>props</code>. It's simply an object containing all the data passed from the parent .
+            </p>
             <p>Create a file called <code>Greeting.jsx</code>:</p>
             <pre>// Greeting.jsx
 function Greeting(props) {
@@ -271,7 +274,8 @@ function App() {
 
 export default App;</pre>
             <p>Here, <code>name="John"</code> is the prop. <code>name</code> is the <strong>key</strong>, and
-                <code>"John"</code> is the <strong>value</strong> .</p>
+                <code>"John"</code> is the <strong>value</strong> .
+            </p>
         </div>
 
         <div class="step-box">
@@ -285,7 +289,8 @@ function Greeting(props) {
 
 export default Greeting;</pre>
             <p>The curly braces <code>{}</code> in JSX allow you to inject JavaScript expressions, like the value of
-                <code>props.name</code>, directly into your rendered output.</p>
+                <code>props.name</code>, directly into your rendered output.
+            </p>
             <p>Now, the application will display: <strong>"Hello, John!"</strong> You have successfully passed data from
                 a parent to a child!</p>
         </div>
@@ -327,13 +332,15 @@ export default Greeting;</pre>
             <h4>2. Setting Default Props with Default Parameters</h4>
             <p>What happens if a parent component forgets to pass a required prop? The value will be
                 <code>undefined</code>, which can lead to your UI showing nothing or breaking. To make your components
-                more robust, you can define <strong>default values</strong> for props .</p>
+                more robust, you can define <strong>default values</strong> for props .
+            </p>
             <p>Using the same destructuring syntax, you can assign a default value directly .</p>
             <pre>function Greeting({ name = "Guest" }) {
   return &lt;h2&gt;Hello, {name}!&lt;/h2&gt;;
 }</pre>
             <p>Now, if the <code>App</code> component renders <code>&lt;Greeting /&gt;</code> without a
-                <code>name</code> prop, it will safely default to "Guest" instead of displaying "Hello, !".</p>
+                <code>name</code> prop, it will safely default to "Guest" instead of displaying "Hello, !".
+            </p>
         </div>
 
         <div class="feature-card">

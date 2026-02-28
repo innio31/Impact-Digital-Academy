@@ -1,0 +1,4794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVENT HANDLING IN REACT: A COMPREHENSIVE GUIDE</title>
+    <link rel="icon" href="../../../../public/images/favicon.ico">
+
+    <style>
+        /* clean, readable style - preserves content exactly */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8f7fc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .document-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px -20px #2b2b4b;
+            padding: 2.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 6vw, 3.5rem);
+            color: #2a2f6e;
+            border-left: 12px solid #c9516c;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 4vw, 2.3rem);
+            color: #383d88;
+            border-bottom: 3px solid #dd768c;
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 1.5rem 0;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            color: #3d4392;
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            color: #4a4e9e;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        p,
+        li,
+        td {
+            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(58, 45, 110, 0.1);
+        }
+
+        th {
+            background: #4a4e9e;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #d8cef0;
+            background: #fdfcff;
+        }
+
+        pre {
+            background: #f0ebfc;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid #b3a9d0;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            margin: 1.2rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            background: #eae5fc;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: #2d3270;
+        }
+
+        .table-of-contents {
+            background: #f1edff;
+            padding: 2rem;
+            border-radius: 2rem;
+            margin: 2rem 0 3rem;
+            column-count: 2;
+            column-gap: 2.5rem;
+        }
+
+        .table-of-contents a {
+            display: block;
+            color: #2f3470;
+            text-decoration: none;
+            padding: 0.3rem 0;
+            border-left: 4px solid #c9516c;
+            padding-left: 1rem;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            break-inside: avoid;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, #dad0f0, #ffffff, #dad0f0);
+            margin: 3rem 0;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .note {
+            background: #fff9e6;
+            border-left: 8px solid #dd768c;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 800px) {
+            .table-of-contents {
+                column-count: 1;
+            }
+
+            .document-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-container">
+
+        <h1>EVENT HANDLING IN REACT: A COMPREHENSIVE GUIDE</h1>
+
+        <div class="table-of-contents">
+            <h3 style="margin-top:0; border:none; padding-left:0; width:100%;">TABLE OF CONTENTS</h3>
+            <a>1. Introduction to Event Handling in React</a>
+            <a>2. Understanding React Events vs. DOM Events</a>
+            <a>3. Synthetic Events in React</a>
+            <a>4. Common React Events</a>
+            <a>5. Handling onClick Events</a>
+            <a>6. Handling onChange Events</a>
+            <a>7. Event Handler Syntax and Binding</a>
+            <a>8. Passing Parameters to Event Handlers</a>
+            <a>9. Event Object in React</a>
+            <a>10. Updating State Based on User Input</a>
+            <a>11. Working with Forms and Inputs</a>
+            <a>12. Controlled Components</a>
+            <a>13. Uncontrolled Components</a>
+            <a>14. Handling Multiple Inputs</a>
+            <a>15. Form Submission Handling</a>
+            <a>16. Event Pooling and Performance</a>
+            <a>17. Custom Events in React</a>
+            <a>18. Event Propagation and Prevention</a>
+            <a>19. Best Practices for Event Handling</a>
+            <a>20. Common Patterns and Examples</a>
+            <a>21. Troubleshooting Event Issues</a>
+            <a>22. Advanced Event Handling Techniques</a>
+            <a>23. Testing Event Handlers</a>
+            <a>24. Accessibility Considerations</a>
+        </div>
+
+        <hr>
+
+        <h2>1. INTRODUCTION TO EVENT HANDLING IN REACT</h2>
+
+        <h3>What are Events in React?</h3>
+        <p>Events are actions or occurrences that happen in the browser, such as user interactions (clicks, key presses,
+            mouse movements) or system events (page loading, errors). React provides a sophisticated system for handling
+            these events in a way that is consistent across all browsers and integrates seamlessly with React's
+            component model.</p>
+
+        <h3>Why Event Handling Matters</h3>
+        <ul>
+            <li><strong>Interactivity</strong>: Events make web applications interactive and responsive to user actions
+            </li>
+            <li><strong>User Experience</strong>: Proper event handling creates intuitive and engaging user interfaces
+            </li>
+            <li><strong>Data Flow</strong>: Events are the primary way user input flows into application state</li>
+            <li><strong>Real-time Updates</strong>: Enable dynamic content updates without page refreshes</li>
+        </ul>
+
+        <h3>React's Approach to Events</h3>
+        <p>React's event system is different from vanilla JavaScript in several key ways:<br>
+            - Events are named using camelCase (onClick instead of onclick)<br>
+            - You pass functions as event handlers, not strings<br>
+            - You can prevent default behavior by calling <code>preventDefault</code> explicitly<br>
+            - React uses a synthetic event system for cross-browser compatibility</p>
+
+        <hr>
+
+        <h2>2. UNDERSTANDING REACT EVENTS VS. DOM EVENTS</h2>
+
+        <h3>Comparison Table</h3>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Vanilla JavaScript DOM Events</th>
+                <th>React Synthetic Events</th>
+            </tr>
+            <tr>
+                <td><strong>Naming Convention</strong></td>
+                <td>lowercase (click, submit)</td>
+                <td>camelCase (onClick, onSubmit)</td>
+            </tr>
+            <tr>
+                <td><strong>Handler Syntax</strong></td>
+                <td>String: <code>onclick="handleClick()"</code></td>
+                <td>Function: <code>onClick={handleClick}</code></td>
+            </tr>
+            <tr>
+                <td><strong>Event Object</strong></td>
+                <td>Native browser event</td>
+                <td>SyntheticEvent wrapper</td>
+            </tr>
+            <tr>
+                <td><strong>Cross-browser Consistency</strong></td>
+                <td>Inconsistent</td>
+                <td>Consistent across all browsers</td>
+            </tr>
+            <tr>
+                <td><strong>Default Behavior Prevention</strong></td>
+                <td><code>return false</code> or <code>preventDefault()</code></td>
+                <td>Must call <code>preventDefault()</code> explicitly</td>
+            </tr>
+            <tr>
+                <td><strong>Event Pooling</strong></td>
+                <td>No pooling</td>
+                <td>Events are pooled for performance</td>
+            </tr>
+        </table>
+
+        <h3>Code Comparison</h3>
+        <p><strong>Vanilla JavaScript:</strong></p>
+        <pre>// HTML
+&lt;button onclick="handleClick()"&gt;Click Me&lt;/button&gt;
+
+// JavaScript
+document.getElementById('myButton').addEventListener('click', function(event) {
+    console.log('Button clicked', event);
+});</pre>
+
+        <p><strong>React:</strong></p>
+        <pre>function MyComponent() {
+    const handleClick = (event) => {
+        console.log('Button clicked', event);
+    };
+    
+    return &lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;;
+}</pre>
+
+        <hr>
+
+        <h2>3. SYNTHETIC EVENTS IN REACT</h2>
+
+        <h3>What are Synthetic Events?</h3>
+        <p>SyntheticEvent is a cross-browser wrapper around the browser's native event. It has the same interface as the
+            browser's native event, including <code>stopPropagation()</code> and <code>preventDefault()</code>, except
+            events work identically across all browsers.</p>
+
+        <h3>Key Characteristics</h3>
+        <ol>
+            <li><strong>Cross-browser Compatibility</strong>: Normalizes event behavior across different browsers</li>
+            <li><strong>Performance Optimization</strong>: Events are pooled for better performance</li>
+            <li><strong>Consistent Interface</strong>: Provides the same properties and methods as native events</li>
+            <li><strong>Automatic Cleanup</strong>: React manages event listener cleanup</li>
+        </ol>
+
+        <h3>Properties of SyntheticEvent</h3>
+        <pre>function handleEvent(event) {
+    // Common properties available
+    console.log(event.type);          // Type of event (click, change, etc.)
+    console.log(event.target);        // DOM element that triggered the event
+    console.log(event.currentTarget); // DOM element the listener is attached to
+    console.log(event.bubbles);       // Whether the event bubbles
+    console.log(event.cancelable);    // Whether the event can be canceled
+    console.log(event.defaultPrevented); // Whether preventDefault was called
+    console.log(event.eventPhase);    // Current phase of the event flow
+    console.log(event.isTrusted);     // Whether event was generated by user action
+    console.log(event.timeStamp);     // Time when event was created
+}</pre>
+
+        <h3>Event Pooling</h3>
+        <pre>function MyComponent() {
+    // ❌ Incorrect - event will be null in asynchronous code
+    const handleAsync = (event) => {
+        setTimeout(() => {
+            console.log(event.type); // event is null (pooled)
+        }, 100);
+    };
+    
+    // ✅ Correct - persist the event
+    const handleAsyncCorrect = (event) => {
+        event.persist(); // Removes event from pool
+        setTimeout(() => {
+            console.log(event.type); // Works correctly
+        }, 100);
+    };
+    
+    return &lt;button onClick={handleAsyncCorrect}&gt;Click Me&lt;/button&gt;;
+}</pre>
+
+        <hr>
+
+        <h2>4. COMMON REACT EVENTS</h2>
+
+        <h3>Mouse Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>onClick</td>
+                <td>Element clicked</td>
+                <td><code>&lt;button onClick={handleClick}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onDoubleClick</td>
+                <td>Element double-clicked</td>
+                <td><code>&lt;div onDoubleClick={handleDoubleClick}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onMouseEnter</td>
+                <td>Mouse enters element</td>
+                <td><code>&lt;div onMouseEnter={handleMouseEnter}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onMouseLeave</td>
+                <td>Mouse leaves element</td>
+                <td><code>&lt;div onMouseLeave={handleMouseLeave}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onMouseMove</td>
+                <td>Mouse moves over element</td>
+                <td><code>&lt;div onMouseMove={handleMouseMove}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onMouseDown</td>
+                <td>Mouse button pressed</td>
+                <td><code>&lt;button onMouseDown={handleMouseDown}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onMouseUp</td>
+                <td>Mouse button released</td>
+                <td><code>&lt;button onMouseUp={handleMouseUp}&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>Keyboard Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>onKeyDown</td>
+                <td>Key is pressed down</td>
+                <td><code>&lt;input onKeyDown={handleKeyDown}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onKeyPress</td>
+                <td>Key is pressed (deprecated)</td>
+                <td>Use onKeyDown instead</td>
+            </tr>
+            <tr>
+                <td>onKeyUp</td>
+                <td>Key is released</td>
+                <td><code>&lt;input onKeyUp={handleKeyUp}&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>Form Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>onChange</td>
+                <td>Input value changes</td>
+                <td><code>&lt;input onChange={handleChange}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onSubmit</td>
+                <td>Form is submitted</td>
+                <td><code>&lt;form onSubmit={handleSubmit}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onFocus</td>
+                <td>Element receives focus</td>
+                <td><code>&lt;input onFocus={handleFocus}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onBlur</td>
+                <td>Element loses focus</td>
+                <td><code>&lt;input onBlur={handleBlur}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onInput</td>
+                <td>Input value changes</td>
+                <td><code>&lt;input onInput={handleInput}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onInvalid</td>
+                <td>Element is invalid</td>
+                <td><code>&lt;input onInvalid={handleInvalid}&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>Clipboard Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>onCopy</td>
+                <td>Content copied</td>
+                <td><code>&lt;div onCopy={handleCopy}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onCut</td>
+                <td>Content cut</td>
+                <td><code>&lt;input onCut={handleCut}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onPaste</td>
+                <td>Content pasted</td>
+                <td><code>&lt;input onPaste={handlePaste}&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>Focus Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>onFocus</td>
+                <td>Element focused</td>
+                <td><code>&lt;input onFocus={handleFocus}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onBlur</td>
+                <td>Element blurred</td>
+                <td><code>&lt;input onBlur={handleBlur}&gt;</code></td>
+            </tr>
+            <tr>
+                <td>onFocusCapture</td>
+                <td>Focus capture phase</td>
+                <td><code>&lt;input onFocusCapture={handleFocusCapture}&gt;</code></td>
+            </tr>
+        </table>
+
+        <h3>Touch Events (Mobile)</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>onTouchStart</td>
+                <td>Touch starts</td>
+            </tr>
+            <tr>
+                <td>onTouchMove</td>
+                <td>Touch moves</td>
+            </tr>
+            <tr>
+                <td>onTouchEnd</td>
+                <td>Touch ends</td>
+            </tr>
+            <tr>
+                <td>onTouchCancel</td>
+                <td>Touch cancelled</td>
+            </tr>
+        </table>
+
+        <h3>UI Events</h3>
+        <table>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>onScroll</td>
+                <td>Element scrolled</td>
+            </tr>
+            <tr>
+                <td>onResize</td>
+                <td>Window resized (attach to window)</td>
+            </tr>
+            <tr>
+                <td>onLoad</td>
+                <td>Element loaded</td>
+            </tr>
+            <tr>
+                <td>onError</td>
+                <td>Error occurred</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>5. HANDLING ONCLICK EVENTS</h2>
+
+        <h3>Basic onClick Implementation</h3>
+        <pre>import React, { useState } from 'react';
+
+function ClickHandler() {
+    const [count, setCount] = useState(0);
+    
+    // Basic click handler
+    const handleClick = () => {
+        setCount(count + 1);
+        console.log('Button clicked!');
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;p&gt;Count: {count}&lt;/p&gt;
+            &lt;button onClick={handleClick}&gt;
+                Increment Count
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Inline onClick Handlers</h3>
+        <pre>function InlineHandlers() {
+    return (
+        &lt;div&gt;
+            {/* Inline arrow function */}
+            &lt;button onClick={() =&gt; console.log('Clicked!')}&gt;
+                Click Me
+            &lt;/button&gt;
+            
+            {/* Inline function call */}
+            &lt;button onClick={() =&gt; alert('Alert!')}&gt;
+                Show Alert
+            &lt;/button&gt;
+            
+            {/* Multiple statements */}
+            &lt;button onClick={() =&gt; {
+                console.log('First');
+                console.log('Second');
+                alert('Done!');
+            }}&gt;
+                Multiple Actions
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Conditional onClick Handlers</h3>
+        <pre>function ConditionalClick() {
+    const [isEnabled, setIsEnabled] = useState(true);
+    const [message, setMessage] = useState('');
+    
+    const handleClick = () => {
+        if (isEnabled) {
+            setMessage('Action performed!');
+        } else {
+            setMessage('Action is disabled');
+        }
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;button 
+                onClick={handleClick}
+                disabled={!isEnabled}
+            &gt;
+                {isEnabled ? 'Click Me' : 'Disabled'}
+            &lt;/button&gt;
+            
+            &lt;button onClick={() =&gt; setIsEnabled(!isEnabled)}&gt;
+                Toggle Enabled
+            &lt;/button&gt;
+            
+            {message && &lt;p&gt;{message}&lt;/p&gt;}
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Button Variants with onClick</h3>
+        <pre>function ButtonVariants() {
+    const handleClick = (variant) => {
+        console.log(`${variant} button clicked`);
+    };
+    
+    return (
+        &lt;div className="button-group"&gt;
+            &lt;button 
+                className="btn-primary"
+                onClick={() =&gt; handleClick('primary')}
+            &gt;
+                Primary Button
+            &lt;/button&gt;
+            
+            &lt;button 
+                className="btn-secondary"
+                onClick={() =&gt; handleClick('secondary')}
+            &gt;
+                Secondary Button
+            &lt;/button&gt;
+            
+            &lt;button 
+                className="btn-danger"
+                onClick={() =&gt; handleClick('danger')}
+            &gt;
+                Danger Button
+            &lt;/button&gt;
+            
+            {/* Button with confirmation */}
+            &lt;button 
+                className="btn-delete"
+                onClick={() =&gt; {
+                    if (window.confirm('Are you sure?')) {
+                        handleClick('delete');
+                    }
+                }}
+            &gt;
+                Delete
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>6. HANDLING ONCHANGE EVENTS</h2>
+
+        <h3>Basic onChange Implementation</h3>
+        <pre>import React, { useState } from 'react';
+
+function ChangeHandler() {
+    const [value, setValue] = useState('');
+    
+    const handleChange = (event) => {
+        setValue(event.target.value);
+        console.log('Current value:', event.target.value);
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;input 
+                type="text"
+                value={value}
+                onChange={handleChange}
+                placeholder="Type something..."
+            /&gt;
+            &lt;p&gt;You typed: {value}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>onChange with Different Input Types</h3>
+        <pre>function AllInputTypes() {
+    const [formData, setFormData] = useState({
+        text: '',
+        email: '',
+        password: '',
+        number: 0,
+        checkbox: false,
+        radio: '',
+        select: '',
+        textarea: ''
+    });
+    
+    const handleTextChange = (e) => {
+        setFormData({...formData, text: e.target.value});
+    };
+    
+    const handleEmailChange = (e) => {
+        setFormData({...formData, email: e.target.value});
+    };
+    
+    const handleNumberChange = (e) => {
+        setFormData({...formData, number: parseInt(e.target.value) || 0});
+    };
+    
+    const handleCheckboxChange = (e) => {
+        setFormData({...formData, checkbox: e.target.checked});
+    };
+    
+    const handleRadioChange = (e) => {
+        setFormData({...formData, radio: e.target.value});
+    };
+    
+    const handleSelectChange = (e) => {
+        setFormData({...formData, select: e.target.value});
+    };
+    
+    const handleTextareaChange = (e) => {
+        setFormData({...formData, textarea: e.target.value});
+    };
+    
+    return (
+        &lt;form&gt;
+            &lt;div&gt;
+                &lt;label&gt;Text: &lt;/label&gt;
+                &lt;input 
+                    type="text" 
+                    value={formData.text}
+                    onChange={handleTextChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Email: &lt;/label&gt;
+                &lt;input 
+                    type="email" 
+                    value={formData.email}
+                    onChange={handleEmailChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Number: &lt;/label&gt;
+                &lt;input 
+                    type="number" 
+                    value={formData.number}
+                    onChange={handleNumberChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Checkbox: &lt;/label&gt;
+                &lt;input 
+                    type="checkbox" 
+                    checked={formData.checkbox}
+                    onChange={handleCheckboxChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Radio 1: &lt;/label&gt;
+                &lt;input 
+                    type="radio" 
+                    name="radioGroup"
+                    value="option1"
+                    checked={formData.radio === 'option1'}
+                    onChange={handleRadioChange}
+                /&gt;
+                
+                &lt;label&gt;Radio 2: &lt;/label&gt;
+                &lt;input 
+                    type="radio" 
+                    name="radioGroup"
+                    value="option2"
+                    checked={formData.radio === 'option2'}
+                    onChange={handleRadioChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Select: &lt;/label&gt;
+                &lt;select 
+                    value={formData.select}
+                    onChange={handleSelectChange}
+                &gt;
+                    &lt;option value=""&gt;Choose...&lt;/option&gt;
+                    &lt;option value="option1"&gt;Option 1&lt;/option&gt;
+                    &lt;option value="option2"&gt;Option 2&lt;/option&gt;
+                    &lt;option value="option3"&gt;Option 3&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Textarea: &lt;/label&gt;
+                &lt;textarea 
+                    value={formData.textarea}
+                    onChange={handleTextareaChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;pre&gt;{JSON.stringify(formData, null, 2)}&lt;/pre&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>7. EVENT HANDLER SYNTAX AND BINDING</h2>
+
+        <h3>Different Ways to Define Event Handlers</h3>
+
+        <h4>1. Method as Class Property (Class Components)</h4>
+        <pre>class ClassComponent extends React.Component {
+    // Class property (automatic binding)
+    handleClick = () => {
+        console.log('Clicked', this.props.name);
+    };
+    
+    render() {
+        return &lt;button onClick={this.handleClick}&gt;Click&lt;/button&gt;;
+    }
+}</pre>
+
+        <h4>2. Method Defined in Class (Class Components - Need Binding)</h4>
+        <pre>class ClassComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        // Binding in constructor
+        this.handleClick = this.handleClick.bind(this);
+    }
+    
+    handleClick() {
+        console.log('Clicked', this.props.name);
+    }
+    
+    render() {
+        return &lt;button onClick={this.handleClick}&gt;Click&lt;/button&gt;;
+    }
+}</pre>
+
+        <h4>3. Arrow Function in Render (Class Components - Not Recommended)</h4>
+        <pre>class ClassComponent extends React.Component {
+    handleClick() {
+        console.log('Clicked', this.props.name);
+    }
+    
+    render() {
+        // ❌ Creates new function on every render
+        return &lt;button onClick={() =&gt; this.handleClick()}&gt;Click&lt;/button&gt;;
+    }
+}</pre>
+
+        <h4>4. Function Declaration (Functional Components)</h4>
+        <pre>function FunctionalComponent() {
+    // Function declaration
+    function handleClick() {
+        console.log('Clicked');
+    }
+    
+    return &lt;button onClick={handleClick}&gt;Click&lt;/button&gt;;
+}</pre>
+
+        <h4>5. Arrow Function (Functional Components - Most Common)</h4>
+        <pre>function FunctionalComponent() {
+    // Arrow function
+    const handleClick = () => {
+        console.log('Clicked');
+    };
+    
+    return &lt;button onClick={handleClick}&gt;Click&lt;/button&gt;;
+}</pre>
+
+        <h4>6. Inline Arrow Function</h4>
+        <pre>function FunctionalComponent() {
+    return (
+        &lt;button onClick={() =&gt; console.log('Clicked')}&gt;
+            Click
+        &lt;/button&gt;
+    );
+}</pre>
+
+        <h3>Performance Considerations</h3>
+        <pre>function PerformanceExample({ items }) {
+    // ✅ Good: Handler defined once
+    const handleItemClick = (itemId) => {
+        console.log('Item clicked:', itemId);
+    };
+    
+    return (
+        &lt;ul&gt;
+            {items.map(item =&gt; (
+                &lt;li key={item.id}&gt;
+                    {/* ✅ Good: Reference to predefined function */}
+                    &lt;button onClick={() =&gt; handleItemClick(item.id)}&gt;
+                        {item.name}
+                    &lt;/button&gt;
+                    
+                    {/* ❌ Bad: New function created every render */}
+                    &lt;button onClick={() =&gt; console.log(item.id)}&gt;
+                        {item.name}
+                    &lt;/button&gt;
+                &lt;/li&gt;
+            ))}
+        &lt;/ul&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>8. PASSING PARAMETERS TO EVENT HANDLERS</h2>
+
+        <h3>Methods to Pass Parameters</h3>
+
+        <h4>1. Arrow Function Wrapper</h4>
+        <pre>function ParameterExample() {
+    const handleClick = (param, event) => {
+        console.log('Parameter:', param);
+        console.log('Event:', event);
+    };
+    
+    return (
+        &lt;button onClick={(e) =&gt; handleClick('Hello', e)}&gt;
+            Click Me
+        &lt;/button&gt;
+    );
+}</pre>
+
+        <h4>2. .bind() Method</h4>
+        <pre>function BindExample() {
+    const handleClick = (param, event) => {
+        console.log('Parameter:', param);
+        console.log('Event:', event);
+    };
+    
+    return (
+        &lt;button onClick={handleClick.bind(null, 'Hello')}&gt;
+            Click Me
+        &lt;/button&gt;
+    );
+}</pre>
+
+        <h4>3. Data Attributes</h4>
+        <pre>function DataAttributeExample() {
+    const handleClick = (event) => {
+        const value = event.currentTarget.dataset.value;
+        const id = event.currentTarget.dataset.id;
+        console.log('Value:', value, 'ID:', id);
+    };
+    
+    return (
+        &lt;button 
+            data-value="hello"
+            data-id="123"
+            onClick={handleClick}
+        &gt;
+            Click Me
+        &lt;/button&gt;
+    );
+}</pre>
+
+        <h4>4. Custom Hook for Event Handlers</h4>
+        <pre>function useEventHandler(handler) {
+    const handlerRef = useRef();
+    
+    useEffect(() => {
+        handlerRef.current = handler;
+    }, [handler]);
+    
+    return useCallback((...args) => {
+        if (handlerRef.current) {
+            handlerRef.current(...args);
+        }
+    }, []);
+}
+
+// Usage
+function CustomHookExample() {
+    const handleItemClick = (itemId, event) => {
+        console.log('Item:', itemId, 'Event:', event);
+    };
+    
+    const items = [1, 2, 3, 4, 5];
+    
+    return (
+        &lt;ul&gt;
+            {items.map(id =&gt; (
+                &lt;li key={id}&gt;
+                    &lt;button onClick={(e) =&gt; handleItemClick(id, e)}&gt;
+                        Item {id}
+                    &lt;/button&gt;
+                &lt;/li&gt;
+            ))}
+        &lt;/ul&gt;
+    );
+}</pre>
+
+        <h3>Complex Parameter Passing Example</h3>
+        <pre>function ShoppingCart() {
+    const [cart, setCart] = useState([]);
+    
+    const products = [
+        { id: 1, name: 'Laptop', price: 999 },
+        { id: 2, name: 'Mouse', price: 29 },
+        { id: 3, name: 'Keyboard', price: 79 }
+    ];
+    
+    const addToCart = (product, quantity, options) => {
+        setCart(prevCart =&gt; [
+            ...prevCart,
+            {
+                ...product,
+                quantity,
+                ...options
+            }
+        ]);
+    };
+    
+    const removeFromCart = (productId) => {
+        setCart(prevCart =&gt; prevCart.filter(item =&gt; item.id !== productId));
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;h2&gt;Products&lt;/h2&gt;
+            {products.map(product =&gt; (
+                &lt;div key={product.id}&gt;
+                    &lt;h3&gt;{product.name} - ${product.price}&lt;/h3&gt;
+                    &lt;button 
+                        onClick={(e) =&gt; addToCart(
+                            product, 
+                            1, 
+                            { giftWrap: false, expedited: false }
+                        )}
+                    &gt;
+                        Add to Cart
+                    &lt;/button&gt;
+                    
+                    &lt;button 
+                        onClick={(e) =&gt; addToCart(
+                            product, 
+                            1, 
+                            { giftWrap: true, expedited: true }
+                        )}
+                    &gt;
+                        Buy Now with Expedited
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            ))}
+            
+            &lt;h2&gt;Cart&lt;/h2&gt;
+            {cart.map(item =&gt; (
+                &lt;div key={`${item.id}-${Date.now()}`}&gt;
+                    &lt;p&gt;{item.name} x{item.quantity}&lt;/p&gt;
+                    &lt;button onClick={() =&gt; removeFromCart(item.id)}&gt;
+                        Remove
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            ))}
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>9. EVENT OBJECT IN REACT</h2>
+
+        <h3>Understanding the Event Object</h3>
+        <p>The event object contains information about the event that occurred and methods to control its behavior.</p>
+
+        <pre>function EventObjectExplorer() {
+    const handleEvent = (event) => {
+        console.log('=== Event Object Properties ===');
+        
+        // Basic properties
+        console.log('Type:', event.type);
+        console.log('Target:', event.target);
+        console.log('Current Target:', event.currentTarget);
+        console.log('Bubbles:', event.bubbles);
+        console.log('Cancelable:', event.cancelable);
+        
+        // Mouse event specific
+        if (event.type.includes('mouse')) {
+            console.log('Client X/Y:', event.clientX, event.clientY);
+            console.log('Screen X/Y:', event.screenX, event.screenY);
+            console.log('Button:', event.button);
+            console.log('Ctrl Key:', event.ctrlKey);
+            console.log('Shift Key:', event.shiftKey);
+            console.log('Alt Key:', event.altKey);
+        }
+        
+        // Keyboard event specific
+        if (event.type.includes('key')) {
+            console.log('Key:', event.key);
+            console.log('Code:', event.code);
+            console.log('Key Code:', event.keyCode);
+            console.log('Ctrl Key:', event.ctrlKey);
+            console.log('Shift Key:', event.shiftKey);
+            console.log('Alt Key:', event.altKey);
+        }
+        
+        // Form event specific
+        if (event.target.tagName === 'INPUT') {
+            console.log('Input Value:', event.target.value);
+            console.log('Input Type:', event.target.type);
+            console.log('Checked:', event.target.checked);
+        }
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;button onClick={handleEvent}&gt;
+                Click for Mouse Event
+            &lt;/button&gt;
+            
+            &lt;input 
+                type="text" 
+                onKeyDown={handleEvent}
+                onChange={handleEvent}
+                placeholder="Type for Keyboard Event"
+            /&gt;
+            
+            &lt;div 
+                onMouseEnter={handleEvent}
+                onMouseLeave={handleEvent}
+                style={{padding: 20, background: '#f0f0f0'}}
+            &gt;
+                Hover for Mouse Events
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Common Event Object Methods</h3>
+        <pre>function EventMethods() {
+    const handleClick = (event) => {
+        // Prevent default behavior
+        event.preventDefault();
+        
+        // Stop event propagation
+        event.stopPropagation();
+        
+        // Check if default was prevented
+        console.log('Default prevented:', event.defaultPrevented);
+        
+        // For async operations
+        event.persist();
+        
+        console.log('Event handled');
+    };
+    
+    const handleParentClick = () => {
+        console.log('Parent clicked - should not happen if propagation stopped');
+    };
+    
+    return (
+        &lt;div onClick={handleParentClick} style={{padding: 20, background: '#ddd'}}&gt;
+            &lt;a 
+                href="https://example.com" 
+                onClick={handleClick}
+            &gt;
+                Click me (link won't navigate)
+            &lt;/a&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>10. UPDATING STATE BASED ON USER INPUT</h2>
+
+        <h3>Basic State Updates</h3>
+        <pre>import React, { useState } from 'react';
+
+function StateUpdateBasics() {
+    const [text, setText] = useState('');
+    const [number, setNumber] = useState(0);
+    const [isChecked, setIsChecked] = useState(false);
+    
+    const handleTextChange = (e) => {
+        setText(e.target.value);
+    };
+    
+    const handleNumberChange = (e) => {
+        const value = parseInt(e.target.value) || 0;
+        setNumber(value);
+    };
+    
+    const handleCheckboxChange = (e) => {
+        setIsChecked(e.target.checked);
+    };
+    
+    const increment = () => {
+        setNumber(prev =&gt; prev + 1);
+    };
+    
+    const decrement = () => {
+        setNumber(prev =&gt; prev - 1);
+    };
+    
+    const reset = () => {
+        setText('');
+        setNumber(0);
+        setIsChecked(false);
+    };
+    
+    return (
+        &lt;div className="state-update-basics"&gt;
+            &lt;h2&gt;Basic State Updates&lt;/h2&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Text Input: &lt;/label&gt;
+                &lt;input 
+                    type="text" 
+                    value={text}
+                    onChange={handleTextChange}
+                /&gt;
+                &lt;p&gt;Current text: {text}&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Number: {number} &lt;/label&gt;
+                &lt;button onClick={decrement}&gt;-&lt;/button&gt;
+                &lt;input 
+                    type="number" 
+                    value={number}
+                    onChange={handleNumberChange}
+                /&gt;
+                &lt;button onClick={increment}&gt;+&lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;
+                    &lt;input 
+                        type="checkbox" 
+                        checked={isChecked}
+                        onChange={handleCheckboxChange}
+                    /&gt;
+                    Check me
+                &lt;/label&gt;
+                &lt;p&gt;Checkbox is: {isChecked ? 'checked' : 'unchecked'}&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;button onClick={reset}&gt;Reset All&lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Complex State Updates with Objects</h3>
+        <pre>function ComplexStateUpdates() {
+    const [user, setUser] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        age: 0,
+        address: {
+            street: '',
+            city: '',
+            zipCode: '',
+            country: ''
+        },
+        preferences: {
+            newsletter: false,
+            notifications: true,
+            theme: 'light'
+        }
+    });
+    
+    // Update simple fields
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        const newValue = type === 'checkbox' ? checked : value;
+        
+        setUser(prev =&gt; ({
+            ...prev,
+            [name]: newValue
+        }));
+    };
+    
+    // Update nested object fields
+    const handleAddressChange = (e) => {
+        const { name, value } = e.target;
+        
+        setUser(prev =&gt; ({
+            ...prev,
+            address: {
+                ...prev.address,
+                [name]: value
+            }
+        }));
+    };
+    
+    // Update preferences
+    const handlePreferenceChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        const newValue = type === 'checkbox' ? checked : value;
+        
+        setUser(prev =&gt; ({
+            ...prev,
+            preferences: {
+                ...prev.preferences,
+                [name]: newValue
+            }
+        }));
+    };
+    
+    // Batch update multiple fields
+    const resetToGuest = () => {
+        setUser({
+            firstName: 'Guest',
+            lastName: 'User',
+            email: 'guest@example.com',
+            age: 0,
+            address: {
+                street: '',
+                city: '',
+                zipCode: '',
+                country: 'USA'
+            },
+            preferences: {
+                newsletter: false,
+                notifications: true,
+                theme: 'light'
+            }
+        });
+    };
+    
+    return (
+        &lt;div className="complex-state"&gt;
+            &lt;h2&gt;User Profile&lt;/h2&gt;
+            
+            &lt;div className="form-section"&gt;
+                &lt;h3&gt;Basic Information&lt;/h3&gt;
+                &lt;input
+                    name="firstName"
+                    placeholder="First Name"
+                    value={user.firstName}
+                    onChange={handleInputChange}
+                /&gt;
+                &lt;input
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={user.lastName}
+                    onChange={handleInputChange}
+                /&gt;
+                &lt;input
+                    name="email"
+                    type="email"
+                    placeholder="Email"
+                    value={user.email}
+                    onChange={handleInputChange}
+                /&gt;
+                &lt;input
+                    name="age"
+                    type="number"
+                    placeholder="Age"
+                    value={user.age}
+                    onChange={handleInputChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-section"&gt;
+                &lt;h3&gt;Address&lt;/h3&gt;
+                &lt;input
+                    name="street"
+                    placeholder="Street"
+                    value={user.address.street}
+                    onChange={handleAddressChange}
+                /&gt;
+                &lt;input
+                    name="city"
+                    placeholder="City"
+                    value={user.address.city}
+                    onChange={handleAddressChange}
+                /&gt;
+                &lt;input
+                    name="zipCode"
+                    placeholder="ZIP Code"
+                    value={user.address.zipCode}
+                    onChange={handleAddressChange}
+                /&gt;
+                &lt;input
+                    name="country"
+                    placeholder="Country"
+                    value={user.address.country}
+                    onChange={handleAddressChange}
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-section"&gt;
+                &lt;h3&gt;Preferences&lt;/h3&gt;
+                &lt;label&gt;
+                    &lt;input
+                        name="newsletter"
+                        type="checkbox"
+                        checked={user.preferences.newsletter}
+                        onChange={handlePreferenceChange}
+                    /&gt;
+                    Subscribe to Newsletter
+                &lt;/label&gt;
+                
+                &lt;label&gt;
+                    &lt;input
+                        name="notifications"
+                        type="checkbox"
+                        checked={user.preferences.notifications}
+                        onChange={handlePreferenceChange}
+                    /&gt;
+                    Enable Notifications
+                &lt;/label&gt;
+                
+                &lt;select
+                    name="theme"
+                    value={user.preferences.theme}
+                    onChange={handlePreferenceChange}
+                &gt;
+                    &lt;option value="light"&gt;Light&lt;/option&gt;
+                    &lt;option value="dark"&gt;Dark&lt;/option&gt;
+                    &lt;option value="system"&gt;System&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+            
+            &lt;button onClick={resetToGuest}&gt;Reset to Guest&lt;/button&gt;
+            
+            &lt;div className="state-preview"&gt;
+                &lt;h3&gt;Current State:&lt;/h3&gt;
+                &lt;pre&gt;{JSON.stringify(user, null, 2)}&lt;/pre&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>State Updates with Arrays</h3>
+        <pre>function TodoListWithState() {
+    const [todos, setTodos] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    const [filter, setFilter] = useState('all'); // all, active, completed
+    
+    const addTodo = () => {
+        if (inputValue.trim() === '') return;
+        
+        const newTodo = {
+            id: Date.now(),
+            text: inputValue,
+            completed: false,
+            createdAt: new Date().toISOString()
+        };
+        
+        setTodos(prev =&gt; [...prev, newTodo]);
+        setInputValue('');
+    };
+    
+    const toggleTodo = (id) => {
+        setTodos(prev =&gt; 
+            prev.map(todo =&gt; 
+                todo.id === id 
+                    ? { ...todo, completed: !todo.completed }
+                    : todo
+            )
+        );
+    };
+    
+    const deleteTodo = (id) => {
+        setTodos(prev =&gt; prev.filter(todo =&gt; todo.id !== id));
+    };
+    
+    const updateTodoText = (id, newText) => {
+        setTodos(prev =&gt; 
+            prev.map(todo =&gt; 
+                todo.id === id 
+                    ? { ...todo, text: newText }
+                    : todo
+            )
+        );
+    };
+    
+    const clearCompleted = () => {
+        setTodos(prev =&gt; prev.filter(todo =&gt; !todo.completed));
+    };
+    
+    const getFilteredTodos = () => {
+        switch(filter) {
+            case 'active':
+                return todos.filter(todo =&gt; !todo.completed);
+            case 'completed':
+                return todos.filter(todo =&gt; todo.completed);
+            default:
+                return todos;
+        }
+    };
+    
+    const filteredTodos = getFilteredTodos();
+    
+    return (
+        &lt;div className="todo-app"&gt;
+            &lt;h2&gt;Todo List&lt;/h2&gt;
+            
+            &lt;div className="add-todo"&gt;
+                &lt;input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) =&gt; setInputValue(e.target.value)}
+                    onKeyPress={(e) =&gt; e.key === 'Enter' && addTodo()}
+                    placeholder="Add a new todo..."
+                /&gt;
+                &lt;button onClick={addTodo}&gt;Add&lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="filters"&gt;
+                &lt;button 
+                    onClick={() =&gt; setFilter('all')}
+                    className={filter === 'all' ? 'active' : ''}
+                &gt;
+                    All
+                &lt;/button&gt;
+                &lt;button 
+                    onClick={() =&gt; setFilter('active')}
+                    className={filter === 'active' ? 'active' : ''}
+                &gt;
+                    Active
+                &lt;/button&gt;
+                &lt;button 
+                    onClick={() =&gt; setFilter('completed')}
+                    className={filter === 'completed' ? 'active' : ''}
+                &gt;
+                    Completed
+                &lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;ul className="todo-list"&gt;
+                {filteredTodos.map(todo =&gt; (
+                    &lt;li key={todo.id}&gt;
+                        &lt;input
+                            type="checkbox"
+                            checked={todo.completed}
+                            onChange={() =&gt; toggleTodo(todo.id)}
+                        /&gt;
+                        
+                        &lt;input
+                            type="text"
+                            value={todo.text}
+                            onChange={(e) =&gt; updateTodoText(todo.id, e.target.value)}
+                            className={todo.completed ? 'completed' : ''}
+                        /&gt;
+                        
+                        &lt;button onClick={() =&gt; deleteTodo(todo.id)}&gt;
+                            Delete
+                        &lt;/button&gt;
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+            
+            &lt;div className="todo-stats"&gt;
+                &lt;p&gt;Total: {todos.length}&lt;/p&gt;
+                &lt;p&gt;Active: {todos.filter(t =&gt; !t.completed).length}&lt;/p&gt;
+                &lt;p&gt;Completed: {todos.filter(t =&gt; t.completed).length}&lt;/p&gt;
+                &lt;button onClick={clearCompleted}&gt;Clear Completed&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>11. WORKING WITH FORMS AND INPUTS</h2>
+
+        <h3>Basic Form Handling</h3>
+        <pre>import React, { useState } from 'react';
+
+function BasicForm() {
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+    
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev =&gt; ({
+            ...prev,
+            [name]: value
+        }));
+        
+        // Clear error for this field when user starts typing
+        if (errors[name]) {
+            setErrors(prev =&gt; ({
+                ...prev,
+                [name]: ''
+            }));
+        }
+    };
+    
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!formData.username.trim()) {
+            newErrors.username = 'Username is required';
+        } else if (formData.username.length &lt; 3) {
+            newErrors.username = 'Username must be at least 3 characters';
+        }
+        
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is invalid';
+        }
+        
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length &lt; 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        }
+        
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match';
+        }
+        
+        return newErrors;
+    };
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const newErrors = validateForm();
+        
+        if (Object.keys(newErrors).length === 0) {
+            setIsSubmitting(true);
+            
+            // Simulate API call
+            try {
+                await new Promise(resolve =&gt; setTimeout(resolve, 2000));
+                console.log('Form submitted:', formData);
+                alert('Registration successful!');
+                
+                // Reset form
+                setFormData({
+                    username: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: ''
+                });
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Submission failed. Please try again.');
+            } finally {
+                setIsSubmitting(false);
+            }
+        } else {
+            setErrors(newErrors);
+        }
+    };
+    
+    return (
+        &lt;form onSubmit={handleSubmit} className="basic-form"&gt;
+            &lt;h2&gt;Registration Form&lt;/h2&gt;
+            
+            &lt;div className="form-group"&gt;
+                &lt;label htmlFor="username"&gt;Username:&lt;/label&gt;
+                &lt;input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    className={errors.username ? 'error' : ''}
+                    disabled={isSubmitting}
+                /&gt;
+                {errors.username && &lt;span className="error-message"&gt;{errors.username}&lt;/span&gt;}
+            &lt;/div&gt;
+            
+            &lt;div className="form-group"&gt;
+                &lt;label htmlFor="email"&gt;Email:&lt;/label&gt;
+                &lt;input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={errors.email ? 'error' : ''}
+                    disabled={isSubmitting}
+                /&gt;
+                {errors.email && &lt;span className="error-message"&gt;{errors.email}&lt;/span&gt;}
+            &lt;/div&gt;
+            
+            &lt;div className="form-group"&gt;
+                &lt;label htmlFor="password"&gt;Password:&lt;/label&gt;
+                &lt;input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={errors.password ? 'error' : ''}
+                    disabled={isSubmitting}
+                /&gt;
+                {errors.password && &lt;span className="error-message"&gt;{errors.password}&lt;/span&gt;}
+            &lt;/div&gt;
+            
+            &lt;div className="form-group"&gt;
+                &lt;label htmlFor="confirmPassword"&gt;Confirm Password:&lt;/label&gt;
+                &lt;input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={errors.confirmPassword ? 'error' : ''}
+                    disabled={isSubmitting}
+                /&gt;
+                {errors.confirmPassword && &lt;span className="error-message"&gt;{errors.confirmPassword}&lt;/span&gt;}
+            &lt;/div&gt;
+            
+            &lt;button 
+                type="submit" 
+                disabled={isSubmitting}
+                className={isSubmitting ? 'submitting' : ''}
+            &gt;
+                {isSubmitting ? 'Submitting...' : 'Register'}
+            &lt;/button&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>12. CONTROLLED COMPONENTS</h2>
+
+        <h3>What are Controlled Components?</h3>
+        <p>In a controlled component, form data is handled by React state. The input's value is controlled by React, and
+            any change is handled by an event handler that updates the state.</p>
+
+        <h3>Comprehensive Controlled Component Example</h3>
+        <pre>function ControlledComponentDemo() {
+    const [formData, setFormData] = useState({
+        textInput: '',
+        textarea: '',
+        select: '',
+        checkbox: false,
+        radio: '',
+        file: null,
+        date: '',
+        color: '#000000',
+        range: 50
+    });
+    
+    const [touched, setTouched] = useState({});
+    const [errors, setErrors] = useState({});
+    
+    // Handle all input types
+    const handleChange = (e) => {
+        const { name, value, type, checked, files } = e.target;
+        
+        let newValue;
+        switch (type) {
+            case 'checkbox':
+                newValue = checked;
+                break;
+            case 'file':
+                newValue = files[0];
+                break;
+            case 'number':
+                newValue = value === '' ? '' : Number(value);
+                break;
+            default:
+                newValue = value;
+        }
+        
+        setFormData(prev =&gt; ({
+            ...prev,
+            [name]: newValue
+        }));
+        
+        // Validate on change
+        validateField(name, newValue);
+    };
+    
+    // Mark field as touched on blur
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setTouched(prev =&gt; ({
+            ...prev,
+            [name]: true
+        }));
+        validateField(name, formData[name]);
+    };
+    
+    // Validate individual field
+    const validateField = (name, value) => {
+        let error = '';
+        
+        switch (name) {
+            case 'textInput':
+                if (!value) error = 'Text input is required';
+                else if (value.length &lt; 3) error = 'Must be at least 3 characters';
+                break;
+            case 'email':
+                if (value && !/\S+@\S+\.\S+/.test(value)) {
+                    error = 'Invalid email format';
+                }
+                break;
+        }
+        
+        setErrors(prev =&gt; ({
+            ...prev,
+            [name]: error
+        }));
+    };
+    
+    // Reset form
+    const handleReset = () => {
+        setFormData({
+            textInput: '',
+            textarea: '',
+            select: '',
+            checkbox: false,
+            radio: '',
+            file: null,
+            date: '',
+            color: '#000000',
+            range: 50
+        });
+        setTouched({});
+        setErrors({});
+    };
+    
+    // Submit handler
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Validate all fields
+        const allTouched = Object.keys(formData).reduce((acc, key) => {
+            acc[key] = true;
+            return acc;
+        }, {});
+        setTouched(allTouched);
+        
+        // Check if any errors
+        if (Object.values(errors).every(error =&gt; !error)) {
+            console.log('Form submitted:', formData);
+            alert('Form submitted successfully!');
+        } else {
+            alert('Please fix the errors before submitting.');
+        }
+    };
+    
+    return (
+        &lt;form onSubmit={handleSubmit} className="controlled-form"&gt;
+            &lt;h2&gt;Controlled Component Demo&lt;/h2&gt;
+            
+            {/* Text Input */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="textInput"&gt;Text Input:&lt;/label&gt;
+                &lt;input
+                    type="text"
+                    id="textInput"
+                    name="textInput"
+                    value={formData.textInput}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter text..."
+                /&gt;
+                {touched.textInput && errors.textInput && (
+                    &lt;span className="error"&gt;{errors.textInput}&lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            {/* Email Input */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="email"&gt;Email:&lt;/label&gt;
+                &lt;input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email || ''}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter email..."
+                /&gt;
+                {touched.email && errors.email && (
+                    &lt;span className="error"&gt;{errors.email}&lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            {/* Textarea */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="textarea"&gt;Textarea:&lt;/label&gt;
+                &lt;textarea
+                    id="textarea"
+                    name="textarea"
+                    value={formData.textarea}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    rows="3"
+                /&gt;
+            &lt;/div&gt;
+            
+            {/* Select */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="select"&gt;Select:&lt;/label&gt;
+                &lt;select
+                    id="select"
+                    name="select"
+                    value={formData.select}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                &gt;
+                    &lt;option value=""&gt;Choose...&lt;/option&gt;
+                    &lt;option value="option1"&gt;Option 1&lt;/option&gt;
+                    &lt;option value="option2"&gt;Option 2&lt;/option&gt;
+                    &lt;option value="option3"&gt;Option 3&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+            
+            {/* Checkbox */}
+            &lt;div className="form-field"&gt;
+                &lt;label&gt;
+                    &lt;input
+                        type="checkbox"
+                        name="checkbox"
+                        checked={formData.checkbox}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    /&gt;
+                    Checkbox Label
+                &lt;/label&gt;
+            &lt;/div&gt;
+            
+            {/* Radio Buttons */}
+            &lt;div className="form-field"&gt;
+                &lt;label&gt;Radio Group:&lt;/label&gt;
+                &lt;div&gt;
+                    &lt;label&gt;
+                        &lt;input
+                            type="radio"
+                            name="radio"
+                            value="option1"
+                            checked={formData.radio === 'option1'}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        /&gt;
+                        Option 1
+                    &lt;/label&gt;
+                    &lt;label&gt;
+                        &lt;input
+                            type="radio"
+                            name="radio"
+                            value="option2"
+                            checked={formData.radio === 'option2'}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        /&gt;
+                        Option 2
+                    &lt;/label&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            {/* Range Slider */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="range"&gt;
+                    Range: {formData.range}
+                &lt;/label&gt;
+                &lt;input
+                    type="range"
+                    id="range"
+                    name="range"
+                    min="0"
+                    max="100"
+                    value={formData.range}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                /&gt;
+            &lt;/div&gt;
+            
+            {/* Color Picker */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="color"&gt;Color:&lt;/label&gt;
+                &lt;input
+                    type="color"
+                    id="color"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                /&gt;
+            &lt;/div&gt;
+            
+            {/* Date Picker */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="date"&gt;Date:&lt;/label&gt;
+                &lt;input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                /&gt;
+            &lt;/div&gt;
+            
+            {/* File Input */}
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="file"&gt;File:&lt;/label&gt;
+                &lt;input
+                    type="file"
+                    id="file"
+                    name="file"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                /&gt;
+                {formData.file && (
+                    &lt;span&gt;Selected: {formData.file.name}&lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            &lt;div className="form-actions"&gt;
+                &lt;button type="submit"&gt;Submit&lt;/button&gt;
+                &lt;button type="button" onClick={handleReset}&gt;Reset&lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="state-preview"&gt;
+                &lt;h3&gt;Current State:&lt;/h3&gt;
+                &lt;pre&gt;{JSON.stringify(formData, null, 2)}&lt;/pre&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>13. UNCONTROLLED COMPONENTS</h2>
+
+        <h3>What are Uncontrolled Components?</h3>
+        <p>Uncontrolled components store their own state internally in the DOM. You use refs to get form values from the
+            DOM when needed.</p>
+
+        <h3>Basic Uncontrolled Component Example</h3>
+        <pre>import React, { useRef } from 'react';
+
+function UncontrolledForm() {
+    const inputRef = useRef(null);
+    const fileRef = useRef(null);
+    const selectRef = useRef(null);
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            input: inputRef.current.value,
+            file: fileRef.current.files[0]?.name,
+            select: selectRef.current.value
+        };
+        
+        console.log('Form data:', formData);
+    };
+    
+    return (
+        &lt;form onSubmit={handleSubmit}&gt;
+            &lt;div&gt;
+                &lt;label&gt;Text Input:&lt;/label&gt;
+                &lt;input
+                    type="text"
+                    ref={inputRef}
+                    defaultValue="Default value"
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;Select:&lt;/label&gt;
+                &lt;select ref={selectRef} defaultValue=""&gt;
+                    &lt;option value=""&gt;Choose...&lt;/option&gt;
+                    &lt;option value="option1"&gt;Option 1&lt;/option&gt;
+                    &lt;option value="option2"&gt;Option 2&lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+            
+            &lt;div&gt;
+                &lt;label&gt;File:&lt;/label&gt;
+                &lt;input type="file" ref={fileRef} /&gt;
+            &lt;/div&gt;
+            
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <h3>File Upload with Uncontrolled Component</h3>
+        <pre>function FileUploadWithPreview() {
+    const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState(null);
+    
+    const handleFileSelect = () => {
+        const file = fileInputRef.current.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setPreview(null);
+        }
+    };
+    
+    const handleUpload = async () => {
+        const file = fileInputRef.current.files[0];
+        if (!file) return;
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Simulate upload
+        console.log('Uploading:', file.name);
+        // await fetch('/upload', { method: 'POST', body: formData });
+    };
+    
+    return (
+        &lt;div className="file-upload"&gt;
+            &lt;input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept="image/*"
+            /&gt;
+            
+            {preview && (
+                &lt;div&gt;
+                    &lt;img src={preview} alt="Preview" style={{maxWidth: '200px'}} /&gt;
+                &lt;/div&gt;
+            )}
+            
+            &lt;button onClick={handleUpload}&gt;Upload&lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>When to Use Uncontrolled Components</h3>
+        <table>
+            <tr>
+                <th>Scenario</th>
+                <th>Use Controlled</th>
+                <th>Use Uncontrolled</th>
+            </tr>
+            <tr>
+                <td>Real-time validation</td>
+                <td>✅</td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Instant input formatting</td>
+                <td>✅</td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Conditional disable fields</td>
+                <td>✅</td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Dynamic form fields</td>
+                <td>✅</td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>File uploads</td>
+                <td>❌</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td>Simple forms with minimal interaction</td>
+                <td>❌</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td>Integrating with non-React code</td>
+                <td>❌</td>
+                <td>✅</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>14. HANDLING MULTIPLE INPUTS</h2>
+
+        <h3>Single Handler for Multiple Inputs</h3>
+        <pre>function MultipleInputsHandler() {
+    const [inputs, setInputs] = useState({});
+    
+    const handleChange = (event) => {
+        const { name, value, type, checked } = event.target;
+        
+        setInputs(prev =&gt; ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+    
+    return (
+        &lt;form&gt;
+            &lt;input
+                name="firstName"
+                placeholder="First Name"
+                value={inputs.firstName || ''}
+                onChange={handleChange}
+            /&gt;
+            
+            &lt;input
+                name="lastName"
+                placeholder="Last Name"
+                value={inputs.lastName || ''}
+                onChange={handleChange}
+            /&gt;
+            
+            &lt;label&gt;
+                &lt;input
+                    name="newsletter"
+                    type="checkbox"
+                    checked={inputs.newsletter || false}
+                    onChange={handleChange}
+                /&gt;
+                Subscribe to newsletter
+            &lt;/label&gt;
+            
+            &lt;input
+                name="age"
+                type="number"
+                placeholder="Age"
+                value={inputs.age || ''}
+                onChange={handleChange}
+            /&gt;
+            
+            &lt;select
+                name="country"
+                value={inputs.country || ''}
+                onChange={handleChange}
+            &gt;
+                &lt;option value=""&gt;Select country&lt;/option&gt;
+                &lt;option value="usa"&gt;USA&lt;/option&gt;
+                &lt;option value="canada"&gt;Canada&lt;/option&gt;
+                &lt;option value="uk"&gt;UK&lt;/option&gt;
+            &lt;/select&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <h3>Dynamic Form Fields</h3>
+        <pre>function DynamicFormFields() {
+    const [fields, setFields] = useState([
+        { id: 1, name: 'field-1', value: '' }
+    ]);
+    
+    const addField = () => {
+        const newId = Math.max(...fields.map(f =&gt; f.id)) + 1;
+        setFields([
+            ...fields,
+            { id: newId, name: `field-${newId}`, value: '' }
+        ]);
+    };
+    
+    const removeField = (idToRemove) => {
+        setFields(fields.filter(field =&gt; field.id !== idToRemove));
+    };
+    
+    const handleFieldChange = (id, value) => {
+        setFields(fields.map(field =&gt; 
+            field.id === id ? { ...field, value } : field
+        ));
+    };
+    
+    return (
+        &lt;div className="dynamic-form"&gt;
+            &lt;h3&gt;Dynamic Form Fields&lt;/h3&gt;
+            
+            {fields.map(field =&gt; (
+                &lt;div key={field.id} className="field-row"&gt;
+                    &lt;input
+                        type="text"
+                        value={field.value}
+                        onChange={(e) =&gt; handleFieldChange(field.id, e.target.value)}
+                        placeholder={`Field ${field.id}`}
+                    /&gt;
+                    
+                    {fields.length &gt; 1 && (
+                        &lt;button 
+                            type="button"
+                            onClick={() =&gt; removeField(field.id)}
+                            className="remove-btn"
+                        &gt;
+                            Remove
+                        &lt;/button&gt;
+                    )}
+                &lt;/div&gt;
+            ))}
+            
+            &lt;button type="button" onClick={addField}&gt;
+                Add Field
+            &lt;/button&gt;
+            
+            &lt;div className="preview"&gt;
+                &lt;h4&gt;Current Values:&lt;/h4&gt;
+                &lt;pre&gt;{JSON.stringify(fields, null, 2)}&lt;/pre&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Nested Form Data</h3>
+        <pre>function NestedFormData() {
+    const [data, setData] = useState({
+        user: {
+            profile: {
+                firstName: '',
+                lastName: '',
+                contact: {
+                    email: '',
+                    phone: ''
+                }
+            },
+            preferences: {
+                theme: 'light',
+                notifications: {
+                    email: true,
+                    sms: false
+                }
+            }
+        },
+        payment: {
+            method: 'credit',
+            details: {
+                cardNumber: '',
+                expiry: '',
+                cvv: ''
+            }
+        }
+    });
+    
+    const handleNestedChange = (path, value) => {
+        setData(prev =&gt; {
+            const newData = { ...prev };
+            const keys = path.split('.');
+            let current = newData;
+            
+            for (let i = 0; i &lt; keys.length - 1; i++) {
+                current = current[keys[i]];
+            }
+            
+            current[keys[keys.length - 1]] = value;
+            return newData;
+        });
+    };
+    
+    return (
+        &lt;form className="nested-form"&gt;
+            &lt;h3&gt;User Profile&lt;/h3&gt;
+            
+            &lt;div className="nested-section"&gt;
+                &lt;h4&gt;Personal Information&lt;/h4&gt;
+                &lt;input
+                    placeholder="First Name"
+                    value={data.user.profile.firstName}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('user.profile.firstName', e.target.value)
+                    }
+                /&gt;
+                
+                &lt;input
+                    placeholder="Last Name"
+                    value={data.user.profile.lastName}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('user.profile.lastName', e.target.value)
+                    }
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="nested-section"&gt;
+                &lt;h4&gt;Contact Information&lt;/h4&gt;
+                &lt;input
+                    type="email"
+                    placeholder="Email"
+                    value={data.user.profile.contact.email}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('user.profile.contact.email', e.target.value)
+                    }
+                /&gt;
+                
+                &lt;input
+                    placeholder="Phone"
+                    value={data.user.profile.contact.phone}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('user.profile.contact.phone', e.target.value)
+                    }
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="nested-section"&gt;
+                &lt;h4&gt;Preferences&lt;/h4&gt;
+                &lt;select
+                    value={data.user.preferences.theme}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('user.preferences.theme', e.target.value)
+                    }
+                &gt;
+                    &lt;option value="light"&gt;Light&lt;/option&gt;
+                    &lt;option value="dark"&gt;Dark&lt;/option&gt;
+                &lt;/select&gt;
+                
+                &lt;label&gt;
+                    &lt;input
+                        type="checkbox"
+                        checked={data.user.preferences.notifications.email}
+                        onChange={(e) =&gt; 
+                            handleNestedChange(
+                                'user.preferences.notifications.email', 
+                                e.target.checked
+                            )
+                        }
+                    /&gt;
+                    Email Notifications
+                &lt;/label&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="nested-section"&gt;
+                &lt;h4&gt;Payment Details&lt;/h4&gt;
+                &lt;select
+                    value={data.payment.method}
+                    onChange={(e) =&gt; 
+                        handleNestedChange('payment.method', e.target.value)
+                    }
+                &gt;
+                    &lt;option value="credit"&gt;Credit Card&lt;/option&gt;
+                    &lt;option value="debit"&gt;Debit Card&lt;/option&gt;
+                    &lt;option value="paypal"&gt;PayPal&lt;/option&gt;
+                &lt;/select&gt;
+                
+                {data.payment.method === 'credit' && (
+                    &lt;div&gt;
+                        &lt;input
+                            placeholder="Card Number"
+                            value={data.payment.details.cardNumber}
+                            onChange={(e) =&gt; 
+                                handleNestedChange('payment.details.cardNumber', e.target.value)
+                            }
+                        /&gt;
+                        
+                        &lt;input
+                            placeholder="Expiry (MM/YY)"
+                            value={data.payment.details.expiry}
+                            onChange={(e) =&gt; 
+                                handleNestedChange('payment.details.expiry', e.target.value)
+                            }
+                        /&gt;
+                        
+                        &lt;input
+                            placeholder="CVV"
+                            type="password"
+                            maxLength="3"
+                            value={data.payment.details.cvv}
+                            onChange={(e) =&gt; 
+                                handleNestedChange('payment.details.cvv', e.target.value)
+                            }
+                        /&gt;
+                    &lt;/div&gt;
+                )}
+            &lt;/div&gt;
+            
+            &lt;div className="data-preview"&gt;
+                &lt;h4&gt;Form Data:&lt;/h4&gt;
+                &lt;pre&gt;{JSON.stringify(data, null, 2)}&lt;/pre&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>15. FORM SUBMISSION HANDLING</h2>
+
+        <h3>Comprehensive Form Submission Example</h3>
+        <pre>import React, { useState } from 'react';
+
+function FormSubmissionHandler() {
+    const [formState, setFormState] = useState({
+        data: {
+            username: '',
+            email: '',
+            password: '',
+            acceptTerms: false
+        },
+        status: 'idle', // idle, validating, submitting, success, error
+        errors: {},
+        submitCount: 0,
+        lastSubmitted: null
+    });
+    
+    const validateField = (name, value) => {
+        switch (name) {
+            case 'username':
+                if (!value) return 'Username is required';
+                if (value.length &lt; 3) return 'Username must be at least 3 characters';
+                if (value.length &gt; 20) return 'Username must be less than 20 characters';
+                if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+                    return 'Username can only contain letters, numbers, and underscores';
+                }
+                return '';
+                
+            case 'email':
+                if (!value) return 'Email is required';
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    return 'Please enter a valid email address';
+                }
+                return '';
+                
+            case 'password':
+                if (!value) return 'Password is required';
+                if (value.length &lt; 8) return 'Password must be at least 8 characters';
+                if (!/[A-Z]/.test(value)) {
+                    return 'Password must contain at least one uppercase letter';
+                }
+                if (!/[0-9]/.test(value)) {
+                    return 'Password must contain at least one number';
+                }
+                return '';
+                
+            case 'acceptTerms':
+                if (!value) return 'You must accept the terms and conditions';
+                return '';
+                
+            default:
+                return '';
+        }
+    };
+    
+    const validateForm = (data) => {
+        const errors = {};
+        
+        Object.keys(data).forEach(key => {
+            const error = validateField(key, data[key]);
+            if (error) {
+                errors[key] = error;
+            }
+        });
+        
+        return errors;
+    };
+    
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        const newValue = type === 'checkbox' ? checked : value;
+        
+        setFormState(prev =&gt; ({
+            ...prev,
+            data: {
+                ...prev.data,
+                [name]: newValue
+            },
+            errors: {
+                ...prev.errors,
+                [name]: validateField(name, newValue)
+            }
+        }));
+    };
+    
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setFormState(prev =&gt; ({
+            ...prev,
+            errors: {
+                ...prev.errors,
+                [name]: validateField(name, prev.data[name])
+            }
+        }));
+    };
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Validate all fields
+        const errors = validateForm(formState.data);
+        
+        if (Object.keys(errors).length &gt; 0) {
+            setFormState(prev =&gt; ({
+                ...prev,
+                status: 'error',
+                errors
+            }));
+            
+            // Scroll to first error
+            const firstErrorField = document.querySelector('.error');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+        
+        setFormState(prev =&gt; ({
+            ...prev,
+            status: 'submitting',
+            submitCount: prev.submitCount + 1
+        }));
+        
+        try {
+            // Simulate API call
+            const response = await new Promise((resolve, reject) =&gt; {
+                setTimeout(() =&gt; {
+                    // Randomly succeed or fail for demo
+                    if (Math.random() &gt; 0.3) {
+                        resolve({ success: true });
+                    } else {
+                        reject(new Error('Network error'));
+                    }
+                }, 2000);
+            });
+            
+            setFormState(prev =&gt; ({
+                ...prev,
+                status: 'success',
+                data: {
+                    username: '',
+                    email: '',
+                    password: '',
+                    acceptTerms: false
+                },
+                errors: {},
+                lastSubmitted: new Date().toISOString()
+            }));
+            
+            alert('Form submitted successfully!');
+            
+        } catch (error) {
+            setFormState(prev =&gt; ({
+                ...prev,
+                status: 'error',
+                errors: {
+                    ...prev.errors,
+                    form: error.message || 'Submission failed. Please try again.'
+                }
+            }));
+        }
+    };
+    
+    const handleReset = () => {
+        setFormState({
+            data: {
+                username: '',
+                email: '',
+                password: '',
+                acceptTerms: false
+            },
+            status: 'idle',
+            errors: {},
+            submitCount: formState.submitCount,
+            lastSubmitted: formState.lastSubmitted
+        });
+    };
+    
+    const isSubmitting = formState.status === 'submitting';
+    const hasErrors = Object.keys(formState.errors).length &gt; 0;
+    
+    return (
+        &lt;form onSubmit={handleSubmit} className="form-submission-demo"&gt;
+            &lt;h2&gt;Form Submission Demo&lt;/h2&gt;
+            
+            {formState.errors.form && (
+                &lt;div className="form-error"&gt;
+                    {formState.errors.form}
+                &lt;/div&gt;
+            )}
+            
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="username"&gt;
+                    Username:
+                    {formState.errors.username && (
+                        &lt;span className="error-message"&gt;{formState.errors.username}&lt;/span&gt;
+                    )}
+                &lt;/label&gt;
+                &lt;input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formState.data.username}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={formState.errors.username ? 'error' : ''}
+                    disabled={isSubmitting}
+                    placeholder="Enter username"
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="email"&gt;
+                    Email:
+                    {formState.errors.email && (
+                        &lt;span className="error-message"&gt;{formState.errors.email}&lt;/span&gt;
+                    )}
+                &lt;/label&gt;
+                &lt;input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formState.data.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={formState.errors.email ? 'error' : ''}
+                    disabled={isSubmitting}
+                    placeholder="Enter email"
+                /&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="password"&gt;
+                    Password:
+                    {formState.errors.password && (
+                        &lt;span className="error-message"&gt;{formState.errors.password}&lt;/span&gt;
+                    )}
+                &lt;/label&gt;
+                &lt;input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formState.data.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={formState.errors.password ? 'error' : ''}
+                    disabled={isSubmitting}
+                    placeholder="Enter password"
+                /&gt;
+                &lt;div className="password-requirements"&gt;
+                    Password must contain:
+                    &lt;ul&gt;
+                        &lt;li className={formState.data.password.length &gt;= 8 ? 'valid' : ''}&gt;
+                            At least 8 characters
+                        &lt;/li&gt;
+                        &lt;li className={/[A-Z]/.test(formState.data.password) ? 'valid' : ''}&gt;
+                            One uppercase letter
+                        &lt;/li&gt;
+                        &lt;li className={/[0-9]/.test(formState.data.password) ? 'valid' : ''}&gt;
+                            One number
+                        &lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-field checkbox"&gt;
+                &lt;label&gt;
+                    &lt;input
+                        type="checkbox"
+                        name="acceptTerms"
+                        checked={formState.data.acceptTerms}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        disabled={isSubmitting}
+                    /&gt;
+                    I accept the terms and conditions
+                    {formState.errors.acceptTerms && (
+                        &lt;span className="error-message"&gt;{formState.errors.acceptTerms}&lt;/span&gt;
+                    )}
+                &lt;/label&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-actions"&gt;
+                &lt;button 
+                    type="submit" 
+                    disabled={isSubmitting || hasErrors}
+                &gt;
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                &lt;/button&gt;
+                
+                &lt;button 
+                    type="button" 
+                    onClick={handleReset}
+                    disabled={isSubmitting}
+                &gt;
+                    Reset
+                &lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="form-stats"&gt;
+                &lt;p&gt;Submit count: {formState.submitCount}&lt;/p&gt;
+                {formState.lastSubmitted && (
+                    &lt;p&gt;Last submitted: {new Date(formState.lastSubmitted).toLocaleString()}&lt;/p&gt;
+                )}
+            &lt;/div&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>16. EVENT POOLING AND PERFORMANCE</h2>
+
+        <h3>Understanding Event Pooling</h3>
+        <p>React uses event pooling to improve performance by reusing event objects. After the event handler runs, all
+            properties on the SyntheticEvent are nullified.</p>
+
+        <pre>function EventPoolingDemo() {
+    // ❌ This won't work as expected
+    const handleClickAsync = (event) => {
+        console.log(event.type); // 'click'
+        
+        setTimeout(() => {
+            console.log(event.type); // null (event has been pooled)
+            console.log(event.target); // null
+        }, 100);
+    };
+    
+    // ✅ Solution 1: Call event.persist()
+    const handleClickWithPersist = (event) => {
+        event.persist(); // Remove from pool
+        console.log(event.type); // 'click'
+        
+        setTimeout(() => {
+            console.log(event.type); // 'click' (still available)
+            console.log(event.target); // Still available
+        }, 100);
+    };
+    
+    // ✅ Solution 2: Extract needed data
+    const handleClickExtractData = (event) => {
+        const { type, target } = event; // Extract what you need
+        
+        setTimeout(() => {
+            console.log(type); // 'click' (plain variable, not pooled)
+            console.log(target); // Still available
+        }, 100);
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;button onClick={handleClickWithPersist}&gt;
+                Click with persist
+            &lt;/button&gt;
+            
+            &lt;button onClick={handleClickExtractData}&gt;
+                Click with extraction
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Performance Optimization Techniques</h3>
+        <pre>function PerformanceOptimization() {
+    // ❌ Inefficient - creates new function every render
+    const InefficientComponent = ({ items }) => {
+        return (
+            &lt;ul&gt;
+                {items.map(item =&gt; (
+                    &lt;li key={item.id}&gt;
+                        &lt;button onClick={() =&gt; console.log(item.id)}&gt;
+                            {item.name}
+                        &lt;/button&gt;
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+        );
+    };
+    
+    // ✅ Efficient - uses useCallback and data attributes
+    const EfficientComponent = ({ items }) => {
+        const handleClick = useCallback((event) => {
+            const itemId = event.currentTarget.dataset.id;
+            console.log('Clicked:', itemId);
+        }, []); // No dependencies, stable reference
+        
+        return (
+            &lt;ul&gt;
+                {items.map(item =&gt; (
+                    &lt;li key={item.id}&gt;
+                        &lt;button 
+                            data-id={item.id}
+                            onClick={handleClick}
+                        &gt;
+                            {item.name}
+                        &lt;/button&gt;
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+        );
+    };
+    
+    // ✅ Throttle/Debounce for frequent events
+    const SearchInput = () => {
+        const [searchTerm, setSearchTerm] = useState('');
+        const [results, setResults] = useState([]);
+        
+        // Debounce the search
+        const debouncedSearch = useCallback(
+            debounce(async (term) => {
+                if (term.length &gt; 2) {
+                    const results = await searchAPI(term);
+                    setResults(results);
+                }
+            }, 500),
+            []
+        );
+        
+        const handleChange = (e) => {
+            const term = e.target.value;
+            setSearchTerm(term);
+            debouncedSearch(term);
+        };
+        
+        return (
+            &lt;div&gt;
+                &lt;input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleChange}
+                    placeholder="Search..."
+                /&gt;
+                {/* Display results */}
+            &lt;/div&gt;
+        );
+    };
+    
+    // ✅ Use useMemo for expensive computations
+    const ExpensiveList = ({ items, filter }) => {
+        const filteredItems = useMemo(() => {
+            return items.filter(item =&gt; 
+                item.name.toLowerCase().includes(filter.toLowerCase())
+            );
+        }, [items, filter]);
+        
+        return (
+            &lt;ul&gt;
+                {filteredItems.map(item =&gt; (
+                    &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+        );
+    };
+}</pre>
+
+        <hr>
+
+        <h2>17. CUSTOM EVENTS IN REACT</h2>
+
+        <h3>Creating Custom Events</h3>
+        <pre>import React, { useEffect, useRef } from 'react';
+
+// Custom event system using a context
+const EventContext = React.createContext();
+
+function EventProvider({ children }) {
+    const events = useRef({});
+    
+    const subscribe = (eventName, callback) => {
+        if (!events.current[eventName]) {
+            events.current[eventName] = [];
+        }
+        events.current[eventName].push(callback);
+        
+        // Return unsubscribe function
+        return () => {
+            events.current[eventName] = events.current[eventName]
+                .filter(cb =&gt; cb !== callback);
+        };
+    };
+    
+    const emit = (eventName, data) => {
+        if (events.current[eventName]) {
+            events.current[eventName].forEach(callback =&gt; {
+                callback(data);
+            });
+        }
+    };
+    
+    return (
+        &lt;EventContext.Provider value={{ subscribe, emit }}&gt;
+            {children}
+        &lt;/EventContext.Provider&gt;
+    );
+}
+
+// Custom hook to use events
+function useEvent(eventName, callback) {
+    const { subscribe } = useContext(EventContext);
+    
+    useEffect(() => {
+        if (eventName && callback) {
+            const unsubscribe = subscribe(eventName, callback);
+            return unsubscribe;
+        }
+    }, [eventName, callback, subscribe]);
+}
+
+// Publisher component
+function TodoPublisher() {
+    const { emit } = useContext(EventContext);
+    const [todoText, setTodoText] = useState('');
+    
+    const addTodo = () => {
+        const newTodo = {
+            id: Date.now(),
+            text: todoText,
+            completed: false
+        };
+        
+        emit('TODO_ADDED', newTodo);
+        setTodoText('');
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;input
+                value={todoText}
+                onChange={(e) =&gt; setTodoText(e.target.value)}
+                placeholder="Enter todo..."
+            /&gt;
+            &lt;button onClick={addTodo}&gt;Add Todo&lt;/button&gt;
+        &lt;/div&gt;
+    );
+}
+
+// Subscriber component
+function TodoSubscriber() {
+    const [todos, setTodos] = useState([]);
+    
+    useEvent('TODO_ADDED', (newTodo) => {
+        setTodos(prev =&gt; [...prev, newTodo]);
+    });
+    
+    useEvent('TODO_COMPLETED', (todoId) => {
+        setTodos(prev =&gt; 
+            prev.map(todo =&gt; 
+                todo.id === todoId 
+                    ? { ...todo, completed: true }
+                    : todo
+            )
+        );
+    });
+    
+    return (
+        &lt;ul&gt;
+            {todos.map(todo =&gt; (
+                &lt;li key={todo.id}&gt;
+                    {todo.text} - {todo.completed ? '✓' : '○'}
+                &lt;/li&gt;
+            ))}
+        &lt;/ul&gt;
+    );
+}</pre>
+
+        <h3>Custom Event Hook with DOM Events</h3>
+        <pre>function useEventListener(eventName, handler, element = window) {
+    const savedHandler = useRef();
+    
+    useEffect(() => {
+        savedHandler.current = handler;
+    }, [handler]);
+    
+    useEffect(() => {
+        const isSupported = element && element.addEventListener;
+        if (!isSupported) return;
+        
+        const eventListener = (event) =&gt; savedHandler.current(event);
+        
+        element.addEventListener(eventName, eventListener);
+        
+        return () => {
+            element.removeEventListener(eventName, eventListener);
+        };
+    }, [eventName, element]);
+}
+
+// Usage
+function MouseTracker() {
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    
+    useEventListener('mousemove', (e) => {
+        setPosition({ x: e.clientX, y: e.clientY });
+    });
+    
+    useEventListener('resize', () => {
+        console.log('Window resized');
+    });
+    
+    return (
+        &lt;div&gt;
+            Mouse position: {position.x}, {position.y}
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>18. EVENT PROPAGATION AND PREVENTION</h2>
+
+        <h3>Understanding Event Propagation</h3>
+        <pre>function EventPropagationDemo() {
+    // Event bubbling (default) - from child to parent
+    const handleChildClick = (e) => {
+        console.log('Child clicked');
+        // e.stopPropagation(); // Uncomment to stop bubbling
+    };
+    
+    const handleParentClick = (e) => {
+        console.log('Parent clicked');
+    };
+    
+    const handleGrandparentClick = (e) => {
+        console.log('Grandparent clicked');
+    };
+    
+    // Event capturing - from parent to child
+    const handleChildCapture = (e) => {
+        console.log('Child capture');
+    };
+    
+    const handleParentCapture = (e) => {
+        console.log('Parent capture');
+        // e.stopPropagation(); // Stops further capturing/bubbling
+    };
+    
+    const handleGrandparentCapture = (e) => {
+        console.log('Grandparent capture');
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;h3&gt;Event Bubbling (default)&lt;/h3&gt;
+            &lt;div 
+                onClick={handleGrandparentClick}
+                style={{ padding: 20, background: '#ffcccc' }}
+            &gt;
+                Grandparent
+                &lt;div 
+                    onClick={handleParentClick}
+                    style={{ padding: 20, background: '#ccffcc' }}
+                &gt;
+                    Parent
+                    &lt;div 
+                        onClick={handleChildClick}
+                        style={{ padding: 20, background: '#ccccff' }}
+                    &gt;
+                        Child (Click me)
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;h3&gt;Event Capturing&lt;/h3&gt;
+            &lt;div 
+                onClickCapture={handleGrandparentCapture}
+                style={{ padding: 20, background: '#ffcccc', marginTop: 20 }}
+            &gt;
+                Grandparent
+                &lt;div 
+                    onClickCapture={handleParentCapture}
+                    style={{ padding: 20, background: '#ccffcc' }}
+                &gt;
+                    Parent
+                    &lt;div 
+                        onClickCapture={handleChildCapture}
+                        style={{ padding: 20, background: '#ccccff' }}
+                    &gt;
+                        Child (Click me)
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Preventing Default Behavior</h3>
+        <pre>function PreventDefaultDemo() {
+    const handleLinkClick = (e) => {
+        e.preventDefault();
+        console.log('Link clicked but navigation prevented');
+    };
+    
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        console.log('Form submission prevented');
+    };
+    
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        console.log('Context menu prevented');
+    };
+    
+    const handleKeyDown = (e) => {
+        // Prevent F5 refresh
+        if (e.key === 'F5') {
+            e.preventDefault();
+            console.log('F5 refresh prevented');
+        }
+        
+        // Prevent Ctrl+S
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            console.log('Ctrl+S prevented');
+        }
+    };
+    
+    return (
+        &lt;div onContextMenu={handleContextMenu}&gt;
+            &lt;a 
+                href="https://example.com" 
+                onClick={handleLinkClick}
+            &gt;
+                Click me (link won't navigate)
+            &lt;/a&gt;
+            
+            &lt;form onSubmit={handleFormSubmit}&gt;
+                &lt;input type="text" placeholder="Type something" /&gt;
+                &lt;button type="submit"&gt;Submit (won't submit)&lt;/button&gt;
+            &lt;/form&gt;
+            
+            &lt;input 
+                type="text" 
+                onKeyDown={handleKeyDown}
+                placeholder="Try F5 or Ctrl+S"
+            /&gt;
+            
+            &lt;p&gt;Right-click anywhere is prevented&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Advanced Propagation Control</h3>
+        <pre>function PropagationControl() {
+    const [logs, setLogs] = useState([]);
+    
+    const addLog = (message) => {
+        setLogs(prev =&gt; [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    };
+    
+    const handleClick = (level, e) => {
+        addLog(`${level} clicked`);
+    };
+    
+    const handleStopPropagation = (level, e) => {
+        e.stopPropagation();
+        addLog(`${level} clicked (propagation stopped)`);
+    };
+    
+    const handleStopImmediatePropagation = (level, e) => {
+        e.nativeEvent.stopImmediatePropagation();
+        addLog(`${level} clicked (immediate propagation stopped)`);
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;div className="propagation-demo"&gt;
+                &lt;h3&gt;Normal Bubbling&lt;/h3&gt;
+                &lt;div onClick={(e) =&gt; handleClick('Outer', e)} className="outer"&gt;
+                    Outer Div
+                    &lt;div onClick={(e) =&gt; handleClick('Inner', e)} className="inner"&gt;
+                        Inner Div (Click me)
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                
+                &lt;h3&gt;Stop Propagation&lt;/h3&gt;
+                &lt;div onClick={(e) =&gt; handleClick('Outer', e)} className="outer"&gt;
+                    Outer Div
+                    &lt;div onClick={(e) =&gt; handleStopPropagation('Inner', e)} className="inner"&gt;
+                        Inner Div (Click me - stops bubbling)
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                
+                &lt;h3&gt;Multiple Listeners&lt;/h3&gt;
+                &lt;div 
+                    onClick={(e) =&gt; handleClick('First Listener', e)}
+                    onClickCapture={(e) =&gt; handleClick('Capture First', e)}
+                    className="outer"
+                &gt;
+                    &lt;button 
+                        onClick={(e) =&gt; {
+                            handleClick('Button', e);
+                            e.stopPropagation();
+                        }}
+                    &gt;
+                        Click me
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div className="logs"&gt;
+                &lt;h4&gt;Event Log:&lt;/h4&gt;
+                &lt;button onClick={() =&gt; setLogs([])}&gt;Clear Logs&lt;/button&gt;
+                &lt;ul&gt;
+                    {logs.map((log, index) =&gt; (
+                        &lt;li key={index}&gt;{log}&lt;/li&gt;
+                    ))}
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>19. BEST PRACTICES FOR EVENT HANDLING</h2>
+
+        <h3>Naming Conventions</h3>
+        <pre>function NamingConventions() {
+    // ✅ Good: Descriptive names
+    const handleSubmit = () =&gt; {};
+    const handleInputChange = () =&gt; {};
+    const handleButtonClick = () =&gt; {};
+    const handleUserSelect = () =&gt; {};
+    
+    // ❌ Bad: Vague names
+    const handle1 = () =&gt; {};
+    const change = () =&gt; {};
+    const click = () =&gt; {};
+    
+    // Pattern: handle[Element][Event]
+    const handleFormSubmit = () =&gt; {};
+    const handleInputChange = () =&gt; {};
+    const handleButtonClick = () =&gt; {};
+    const handleCheckboxToggle = () =&gt; {};
+    
+    // Pattern: on[Component][Event] for props
+    return (
+        &lt;CustomForm 
+            onSubmit={handleFormSubmit}
+            onCancel={handleCancel}
+        /&gt;
+    );
+}</pre>
+
+        <h3>Organizing Event Handlers</h3>
+        <pre>function OrganizedHandlers() {
+    // ✅ Good: Group related handlers
+    const formHandlers = {
+        handleSubmit: (e) =&gt; {
+            e.preventDefault();
+            // submit logic
+        },
+        handleReset: () =&gt; {
+            // reset logic
+        },
+        handleFieldChange: (fieldName, value) =&gt; {
+            // update logic
+        }
+    };
+    
+    const uiHandlers = {
+        handleModalOpen: () =&gt; {},
+        handleModalClose: () =&gt; {},
+        handleTabChange: (index) =&gt; {}
+    };
+    
+    const dataHandlers = {
+        handleLoadMore: () =&gt; {},
+        handleRefresh: () =&gt; {},
+        handleFilter: (filter) =&gt; {}
+    };
+    
+    // ✅ Good: Custom hook for complex handlers
+    const useFormHandlers = (initialData) =&gt; {
+        const [data, setData] = useState(initialData);
+        const [errors, setErrors] = useState({});
+        
+        const handleChange = useCallback((e) =&gt; {
+            const { name, value } = e.target;
+            setData(prev =&gt; ({ ...prev, [name]: value }));
+        }, []);
+        
+        const handleSubmit = useCallback((e) =&gt; {
+            e.preventDefault();
+            // validation and submission
+        }, [data]);
+        
+        return { data, errors, handleChange, handleSubmit };
+    };
+    
+    // Usage
+    const { data, errors, handleChange, handleSubmit } = useFormHandlers({
+        email: '',
+        password: ''
+    });
+    
+    return (
+        &lt;form onSubmit={handleSubmit}&gt;
+            &lt;input
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+            /&gt;
+            &lt;input
+                name="password"
+                type="password"
+                value={data.password}
+                onChange={handleChange}
+            /&gt;
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <h3>Error Handling in Events</h3>
+        <pre>function ErrorHandlingInEvents() {
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
+    
+    // ✅ Good: Try-catch in async handlers
+    const handleAsyncOperation = async (e) =&gt; {
+        e.preventDefault();
+        
+        try {
+            setError(null);
+            const result = await riskyOperation();
+            console.log('Success:', result);
+            setRetryCount(0);
+        } catch (err) {
+            setError(err.message);
+            console.error('Operation failed:', err);
+            
+            // Implement retry logic
+            if (retryCount &lt; 3) {
+                setRetryCount(prev =&gt; prev + 1);
+                // Auto-retry after 2 seconds
+                setTimeout(() =&gt; handleAsyncOperation(e), 2000);
+            }
+        }
+    };
+    
+    // ✅ Good: Error boundary for render errors
+    const handleClickWithGuard = (callback) =&gt; {
+        try {
+            callback();
+        } catch (err) {
+            setError(err.message);
+            // Log to error reporting service
+            console.error('Event handler error:', err);
+        }
+    };
+    
+    // ✅ Good: Validation before processing
+    const handleSubmitWithValidation = (e) =&gt; {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        const errors = validateForm(data);
+        
+        if (Object.keys(errors).length &gt; 0) {
+            setFormErrors(errors);
+            return;
+        }
+        
+        // Proceed with submission
+    };
+    
+    return (
+        &lt;div&gt;
+            {error && (
+                &lt;div className="error-banner"&gt;
+                    Error: {error}
+                    &lt;button onClick={() =&gt; setError(null)}&gt;Dismiss&lt;/button&gt;
+                &lt;/div&gt;
+            )}
+            
+            &lt;button onClick={handleAsyncOperation}&gt;
+                Perform Risky Operation {retryCount &gt; 0 && `(Retry ${retryCount}/3)`}
+            &lt;/button&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>20. COMMON PATTERNS AND EXAMPLES</h2>
+
+        <h3>Debounced Search Pattern</h3>
+        <pre>function DebouncedSearch() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [results, setResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+    
+    // Debounce function
+    const debounce = (func, delay) =&gt; {
+        let timeoutId;
+        return (...args) =&gt; {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() =&gt; func(...args), delay);
+        };
+    };
+    
+    const performSearch = async (term) => {
+        if (!term.trim()) {
+            setResults([]);
+            return;
+        }
+        
+        setIsSearching(true);
+        try {
+            // Simulate API call
+            const response = await fetch(`/api/search?q=${term}`);
+            const data = await response.json();
+            setResults(data);
+        } catch (error) {
+            console.error('Search failed:', error);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+    
+    // Create debounced version
+    const debouncedSearch = useCallback(
+        debounce(performSearch, 500),
+        []
+    );
+    
+    const handleChange = (e) =&gt; {
+        const term = e.target.value;
+        setSearchTerm(term);
+        debouncedSearch(term);
+    };
+    
+    return (
+        &lt;div className="search-box"&gt;
+            &lt;input
+                type="text"
+                value={searchTerm}
+                onChange={handleChange}
+                placeholder="Search..."
+            /&gt;
+            {isSearching && &lt;div&gt;Searching...&lt;/div&gt;}
+            &lt;ul&gt;
+                {results.map(item =&gt; (
+                    &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Infinite Scroll Pattern</h3>
+        <pre>function InfiniteScroll() {
+    const [items, setItems] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const observerRef = useRef();
+    const lastItemRef = useRef();
+    
+    const loadMoreItems = async () => {
+        if (loading || !hasMore) return;
+        
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/items?page=${page}&limit=20`);
+            const newItems = await response.json();
+            
+            if (newItems.length === 0) {
+                setHasMore(false);
+            } else {
+                setItems(prev =&gt; [...prev, ...newItems]);
+                setPage(prev =&gt; prev + 1);
+            }
+        } catch (error) {
+            console.error('Failed to load items:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    useEffect(() => {
+        if (!hasMore) return;
+        
+        const observer = new IntersectionObserver(
+            (entries) =&gt; {
+                if (entries[0].isIntersecting) {
+                    loadMoreItems();
+                }
+            },
+            { threshold: 0.1 }
+        );
+        
+        if (lastItemRef.current) {
+            observer.observe(lastItemRef.current);
+        }
+        
+        return () =&gt; observer.disconnect();
+    }, [hasMore, loading, page]);
+    
+    return (
+        &lt;div className="infinite-scroll"&gt;
+            &lt;h2&gt;Infinite Scroll List&lt;/h2&gt;
+            &lt;ul&gt;
+                {items.map((item, index) =&gt; (
+                    &lt;li 
+                        key={item.id}
+                        ref={index === items.length - 1 ? lastItemRef : null}
+                    &gt;
+                        {item.name}
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+            {loading && &lt;div&gt;Loading more items...&lt;/div&gt;}
+            {!hasMore && &lt;div&gt;No more items to load&lt;/div&gt;}
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Drag and Drop Pattern</h3>
+        <pre>function DragAndDropList() {
+    const [items, setItems] = useState([
+        { id: '1', text: 'Item 1' },
+        { id: '2', text: 'Item 2' },
+        { id: '3', text: 'Item 3' },
+        { id: '4', text: 'Item 4' }
+    ]);
+    
+    const [draggedItem, setDraggedItem] = useState(null);
+    const [dragOverIndex, setDragOverIndex] = useState(null);
+    
+    const handleDragStart = (e, index) =&gt; {
+        setDraggedItem(items[index]);
+        e.dataTransfer.effectAllowed = 'move';
+        e.target.classList.add('dragging');
+    };
+    
+    const handleDragOver = (e, index) =&gt; {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setDragOverIndex(index);
+    };
+    
+    const handleDragEnd = (e) => {
+        e.target.classList.remove('dragging');
+        setDraggedItem(null);
+        setDragOverIndex(null);
+    };
+    
+    const handleDrop = (e, dropIndex) =&gt; {
+        e.preventDefault();
+        
+        if (draggedItem) {
+            const startIndex = items.findIndex(i =&gt; i.id === draggedItem.id);
+            const newItems = [...items];
+            
+            // Remove dragged item
+            newItems.splice(startIndex, 1);
+            // Insert at drop position
+            newItems.splice(dropIndex, 0, draggedItem);
+            
+            setItems(newItems);
+        }
+        
+        setDraggedItem(null);
+        setDragOverIndex(null);
+    };
+    
+    return (
+        &lt;ul className="drag-drop-list"&gt;
+            {items.map((item, index) =&gt; (
+                &lt;li
+                    key={item.id}
+                    draggable
+                    onDragStart={(e) =&gt; handleDragStart(e, index)}
+                    onDragOver={(e) =&gt; handleDragOver(e, index)}
+                    onDragEnd={handleDragEnd}
+                    onDrop={(e) =&gt; handleDrop(e, index)}
+                    className={`
+                        ${draggedItem?.id === item.id ? 'dragging' : ''}
+                        ${dragOverIndex === index ? 'drag-over' : ''}
+                    `}
+                &gt;
+                    {item.text}
+                &lt;/li&gt;
+            ))}
+        &lt;/ul&gt;
+    );
+}</pre>
+
+        <h3>Keyboard Shortcuts Pattern</h3>
+        <pre>function KeyboardShortcuts() {
+    const [shortcuts, setShortcuts] = useState({
+        'Ctrl+S': { action: 'Save', enabled: true },
+        'Ctrl+Z': { action: 'Undo', enabled: true },
+        'Ctrl+Shift+Z': { action: 'Redo', enabled: true },
+        'Ctrl+F': { action: 'Find', enabled: true },
+        'Esc': { action: 'Close', enabled: true }
+    });
+    
+    const [lastAction, setLastAction] = useState('');
+    
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Build shortcut string
+            const parts = [];
+            if (e.ctrlKey) parts.push('Ctrl');
+            if (e.shiftKey) parts.push('Shift');
+            if (e.altKey) parts.push('Alt');
+            
+            // Add the key (normalize)
+            const key = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+            if (!['Control', 'Shift', 'Alt', 'Meta'].includes(key)) {
+                parts.push(key);
+            }
+            
+            const shortcut = parts.join('+');
+            
+            // Check if shortcut exists and is enabled
+            if (shortcuts[shortcut]?.enabled) {
+                e.preventDefault();
+                setLastAction(shortcuts[shortcut].action);
+                
+                // Execute action
+                switch (shortcut) {
+                    case 'Ctrl+S':
+                        console.log('Saving...');
+                        break;
+                    case 'Ctrl+Z':
+                        console.log('Undo...');
+                        break;
+                    case 'Ctrl+Shift+Z':
+                        console.log('Redo...');
+                        break;
+                    case 'Ctrl+F':
+                        console.log('Find...');
+                        break;
+                    case 'Esc':
+                        console.log('Closing...');
+                        break;
+                }
+            }
+        };
+        
+        window.addEventListener('keydown', handleKeyDown);
+        return () =&gt; window.removeEventListener('keydown', handleKeyDown);
+    }, [shortcuts]);
+    
+    const toggleShortcut = (shortcutKey) => {
+        setShortcuts(prev =&gt; ({
+            ...prev,
+            [shortcutKey]: {
+                ...prev[shortcutKey],
+                enabled: !prev[shortcutKey].enabled
+            }
+        }));
+    };
+    
+    return (
+        &lt;div className="keyboard-shortcuts"&gt;
+            &lt;h2&gt;Keyboard Shortcuts&lt;/h2&gt;
+            
+            &lt;div className="shortcuts-list"&gt;
+                {Object.entries(shortcuts).map(([key, { action, enabled }]) =&gt; (
+                    &lt;div key={key} className="shortcut-item"&gt;
+                        &lt;span className="shortcut-key"&gt;{key}&lt;/span&gt;
+                        &lt;span className="shortcut-action"&gt;{action}&lt;/span&gt;
+                        &lt;label&gt;
+                            &lt;input
+                                type="checkbox"
+                                checked={enabled}
+                                onChange={() =&gt; toggleShortcut(key)}
+                            /&gt;
+                            Enabled
+                        &lt;/label&gt;
+                    &lt;/div&gt;
+                ))}
+            &lt;/div&gt;
+            
+            {lastAction && (
+                &lt;div className="last-action"&gt;
+                    Last action: {lastAction}
+                &lt;/div&gt;
+            )}
+            
+            &lt;div className="instructions"&gt;
+                &lt;p&gt;Try pressing keyboard shortcuts like Ctrl+S, Ctrl+Z, etc.&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>21. TROUBLESHOOTING EVENT ISSUES</h2>
+
+        <h3>Common Problems and Solutions</h3>
+        <pre>function TroubleshootingGuide() {
+    // ❌ Problem: Event handler not firing
+    const Problem1 = () => {
+        // Wrong: Missing function call syntax
+        return &lt;button onClick={handleClick()}&gt;Click&lt;/button&gt;;
+        // Correct: Pass function reference
+        return &lt;button onClick={handleClick}&gt;Click&lt;/button&gt;;
+    };
+    
+    // ❌ Problem: this is undefined in class components
+    class Problem2 extends React.Component {
+        // Wrong: Not binding
+        handleClick() {
+            console.log(this.props); // this is undefined
+        }
+        
+        // Correct: Bind in constructor
+        constructor(props) {
+            super(props);
+            this.handleClick = this.handleClick.bind(this);
+        }
+        
+        // Or: Use arrow function
+        handleClick = () =&gt; {
+            console.log(this.props); // Works!
+        };
+    }
+    
+    // ❌ Problem: Event pooling in async code
+    const Problem3 = () => {
+        const handleClick = (e) => {
+            // Wrong: Using pooled event in async
+            setTimeout(() => {
+                console.log(e.target); // e.target is null
+            }, 100);
+            
+            // Correct: Extract data first
+            const target = e.target;
+            setTimeout(() => {
+                console.log(target); // Works!
+            }, 100);
+            
+            // Or: Call persist()
+            e.persist();
+            setTimeout(() => {
+                console.log(e.target); // Works!
+            }, 100);
+        };
+    };
+    
+    // ❌ Problem: Event propagation issues
+    const Problem4 = () => {
+        const handleParent = () =&gt; console.log('Parent');
+        const handleChild = (e) => {
+            // If you don't want parent handler to fire
+            e.stopPropagation();
+            console.log('Child');
+        };
+        
+        return (
+            &lt;div onClick={handleParent}&gt;
+                &lt;button onClick={handleChild}&gt;
+                    Click me (parent won't fire)
+                &lt;/button&gt;
+            &lt;/div&gt;
+        );
+    };
+    
+    // ❌ Problem: Form submission reloading page
+    const Problem5 = () => {
+        const handleSubmit = (e) => {
+            // Forgot to prevent default
+            // e.preventDefault(); // Missing!
+            console.log('Form submitted');
+        };
+        
+        return (
+            &lt;form onSubmit={handleSubmit}&gt;
+                &lt;button type="submit"&gt;Submit&lt;/button&gt;
+            &lt;/form&gt;
+        );
+    };
+    
+    // ✅ Debugging helper
+    const EventDebugger = ({ children }) => {
+        const createHandler = (eventName) =&gt; (e) =&gt; {
+            console.group(`Event: ${eventName}`);
+            console.log('Type:', e.type);
+            console.log('Target:', e.target);
+            console.log('Current Target:', e.currentTarget);
+            console.log('Event Phase:', e.eventPhase);
+            console.log('Bubbles:', e.bubbles);
+            console.log('Cancelable:', e.cancelable);
+            console.log('Default Prevented:', e.defaultPrevented);
+            console.log('Timestamp:', e.timeStamp);
+            console.log('Native Event:', e.nativeEvent);
+            console.groupEnd();
+        };
+        
+        return React.cloneElement(children, {
+            onClick: createHandler('click'),
+            onChange: createHandler('change'),
+            onSubmit: createHandler('submit')
+        });
+    };
+}</pre>
+
+        <h3>Debugging Tools and Techniques</h3>
+        <pre>function EventDebugger() {
+    const [eventLog, setEventLog] = useState([]);
+    
+    // Enhanced event logger
+    const logEvent = (eventName, e) => {
+        const logEntry = {
+            timestamp: new Date().toISOString(),
+            eventName,
+            type: e.type,
+            target: {
+                tagName: e.target.tagName,
+                id: e.target.id,
+                className: e.target.className,
+                value: e.target.value
+            },
+            coordinates: e.clientX ? { x: e.clientX, y: e.clientY } : null,
+            key: e.key || null
+        };
+        
+        setEventLog(prev =&gt; [logEntry, ...prev].slice(0, 50));
+    };
+    
+    // Wrapper component for debugging
+    const DebugWrapper = ({ children }) => {
+        return React.Children.map(children, child =&gt; {
+            if (!React.isValidElement(child)) return child;
+            
+            const props = {};
+            
+            // Add debug handlers for common events
+            ['onClick', 'onChange', 'onSubmit', 'onMouseEnter', 'onMouseLeave'].forEach(eventName =&gt; {
+                if (child.props[eventName] || eventName === 'onClick') {
+                    props[eventName] = (e) =&gt; {
+                        logEvent(eventName, e);
+                        if (child.props[eventName]) {
+                            child.props[eventName](e);
+                        }
+                    };
+                }
+            });
+            
+            return React.cloneElement(child, props);
+        });
+    };
+    
+    return (
+        &lt;div className="event-debugger"&gt;
+            &lt;DebugWrapper&gt;
+                &lt;button id="debug-btn"&gt;Debug Button&lt;/button&gt;
+                &lt;input id="debug-input" placeholder="Debug input" /&gt;
+            &lt;/DebugWrapper&gt;
+            
+            &lt;div className="event-log"&gt;
+                &lt;h3&gt;Event Log&lt;/h3&gt;
+                &lt;button onClick={() =&gt; setEventLog([])}&gt;Clear Log&lt;/button&gt;
+                &lt;ul&gt;
+                    {eventLog.map((log, index) =&gt; (
+                        &lt;li key={index}&gt;
+                            &lt;strong&gt;{log.timestamp}&lt;/strong&gt;&lt;br/&gt;
+                            {log.eventName} on {log.target.tagName}
+                            {log.target.value && ` - Value: ${log.target.value}`}
+                            {log.coordinates && ` at (${log.coordinates.x}, ${log.coordinates.y})`}
+                        &lt;/li&gt;
+                    ))}
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>22. ADVANCED EVENT HANDLING TECHNIQUES</h2>
+
+        <h3>Event Delegation Pattern</h3>
+        <pre>function EventDelegation() {
+    const [items, setItems] = useState(
+        Array.from({ length: 1000 }, (_, i) =&gt; ({
+            id: i,
+            text: `Item ${i}`,
+            selected: false
+        }))
+    );
+    
+    // Single event handler for all items (efficient for large lists)
+    const handleListClick = useCallback((e) =&gt; {
+        // Find the clicked item
+        const itemElement = e.target.closest('.list-item');
+        if (!itemElement) return;
+        
+        const itemId = parseInt(itemElement.dataset.id);
+        
+        // Handle different actions based on click target
+        if (e.target.classList.contains('delete-btn')) {
+            // Delete item
+            setItems(prev =&gt; prev.filter(item =&gt; item.id !== itemId));
+        } else if (e.target.classList.contains('select-checkbox')) {
+            // Toggle selection
+            setItems(prev =&gt; prev.map(item =&gt;
+                item.id === itemId 
+                    ? { ...item, selected: !item.selected }
+                    : item
+            ));
+        } else {
+            // Select item
+            setItems(prev =&gt; prev.map(item =&gt;
+                item.id === itemId 
+                    ? { ...item, selected: !item.selected }
+                    : item
+            ));
+        }
+    }, []);
+    
+    return (
+        &lt;div className="event-delegation"&gt;
+            &lt;h3&gt;Event Delegation Demo&lt;/h3&gt;
+            &lt;p&gt;Click on items, checkboxes, or delete buttons&lt;/p&gt;
+            
+            &lt;div className="list-controls"&gt;
+                &lt;button onClick={() =&gt; setItems(prev =&gt; prev.map(i =&gt; ({ ...i, selected: false })))}&gt;
+                    Deselect All
+                &lt;/button&gt;
+                &lt;button onClick={() =&gt; setItems(prev =&gt; prev.filter(i =&gt; !i.selected))}&gt;
+                    Delete Selected
+                &lt;/button&gt;
+            &lt;/div&gt;
+            
+            &lt;ul className="item-list" onClick={handleListClick}&gt;
+                {items.map(item =&gt; (
+                    &lt;li 
+                        key={item.id}
+                        data-id={item.id}
+                        className={`list-item ${item.selected ? 'selected' : ''}`}
+                    &gt;
+                        &lt;input 
+                            type="checkbox" 
+                            className="select-checkbox"
+                            checked={item.selected}
+                            readOnly
+                        /&gt;
+                        &lt;span className="item-text"&gt;{item.text}&lt;/span&gt;
+                        &lt;button className="delete-btn"&gt;Delete&lt;/button&gt;
+                    &lt;/li&gt;
+                ))}
+            &lt;/ul&gt;
+            
+            &lt;div className="stats"&gt;
+                Total: {items.length} | Selected: {items.filter(i =&gt; i.selected).length}
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Compound Event Handlers</h3>
+        <pre>function CompoundEventHandlers() {
+    const [dragState, setDragState] = useState({
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+        currentX: 0,
+        currentY: 0,
+        element: null
+    });
+    
+    // Compound drag handler
+    const dragHandlers = {
+        onMouseDown: (e) => {
+            const element = e.currentTarget;
+            const rect = element.getBoundingClientRect();
+            
+            setDragState({
+                isDragging: true,
+                startX: e.clientX - rect.left,
+                startY: e.clientY - rect.top,
+                currentX: rect.left,
+                currentY: rect.top,
+                element
+            });
+            
+            element.style.cursor = 'grabbing';
+            element.style.userSelect = 'none';
+        },
+        
+        onMouseMove: (e) => {
+            if (!dragState.isDragging) return;
+            
+            const newX = e.clientX - dragState.startX;
+            const newY = e.clientY - dragState.startY;
+            
+            setDragState(prev =&gt; ({
+                ...prev,
+                currentX: newX,
+                currentY: newY
+            }));
+            
+            if (dragState.element) {
+                dragState.element.style.transform = `translate(${newX}px, ${newY}px)`;
+            }
+        },
+        
+        onMouseUp: () => {
+            if (dragState.element) {
+                dragState.element.style.cursor = 'grab';
+                dragState.element.style.userSelect = 'auto';
+            }
+            
+            setDragState(prev =&gt; ({
+                ...prev,
+                isDragging: false
+            }));
+        },
+        
+        onMouseLeave: () => {
+            if (dragState.isDragging) {
+                dragHandlers.onMouseUp();
+            }
+        }
+    };
+    
+    return (
+        &lt;div className="compound-events"&gt;
+            &lt;h3&gt;Compound Event Handler Demo&lt;/h3&gt;
+            &lt;p&gt;Click and drag the box&lt;/p&gt;
+            
+            &lt;div
+                className="draggable-box"
+                {...dragHandlers}
+                style={{
+                    width: 100,
+                    height: 100,
+                    background: '#4CAF50',
+                    borderRadius: 8,
+                    cursor: 'grab',
+                    position: 'relative'
+                }}
+            &gt;
+                Drag me
+            &lt;/div&gt;
+            
+            &lt;div className="drag-info"&gt;
+                {dragState.isDragging && (
+                    &lt;p&gt;
+                        Dragging at: ({dragState.currentX.toFixed(0)}, {dragState.currentY.toFixed(0)})
+                    &lt;/p&gt;
+                )}
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <h3>Gesture Recognition</h3>
+        <pre>function GestureRecognizer() {
+    const [gesture, setGesture] = useState('');
+    const [touchPoints, setTouchPoints] = useState([]);
+    
+    const gestureHandlers = {
+        onTouchStart: (e) => {
+            const touches = Array.from(e.touches).map(t =&gt; ({
+                id: t.identifier,
+                x: t.clientX,
+                y: t.clientY
+            }));
+            setTouchPoints(touches);
+            setGesture('touch started');
+        },
+        
+        onTouchMove: (e) => {
+            e.preventDefault();
+            const touches = Array.from(e.touches).map(t =&gt; ({
+                id: t.identifier,
+                x: t.clientX,
+                y: t.clientY
+            }));
+            
+            // Detect gestures
+            if (touches.length === 1 && touchPoints.length === 1) {
+                const dx = touches[0].x - touchPoints[0].x;
+                const dy = touches[0].y - touchPoints[0].y;
+                
+                if (Math.abs(dx) &gt; Math.abs(dy)) {
+                    setGesture(dx &gt; 0 ? 'swipe right' : 'swipe left');
+                } else {
+                    setGesture(dy &gt; 0 ? 'swipe down' : 'swipe up');
+                }
+            } else if (touches.length === 2 && touchPoints.length === 2) {
+                // Pinch detection
+                const oldDist = Math.hypot(
+                    touchPoints[1].x - touchPoints[0].x,
+                    touchPoints[1].y - touchPoints[0].y
+                );
+                const newDist = Math.hypot(
+                    touches[1].x - touches[0].x,
+                    touches[1].y - touches[0].y
+                );
+                
+                setGesture(newDist &gt; oldDist ? 'pinch out' : 'pinch in');
+            }
+            
+            setTouchPoints(touches);
+        },
+        
+        onTouchEnd: (e) => {
+            if (e.touches.length === 0) {
+                setGesture('touch ended');
+                setTouchPoints([]);
+            } else {
+                setTouchPoints(Array.from(e.touches).map(t =&gt; ({
+                    id: t.identifier,
+                    x: t.clientX,
+                    y: t.clientY
+                })));
+            }
+        }
+    };
+    
+    return (
+        &lt;div 
+            className="gesture-area"
+            {...gestureHandlers}
+            style={{
+                width: '100%',
+                height: 300,
+                background: '#f0f0f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px dashed #999',
+                touchAction: 'none'
+            }}
+        &gt;
+            &lt;div className="gesture-info"&gt;
+                &lt;h3&gt;Gesture Recognition Demo&lt;/h3&gt;
+                &lt;p&gt;Last gesture: &lt;strong&gt;{gesture}&lt;/strong&gt;&lt;/p&gt;
+                &lt;p&gt;Touch points: {touchPoints.length}&lt;/p&gt;
+                &lt;p className="hint"&gt;(Use touch device or Chrome device emulation)&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>23. TESTING EVENT HANDLERS</h2>
+
+        <h3>Unit Testing with React Testing Library</h3>
+        <pre>import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+// Component to test
+function TestableComponent() {
+    const [count, setCount] = useState(0);
+    const [text, setText] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+    
+    const handleClick = () =&gt; setCount(c =&gt; c + 1);
+    const handleChange = (e) =&gt; setText(e.target.value);
+    const handleSubmit = (e) =&gt; {
+        e.preventDefault();
+        setSubmitted(true);
+    };
+    
+    return (
+        &lt;div&gt;
+            &lt;p data-testid="count"&gt;Count: {count}&lt;/p&gt;
+            &lt;button onClick={handleClick}&gt;Increment&lt;/button&gt;
+            
+            &lt;input 
+                data-testid="input"
+                value={text}
+                onChange={handleChange}
+                placeholder="Enter text"
+            /&gt;
+            &lt;p data-testid="text-output"&gt;{text}&lt;/p&gt;
+            
+            &lt;form onSubmit={handleSubmit}&gt;
+                &lt;input type="text" defaultValue="test" /&gt;
+                &lt;button type="submit"&gt;Submit&lt;/button&gt;
+            &lt;/form&gt;
+            {submitted && &lt;p data-testid="submitted"&gt;Submitted!&lt;/p&gt;}
+        &lt;/div&gt;
+    );
+}
+
+// Tests
+describe('Event Handler Tests', () =&gt; {
+    test('click handler increments count', () =&gt; {
+        render(&lt;TestableComponent /&gt;);
+        
+        const button = screen.getByText('Increment');
+        const count = screen.getByTestId('count');
+        
+        expect(count).toHaveTextContent('Count: 0');
+        
+        fireEvent.click(button);
+        expect(count).toHaveTextContent('Count: 1');
+        
+        fireEvent.click(button);
+        expect(count).toHaveTextContent('Count: 2');
+    });
+    
+    test('change handler updates text', () =&gt; {
+        render(&lt;TestableComponent /&gt;);
+        
+        const input = screen.getByTestId('input');
+        const output = screen.getByTestId('text-output');
+        
+        fireEvent.change(input, { target: { value: 'Hello' } });
+        expect(output).toHaveTextContent('Hello');
+        
+        fireEvent.change(input, { target: { value: 'World' } });
+        expect(output).toHaveTextContent('World');
+    });
+    
+    test('form submission is prevented and state updates', async () =&gt; {
+        render(&lt;TestableComponent /&gt;);
+        
+        const submitButton = screen.getByText('Submit');
+        fireEvent.click(submitButton);
+        
+        await waitFor(() =&gt; {
+            expect(screen.getByTestId('submitted')).toBeInTheDocument();
+        });
+    });
+    
+    test('userEvent simulates more realistic interactions', async () =&gt; {
+        const user = userEvent.setup();
+        render(&lt;TestableComponent /&gt;);
+        
+        const input = screen.getByTestId('input');
+        await user.type(input, 'Hello, World!');
+        
+        expect(input).toHaveValue('Hello, World!');
+        
+        const button = screen.getByText('Increment');
+        await user.click(button);
+        await user.click(button);
+        
+        expect(screen.getByTestId('count')).toHaveTextContent('Count: 2');
+    });
+});</pre>
+
+        <h3>Testing Custom Hooks</h3>
+        <pre>import { renderHook, act } from '@testing-library/react';
+
+// Custom hook to test
+function useCounter(initialValue = 0) {
+    const [count, setCount] = useState(initialValue);
+    
+    const increment = useCallback(() =&gt; setCount(c =&gt; c + 1), []);
+    const decrement = useCallback(() =&gt; setCount(c =&gt; c - 1), []);
+    const reset = useCallback(() =&gt; setCount(initialValue), [initialValue]);
+    
+    return { count, increment, decrement, reset };
+}
+
+// Tests
+describe('useCounter Hook', () =&gt; {
+    test('initializes with given value', () =&gt; {
+        const { result } = renderHook(() =&gt; useCounter(10));
+        expect(result.current.count).toBe(10);
+    });
+    
+    test('increment increases count', () =&gt; {
+        const { result } = renderHook(() =&gt; useCounter(0));
+        
+        act(() =&gt; {
+            result.current.increment();
+        });
+        
+        expect(result.current.count).toBe(1);
+        
+        act(() =&gt; {
+            result.current.increment();
+        });
+        
+        expect(result.current.count).toBe(2);
+    });
+    
+    test('decrement decreases count', () =&gt; {
+        const { result } = renderHook(() =&gt; useCounter(5));
+        
+        act(() =&gt; {
+            result.current.decrement();
+        });
+        
+        expect(result.current.count).toBe(4);
+    });
+    
+    test('reset sets count back to initial value', () =&gt; {
+        const { result } = renderHook(() =&gt; useCounter(100));
+        
+        act(() =&gt; {
+            result.current.increment();
+            result.current.increment();
+        });
+        
+        expect(result.current.count).toBe(102);
+        
+        act(() =&gt; {
+            result.current.reset();
+        });
+        
+        expect(result.current.count).toBe(100);
+    });
+});</pre>
+
+        <hr>
+
+        <h2>24. ACCESSIBILITY CONSIDERATIONS</h2>
+
+        <h3>Keyboard Accessibility</h3>
+        <pre>function AccessibleComponent() {
+    const [isOpen, setIsOpen] = useState(false);
+    
+    // Keyboard handlers
+    const handleKeyDown = (e) => {
+        switch (e.key) {
+            case 'Enter':
+            case 'Space':
+                e.preventDefault();
+                setIsOpen(!isOpen);
+                break;
+            case 'Escape':
+                if (isOpen) {
+                    setIsOpen(false);
+                }
+                break;
+            case 'ArrowDown':
+                if (isOpen) {
+                    e.preventDefault();
+                    // Focus next item
+                }
+                break;
+            case 'ArrowUp':
+                if (isOpen) {
+                    e.preventDefault();
+                    // Focus previous item
+                }
+                break;
+            default:
+                break;
+        }
+    };
+    
+    return (
+        &lt;div className="accessible-component"&gt;
+            {/* Button with proper role and keyboard handling */}
+            &lt;button
+                onClick={() =&gt; setIsOpen(!isOpen)}
+                onKeyDown={handleKeyDown}
+                aria-expanded={isOpen}
+                aria-controls="menu"
+                aria-haspopup="true"
+            &gt;
+                Menu
+            &lt;/button&gt;
+            
+            {/* Menu with proper ARIA attributes */}
+            {isOpen && (
+                &lt;ul
+                    id="menu"
+                    role="menu"
+                    aria-label="Options"
+                &gt;
+                    &lt;li role="menuitem" tabIndex={-1}&gt;Option 1&lt;/li&gt;
+                    &lt;li role="menuitem" tabIndex={-1}&gt;Option 2&lt;/li&gt;
+                    &lt;li role="menuitem" tabIndex={-1}&gt;Option 3&lt;/li&gt;
+                &lt;/ul&gt;
+            )}
+        &lt;/div&gt;
+    );
+}
+
+// Accessible form inputs
+function AccessibleForm() {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        agree: false
+    });
+    
+    const [errors, setErrors] = useState({});
+    
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev =&gt; ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+        
+        // Clear error when user types
+        if (errors[name]) {
+            setErrors(prev =&gt; ({ ...prev, [name]: '' }));
+        }
+    };
+    
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        
+        if (!value && name !== 'agree') {
+            setErrors(prev =&gt; ({
+                ...prev,
+                [name]: `${name} is required`
+            }));
+        }
+    };
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Validate
+        const newErrors = {};
+        if (!formData.name) newErrors.name = 'Name is required';
+        if (!formData.email) newErrors.email = 'Email is required';
+        if (!formData.agree) newErrors.agree = 'You must agree to terms';
+        
+        if (Object.keys(newErrors).length &gt; 0) {
+            setErrors(newErrors);
+            
+            // Focus first error
+            const firstError = Object.keys(newErrors)[0];
+            document.getElementById(firstError)?.focus();
+        } else {
+            console.log('Form submitted:', formData);
+        }
+    };
+    
+    return (
+        &lt;form onSubmit={handleSubmit} noValidate&gt;
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="name"&gt;
+                    Name
+                    {errors.name && &lt;span className="error-indicator"&gt;*&lt;/span&gt;}
+                &lt;/label&gt;
+                &lt;input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? 'name-error' : undefined}
+                    required
+                /&gt;
+                {errors.name && (
+                    &lt;span id="name-error" className="error-message" role="alert"&gt;
+                        {errors.name}
+                    &lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            &lt;div className="form-field"&gt;
+                &lt;label htmlFor="email"&gt;
+                    Email
+                    {errors.email && &lt;span className="error-indicator"&gt;*&lt;/span&gt;}
+                &lt;/label&gt;
+                &lt;input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
+                    required
+                /&gt;
+                {errors.email && (
+                    &lt;span id="email-error" className="error-message" role="alert"&gt;
+                        {errors.email}
+                    &lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            &lt;div className="form-field checkbox"&gt;
+                &lt;input
+                    type="checkbox"
+                    id="agree"
+                    name="agree"
+                    checked={formData.agree}
+                    onChange={handleChange}
+                    aria-invalid={!!errors.agree}
+                    aria-describedby={errors.agree ? 'agree-error' : undefined}
+                /&gt;
+                &lt;label htmlFor="agree"&gt;
+                    I agree to the terms and conditions
+                    {errors.agree && &lt;span className="error-indicator"&gt;*&lt;/span&gt;}
+                &lt;/label&gt;
+                {errors.agree && (
+                    &lt;span id="agree-error" className="error-message" role="alert"&gt;
+                        {errors.agree}
+                    &lt;/span&gt;
+                )}
+            &lt;/div&gt;
+            
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+
+        <h3>Focus Management</h3>
+        <pre>function FocusManagement() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const modalRef = useRef(null);
+    const triggerRef = useRef(null);
+    const previousFocus = useRef(null);
+    
+    const openModal = () => {
+        previousFocus.current = document.activeElement;
+        setIsModalOpen(true);
+    };
+    
+    const closeModal = () => {
+        setIsModalOpen(false);
+        // Return focus to trigger
+        previousFocus.current?.focus();
+    };
+    
+    // Trap focus in modal
+    useEffect(() => {
+        if (isModalOpen && modalRef.current) {
+            const focusableElements = modalRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            firstElement?.focus();
+            
+            const handleTabKey = (e) => {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement?.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement?.focus();
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            };
+            
+            document.addEventListener('keydown', handleTabKey);
+            return () =&gt; document.removeEventListener('keydown', handleTabKey);
+        }
+    }, [isModalOpen]);
+    
+    return (
+        &lt;div className="focus-management"&gt;
+            &lt;button 
+                ref={triggerRef}
+                onClick={openModal}
+                aria-haspopup="dialog"
+            &gt;
+                Open Modal
+            &lt;/button&gt;
+            
+            {isModalOpen && (
+                &lt;div
+                    ref={modalRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                    className="modal"
+                &gt;
+                    &lt;h2 id="modal-title"&gt;Modal Dialog&lt;/h2&gt;
+                    &lt;p&gt;Focus is trapped inside the modal.&lt;/p&gt;
+                    &lt;input type="text" placeholder="Input 1" /&gt;
+                    &lt;input type="text" placeholder="Input 2" /&gt;
+                    &lt;button onClick={closeModal}&gt;Close&lt;/button&gt;
+                &lt;/div&gt;
+            )}
+        &lt;/div&gt;
+    );
+}</pre>
+
+        <hr>
+
+        <h2>SUMMARY AND BEST PRACTICES</h2>
+
+        <h3>Event Handling Checklist</h3>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Best Practice</th>
+            </tr>
+            <tr>
+                <td><strong>Naming</strong></td>
+                <td>Use <code>handle[Event]</code> for handlers, <code>on[Event]</code> for props</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Avoid inline functions in render, use <code>useCallback</code></td>
+            </tr>
+            <tr>
+                <td><strong>State Updates</strong></td>
+                <td>Use functional updates when depending on previous state</td>
+            </tr>
+            <tr>
+                <td><strong>Event Pooling</strong></td>
+                <td>Call <code>event.persist()</code> or extract data for async operations</td>
+            </tr>
+            <tr>
+                <td><strong>Accessibility</strong></td>
+                <td>Support keyboard navigation, use proper ARIA attributes</td>
+            </tr>
+            <tr>
+                <td><strong>Testing</strong></td>
+                <td>Test user interactions, not implementation details</td>
+            </tr>
+            <tr>
+                <td><strong>Error Handling</strong></td>
+                <td>Always wrap async handlers in try-catch</td>
+            </tr>
+            <tr>
+                <td><strong>Propagation</strong></td>
+                <td>Use <code>stopPropagation()</code> sparingly and intentionally</td>
+            </tr>
+            <tr>
+                <td><strong>Prevention</strong></td>
+                <td>Always call <code>preventDefault()</code> when overriding browser behavior</td>
+            </tr>
+            <tr>
+                <td><strong>Documentation</strong></td>
+                <td>Document complex event handlers and side effects</td>
+            </tr>
+        </table>
+
+        <h3>Common Patterns Cheat Sheet</h3>
+        <pre>// 1. Basic handler
+const handleClick = () =&gt; {}
+
+// 2. Handler with event
+const handleChange = (e) =&gt; setValue(e.target.value)
+
+// 3. Handler with parameter
+const handleItemClick = (id) =&gt; () =&gt; {}
+
+// 4. Async handler
+const handleSubmit = async (e) =&gt; {
+    e.preventDefault()
+    try { await submit() } catch (err) {}
+}
+
+// 5. Debounced handler
+const debouncedSearch = useCallback(debounce(search, 500), [])
+
+// 6. Compound handler
+const handlers = {
+    onMouseDown,
+    onMouseMove,
+    onMouseUp
+}
+
+// 7. Custom event
+const emit = (name, data) =&gt; {
+    const event = new CustomEvent(name, { detail: data })
+    window.dispatchEvent(event)
+}
+
+// 8. Keyboard handler
+const onKeyDown = (e) =&gt; {
+    if (e.key === 'Enter') handleEnter()
+}</pre>
+
+        <hr>
+
+        <p style="text-align: center; font-style: italic; margin-top: 3rem;">This comprehensive guide covers all aspects
+            of event handling in React, from basic concepts to advanced patterns and best practices. Remember that good
+            event handling is crucial for creating intuitive, accessible, and performant React applications.</p>
+
+    </div>
+</body>
+
+</html>

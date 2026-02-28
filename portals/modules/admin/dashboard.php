@@ -1,10 +1,6 @@
 <?php
 // modules/admin/dashboard.php
 
-// Enable error reporting for debugging (remove in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -27,7 +23,7 @@ if (!$conn) {
     die("Database connection failed. Please check your configuration.");
 }
 
-// Initialize stats array with defaults
+// Initialize stats array
 $stats = [
     'total_users' => 0,
     'total_students' => 0,
@@ -38,10 +34,9 @@ $stats = [
     'recent_enrollments' => 0,
     'monthly_revenue' => 0,
     'total_revenue' => 0,
-    'pending_payments_count' => 0,
-    'pending_amount' => 0,
-    'overdue_count' => 0,
-    'overdue_amount' => 0,
+    'pending_payments' => 0,
+    'overdue_payments' => 0,
+    'financial_issues_count' => 0,
     'payment_methods' => [],
     'recent_transactions' => []
 ];
@@ -49,88 +44,78 @@ $stats = [
 // Get statistics with error handling
 try {
     // Total active users
-    $result = $conn->query("SELECT COUNT(*) as total FROM users WHERE status = 'active'");
+    $sql = "SELECT COUNT(*) as total_users FROM users WHERE status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['total_users'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['total_users'] = $row['total_users'] ?? 0;
     }
 
     // Total students
-    $result = $conn->query("SELECT COUNT(*) as total FROM users WHERE role = 'student' AND status = 'active'");
+    $sql = "SELECT COUNT(*) as total_students FROM users WHERE role = 'student' AND status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['total_students'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['total_students'] = $row['total_students'] ?? 0;
     }
 
     // Total instructors
-    $result = $conn->query("SELECT COUNT(*) as total FROM users WHERE role = 'instructor' AND status = 'active'");
+    $sql = "SELECT COUNT(*) as total_instructors FROM users WHERE role = 'instructor' AND status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['total_instructors'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['total_instructors'] = $row['total_instructors'] ?? 0;
     }
 
     // Total active programs
-    $result = $conn->query("SELECT COUNT(*) as total FROM programs WHERE status = 'active'");
+    $sql = "SELECT COUNT(*) as total_programs FROM programs WHERE status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['total_programs'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['total_programs'] = $row['total_programs'] ?? 0;
     }
 
     // Total ongoing classes
-    $result = $conn->query("SELECT COUNT(*) as total FROM class_batches WHERE status = 'ongoing'");
+    $sql = "SELECT COUNT(*) as total_classes FROM class_batches WHERE status = 'ongoing'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['total_classes'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['total_classes'] = $row['total_classes'] ?? 0;
     }
 
     // Pending applications
-    $result = $conn->query("SELECT COUNT(*) as total FROM applications WHERE status = 'pending'");
+    $sql = "SELECT COUNT(*) as pending_apps FROM applications WHERE status = 'pending'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['pending_apps'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['pending_apps'] = $row['pending_apps'] ?? 0;
     }
 
     // Recent enrollments (last 30 days)
-    $result = $conn->query("SELECT COUNT(*) as total FROM enrollments WHERE enrollment_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND status = 'active'");
+    $sql = "SELECT COUNT(*) as recent_enrollments FROM enrollments WHERE enrollment_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['recent_enrollments'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['recent_enrollments'] = $row['recent_enrollments'] ?? 0;
     }
 
-    // Monthly revenue
-    $result = $conn->query("SELECT COALESCE(SUM(p.fee), 0) as total 
+    // Get financial dashboard statistics
+    $finance_stats = getFinanceDashboardStats('month');
+    $stats = array_merge($stats, $finance_stats);
+
+    // Monthly revenue calculation
+    $sql = "SELECT COALESCE(SUM(p.fee), 0) as monthly_revenue 
             FROM enrollments e 
             JOIN class_batches cb ON e.class_id = cb.id 
             JOIN courses c ON cb.course_id = c.id 
             JOIN programs p ON c.program_id = p.id 
             WHERE MONTH(e.enrollment_date) = MONTH(CURDATE()) 
             AND YEAR(e.enrollment_date) = YEAR(CURDATE())
-            AND e.status = 'active'");
+            AND e.status = 'active'";
+    $result = $conn->query($sql);
     if ($result) {
-        $stats['monthly_revenue'] = $result->fetch_assoc()['total'] ?? 0;
-        $result->free();
-    }
-
-    // Get recent transactions
-    $result = $conn->query("SELECT t.*, u.first_name, u.last_name, cb.batch_code 
-            FROM transactions t 
-            JOIN users u ON t.user_id = u.id 
-            LEFT JOIN class_batches cb ON t.class_id = cb.id 
-            ORDER BY t.created_at DESC 
-            LIMIT 5");
-    if ($result && $result->num_rows > 0) {
-        $stats['recent_transactions'] = $result->fetch_all(MYSQLI_ASSOC);
-        $result->free();
-    }
-
-    // Get payment methods distribution
-    $result = $conn->query("SELECT payment_method, COUNT(*) as count 
-            FROM transactions 
-            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            GROUP BY payment_method");
-    if ($result && $result->num_rows > 0) {
-        $stats['payment_methods'] = $result->fetch_all(MYSQLI_ASSOC);
-        $result->free();
+        $row = $result->fetch_assoc();
+        $stats['monthly_revenue'] = $row['monthly_revenue'] ?? 0;
     }
 } catch (Exception $e) {
     error_log("Dashboard statistics error: " . $e->getMessage());
@@ -138,39 +123,40 @@ try {
 
 // Get recent activity logs
 $activities = [];
-$result = $conn->query("SELECT al.*, u.first_name, u.last_name, u.email 
+$sql = "SELECT al.*, u.first_name, u.last_name, u.email 
         FROM activity_logs al 
         LEFT JOIN users u ON al.user_id = u.id 
         ORDER BY al.created_at DESC 
-        LIMIT 10");
+        LIMIT 10";
+$result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $activities = $result->fetch_all(MYSQLI_ASSOC);
-    $result->free();
 }
 
 // Get pending applications for review
 $pending_applications = [];
-$result = $conn->query("SELECT a.*, u.first_name, u.last_name, u.email, u.phone, 
+$sql = "SELECT a.*, u.first_name, u.last_name, u.email, u.phone, 
                p.name as program_name, p.program_code 
         FROM applications a 
         JOIN users u ON a.user_id = u.id 
         LEFT JOIN programs p ON a.program_id = p.id 
         WHERE a.status = 'pending' 
         ORDER BY a.created_at DESC 
-        LIMIT 5");
+        LIMIT 5";
+$result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $pending_applications = $result->fetch_all(MYSQLI_ASSOC);
-    $result->free();
 }
 
 // Get system notifications for current user
 $notifications = [];
 $user_id = $_SESSION['user_id'] ?? 0;
-$stmt = $conn->prepare("SELECT * FROM notifications 
+$sql = "SELECT * FROM notifications 
         WHERE (user_id = ? OR user_id IS NULL) 
         AND is_read = 0 
         ORDER BY created_at DESC 
-        LIMIT 10");
+        LIMIT 10";
+$stmt = $conn->prepare($sql);
 if ($stmt) {
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -183,7 +169,7 @@ if ($stmt) {
 
 // Get upcoming classes
 $upcoming_classes = [];
-$result = $conn->query("SELECT cb.*, c.title as course_title, p.name as program_name, 
+$sql = "SELECT cb.*, c.title as course_title, p.name as program_name, 
                CONCAT(u.first_name, ' ', u.last_name) as instructor_name 
         FROM class_batches cb 
         JOIN courses c ON cb.course_id = c.id 
@@ -192,15 +178,15 @@ $result = $conn->query("SELECT cb.*, c.title as course_title, p.name as program_
         WHERE cb.start_date >= CURDATE() 
         AND cb.status = 'scheduled' 
         ORDER BY cb.start_date ASC 
-        LIMIT 5");
+        LIMIT 5";
+$result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $upcoming_classes = $result->fetch_all(MYSQLI_ASSOC);
-    $result->free();
 }
 
 // Get students with overdue payments
 $overdue_students = [];
-$result = $conn->query("SELECT sfs.*, u.first_name, u.last_name, u.email, cb.batch_code, 
+$sql = "SELECT sfs.*, u.first_name, u.last_name, u.email, cb.batch_code, 
                c.title as course_title, DATEDIFF(CURDATE(), sfs.next_payment_due) as days_overdue
         FROM student_financial_status sfs
         JOIN users u ON u.id = sfs.student_id
@@ -210,19 +196,16 @@ $result = $conn->query("SELECT sfs.*, u.first_name, u.last_name, u.email, cb.bat
         AND sfs.next_payment_due < CURDATE()
         AND sfs.is_suspended = 0
         ORDER BY sfs.next_payment_due ASC
-        LIMIT 5");
+        LIMIT 5";
+$result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $overdue_students = $result->fetch_all(MYSQLI_ASSOC);
-    $result->free();
 }
 
 // Log dashboard access
-if (function_exists('logActivity')) {
-    logActivity($_SESSION['user_id'], 'admin_dashboard_access', 'Admin accessed dashboard', $_SERVER['REMOTE_ADDR']);
-}
+logActivity($_SESSION['user_id'], 'admin_dashboard_access', 'Admin accessed dashboard', $_SERVER['REMOTE_ADDR']);
 
-// DO NOT close the database connection here if you need it later in the HTML
-// The connection will be closed automatically at the end of script execution
+// Close database connection
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -232,14 +215,24 @@ if (function_exists('logActivity')) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Admin Dashboard - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/images/favicon.ico">
     <style>
-        /* RESET & BASE STYLES */
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        /* Color Variables */
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
@@ -261,56 +254,39 @@ if (function_exists('logActivity')) {
             --gray-700: #334155;
             --gray-800: #1e293b;
             --gray-900: #0f172a;
-
-            /* Spacing */
-            --space-xs: 0.5rem;
-            --space-sm: 0.75rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-
-            /* Font sizes */
-            --text-xs: 0.75rem;
-            --text-sm: 0.875rem;
-            --text-md: 1rem;
-            --text-lg: 1.125rem;
-            --text-xl: 1.25rem;
-            --text-2xl: 1.5rem;
+            --sidebar-width: 260px;
+            --sidebar-mobile-width: 85%;
+            --header-height: 70px;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-700);
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        /* Mobile-first layout */
+        /* Layout */
         .app-container {
             display: flex;
-            flex-direction: column;
             min-height: 100vh;
+            position: relative;
         }
 
-        /* Mobile Sidebar */
+        /* Sidebar - Mobile First Approach */
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
+            width: var(--sidebar-mobile-width);
+            max-width: 320px;
             background: linear-gradient(180deg, var(--gray-800) 0%, var(--gray-900) 100%);
             color: white;
-            transition: left 0.3s ease;
-            z-index: 1000;
+            position: fixed;
+            left: -100%;
+            top: 0;
+            height: 100vh;
             overflow-y: auto;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar.active {
             left: 0;
         }
 
+        /* Overlay for mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -320,18 +296,34 @@ if (function_exists('logActivity')) {
             bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
         }
 
         .sidebar-overlay.active {
             display: block;
         }
 
+        /* Desktop sidebar */
+        @media (min-width: 1024px) {
+            .sidebar {
+                width: var(--sidebar-width);
+                left: 0;
+                position: fixed;
+                box-shadow: none;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
         .sidebar-header {
-            padding: var(--space-lg);
+            padding: 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: 0.75rem;
         }
 
         .logo-icon {
@@ -343,13 +335,23 @@ if (function_exists('logActivity')) {
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-info {
-            padding: var(--space-lg);
+            padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: 0.75rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -362,54 +364,92 @@ if (function_exists('logActivity')) {
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 1rem;
+            color: white;
             flex-shrink: 0;
         }
 
+        .user-details {
+            min-width: 0;
+            flex: 1;
+        }
+
         .user-details h3 {
-            font-size: var(--text-sm);
+            font-size: 0.875rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-details p {
-            font-size: var(--text-xs);
+            font-size: 0.75rem;
             color: var(--gray-400);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            white-space: nowrap;
         }
 
         .sidebar-nav {
-            padding: var(--space-md) 0;
+            padding: 1rem 0;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            padding: var(--space-sm) var(--space-lg);
+            padding: 0.75rem 1.5rem;
             color: var(--gray-300);
             text-decoration: none;
-            gap: var(--space-sm);
-            font-size: var(--text-sm);
-            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            gap: 0.75rem;
+            min-height: 48px;
+            /* Better touch target */
         }
 
         .nav-item:hover,
+        .nav-item:active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
         .nav-item.active {
             background: rgba(67, 97, 238, 0.2);
             color: white;
-            border-left-color: var(--primary);
+            border-left: 3px solid var(--primary);
         }
 
         .nav-item i {
             width: 20px;
             text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-label {
+            flex: 1;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .badge {
             background: var(--primary);
             color: white;
-            font-size: var(--text-xs);
-            padding: 0.125rem 0.5rem;
+            font-size: 0.7rem;
+            padding: 0.125rem 0.4rem;
             border-radius: 12px;
-            margin-left: auto;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+        }
+
+        .nav-dropdown {
+            position: relative;
         }
 
         .dropdown-content {
@@ -421,61 +461,92 @@ if (function_exists('logActivity')) {
 
         .nav-dropdown.active .dropdown-content {
             max-height: 500px;
+            transition: max-height 0.5s ease-in;
         }
 
         .dropdown-content .nav-item {
-            padding-left: calc(var(--space-lg) * 2);
+            padding-left: 3rem;
         }
 
         .dropdown-toggle {
             cursor: pointer;
             display: flex;
             align-items: center;
+            gap: 0.75rem;
         }
 
-        .dropdown-toggle .fa-chevron-down {
+        .dropdown-toggle .fa-chevron-down,
+        .dropdown-toggle .fa-chevron-up {
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
             margin-left: auto;
-            font-size: var(--text-xs);
+        }
+
+        .nav-dropdown.active .dropdown-toggle .fa-chevron-down {
+            transform: rotate(180deg);
         }
 
         .sidebar-footer {
-            padding: var(--space-lg);
+            padding: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
             width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Top Bar */
+        @media (min-width: 1024px) {
+            .main-content {
+                margin-left: var(--sidebar-width);
+            }
+        }
+
+        /* Top Bar - Mobile Optimized */
         .top-bar {
             background: white;
-            padding: var(--space-sm) var(--space-md);
+            padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--gray-200);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
-            z-index: 100;
-            gap: var(--space-sm);
+            z-index: 90;
+            height: var(--header-height);
         }
 
         .mobile-menu-toggle {
             background: none;
             border: none;
-            font-size: var(--text-xl);
+            font-size: 1.5rem;
             color: var(--gray-700);
             cursor: pointer;
-            padding: var(--space-xs);
-            width: 40px;
-            height: 40px;
+            padding: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 44px;
+            height: 44px;
             border-radius: 8px;
+            background: var(--gray-100);
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-toggle:active {
+            background: var(--gray-200);
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
         }
 
         .page-title {
@@ -484,24 +555,79 @@ if (function_exists('logActivity')) {
         }
 
         .page-title h1 {
-            font-size: var(--text-lg);
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--gray-800);
+            margin-bottom: 0.125rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .page-title p {
-            font-size: var(--text-xs);
+            font-size: 0.75rem;
             color: var(--gray-600);
-            display: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (min-width: 640px) {
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .page-title p {
+                font-size: 0.875rem;
+            }
         }
 
         .top-bar-actions {
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 640px) {
+            .top-bar-actions {
+                gap: 1rem;
+            }
+        }
+
+        .search-box {
+            display: none;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .search-box {
+                display: block;
+            }
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            width: 200px;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
         }
 
         .action-icon {
@@ -515,7 +641,14 @@ if (function_exists('logActivity')) {
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.2s ease;
             position: relative;
+            flex-shrink: 0;
+        }
+
+        .action-icon:active {
+            background: var(--gray-200);
+            transform: scale(0.95);
         }
 
         .notification-count {
@@ -524,13 +657,14 @@ if (function_exists('logActivity')) {
             right: -4px;
             background: var(--danger);
             color: white;
-            font-size: var(--text-xs);
+            font-size: 0.7rem;
             width: 18px;
             height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 600;
         }
 
         .user-menu {
@@ -545,57 +679,85 @@ if (function_exists('logActivity')) {
             border: 1px solid var(--gray-200);
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            min-width: 180px;
+            min-width: 200px;
             display: none;
             z-index: 1000;
+            margin-top: 0.5rem;
         }
 
-        .user-menu:hover .user-menu-dropdown {
+        .user-menu-dropdown.active {
             display: block;
         }
 
         .user-menu-item {
             display: flex;
             align-items: center;
-            padding: var(--space-sm) var(--space-md);
+            padding: 0.75rem 1rem;
             color: var(--gray-700);
             text-decoration: none;
-            gap: var(--space-sm);
-            font-size: var(--text-sm);
+            gap: 0.75rem;
+            transition: all 0.2s ease;
+            min-height: 44px;
         }
 
-        .user-menu-item:hover {
+        .user-menu-item:active {
             background: var(--gray-100);
         }
 
-        /* Stats Grid */
+        /* Stats Grid - Mobile Optimized */
         .stats-grid {
-            padding: var(--space-md);
+            padding: 1rem;
             display: grid;
             grid-template-columns: 1fr;
-            gap: var(--space-md);
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
             border-radius: 12px;
-            padding: var(--space-md);
+            padding: 1.25rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: var(--space-sm);
+            margin-bottom: 1rem;
         }
 
         .stat-title {
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--gray-600);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-icon {
@@ -605,7 +767,16 @@ if (function_exists('logActivity')) {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--text-lg);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 640px) {
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
         }
 
         .stat-icon.success {
@@ -634,87 +805,197 @@ if (function_exists('logActivity')) {
         }
 
         .stat-value {
-            font-size: var(--text-2xl);
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        @media (min-width: 640px) {
+            .stat-value {
+                font-size: 2rem;
+            }
         }
 
         .stat-change {
-            font-size: var(--text-xs);
+            font-size: 0.75rem;
             color: var(--gray-600);
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
-        /* Content Grid */
+        /* Main Content Grid - Mobile Optimized */
         .content-grid {
-            padding: 0 var(--space-md) var(--space-md);
+            flex: 1;
+            padding: 0 1rem 1rem;
             display: grid;
             grid-template-columns: 1fr;
-            gap: var(--space-md);
+            gap: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                padding: 0 1.5rem 1.5rem;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+            }
         }
 
         .content-card {
             background: white;
             border-radius: 12px;
-            padding: var(--space-md);
+            padding: 1.25rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        @media (min-width: 640px) {
+            .content-card {
+                padding: 1.5rem;
+            }
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-sm);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--gray-200);
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .card-title {
-            font-size: var(--text-md);
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--gray-800);
         }
 
-        /* Table */
+        @media (min-width: 640px) {
+            .card-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Tables - Mobile Optimized */
         .table-container {
             overflow-x: auto;
-            margin: 0 calc(var(--space-md) * -1);
-            padding: 0 var(--space-md);
+            margin: 0 -0.25rem;
+            -webkit-overflow-scrolling: touch;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 500px;
+            min-width: 600px;
         }
 
         .data-table th {
-            padding: var(--space-xs) var(--space-sm);
+            padding: 0.75rem 0.75rem;
             text-align: left;
             font-weight: 600;
             color: var(--gray-700);
             border-bottom: 2px solid var(--gray-200);
             background: var(--gray-50);
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
+            white-space: nowrap;
         }
 
         .data-table td {
-            padding: var(--space-sm);
+            padding: 0.75rem;
             border-bottom: 1px solid var(--gray-200);
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
+        }
+
+        /* Mobile card view for tables on very small screens */
+        @media (max-width: 480px) {
+            .table-container {
+                overflow-x: visible;
+            }
+
+            .data-table {
+                min-width: 0;
+                display: block;
+            }
+
+            .data-table thead {
+                display: none;
+            }
+
+            .data-table tbody {
+                display: block;
+            }
+
+            .data-table tr {
+                display: block;
+                padding: 1rem;
+                background: var(--gray-50);
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                border: 1px solid var(--gray-200);
+            }
+
+            .data-table td {
+                display: flex;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid var(--gray-200);
+                border-bottom: none;
+                font-size: 0.875rem;
+            }
+
+            .data-table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                width: 100px;
+                min-width: 100px;
+                color: var(--gray-600);
+            }
+
+            .data-table td:last-child {
+                border-bottom: none;
+            }
+
+            /* Special handling for transaction rows */
+            .data-table td:first-child:before {
+                content: "Student:";
+            }
+
+            .data-table td:nth-child(2):before {
+                content: "Transaction:";
+            }
+
+            .data-table td:nth-child(3):before {
+                content: "Amount:";
+            }
+
+            .data-table td:nth-child(4):before {
+                content: "Method:";
+            }
+
+            .data-table td:nth-child(5):before {
+                content: "Date:";
+            }
+
+            .data-table td:nth-child(6):before {
+                content: "Status:";
+            }
         }
 
         /* Status Badges */
         .status-badge {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 20px;
-            font-size: var(--text-xs);
+            font-size: 0.7rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .status-active {
@@ -722,29 +1003,52 @@ if (function_exists('logActivity')) {
             color: var(--success);
         }
 
-        /* Quick Actions */
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-overdue {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Quick Actions - Mobile Optimized */
         .quick-actions-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 480px) {
+            .quick-actions-grid {
+                gap: 1rem;
+            }
         }
 
         .quick-action {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: var(--space-md) var(--space-xs);
+            justify-content: center;
+            padding: 1rem 0.5rem;
             background: var(--gray-50);
             border-radius: 10px;
             text-decoration: none;
             color: var(--gray-700);
             transition: all 0.2s ease;
-            text-align: center;
+            min-height: 100px;
         }
 
-        .quick-action:hover {
+        .quick-action:active {
             background: var(--primary);
             color: white;
+            transform: scale(0.98);
+        }
+
+        .quick-action:active .quick-action-icon {
+            background: white;
+            color: var(--primary);
         }
 
         .quick-action-icon {
@@ -755,42 +1059,70 @@ if (function_exists('logActivity')) {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--text-md);
-            margin-bottom: var(--space-xs);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
         }
 
         .quick-action-label {
-            font-size: var(--text-xs);
+            font-size: 0.75rem;
             font-weight: 600;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        @media (min-width: 640px) {
+            .quick-action-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+
+            .quick-action-label {
+                font-size: 0.875rem;
+            }
         }
 
         /* Payment Methods */
         .payment-methods {
             display: flex;
             flex-direction: column;
-            gap: var(--space-xs);
+            gap: 0.5rem;
         }
 
         .payment-method-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--space-sm);
+            padding: 0.75rem;
             background: var(--gray-50);
             border-radius: 8px;
+            transition: all 0.2s ease;
+            min-height: 56px;
+        }
+
+        .payment-method-item:active {
+            background: var(--gray-100);
+            transform: scale(0.98);
         }
 
         .payment-method-name {
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
-            font-size: var(--text-xs);
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .payment-method-name i {
+            width: 20px;
         }
 
         .payment-method-count {
             font-weight: 600;
             color: var(--primary);
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
+            white-space: nowrap;
         }
 
         /* Overdue Students */
@@ -798,11 +1130,12 @@ if (function_exists('logActivity')) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--space-sm);
+            padding: 1rem;
             background: rgba(239, 68, 68, 0.05);
             border-radius: 8px;
             border-left: 4px solid var(--danger);
-            margin-bottom: var(--space-sm);
+            margin-bottom: 0.75rem;
+            gap: 1rem;
         }
 
         .overdue-student-info {
@@ -811,39 +1144,47 @@ if (function_exists('logActivity')) {
         }
 
         .overdue-student-info h4 {
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 0.125rem;
+            margin-bottom: 0.25rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .overdue-student-info p {
-            font-size: var(--text-xs);
+            font-size: 0.7rem;
             color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .overdue-amount {
             font-weight: 700;
             color: var(--danger);
-            font-size: var(--text-sm);
+            font-size: 0.9rem;
             white-space: nowrap;
-            margin-left: var(--space-sm);
+        }
+
+        @media (min-width: 640px) {
+            .overdue-amount {
+                font-size: 1rem;
+            }
         }
 
         /* Activity List */
         .activity-list {
             display: flex;
             flex-direction: column;
-            gap: var(--space-sm);
+            gap: 0.75rem;
         }
 
         .activity-item {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
+            gap: 0.75rem;
+            padding: 0.75rem;
             background: var(--gray-50);
             border-radius: 8px;
         }
@@ -855,23 +1196,31 @@ if (function_exists('logActivity')) {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--text-sm);
+            font-size: 0.9rem;
             background: white;
+            flex-shrink: 0;
         }
 
         .activity-content {
             flex: 1;
+            min-width: 0;
         }
 
         .activity-title {
             font-weight: 600;
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
             margin-bottom: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .activity-meta {
-            font-size: var(--text-xs);
+            font-size: 0.7rem;
             color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Buttons */
@@ -879,15 +1228,21 @@ if (function_exists('logActivity')) {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.375rem 0.75rem;
+            padding: 0.5rem 0.75rem;
             border-radius: 6px;
-            font-size: var(--text-xs);
+            font-size: 0.8rem;
             font-weight: 500;
             text-decoration: none;
             cursor: pointer;
             border: none;
-            gap: 0.25rem;
+            transition: all 0.2s ease;
+            gap: 0.5rem;
+            min-height: 36px;
             white-space: nowrap;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
         }
 
         .btn-primary {
@@ -895,28 +1250,43 @@ if (function_exists('logActivity')) {
             color: white;
         }
 
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
+        .btn-primary:active {
+            background: var(--primary-dark);
         }
 
-        /* Footer */
+        .btn-sm {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.7rem;
+            min-height: 32px;
+        }
+
+        /* Footer - Mobile Optimized */
         .dashboard-footer {
             background: white;
-            padding: var(--space-sm) var(--space-md);
+            padding: 0.75rem 1rem;
             border-top: 1px solid var(--gray-200);
             display: flex;
             flex-direction: column;
-            gap: var(--space-xs);
-            align-items: center;
-            text-align: center;
-            font-size: var(--text-xs);
+            gap: 0.5rem;
+            font-size: 0.7rem;
             color: var(--gray-600);
+        }
+
+        @media (min-width: 640px) {
+            .dashboard-footer {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 1.5rem;
+                font-size: 0.875rem;
+            }
         }
 
         .system-status {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .status-indicator {
@@ -939,74 +1309,80 @@ if (function_exists('logActivity')) {
             }
         }
 
-        /* Tablet */
-        @media (min-width: 768px) {
-            .page-title p {
-                display: block;
-            }
+        /* Mobile Search Modal */
+        .mobile-search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 1100;
+            padding: 1rem;
+        }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .mobile-search-modal.active {
+            display: block;
+        }
 
-            .dashboard-footer {
-                flex-direction: row;
-                justify-content: space-between;
-                text-align: left;
-            }
+        .mobile-search-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
 
-            .quick-actions-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+        .mobile-search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
 
-            .table-container {
-                margin: 0;
-                padding: 0;
-            }
+        .mobile-search-close {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--gray-100);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
 
-            .data-table {
-                min-width: 0;
+        @media (max-width: 767px) {
+            .mobile-search-toggle {
+                display: flex !important;
             }
         }
 
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .app-container {
-                flex-direction: row;
-            }
-
-            .sidebar {
-                position: sticky;
-                left: 0;
-                width: 260px;
-            }
-
-            .sidebar-overlay {
-                display: none !important;
-            }
-
-            .main-content {
-                width: calc(100% - 260px);
-            }
-
-            .mobile-menu-toggle {
-                display: none;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .content-grid {
-                grid-template-columns: 2fr 1fr;
-            }
+        .mobile-search-toggle {
+            display: none;
         }
 
-        /* Utilities */
-        .text-truncate {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        /* Touch-friendly improvements */
+        button,
+        .nav-item,
+        .quick-action,
+        .btn,
+        .action-icon {
+            touch-action: manipulation;
+        }
+
+        /* Prevent text overflow */
+        * {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Improve scrolling on iOS */
+        .sidebar,
+        .main-content,
+        .table-container {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -1027,7 +1403,7 @@ if (function_exists('logActivity')) {
                 <div class="user-avatar">
                     <?php
                     $initials = isset($_SESSION['user_name']) ? strtoupper(substr($_SESSION['user_name'], 0, 1)) : 'A';
-                    echo htmlspecialchars($initials);
+                    echo $initials;
                     ?>
                 </div>
                 <div class="user-details">
@@ -1037,57 +1413,184 @@ if (function_exists('logActivity')) {
             </div>
 
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">
+                <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php" class="nav-item active">
                     <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                    <span class="nav-label">Dashboard</span>
                 </a>
 
+                <!-- Applications Dropdown -->
                 <div class="nav-dropdown">
-                    <div class="nav-item dropdown-toggle">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
                         <i class="fas fa-file-alt"></i>
-                        <span>Applications</span>
+                        <span class="nav-label">Applications</span>
                         <?php if ($stats['pending_apps'] > 0): ?>
                             <span class="badge"><?php echo $stats['pending_apps']; ?></span>
                         <?php endif; ?>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="dropdown-content">
-                        <a href="#" class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php?status=pending" class="nav-item">
                             <i class="fas fa-clock"></i>
-                            <span>Pending</span>
+                            <span class="nav-label">Pending Review</span>
+                            <?php if ($stats['pending_apps'] > 0): ?>
+                                <span class="badge"><?php echo $stats['pending_apps']; ?></span>
+                            <?php endif; ?>
                         </a>
-                        <a href="#" class="nav-item">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php?status=under_review" class="nav-item">
+                            <i class="fas fa-search"></i>
+                            <span class="nav-label">Under Review</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php?status=approved" class="nav-item">
                             <i class="fas fa-check-circle"></i>
-                            <span>Approved</span>
+                            <span class="nav-label">Approved</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php?status=rejected" class="nav-item">
+                            <i class="fas fa-times-circle"></i>
+                            <span class="nav-label">Rejected</span>
                         </a>
                     </div>
                 </div>
 
-                <a href="#" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
+                <!-- Users Management -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-label">Users Management</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php" class="nav-item">
+                            <i class="fas fa-list"></i>
+                            <span class="nav-label">All Users</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php?role=student" class="nav-item">
+                            <i class="fas fa-user-graduate"></i>
+                            <span class="nav-label">Students</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php?role=instructor" class="nav-item">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-label">Instructors</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- School Management -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-school"></i>
+                        <span class="nav-label">School Management</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/schools/manage.php" class="nav-item">
+                            <i class="fas fa-list"></i>
+                            <span class="nav-label">Manage Schools</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/schools/create.php" class="nav-item">
+                            <i class="fas fa-plus-circle"></i>
+                            <span class="nav-label">Register a School</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Academic Management -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span class="nav-label">Academic Management</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/" class="nav-item">
+                            <i class="fas fa-project-diagram"></i>
+                            <span class="nav-label">Programs</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/" class="nav-item">
+                            <i class="fas fa-book"></i>
+                            <span class="nav-label">Courses</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/academic/classes/list.php" class="nav-item">
+                            <i class="fas fa-chalkboard"></i>
+                            <span class="nav-label">Classes/Batches</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Finance Management -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span class="nav-label">Finance Management</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/finance/dashboard.php" class="nav-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-label">Financial Overview</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/finance/payments/verify.php" class="nav-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="nav-label">Verify Payments</span>
+                            <?php
+                            if (isset($conn)) {
+                                $sql = "SELECT COUNT(*) as count FROM payment_verifications WHERE status = 'pending'";
+                                $result = $conn->query($sql);
+                                if ($result) {
+                                    $count = $result->fetch_assoc()['count'];
+                                    if ($count > 0): ?>
+                                        <span class="badge badge-danger"><?php echo $count; ?></span>
+                            <?php endif;
+                                }
+                            }
+                            ?>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/finance/payments/index.php" class="nav-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span class="nav-label">Payment Management</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/finance/invoices/index.php" class="nav-item">
+                            <i class="fas fa-file-invoice"></i>
+                            <span class="nav-label">Invoice Management</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- System -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-cogs"></i>
+                        <span class="nav-label">System</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/system/logs.php" class="nav-item">
+                            <i class="fas fa-history"></i>
+                            <span class="nav-label">System Logs</span>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>modules/admin/system/settings.php" class="nav-item">
+                            <i class="fas fa-sliders-h"></i>
+                            <span class="nav-label">System Settings</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-divider"></div>
+
+                <a href="<?php echo BASE_URL; ?>modules/admin/profile/edit.php" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-label">My Profile</span>
                 </a>
 
-                <a href="#" class="nav-item">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Academic</span>
-                </a>
-
-                <a href="#" class="nav-item">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>Finance</span>
-                </a>
-
-                <a href="#" class="nav-item">
-                    <i class="fas fa-cogs"></i>
-                    <span>Settings</span>
+                <a href="<?php echo BASE_URL; ?>modules/admin/help/" class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="nav-label">Help & Docs</span>
                 </a>
             </nav>
 
             <div class="sidebar-footer">
-                <a href="<?php echo BASE_URL; ?>modules/auth/logout.php" class="nav-item" onclick="return confirm('Are you sure?');">
+                <a href="<?php echo BASE_URL; ?>modules/auth/logout.php" class="nav-item" onclick="return confirm('Are you sure you want to logout?');">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
+                    <span class="nav-label">Logout</span>
                 </a>
             </div>
         </aside>
@@ -1096,17 +1599,26 @@ if (function_exists('logActivity')) {
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
-                <button class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="Menu">
+                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
 
                 <div class="page-title">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></p>
+                    <h1>Admin Dashboard</h1>
+                    <p>Welcome back, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Administrator'); ?>!</p>
                 </div>
 
                 <div class="top-bar-actions">
-                    <button class="action-icon" onclick="alert('Notifications')">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." id="searchInput">
+                    </div>
+
+                    <button class="action-icon mobile-search-toggle" onclick="openMobileSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <button class="action-icon" onclick="toggleNotifications()">
                         <i class="fas fa-bell"></i>
                         <?php if (count($notifications) > 0): ?>
                             <span class="notification-count"><?php echo min(count($notifications), 9); ?></span>
@@ -1114,16 +1626,21 @@ if (function_exists('logActivity')) {
                     </button>
 
                     <div class="user-menu">
-                        <button class="action-icon">
+                        <button class="action-icon" onclick="toggleUserMenu()">
                             <div class="user-avatar" style="width: 36px; height: 36px;">
                                 <?php echo $initials; ?>
                             </div>
                         </button>
-                        <div class="user-menu-dropdown">
-                            <a href="#" class="user-menu-item">
+                        <div class="user-menu-dropdown" id="userMenuDropdown">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/profile/edit.php" class="user-menu-item">
                                 <i class="fas fa-user"></i>
-                                <span>Profile</span>
+                                <span>My Profile</span>
                             </a>
+                            <a href="<?php echo BASE_URL; ?>modules/admin/settings.php" class="user-menu-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Account Settings</span>
+                            </a>
+                            <div class="user-menu-divider"></div>
                             <a href="<?php echo BASE_URL; ?>modules/auth/logout.php" class="user-menu-item">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Logout</span>
@@ -1133,8 +1650,22 @@ if (function_exists('logActivity')) {
                 </div>
             </div>
 
+            <!-- Mobile Search Modal -->
+            <div class="mobile-search-modal" id="mobileSearchModal">
+                <div class="mobile-search-header">
+                    <input type="text" class="mobile-search-input" placeholder="Search users, classes, applications..." id="mobileSearchInput">
+                    <button class="mobile-search-close" onclick="closeMobileSearch()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="mobileSearchResults" style="padding: 1rem 0;">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+
             <!-- Stats Grid -->
             <div class="stats-grid">
+                <!-- Total Revenue -->
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-title">Total Revenue</div>
@@ -1144,63 +1675,131 @@ if (function_exists('logActivity')) {
                     </div>
                     <div class="stat-value">₦<?php echo number_format($stats['total_revenue'], 2); ?></div>
                     <div class="stat-change">
-                        <i class="fas fa-calendar"></i> Last 30 days
+                        <i class="fas fa-calendar"></i>
+                        Last 30 days
                     </div>
                 </div>
 
+                <!-- Pending Payments -->
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-title">Students</div>
+                        <div class="stat-title">Pending Payments</div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value"><?php echo number_format($stats['pending_payments_count'] ?? 0); ?></div>
+                    <div class="stat-change">
+                        ₦<?php echo number_format($stats['pending_amount'] ?? 0, 2); ?> pending
+                    </div>
+                </div>
+
+                <!-- Overdue Payments -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Overdue Payments</div>
+                        <div class="stat-icon danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value"><?php echo number_format($stats['overdue_count'] ?? 0); ?></div>
+                    <div class="stat-change">
+                        ₦<?php echo number_format($stats['overdue_amount'] ?? 0, 2); ?> overdue
+                    </div>
+                </div>
+
+                <!-- Active Students -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Students</div>
                         <div class="stat-icon primary">
                             <i class="fas fa-user-graduate"></i>
                         </div>
                     </div>
                     <div class="stat-value"><?php echo number_format($stats['total_students']); ?></div>
                     <div class="stat-change">
-                        <i class="fas fa-user-plus"></i> <?php echo number_format($stats['recent_enrollments']); ?> new
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <?php echo number_format($stats['total_instructors']); ?> instructors
                     </div>
                 </div>
 
+                <!-- Total Users -->
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-title">Applications</div>
-                        <div class="stat-icon warning">
+                        <div class="stat-title">Total Users</div>
+                        <div class="stat-icon info">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value"><?php echo number_format($stats['total_users']); ?></div>
+                    <div class="stat-change">
+                        <i class="fas fa-user-plus"></i>
+                        <?php echo number_format($stats['recent_enrollments']); ?> recent
+                    </div>
+                </div>
+
+                <!-- Pending Applications -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pending Apps</div>
+                        <div class="stat-icon info">
                             <i class="fas fa-file-alt"></i>
                         </div>
                     </div>
                     <div class="stat-value"><?php echo number_format($stats['pending_apps']); ?></div>
                     <div class="stat-change">
                         <?php if ($stats['pending_apps'] > 0): ?>
-                            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Pending review
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                            Needs attention
                         <?php else: ?>
-                            <i class="fas fa-check-circle" style="color: var(--success);"></i> All clear
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                            All clear
                         <?php endif; ?>
                     </div>
                 </div>
 
+                <!-- Monthly Revenue -->
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-title">Classes</div>
-                        <div class="stat-icon info">
+                        <div class="stat-title">Monthly Revenue</div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">₦<?php echo number_format($stats['monthly_revenue'], 2); ?></div>
+                    <div class="stat-change">
+                        <i class="fas fa-project-diagram"></i>
+                        <?php echo number_format($stats['total_programs']); ?> programs
+                    </div>
+                </div>
+
+                <!-- Active Programs & Classes -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Programs</div>
+                        <div class="stat-icon primary">
                             <i class="fas fa-chalkboard"></i>
                         </div>
                     </div>
-                    <div class="stat-value"><?php echo number_format($stats['total_classes']); ?></div>
+                    <div class="stat-value"><?php echo number_format($stats['total_programs']); ?></div>
                     <div class="stat-change">
-                        <i class="fas fa-book"></i> <?php echo number_format($stats['total_programs']); ?> programs
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <?php echo number_format($stats['total_classes']); ?> ongoing classes
                     </div>
                 </div>
             </div>
 
-            <!-- Content Grid -->
+            <!-- Main Content Grid -->
             <div class="content-grid">
                 <!-- Left Column -->
                 <div class="left-column">
-                    <!-- Recent Transactions -->
+                    <!-- Recent Financial Transactions -->
                     <div class="content-card">
                         <div class="card-header">
-                            <h2 class="card-title">Recent Transactions</h2>
-                            <a href="#" class="btn btn-primary btn-sm">View All</a>
+                            <h2 class="card-title">Recent Financial Transactions</h2>
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/payments/" class="btn btn-primary btn-sm">
+                                View All
+                            </a>
                         </div>
 
                         <div class="table-container">
@@ -1208,7 +1807,9 @@ if (function_exists('logActivity')) {
                                 <thead>
                                     <tr>
                                         <th>Student</th>
+                                        <th>Transaction</th>
                                         <th>Amount</th>
+                                        <th>Method</th>
                                         <th>Date</th>
                                         <th>Status</th>
                                     </tr>
@@ -1216,31 +1817,43 @@ if (function_exists('logActivity')) {
                                 <tbody>
                                     <?php if (empty($stats['recent_transactions'])): ?>
                                         <tr>
-                                            <td colspan="4" style="text-align: center; padding: var(--space-xl); color: var(--gray-500);">
-                                                <i class="fas fa-exchange-alt" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                                <i class="fas fa-exchange-alt" style="font-size: 2rem; margin-bottom: 1rem; display: block; color: var(--gray-300);"></i>
                                                 No recent transactions
                                             </td>
                                         </tr>
                                     <?php else: ?>
                                         <?php foreach ($stats['recent_transactions'] as $transaction): ?>
                                             <tr>
-                                                <td>
-                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                        <div class="user-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                                <td data-label="Student">
+                                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                        <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.875rem; flex-shrink: 0;">
                                                             <?php echo strtoupper(substr($transaction['first_name'] ?? 'S', 0, 1)); ?>
                                                         </div>
-                                                        <span class="text-truncate" style="max-width: 100px;">
-                                                            <?php echo htmlspecialchars($transaction['first_name'] ?? 'Student'); ?>
-                                                        </span>
+                                                        <div style="min-width: 0;">
+                                                            <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($transaction['first_name'] . ' ' . $transaction['last_name']); ?></div>
+                                                            <div style="font-size: 0.75rem; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($transaction['batch_code'] ?? 'N/A'); ?></div>
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td style="font-weight: 600; color: var(--success);">
+                                                <td data-label="Transaction">
+                                                    <span style="font-size: 0.875rem;">
+                                                        <?php echo ucfirst(str_replace('_', ' ', $transaction['transaction_type'] ?? 'payment')); ?>
+                                                    </span>
+                                                </td>
+                                                <td data-label="Amount" style="font-weight: 700; color: var(--success);">
                                                     ₦<?php echo number_format($transaction['amount'] ?? 0, 2); ?>
                                                 </td>
-                                                <td>
-                                                    <?php echo date('M d', strtotime($transaction['created_at'] ?? date('Y-m-d'))); ?>
+                                                <td data-label="Method">
+                                                    <span class="status-badge" style="background-color: var(--gray-100); color: var(--gray-700);">
+                                                        <?php echo ucfirst($transaction['payment_method'] ?? 'N/A'); ?>
+                                                    </span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Date">
+                                                    <?php echo date('M d, Y', strtotime($transaction['created_at'] ?? date('Y-m-d H:i:s'))); ?> <br>
+                                                    <small style="color: var(--gray-500);"><?php echo date('h:i A', strtotime($transaction['created_at'] ?? date('Y-m-d H:i:s'))); ?></small>
+                                                </td>
+                                                <td data-label="Status">
                                                     <span class="status-badge status-active">
                                                         <?php echo ucfirst($transaction['status'] ?? 'completed'); ?>
                                                     </span>
@@ -1254,15 +1867,17 @@ if (function_exists('logActivity')) {
                     </div>
 
                     <!-- Overdue Payments -->
-                    <div class="content-card" style="margin-top: var(--space-md);">
+                    <div class="content-card" style="margin-top: 1rem;">
                         <div class="card-header">
                             <h2 class="card-title">Overdue Payments</h2>
-                            <a href="#" class="btn btn-primary btn-sm">View All</a>
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/students/overdue.php" class="btn btn-primary btn-sm">
+                                View All
+                            </a>
                         </div>
 
                         <?php if (empty($overdue_students)): ?>
-                            <div style="text-align: center; padding: var(--space-xl); color: var(--gray-500);">
-                                <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--success);"></i>
+                            <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block; color: var(--success);"></i>
                                 No overdue payments
                             </div>
                         <?php else: ?>
@@ -1271,13 +1886,17 @@ if (function_exists('logActivity')) {
                                     <div class="overdue-student-info">
                                         <h4><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></h4>
                                         <p>
-                                            <?php echo htmlspecialchars($student['course_title'] ?? 'Course'); ?>
+                                            <?php echo htmlspecialchars($student['course_title']); ?> •
+                                            <?php echo htmlspecialchars($student['batch_code']); ?>
                                             <br>
-                                            <small><?php echo $student['days_overdue']; ?> days overdue</small>
+                                            <small>
+                                                <i class="fas fa-calendar"></i>
+                                                <?php echo $student['days_overdue']; ?> days overdue
+                                            </small>
                                         </p>
                                     </div>
                                     <div class="overdue-amount">
-                                        ₦<?php echo number_format($student['balance'] ?? 0, 0); ?>
+                                        ₦<?php echo number_format($student['balance'], 2); ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -1287,42 +1906,84 @@ if (function_exists('logActivity')) {
 
                 <!-- Right Column -->
                 <div class="right-column">
-                    <!-- Quick Actions -->
+                    <!-- Payment Methods Distribution -->
                     <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Payment Methods</h2>
+                            <span style="font-size: 0.75rem; color: var(--gray-500);">Last 30 days</span>
+                        </div>
+
+                        <div class="payment-methods">
+                            <?php if (empty($stats['payment_methods'])): ?>
+                                <div style="text-align: center; padding: 1rem; color: var(--gray-500);">
+                                    <i class="fas fa-credit-card" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                    No payment data
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($stats['payment_methods'] as $method): ?>
+                                    <div class="payment-method-item">
+                                        <div class="payment-method-name">
+                                            <?php
+                                            $icons = [
+                                                'online' => 'fa-globe',
+                                                'bank_transfer' => 'fa-university',
+                                                'cash' => 'fa-money-bill',
+                                                'cheque' => 'fa-money-check',
+                                                'pos' => 'fa-credit-card'
+                                            ];
+                                            $icon = $icons[$method['payment_method']] ?? 'fa-money-bill';
+                                            ?>
+                                            <i class="fas <?php echo $icon; ?>" style="color: var(--primary);"></i>
+                                            <span><?php echo ucfirst(str_replace('_', ' ', $method['payment_method'])); ?></span>
+                                        </div>
+                                        <div class="payment-method-count">
+                                            <?php echo $method['count']; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="content-card" style="margin-top: 1rem;">
                         <div class="card-header">
                             <h2 class="card-title">Quick Actions</h2>
                         </div>
 
                         <div class="quick-actions-grid">
-                            <a href="#" class="quick-action">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/invoices/generate.php" class="quick-action">
                                 <div class="quick-action-icon">
                                     <i class="fas fa-file-invoice"></i>
                                 </div>
-                                <div class="quick-action-label">Invoice</div>
+                                <div class="quick-action-label">Generate Invoice</div>
                             </a>
-                            <a href="#" class="quick-action">
+
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/payments/verify.php" class="quick-action">
                                 <div class="quick-action-icon">
                                     <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="quick-action-label">Verify</div>
+                                <div class="quick-action-label">Verify Payments</div>
                             </a>
-                            <a href="#" class="quick-action">
+
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/students/overdue.php" class="quick-action">
                                 <div class="quick-action-icon">
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </div>
-                                <div class="quick-action-label">Overdue</div>
+                                <div class="quick-action-label">Overdue Payments</div>
                             </a>
-                            <a href="#" class="quick-action">
+
+                            <a href="<?php echo BASE_URL; ?>modules/admin/finance/reports/revenue.php" class="quick-action">
                                 <div class="quick-action-icon">
                                     <i class="fas fa-chart-bar"></i>
                                 </div>
-                                <div class="quick-action-label">Reports</div>
+                                <div class="quick-action-label">Revenue Report</div>
                             </a>
                         </div>
                     </div>
 
                     <!-- System Status -->
-                    <div class="content-card" style="margin-top: var(--space-md);">
+                    <div class="content-card" style="margin-top: 1rem;">
                         <div class="card-header">
                             <h2 class="card-title">System Status</h2>
                         </div>
@@ -1330,23 +1991,48 @@ if (function_exists('logActivity')) {
                         <div class="activity-list">
                             <div class="activity-item">
                                 <div class="activity-icon">
-                                    <i class="fas fa-database" style="color: var(--primary);"></i>
+                                    <i class="fas fa-database"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">Database</div>
+                                    <div class="activity-title">Database Connection</div>
                                     <div class="activity-meta">
-                                        <span style="color: var(--success);">✓ Connected</span>
+                                        <span style="color: var(--success);">
+                                            <i class="fas fa-check-circle"></i> Active
+                                        </span>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="activity-item">
                                 <div class="activity-icon">
-                                    <i class="fas fa-calculator" style="color: var(--success);"></i>
+                                    <i class="fas fa-calculator"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">Financial System</div>
+                                    <div class="activity-title">Financial Calculations</div>
                                     <div class="activity-meta">
-                                        <span style="color: var(--success);">✓ Operational</span>
+                                        <span style="color: var(--success);">
+                                            <i class="fas fa-check-circle"></i> Operational
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Payment Reminders</div>
+                                    <div class="activity-meta">
+                                        <?php if (($stats['overdue_count'] ?? 0) > 0): ?>
+                                            <span style="color: var(--warning);">
+                                                <i class="fas fa-exclamation-circle"></i> <?php echo $stats['overdue_count']; ?> pending
+                                            </span>
+                                        <?php else: ?>
+                                            <span style="color: var(--success);">
+                                                <i class="fas fa-check-circle"></i> Up to date
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -1359,21 +2045,40 @@ if (function_exists('logActivity')) {
             <div class="dashboard-footer">
                 <div class="system-status">
                     <div class="status-indicator"></div>
-                    <span>All Systems Operational</span>
+                    <span>System: Operational</span>
                 </div>
                 <div>
-                    Updated: <?php echo date('M j, g:i a'); ?>
+                    <span>Updated: <?php echo date('M j, Y g:i a'); ?></span>
+                    <?php if ($stats['total_revenue'] > 0): ?>
+                        <span style="margin-left: 0.5rem; color: var(--success); font-weight: 600;">
+                            <i class="fas fa-money-bill-wave"></i>
+                            ₦<?php echo number_format($stats['total_revenue'], 2); ?>
+                        </span>
+                    <?php endif; ?>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAll();
+        });
+
+        function initializeAll() {
+            initializeDropdowns();
+            initializeKeyboardShortcuts();
+            initializeTouchEvents();
+        }
+
+        // Sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
         }
 
         function closeSidebar() {
@@ -1381,36 +2086,182 @@ if (function_exists('logActivity')) {
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
-        // Dropdown functionality
-        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const parent = this.closest('.nav-dropdown');
-                parent.classList.toggle('active');
+        // Dropdown functions
+        function toggleDropdown(element) {
+            const parentDropdown = element.closest('.nav-dropdown');
+            const wasActive = parentDropdown.classList.contains('active');
 
-                const chevron = this.querySelector('.fa-chevron-down');
-                if (chevron) {
-                    chevron.style.transform = parent.classList.contains('active') ? 'rotate(180deg)' : '';
+            // Close all dropdowns first
+            document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+
+            // If this dropdown wasn't active, open it
+            if (!wasActive) {
+                parentDropdown.classList.add('active');
+            }
+        }
+
+        // Close all dropdowns
+        function closeAllDropdowns() {
+            document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+
+        // User menu
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userMenuDropdown');
+            dropdown.classList.toggle('active');
+
+            // Close when clicking outside
+            if (dropdown.classList.contains('active')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeUserMenuOnClickOutside);
+                }, 100);
+            }
+        }
+
+        function closeUserMenuOnClickOutside(event) {
+            const dropdown = document.getElementById('userMenuDropdown');
+            const userMenuBtn = document.querySelector('.user-menu .action-icon');
+
+            if (!dropdown.contains(event.target) && !userMenuBtn.contains(event.target)) {
+                dropdown.classList.remove('active');
+                document.removeEventListener('click', closeUserMenuOnClickOutside);
+            }
+        }
+
+        // Notifications
+        function toggleNotifications() {
+            const notificationCount = document.querySelector('.notification-count');
+
+            if (notificationCount) {
+                const count = parseInt(notificationCount.textContent);
+                if (count > 0) {
+                    if (confirm(`You have ${count} unread notifications. Mark all as read?`)) {
+                        notificationCount.style.display = 'none';
+                        alert('All notifications marked as read!');
+                    }
+                } else {
+                    alert('No new notifications');
+                }
+            } else {
+                alert('No new notifications');
+            }
+        }
+
+        // Mobile Search
+        function openMobileSearch() {
+            document.getElementById('mobileSearchModal').classList.add('active');
+            document.getElementById('mobileSearchInput').focus();
+        }
+
+        function closeMobileSearch() {
+            document.getElementById('mobileSearchModal').classList.remove('active');
+        }
+
+        // Search functionality
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const mobileSearchInput = document.getElementById('mobileSearchInput');
+
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch(this.value);
+                    }
+                });
+            }
+
+            if (mobileSearchInput) {
+                mobileSearchInput.addEventListener('keyup', function(e) {
+                    performSearch(this.value);
+                });
+            }
+        }
+
+        function performSearch(query) {
+            if (query.trim().length < 2) return;
+
+            const resultsDiv = document.getElementById('mobileSearchResults');
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `<div style="text-align: center; padding: 1rem; color: var(--gray-500);">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+                    Searching for "${query}"...
+                </div>`;
+
+                // Simulate search results (replace with actual AJAX call)
+                setTimeout(() => {
+                    resultsDiv.innerHTML = `<div style="text-align: center; padding: 1rem; color: var(--gray-500);">
+                        No results found for "${query}"
+                    </div>`;
+                }, 1000);
+            }
+        }
+
+        // Keyboard shortcuts
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + K for search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (window.innerWidth >= 768) {
+                        document.getElementById('searchInput')?.focus();
+                    } else {
+                        openMobileSearch();
+                    }
+                }
+
+                // Escape key closes everything
+                if (e.key === 'Escape') {
+                    closeAllDropdowns();
+                    closeSidebar();
+                    closeMobileSearch();
+                    document.getElementById('userMenuDropdown')?.classList.remove('active');
                 }
             });
-        });
+        }
 
-        // Close sidebar on link click (mobile)
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 1024) {
+        // Touch events
+        function initializeTouchEvents() {
+            // Swipe to close sidebar on mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+
+            function handleSwipe() {
+                const sidebar = document.getElementById('sidebar');
+                const swipeThreshold = 100;
+
+                if (touchEndX < touchStartX - swipeThreshold && sidebar.classList.contains('active')) {
+                    // Swipe left to close
                     closeSidebar();
                 }
-            });
-        });
-
-        // Close sidebar on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && window.innerWidth <= 1024) {
-                closeSidebar();
             }
+        }
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                // Close mobile elements when resizing to desktop
+                if (window.innerWidth >= 1024) {
+                    closeSidebar();
+                }
+            }, 250);
         });
     </script>
 </body>

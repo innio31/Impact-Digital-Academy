@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 6 · LISTS & KEYS IN REACT (full preservation)</title>
+    <link rel="icon" href="../../../../public/images/favicon.ico">
+
+    <style>
+        /* same base style – extended for long‑form perfect preservation */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #edecf2;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 2.2rem;
+            box-shadow: 0 30px 45px -30px #2b2b4b;
+            padding: 2rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #2e317c;
+            font-weight: 650;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            background: linear-gradient(145deg, #3b3f8f, #c9516c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #dd768c;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0 0.5rem;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            border-bottom: 3px solid #dd768c;
+            padding-bottom: 0.4rem;
+            margin: 2.5rem 0 1.2rem;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            margin: 2rem 0 0.8rem;
+            color: #4347a0;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            margin: 1.6rem 0 0.4rem;
+        }
+
+        .toc {
+            background: #f5f3ff;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            border: 1px solid #c7c1e0;
+            margin: 2rem 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #3d3580;
+            font-weight: 500;
+        }
+
+        .toc li {
+            margin: 0.3rem 0;
+        }
+
+        pre {
+            background: #1e1e2f;
+            color: #f8f8f2;
+            padding: 1.2rem 1.2rem;
+            border-radius: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.4rem 0;
+            border: 2px solid #9580c0;
+            box-shadow: inset 0 0 10px #2b2740;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #eae5fc;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #2c3069;
+        }
+
+        pre code {
+            background: transparent;
+            color: #f1edff;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(35, 30, 75, 0.12);
+        }
+
+        th {
+            background: #4a4e9e;
+            color: white;
+            padding: 0.9rem;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #cfc6ec;
+            background: #fdfcff;
+        }
+
+        .badge {
+            background: #4a4e9e;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, #ddd2f5, #fcfdff, #ddd2f5);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #43478f;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card-snippet {
+            background: #f8f6ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #cdc3e8;
+        }
+
+        hr.sep {
+            margin: 3rem 0;
+        }
+
+        /* ensure no lines missing */
+        .preserve-linebreak {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <!-- TITLE exactly as provided -->
+        <h1>LISTS & KEYS IN REACT: A COMPREHENSIVE GUIDE</h1>
+
+        <!-- TABLE OF CONTENTS – exact copy, including all links and structure -->
+        <div class="toc">
+            <h2 style="border-bottom:none; margin-top:0;">TABLE OF CONTENTS</h2>
+            <ol style="columns:2 250px; column-gap:2rem;">
+                <li><a href="#introduction">Introduction to Lists in React</a></li>
+                <li><a href="#rendering-with-map">Rendering Lists with .map()</a></li>
+                <li><a href="#key-prop-importance">The Key Prop: Why It Matters</a></li>
+                <li><a href="#choosing-right-key">Choosing the Right Key</a></li>
+                <li><a href="#patterns-practices">Common Patterns and Best Practices</a></li>
+                <li><a href="#performance">Performance Implications</a></li>
+                <li><a href="#advanced-scenarios">Advanced Scenarios</a></li>
+                <li><a href="#troubleshooting">Troubleshooting and Common Pitfalls</a></li>
+                <li><a href="#practical-examples">Practical Examples and Use Cases</a></li>
+                <li><a href="#interview-questions">Interview Questions and Answers</a></li>
+            </ol>
+        </div>
+
+        <hr class="sep" />
+
+        <!-- ================ START OF EXACT CONTENT (every line, heading, code block) ================ -->
+
+        <h2 id="introduction">1. INTRODUCTION TO LISTS IN REACT</h2>
+
+        <h3>1.1 What Are Lists in React?</h3>
+        <p>Lists are fundamental UI components that display collections of similar data items. In React, lists are
+            everywhere:</p>
+        <ul>
+            <li>Navigation menus</li>
+            <li>Product catalogs</li>
+            <li>Todo items</li>
+            <li>Comment sections</li>
+            <li>Image galleries</li>
+            <li>Search results</li>
+            <li>Dropdown options</li>
+        </ul>
+
+        <h3>1.2 The Challenge of Dynamic Lists</h3>
+        <p>Unlike static HTML where you manually write each list item, React applications work with dynamic data that
+            changes over time. Consider these scenarios:</p>
+        <pre><code>```javascript
+// Static HTML - Not scalable
+&lt;ul&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+  &lt;li&gt;Item 3&lt;/li&gt;
+&lt;/ul&gt;
+
+// Dynamic Data - Changes constantly
+const products = fetchProductsFromAPI(); // Array of 100+ items
+const searchResults = filterProducts(products); // Changes with user input
+const todoItems = userTodos; // Users add/remove items
+```</code></pre>
+
+        <h3>1.3 The React Solution: Transformation Pattern</h3>
+        <p>React embraces a declarative approach where you transform data into elements:</p>
+        <pre><code>Data Array → Transformation → Array of Elements → Rendered JSX</code></pre>
+
+        <hr />
+
+        <h2 id="rendering-with-map">2. RENDERING LISTS WITH .map()</h2>
+
+        <h3>2.1 Understanding .map()</h3>
+        <p>The <code>map()</code> method is a JavaScript array method that creates a new array by transforming each
+            element in the original array.</p>
+        <p><strong>Syntax:</strong></p>
+        <pre><code>```javascript
+const newArray = originalArray.map((currentElement, index, array) => {
+  // Return transformed element
+});
+```</code></pre>
+
+        <h3>2.2 Basic List Rendering</h3>
+        <p><strong>Example 1: Simple String Array</strong></p>
+        <pre><code>```jsx
+function SimpleList() {
+  const fruits = ['Apple', 'Banana', 'Orange', 'Mango'];
+  
+  return (
+    &lt;ul&gt;
+      {fruits.map((fruit) => {
+        return &lt;li&gt;{fruit}&lt;/li&gt;;
+      })}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+        <p><strong>Example 2: Shorter Syntax (Implicit Return)</strong></p>
+        <pre><code>```jsx
+function SimpleList() {
+  const fruits = ['Apple', 'Banana', 'Orange', 'Mango'];
+  
+  return (
+    &lt;ul&gt;
+      {fruits.map((fruit) => (
+        &lt;li&gt;{fruit}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <h3>2.3 Rendering Arrays of Objects</h3>
+        <p>Most real-world data comes as arrays of objects:</p>
+        <pre><code>```jsx
+function ProductList() {
+  const products = [
+    { id: 1, name: 'Laptop', price: 999, inStock: true },
+    { id: 2, name: 'Mouse', price: 25, inStock: true },
+    { id: 3, name: 'Keyboard', price: 75, inStock: false },
+    { id: 4, name: 'Monitor', price: 299, inStock: true }
+  ];
+
+  return (
+    &lt;div className="product-grid"&gt;
+      {products.map((product) => (
+        &lt;div className="product-card"&gt;
+          &lt;h3&gt;{product.name}&lt;/h3&gt;
+          &lt;p&gt;Price: ${product.price}&lt;/p&gt;
+          &lt;p className={product.inStock ? 'in-stock' : 'out-of-stock'}&gt;
+            {product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
+          &lt;/p&gt;
+          &lt;button disabled={!product.inStock}&gt;
+            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          &lt;/button&gt;
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>2.4 Complex Transformations</h3>
+        <p><strong>Example: Conditional Rendering Within .map()</strong></p>
+        <pre><code>```jsx
+function UserDirectory({ users }) {
+  return (
+    &lt;div className="user-list"&gt;
+      {users.map((user) => {
+        // Skip inactive users
+        if (!user.isActive) return null;
+        
+        return (
+          &lt;div className={`user-card ${user.role}`}&gt;
+            &lt;img src={user.avatar} alt={user.name} /&gt;
+            &lt;div className="user-info"&gt;
+              &lt;h4&gt;{user.name}&lt;/h4&gt;
+              &lt;span className="role-badge"&gt;{user.role}&lt;/span&gt;
+              {user.isAdmin && &lt;span className="admin-star"&gt;⭐&lt;/span&gt;}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        );
+      })}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <p><strong>Example: Nested Lists</strong></p>
+        <pre><code>```jsx
+function CategoryList({ categories }) {
+  return (
+    &lt;ul className="categories"&gt;
+      {categories.map((category) => (
+        &lt;li key={category.id}&gt;
+          &lt;h3&gt;{category.name}&lt;/h3&gt;
+          {category.subcategories && category.subcategories.length > 0 && (
+            &lt;ul className="subcategories"&gt;
+              {category.subcategories.map((sub) => (
+                &lt;li key={sub.id}&gt;{sub.name}&lt;/li&gt;
+              ))}
+            &lt;/ul&gt;
+          )}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <h3>2.5 Extracting List Items into Components</h3>
+        <p><strong>Best Practice: Create Separate Components for List Items</strong></p>
+        <pre><code>```jsx
+// ListItem.jsx - Separate component for each item
+function TodoItem({ todo, onToggle, onDelete }) {
+  return (
+    &lt;li className={`todo-item ${todo.completed ? 'completed' : ''}`}&gt;
+      &lt;input 
+        type="checkbox" 
+        checked={todo.completed}
+        onChange={() => onToggle(todo.id)}
+      /&gt;
+      &lt;span className="todo-text"&gt;{todo.text}&lt;/span&gt;
+      &lt;button onClick={() => onDelete(todo.id)} className="delete-btn"&gt;
+        🗑️
+      &lt;/button&gt;
+    &lt;/li&gt;
+  );
+}
+
+// TodoList.jsx - Parent component managing the list
+function TodoList() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: 'Learn React', completed: true },
+    { id: 2, text: 'Build a project', completed: false },
+    { id: 3, text: 'Master hooks', completed: false }
+  ]);
+
+  const handleToggle = (id) => {
+    setTodos(todos.map(todo =&gt; 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const handleDelete = (id) => {
+    setTodos(todos.filter(todo =&gt; todo.id !== id));
+  };
+
+  return (
+    &lt;ul className="todo-list"&gt;
+      {todos.map((todo) =&gt; (
+        &lt;TodoItem
+          key={todo.id}
+          todo={todo}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+        /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="key-prop-importance">3. THE KEY PROP: WHY IT MATTERS</h2>
+
+        <h3>3.1 What Is the Key Prop?</h3>
+        <p>The <code>key</code> is a special string attribute you need to include when creating lists of elements in
+            React. It gives the elements a stable identity.</p>
+        <pre><code>```jsx
+// Without key (BAD)
+{items.map(item => &lt;li&gt;{item.text}&lt;/li&gt;)}
+
+// With key (GOOD)
+{items.map(item => &lt;li key={item.id}&gt;{item.text}&lt;/li&gt;)}
+```</code></pre>
+
+        <h3>3.2 Why Keys Are Essential</h3>
+        <p><strong>The Problem: Without Keys</strong></p>
+        <p>Imagine React needs to update this list:</p>
+        <pre><code>```jsx
+// Initial Render
+&lt;ul&gt;
+  &lt;li&gt;Apple&lt;/li&gt;   {/* React's internal tracking: "li with text Apple" */}
+  &lt;li&gt;Banana&lt;/li&gt;  {/* React's internal tracking: "li with text Banana" */}
+  &lt;li&gt;Orange&lt;/li&gt;  {/* React's internal tracking: "li with text Orange" */}
+&lt;/ul&gt;
+
+// After removing "Banana"
+&lt;ul&gt;
+  &lt;li&gt;Apple&lt;/li&gt;   {/* React thinks: this is the same Apple li */}
+  &lt;li&gt;Orange&lt;/li&gt;  {/* React thinks: this is the same Banana li (WRONG!) */}
+&lt;/ul&gt;
+```</code></pre>
+        <p>Without keys, React compares elements by their type and order, leading to:</p>
+        <ul>
+            <li><strong>Inefficient updates</strong>: React may re-render the wrong elements</li>
+            <li><strong>UI bugs</strong>: Component state can get attached to wrong items</li>
+            <li><strong>Performance issues</strong>: More DOM manipulations than necessary</li>
+        </ul>
+        <p><strong>The Solution: With Keys</strong></p>
+        <pre><code>```jsx
+// Initial Render
+&lt;ul&gt;
+  &lt;li key="fruit-1"&gt;Apple&lt;/li&gt;   {/* React tracks: element with key="fruit-1" */}
+  &lt;li key="fruit-2"&gt;Banana&lt;/li&gt;  {/* React tracks: element with key="fruit-2" */}
+  &lt;li key="fruit-3"&gt;Orange&lt;/li&gt;  {/* React tracks: element with key="fruit-3" */}
+&lt;/ul&gt;
+
+// After removing "Banana"
+&lt;ul&gt;
+  &lt;li key="fruit-1"&gt;Apple&lt;/li&gt;   {/* React knows: keep this as is */}
+  &lt;li key="fruit-3"&gt;Orange&lt;/li&gt;  {/* React knows: this was originally Orange */}
+&lt;/ul&gt;
+```</code></pre>
+        <p>With keys, React can identify exactly which items changed, were added, or were removed.</p>
+
+        <h3>3.3 The Reconciliation Process</h3>
+        <p>React uses a "diffing algorithm" to update the UI efficiently:</p>
+        <ol>
+            <li><strong>Without Keys</strong> (Element-by-element comparison):
+                <pre><code>Old List: [A, B, C, D]
+New List: [A, B, C]
+
+React compares:
+- A vs A: same → keep
+- B vs B: same → keep
+- C vs C: same → keep
+- D vs (nothing): remove D
+
+Result: Efficient for this case, but fails with reordering</code></pre>
+            </li>
+            <li><strong>With Keys</strong> (Key-based matching):
+                <pre><code>Old List with keys: [{id:1,A}, {id:2,B}, {id:3,C}, {id:4,D}]
+New List: [{id:1,A}, {id:2,B}, {id:4,D}]
+
+React matches by key:
+- Key 1 exists in both → keep
+- Key 2 exists in both → keep
+- Key 3 exists only in old → remove
+- Key 4 exists only in new → add
+
+Result: Perfect matching even with reordering</code></pre>
+            </li>
+        </ol>
+
+        <h3>3.4 Visual Example of Key Importance</h3>
+        <pre><code>```jsx
+// BAD EXAMPLE - DON'T DO THIS
+function BuggyTodoList() {
+  const [todos, setTodos] = useState([
+    { text: 'Learn React', completed: false },
+    { text: 'Build app', completed: false }
+  ]);
+
+  // Each todo has NO stable identifier
+
+  const toggleFirst = () => {
+    setTodos([
+      { ...todos[0], completed: !todos[0].completed },
+      todos[1]
+    ]);
+  };
+
+  return (
+    &lt;div&gt;
+      {todos.map((todo, index) => (
+        &lt;TodoItem 
+          // DON'T USE INDEX AS KEY (we'll explain why later)
+          key={index}
+          todo={todo}
+        /&gt;
+      ))}
+      &lt;button onClick={toggleFirst}&gt;Toggle First&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+// PROBLEM: If items are reordered, React will mismatch state
+```</code></pre>
+        <pre><code>```jsx
+// GOOD EXAMPLE
+function WorkingTodoList() {
+  const [todos, setTodos] = useState([
+    { id: 'a1b2', text: 'Learn React', completed: false },
+    { id: 'c3d4', text: 'Build app', completed: false }
+  ]);
+
+  const toggleFirst = () => {
+    setTodos([
+      { ...todos[0], completed: !todos[0].completed },
+      todos[1]
+    ]);
+  };
+
+  return (
+    &lt;div&gt;
+      {todos.map((todo) => (
+        &lt;TodoItem 
+          key={todo.id}  // ✅ STABLE, UNIQUE IDENTIFIER
+          todo={todo}
+        /&gt;
+      ))}
+      &lt;button onClick={toggleFirst}&gt;Toggle First&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="choosing-right-key">4. CHOOSING THE RIGHT KEY</h2>
+
+        <h3>4.1 Characteristics of a Good Key</h3>
+        <p>A good key should be:</p>
+        <ol>
+            <li><strong>Stable</strong> - Doesn't change between re-renders</li>
+            <li><strong>Unique</strong> - Different among siblings</li>
+            <li><strong>Predictable</strong> - Same key always corresponds to same item</li>
+        </ol>
+
+        <h3>4.2 Key Options (Ranked from Best to Worst)</h3>
+        <p><span class="badge">✅ BEST</span> Unique Database IDs</p>
+        <pre><code>```jsx
+const posts = [
+  { id: 123, title: 'React Tutorial' },
+  { id: 456, title: 'JavaScript Guide' }
+];
+
+{posts.map(post => (
+  &lt;PostCard key={post.id} post={post} /&gt;
+))}
+```</code></pre>
+
+        <p><span class="badge">✅ GOOD</span> Unique Identifier from Data</p>
+        <pre><code>```jsx
+const users = [
+  { userId: 'user_abc123', name: 'John' },
+  { userId: 'user_def456', name: 'Jane' }
+];
+
+{users.map(user => (
+  &lt;UserProfile key={user.userId} user={user} /&gt;
+))}
+```</code></pre>
+
+        <p><span class="badge">⚠️ ACCEPTABLE</span> Generated Unique IDs (with care)</p>
+        <pre><code>```jsx
+// For static, never-changing lists
+const items = ['Apple', 'Banana', 'Orange'];
+
+{items.map((item, index) => {
+  // Generate a stable key based on content
+  const stableKey = `item-${item.replace(/\s+/g, '-').toLowerCase()}`;
+  return &lt;li key={stableKey}&gt;{item}&lt;/li&gt;;
+})}
+```</code></pre>
+
+        <p><span class="badge">⚠️ USE WITH CAUTION</span> Index as Key</p>
+        <pre><code>```jsx
+// Only use index when:
+// 1. The list is static (never changes)
+// 2. Items have no unique IDs
+// 3. Order never changes (no sorting/filtering/reordering)
+// 4. Items are never added/removed except at the end
+
+const staticNavigationItems = ['Home', 'About', 'Contact'];
+
+{staticNavigationItems.map((item, index) => (
+  &lt;NavItem key={index} label={item} /&gt;
+))}
+```</code></pre>
+
+        <p><span class="badge">❌ NEVER USE</span> Random Values</p>
+        <pre><code>```jsx
+// NEVER DO THIS - keys change on every render!
+{items.map(item => (
+  &lt;li key={Math.random()}&gt;{item}&lt;/li&gt;
+))}
+
+// OR THIS
+{items.map(item => (
+  &lt;li key={new Date().toISOString()}&gt;{item}&lt;/li&gt;
+))}
+```</code></pre>
+
+        <h3>4.3 When Can You Use Index as Key?</h3>
+        <p>Index as key is acceptable ONLY if all these conditions are met:</p>
+        <pre><code>```jsx
+// ACCEPTABLE USE CASE FOR INDEX
+function StaticReadOnlyList({ items }) {
+  // This list:
+  // - Never changes order
+  // - Never has items added/removed
+  // - Items are read-only (no state/inputs)
+  
+  return (
+    &lt;ul&gt;
+      {items.map((item, index) => (
+        // Index is safe here because the list is static
+        &lt;li key={index}&gt;{item}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <h3>4.4 The Dangers of Using Index as Key</h3>
+        <p>When lists are dynamic, index keys cause problems:</p>
+        <pre><code>```jsx
+// PROBLEMATIC EXAMPLE
+function ColorPicker() {
+  const [colors, setColors] = useState([
+    { id: 1, name: 'Red', hex: '#FF0000' },
+    { id: 2, name: 'Green', hex: '#00FF00' },
+    { id: 3, name: 'Blue', hex: '#0000FF' }
+  ]);
+
+  const removeSecond = () => {
+    setColors([colors[0], colors[2]]); // Remove Green
+  };
+
+  return (
+    &lt;div&gt;
+      {colors.map((color, index) => (
+        &lt;ColorCard 
+          key={index}  // ❌ PROBLEMATIC: Using index
+          color={color}
+        /&gt;
+      ))}
+      &lt;button onClick={removeSecond}&gt;Remove Green&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+        <p><strong>What happens when "Green" is removed:</strong></p>
+        <pre><code>Before removal:
+- Index 0 → ColorCard for Red (with its own state, e.g., "selected")
+- Index 1 → ColorCard for Green (with its own state)
+- Index 2 → ColorCard for Blue (with its own state)
+
+After removal:
+- Index 0 → ColorCard for Red (✅ keeps its state)
+- Index 1 → ColorCard for Blue (❌ gets the state that belonged to Green!)</code></pre>
+        <p>The Blue component inherits the state of the removed Green component!</p>
+
+        <hr />
+
+        <h2 id="patterns-practices">5. COMMON PATTERNS AND BEST PRACTICES</h2>
+
+        <h3>5.1 Extracting Keys for Complex Components</h3>
+        <pre><code>```jsx
+// BAD: Key on child component without passing id
+function ItemList({ items }) {
+  return (
+    &lt;div&gt;
+      {items.map(item => (
+        &lt;ListItem 
+          key={item.id}  // ✅ Good: key here
+          data={item}    // But don't pass id separately if not needed
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+// GOOD: Clean separation
+function ItemList({ items }) {
+  return (
+    &lt;div&gt;
+      {items.map(item => (
+        &lt;ListItem 
+          key={item.id}
+          item={item}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>5.2 Keys with Fragments</h3>
+        <pre><code>```jsx
+// Using shorthand fragment (can't add key)
+function ListWithFragments({ items }) {
+  return (
+    &lt;div&gt;
+      {items.map(item => (
+        &lt;&gt;  {/* ❌ Can't add key to shorthand fragment */}
+          &lt;h3&gt;{item.title}&lt;/h3&gt;
+          &lt;p&gt;{item.description}&lt;/p&gt;
+        &lt;/&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+// Correct way: Use `&lt;Fragment&gt;` with key
+import { Fragment } from 'react';
+
+function ListWithFragments({ items }) {
+  return (
+    &lt;div&gt;
+      {items.map(item => (
+        &lt;Fragment key={item.id}&gt;  {/* ✅ Key goes on Fragment */}
+          &lt;h3&gt;{item.title}&lt;/h3&gt;
+          &lt;p&gt;{item.description}&lt;/p&gt;
+        &lt;/Fragment&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>5.3 Keys in Nested Lists</h3>
+        <pre><code>```jsx
+function NestedComments({ comments }) {
+  return (
+    &lt;div className="comments"&gt;
+      {comments.map(comment => (
+        &lt;div key={comment.id} className="comment"&gt;
+          &lt;div className="comment-header"&gt;
+            &lt;img src={comment.author.avatar} alt={comment.author.name} /&gt;
+            &lt;strong&gt;{comment.author.name}&lt;/strong&gt;
+          &lt;/div&gt;
+          &lt;p&gt;{comment.text}&lt;/p&gt;
+          
+          {/* Nested replies need their own keys */}
+          {comment.replies && comment.replies.length > 0 && (
+            &lt;div className="replies"&gt;
+              {comment.replies.map(reply => (
+                &lt;div key={reply.id} className="reply"&gt;
+                  {/* Reply content */}
+                &lt;/div&gt;
+              ))}
+            &lt;/div&gt;
+          )}
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>5.4 Generating Keys for Data Without IDs</h3>
+        <p>Sometimes your data doesn't have unique IDs:</p>
+        <pre><code>```jsx
+// Strategy 1: Generate stable keys on data load
+function processData(rawData) {
+  return rawData.map((item, index) => ({
+    ...item,
+    // Generate a stable key using content and index
+    _key: `${item.title}-${item.date}-${index}`.replace(/\s+/g, '-')
+  }));
+}
+
+function ArticleList({ rawArticles }) {
+  const [articles, setArticles] = useState(() => processData(rawArticles));
+  
+  return (
+    &lt;div&gt;
+      {articles.map(article => (
+        &lt;ArticleCard key={article._key} article={article} /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+// Strategy 2: Use a combination of fields that uniquely identify the item
+function ProductList({ products }) {
+  return (
+    &lt;div&gt;
+      {products.map(product => (
+        // If SKU is unique, combine with name for safety
+        &lt;ProductCard 
+          key={`${product.sku}-${product.name}`}
+          product={product}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>5.5 Keys with Dynamic Lists and Forms</h3>
+        <pre><code>```jsx
+function DynamicFormList() {
+  const [fields, setFields] = useState([
+    { id: crypto.randomUUID(), name: '', email: '' }
+  ]);
+
+  const addField = () => {
+    setFields([...fields, { 
+      id: crypto.randomUUID(), 
+      name: '', 
+      email: '' 
+    }]);
+  };
+
+  const removeField = (id) => {
+    setFields(fields.filter(field => field.id !== id));
+  };
+
+  const updateField = (id, fieldName, value) => {
+    setFields(fields.map(field => 
+      field.id === id ? { ...field, [fieldName]: value } : field
+    ));
+  };
+
+  return (
+    &lt;div&gt;
+      {fields.map((field) => (
+        &lt;div key={field.id} className="form-row"&gt;
+          &lt;input
+            type="text"
+            placeholder="Name"
+            value={field.name}
+            onChange={(e) => updateField(field.id, 'name', e.target.value)}
+          /&gt;
+          &lt;input
+            type="email"
+            placeholder="Email"
+            value={field.email}
+            onChange={(e) => updateField(field.id, 'email', e.target.value)}
+          /&gt;
+          &lt;button onClick={() => removeField(field.id)}&gt;Remove&lt;/button&gt;
+        &lt;/div&gt;
+      ))}
+      &lt;button onClick={addField}&gt;Add Field&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="performance">6. PERFORMANCE IMPLICATIONS</h2>
+
+        <h3>6.1 How Keys Affect Performance</h3>
+        <p>Keys directly impact React's rendering performance through the reconciliation algorithm:</p>
+        <pre><code>```jsx
+// INEFFICIENT RENDERING (bad keys)
+function InefficientList({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map((item, index) => (
+        &lt;ListItem key={index} item={item} /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+// When items array changes:
+// 1. React can't identify which items moved/changed
+// 2. May unmount and remount components unnecessarily
+// 3. Loses component state
+// 4. Causes unnecessary re-renders
+```</code></pre>
+        <pre><code>```jsx
+// EFFICIENT RENDERING (good keys)
+function EfficientList({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map(item => (
+        &lt;ListItem key={item.id} item={item} /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+// When items array changes:
+// 1. React quickly identifies each item by its key
+// 2. Only updates items that actually changed
+// 3. Preserves component state
+// 4. Minimizes DOM operations
+```</code></pre>
+
+        <h3>6.2 Performance Comparison</h3>
+        <p><strong>Scenario: List with 1000 items, reorder operation</strong></p>
+        <table>
+            <tr>
+                <th>Key Type</th>
+                <th>Operations</th>
+                <th>Memory</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Unique ID</td>
+                <td>O(n)</td>
+                <td>Low</td>
+                <td>React matches by key, only moves DOM nodes</td>
+            </tr>
+            <tr>
+                <td>Index</td>
+                <td>O(n²)</td>
+                <td>High</td>
+                <td>React sees all items as new, rebuilds entire list</td>
+            </tr>
+        </table>
+
+        <h3>6.3 Memoization with Keys</h3>
+        <p>Keys also affect React.memo performance:</p>
+        <pre><code>```jsx
+const MemoizedItem = React.memo(function Item({ data }) {
+  return &lt;div&gt;{data.text}&lt;/div&gt;;
+});
+
+function List({ items }) {
+  return (
+    &lt;div&gt;
+      {items.map(item => (
+        &lt;MemoizedItem 
+          key={item.id}  // Key change affects memoization!
+          data={item}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+// If key changes but data is the same, React.memo still re-renders
+// because it sees it as a new component instance
+```</code></pre>
+
+        <h3>6.4 Keys and Animation Performance</h3>
+        <pre><code>```jsx
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
+function AnimatedList({ items }) {
+  return (
+    &lt;TransitionGroup&gt;
+      {items.map(item => (
+        &lt;CSSTransition
+          key={item.id}  // Key crucial for animation tracking
+          timeout={500}
+          classNames="fade"
+        &gt;
+          &lt;ListItem item={item} /&gt;
+        &lt;/CSSTransition&gt;
+      ))}
+    &lt;/TransitionGroup&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="advanced-scenarios">7. ADVANCED SCENARIOS</h2>
+
+        <h3>7.1 Keys with Drag and Drop</h3>
+        <pre><code>```jsx
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
+function DraggableList({ items }) {
+  return (
+    &lt;DragDropContext onDragEnd={handleDragEnd}&gt;
+      &lt;Droppable droppableId="list"&gt;
+        {(provided) => (
+          &lt;div ref={provided.innerRef} {...provided.droppableProps}&gt;
+            {items.map((item, index) => (
+              &lt;Draggable 
+                key={item.id}  // Stable key essential for DnD
+                draggableId={item.id}
+                index={index}
+              &gt;
+                {(provided) => (
+                  &lt;div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  &gt;
+                    {item.content}
+                  &lt;/div&gt;
+                )}
+              &lt;/Draggable&gt;
+            ))}
+            {provided.placeholder}
+          &lt;/div&gt;
+        )}
+      &lt;/Droppable&gt;
+    &lt;/DragDropContext&gt;
+  );
+}
+```</code></pre>
+
+        <h3>7.2 Virtualized Lists with Keys</h3>
+        <pre><code>```jsx
+import { FixedSizeList } from 'react-window';
+
+function VirtualizedList({ items }) {
+  const Row = ({ index, style }) => (
+    &lt;div style={style}&gt;
+      &lt;ListItem 
+        key={items[index].id}  // Keys still important in virtualized lists
+        item={items[index]}
+      /&gt;
+    &lt;/div&gt;
+  );
+
+  return (
+    &lt;FixedSizeList
+      height={400}
+      itemCount={items.length}
+      itemSize={50}
+      width={300}
+    &gt;
+      {Row}
+    &lt;/FixedSizeList&gt;
+  );
+}
+```</code></pre>
+
+        <h3>7.3 Server-Side Rendering (SSR) and Keys</h3>
+        <pre><code>```jsx
+// In SSR, keys help with hydration
+function SSRList({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map(item => (
+        // Same keys on server and client ensure proper hydration
+        &lt;li key={item.id}&gt;{item.text}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+// Mismatched keys between server and client cause:
+// - Hydration warnings
+// - Potential re-renders
+// - Loss of interactivity
+```</code></pre>
+
+        <h3>7.4 Keys in Compound Components</h3>
+        <pre><code>```jsx
+// Tab component with keys
+function Tabs({ tabs }) {
+  const [activeTab, setActiveTab] = useState(tabs[0]?.id);
+
+  return (
+    &lt;div&gt;
+      &lt;div className="tab-headers"&gt;
+        {tabs.map(tab => (
+          &lt;button
+            key={tab.id}
+            className={activeTab === tab.id ? 'active' : ''}
+            onClick={() => setActiveTab(tab.id)}
+          &gt;
+            {tab.title}
+          &lt;/button&gt;
+        ))}
+      &lt;/div&gt;
+      &lt;div className="tab-content"&gt;
+        {tabs.map(tab => (
+          &lt;div
+            key={tab.id}
+            style={{ display: activeTab === tab.id ? 'block' : 'none' }}
+          &gt;
+            {tab.content}
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="troubleshooting">8. TROUBLESHOOTING AND COMMON PITFALLS</h2>
+
+        <h3>8.1 Common Warning Messages</h3>
+        <p><strong>Warning: "Each child in a list should have a unique 'key' prop"</strong></p>
+        <pre><code>```jsx
+// ❌ What triggers it:
+function MyList() {
+  const items = ['a', 'b', 'c'];
+  return (
+    &lt;ul&gt;
+      {items.map(item => &lt;li&gt;{item}&lt;/li&gt;)}  // No key prop
+    &lt;/ul&gt;
+  );
+}
+
+// ✅ How to fix:
+function MyList() {
+  const items = ['a', 'b', 'c'];
+  return (
+    &lt;ul&gt;
+      {items.map((item, index) => &lt;li key={index}&gt;{item}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <p><strong>Warning: "Encountered two children with the same key"</strong></p>
+        <pre><code>```jsx
+// ❌ What triggers it:
+function DuplicateKeys() {
+  const items = [
+    { id: 1, name: 'Item 1' },
+    { id: 1, name: 'Item 2' }  // Duplicate ID!
+  ];
+  
+  return (
+    &lt;ul&gt;
+      {items.map(item => &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}
+
+// ✅ How to fix:
+function UniqueKeys() {
+  const items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' }  // Unique IDs
+  ];
+  
+  return (
+    &lt;ul&gt;
+      {items.map(item => &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <h3>8.2 Debugging Key Issues</h3>
+        <pre><code>```jsx
+// Helper to debug key issues
+function DebuggableList({ items }) {
+  // Log keys for debugging
+  console.log('Rendering items with keys:', items.map(i => i.id));
+  
+  return (
+    &lt;ul&gt;
+      {items.map(item => {
+        // Check for duplicate keys in development
+        if (process.env.NODE_ENV === 'development') {
+          const key = item.id;
+          if (DebuggingSet.has(key)) {
+            console.warn(`Duplicate key detected: ${key}`);
+          }
+          DebuggingSet.add(key);
+        }
+        
+        return &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;;
+      })}
+    &lt;/ul&gt;
+  );
+}
+
+// Reset debug set between renders
+const DebuggingSet = new Set();
+```</code></pre>
+
+        <h3>8.3 Performance Debugging</h3>
+        <pre><code>```jsx
+// Use React DevTools Profiler to identify rendering issues
+function ProfileThisList({ items }) {
+  return (
+    &lt;Profiler id="list" onRender={(id, phase, actualTime) => {
+      console.log(`List render took ${actualTime}ms`);
+    }}&gt;
+      &lt;ul&gt;
+        {items.map(item => (
+          &lt;ExpensiveItem key={item.id} data={item} /&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/Profiler&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="practical-examples">9. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3>9.1 E-commerce Product Grid</h3>
+        <pre><code>```jsx
+function ProductGrid({ products, onAddToCart }) {
+  return (
+    &lt;div className="product-grid"&gt;
+      {products.map((product) => (
+        &lt;div key={product.id} className="product-card"&gt;
+          &lt;img 
+            src={product.imageUrl} 
+            alt={product.name}
+            loading="lazy" 
+          /&gt;
+          &lt;h3&gt;{product.name}&lt;/h3&gt;
+          &lt;p className="price"&gt;${product.price.toFixed(2)}&lt;/p&gt;
+          &lt;p className="rating"&gt;
+            {'★'.repeat(product.rating)}
+            {'☆'.repeat(5 - product.rating)}
+          &lt;/p&gt;
+          {product.inStock ? (
+            &lt;button onClick={() => onAddToCart(product)}&gt;
+              Add to Cart
+            &lt;/button&gt;
+          ) : (
+            &lt;button disabled&gt;Out of Stock&lt;/button&gt;
+          )}
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>9.2 Chat Application Message List</h3>
+        <pre><code>```jsx
+function MessageList({ messages, currentUser }) {
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  return (
+    &lt;div className="message-list"&gt;
+      {messages.map((message, index) => {
+        const isCurrentUser = message.userId === currentUser.id;
+        const showAvatar = index === 0 || 
+          messages[index - 1].userId !== message.userId;
+
+        return (
+          &lt;div
+            key={message.id}
+            className={`message ${isCurrentUser ? 'own' : 'other'}`}
+          &gt;
+            {showAvatar && (
+              &lt;img 
+                src={message.userAvatar} 
+                alt={message.userName}
+                className="avatar"
+              /&gt;
+            )}
+            &lt;div className="message-content"&gt;
+              {showAvatar && (
+                &lt;span className="username"&gt;{message.userName}&lt;/span&gt;
+              )}
+              &lt;p&gt;{message.text}&lt;/p&gt;
+              &lt;span className="timestamp"&gt;
+                {new Date(message.timestamp).toLocaleTimeString()}
+              &lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        );
+      })}
+      &lt;div ref={messagesEndRef} /&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>9.3 Dynamic Form Builder</h3>
+        <pre><code>```jsx
+function FormBuilder() {
+  const [fields, setFields] = useState([]);
+
+  const addField = (type) => {
+    const newField = {
+      id: crypto.randomUUID(),
+      type,
+      label: `New ${type} field`,
+      required: false,
+      options: type === 'select' || type === 'radio' ? ['Option 1'] : null
+    };
+    setFields([...fields, newField]);
+  };
+
+  const updateField = (id, updates) => {
+    setFields(fields.map(field => 
+      field.id === id ? { ...field, ...updates } : field
+    ));
+  };
+
+  const removeField = (id) => {
+    setFields(fields.filter(field => field.id !== id));
+  };
+
+  const moveField = (dragIndex, hoverIndex) => {
+    const draggedField = fields[dragIndex];
+    const updatedFields = [...fields];
+    updatedFields.splice(dragIndex, 1);
+    updatedFields.splice(hoverIndex, 0, draggedField);
+    setFields(updatedFields);
+  };
+
+  return (
+    &lt;div className="form-builder"&gt;
+      &lt;div className="toolbar"&gt;
+        &lt;button onClick={() => addField('text')}&gt;Add Text Field&lt;/button&gt;
+        &lt;button onClick={() => addField('select')}&gt;Add Dropdown&lt;/button&gt;
+        &lt;button onClick={() => addField('checkbox')}&gt;Add Checkbox&lt;/button&gt;
+      &lt;/div&gt;
+      
+      &lt;Droppable droppableId="form-fields"&gt;
+        {(provided) => (
+          &lt;div ref={provided.innerRef} {...provided.droppableProps}&gt;
+            {fields.map((field, index) => (
+              &lt;Draggable key={field.id} draggableId={field.id} index={index}&gt;
+                {(provided) => (
+                  &lt;div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    className="field-item"
+                  &gt;
+                    &lt;div {...provided.dragHandleProps} className="drag-handle"&gt;
+                      ⋮⋮
+                    &lt;/div&gt;
+                    
+                    &lt;input
+                      type="text"
+                      value={field.label}
+                      onChange={(e) => updateField(field.id, { label: e.target.value })}
+                      placeholder="Field label"
+                    /&gt;
+                    
+                    {field.type === 'select' && (
+                      &lt;div className="options"&gt;
+                        {field.options.map((opt, optIndex) => (
+                          &lt;div key={optIndex} className="option"&gt;
+                            &lt;input
+                              type="text"
+                              value={opt}
+                              onChange={(e) => {
+                                const newOptions = [...field.options];
+                                newOptions[optIndex] = e.target.value;
+                                updateField(field.id, { options: newOptions });
+                              }}
+                            /&gt;
+                          &lt;/div&gt;
+                        ))}
+                      &lt;/div&gt;
+                    )}
+                    
+                    &lt;label&gt;
+                      &lt;input
+                        type="checkbox"
+                        checked={field.required}
+                        onChange={(e) => updateField(field.id, { required: e.target.checked })}
+                      /&gt;
+                      Required
+                    &lt;/label&gt;
+                    
+                    &lt;button onClick={() => removeField(field.id)}&gt;Remove&lt;/button&gt;
+                  &lt;/div&gt;
+                )}
+              &lt;/Draggable&gt;
+            ))}
+            {provided.placeholder}
+          &lt;/div&gt;
+        )}
+      &lt;/Droppable&gt;
+    &lt;/div&gt;
+  );
+}
+```</code></pre>
+
+        <h3>9.4 Data Table with Sorting and Filtering</h3>
+        <pre><code>```jsx
+function DataTable({ data, columns }) {
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [filters, setFilters] = useState({});
+
+  const sortedData = useMemo(() => {
+    let sortableData = [...data];
+    if (sortConfig.key) {
+      sortableData.sort((a, b) => {
+        if (a[sortConfig.key] &lt; b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableData;
+  }, [data, sortConfig]);
+
+  const filteredData = useMemo(() => {
+    return sortedData.filter(row => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value) return true;
+        return String(row[key]).toLowerCase().includes(String(value).toLowerCase());
+      });
+    });
+  }, [sortedData, filters]);
+
+  const requestSort = (key) => {
+    setSortConfig({
+      key,
+      direction: 
+        sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
+    });
+  };
+
+  return (
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          {columns.map(column => (
+            &lt;th key={column.key}&gt;
+              &lt;div onClick={() => requestSort(column.key)}&gt;
+                {column.label}
+                {sortConfig.key === column.key && (
+                  &lt;span&gt;{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}&lt;/span&gt;
+                )}
+              &lt;/div&gt;
+              &lt;input
+                type="text"
+                placeholder={`Filter ${column.label}`}
+                value={filters[column.key] || ''}
+                onChange={(e) => setFilters({
+                  ...filters,
+                  [column.key]: e.target.value
+                })}
+              /&gt;
+            &lt;/th&gt;
+          ))}
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        {filteredData.map((row, index) => (
+          &lt;tr key={row.id || index}&gt;
+            {columns.map(column => (
+              &lt;td key={`${row.id}-${column.key}`}&gt;
+                {column.render ? column.render(row) : row[column.key]}
+              &lt;/td&gt;
+            ))}
+          &lt;/tr&gt;
+        ))}
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2 id="interview-questions">10. INTERVIEW QUESTIONS AND ANSWERS</h2>
+
+        <h3>10.1 Basic Questions</h3>
+        <p><strong>Q1: What are keys in React and why are they important?</strong><br />
+            &gt; Keys are special string attributes that help React identify which items have changed, been added, or
+            been removed in a list. They provide a stable identity to elements, enabling React to perform efficient
+            updates and maintain component state correctly during re-renders.</p>
+        <p><strong>Q2: What happens if you don't provide keys in a list?</strong><br />
+            &gt; React will issue a warning and default to using indices as keys. This can lead to:<br />
+            &gt; - Performance issues (unnecessary re-renders)<br />
+            &gt; - State bugs (component state may get attached to wrong items)<br />
+            &gt; - UI glitches (especially with lists that can be reordered)</p>
+        <p><strong>Q3: Can I use the array index as a key?</strong><br />
+            &gt; You can, but only if:<br />
+            &gt; - The list is static and never changes<br />
+            &gt; - Items have no unique IDs<br />
+            &gt; - The list is never reordered or filtered<br />
+            &gt; - Items are never added/removed except at the end</p>
+
+        <h3>10.2 Intermediate Questions</h3>
+        <p><strong>Q4: Why is using Math.random() as a key bad?</strong><br />
+            &gt; ```jsx<br />
+            &gt; // This causes:<br />
+            &gt; // 1. New key on every render → React thinks it's a new element<br />
+            &gt; // 2. Unnecessary DOM recreation → Performance hit<br />
+            &gt; // 3. Loss of component state<br />
+            &gt; // 4. Memory leaks<br />
+            &gt; {items.map(item =&gt; &lt;Item key={Math.random()} item={item} /&gt;)}<br />
+            &gt; ```</p>
+        <p><strong>Q5: How do keys work with React's reconciliation algorithm?</strong><br />
+            &gt; React uses keys to match children in the old tree with children in the new tree. When keys are present,
+            React reorders existing elements rather than destroying and recreating them. This makes the algorithm O(n)
+            instead of O(n³).</p>
+        <p><strong>Q6: Can two different items in a list have the same key?</strong><br />
+            &gt; No. Keys must be unique among siblings. Duplicate keys cause:<br />
+            &gt; - Reconciliation errors<br />
+            &gt; - Unpredictable rendering<br />
+            &gt; - State management issues<br />
+            &gt; - React will warn you in development</p>
+
+        <h3>10.3 Advanced Questions</h3>
+        <p><strong>Q7: How do keys affect React.memo()?</strong><br />
+            &gt; ```jsx<br />
+            &gt; const MemoItem = React.memo(Item);<br />
+            &gt; function List({ items }) {<br />
+            &gt; return (<br />
+            &gt; &lt;div&gt;<br />
+            &gt; {items.map(item =&gt; (<br />
+            &gt; &lt;MemoItem <br />
+            &gt; key={item.id} // If key changes, memoization fails<br />
+            &gt; data={item.data} // because React sees it as a new instance<br />
+            &gt; /&gt;<br />
+            &gt; ))}<br />
+            &gt; &lt;/div&gt;<br />
+            &gt; );<br />
+            &gt; }<br />
+            &gt; ```</p>
+        <p><strong>Q8: How would you handle keys in a list with drag-and-drop functionality?</strong><br />
+            &gt; Use stable, unique IDs as keys. When items are reordered, React will see the same keys but in different
+            positions and simply move the DOM nodes instead of destroying and recreating them, preserving state and
+            providing smooth animations.</p>
+        <p><strong>Q9: Explain the concept of "key" in the context of React Fiber architecture.</strong><br />
+            &gt; In React Fiber, keys help the reconciliation process by allowing React to identify which units of work
+            (fibers) correspond to which elements. This enables efficient reuse of fibers during updates, preserving
+            state and avoiding unnecessary work.</p>
+
+        <h3>10.4 Practical Problem-Solving</h3>
+        <p><strong>Q10: How would you fix this buggy code?</strong></p>
+        <pre><code>```jsx
+// ❌ BUGGY CODE
+function TodoApp() {
+  const [todos, setTodos] = useState([
+    { text: 'Learn React' },
+    { text: 'Build app' }
+  ]);
+
+  const addTodo = () => {
+    setTodos([...todos, { text: 'New todo' }]);
+  };
+
+  return (
+    &lt;ul&gt;
+      {todos.map((todo, index) => (
+        &lt;li key={index}&gt;
+          &lt;input type="checkbox" /&gt;
+          {todo.text}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+
+// ✅ FIXED CODE
+function TodoApp() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: 'Learn React' },
+    { id: 2, text: 'Build app' }
+  ]);
+
+  const addTodo = () => {
+    setTodos([...todos, { 
+      id: Date.now(), 
+      text: 'New todo' 
+    }]);
+  };
+
+  return (
+    &lt;ul&gt;
+      {todos.map(todo =&gt; (
+        &lt;li key={todo.id}&gt;
+          &lt;input type="checkbox" /&gt;
+          {todo.text}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <p><strong>Q11: Design a solution for a list where items don't have unique IDs.</strong></p>
+        <pre><code>```jsx
+// Solution: Generate stable keys based on content
+function generateStableKey(item, index) {
+  // Create a unique string from the item's properties
+  const contentString = JSON.stringify(item);
+  // Simple hash function (in production, use a proper hashing library)
+  let hash = 0;
+  for (let i = 0; i &lt; contentString.length; i++) {
+    hash = ((hash &lt;&lt; 5) - hash) + contentString.charCodeAt(i);
+    hash |= 0; // Convert to 32-bit integer
+  }
+  return `item-${index}-${hash}`;
+}
+
+function ListWithoutIds({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map((item, index) => (
+        &lt;li key={generateStableKey(item, index)}&gt;
+          {item.text}
+        &lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+```</code></pre>
+
+        <hr />
+
+        <h2>KEY TAKEAWAYS</h2>
+        <ul>
+            <li><strong>Always use keys</strong> when rendering lists in React</li>
+            <li><strong>Use stable, unique identifiers</strong> from your data as keys</li>
+            <li><strong>Avoid using indices</strong> as keys for dynamic lists</li>
+            <li><strong>Never use random values</strong> as keys</li>
+            <li><strong>Keys are not props</strong> - they won't be available in child components</li>
+            <li><strong>Keys help with performance</strong> by enabling efficient reconciliation</li>
+            <li><strong>Keys are crucial for maintaining component state</strong> during updates</li>
+            <li><strong>Unique among siblings</strong>, not globally unique</li>
+            <li><strong>Keys work with fragments</strong> using <code>&lt;Fragment key={id}&gt;</code></li>
+            <li><strong>Test your keys</strong> to ensure they're stable across re-renders</li>
+        </ul>
+
+        <hr />
+
+        <h2>REFERENCES AND FURTHER READING</h2>
+        <ol>
+            <li><a href="https://reactjs.org/docs/lists-and-keys.html" target="_blank">React Official Documentation:
+                    Lists and Keys</a></li>
+            <li><a href="https://reactjs.org/docs/reconciliation.html" target="_blank">React Reconciliation
+                    Algorithm</a></li>
+            <li><a href="https://kentcdodds.com/blog/understanding-reacts-key-prop" target="_blank">Using the Key Prop
+                    in React</a></li>
+            <li><a href="https://github.com/acdlite/react-fiber-architecture" target="_blank">React Fiber
+                    Architecture</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+                    target="_blank">ES6 Array.map() Documentation</a></li>
+        </ol>
+
+        <p><em>This comprehensive guide covers everything you need to know about Lists and Keys in React. From basic
+                rendering with .map() to advanced performance optimization and troubleshooting, you now have a complete
+                understanding of one of React's most fundamental concepts.</em></p>
+
+        <hr />
+
+        <footer>⚛️ Block 6 – LISTS & KEYS IN REACT · every line, heading, code block, table preserved exactly as
+            provided</footer>
+
+    </div>
+</body>
+
+</html>
