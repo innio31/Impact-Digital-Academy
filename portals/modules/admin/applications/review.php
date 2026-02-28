@@ -355,7 +355,7 @@ logActivity(
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Review Application #<?php echo $application_id; ?> - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
@@ -369,50 +369,224 @@ logActivity(
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --pending: #f59e0b;
+            --under-review: #8b5cf6;
+            --approved: #10b981;
+            --rejected: #ef4444;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-left: env(safe-area-inset-left);
+            --safe-right: env(safe-area-inset-right);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
             background-color: #f1f5f9;
             color: var(--dark);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         .admin-container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
         }
 
+        /* Mobile Header */
+        .mobile-header {
+            display: flex;
+            background: var(--dark);
+            color: white;
+            padding: 0.75rem 1rem;
+            padding-top: max(0.75rem, var(--safe-top));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-header-left h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .mobile-header-left p {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 0.1rem;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .mobile-menu-btn:active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: min(85%, 320px);
+            height: 100vh;
+            height: -webkit-fill-available;
+            background: var(--dark);
+            color: white;
+            z-index: 1000;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .mobile-sidebar.active {
+            left: 0;
+        }
+
+        .mobile-sidebar-header {
+            padding: 1.5rem 1.25rem;
+            padding-top: max(1.5rem, var(--safe-top));
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-sidebar-header h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-sidebar:active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Desktop Sidebar */
         .sidebar {
+            display: none;
             width: 250px;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
+            z-index: 100;
         }
 
         .main-content {
             flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+            padding: 1rem;
+            padding-bottom: calc(1rem + var(--safe-bottom));
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-header {
+                display: none;
+            }
+
+            .sidebar {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 2rem;
+            }
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 1.5rem 1.5rem 1.5rem;
+            padding-top: max(1.5rem, var(--safe-top));
             border-bottom: 1px solid #334155;
         }
 
         .sidebar-header h2 {
             font-size: 1.5rem;
-            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
 
         .sidebar-nav ul {
@@ -427,13 +601,18 @@ logActivity(
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: #cbd5e1;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            min-height: 48px;
         }
 
-        .sidebar-nav a:hover,
+        .sidebar-nav a:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -446,25 +625,18 @@ logActivity(
             font-size: 1.1rem;
         }
 
+        /* Header Section */
         .header {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            color: var(--dark);
-            font-size: 1.8rem;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
         }
 
         .breadcrumb {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0.5rem;
         }
 
@@ -473,19 +645,84 @@ logActivity(
             text-decoration: none;
         }
 
-        .breadcrumb a:hover {
+        .breadcrumb a:active {
             text-decoration: underline;
         }
 
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .user-info {
+                border-top: none;
+                padding: 0;
+            }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        @media (min-width: 640px) {
+            .action-buttons .btn {
+                flex: none;
+            }
+        }
+
+        /* Application Header */
         .application-header {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            padding: 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .applicant-info {
@@ -505,22 +742,26 @@ logActivity(
             color: white;
             font-size: 1.5rem;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
         .applicant-details h2 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 0.25rem;
         }
 
         .applicant-details p {
             color: #64748b;
             font-size: 0.9rem;
+            margin-bottom: 0.25rem;
         }
 
         .application-meta {
-            display: flex;
-            gap: 2rem;
-            text-align: right;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
         }
 
         .meta-item {
@@ -529,20 +770,39 @@ logActivity(
         }
 
         .meta-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: #64748b;
             margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .meta-value {
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
+        @media (min-width: 768px) {
+            .application-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .application-meta {
+                padding-top: 0;
+                border-top: none;
+                gap: 2rem;
+            }
+        }
+
+        /* Status Badge */
         .status-badge {
             display: inline-block;
             padding: 0.5rem 1rem;
-            border-radius: 20px;
+            border-radius: 30px;
             font-weight: 600;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -567,75 +827,90 @@ logActivity(
             color: #991b1b;
         }
 
+        /* Content Grid */
         .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        @media (max-width: 1024px) {
+        @media (min-width: 1024px) {
             .content-grid {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
             }
         }
 
+        /* Section Cards */
         .section-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .section-card:last-child {
+            margin-bottom: 0;
         }
 
         .section-header {
-            padding: 1.25rem 1.5rem;
+            padding: 1rem 1.25rem;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
         }
 
         .section-header h3 {
             color: var(--dark);
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .section-header i {
             color: var(--primary);
+            font-size: 1rem;
         }
 
         .section-body {
-            padding: 1.5rem;
+            padding: 1.25rem;
         }
 
+        /* Info Grid */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
         }
 
         .info-item {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .info-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: #64748b;
             margin-bottom: 0.25rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .info-value {
             font-weight: 500;
             color: var(--dark);
+            font-size: 0.95rem;
+            word-break: break-word;
         }
 
         .text-content {
             line-height: 1.6;
             color: var(--dark);
             white-space: pre-wrap;
+            font-size: 0.95rem;
+            word-break: break-word;
         }
 
         .text-content.empty {
@@ -643,12 +918,13 @@ logActivity(
             font-style: italic;
         }
 
+        /* Review Form */
         .review-form {
-            margin-top: 2rem;
+            margin-top: 0;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
@@ -656,15 +932,19 @@ logActivity(
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--dark);
+            font-size: 0.9rem;
         }
 
         .form-control {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 1rem;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
+            min-height: 48px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .form-control:focus {
@@ -674,12 +954,11 @@ logActivity(
         }
 
         textarea.form-control {
-            min-height: 150px;
+            min-height: 120px;
             resize: vertical;
         }
 
         select.form-control {
-            appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
@@ -687,16 +966,41 @@ logActivity(
             padding-right: 2.5rem;
         }
 
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .btn-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Buttons */
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
             border: none;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-size: 0.95rem;
+            min-height: 48px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -704,7 +1008,7 @@ logActivity(
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:active {
             background: var(--secondary);
         }
 
@@ -723,26 +1027,110 @@ logActivity(
             color: var(--dark);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:active {
             background: #cbd5e1;
         }
 
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+        .btn-sm {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            min-height: 40px;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
+        .btn-block-mobile {
+            width: 100%;
         }
 
-        .history-item {
-            padding: 1rem;
-            border-left: 3px solid #e2e8f0;
-            margin-bottom: 1rem;
+        @media (min-width: 640px) {
+            .btn-block-mobile {
+                width: auto;
+            }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .quick-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            border: 2px solid white;
+            z-index: 1;
+        }
+
+        .timeline-item.current::before {
+            background: var(--primary);
+        }
+
+        .timeline-date {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-content {
             background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timeline-content strong {
+            font-size: 0.95rem;
+        }
+
+        .timeline-content p {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            color: #64748b;
+        }
+
+        /* History Items */
+        .history-item {
+            padding: 0.75rem;
+            border-left: 3px solid #e2e8f0;
+            margin-bottom: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
         }
 
         .history-item:last-child {
@@ -756,34 +1144,36 @@ logActivity(
         }
 
         .history-date {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #64748b;
             margin-bottom: 0.25rem;
         }
 
         .history-status {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             margin-right: 0.5rem;
         }
 
         .history-notes {
             margin-top: 0.5rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--dark);
             white-space: pre-wrap;
         }
 
+        /* Alerts */
         .alert {
             padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
+            font-size: 0.95rem;
         }
 
         .alert-success {
@@ -804,93 +1194,75 @@ logActivity(
             border: 1px solid #93c5fd;
         }
 
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
+        .alert i {
+            font-size: 1.25rem;
+            flex-shrink: 0;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #e2e8f0;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 2rem;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2.35rem;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            border: 2px solid white;
-        }
-
-        .timeline-item.current::before {
-            background: var(--primary);
-        }
-
-        .timeline-date {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-content {
-            background: white;
+        /* Info Box */
+        .info-box {
+            margin-top: 1rem;
             padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
+            background: #f0f9ff;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-            }
+        .info-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #0369a1;
         }
 
-        @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
-            }
+        .info-box p {
+            font-size: 0.9rem;
+            color: #334155;
+            line-height: 1.5;
+        }
 
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
+        /* Touch Optimizations */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input,
+        textarea,
+        select,
+        button,
+        a {
+            -webkit-touch-callout: default;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        body {
+            overscroll-behavior-y: contain;
+        }
+
+        /* Print Styles */
+        @media print {
+
+            .sidebar,
+            .mobile-header,
+            .action-buttons,
+            .btn-group,
+            .quick-actions,
+            .review-form {
+                display: none !important;
             }
 
             .main-content {
                 margin-left: 0;
+                padding: 1rem;
             }
 
-            .application-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .application-meta {
-                width: 100%;
-                justify-content: space-between;
+            .application-header,
+            .section-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
             }
         }
     </style>
@@ -898,11 +1270,65 @@ logActivity(
 
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <div class="mobile-header-content">
+                <div class="mobile-header-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h2>Impact Academy</h2>
+                        <p>Admin Dashboard</p>
+                    </div>
+                </div>
+                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
+                    <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Mobile Sidebar -->
+        <div class="mobile-sidebar" id="mobileSidebar">
+            <div class="mobile-sidebar-header">
+                <div>
+                    <h2>Impact Academy</h2>
+                    <p>Admin Dashboard</p>
+                </div>
+                <button class="close-sidebar" onclick="toggleSidebar()" aria-label="Close menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php" class="active">
+                            <i class="fas fa-file-alt"></i> Applications</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">
+                            <i class="fas fa-users"></i> Users</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/">
+                            <i class="fas fa-graduation-cap"></i> Academic</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/system/announcements.php">
+                            <i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/system/logs.php">
+                            <i class="fas fa-history"></i> Activity Logs</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/system/settings.php">
+                            <i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
+                            <i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Desktop Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2>Impact Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <p>Admin Dashboard</p>
             </div>
             <nav class="sidebar-nav">
                 <ul>
@@ -930,19 +1356,35 @@ logActivity(
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div>
-                    <div class="breadcrumb">
-                        <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">Dashboard</a> &rsaquo;
-                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">Applications</a> &rsaquo;
-                        Review Application
+                <div class="header-content">
+                    <div>
+                        <div class="breadcrumb">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">Dashboard</a> &rsaquo;
+                            <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">Applications</a> &rsaquo;
+                            Review #<?php echo str_pad($application_id, 4, '0', STR_PAD_LEFT); ?>
+                        </div>
+                        <h1>Review Application</h1>
                     </div>
-                    <h1>Review Application #<?php echo str_pad($application_id, 4, '0', STR_PAD_LEFT); ?></h1>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></div>
+                            <div style="font-size: 0.85rem; color: #64748b;">Administrator</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="action-buttons">
-                    <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to List
-                    </a>
-                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons" style="margin-bottom: 1rem;">
+                <a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                <a href="#" onclick="window.print()" class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Print
+                </a>
             </div>
 
             <!-- Alerts -->
@@ -957,17 +1399,10 @@ logActivity(
                             </div>
                         <?php elseif ($application['applying_as'] === 'student' && $application['program_id']): ?>
                             <div style="margin-top: 0.5rem; color: #92400e;">
-                                <i class="fas fa-exclamation-triangle"></i> No available class batches found for automatic enrollment. Student should contact administration.
+                                <i class="fas fa-exclamation-triangle"></i> No available class batches found for automatic enrollment.
                             </div>
                         <?php endif; ?>
                     </div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($success): ?>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    Application status updated successfully!
                 </div>
             <?php endif; ?>
 
@@ -986,8 +1421,9 @@ logActivity(
                     </div>
                     <div class="applicant-details">
                         <h2><?php echo htmlspecialchars($application['first_name'] . ' ' . $application['last_name']); ?></h2>
-                        <p><?php echo htmlspecialchars($application['email']); ?> • <?php echo $application['phone'] ?? 'No phone'; ?></p>
-                        <p>Applying as: <strong><?php echo ucfirst($application['applying_as']); ?></strong></p>
+                        <p><i class="fas fa-envelope" style="width: 16px;"></i> <?php echo htmlspecialchars($application['email']); ?></p>
+                        <p><i class="fas fa-phone" style="width: 16px;"></i> <?php echo $application['phone'] ?? 'No phone'; ?></p>
+                        <p><i class="fas fa-user-tag" style="width: 16px;"></i> Applying as: <strong><?php echo ucfirst($application['applying_as']); ?></strong></p>
                     </div>
                 </div>
                 <div class="application-meta">
@@ -1001,12 +1437,19 @@ logActivity(
                     </div>
                     <div class="meta-item">
                         <div class="meta-label">Submitted</div>
-                        <div class="meta-value"><?php echo date('M j, Y g:i A', strtotime($application['created_at'])); ?></div>
+                        <div class="meta-value"><?php echo date('M j, Y', strtotime($application['created_at'])); ?></div>
+                        <div style="font-size: 0.75rem; color: #64748b;"><?php echo date('g:i A', strtotime($application['created_at'])); ?></div>
                     </div>
                     <div class="meta-item">
                         <div class="meta-label">Last Updated</div>
-                        <div class="meta-value"><?php echo $application['updated_at'] ? date('M j, Y g:i A', strtotime($application['updated_at'])) : 'N/A'; ?></div>
+                        <div class="meta-value"><?php echo $application['updated_at'] ? date('M j, Y', strtotime($application['updated_at'])) : 'N/A'; ?></div>
                     </div>
+                    <?php if ($application['reviewed_by']): ?>
+                        <div class="meta-item">
+                            <div class="meta-label">Reviewed By</div>
+                            <div class="meta-value"><?php echo htmlspecialchars($application['reviewer_first_name'] . ' ' . $application['reviewer_last_name']); ?></div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -1047,7 +1490,7 @@ logActivity(
 
                     <!-- Address Information -->
                     <?php if ($application['address'] || $application['city'] || $application['state']): ?>
-                        <div class="section-card" style="margin-top: 1.5rem;">
+                        <div class="section-card">
                             <div class="section-header">
                                 <h3><i class="fas fa-map-marker-alt"></i> Address Information</h3>
                             </div>
@@ -1076,7 +1519,7 @@ logActivity(
 
                     <!-- Program Information -->
                     <?php if ($application['applying_as'] === 'student' && $application['program_name']): ?>
-                        <div class="section-card" style="margin-top: 1.5rem;">
+                        <div class="section-card">
                             <div class="section-header">
                                 <h3><i class="fas fa-graduation-cap"></i> Program Information</h3>
                             </div>
@@ -1095,15 +1538,13 @@ logActivity(
                                     </div>
                                     <div class="info-item">
                                         <div class="info-label">Program Fee</div>
-                                        <div class="info-value">₦<?php echo number_format($application['fee'], 2); ?></div>
+                                        <div class="info-value">₦<?php echo number_format($application['fee'] ?? 0, 2); ?></div>
                                     </div>
                                 </div>
                                 <?php if ($application['status'] === 'approved'): ?>
-                                    <div style="margin-top: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px; border-left: 4px solid var(--primary);">
+                                    <div class="info-box">
                                         <strong><i class="fas fa-info-circle"></i> Automatic Enrollment</strong>
-                                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
-                                            When this application is approved, the student will be automatically enrolled in the next available class batch for this program.
-                                        </p>
+                                        <p>When this application is approved, the student will be automatically enrolled in the next available class batch for this program.</p>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -1112,28 +1553,28 @@ logActivity(
 
                     <!-- Application Content -->
                     <?php if ($application['motivation'] || $application['qualifications'] || $application['experience']): ?>
-                        <div class="section-card" style="margin-top: 1.5rem;">
+                        <div class="section-card">
                             <div class="section-header">
                                 <h3><i class="fas fa-file-alt"></i> Application Content</h3>
                             </div>
                             <div class="section-body">
                                 <?php if ($application['motivation']): ?>
                                     <div style="margin-bottom: 1.5rem;">
-                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark);">Motivation Statement</h4>
+                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark); font-size: 0.95rem;">Motivation Statement</h4>
                                         <div class="text-content"><?php echo nl2br(htmlspecialchars($application['motivation'])); ?></div>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if ($application['qualifications']): ?>
                                     <div style="margin-bottom: 1.5rem;">
-                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark);">Qualifications</h4>
+                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark); font-size: 0.95rem;">Qualifications</h4>
                                         <div class="text-content"><?php echo nl2br(htmlspecialchars($application['qualifications'])); ?></div>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if ($application['experience']): ?>
                                     <div>
-                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark);">Experience</h4>
+                                        <h4 style="margin-bottom: 0.5rem; color: var(--dark); font-size: 0.95rem;">Experience</h4>
                                         <div class="text-content"><?php echo nl2br(htmlspecialchars($application['experience'])); ?></div>
                                     </div>
                                 <?php endif; ?>
@@ -1142,7 +1583,7 @@ logActivity(
                     <?php endif; ?>
 
                     <!-- Review Form -->
-                    <div class="section-card" style="margin-top: 1.5rem;">
+                    <div class="section-card">
                         <div class="section-header">
                             <h3><i class="fas fa-clipboard-check"></i> Review & Decision</h3>
                         </div>
@@ -1163,16 +1604,16 @@ logActivity(
                                 <div class="form-group">
                                     <label for="review_notes">Review Notes (Internal)</label>
                                     <textarea name="review_notes" id="review_notes" class="form-control"
-                                        placeholder="Add notes about your review decision..."></textarea>
+                                        placeholder="Add notes about your review decision..."><?php echo htmlspecialchars($review_notes ?? ''); ?></textarea>
                                 </div>
 
                                 <div class="btn-group">
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Update Application
+                                        <i class="fas fa-save"></i> Update
                                     </button>
                                     <?php if ($application['status'] === 'pending'): ?>
                                         <button type="submit" name="status" value="under_review" class="btn btn-secondary">
-                                            <i class="fas fa-search"></i> Mark as Under Review
+                                            <i class="fas fa-search"></i> Start Review
                                         </button>
                                     <?php endif; ?>
                                     <button type="button" class="btn btn-success" onclick="confirmApprove()">
@@ -1200,9 +1641,7 @@ logActivity(
                                     <div class="timeline-date"><?php echo date('M j, Y g:i A', strtotime($application['created_at'])); ?></div>
                                     <div class="timeline-content">
                                         <strong>Application Submitted</strong>
-                                        <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
-                                            Application received and marked as pending
-                                        </p>
+                                        <p>Application received and marked as pending</p>
                                     </div>
                                 </div>
 
@@ -1211,9 +1650,9 @@ logActivity(
                                         <div class="timeline-date"><?php echo date('M j, Y g:i A', strtotime($application['reviewed_at'])); ?></div>
                                         <div class="timeline-content">
                                             <strong>Status Updated</strong>
-                                            <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">
+                                            <p>
                                                 Marked as <?php echo $application['status']; ?> by
-                                                <?php echo $application['reviewer_first_name'] . ' ' . $application['reviewer_last_name']; ?>
+                                                <?php echo htmlspecialchars($application['reviewer_first_name'] . ' ' . $application['reviewer_last_name']); ?>
                                             </p>
                                         </div>
                                     </div>
@@ -1224,7 +1663,7 @@ logActivity(
 
                     <!-- Review History -->
                     <?php if ($application['review_notes']): ?>
-                        <div class="section-card" style="margin-top: 1.5rem;">
+                        <div class="section-card">
                             <div class="section-header">
                                 <h3><i class="fas fa-clipboard-list"></i> Review History</h3>
                             </div>
@@ -1247,7 +1686,7 @@ logActivity(
 
                     <!-- Previous Applications -->
                     <?php if (!empty($prev_apps)): ?>
-                        <div class="section-card" style="margin-top: 1.5rem;">
+                        <div class="section-card">
                             <div class="section-header">
                                 <h3><i class="fas fa-copy"></i> Previous Applications</h3>
                             </div>
@@ -1255,12 +1694,12 @@ logActivity(
                                 <?php foreach ($prev_apps as $prev): ?>
                                     <div class="history-item">
                                         <div class="history-date"><?php echo date('M j, Y', strtotime($prev['created_at'])); ?></div>
-                                        <div class="history-status status-<?php echo str_replace('_', '-', $prev['status']); ?>">
+                                        <span class="history-status status-<?php echo str_replace('_', '-', $prev['status']); ?>">
                                             <?php echo ucfirst(str_replace('_', ' ', $prev['status'])); ?>
-                                        </div>
-                                        <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                        </span>
+                                        <div style="margin-top: 0.5rem; font-size: 0.85rem;">
                                             <?php if ($prev['program_id']): ?>
-                                                Program: <?php echo $prev['program_name'] ?? 'Unknown'; ?>
+                                                Program: <?php echo htmlspecialchars($prev['program_name'] ?? 'Unknown'); ?>
                                             <?php else: ?>
                                                 Applying as: <?php echo ucfirst($prev['applying_as']); ?>
                                             <?php endif; ?>
@@ -1272,29 +1711,26 @@ logActivity(
                     <?php endif; ?>
 
                     <!-- Quick Actions -->
-                    <div class="section-card" style="margin-top: 1.5rem;">
+                    <div class="section-card">
                         <div class="section-header">
                             <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
                         </div>
                         <div class="section-body">
-                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                <a href="mailto:<?php echo urlencode($application['email']); ?>" class="btn btn-secondary" style="justify-content: center;">
+                            <div class="quick-actions">
+                                <a href="mailto:<?php echo urlencode($application['email']); ?>" class="btn btn-secondary">
                                     <i class="fas fa-envelope"></i> Email Applicant
                                 </a>
-                                <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $application['user_id']; ?>" class="btn btn-secondary" style="justify-content: center;">
+                                <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $application['user_id']; ?>" class="btn btn-secondary">
                                     <i class="fas fa-user"></i> View User Profile
                                 </a>
                                 <?php if ($application['applying_as'] === 'student' && $application['program_id']): ?>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/view.php?id=<?php echo $application['program_id']; ?>" class="btn btn-secondary" style="justify-content: center;">
+                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/view.php?id=<?php echo $application['program_id']; ?>" class="btn btn-secondary">
                                         <i class="fas fa-graduation-cap"></i> View Program
                                     </a>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/class-batches/?program_id=<?php echo $application['program_id']; ?>" class="btn btn-secondary" style="justify-content: center;">
+                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/class-batches/?program_id=<?php echo $application['program_id']; ?>" class="btn btn-secondary">
                                         <i class="fas fa-calendar-alt"></i> View Class Batches
                                     </a>
                                 <?php endif; ?>
-                                <a href="#" onclick="window.print()" class="btn btn-secondary" style="justify-content: center;">
-                                    <i class="fas fa-print"></i> Print Application
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -1304,6 +1740,28 @@ logActivity(
     </div>
 
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            // Prevent body scroll when sidebar is open
+            if (sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close sidebar when clicking a link (on mobile)
+        document.querySelectorAll('.mobile-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleSidebar();
+            });
+        });
+
         // Confirmation for approve action
         function confirmApprove() {
             const isStudent = <?php echo $application['applying_as'] === 'student' ? 'true' : 'false'; ?>;
@@ -1312,7 +1770,7 @@ logActivity(
             let message = 'Are you sure you want to approve this application?';
 
             if (isStudent && hasProgram) {
-                message += '\n\nThis will automatically enroll the student in the next available class batch for this program.';
+                message += '\n\nThis will automatically enroll the student in the next available class batch.';
             }
 
             if (confirm(message)) {
@@ -1329,7 +1787,7 @@ logActivity(
             }
         }
 
-        // Auto-save review notes (optional enhancement)
+        // Auto-save review notes
         let autoSaveTimer;
         const reviewNotes = document.getElementById('review_notes');
 
@@ -1348,6 +1806,42 @@ logActivity(
                 reviewNotes.value = savedNotes;
             }
         }
+
+        // Swipe to close sidebar
+        let touchStartX = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', function(e) {
+            const sidebar = document.getElementById('mobileSidebar');
+            const touchEndX = e.changedTouches[0].screenX;
+            const diffX = touchEndX - touchStartX;
+
+            if (sidebar.classList.contains('active') && diffX < -50) {
+                toggleSidebar();
+            }
+        }, false);
+
+        // Touch-friendly optimizations
+        document.querySelectorAll('select, .btn, a').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            element.addEventListener('touchend', function() {
+                this.style.opacity = '';
+            });
+        });
+
+        // Prevent zoom on double-tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 
