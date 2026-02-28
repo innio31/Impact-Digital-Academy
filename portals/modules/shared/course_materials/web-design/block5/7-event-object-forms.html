@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE EVENT OBJECT & FORM EVENTS · complete guide</title>
+    <style>
+        /* ---------- same clean, mobile-first style as block5 ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f5;
+            color: #1e2b3a;
+            line-height: 1.5;
+            padding: 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -20px #1f3a4b;
+            padding: 2rem 1.8rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            background: linear-gradient(145deg, #1f5f7e, #b35f4a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #c97b62;
+            padding-left: 1.2rem;
+            margin: 1rem 0 1.8rem;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            color: #215c7a;
+            border-bottom: 3px solid #cf8a72;
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            color: #236889;
+            margin: 2rem 0 1rem;
+            background: #ebf4fa;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            color: #1d5575;
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        .toc {
+            background: #e3eff9;
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom-color: #9fbbd0;
+        }
+
+        .toc ul {
+            columns: 2 220px;
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 0.4rem 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #1d4e6b;
+            font-weight: 500;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+        }
+
+        .toc a:hover {
+            background: #c7dff0;
+        }
+
+        pre {
+            background: #1e2f3f;
+            color: #e4f0fb;
+            padding: 1.2rem;
+            border-radius: 1.8rem;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 0 0 1px #5982a0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            background: #e1edf7;
+            color: #1f4d6e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            box-shadow: 0 8px 18px rgba(20, 65, 95, 0.1);
+        }
+
+        th {
+            background: #2c6e8f;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            background: #f8fcff;
+            border-bottom: 1px solid #c5d9ea;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, #cbdbe9, white, #cbdbe9);
+            margin: 2.5rem 0;
+        }
+
+        .badge {
+            background: #2c6e8f;
+            color: white;
+            font-size: 0.85rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .card-note {
+            background: #f2f8ff;
+            border-left: 8px solid #3e799b;
+            border-radius: 2rem;
+            padding: 1.2rem 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .example-block {
+            background: #e9f2fa;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            margin: 1.2rem 0;
+            border: 1px solid #b4cfdf;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #386282;
+            font-size: 1rem;
+            border-top: 2px solid #d2e3ef;
+            padding-top: 2rem;
+        }
+
+        .anchor {
+            scroll-margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <!-- TITLE exactly as given -->
+        <h1>THE EVENT OBJECT &amp; FORM EVENTS</h1>
+
+        <!-- TABLE OF CONTENTS (preserve every line, headings, links) -->
+        <div class="toc" id="table-of-contents">
+            <h2> Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">1. Introduction to Events in JavaScript</a></li>
+                <li><a href="#event-object-deep-dive">2. The Event Object</a></li>
+                <li><a href="#form-events-complete-coverage">3. Form Events: Complete Coverage</a></li>
+                <li><a href="#submit-event-preventdefault">4. The submit Event & preventDefault()</a></li>
+                <li><a href="#practical-examples">5. Practical Examples and Use Cases</a></li>
+                <li><a href="#advanced-patterns">6. Advanced Patterns and Best Practices</a></li>
+                <li><a href="#debugging">7. Debugging and Troubleshooting</a></li>
+                <li><a href="#performance">8. Performance Considerations</a></li>
+                <li><a href="#accessibility">9. Accessibility and Form Events</a></li>
+                <li><a href="#modern-apis">10. Modern APIs and Future Trends</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <section id="introduction" class="anchor">
+            <h2> 1. INTRODUCTION TO EVENTS IN JAVASCRIPT {#introduction}</h2>
+            <h3> What are Events?</h3>
+            <p>Events are actions or occurrences that happen in the browser window, which JavaScript can detect and
+                respond to. They are the core of interactive web applications.</p>
+            <pre><code>// Basic event listening structure
+element.addEventListener(eventType, eventHandler, useCapture);</code></pre>
+
+            <h3> The Event-Driven Programming Paradigm</h3>
+            <ul>
+                <li><strong>Event Emitter</strong>: The element that generates the event</li>
+                <li><strong>Event Listener</strong>: The code that "listens" for the event</li>
+                <li><strong>Event Handler</strong>: The function that runs when the event occurs</li>
+                <li><strong>Event Object</strong>: The object containing event details</li>
+            </ul>
+            <pre><code>// Simple event example
+const button = document.querySelector('#myButton');
+button.addEventListener('click', function(event) {
+    console.log('Button was clicked!');
+    console.log('Event object:', event);
+});</code></pre>
+
+            <h3> Types of Events Relevant to Forms</h3>
+            <ol>
+                <li><strong>Mouse Events</strong>: click, dblclick, mousedown, mouseup, mouseenter, mouseleave</li>
+                <li><strong>Keyboard Events</strong>: keydown, keypress, keyup</li>
+                <li><strong>Focus Events</strong>: focus, blur, focusin, focusout</li>
+                <li><strong>Form Events</strong>: submit, reset, change, input, select, invalid</li>
+                <li><strong>Clipboard Events</strong>: cut, copy, paste</li>
+                <li><strong>Drag Events</strong>: drag, dragstart, dragend, dragover, dragenter, dragleave, drop</li>
+            </ol>
+        </section>
+
+        <hr>
+
+        <!-- 2. EVENT OBJECT DEEP DIVE -->
+        <section id="event-object-deep-dive" class="anchor">
+            <h2> 2. THE EVENT OBJECT</h2>
+            <h3> What is the Event Object?</h3>
+            <p>When an event occurs, the browser automatically creates an event object containing detailed information
+                about the event and passes it as an argument to the event handler.</p>
+            <pre><code>document.querySelector('#myForm').addEventListener('submit', function(event) {
+    // 'event' is the Event object
+    console.log(event); // See all properties
+});</code></pre>
+
+            <h3> Core Properties of the Event Object</h3>
+            <h4># 2.1 <strong>target vs currentTarget</strong></h4>
+            <pre><code>form.addEventListener('click', function(event) {
+    // target: the element that actually triggered the event
+    console.log('Target:', event.target); // Could be input, button, etc.
+    
+    // currentTarget: the element the listener is attached to
+    console.log('Current Target:', event.currentTarget); // Always the form
+    
+    // Practical difference
+    if (event.target.tagName === 'INPUT') {
+        console.log('An input was clicked!');
+    }
+});</code></pre>
+
+            <h4># 2.2 <strong>type</strong></h4>
+            <pre><code>input.addEventListener('keydown', function(event) {
+    console.log(event.type); // 'keydown'
+    
+    if (event.type === 'keydown') {
+        // Handle keydown specifically
+    }
+});</code></pre>
+
+            <h4># 2.3 <strong>bubbles and cancelable</strong></h4>
+            <pre><code>button.addEventListener('click', function(event) {
+    console.log('Does this event bubble?', event.bubbles); // true for most events
+    console.log('Can this be canceled?', event.cancelable); // true for submit
+    
+    if (event.cancelable) {
+        // Safe to call preventDefault()
+        event.preventDefault();
+    }
+});</code></pre>
+
+            <h4># 2.4 <strong>defaultPrevented</strong></h4>
+            <pre><code>form.addEventListener('submit', function(event) {
+    console.log('Was default prevented?', event.defaultPrevented); // false initially
+    event.preventDefault();
+    console.log('Was default prevented?', event.defaultPrevented); // true now
+});</code></pre>
+
+            <h4># 2.5 <strong>eventPhase</strong></h4>
+            <pre><code>element.addEventListener('click', function(event) {
+    // 1: CAPTURING_PHASE, 2: AT_TARGET, 3: BUBBLING_PHASE
+    console.log('Event phase:', event.eventPhase); 
+});</code></pre>
+
+            <h3> Keyboard Event-Specific Properties</h3>
+            <pre><code>input.addEventListener('keydown', function(event) {
+    // Key identification
+    console.log('Key:', event.key); // 'a', 'Enter', 'ArrowUp'
+    console.log('Code:', event.code); // 'KeyA', 'Enter', 'ArrowUp'
+    console.log('Key Code (deprecated):', event.keyCode); // 65, 13, 38
+    
+    // Modifier keys
+    console.log('Shift?', event.shiftKey);
+    console.log('Ctrl?', event.ctrlKey);
+    console.log('Alt?', event.altKey);
+    console.log('Meta?', event.metaKey); // Command on Mac, Windows key on PC
+    
+    // Practical: Detect Ctrl+Enter
+    if (event.ctrlKey && event.key === 'Enter') {
+        console.log('Ctrl+Enter pressed!');
+        submitForm();
+    }
+});</code></pre>
+
+            <h3> Mouse Event-Specific Properties</h3>
+            <pre><code>form.addEventListener('click', function(event) {
+    // Button information
+    console.log('Which button?', event.button); // 0: left, 1: middle, 2: right
+    console.log('Buttons pressed:', event.buttons); // Bitfield of buttons
+    
+    // Coordinates relative to different references
+    console.log('Client X/Y (viewport):', event.clientX, event.clientY);
+    console.log('Page X/Y (document):', event.pageX, event.pageY);
+    console.log('Screen X/Y (screen):', event.screenX, event.screenY);
+    console.log('Offset X/Y (element):', event.offsetX, event.offsetY);
+    
+    // Modifier keys
+    console.log('Ctrl?', event.ctrlKey);
+    console.log('Shift?', event.shiftKey);
+});</code></pre>
+
+            <h3> Focus Event-Specific Properties</h3>
+            <pre><code>input.addEventListener('focusin', function(event) {
+    console.log('Related target (element losing focus):', event.relatedTarget);
+});
+
+input.addEventListener('focusout', function(event) {
+    console.log('Related target (element gaining focus):', event.relatedTarget);
+});</code></pre>
+
+            <h3> Creating and Dispatching Custom Events</h3>
+            <pre><code>// Creating a custom event with data
+const validationEvent = new CustomEvent('formValidation', {
+    detail: {
+        isValid: false,
+        errors: ['Email is required', 'Password too short'],
+        timestamp: Date.now()
+    },
+    bubbles: true,
+    cancelable: true
+});
+
+// Dispatching the event
+form.dispatchEvent(validationEvent);
+
+// Listening for the custom event
+form.addEventListener('formValidation', function(event) {
+    console.log('Validation result:', event.detail);
+    
+    if (!event.detail.isValid) {
+        showErrors(event.detail.errors);
+    }
+});</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 3. FORM EVENTS COMPLETE COVERAGE -->
+        <section id="form-events-complete-coverage" class="anchor">
+            <h2> 3. FORM EVENTS: COMPLETE COVERAGE {#form-events-complete-coverage}</h2>
+            <h3> Overview of Form Events</h3>
+            <p>Forms in HTML5 generate several specific events throughout their lifecycle. Understanding each one is
+                crucial for building robust form interactions.</p>
+
+            <h3> 3.1 <strong>The submit Event</strong></h3>
+            <pre><code>const form = document.querySelector('#registrationForm');
+
+form.addEventListener('submit', function(event) {
+    console.log('Form is being submitted');
+    // This is where we usually call preventDefault()
+    
+    // Access all form data
+    const formData = new FormData(form);
+    for (let [name, value] of formData) {
+        console.log(`${name}: ${value}`);
+    }
+});</code></pre>
+
+            <h3> 3.2 <strong>The reset Event</strong></h3>
+            <pre><code>form.addEventListener('reset', function(event) {
+    console.log('Form is being reset');
+    
+    // Confirm before reset
+    if (!confirm('Are you sure you want to clear all fields?')) {
+        event.preventDefault(); // Cancel the reset
+    }
+});</code></pre>
+
+            <h3> 3.3 <strong>The input Event</strong> (Fires on every change)</h3>
+            <pre><code>const usernameInput = document.querySelector('#username');
+
+usernameInput.addEventListener('input', function(event) {
+    console.log('Input value changed:', event.target.value);
+    console.log('Input type:', event.inputType); // 'insertText', 'deleteContentBackward'
+    
+    // Real-time validation
+    validateField(event.target);
+    
+    // Character count
+    const charCount = event.target.value.length;
+    updateCharacterCounter(charCount);
+});</code></pre>
+
+            <h3> 3.4 <strong>The change Event</strong> (Fires after losing focus)</h3>
+            <pre><code>const emailInput = document.querySelector('#email');
+
+emailInput.addEventListener('change', function(event) {
+    console.log('Email field changed and lost focus');
+    console.log('New value:', event.target.value);
+    console.log('Old value?', event.target.defaultValue);
+    
+    // Validate after user finishes editing
+    validateEmail(event.target.value);
+});
+
+// For select elements
+const countrySelect = document.querySelector('#country');
+countrySelect.addEventListener('change', function(event) {
+    console.log('Selected country:', event.target.value);
+    loadCitiesForCountry(event.target.value);
+});</code></pre>
+
+            <h3> 3.5 <strong>The focus and blur Events</strong></h3>
+            <pre><code>const input = document.querySelector('#search');
+
+input.addEventListener('focus', function(event) {
+    console.log('Input gained focus');
+    console.log('Target:', event.target);
+    console.log('Related target (element losing focus):', event.relatedTarget);
+    
+    // Visual feedback
+    this.classList.add('focused');
+    showHint('Type to search...');
+});
+
+input.addEventListener('blur', function(event) {
+    console.log('Input lost focus');
+    console.log('Target:', event.target);
+    console.log('Related target (element gaining focus):', event.relatedTarget);
+    
+    // Remove visual feedback
+    this.classList.remove('focused');
+    hideHint();
+    
+    // Validate on blur
+    validateOnBlur(this);
+});</code></pre>
+
+            <h3> 3.6 <strong>The focusin and focusout Events</strong> (Bubbling versions)</h3>
+            <pre><code>const form = document.querySelector('#myForm');
+
+// These bubble, unlike focus/blur
+form.addEventListener('focusin', function(event) {
+    console.log('Some element inside form gained focus:', event.target);
+    highlightField(event.target);
+});
+
+form.addEventListener('focusout', function(event) {
+    console.log('Some element inside form lost focus:', event.target);
+    unhighlightField(event.target);
+    
+    // Validate on focus out
+    if (event.target.tagName === 'INPUT') {
+        validateField(event.target);
+    }
+});</code></pre>
+
+            <h3> 3.7 <strong>The select Event</strong> (For text selection)</h3>
+            <pre><code>const textarea = document.querySelector('#description');
+
+textarea.addEventListener('select', function(event) {
+    console.log('Text selected');
+    
+    const start = this.selectionStart;
+    const end = this.selectionEnd;
+    const selectedText = this.value.substring(start, end);
+    
+    console.log('Selected text:', selectedText);
+    console.log('Selection range:', start, '-', end);
+    
+    // Show character count of selection
+    updateSelectionCounter(selectedText.length);
+});</code></pre>
+
+            <h3> 3.8 <strong>The invalid Event</strong> (HTML5 validation)</h3>
+            <pre><code>const emailInput = document.querySelector('#email');
+
+emailInput.addEventListener('invalid', function(event) {
+    console.log('Validation failed for:', event.target);
+    console.log('Validation message:', event.target.validationMessage);
+    
+    // Prevent the default browser tooltip
+    event.preventDefault();
+    
+    // Show custom error
+    showCustomError(this, this.validationMessage);
+});
+
+// For multiple fields
+form.addEventListener('invalid', function(event) {
+    event.preventDefault(); // Stops the browser validation bubble
+    console.log('Invalid field:', event.target);
+}, true); // Capture phase to catch all invalid events</code></pre>
+
+            <h3> 3.9 <strong>The beforeinput Event</strong> (Modern, fires before input)</h3>
+            <pre><code>input.addEventListener('beforeinput', function(event) {
+    console.log('About to input:', event.data);
+    console.log('Input type:', event.inputType); // 'insertText', 'deleteContentBackward'
+    console.log('Current value:', event.target.value);
+    
+    // Can we prevent certain inputs?
+    if (event.inputType === 'insertText' && event.data === '@') {
+        showMentionSuggestions();
+    }
+});</code></pre>
+
+            <h3> 3.10 <strong>The search Event</strong> (For search inputs)</h3>
+            <pre><code>const searchInput = document.querySelector('input[type="search"]');
+
+searchInput.addEventListener('search', function(event) {
+    console.log('Search submitted or cleared');
+    console.log('Search value:', event.target.value);
+    
+    if (event.target.value === '') {
+        // Search was cleared
+        resetSearchResults();
+    } else {
+        // Perform search
+        performSearch(event.target.value);
+    }
+});</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 4. SUBMIT EVENT & PREVENTDEFAULT -->
+        <section id="submit-event-preventdefault" class="anchor">
+            <h2> 4. THE SUBMIT EVENT & PREVENTDEFAULT() {#submit-event-preventdefault}</h2>
+            <h3> Deep Dive into the submit Event</h3>
+            <h4># 4.1 <strong>When Does submit Fire?</strong></h4>
+            <pre><code>// The submit event fires when:
+// 1. User clicks a submit button (<button type="submit"> or <input type="submit">)
+// 2. User presses Enter in a form field
+// 3. JavaScript calls form.submit() method
+
+form.addEventListener('submit', function(event) {
+    console.log('Submit event triggered!');
+});</code></pre>
+
+            <h4># 4.2 <strong>How submit is Different from Click</strong></h4>
+            <pre><code>const submitButton = document.querySelector('#submitBtn');
+
+submitButton.addEventListener('click', function(event) {
+    console.log('Button clicked');
+    // This fires BEFORE the submit event
+    
+    // The button click triggers form submission
+    // Unless we prevent it
+    // event.preventDefault(); // Would prevent form submission
+});
+
+form.addEventListener('submit', function(event) {
+    console.log('Form submitted');
+    // This fires AFTER the button click
+});</code></pre>
+
+            <h3> Understanding preventDefault()</h3>
+            <h4># 4.3 <strong>What Does preventDefault() Do?</strong></h4>
+            <pre><code>form.addEventListener('submit', function(event) {
+    // Stops the browser from:
+    // - Sending an HTTP request
+    // - Reloading the page
+    // - Navigating to the action URL
+    event.preventDefault();
+    
+    console.log('Default form submission prevented');
+    // We can now handle submission via JavaScript
+    handleFormDataViaAJAX();
+});</code></pre>
+
+            <h4># 4.4 <strong>Checking if preventDefault is Possible</strong></h4>
+            <pre><code>submitButton.addEventListener('click', function(event) {
+    if (event.cancelable) {
+        console.log('This event can be prevented');
+        event.preventDefault();
+    } else {
+        console.log('This event cannot be prevented');
+    }
+});</code></pre>
+
+            <h4># 4.5 <strong>The Difference Between preventDefault, stopPropagation, and return false</strong></h4>
+            <pre><code>form.addEventListener('submit', function(event) {
+    // preventDefault() - prevents default browser behavior
+    event.preventDefault();
+    
+    // stopPropagation() - stops event from bubbling up
+    event.stopPropagation();
+    
+    // stopImmediatePropagation() - stops other listeners on same element
+    // event.stopImmediatePropagation();
+    
+    // return false - in jQuery does both preventDefault and stopPropagation
+    // In vanilla JS, return false does NOTHING in addEventListener
+    return false; // This does nothing here!
+});
+
+// In inline event handlers, return false works
+&lt;form onsubmit="return validateForm()"&gt;</code></pre>
+
+            <h4># 4.6 <strong>Practical: Conditional Prevention</strong></h4>
+            <pre><code>form.addEventListener('submit', function(event) {
+    const isValid = validateForm();
+    
+    if (!isValid) {
+        console.log('Validation failed, preventing submission');
+        event.preventDefault();
+        showErrors();
+    } else {
+        console.log('Form is valid, allowing submission');
+        // If we don't call preventDefault, form submits normally
+    }
+});</code></pre>
+
+            <h3> The Form Submission Process</h3>
+            <h4># 4.7 <strong>Complete Form Submission Flow</strong></h4>
+            <pre><code>form.addEventListener('submit', function(event) {
+    // 1. First, we can prevent the default
+    event.preventDefault();
+    
+    // 2. Collect form data
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    // 3. Perform validation
+    const errors = validateFormData(data);
+    
+    if (errors.length > 0) {
+        // 4a. Handle errors
+        displayErrors(errors);
+        return;
+    }
+    
+    // 4b. Submit via AJAX
+    submitViaFetch(data)
+        .then(response => {
+            if (response.ok) {
+                showSuccessMessage();
+                form.reset(); // Reset form after successful submission
+            }
+        })
+        .catch(error => {
+            showErrorMessage('Submission failed');
+        });
+});</code></pre>
+
+            <h4># 4.8 <strong>Different Submit Methods and Their Effects</strong></h4>
+            <pre><code>// Method 1: Normal submit (page reloads)
+// &lt;form action="/submit" method="POST"&gt;
+
+// Method 2: JavaScript submit (triggers submit event)
+form.submit(); // This DOES NOT trigger the submit event!
+
+// Method 3: Programmatic click of submit button
+submitButton.click(); // This DOES trigger the submit event
+
+// Method 4: AJAX submission (no page reload)
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    fetch(form.action, {
+        method: form.method,
+        body: new FormData(form)
+    });
+});</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 5. PRACTICAL EXAMPLES -->
+        <section id="practical-examples" class="anchor">
+            <h2> 5. PRACTICAL EXAMPLES AND USE CASES {#practical-examples}</h2>
+            <h3> Example 1: Complete Form Handling System</h3>
+            <pre><code>&lt;form id="registrationForm" action="/api/register" method="POST"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label for="username"&gt;Username:&lt;/label&gt;
+        &lt;input type="text" id="username" name="username" required 
+               minlength="3" maxlength="20" pattern="[A-Za-z0-9]+"&gt;
+        &lt;div class="error" id="usernameError"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-group"&gt;
+        &lt;label for="email"&gt;Email:&lt;/label&gt;
+        &lt;input type="email" id="email" name="email" required&gt;
+        &lt;div class="error" id="emailError"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-group"&gt;
+        &lt;label for="password"&gt;Password:&lt;/label&gt;
+        &lt;input type="password" id="password" name="password" required 
+               minlength="8"&gt;
+        &lt;div class="error" id="passwordError"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-group"&gt;
+        &lt;label for="confirmPassword"&gt;Confirm Password:&lt;/label&gt;
+        &lt;input type="password" id="confirmPassword" name="confirmPassword" required&gt;
+        &lt;div class="error" id="confirmPasswordError"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-group"&gt;
+        &lt;label for="country"&gt;Country:&lt;/label&gt;
+        &lt;select id="country" name="country" required&gt;
+            &lt;option value=""&gt;Select a country&lt;/option&gt;
+            &lt;option value="us"&gt;United States&lt;/option&gt;
+            &lt;option value="ca"&gt;Canada&lt;/option&gt;
+            &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="form-group"&gt;
+        &lt;label&gt;
+            &lt;input type="checkbox" name="terms" required&gt;
+            I accept the terms and conditions
+        &lt;/label&gt;
+    &lt;/div&gt;
+    
+    &lt;button type="submit"&gt;Register&lt;/button&gt;
+    &lt;button type="reset"&gt;Clear Form&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id="formMessage"&gt;&lt;/div&gt;</code></pre>
+
+            <pre><code>class FormHandler {
+    constructor(formId) {
+        this.form = document.getElementById(formId);
+        this.fields = this.form.querySelectorAll('input, select, textarea');
+        this.errors = new Map();
+        this.setupEventListeners();
+    }
+    
+    setupEventListeners() {
+        // Handle form submission
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        
+        // Handle form reset
+        this.form.addEventListener('reset', (e) => this.handleReset(e));
+        
+        // Real-time validation
+        this.fields.forEach(field => {
+            field.addEventListener('input', (e) => this.validateField(e.target));
+            field.addEventListener('blur', (e) => this.validateField(e.target));
+            field.addEventListener('invalid', (e) => this.handleInvalid(e));
+        });
+        
+        // Special handling for password confirmation
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        if (confirmPassword) {
+            [password, confirmPassword].forEach(field => {
+                field.addEventListener('input', () => this.validatePasswordMatch());
+            });
+        }
+    }
+    
+    handleSubmit(event) {
+        event.preventDefault();
+        
+        // Validate all fields
+        let isValid = true;
+        this.fields.forEach(field => {
+            if (!this.validateField(field)) {
+                isValid = false;
+            }
+        });
+        
+        if (!isValid) {
+            this.showMessage('Please fix the errors in the form', 'error');
+            return;
+        }
+        
+        // Collect form data
+        const formData = new FormData(this.form);
+        const data = Object.fromEntries(formData);
+        
+        // Simulate AJAX submission
+        this.submitForm(data);
+    }
+    
+    validateField(field) {
+        const errorElement = document.getElementById(`${field.id}Error`);
+        
+        if (field.validity) {
+            if (field.validity.valid) {
+                // Field is valid
+                this.errors.delete(field.id);
+                field.classList.remove('invalid');
+                field.classList.add('valid');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.classList.remove('show');
+                }
+                return true;
+            } else {
+                // Field is invalid
+                let errorMessage = '';
+                
+                if (field.validity.valueMissing) {
+                    errorMessage = `${field.name} is required`;
+                } else if (field.validity.typeMismatch) {
+                    errorMessage = `Please enter a valid ${field.type}`;
+                } else if (field.validity.tooShort) {
+                    errorMessage = `Must be at least ${field.minLength} characters`;
+                } else if (field.validity.patternMismatch) {
+                    errorMessage = 'Please match the requested format';
+                } else {
+                    errorMessage = field.validationMessage;
+                }
+                
+                this.errors.set(field.id, errorMessage);
+                field.classList.add('invalid');
+                field.classList.remove('valid');
+                
+                if (errorElement) {
+                    errorElement.textContent = errorMessage;
+                    errorElement.classList.add('show');
+                }
+                
+                return false;
+            }
+        }
+        
+        return true; // Fallback for non-validatable fields
+    }
+    
+    validatePasswordMatch() {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const errorElement = document.getElementById('confirmPasswordError');
+        
+        if (password.value !== confirmPassword.value) {
+            const message = 'Passwords do not match';
+            this.errors.set('confirmPassword', message);
+            confirmPassword.classList.add('invalid');
+            confirmPassword.classList.remove('valid');
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+            
+            return false;
+        } else {
+            this.errors.delete('confirmPassword');
+            confirmPassword.classList.remove('invalid');
+            confirmPassword.classList.add('valid');
+            
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.remove('show');
+            }
+            
+            return true;
+        }
+    }
+    
+    handleInvalid(event) {
+        event.preventDefault(); // Prevent browser tooltips
+        this.validateField(event.target);
+    }
+    
+    handleReset(event) {
+        // Optional: confirm reset
+        if (!confirm('Are you sure you want to clear all fields?')) {
+            event.preventDefault();
+            return;
+        }
+        
+        // Clear all errors and validation states
+        this.errors.clear();
+        this.fields.forEach(field => {
+            field.classList.remove('valid', 'invalid');
+            const errorElement = document.getElementById(`${field.id}Error`);
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.remove('show');
+            }
+        });
+        
+        this.showMessage('Form has been reset', 'info');
+    }
+    
+    async submitForm(data) {
+        this.showMessage('Submitting...', 'info');
+        
+        try {
+            // Simulate API call
+            const response = await this.mockApiCall(data);
+            
+            if (response.success) {
+                this.showMessage('Registration successful!', 'success');
+                this.form.reset(); // Clear form on success
+            } else {
+                this.showMessage('Registration failed: ' + response.message, 'error');
+            }
+        } catch (error) {
+            this.showMessage('Network error. Please try again.', 'error');
+        }
+    }
+    
+    mockApiCall(data) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Simulate random success/failure
+                const success = Math.random() > 0.3;
+                resolve({
+                    success: success,
+                    message: success ? 'Welcome!' : 'Server error'
+                });
+            }, 1500);
+        });
+    }
+    
+    showMessage(message, type) {
+        const messageDiv = document.getElementById('formMessage');
+        messageDiv.textContent = message;
+        messageDiv.className = `message ${type}`;
+        messageDiv.classList.add('show');
+        
+        // Auto-hide after 5 seconds for success/info
+        if (type !== 'error') {
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 5000);
+        }
+    }
+}
+
+// Initialize the form handler
+const formHandler = new FormHandler('registrationForm');</code></pre>
+
+            <h3> Example 2: Advanced Real-time Form Features</h3>
+            <pre><code>class AdvancedFormFeatures {
+    constructor(formId) {
+        this.form = document.getElementById(formId);
+        this.setupCharacterCounters();
+        this.setupAutoSave();
+        this.setupInputMasks();
+        this.setupPasswordStrength();
+        this.setupConditionalFields();
+    }
+    
+    setupCharacterCounters() {
+        const textareas = this.form.querySelectorAll('textarea[maxlength]');
+        
+        textareas.forEach(textarea => {
+            const counter = document.createElement('div');
+            counter.className = 'char-counter';
+            textarea.parentNode.insertBefore(counter, textarea.nextSibling);
+            
+            const updateCounter = () => {
+                const remaining = textarea.maxLength - textarea.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.style.color = remaining < 20 ? 'orange' : 
+                                     remaining < 10 ? 'red' : 'gray';
+            };
+            
+            textarea.addEventListener('input', updateCounter);
+            textarea.addEventListener('focus', updateCounter);
+            updateCounter(); // Initial update
+        });
+    }
+    
+    setupAutoSave() {
+        const AUTO_SAVE_KEY = 'formAutoSave';
+        const fields = this.form.querySelectorAll('input, textarea, select');
+        
+        // Load saved data
+        const savedData = localStorage.getItem(AUTO_SAVE_KEY);
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            fields.forEach(field => {
+                if (data[field.name]) {
+                    field.value = data[field.name];
+                }
+            });
+            this.showNotification('Draft loaded from auto-save');
+        }
+        
+        // Auto-save on input (debounced)
+        let saveTimeout;
+        const saveForm = () => {
+            const formData = new FormData(this.form);
+            const data = Object.fromEntries(formData);
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
+            this.showNotification('Draft saved', 2000);
+        };
+        
+        fields.forEach(field => {
+            field.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(saveForm, 1000);
+            });
+        });
+        
+        // Clear auto-save on successful submit
+        this.form.addEventListener('submit', (e) => {
+            if (e.defaultPrevented) return; // Only clear if AJAX submit handled
+            
+            // Clear saved draft after successful submission
+            setTimeout(() => {
+                localStorage.removeItem(AUTO_SAVE_KEY);
+            }, 1000);
+        });
+    }
+    
+    setupInputMasks() {
+        const phoneInput = this.form.querySelector('input[type="tel"]');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        value = `(${value}`;
+                    } else if (value.length <= 6) {
+                        value = `(${value.slice(0,3)}) ${value.slice(3)}`;
+                    } else {
+                        value = `(${value.slice(0,3)}) ${value.slice(3,6)}-${value.slice(6,10)}`;
+                    }
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        const creditCard = this.form.querySelector('#creditCard');
+        if (creditCard) {
+            creditCard.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                let formatted = '';
+                
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formatted += ' ';
+                    }
+                    formatted += value[i];
+                }
+                
+                e.target.value = formatted;
+            });
+        }
+    }
+    
+    setupPasswordStrength() {
+        const passwordInput = this.form.querySelector('#password');
+        if (!passwordInput) return;
+        
+        const strengthMeter = document.createElement('div');
+        strengthMeter.className = 'password-strength';
+        passwordInput.parentNode.appendChild(strengthMeter);
+        
+        passwordInput.addEventListener('input', (e) => {
+            const password = e.target.value;
+            const strength = this.calculatePasswordStrength(password);
+            
+            strengthMeter.textContent = `Strength: ${strength.label}`;
+            strengthMeter.className = `password-strength ${strength.class}`;
+            
+            // Show requirements
+            const requirements = this.getPasswordRequirements(password);
+            this.showPasswordRequirements(requirements);
+        });
+    }
+    
+    calculatePasswordStrength(password) {
+        let score = 0;
+        
+        // Length check
+        if (password.length >= 8) score += 1;
+        if (password.length >= 12) score += 1;
+        
+        // Character variety
+        if (/[a-z]/.test(password)) score += 1;
+        if (/[A-Z]/.test(password)) score += 1;
+        if (/[0-9]/.test(password)) score += 1;
+        if (/[^a-zA-Z0-9]/.test(password)) score += 1;
+        
+        if (score < 3) return { label: 'Weak', class: 'weak' };
+        if (score < 5) return { label: 'Medium', class: 'medium' };
+        if (score < 7) return { label: 'Strong', class: 'strong' };
+        return { label: 'Very Strong', class: 'very-strong' };
+    }
+    
+    getPasswordRequirements(password) {
+        return {
+            length: password.length >= 8,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[^a-zA-Z0-9]/.test(password)
+        };
+    }
+    
+    showPasswordRequirements(requirements) {
+        // Implementation would display requirements checklist
+        console.log('Password requirements:', requirements);
+    }
+    
+    setupConditionalFields() {
+        const conditionTriggers = this.form.querySelectorAll('[data-conditional]');
+        
+        conditionTriggers.forEach(trigger => {
+            const updateVisibility = () => {
+                const targetId = trigger.dataset.conditional;
+                const target = document.getElementById(targetId);
+                if (!target) return;
+                
+                const condition = trigger.dataset.condition || 'true';
+                const show = eval(condition); // Be careful with eval!
+                
+                target.style.display = show ? 'block' : 'none';
+                
+                // Disable/enable fields to prevent submission of hidden fields
+                const fields = target.querySelectorAll('input, select, textarea');
+                fields.forEach(field => {
+                    field.disabled = !show;
+                    field.required = show && field.dataset.requiredWhenVisible === 'true';
+                });
+            };
+            
+            trigger.addEventListener('change', updateVisibility);
+            trigger.addEventListener('input', updateVisibility);
+            updateVisibility(); // Initial state
+        });
+    }
+    
+    showNotification(message, duration = 3000) {
+        const notification = document.createElement('div');
+        notification.className = 'form-notification';
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 300);
+        }, duration);
+    }
+}</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 6. ADVANCED PATTERNS -->
+        <section id="advanced-patterns" class="anchor">
+            <h2> 6. ADVANCED PATTERNS AND BEST PRACTICES {#advanced-patterns}</h2>
+            <h3> 6.1 <strong>Event Delegation for Dynamic Forms</strong></h3>
+            <pre><code>// Instead of attaching listeners to each input
+class DynamicFormHandler {
+    constructor(formId) {
+        this.form = document.getElementById(formId);
+        
+        // Single event listener for all inputs
+        this.form.addEventListener('input', (e) => {
+            if (e.target.matches('input, textarea, select')) {
+                this.handleFieldInput(e.target);
+            }
+        });
+        
+        // Handle dynamically added fields
+        this.form.addEventListener('focusout', (e) => {
+            if (e.target.matches('.dynamic-field')) {
+                this.validateField(e.target);
+            }
+        });
+    }
+    
+    addField(type, name) {
+        const field = document.createElement('input');
+        field.type = type;
+        field.name = name;
+        field.className = 'dynamic-field';
+        
+        this.form.appendChild(field);
+        // No need to add new listeners - delegation handles it
+    }
+}</code></pre>
+
+            <h3> 6.2 <strong>Debouncing and Throttling for Performance</strong></h3>
+            <pre><code>class OptimizedFormHandler {
+    constructor() {
+        this.debouncedValidate = this.debounce(this.validateField, 500);
+        this.throttledAutoSave = this.throttle(this.autoSave, 2000);
+    }
+    
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
+    
+    setupListeners() {
+        searchInput.addEventListener('input', (e) => {
+            this.debouncedValidate(e.target); // Waits for user to stop typing
+        });
+        
+        this.form.addEventListener('input', (e) => {
+            this.throttledAutoSave(); // At most once every 2 seconds
+        });
+    }
+}</code></pre>
+
+            <h3> 6.3 <strong>Form State Management</strong></h3>
+            <pre><code>class FormStateManager {
+    constructor(form) {
+        this.form = form;
+        this.initialState = this.captureState();
+        this.currentState = this.initialState;
+        this.modifiedFields = new Set();
+        
+        this.setupTracking();
+    }
+    
+    captureState() {
+        const formData = new FormData(this.form);
+        const state = {};
+        for (let [key, value] of formData) {
+            state[key] = value;
+        }
+        return state;
+    }
+    
+    setupTracking() {
+        this.form.addEventListener('input', (e) => {
+            this.currentState[e.target.name] = e.target.value;
+            
+            if (this.currentState[e.target.name] !== this.initialState[e.target.name]) {
+                this.modifiedFields.add(e.target.name);
+            } else {
+                this.modifiedFields.delete(e.target.name);
+            }
+            
+            this.updateFormStatus();
+        });
+        
+        // Warn before leaving if form is dirty
+        window.addEventListener('beforeunload', (e) => {
+            if (this.modifiedFields.size > 0) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            }
+        });
+    }
+    
+    isDirty() {
+        return this.modifiedFields.size > 0;
+    }
+    
+    reset() {
+        this.form.reset();
+        this.initialState = this.captureState();
+        this.currentState = this.initialState;
+        this.modifiedFields.clear();
+        this.updateFormStatus();
+    }
+    
+    updateFormStatus() {
+        const statusEl = document.getElementById('formStatus');
+        if (statusEl) {
+            statusEl.textContent = this.isDirty() ? 
+                '✎ You have unsaved changes' : '✓ All changes saved';
+        }
+    }
+}</code></pre>
+
+            <h3> 6.4 <strong>Multi-step Form (Wizard) Pattern</strong></h3>
+            <pre><code>class MultiStepForm {
+    constructor(formId, steps) {
+        this.form = document.getElementById(formId);
+        this.steps = steps;
+        this.currentStep = 0;
+        this.formData = {};
+        
+        this.init();
+    }
+    
+    init() {
+        this.renderStep();
+        this.setupNavigation();
+        this.setupAutoSave();
+    }
+    
+    renderStep() {
+        const step = this.steps[this.currentStep];
+        
+        // Clear and render step content
+        this.form.innerHTML = step.render(this.formData);
+        
+        // Update progress indicator
+        this.updateProgress();
+    }
+    
+    setupNavigation() {
+        this.form.addEventListener('click', (e) => {
+            if (e.target.matches('.next-btn')) {
+                e.preventDefault();
+                if (this.validateCurrentStep()) {
+                    this.saveStepData();
+                    
+                    if (this.currentStep < this.steps.length - 1) {
+                        this.currentStep++;
+                        this.renderStep();
+                    } else {
+                        this.submitForm();
+                    }
+                }
+            }
+            
+            if (e.target.matches('.prev-btn')) {
+                e.preventDefault();
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    this.renderStep();
+                }
+            }
+        });
+        
+        // Handle Enter key for next step
+        this.form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.ctrlKey) {
+                e.preventDefault();
+                const nextBtn = this.form.querySelector('.next-btn');
+                if (nextBtn) nextBtn.click();
+            }
+        });
+    }
+    
+    validateCurrentStep() {
+        const step = this.steps[this.currentStep];
+        const fields = this.form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        fields.forEach(field => {
+            if (!field.value) {
+                isValid = false;
+                this.showFieldError(field, 'This field is required');
+            }
+        });
+        
+        // Custom step validation
+        if (step.validate) {
+            isValid = step.validate(this.getStepData()) && isValid;
+        }
+        
+        return isValid;
+    }
+    
+    saveStepData() {
+        const stepData = this.getStepData();
+        this.formData = {
+            ...this.formData,
+            ...stepData
+        };
+        
+        // Save to localStorage
+        localStorage.setItem('multiStepFormData', JSON.stringify(this.formData));
+        localStorage.setItem('multiStepFormStep', this.currentStep);
+    }
+    
+    getStepData() {
+        const formData = new FormData(this.form);
+        return Object.fromEntries(formData);
+    }
+    
+    setupAutoSave() {
+        // Load saved data
+        const savedData = localStorage.getItem('multiStepFormData');
+        const savedStep = localStorage.getItem('multiStepFormStep');
+        
+        if (savedData &amp;&amp; savedStep) {
+            this.formData = JSON.parse(savedData);
+            this.currentStep = parseInt(savedStep);
+            
+            if (confirm('You have a saved draft. Resume where you left off?')) {
+                this.renderStep();
+                this.populateFields();
+            }
+        }
+        
+        // Auto-save on field change
+        this.form.addEventListener('input', () => {
+            this.saveStepData();
+        });
+    }
+    
+    async submitForm() {
+        // Final validation
+        if (!this.validateAllSteps()) {
+            alert('Please complete all steps correctly');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.formData)
+            });
+            
+            if (response.ok) {
+                // Clear saved data
+                localStorage.removeItem('multiStepFormData');
+                localStorage.removeItem('multiStepFormStep');
+                
+                this.showSuccess();
+            }
+        } catch (error) {
+            this.showError('Submission failed. Please try again.');
+        }
+    }
+}</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 7. DEBUGGING -->
+        <section id="debugging" class="anchor">
+            <h2> 7. DEBUGGING AND TROUBLESHOOTING {#debugging}</h2>
+            <h3> 7.1 <strong>Common Event Problems and Solutions</strong></h3>
+            <pre><code>class EventDebugger {
+    constructor() {
+        this.eventLog = [];
+    }
+    
+    // Problem 1: Event not firing
+    debugEventListener(element, eventType) {
+        console.group(`Debugging ${eventType} on element:`, element);
+        
+        // Check if element exists
+        if (!element) {
+            console.error('Element not found!');
+            console.groupEnd();
+            return;
+        }
+        
+        // Check if element is visible/interactable
+        const styles = window.getComputedStyle(element);
+        console.log('Element visible:', styles.display !== 'none' &amp;&amp; styles.visibility !== 'hidden');
+        console.log('Element dimensions:', element.offsetWidth, 'x', element.offsetHeight);
+        console.log('Pointer events:', styles.pointerEvents);
+        
+        // Check if event listener is attached
+        console.log('Has listeners?', this.hasEventListeners(element, eventType));
+        
+        console.groupEnd();
+    }
+    
+    // Problem 2: Event firing multiple times
+    detectDuplicateListeners(element) {
+        const listeners = this.getEventListeners(element);
+        const counts = {};
+        
+        listeners.forEach(listener => {
+            const key = `${listener.type}:${listener.listener.toString()}`;
+            counts[key] = (counts[key] || 0) + 1;
+        });
+        
+        Object.entries(counts).forEach(([key, count]) => {
+            if (count > 1) {
+                console.warn(`Duplicate listener detected: ${key} (${count} times)`);
+            }
+        });
+    }
+    
+    // Problem 3: Event propagation issues
+    traceEventPropagation(event) {
+        console.log('Event tracing started...');
+        const path = [];
+        
+        const handler = (e) => {
+            path.push({
+                element: e.currentTarget.tagName,
+                id: e.currentTarget.id,
+                class: e.currentTarget.className,
+                phase: e.eventPhase
+            });
+        };
+        
+        // Add listeners to all ancestors
+        let element = event.target;
+        while (element) {
+            element.addEventListener(event.type, handler);
+            element = element.parentElement;
+        }
+        
+        // Re-trigger event
+        event.target.dispatchEvent(new Event(event.type));
+        
+        console.log('Event propagation path:', path);
+        return path;
+    }
+}
+
+// Usage
+const debugger = new EventDebugger();
+debugger.debugEventListener(document.getElementById('myForm'), 'submit');</code></pre>
+
+            <h3> 7.2 <strong>Debugging preventDefault Issues</strong></h3>
+            <pre><code>class PreventDefaultDebugger {
+    static trackPreventDefault(element, eventType) {
+        let preventDefaultCalled = false;
+        
+        const wrappedListener = (e) => {
+            const originalPreventDefault = e.preventDefault;
+            
+            e.preventDefault = function() {
+                console.log(`preventDefault() called for ${eventType}`, {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
+                    timestamp: new Date().toISOString()
+                });
+                preventDefaultCalled = true;
+                originalPreventDefault.call(this);
+            };
+            
+            // Call original listeners
+            const listeners = this.getListeners(element, eventType);
+            listeners.forEach(listener => listener.call(element, e));
+            
+            console.log(`After ${eventType} handling:`, {
+                preventDefaultCalled,
+                defaultPrevented: e.defaultPrevented
+            });
+        };
+        
+        element.addEventListener(eventType, wrappedListener);
+    }
+    
+    static checkFormSubmissionIssues(form) {
+        console.group('Form Submission Debug');
+        
+        form.addEventListener('submit', (e) => {
+            console.log('Submit event triggered');
+            console.log('Default prevented?', e.defaultPrevented);
+            
+            // Check if any validation is preventing submission
+            const invalidFields = form.querySelectorAll(':invalid');
+            if (invalidFields.length > 0) {
+                console.log('Invalid fields found:', invalidFields.length);
+                invalidFields.forEach(field => {
+                    console.log(`- ${field.name}: ${field.validationMessage}`);
+                });
+            }
+            
+            // Check for JavaScript errors
+            try {
+                // Simulate form handling
+                console.log('Form action:', form.action);
+                console.log('Form method:', form.method);
+                console.log('Form data:', new FormData(form));
+            } catch (error) {
+                console.error('Error processing form:', error);
+            }
+        });
+        
+        console.groupEnd();
+    }
+}</code></pre>
+
+            <h3> 7.3 <strong>Event Object Inspection Tool</strong></h3>
+            <pre><code>class EventInspector {
+    static inspect(event) {
+        console.group('🔍 Event Object Inspection');
+        
+        // Basic properties
+        console.log('Type:', event.type);
+        console.log('Target:', event.target);
+        console.log('Current Target:', event.currentTarget);
+        console.log('Event Phase:', this.getPhaseName(event.eventPhase));
+        console.log('Bubbles:', event.bubbles);
+        console.log('Cancelable:', event.cancelable);
+        console.log('Default Prevented:', event.defaultPrevented);
+        console.log('Timestamp:', event.timeStamp);
+        console.log('Is Trusted:', event.isTrusted);
+        
+        // Event-specific properties
+        if (event instanceof KeyboardEvent) {
+            console.group('Keyboard Event Properties');
+            console.log('Key:', event.key);
+            console.log('Code:', event.code);
+            console.log('Location:', event.location);
+            console.log('Ctrl:', event.ctrlKey);
+            console.log('Shift:', event.shiftKey);
+            console.log('Alt:', event.altKey);
+            console.log('Meta:', event.metaKey);
+            console.log('Repeat:', event.repeat);
+            console.groupEnd();
+        }
+        
+        if (event instanceof MouseEvent) {
+            console.group('Mouse Event Properties');
+            console.log('Button:', event.button);
+            console.log('Buttons:', event.buttons);
+            console.log('Client X/Y:', event.clientX, event.clientY);
+            console.log('Page X/Y:', event.pageX, event.pageY);
+            console.log('Screen X/Y:', event.screenX, event.screenY);
+            console.log('Offset X/Y:', event.offsetX, event.offsetY);
+            console.log('Ctrl:', event.ctrlKey);
+            console.log('Shift:', event.shiftKey);
+            console.log('Alt:', event.altKey);
+            console.log('Meta:', event.metaKey);
+            console.groupEnd();
+        }
+        
+        if (event instanceof FocusEvent) {
+            console.group('Focus Event Properties');
+            console.log('Related Target:', event.relatedTarget);
+            console.groupEnd();
+        }
+        
+        if (event instanceof InputEvent) {
+            console.group('Input Event Properties');
+            console.log('Data:', event.data);
+            console.log('Input Type:', event.inputType);
+            console.log('Is Composing:', event.isComposing);
+            console.groupEnd();
+        }
+        
+        // Show all properties
+        console.group('All Properties');
+        const allProps = {};
+        for (let prop in event) {
+            try {
+                allProps[prop] = event[prop];
+            } catch (e) {
+                allProps[prop] = '[Unable to access]';
+            }
+        }
+        console.table(allProps);
+        console.groupEnd();
+        
+        console.groupEnd();
+        
+        return event;
+    }
+    
+    static getPhaseName(phase) {
+        switch(phase) {
+            case 1: return 'CAPTURING_PHASE';
+            case 2: return 'AT_TARGET';
+            case 3: return 'BUBBLING_PHASE';
+            default: return 'UNKNOWN';
+        }
+    }
+}
+
+// Usage
+document.addEventListener('click', EventInspector.inspect);</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 8. PERFORMANCE -->
+        <section id="performance" class="anchor">
+            <h2> 8. PERFORMANCE CONSIDERATIONS {#performance}</h2>
+            <h3> 8.1 <strong>Event Listener Optimization</strong></h3>
+            <pre><code>class PerformanceOptimizer {
+    // 1. Use event delegation instead of many listeners
+    static optimizeWithDelegation(container, selector, eventType, handler) {
+        container.addEventListener(eventType, (e) => {
+            if (e.target.matches(selector)) {
+                handler(e);
+            }
+        });
+    }
+    
+    // 2. Remove listeners when not needed
+    static cleanupListeners(elements) {
+        elements.forEach(element => {
+            const listeners = this.getEventListeners(element);
+            listeners.forEach(listener => {
+                element.removeEventListener(
+                    listener.type, 
+                    listener.listener, 
+                    listener.options
+                );
+            });
+        });
+    }
+    
+    // 3. Use passive listeners for scroll/touch
+    static addPassiveListener(element, eventType, handler) {
+        element.addEventListener(eventType, handler, { 
+            passive: true,
+            capture: false
+        });
+    }
+    
+    // 4. Lazy load event handlers
+    static lazyLoadHandler(element, eventType, handlerPath) {
+        const loadHandler = async (e) => {
+            // Remove temporary listener
+            element.removeEventListener(eventType, loadHandler);
+            
+            // Load actual handler
+            try {
+                const module = await import(handlerPath);
+                module.default.call(element, e);
+            } catch (error) {
+                console.error('Failed to load handler:', error);
+            }
+        };
+        
+        element.addEventListener(eventType, loadHandler);
+    }
+}
+
+// Performance monitoring
+class EventPerformanceMonitor {
+    static measureHandlerPerformance(handler, name) {
+        return function(event) {
+            const start = performance.now();
+            handler.call(this, event);
+            const end = performance.now();
+            
+            console.log(`${name} took ${end - start}ms`);
+            
+            // Report if too slow
+            if (end - start > 16) { // 16ms = 60fps
+                console.warn(`${name} is causing performance issues`);
+            }
+        };
+    }
+}</code></pre>
+
+            <h3> 8.2 <strong>Memory Leak Prevention</strong></h3>
+            <pre><code>class MemoryLeakPreventer {
+    constructor() {
+        this.listeners = new Map();
+    }
+    
+    // Track listeners for cleanup
+    addTrackedListener(element, eventType, handler, options = {}) {
+        const key = Symbol('listener');
+        
+        const wrappedHandler = (event) => {
+            handler(event);
+        };
+        
+        element.addEventListener(eventType, wrappedHandler, options);
+        
+        if (!this.listeners.has(element)) {
+            this.listeners.set(element, []);
+        }
+        
+        this.listeners.get(element).push({
+            type: eventType,
+            handler: wrappedHandler,
+            options
+        });
+        
+        return key;
+    }
+    
+    // Clean up all listeners for an element
+    removeAllListeners(element) {
+        const elementListeners = this.listeners.get(element) || [];
+        
+        elementListeners.forEach(listener => {
+            element.removeEventListener(
+                listener.type, 
+                listener.handler, 
+                listener.options
+            );
+        });
+        
+        this.listeners.delete(element);
+    }
+    
+    // For Single Page Applications
+    setupPageCleanup() {
+        // Clean up when navigating away
+        window.addEventListener('beforeunload', () => {
+            document.body.innerHTML = ''; // Remove all elements
+            this.listeners.clear(); // Clear all tracked listeners
+        });
+    }
+}</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 9. ACCESSIBILITY -->
+        <section id="accessibility" class="anchor">
+            <h2> 9. ACCESSIBILITY AND FORM EVENTS {#accessibility}</h2>
+            <h3> 9.1 <strong>Making Form Events Accessible</strong></h3>
+            <pre><code>class AccessibleFormHandler {
+    constructor(form) {
+        this.form = form;
+        this.setupAccessibleEvents();
+    }
+    
+    setupAccessibleEvents() {
+        // 1. Support keyboard navigation
+        this.form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName === 'BUTTON' || 
+                    activeElement.type === 'submit') {
+                    return; // Let button handle its own Enter
+                }
+                
+                // For other elements, move to next field
+                e.preventDefault();
+                this.moveToNextField(activeElement);
+            }
+        });
+        
+        // 2. Announce validation errors to screen readers
+        this.form.addEventListener('invalid', (e) => {
+            e.preventDefault();
+            this.announceError(e.target);
+        }, true);
+        
+        // 3. Success announcements
+        this.form.addEventListener('submit', (e) => {
+            if (!e.defaultPrevented) {
+                this.announceSuccess();
+            }
+        });
+        
+        // 4. Live region for dynamic updates
+        this.setupLiveRegion();
+    }
+    
+    announceError(field) {
+        // Create or update live region
+        let liveRegion = document.getElementById('formLiveRegion');
+        
+        if (!liveRegion) {
+            liveRegion = document.createElement('div');
+            liveRegion.id = 'formLiveRegion';
+            liveRegion.setAttribute('aria-live', 'assertive');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.className = 'sr-only'; // Visually hidden
+            document.body.appendChild(liveRegion);
+        }
+        
+        liveRegion.textContent = `Error in ${field.labels?.[0]?.textContent || field.name}: ${field.validationMessage}`;
+        
+        // Focus the field
+        field.focus();
+        
+        // Add error indicator
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', `${field.id}-error`);
+    }
+    
+    announceSuccess() {
+        let liveRegion = document.getElementById('formLiveRegion');
+        if (liveRegion) {
+            liveRegion.textContent = 'Form submitted successfully';
+        }
+    }
+    
+    setupLiveRegion() {
+        // Polite region for status updates
+        const politeRegion = document.createElement('div');
+        politeRegion.setAttribute('aria-live', 'polite');
+        politeRegion.setAttribute('aria-atomic', 'true');
+        politeRegion.className = 'sr-only';
+        politeRegion.id = 'formPoliteRegion';
+        document.body.appendChild(politeRegion);
+    }
+    
+    moveToNextField(currentField) {
+        const focusable = this.form.querySelectorAll(
+            'input, select, textarea, button'
+        );
+        
+        const currentIndex = Array.from(focusable).indexOf(currentField);
+        if (currentIndex >= 0 &amp;&amp; currentIndex < focusable.length - 1) {
+            focusable[currentIndex + 1].focus();
+        }
+    }
+}</code></pre>
+
+            <h3> 9.2 <strong>ARIA Attributes for Form Events</strong></h3>
+            <pre><code>class ARIAFormEnhancer {
+    static enhanceForm(form) {
+        // Add form role
+        form.setAttribute('role', 'form');
+        
+        // Enhance fields
+        form.querySelectorAll('input, select, textarea').forEach(field => {
+            // Associate with label
+            if (field.id) {
+                const label = form.querySelector(`label[for="${field.id}"]`);
+                if (label) {
+                    field.setAttribute('aria-labelledby', label.id || this.createLabelId(label));
+                }
+            }
+            
+            // Add describedby for hints
+            const hint = field.nextElementSibling?.matches('.hint') ? 
+                         field.nextElementSibling : null;
+            if (hint) {
+                hint.id = hint.id || `hint-${field.id}`;
+                field.setAttribute('aria-describedby', hint.id);
+            }
+            
+            // Required fields
+            if (field.required) {
+                field.setAttribute('aria-required', 'true');
+            }
+        });
+        
+        // Set up validation ARIA
+        this.setupValidationARIA(form);
+    }
+    
+    static setupValidationARIA(form) {
+        form.addEventListener('input', (e) => {
+            const field = e.target;
+            
+            if (field.validity.valid) {
+                field.setAttribute('aria-invalid', 'false');
+            } else {
+                field.setAttribute('aria-invalid', 'true');
+            }
+        });
+        
+        form.addEventListener('blur', (e) => {
+            const field = e.target;
+            
+            // Update describedby with error message if invalid
+            if (!field.validity.valid &amp;&amp; !field.getAttribute('aria-describedby')?.includes('error')) {
+                const errorId = `error-${field.id}`;
+                const errorElement = document.getElementById(errorId);
+                
+                if (errorElement) {
+                    const describedby = field.getAttribute('aria-describedby') || '';
+                    field.setAttribute('aria-describedby', 
+                        `${describedby} ${errorId}`.trim());
+                }
+            }
+        }, true);
+    }
+    
+    static createLabelId(label) {
+        const id = `label-${Math.random().toString(36).substr(2, 9)}`;
+        label.id = id;
+        return id;
+    }
+}</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- 10. MODERN APIS -->
+        <section id="modern-apis" class="anchor">
+            <h2> 10. MODERN APIS AND FUTURE TRENDS {#modern-apis}</h2>
+            <h3> 10.1 <strong>FormData Event API</strong></h3>
+            <pre><code>// Modern way to handle form data with events
+class ModernFormDataHandler {
+    constructor(form) {
+        this.form = form;
+        this.formData = new FormData(form);
+        
+        // Use FormData event (experimental)
+        if (form.addEventListener) {
+            form.addEventListener('formdata', (e) => {
+                console.log('FormData event fired');
+                const formData = e.formData;
+                
+                // Modify data before submission
+                formData.append('timestamp', Date.now());
+                formData.append('userAgent', navigator.userAgent);
+                
+                // Log all data
+                for (let [key, value] of formData) {
+                    console.log(`${key}: ${value}`);
+                }
+            });
+        }
+    }
+}
+
+// Using FormData with fetch
+async function submitFormWithFetch(form) {
+    const formData = new FormData(form);
+    
+    // Can modify formData before sending
+    formData.append('api_key', 'your-api-key');
+    
+    try {
+        const response = await fetch(form.action, {
+            method: form.method,
+            body: formData
+        });
+        
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Submission failed:', error);
+        throw error;
+    }
+}</code></pre>
+
+            <h3> 10.2 <strong>Intersection Observer for Form Fields</strong></h3>
+            <pre><code>// Track when form fields become visible
+class FormFieldVisibilityTracker {
+    constructor(form) {
+        this.form = form;
+        this.visibleFields = new Set();
+        
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.visibleFields.add(entry.target);
+                        this.onFieldVisible(entry.target);
+                    } else {
+                        this.visibleFields.delete(entry.target);
+                        this.onFieldHidden(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.5 // 50% visible
+            }
+        );
+        
+        // Observe all form fields
+        form.querySelectorAll('input, select, textarea').forEach(field => {
+            observer.observe(field);
+        });
+    }
+    
+    onFieldVisible(field) {
+        console.log('Field became visible:', field.name);
+        // Could preload data, start analytics, etc.
+    }
+    
+    onFieldHidden(field) {
+        console.log('Field is now hidden:', field.name);
+        // Could pause animations, save partial data, etc.
+    }
+}</code></pre>
+
+            <h3> 10.3 <strong>Resize Observer for Form Layout</strong></h3>
+            <pre><code>// Adapt form layout based on size changes
+class FormLayoutAdapter {
+    constructor(form) {
+        this.form = form;
+        
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const width = entry.contentRect.width;
+                this.adjustLayout(width);
+            }
+        });
+        
+        resizeObserver.observe(form);
+    }
+    
+    adjustLayout(width) {
+        if (width < 400) {
+            this.form.classList.add('compact-layout');
+            this.form.classList.remove('wide-layout');
+            this.stackFieldsVertically();
+        } else {
+            this.form.classList.add('wide-layout');
+            this.form.classList.remove('compact-layout');
+            this.arrangeFieldsInGrid();
+        }
+    }
+    
+    stackFieldsVertically() {
+        // Implementation for mobile layout
+        const groups = this.form.querySelectorAll('.form-group');
+        groups.forEach(group => {
+            group.style.flexDirection = 'column';
+        });
+    }
+    
+    arrangeFieldsInGrid() {
+        // Implementation for desktop layout
+        const groups = this.form.querySelectorAll('.form-group');
+        groups.forEach(group => {
+            group.style.flexDirection = 'row';
+        });
+    }
+}</code></pre>
+
+            <h3> 10.4 <strong>Web Components and Custom Events</strong></h3>
+            <pre><code>// Creating a custom form field web component
+class ValidatedInput extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        
+        // Create input
+        this.input = document.createElement('input');
+        this.input.type = this.getAttribute('type') || 'text';
+        this.input.placeholder = this.getAttribute('placeholder') || '';
+        
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            :host {
+                display: block;
+                margin-bottom: 1rem;
+            }
+            input {
+                width: 100%;
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            input.invalid {
+                border-color: red;
+            }
+            .error {
+                color: red;
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+                display: none;
+            }
+            .error.show {
+                display: block;
+            }
+        `;
+        
+        // Error display
+        this.errorDiv = document.createElement('div');
+        this.errorDiv.className = 'error';
+        
+        this.shadowRoot.append(style, this.input, this.errorDiv);
+        
+        // Set up validation
+        this.setupValidation();
+    }
+    
+    setupValidation() {
+        this.input.addEventListener('input', (e) => {
+            this.validate(e.target.value);
+            
+            // Dispatch custom event
+            this.dispatchEvent(new CustomEvent('validation', {
+                detail: {
+                    valid: this.isValid,
+                    value: e.target.value,
+                    errors: this.errors
+                },
+                bubbles: true,
+                composed: true
+            }));
+        });
+        
+        this.input.addEventListener('blur', () => {
+            if (this.hasAttribute('required') &amp;&amp; !this.input.value) {
+                this.showError('This field is required');
+            }
+        });
+    }
+    
+    validate(value) {
+        this.errors = [];
+        this.isValid = true;
+        
+        // Required validation
+        if (this.hasAttribute('required') &amp;&amp; !value) {
+            this.errors.push('This field is required');
+            this.isValid = false;
+        }
+        
+        // Pattern validation
+        const pattern = this.getAttribute('pattern');
+        if (pattern &amp;&amp; value &amp;&amp; !new RegExp(pattern).test(value)) {
+            this.errors.push(this.getAttribute('validation-message') || 'Invalid format');
+            this.isValid = false;
+        }
+        
+        // Minlength validation
+        const minlength = this.getAttribute('minlength');
+        if (minlength &amp;&amp; value.length < parseInt(minlength)) {
+            this.errors.push(`Minimum length is ${minlength} characters`);
+            this.isValid = false;
+        }
+        
+        if (this.isValid) {
+            this.input.classList.remove('invalid');
+            this.errorDiv.classList.remove('show');
+            this.errorDiv.textContent = '';
+        } else {
+            this.input.classList.add('invalid');
+            this.showError(this.errors.join(', '));
+        }
+        
+        return this.isValid;
+    }
+    
+    showError(message) {
+        this.errorDiv.textContent = message;
+        this.errorDiv.classList.add('show');
+    }
+    
+    // Make value accessible
+    get value() {
+        return this.input.value;
+    }
+    
+    set value(val) {
+        this.input.value = val;
+        this.validate(val);
+    }
+}
+
+// Register the custom element
+customElements.define('validated-input', ValidatedInput);
+
+// Usage in HTML:
+// &lt;validated-input type="email" required placeholder="Enter email" 
+//                   pattern="[^@]+@[^@]+\.[^@]+" 
+//                   validation-message="Enter a valid email"&gt;
+// &lt;/validated-input&gt;</code></pre>
+        </section>
+
+        <hr>
+
+        <!-- CONCLUSION -->
+        <section>
+            <h2> CONCLUSION</h2>
+            <p>The Event Object and Form Events are fundamental to creating interactive, user-friendly web applications.
+                This comprehensive guide has covered:</p>
+            <ol>
+                <li><strong>The Event Object</strong>: Understanding its properties and methods for accessing event
+                    details</li>
+                <li><strong>Form Events</strong>: Complete coverage of all form-related events and their behaviors</li>
+                <li><strong>preventDefault()</strong>: Mastering form submission control and validation</li>
+                <li><strong>Practical Patterns</strong>: Real-world implementations and best practices</li>
+                <li><strong>Performance</strong>: Optimization techniques and memory management</li>
+                <li><strong>Accessibility</strong>: Making forms usable for everyone</li>
+                <li><strong>Modern APIs</strong>: Future-proofing your form handling code</li>
+            </ol>
+
+            <h3> Key Takeaways:</h3>
+            <ul>
+                <li>Always use <code>preventDefault()</code> when handling form submissions via JavaScript</li>
+                <li>Leverage the event object's <code>target</code> property for dynamic form handling</li>
+                <li>Implement proper validation using both built-in HTML5 and custom JavaScript validation</li>
+                <li>Consider accessibility from the start, not as an afterthought</li>
+                <li>Use event delegation for dynamic forms to improve performance</li>
+                <li>Clean up event listeners to prevent memory leaks</li>
+                <li>Stay updated with modern APIs like FormData, IntersectionObserver, and Web Components</li>
+            </ul>
+
+            <h3> Next Steps:</h3>
+            <ol>
+                <li><strong>Practice</strong>: Build complex forms implementing the patterns shown here</li>
+                <li><strong>Explore</strong>: Look into form libraries like Formik, React Hook Form for
+                    framework-specific solutions</li>
+                <li><strong>Accessibility</strong>: Test your forms with screen readers</li>
+                <li><strong>Performance</strong>: Profile your form event handlers</li>
+                <li><strong>Security</strong>: Learn about CSRF, XSS protection in forms</li>
+            </ol>
+            <p>Remember: Good form handling is invisible to users when done right, but painfully obvious when done
+                wrong. Master these concepts to create seamless, robust web applications.</p>
+        </section>
+
+        <footer>
+            ⚡ THE EVENT OBJECT & FORM EVENTS – complete reference · every line preserved
+        </footer>
+    </div>
+</body>
+
+</html>

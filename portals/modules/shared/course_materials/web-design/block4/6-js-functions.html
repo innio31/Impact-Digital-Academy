@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- responsive meta tag – mobile first -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>JavaScript Functions – Part 1 · The Complete Guide</title>
+    <style>
+        /* -------------------- RESET + BASE (mobile first) -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2e9f0;
+            /* soft lavender hint */
+            color: #2d2a3b;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .landing-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -25px #3f2e4b;
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+            transition: padding 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #1f4a5c, #0f6b7e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            word-break: break-word;
+        }
+
+        h2,
+        h3,
+        h4 {
+            color: #1e3b4c;
+        }
+
+        .block-badge {
+            background: #1f5f73;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 500;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: #0e5c6b;
+            border-left: 8px solid #127c9e;
+            padding-left: 1.2rem;
+            margin: 0.8rem 0 2rem;
+            font-weight: 360;
+        }
+
+        .card {
+            background: #f3f9fd;
+            border-radius: 2rem;
+            padding: 1.5rem 1.5rem;
+            border: 1px solid #b3d3e8;
+            box-shadow: 0 12px 28px -15px #1f4f66;
+            height: fit-content;
+        }
+
+        .learning-list {
+            list-style: none;
+        }
+
+        .learning-list li {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        }
+
+        .learning-list li::before {
+            content: "⚡";
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        pre {
+            background: #e5eff8;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            border: 1px solid #aac7df;
+            font-size: 0.9rem;
+            margin: 1.2rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            background: #e3f0f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #043b49;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 60, 80, 0.1);
+            font-size: clamp(0.85rem, 2.8vw, 1rem);
+        }
+
+        th {
+            background: #1f5f73;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem 0.8rem;
+            border-bottom: 1px solid #c2dae8;
+            background: #f4fafd;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #c1e2f0, #fcf4ff, #c1e2f0);
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            color: #1f5f73;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        /* extra spacing for headings */
+        h2 {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            margin: 2rem 0 1rem;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 5vw, 2rem);
+            margin: 1.8rem 0 1rem;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 4vw, 1.6rem);
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        .toc {
+            background: #f0f6fb;
+            padding: 1.2rem 1.8rem;
+            border-radius: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #0b5268;
+            font-weight: 500;
+        }
+
+        .toc li {
+            list-style-type: none;
+            margin: 0.3rem 0;
+        }
+
+        .toc ul {
+            padding-left: 0;
+        }
+
+        .badge-custom {
+            background: #128098;
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-wrapper">
+        <!-- header -->
+        <h1>🧠 JAVASCRIPT FUNCTIONS · PART 1 · THE COMPLETE GUIDE</h1>
+        <div class="block-badge">defining · calling · parameters · expressions</div>
+        <div class="subhead">master the foundation of reusable code</div>
+
+        <!-- TABLE OF CONTENTS (exact from source) -->
+        <div class="toc">
+            <h2 style="margin-top:0; border-bottom: 2px solid #aac7df;">Table of Contents</h2>
+            <ul>
+                <li>1. <a href="#introduction-to-functions">Introduction to Functions</a></li>
+                <li>2. <a href="#why-functions-the-problem-they-solve">Why Functions? The Problem They Solve</a></li>
+                <li>3. <a href="#function-declarations">Function Declarations</a></li>
+                <li>4. <a href="#function-expressions">Function Expressions</a></li>
+                <li>5. <a href="#parameters-and-arguments">Parameters and Arguments</a></li>
+                <li>6. <a href="#comparing-function-declarations-and-expressions">Comparing Function Declarations and
+                        Expressions</a></li>
+                <li>7. <a href="#practical-examples-and-use-cases">Practical Examples and Use Cases</a></li>
+                <li>8. <a href="#common-mistakes-and-best-practices">Common Mistakes and Best Practices</a></li>
+                <li>9. <a href="#practice-exercises">Practice Exercises</a></li>
+                <li>10. <a href="#interview-questions">Interview Questions</a></li>
+            </ul>
+        </div>
+
+        <!-- EVERY SINGLE SECTION FROM THE SOURCE, PRESERVED VERBATIM -->
+        <hr>
+
+        <h2 id="introduction-to-functions">Introduction to Functions</h2>
+        <h3>What is a Function?</h3>
+        <p>A function is a reusable block of code designed to perform a specific task. Think of it as a recipe or a
+            mini-program within your main program. Once defined, you can "call" or "invoke" the function whenever you
+            need that task performed.</p>
+        <pre><code>// A simple function
+function greet() {
+    console.log("Hello, World!");
+}
+
+// Calling the function
+greet(); // Output: Hello, World!</code></pre>
+
+        <h3>The Analogy: A Coffee Machine</h3>
+        <p>Imagine a coffee machine:
+            <br>- <strong>The Machine Itself</strong> = The Function Definition
+            <br>- <strong>Putting in water/coffee beans</strong> = Parameters/Arguments
+            <br>- <strong>Pressing the button</strong> = Calling/Invoking the function
+            <br>- <strong>Getting coffee</strong> = The Return Value
+        </p>
+        <pre><code>// Coffee machine function
+function makeCoffee(type, sugar) {
+    return `Here's your ${type} coffee with ${sugar} sugar cubes!`;
+}
+
+// Using the coffee machine
+let myCoffee = makeCoffee("espresso", 2);
+console.log(myCoffee); // Output: Here's your espresso coffee with 2 sugar cubes!</code></pre>
+
+        <hr>
+
+        <h2 id="why-functions-the-problem-they-solve">Why Functions? The Problem They Solve</h2>
+        <h3>Problem 1: Code Repetition (DRY Principle)</h3>
+        <p><strong>Without Functions (The Wrong Way):</strong></p>
+        <pre><code>// Calculating area for multiple rectangles
+let rect1Length = 5, rect1Width = 3;
+let area1 = rect1Length * rect1Width;
+console.log("Rectangle 1 area:", area1);
+
+let rect2Length = 7, rect2Width = 2;
+let area2 = rect2Length * rect2Width;
+console.log("Rectangle 2 area:", area2);
+
+let rect3Length = 4, rect3Width = 6;
+let area3 = rect3Length * rect3Width;
+console.log("Rectangle 3 area:", area3);
+
+// If we find a bug in the calculation, we need to fix it in 3 places!</code></pre>
+        <p><strong>With Functions (The Right Way):</strong></p>
+        <pre><code>function calculateRectangleArea(length, width) {
+    return length * width;
+}
+
+// Reuse the same function
+console.log("Rectangle 1 area:", calculateRectangleArea(5, 3));
+console.log("Rectangle 2 area:", calculateRectangleArea(7, 2));
+console.log("Rectangle 3 area:", calculateRectangleArea(4, 6));
+
+// If we need to change the calculation, we change it in ONE place only!</code></pre>
+
+        <h3>Problem 2: Code Organization</h3>
+        <p><strong>Without Functions (Spaghetti Code):</strong></p>
+        <pre><code>// A messy program to process a student
+let studentName = "John";
+let studentGrade = 85;
+
+// Validate grade
+if (studentGrade &lt; 0 || studentGrade &gt; 100) {
+    console.log("Invalid grade!");
+}
+
+// Calculate letter grade
+let letterGrade;
+if (studentGrade &gt;= 90) letterGrade = "A";
+else if (studentGrade &gt;= 80) letterGrade = "B";
+else if (studentGrade &gt;= 70) letterGrade = "C";
+else letterGrade = "F";
+
+// Display result
+console.log(`${studentName} received a ${letterGrade}`);
+
+// Now for another student, we have to copy all this code!</code></pre>
+        <p><strong>With Functions (Organized Code):</strong></p>
+        <pre><code>function validateGrade(grade) {
+    return grade &gt;= 0 &amp;&amp; grade &lt;= 100;
+}
+
+function calculateLetterGrade(grade) {
+    if (grade &gt;= 90) return "A";
+    if (grade &gt;= 80) return "B";
+    if (grade &gt;= 70) return "C";
+    return "F";
+}
+
+function displayStudentResult(name, grade) {
+    if (!validateGrade(grade)) {
+        console.log("Invalid grade!");
+        return;
+    }
+    let letterGrade = calculateLetterGrade(grade);
+    console.log(`${name} received a ${letterGrade}`);
+}
+
+// Now processing multiple students is clean and organized
+displayStudentResult("John", 85);
+displayStudentResult("Jane", 92);
+displayStudentResult("Bob", 65);</code></pre>
+
+        <h3>Problem 3: Complexity Management</h3>
+        <pre><code>// Complex problem: Calculate total price with tax and discount
+function calculateSubtotal(prices) {
+    let total = 0;
+    for (let price of prices) {
+        total += price;
+    }
+    return total;
+}
+
+function calculateTax(subtotal, taxRate) {
+    return subtotal * taxRate;
+}
+
+function calculateDiscount(subtotal, discountPercentage) {
+    return subtotal * (discountPercentage / 100);
+}
+
+function calculateFinalPrice(prices, taxRate, discountPercentage) {
+    let subtotal = calculateSubtotal(prices);
+    let tax = calculateTax(subtotal, taxRate);
+    let discount = calculateDiscount(subtotal, discountPercentage);
+    return subtotal + tax - discount;
+}
+
+// Using the composed functions
+let prices = [10, 20, 30];
+let finalPrice = calculateFinalPrice(prices, 0.08, 10);
+console.log("Final price:", finalPrice);</code></pre>
+
+        <hr>
+
+        <h2 id="function-declarations">Function Declarations</h2>
+        <h3>Syntax and Structure</h3>
+        <pre><code>// Basic syntax
+function functionName(parameter1, parameter2) {
+    // function body
+    // code to be executed
+    return value; // optional
+}</code></pre>
+
+        <h3>Key Characteristics</h3>
+        <p><strong>Characteristic 1: Hoisting</strong><br>Function declarations are hoisted to the top of their scope.
+        </p>
+        <pre><code>// This works because of hoisting
+sayHello("Alice"); // Output: Hello, Alice!
+
+function sayHello(name) {
+    console.log("Hello, " + name + "!");
+}
+
+// The above code is interpreted as:
+// function sayHello(name) { console.log("Hello, " + name + "!"); }
+// sayHello("Alice");</code></pre>
+
+        <p><strong>Characteristic 2: Named Functions</strong><br>Function declarations always have a name.</p>
+        <pre><code>function calculateBMI(weight, height) {
+    return weight / (height * height);
+}</code></pre>
+
+        <h3>Detailed Examples</h3>
+        <p><strong>Example 1: Basic Calculator Functions</strong></p>
+        <pre><code>// Addition function
+function add(a, b) {
+    return a + b;
+}
+
+// Subtraction function
+function subtract(a, b) {
+    return a - b;
+}
+
+// Multiplication function
+function multiply(a, b) {
+    return a * b;
+}
+
+// Division function
+function divide(a, b) {
+    if (b === 0) {
+        return "Error: Division by zero!";
+    }
+    return a / b;
+}
+
+// Using the functions
+console.log(add(10, 5));      // 15
+console.log(subtract(10, 5)); // 5
+console.log(multiply(10, 5)); // 50
+console.log(divide(10, 5));   // 2
+console.log(divide(10, 0));   // Error: Division by zero!</code></pre>
+
+        <p><strong>Example 2: Temperature Converter</strong></p>
+        <pre><code>function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5/9;
+}
+
+console.log(celsiusToFahrenheit(0));   // 32
+console.log(celsiusToFahrenheit(100)); // 212
+console.log(fahrenheitToCelsius(32));  // 0
+console.log(fahrenheitToCelsius(212)); // 100</code></pre>
+
+        <p><strong>Example 3: String Utilities</strong></p>
+        <pre><code>function capitalizeFirstLetter(str) {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+function countVowels(str) {
+    let count = 0;
+    let vowels = "aeiouAEIOU";
+    for (let char of str) {
+        if (vowels.includes(char)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function reverseString(str) {
+    return str.split('').reverse().join('');
+}
+
+console.log(capitalizeFirstLetter("hello WORLD")); // Hello world
+console.log(countVowels("Hello World"));           // 3
+console.log(reverseString("JavaScript"));          // tpircSavaJ</code></pre>
+
+        <h3>Function Return Values</h3>
+        <pre><code>function withReturn(a, b) {
+    return a + b;
+    console.log("This will never execute"); // Unreachable code
+}
+
+function withoutReturn(a, b) {
+    let sum = a + b;
+    // No return statement
+}
+
+console.log(withReturn(5, 3));    // 8
+console.log(withoutReturn(5, 3)); // undefined</code></pre>
+
+        <p><strong>Multiple Return Statements:</strong></p>
+        <pre><code>function getGrade(score) {
+    if (score &gt;= 90) {
+        return "A";
+    } else if (score &gt;= 80) {
+        return "B";
+    } else if (score &gt;= 70) {
+        return "C";
+    } else if (score &gt;= 60) {
+        return "D";
+    } else {
+        return "F";
+    }
+}
+
+console.log(getGrade(95)); // "A"
+console.log(getGrade(82)); // "B"
+console.log(getGrade(45)); // "F"</code></pre>
+
+        <p><strong>Returning Multiple Values Using Objects:</strong></p>
+        <pre><code>function getMinMax(numbers) {
+    let min = Math.min(...numbers);
+    let max = Math.max(...numbers);
+    return {
+        minimum: min,
+        maximum: max,
+        difference: max - min
+    };
+}
+
+let result = getMinMax([5, 2, 8, 1, 9]);
+console.log(result.minimum);    // 1
+console.log(result.maximum);    // 9
+console.log(result.difference); // 8</code></pre>
+
+        <hr>
+
+        <h2 id="function-expressions">Function Expressions</h2>
+        <h3>What Are Function Expressions?</h3>
+        <pre><code>// Anonymous function expression
+const greet = function() {
+    console.log("Hello!");
+};
+
+// Named function expression
+const calculateArea = function area(radius) {
+    return Math.PI * radius * radius;
+};</code></pre>
+
+        <h3>Key Characteristics</h3>
+        <p><strong>Characteristic 1: No Hoisting</strong></p>
+        <pre><code>// This will cause an error
+sayHello("Alice"); // TypeError: sayHello is not a function
+
+const sayHello = function(name) {
+    console.log("Hello, " + name + "!");
+};
+
+// This works fine
+const sayGoodbye = function(name) {
+    console.log("Goodbye, " + name + "!");
+};
+sayGoodbye("Alice"); // Goodbye, Alice!</code></pre>
+
+        <p><strong>Characteristic 2: Can Be Anonymous or Named</strong></p>
+        <pre><code>// Anonymous (most common)
+const multiply = function(a, b) {
+    return a * b;
+};
+
+// Named (useful for debugging)
+const divide = function divideFunction(a, b) {
+    return a / b;
+};
+
+console.log(multiply(4, 3)); // 12
+console.log(divide(10, 2));  // 5</code></pre>
+
+        <h3>Detailed Examples</h3>
+        <p><strong>Example 1: Function Expressions in Different Scenarios</strong></p>
+        <pre><code>// Simple arithmetic
+const square = function(x) {
+    return x * x;
+};
+
+// String manipulation
+const toUpperCase = function(str) {
+    return str.toUpperCase();
+};
+
+// Array operations
+const getFirstElement = function(arr) {
+    return arr[0];
+};
+
+console.log(square(5));           // 25
+console.log(toUpperCase("hello")); // HELLO
+console.log(getFirstElement([1,2,3])); // 1</code></pre>
+
+        <p><strong>Example 2: Function Expressions as Object Methods</strong></p>
+        <pre><code>const calculator = {
+    brand: "Casio",
+    add: function(a, b) {
+        return a + b;
+    },
+    subtract: function(a, b) {
+        return a - b;
+    },
+    // ES6 shorthand (also a function expression)
+    multiply(a, b) {
+        return a * b;
+    }
+};
+
+console.log(calculator.add(5, 3));      // 8
+console.log(calculator.multiply(5, 3)); // 15</code></pre>
+
+        <p><strong>Example 3: Function Expressions in Callbacks</strong></p>
+        <pre><code>// Using function expression as a callback
+setTimeout(function() {
+    console.log("This runs after 2 seconds");
+}, 2000);
+
+// Array methods with function expressions
+const numbers = [1, 2, 3, 4, 5];
+
+const doubled = numbers.map(function(num) {
+    return num * 2;
+});
+
+const evens = numbers.filter(function(num) {
+    return num % 2 === 0;
+});
+
+console.log(doubled); // [2, 4, 6, 8, 10]
+console.log(evens);   // [2, 4]</code></pre>
+
+        <p><strong>Example 4: Immediately Invoked Function Expressions (IIFE)</strong></p>
+        <pre><code>// Function expression that runs immediately
+(function() {
+    console.log("This runs immediately!");
+})();
+
+// IIFE with parameters
+(function(name) {
+    console.log("Hello, " + name + "!");
+})("Alice");
+
+// IIFE for creating a private scope
+const counter = (function() {
+    let count = 0; // Private variable
+    return {
+        increment: function() { count++; },
+        decrement: function() { count--; },
+        getCount: function() { return count; }
+    };
+})();
+
+counter.increment();
+counter.increment();
+console.log(counter.getCount()); // 2
+console.log(counter.count); // undefined (private)</code></pre>
+
+        <hr>
+
+        <h2 id="parameters-and-arguments">Parameters and Arguments</h2>
+        <h3>Understanding the Difference</h3>
+        <pre><code>// 'name' and 'age' are PARAMETERS
+function introduce(name, age) {
+    console.log(`I'm ${name} and I'm ${age} years old`);
+}
+
+// "Alice" and 25 are ARGUMENTS
+introduce("Alice", 25);</code></pre>
+
+        <h3>Types of Parameters</h3>
+        <p><strong>1. Required Parameters</strong></p>
+        <pre><code>function greet(firstName, lastName) {
+    return `Hello, ${firstName} ${lastName}!`;
+}
+
+console.log(greet("John", "Doe")); // Hello, John Doe!</code></pre>
+
+        <p><strong>2. Default Parameters (ES6)</strong></p>
+        <pre><code>function greetWithDefault(name = "Guest", greeting = "Hello") {
+    return `${greeting}, ${name}!`;
+}
+
+console.log(greetWithDefault("John"));           // Hello, John!
+console.log(greetWithDefault());                 // Hello, Guest!
+console.log(greetWithDefault("Jane", "Hi"));     // Hi, Jane!
+console.log(greetWithDefault(undefined, "Hey")); // Hey, Guest!</code></pre>
+
+        <p><strong>3. Rest Parameters (...)</strong></p>
+        <pre><code>function sum(...numbers) {
+    let total = 0;
+    for (let num of numbers) {
+        total += num;
+    }
+    return total;
+}
+
+console.log(sum(1, 2));           // 3
+console.log(sum(1, 2, 3, 4, 5));  // 15
+console.log(sum());                // 0
+
+// Rest parameter with regular parameters
+function multiply(multiplier, ...numbers) {
+    return numbers.map(num => num * multiplier);
+}
+
+console.log(multiply(2, 1, 2, 3)); // [2, 4, 6]</code></pre>
+
+        <p><strong>4. The Arguments Object (Old Way)</strong></p>
+        <pre><code>// Available in function declarations (not arrow functions)
+function showAll() {
+    for (let i = 0; i &lt; arguments.length; i++) {
+        console.log(`Argument ${i}: ${arguments[i]}`);
+    }
+    console.log("Total arguments:", arguments.length);
+}
+
+showAll("apple", "banana", "orange");
+// Argument 0: apple
+// Argument 1: banana
+// Argument 2: orange
+// Total arguments: 3</code></pre>
+
+        <h3>Parameter Passing: By Value vs By Reference</h3>
+        <p><strong>Primitive Types (Pass by Value)</strong></p>
+        <pre><code>function changeValue(x) {
+    x = 100; // This only changes the local copy
+    console.log("Inside function:", x);
+}
+
+let num = 50;
+console.log("Before:", num); // Before: 50
+changeValue(num);            // Inside function: 100
+console.log("After:", num);  // After: 50 (original unchanged)</code></pre>
+
+        <p><strong>Objects (Pass by Reference)</strong></p>
+        <pre><code>function changeObject(obj) {
+    obj.name = "Jane"; // This modifies the original object
+    obj.age = 25;
+}
+
+let person = { name: "John", age: 30 };
+console.log("Before:", person); // Before: {name: "John", age: 30}
+changeObject(person);
+console.log("After:", person);  // After: {name: "Jane", age: 25}
+
+// But reassigning the parameter doesn't affect the original
+function reassignObject(obj) {
+    obj = { name: "Bob", age: 40 }; // New object, doesn't affect original
+}
+
+let person2 = { name: "Alice", age: 35 };
+console.log("Before:", person2); // Before: {name: "Alice", age: 35}
+reassignObject(person2);
+console.log("After:", person2);  // After: {name: "Alice", age: 35}</code></pre>
+
+        <h3>Parameter Validation</h3>
+        <pre><code>function divideNumbers(a, b) {
+    // Check if arguments are numbers
+    if (typeof a !== 'number' || typeof b !== 'number') {
+        return "Error: Both arguments must be numbers";
+    }
+    
+    // Check for division by zero
+    if (b === 0) {
+        return "Error: Cannot divide by zero";
+    }
+    
+    return a / b;
+}
+
+function createUser(name, age, email) {
+    // Validate name
+    if (!name || typeof name !== 'string') {
+        return { error: "Valid name is required" };
+    }
+    
+    // Validate age
+    if (typeof age !== 'number' || age &lt; 0 || age &gt; 150) {
+        return { error: "Valid age is required (0-150)" };
+    }
+    
+    // Validate email (simple validation)
+    if (!email || !email.includes('@')) {
+        return { error: "Valid email is required" };
+    }
+    
+    // All validations passed
+    return {
+        name: name,
+        age: age,
+        email: email,
+        createdAt: new Date()
+    };
+}</code></pre>
+
+        <hr>
+
+        <h2 id="comparing-function-declarations-and-expressions">Comparing Function Declarations and Expressions</h2>
+        <h3>Side-by-Side Comparison</h3>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Function Declaration</th>
+                    <th>Function Expression</th>
+                </tr>
+                <tr>
+                    <td><strong>Syntax</strong></td>
+                    <td><code>function name() {}</code></td>
+                    <td><code>const name = function() {}</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Hoisting</strong></td>
+                    <td>✅ Yes (can be called before definition)</td>
+                    <td>❌ No (cannot be called before definition)</td>
+                </tr>
+                <tr>
+                    <td><strong>Name Required</strong></td>
+                    <td>✅ Yes</td>
+                    <td>❌ Can be anonymous</td>
+                </tr>
+                <tr>
+                    <td><strong>Use in Callbacks</strong></td>
+                    <td>⚠️ Possible but uncommon</td>
+                    <td>✅ Very common</td>
+                </tr>
+                <tr>
+                    <td><strong>Conditional Definition</strong></td>
+                    <td>❌ Not recommended</td>
+                    <td>✅ Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Debugging</strong></td>
+                    <td>✅ Clear stack traces</td>
+                    <td>⚠️ Anonymous can be harder to debug</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Visual Comparison</h3>
+        <pre><code>// ===== FUNCTION DECLARATION =====
+// Can be called before definition
+console.log(multiplyDecl(5, 3)); // Works: 15
+
+function multiplyDecl(a, b) {
+    return a * b;
+}
+
+// Cannot be defined conditionally (in strict mode)
+// This is confusing and not recommended
+if (true) {
+    function conditionalDecl() { return "This is risky"; }
+}
+
+// ===== FUNCTION EXPRESSION =====
+// Cannot be called before definition
+// console.log(multiplyExpr(5, 3)); // Error!
+
+const multiplyExpr = function(a, b) {
+    return a * b;
+};
+
+console.log(multiplyExpr(5, 3)); // Works: 15
+
+// Can be defined conditionally
+let operation;
+if (true) {
+    operation = function(a, b) {
+        return a + b;
+    };
+} else {
+    operation = function(a, b) {
+        return a - b;
+    };
+}
+console.log(operation(10, 5)); // 15</code></pre>
+
+        <h3>Which One Should You Use?</h3>
+        <p><strong>Use Function Declarations when:</strong></p>
+        <ul>
+            <li>You need a function to be available throughout your entire script (hoisting)</li>
+            <li>You're defining utility functions at the top level of your module</li>
+            <li>You want cleaner, more traditional syntax</li>
+        </ul>
+        <pre><code>// Good use of function declarations - utilities at top level
+function formatDate(date) { /* ... */ }
+function validateEmail(email) { /* ... */ }
+function calculateTotal(items) { /* ... */ }</code></pre>
+        <p><strong>Use Function Expressions when:</strong></p>
+        <ul>
+            <li>You're passing a function as a callback</li>
+            <li>You need to assign a function to an object property</li>
+            <li>You're creating functions conditionally</li>
+            <li>You want to control when the function is available</li>
+        </ul>
+        <pre><code>// Good use of function expressions - callbacks
+button.addEventListener('click', function() {
+    console.log('Clicked!');
+});
+
+// Good use - object methods
+const myObject = {
+    method: function() { /* ... */ }
+};
+
+// Good use - conditional assignment
+const handler = isMobile ? 
+    function() { /* mobile version */ } : 
+    function() { /* desktop version */ };</code></pre>
+
+        <hr>
+
+        <h2 id="practical-examples-and-use-cases">Practical Examples and Use Cases</h2>
+        <h3>Example 1: E-commerce Shopping Cart</h3>
+        <pre><code>// Function declarations for core utilities
+function calculateItemTotal(price, quantity) {
+    return price * quantity;
+}
+
+function calculateTax(subtotal, taxRate = 0.08) {
+    return subtotal * taxRate;
+}
+
+function formatCurrency(amount) {
+    return `$${amount.toFixed(2)}`;
+}
+
+// Function expression for the main shopping cart object
+const shoppingCart = {
+    items: [],
+    
+    addItem: function(name, price, quantity = 1) {
+        this.items.push({
+            name: name,
+            price: price,
+            quantity: quantity,
+            itemTotal: price * quantity
+        });
+        console.log(`Added ${quantity} ${name}(s) to cart`);
+    },
+    
+    removeItem: function(itemName) {
+        this.items = this.items.filter(item => item.name !== itemName);
+        console.log(`Removed ${itemName} from cart`);
+    },
+    
+    calculateSubtotal: function() {
+        return this.items.reduce((total, item) => total + item.itemTotal, 0);
+    },
+    
+    calculateTotal: function(taxRate = 0.08) {
+        let subtotal = this.calculateSubtotal();
+        let tax = calculateTax(subtotal, taxRate);
+        return {
+            subtotal: formatCurrency(subtotal),
+            tax: formatCurrency(tax),
+            total: formatCurrency(subtotal + tax)
+        };
+    },
+    
+    displayCart: function() {
+        console.log("\n=== YOUR CART ===");
+        this.items.forEach(item => {
+            console.log(`${item.name} x${item.quantity} - ${formatCurrency(item.itemTotal)}`);
+        });
+        let totals = this.calculateTotal();
+        console.log("-----------------");
+        console.log(`Subtotal: ${totals.subtotal}`);
+        console.log(`Tax: ${totals.tax}`);
+        console.log(`Total: ${totals.total}`);
+    }
+};
+
+// Using the shopping cart
+shoppingCart.addItem("Laptop", 999.99, 1);
+shoppingCart.addItem("Mouse", 29.99, 2);
+shoppingCart.displayCart();</code></pre>
+
+        <h3>Example 2: Form Validator</h3>
+        <pre><code>// Function declarations for validation rules
+function isRequired(value) {
+    return value !== undefined &amp;&amp; value !== null &amp;&amp; value.trim() !== '';
+}
+
+function isEmail(value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+}
+
+function isMinLength(value, min) {
+    return value.length >= min;
+}
+
+function isMaxLength(value, max) {
+    return value.length &lt;= max;
+}
+
+function isMatching(value1, value2) {
+    return value1 === value2;
+}
+
+// Function expression for the validator object
+const formValidator = {
+    rules: [],
+    
+    addRule: function(fieldName, validationFn, errorMessage) {
+        this.rules.push({
+            field: fieldName,
+            validate: validationFn,
+            message: errorMessage
+        });
+    },
+    
+    validate: function(formData) {
+        let errors = [];
+        
+        this.rules.forEach(rule => {
+            let value = formData[rule.field];
+            if (!rule.validate(value)) {
+                errors.push({
+                    field: rule.field,
+                    message: rule.message
+                });
+            }
+        });
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+};
+
+// Set up validation rules
+formValidator.addRule('username', 
+    value => isRequired(value) &amp;&amp; isMinLength(value, 3),
+    'Username must be at least 3 characters'
+);
+
+formValidator.addRule('email',
+    value => isRequired(value) &amp;&amp; isEmail(value),
+    'Please enter a valid email address'
+);
+
+formValidator.addRule('password',
+    value => isRequired(value) &amp;&amp; isMinLength(value, 8),
+    'Password must be at least 8 characters'
+);
+
+formValidator.addRule('confirmPassword',
+    value => isRequired(value) &amp;&amp; isMatching(value, formData?.password),
+    'Passwords must match'
+);
+
+// Test the validator
+let formData = {
+    username: 'jo',
+    email: 'invalid-email',
+    password: 'pass',
+    confirmPassword: 'different'
+};
+
+let result = formValidator.validate(formData);
+console.log(result);</code></pre>
+
+        <h3>Example 3: Data Processing Pipeline</h3>
+        <pre><code>// Function declarations for each processing step
+function filterOutliers(data, min, max) {
+    return data.filter(value => value >= min &amp;&amp; value &lt;= max);
+}
+
+function normalizeData(data) {
+    let max = Math.max(...data);
+    return data.map(value => value / max);
+}
+
+function calculateStatistics(data) {
+    let sum = data.reduce((acc, val) => acc + val, 0);
+    let mean = sum / data.length;
+    
+    let sorted = [...data].sort((a, b) => a - b);
+    let median = sorted.length % 2 === 0
+        ? (sorted[sorted.length/2 - 1] + sorted[sorted.length/2]) / 2
+        : sorted[Math.floor(sorted.length/2)];
+    
+    let variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / data.length;
+    let stdDev = Math.sqrt(variance);
+    
+    return { mean, median, stdDev, min: sorted[0], max: sorted[sorted.length-1] };
+}
+
+// Function expression for the pipeline
+const dataPipeline = {
+    steps: [],
+    
+    addStep: function(stepFunction, stepName) {
+        this.steps.push({
+            execute: stepFunction,
+            name: stepName || `Step ${this.steps.length + 1}`
+        });
+    },
+    
+    execute: function(initialData) {
+        let currentData = initialData;
+        let logs = [];
+        
+        console.log(`Initial data: [${currentData.join(', ')}]`);
+        
+        this.steps.forEach(step => {
+            try {
+                currentData = step.execute(currentData);
+                logs.push(`${step.name}: [${currentData.join(', ')}]`);
+            } catch (error) {
+                console.error(`Error in ${step.name}:`, error);
+                return null;
+            }
+        });
+        
+        return {
+            result: currentData,
+            logs: logs
+        };
+    }
+};
+
+// Set up the pipeline
+dataPipeline.addStep(
+    data => filterOutliers(data, 0, 100),
+    'Remove outliers'
+);
+
+dataPipeline.addStep(
+    data => normalizeData(data),
+    'Normalize'
+);
+
+dataPipeline.addStep(
+    data => {
+        let stats = calculateStatistics(data);
+        console.log('Statistics:', stats);
+        return data;
+    },
+    'Calculate stats'
+);
+
+// Run the pipeline
+let rawData = [10, 25, 150, 30, 45, 200, 60, 75, 300, 90];
+let pipelineResult = dataPipeline.execute(rawData);</code></pre>
+
+        <hr>
+
+        <h2 id="common-mistakes-and-best-practices">Common Mistakes and Best Practices</h2>
+        <h3>Common Mistakes</h3>
+        <p><strong>Mistake 1: Forgetting the Return Statement</strong></p>
+        <pre><code>// WRONG
+function add(a, b) {
+    a + b; // Missing return!
+}
+console.log(add(5, 3)); // undefined
+
+// RIGHT
+function add(a, b) {
+    return a + b;
+}
+console.log(add(5, 3)); // 8</code></pre>
+        <p><strong>Mistake 2: Not Validating Parameters</strong></p>
+        <pre><code>// WRONG
+function divide(a, b) {
+    return a / b; // Crash if b is 0
+}
+
+// RIGHT
+function divide(a, b) {
+    if (b === 0) {
+        throw new Error("Cannot divide by zero");
+    }
+    return a / b;
+}</code></pre>
+        <p><strong>Mistake 3: Confusing Parameters and Arguments</strong></p>
+        <pre><code>function greet(name) { // name is a parameter
+    console.log("Hello, " + name);
+}
+
+let person = "Alice";
+greet(person); // person is an argument</code></pre>
+        <p><strong>Mistake 4: Modifying Parameters Unnecessarily</strong></p>
+        <pre><code>// WRONG - modifies original array
+function addItem(arr, item) {
+    arr.push(item); // Side effect!
+    return arr;
+}
+
+let myList = [1, 2, 3];
+let newList = addItem(myList, 4);
+console.log(myList); // [1, 2, 3, 4] - original changed!
+
+// RIGHT - creates new array
+function addItem(arr, item) {
+    return [...arr, item]; // No side effects
+}
+
+let myList = [1, 2, 3];
+let newList = addItem(myList, 4);
+console.log(myList); // [1, 2, 3] - original unchanged
+console.log(newList); // [1, 2, 3, 4]</code></pre>
+        <p><strong>Mistake 5: Too Many Parameters</strong></p>
+        <pre><code>// WRONG - too many parameters, hard to use
+function createUser(name, age, email, phone, address, city, country, zip) {
+    // ...
+}
+
+// RIGHT - use an object parameter
+function createUser(userInfo) {
+    const { name, age, email, phone, address, city, country, zip } = userInfo;
+    // ...
+}
+
+createUser({
+    name: "John",
+    age: 30,
+    email: "john@example.com",
+    city: "New York"
+});</code></pre>
+
+        <h3>Best Practices</h3>
+        <p><strong>1. Use Descriptive Names</strong></p>
+        <pre><code>// BAD
+function fn(a, b) {
+    return a * b;
+}
+
+// GOOD
+function calculateRectangleArea(length, width) {
+    return length * width;
+}</code></pre>
+        <p><strong>2. Keep Functions Small and Focused</strong></p>
+        <pre><code>// BAD - does too many things
+function processUser(user) {
+    // Validate user
+    // Save to database
+    // Send email
+    // Log activity
+    // Update analytics
+}
+
+// GOOD - single responsibility
+function validateUser(user) { /* ... */ }
+function saveUser(user) { /* ... */ }
+function sendWelcomeEmail(user) { /* ... */ }
+function logUserActivity(user) { /* ... */ }
+function updateAnalytics(user) { /* ... */ }</code></pre>
+        <p><strong>3. Use Default Parameters Instead of Manual Checks</strong></p>
+        <pre><code>// OLD WAY
+function greet(name) {
+    name = name || 'Guest';
+    return 'Hello, ' + name;
+}
+
+// MODERN WAY
+function greet(name = 'Guest') {
+    return `Hello, ${name}`;
+}</code></pre>
+        <p><strong>4. Return Early for Clarity</strong></p>
+        <pre><code>// COMPLEX NESTED IF
+function getDiscount(price, userType) {
+    if (userType === 'premium') {
+        if (price &gt; 100) {
+            return price * 0.2;
+        } else {
+            return price * 0.1;
+        }
+    } else {
+        return 0;
+    }
+}
+
+// CLEARER WITH EARLY RETURNS
+function getDiscount(price, userType) {
+    if (userType !== 'premium') {
+        return 0;
+    }
+    
+    if (price &gt; 100) {
+        return price * 0.2;
+    }
+    
+    return price * 0.1;
+}</code></pre>
+        <p><strong>5. Document Complex Functions</strong></p>
+        <pre><code>/**
+ * Calculates the total price including tax and discounts
+ * @param {Array} items - Array of item objects with price and quantity
+ * @param {number} taxRate - Tax rate as decimal (e.g., 0.08 for 8%)
+ * @param {number} discountPercentage - Discount percentage (0-100)
+ * @returns {Object} Object containing subtotal, tax, discount, and total
+ */
+function calculateOrderTotal(items, taxRate = 0.08, discountPercentage = 0) {
+    // Implementation
+}</code></pre>
+
+        <hr>
+
+        <h2 id="practice-exercises">Practice Exercises</h2>
+        <h3>Exercise 1: Temperature Converter</h3>
+        <pre><code>// TODO: Implement these functions
+function celsiusToFahrenheit(celsius) {
+    // Your code here
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+    // Your code here
+}
+
+function celsiusToKelvin(celsius) {
+    // Your code here
+}
+
+function kelvinToCelsius(kelvin) {
+    // Your code here
+}
+
+// Expected output:
+console.log(celsiusToFahrenheit(0));    // 32
+console.log(fahrenheitToCelsius(32));   // 0
+console.log(celsiusToKelvin(0));        // 273.15
+console.log(kelvinToCelsius(273.15));   // 0</code></pre>
+
+        <h3>Exercise 2: Array Utilities</h3>
+        <pre><code>// TODO: Implement these functions
+function getMax(arr) {
+    // Return the maximum number in an array
+}
+
+function getMin(arr) {
+    // Return the minimum number in an array
+}
+
+function getAverage(arr) {
+    // Return the average of all numbers
+}
+
+function removeDuplicates(arr) {
+    // Return a new array with duplicates removed
+}
+
+function intersect(arr1, arr2) {
+    // Return an array of elements present in both arrays
+}
+
+// Test your functions
+let numbers = [3, 7, 2, 9, 3, 5, 7, 1];
+console.log(getMax(numbers));           // 9
+console.log(getMin(numbers));           // 1
+console.log(getAverage(numbers));       // ~4.625
+console.log(removeDuplicates(numbers)); // [3, 7, 2, 9, 5, 1]
+console.log(intersect([1,2,3], [2,3,4])); // [2,3]</code></pre>
+
+        <h3>Exercise 3: String Manipulator</h3>
+        <pre><code>// TODO: Implement these functions
+function isPalindrome(str) {
+    // Return true if string is a palindrome (reads the same forwards and backwards)
+    // Ignore case and non-alphanumeric characters
+}
+
+function countWords(str) {
+    // Return the number of words in a string
+}
+
+function maskEmail(email) {
+    // Mask email: "john.doe@example.com" -> "j***.d**@example.com"
+}
+
+function acronym(phrase) {
+    // Return acronym: "World Health Organization" -> "WHO"
+}
+
+// Test your functions
+console.log(isPalindrome("A man, a plan, a canal: Panama")); // true
+console.log(countWords("The quick brown fox"));              // 4
+console.log(maskEmail("john.doe@example.com"));              // j***.d**@example.com
+console.log(acronym("World Health Organization"));           // WHO</code></pre>
+
+        <h3>Exercise 4: Math Quiz Generator</h3>
+        <pre><code>// TODO: Create these functions
+
+// Function to generate random numbers
+function getRandomNumber(min, max) {
+    // Your code here
+}
+
+// Function to generate a random operation
+function getRandomOperation() {
+    // Return '+', '-', '*', or '/'
+}
+
+// Function to calculate the correct answer
+function calculateAnswer(num1, num2, operation) {
+    // Your code here
+}
+
+// Function to generate a quiz question
+function generateQuestion() {
+    // Return an object with num1, num2, operation, and answer
+}
+
+// Function to run a quiz with 5 questions
+function runQuiz() {
+    // Generate 5 questions
+    // Ask user for answers (use prompt in browser, or console in Node)
+    // Track score
+    // Return final score
+}
+
+// Test your quiz generator
+// console.log(runQuiz());</code></pre>
+
+        <h3>Exercise 5: E-commerce Discount System</h3>
+        <pre><code>// TODO: Create a discount system
+
+// Base discount function
+function calculateBaseDiscount(total, userType) {
+    // Regular users: 0% discount
+    // Premium users: 10% discount
+    // VIP users: 20% discount
+}
+
+// Seasonal discount function
+function calculateSeasonalDiscount(total, month) {
+    // December: 15% discount
+    // July: 10% discount
+    // Other months: 0% discount
+}
+
+// Bulk discount function
+function calculateBulkDiscount(itemCount) {
+    // More than 10 items: 5% discount
+    // More than 20 items: 10% discount
+    // More than 50 items: 15% discount
+}
+
+// Combine discounts (discounts should be applied sequentially, not added)
+function calculateFinalDiscount(total, userType, month, itemCount) {
+    // Your code here
+    // Apply base discount first, then seasonal, then bulk
+}
+
+// Test your system
+console.log(calculateFinalDiscount(100, "vip", "December", 15));
+// Should apply: base 20% (100 -> 80), seasonal 15% (80 -> 68), bulk 5% (68 -> 64.6)</code></pre>
+
+        <hr>
+
+        <h2 id="interview-questions">Interview Questions</h2>
+        <h3>Beginner Level</h3>
+        <p><strong>Q1: What is the difference between parameters and arguments?</strong></p>
+        <p><strong>Answer:</strong><br> - <strong>Parameters</strong> are the variables listed in the function's
+            definition.<br> - <strong>Arguments</strong> are the actual values passed to the function when it's called.
+        </p>
+        <pre><code>function add(x, y) { // x and y are parameters
+    return x + y;
+}
+
+add(5, 3); // 5 and 3 are arguments</code></pre>
+
+        <p><strong>Q2: Explain hoisting with function declarations vs function expressions.</strong></p>
+        <p><strong>Answer:</strong> Function declarations are hoisted entirely, meaning you can call them before they
+            appear in the code. Function expressions are not hoisted - they behave like variables.</p>
+        <pre><code>// This works
+sayHello(); // "Hello!"
+function sayHello() {
+    console.log("Hello!");
+}
+
+// This causes an error
+sayHi(); // TypeError: sayHi is not a function
+const sayHi = function() {
+    console.log("Hi!");
+};</code></pre>
+
+        <p><strong>Q3: What will the following code output?</strong></p>
+        <pre><code>function test() {
+    return
+    {
+        message: "Hello"
+    };
+}
+
+console.log(test());</code></pre>
+        <p><strong>Answer:</strong> <code>undefined</code>. Due to automatic semicolon insertion (ASI), JavaScript
+            interprets it as:</p>
+        <pre><code>function test() {
+    return; // Semicolon inserted here
+    {
+        message: "Hello"
+    };
+}</code></pre>
+
+        <h3>Intermediate Level</h3>
+        <p><strong>Q4: What's the difference between passing primitives and objects to functions?</strong></p>
+        <p><strong>Answer:</strong> Primitives are passed by value (a copy is made), while objects are passed by
+            reference (the function can modify the original object).</p>
+        <pre><code>// Primitives - passed by value
+let x = 10;
+function changePrimitive(val) {
+    val = 20;
+}
+changePrimitive(x);
+console.log(x); // 10 (unchanged)
+
+// Objects - passed by reference
+let obj = { value: 10 };
+function changeObject(obj) {
+    obj.value = 20;
+}
+changeObject(obj);
+console.log(obj.value); // 20 (changed)</code></pre>
+
+        <p><strong>Q5: What are default parameters and how do they work?</strong></p>
+        <p><strong>Answer:</strong> Default parameters allow parameters to have default values if no argument or
+            <code>undefined</code> is passed.</p>
+        <pre><code>function greet(name = "Guest", greeting = "Hello") {
+    return `${greeting}, ${name}!`;
+}
+
+console.log(greet());              // "Hello, Guest!"
+console.log(greet("John"));        // "Hello, John!"
+console.log(greet("Jane", "Hi"));  // "Hi, Jane!"
+console.log(greet(undefined, "Hey")); // "Hey, Guest!"</code></pre>
+
+        <p><strong>Q6: Explain the arguments object. How is it different from rest parameters?</strong></p>
+        <p><strong>Answer:</strong> The <code>arguments</code> object is an array-like object available inside all
+            non-arrow functions that contains the arguments passed. Rest parameters provide a modern, more flexible
+            alternative.</p>
+        <pre><code>// Using arguments (old way)
+function sumOld() {
+    let total = 0;
+    for (let i = 0; i &lt; arguments.length; i++) {
+        total += arguments[i];
+    }
+    return total;
+}
+
+// Using rest parameters (modern way)
+function sumNew(...numbers) {
+    return numbers.reduce((total, num) => total + num, 0);
+}
+
+// Key differences:
+// - arguments is array-like (not a real array)
+// - rest parameters are real arrays
+// - arrow functions don't have arguments
+// - rest parameters are more readable</code></pre>
+
+        <h3>Advanced Level</h3>
+        <p><strong>Q7: What's a pure function? Give examples.</strong></p>
+        <p><strong>Answer:</strong> A pure function:<br> 1. Always returns the same output for the same input<br> 2. Has
+            no side effects (doesn't modify external state)</p>
+        <pre><code>// IMPURE - modifies external variable
+let taxRate = 0.08;
+function calculateTotalImpure(price) {
+    return price + (price * taxRate); // Depends on external variable
+}
+
+// IMPURE - has side effect
+let total = 0;
+function addToTotal(amount) {
+    total += amount; // Modifies external state
+    return total;
+}
+
+// PURE
+function calculateTotalPure(price, taxRate) {
+    return price + (price * taxRate); // Always same output for same inputs
+}
+
+// PURE
+function add(a, b) {
+    return a + b; // No side effects, deterministic
+}</code></pre>
+
+        <p><strong>Q8: Explain function composition with examples.</strong></p>
+        <p><strong>Answer:</strong> Function composition is combining two or more functions to create a new function.
+        </p>
+        <pre><code>// Basic composition
+const compose = (f, g) => x => f(g(x));
+
+const toUpperCase = str => str.toUpperCase();
+const exclaim = str => `${str}!`;
+const shout = compose(exclaim, toUpperCase);
+
+console.log(shout("hello")); // "HELLO!"
+
+// More practical example
+const addTax = price => price * 1.08;
+const applyDiscount = price => price * 0.9;
+const formatPrice = price => `$${price.toFixed(2)}`;
+
+// Compose multiple functions
+const composeMany = (...fns) => x => fns.reduceRight((acc, fn) => fn(acc), x);
+const calculateFinalPrice = composeMany(formatPrice, applyDiscount, addTax);
+
+console.log(calculateFinalPrice(100)); // "$97.20" (100 * 1.08 * 0.9)</code></pre>
+
+        <p><strong>Q9: What are IIFEs and why would you use them?</strong></p>
+        <p><strong>Answer:</strong> IIFE (Immediately Invoked Function Expression) runs as soon as it's defined. Useful
+            for creating private scope and avoiding global namespace pollution.</p>
+        <pre><code>// Basic IIFE
+(function() {
+    console.log("This runs immediately!");
+})();
+
+// With parameters
+(function(name) {
+    console.log(`Hello, ${name}!`);
+})("Alice");
+
+// Creating private scope
+const counter = (function() {
+    let count = 0; // Private variable
+    
+    return {
+        increment: function() { return ++count; },
+        decrement: function() { return --count; },
+        getCount: function() { return count; }
+    };
+})();
+
+console.log(counter.increment()); // 1
+console.log(counter.increment()); // 2
+console.log(counter.getCount());  // 2
+console.log(counter.count);       // undefined (private)</code></pre>
+
+        <p><strong>Q10: Explain callback functions with examples.</strong></p>
+        <p><strong>Answer:</strong> A callback is a function passed as an argument to another function, to be executed
+            later.</p>
+        <pre><code>// Synchronous callback
+function processArray(arr, callback) {
+    for (let i = 0; i &lt; arr.length; i++) {
+        arr[i] = callback(arr[i]);
+    }
+    return arr;
+}
+
+let numbers = [1, 2, 3, 4];
+let doubled = processArray(numbers, function(num) {
+    return num * 2;
+});
+console.log(doubled); // [2, 4, 6, 8]
+
+// Asynchronous callback
+function fetchData(callback) {
+    setTimeout(function() {
+        const data = { id: 1, name: "John" };
+        callback(data);
+    }, 2000);
+}
+
+fetchData(function(data) {
+    console.log("Data received:", data);
+});
+console.log("Waiting for data..."); // This runs first
+
+// Error-first callback pattern (Node.js style)
+function readFile(path, callback) {
+    // Simulate file reading
+    setTimeout(function() {
+        const error = null; // or new Error("File not found")
+        const data = "File contents";
+        
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, data);
+        }
+    }, 1000);
+}
+
+readFile("test.txt", function(err, data) {
+    if (err) {
+        console.error("Error:", err);
+    } else {
+        console.log("Data:", data);
+    }
+});</code></pre>
+
+        <hr>
+
+        <h2>Summary</h2>
+        <h3>Key Takeaways</h3>
+        <ul>
+            <li><strong>Functions are reusable blocks of code</strong> that make programs more organized, maintainable,
+                and DRY (Don't Repeat Yourself).</li>
+            <li><strong>Two main ways to define functions:</strong> Function declarations (hoisted, named, traditional)
+                and function expressions (not hoisted, can be anonymous, more flexible).</li>
+            <li><strong>Parameters vs Arguments:</strong> Parameters are the placeholders in function definition;
+                Arguments are the actual values passed when calling.</li>
+            <li><strong>Best Practices:</strong> Keep functions small and focused, use descriptive names, validate
+                parameters, return early for clarity, avoid side effects when possible.</li>
+            <li><strong>Common Use Cases:</strong> Code reuse, callbacks and event handlers, object methods, data
+                processing pipelines, creating private scope with IIFEs.</li>
+        </ul>
+
+        <h3>Quick Reference Table</h3>
+        <pre><code>// FUNCTION DECLARATION
+function add(a, b) {
+    return a + b;
+}
+// Hoisted: Yes
+// Can be anonymous: No
+// Best for: Utilities, main functions
+
+// FUNCTION EXPRESSION (Anonymous)
+const multiply = function(a, b) {
+    return a * b;
+};
+// Hoisted: No
+// Can be anonymous: Yes
+// Best for: Callbacks, assignments
+
+// FUNCTION EXPRESSION (Named)
+const divide = function divideFn(a, b) {
+    return a / b;
+};
+// Hoisted: No
+// Name: Useful for debugging
+// Best for: Recursion, debugging
+
+// ARROW FUNCTION (ES6+)
+const square = (x) => x * x;
+// Hoisted: No
+// Own 'this': No
+// Best for: Short functions, callbacks</code></pre>
+
+        <h3>Memory Aid</h3>
+        <pre><code>F.U.N.C.T.I.O.N.S.
+
+F - First-class citizens (can be assigned to variables)
+U - Useful for code reuse
+N - Named or anonymous
+C - Can take parameters
+T - They perform tasks
+I - Invoked with ()
+O - Often return values
+N - Necessary for modular code
+S - Save time and reduce errors</code></pre>
+
+        <p>This comprehensive guide covers everything you need to know about defining and calling functions in
+            JavaScript. Practice regularly, and these concepts will become second nature!</p>
+
+        <hr>
+
+        <footer>⚡ JAVASCRIPT FUNCTIONS – PART 1: THE COMPLETE GUIDE · every line preserved</footer>
+    </div>
+</body>
+
+</html>

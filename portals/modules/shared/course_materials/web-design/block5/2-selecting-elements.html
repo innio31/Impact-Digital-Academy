@@ -1,0 +1,4123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecting DOM Elements</title>
+    <style>
+        /* Complete styling - preserves readability for all content */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4f8;
+            color: #1e2b3a;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 3rem 2rem;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 3rem 2rem;
+            }
+
+            .document-wrapper {
+                padding: 4rem 3rem;
+            }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: #0c4a6e;
+            border-bottom: 4px solid #bdd3e8;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #155e8a;
+            border-bottom: 3px solid #cbdbe9;
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 1.5rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            color: #1f5f7e;
+            margin: 2rem 0 1rem;
+            font-weight: 650;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            color: #2c6e8f;
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 600;
+        }
+
+        p,
+        li {
+            font-size: 1.1rem;
+            color: #1e3a5f;
+            margin-bottom: 0.8rem;
+        }
+
+        pre {
+            background: #1a2b3c;
+            color: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px -15px #0a1a2a;
+            border: 1px solid #2c506a;
+        }
+
+        code {
+            background: #e4f0fa;
+            color: #1b4b6c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95em;
+            border: 1px solid #b8d1e6;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px #d0e0f0;
+            font-size: 1rem;
+        }
+
+        th {
+            background: #2c6e8f;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #c3d9ea;
+            background: #f9fcff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #d0e2f0, #ffffff, #d0e2f0);
+            margin: 3rem 0;
+        }
+
+        .toc {
+            background: #e6f0f9;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #bad2e6;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom-color: #8fb9d4;
+        }
+
+        .toc ol {
+            columns: 2;
+            column-gap: 3rem;
+        }
+
+        .toc li {
+            break-inside: avoid;
+            font-size: 1.1rem;
+        }
+
+        .toc a {
+            color: #1d577b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+            color: #bf6f5a;
+        }
+
+        .note-box {
+            background: #fcf8e7;
+            border-left: 8px solid #e6b12e;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning {
+            background: #ffebee;
+            border-left-color: #c62828;
+        }
+
+        .badge {
+            background: #2c6e8f;
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #31678b;
+            font-size: 1.1rem;
+            border-top: 2px solid #cbdbe9;
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .toc ol {
+                columns: 1;
+            }
+
+            pre {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+        <h1>Selecting DOM Elements</h1>
+
+        <h2>A Comprehensive Guide to <code>getElementById()</code>, <code>querySelector()</code>, and
+            <code>querySelectorAll()</code>
+        </h2>
+
+        <hr>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ol>
+                <li><a href="#introduction-to-the-dom">Introduction to the DOM</a></li>
+                <li><a href="#the-importance-of-element-selection">The Importance of Element Selection</a></li>
+                <li><a href="#getelementbyid---the-classic-approach"><code>getElementById()</code> - The Classic
+                        Approach</a></li>
+                <li><a href="#queryselector---the-versatile-selector"><code>querySelector()</code> - The Versatile
+                        Selector</a></li>
+                <li><a href="#queryselectorall---the-collection-gatherer"><code>querySelectorAll()</code> - The
+                        Collection Gatherer</a></li>
+                <li><a href="#deep-comparative-analysis">Deep Comparative Analysis</a></li>
+                <li><a href="#performance-considerations">Performance Considerations</a></li>
+                <li><a href="#common-patterns-and-best-patterns">Common Patterns and Best Practices</a></li>
+                <li><a href="#error-handling-and-debugging">Error Handling and Debugging</a></li>
+                <li><a href="#real-world-application-scenarios">Real-World Application Scenarios</a></li>
+                <li><a href="#advanced-techniques">Advanced Techniques</a></li>
+                <li><a href="#practice-exercises-and-solutions">Practice Exercises and Solutions</a></li>
+                <li><a href="#interview-questions-and-answers">Interview Questions and Answers</a></li>
+                <li><a href="#reference-cheat-sheet">Reference Cheat Sheet</a></li>
+            </ol>
+        </div>
+
+        <!-- INTRODUCTION TO THE DOM -->
+        <h2 id="introduction-to-the-dom">INTRODUCTION TO THE DOM</h2>
+
+        <h3>What is the DOM?</h3>
+        <p>The <strong>Document Object Model (DOM)</strong> is a programming interface for HTML and XML documents. It
+            represents the page as a tree-like structure where each node is an object representing a part of the
+            document. When a web page is loaded, the browser creates the DOM, which allows programming languages like
+            JavaScript to access, manipulate, and modify the content, structure, and style of the web page dynamically.
+        </p>
+
+        <pre>HTML Document Structure as DOM Tree:
+─────────────────────────────────────
+                    document
+                       │
+                     &lt;html&gt;
+                    ┌──┴──┐
+                  &lt;head&gt; &lt;body&gt;
+                    │      └──────┬──────────┬──────────┐
+                  &lt;title&gt;       &lt;header&gt;   &lt;main&gt;    &lt;footer&gt;
+                                  │          │          │
+                                &lt;h1&gt;      &lt;section&gt;    &lt;p&gt;
+                                            │
+                                      ┌─────┼─────┐
+                                    &lt;p&gt;   &lt;p&gt;   &lt;p&gt;</pre>
+
+        <h3>The DOM as a Living Document</h3>
+        <p>The DOM is not static—it's "live." When you change the DOM using JavaScript, the webpage updates immediately.
+            This is what makes modern interactive web applications possible.</p>
+
+        <pre><code>// When you run this code, the webpage changes instantly
+document.getElementById('myTitle').textContent = 'New Title';
+// The browser repaints immediately with the new text</code></pre>
+
+        <h3>The <code>document</code> Object</h3>
+        <p>The <code>document</code> object is the entry point to the DOM. It represents the entire web page and
+            provides methods to traverse and manipulate the document tree.</p>
+
+        <pre><code>console.log(document); // The entire HTML document
+console.log(document.head); // The &lt;head&gt; element
+console.log(document.body); // The &lt;body&gt; element
+console.log(document.documentElement); // The &lt;html&gt; element
+console.log(document.title); // The page title
+console.log(document.URL); // The current URL
+console.log(document.domain); // The domain name
+console.log(document.referrer); // The referring URL</code></pre>
+
+        <hr>
+
+        <!-- THE IMPORTANCE OF ELEMENT SELECTION -->
+        <h2 id="the-importance-of-element-selection">THE IMPORTANCE OF ELEMENT SELECTION</h2>
+
+        <h3>Why Selection Matters</h3>
+        <p>Before you can do anything with an element—change its text, modify its styles, attach event listeners, or
+            remove it—you must first select it. Element selection is the foundation of all DOM manipulation.</p>
+
+        <h3>The Evolution of Selection Methods</h3>
+
+        <pre><code>// The old ways (mostly deprecated or limited)
+document.all;              // All elements (obsolete)
+document.layers;           // Netscape 4 (obsolete)
+document.forms[0];         // Still works but limited
+document.images[0];        // Still works but limited
+document.links[0];         // Still works but limited
+
+// The traditional methods (still widely used)
+document.getElementById('id');
+document.getElementsByClassName('class');
+document.getElementsByTagName('div');
+document.getElementsByName('name');
+
+// The modern methods (most flexible)
+document.querySelector('.class');
+document.querySelectorAll('div.class');</code></pre>
+
+        <h3>The Selection Journey</h3>
+
+        <pre>User wants to modify an element
+              │
+              ▼
+    ❓ How to identify the element?
+              │
+    ┌─────────┼─────────┐
+    ▼         ▼         ▼
+ By ID    By Class   By Tag/CSS
+    │         │         │
+    ▼         ▼         ▼
+getElement  getElements querySelector
+ ById()    ByClass()   /All()
+    │         │         │
+    └─────────┼─────────┘
+              │
+              ▼
+    ✅ Element(s) Selected
+              │
+              ▼
+    Manipulation begins...</pre>
+
+        <hr>
+
+        <!-- getElementById() - THE CLASSIC APPROACH -->
+        <h2 id="getelementbyid---the-classic-approach">getElementById() - THE CLASSIC APPROACH</h2>
+
+        <h3>Syntax and Basic Usage</h3>
+
+        <pre><code>// Basic syntax
+const element = document.getElementById('idName');
+
+// Example
+const header = document.getElementById('main-header');</code></pre>
+
+        <h3>Deep Dive into Behavior</h3>
+
+        <p><strong>Return Value:</strong></p>
+        <ul>
+            <li>Returns an <strong>Element object</strong> if found</li>
+            <li>Returns <strong>null</strong> if no element with the given ID exists</li>
+        </ul>
+
+        <p><strong>Key Characteristics:</strong></p>
+        <ul>
+            <li>IDs must be unique within an HTML document</li>
+            <li>Case-sensitive</li>
+            <li>One of the fastest selection methods</li>
+            <li>Only returns a single element (or null)</li>
+        </ul>
+
+        <h3>Comprehensive Examples</h3>
+
+        <h4>Example 1: Basic Element Selection</h4>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;getElementById Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="container"&gt;
+        &lt;h1 id="page-title"&gt;Welcome to My Page&lt;/h1&gt;
+        &lt;p id="intro-paragraph"&gt;This is an introduction.&lt;/p&gt;
+        &lt;div id="user-profile"&gt;
+            &lt;span id="user-name"&gt;John Doe&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;button id="submit-btn"&gt;Submit&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // Selecting different elements
+        const container = document.getElementById('container');
+        const title = document.getElementById('page-title');
+        const intro = document.getElementById('intro-paragraph');
+        const userName = document.getElementById('user-name');
+        const button = document.getElementById('submit-btn');
+        
+        console.log(container); // &lt;div id="container"&gt;...
+        console.log(title); // &lt;h1 id="page-title"&gt;...
+        console.log(intro); // &lt;p id="intro-paragraph"&gt;...
+        console.log(userName); // &lt;span id="user-name"&gt;...
+        console.log(button); // &lt;button id="submit-btn"&gt;...
+        
+        // Verifying the type of returned elements
+        console.log(title instanceof Element); // true
+        console.log(title instanceof HTMLElement); // true
+        console.log(title instanceof HTMLHeadingElement); // true
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Example 2: Element Not Found</h4>
+
+        <pre><code>// When an ID doesn't exist
+const nonExistent = document.getElementById('this-id-does-not-exist');
+console.log(nonExistent); // null
+
+// Always check if element exists before manipulating
+if (nonExistent) {
+    nonExistent.textContent = 'This will never run';
+} else {
+    console.log('Element not found!');
+}
+
+// Safe manipulation pattern
+const element = document.getElementById('some-id');
+if (element) {
+    // Perform operations on element
+    element.style.color = 'red';
+} else {
+    console.warn('Element with id "some-id" not found');
+}</code></pre>
+
+        <h4>Example 3: Dynamic ID Generation and Selection</h4>
+
+        <pre><code>// Creating elements with dynamic IDs
+for (let i = 1; i &lt;= 5; i++) {
+    const div = document.createElement('div');
+    div.id = `dynamic-div-${i}`;
+    div.textContent = `This is div number ${i}`;
+    div.style.padding = '10px';
+    div.style.margin = '5px';
+    div.style.backgroundColor = `hsl(${i * 50}, 70%, 80%)`;
+    document.body.appendChild(div);
+}
+
+// Selecting and modifying dynamically created elements
+for (let i = 1; i &lt;= 5; i++) {
+    const div = document.getElementById(`dynamic-div-${i}`);
+    if (div) {
+        div.addEventListener('click', function() {
+            alert(`You clicked on ${this.id}`);
+        });
+    }
+}</code></pre>
+
+        <h4>Example 4: Common Use Cases</h4>
+
+        <pre><code>// Form handling
+const loginForm = document.getElementById('login-form');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const errorMessage = document.getElementById('error-msg');
+
+// Navigation elements
+const navMenu = document.getElementById('main-nav');
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+
+// Dynamic content containers
+const contentArea = document.getElementById('content');
+const sidebar = document.getElementById('sidebar');
+const modal = document.getElementById('modal-overlay');
+
+// Application state elements
+const loadingSpinner = document.getElementById('spinner');
+const notificationBadge = document.getElementById('notification-count');
+const progressBar = document.getElementById('progress');</code></pre>
+
+        <h3>Performance Characteristics of getElementById()</h3>
+
+        <pre><code>// Benchmarking getElementById vs other methods
+console.time('getElementById');
+for (let i = 0; i &lt; 10000; i++) {
+    const el = document.getElementById('test-element');
+}
+console.timeEnd('getElementById');
+// Typically fastest: ~1-3ms for 10,000 iterations</code></pre>
+
+        <h3>Best Practices with getElementById()</h3>
+
+        <pre><code>// GOOD: Store references for repeated use
+const submitBtn = document.getElementById('submit-btn');
+submitBtn.addEventListener('click', handleClick);
+submitBtn.style.backgroundColor = 'blue';
+submitBtn.disabled = false;
+
+// BAD: Querying the DOM repeatedly
+document.getElementById('submit-btn').addEventListener('click', handleClick);
+document.getElementById('submit-btn').style.backgroundColor = 'blue';
+document.getElementById('submit-btn').disabled = false;
+
+// GOOD: Check for existence
+const element = document.getElementById('dynamic-element');
+if (element) {
+    // Safe to use element here
+}
+
+// GOOD: Use meaningful ID names
+// ✅ Descriptive and clear
+document.getElementById('user-profile-card');
+document.getElementById('checkout-form');
+document.getElementById('error-notification');
+
+// ❌ Avoid cryptic or non-descriptive IDs
+document.getElementById('div1');
+document.getElementById('xyz');
+document.getElementById('thing');</code></pre>
+
+        <hr>
+
+        <!-- querySelector() - THE VERSATILE SELECTOR -->
+        <h2 id="queryselector---the-versatile-selector">querySelector() - THE VERSATILE SELECTOR</h2>
+
+        <h3>Syntax and Basic Usage</h3>
+
+        <pre><code>// Basic syntax - returns FIRST matching element
+const element = document.querySelector(selector);
+
+// Where selector can be any valid CSS selector
+const firstParagraph = document.querySelector('p');
+const firstButton = document.querySelector('.btn');
+const firstMainDiv = document.querySelector('#main > div');
+const firstEmailInput = document.querySelector('input[type="email"]');</code></pre>
+
+        <h3>Deep Dive into CSS Selectors</h3>
+
+        <h4>Type Selectors (Element Selectors)</h4>
+
+        <pre><code>// Select by element/tag name
+document.querySelector('div');           // First &lt;div&gt;
+document.querySelector('p');             // First &lt;p&gt;
+document.querySelector('h1');            // First &lt;h1&gt;
+document.querySelector('section');       // First &lt;section&gt;
+document.querySelector('article');       // First &lt;article&gt;
+document.querySelector('button');        // First &lt;button&gt;
+document.querySelector('input');         // First &lt;input&gt;
+document.querySelector('a');             // First &lt;a&gt;</code></pre>
+
+        <h4>Class Selectors</h4>
+
+        <pre><code>// Select by class name
+document.querySelector('.container');        // First element with class "container"
+document.querySelector('.btn-primary');      // First element with class "btn-primary"
+document.querySelector('.nav-item.active');  // First element with both classes
+document.querySelector('.card .title');      // Element with class "title" inside class "card"</code></pre>
+
+        <h4>ID Selectors</h4>
+
+        <pre><code>// Select by ID (though getElementById is better for this specific use)
+document.querySelector('#header');           // Element with id "header"
+document.querySelector('#main-content');     // Element with id "main-content"
+document.querySelector('#footer p');         // Paragraph inside element with id "footer"</code></pre>
+
+        <h4>Attribute Selectors</h4>
+
+        <pre><code>// Select by attributes
+document.querySelector('[type]');                     // Elements with type attribute
+document.querySelector('[type="text"]');              // Inputs of type text
+document.querySelector('[type="email"]');             // Inputs of type email
+document.querySelector('[data-user-id]');             // Elements with data-user-id attribute
+document.querySelector('[data-user-id="123"]');       // Elements with specific data attribute
+document.querySelector('[href^="https"]');            // Links starting with https
+document.querySelector('[href$=".pdf"]');             // Links ending with .pdf
+document.querySelector('[href*="example.com"]');      // Links containing example.com
+document.querySelector('[class~="highlight"]');       // Class contains "highlight" as whole word
+document.querySelector('[lang|="en"]');               // lang attribute starting with "en"</code></pre>
+
+        <h4>Combinators</h4>
+
+        <pre><code>// Descendant combinator (space)
+document.querySelector('div p');              // Paragraph anywhere inside a div
+document.querySelector('article span');       // Span anywhere inside an article
+
+// Child combinator (>)
+document.querySelector('ul > li');            // Li that's direct child of ul
+document.querySelector('.container > div');   // Div that's direct child of .container
+
+// Adjacent sibling combinator (+)
+document.querySelector('h2 + p');             // Paragraph immediately after an h2
+document.querySelector('.error + .success');  // .success immediately after .error
+
+// General sibling combinator (~)
+document.querySelector('h2 ~ p');             // Any paragraph after an h2 (same parent)
+document.querySelector('.warning ~ .notice'); // Any .notice after .warning (same parent)</code></pre>
+
+        <h4>Pseudo-classes</h4>
+
+        <pre><code>// Structural pseudo-classes
+document.querySelector('li:first-child');          // First li in any list
+document.querySelector('li:last-child');           // Last li in any list
+document.querySelector('li:nth-child(2)');         // Second li
+document.querySelector('li:nth-child(odd)');       // Odd-numbered li
+document.querySelector('li:nth-child(3n)');        // Every third li
+document.querySelector('p:first-of-type');         // First p of its parent
+document.querySelector('p:last-of-type');          // Last p of its parent
+
+// Link pseudo-classes
+document.querySelector('a:link');                   // Unvisited links
+document.querySelector('a:visited');                 // Visited links
+document.querySelector('a:hover');                    // Hover state (limited use)
+document.querySelector('a:active');                   // Active state (limited use)
+
+// Input pseudo-classes
+document.querySelector('input:enabled');              // Enabled inputs
+document.querySelector('input:disabled');             // Disabled inputs
+document.querySelector('input:checked');              // Checked checkboxes/radios
+document.querySelector('input:required');             // Required inputs
+document.querySelector('input:optional');             // Optional inputs
+document.querySelector('input:valid');                // Valid inputs
+document.querySelector('input:invalid');              // Invalid inputs
+document.querySelector('input:in-range');             // In-range inputs
+document.querySelector('input:out-of-range');         // Out-of-range inputs
+document.querySelector('input:read-only');            // Read-only inputs
+document.querySelector('input:read-write');           // Read-write inputs
+
+// Content-based pseudo-classes
+document.querySelector('p:empty');                     // Empty paragraphs
+document.querySelector('div:has(span)');               // Divs containing a span
+document.querySelector('p:lang(en)');                  // Paragraphs in English</code></pre>
+
+        <h4>Pseudo-elements (LIMITATION: querySelector CANNOT select pseudo-elements)</h4>
+
+        <pre><code>// ⚠️ These WILL NOT work - querySelector cannot select pseudo-elements
+document.querySelector('p::first-line');        // ❌ Returns null
+document.querySelector('p::first-letter');      // ❌ Returns null
+document.querySelector('p::before');            // ❌ Returns null
+document.querySelector('p::after');             // ❌ Returns null
+document.querySelector('input::placeholder');   // ❌ Returns null</code></pre>
+
+        <h3>Comprehensive Examples with querySelector()</h3>
+
+        <h4>Example 1: Selecting by Various Criteria</h4>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;querySelector Demo&lt;/title&gt;
+    &lt;style&gt;
+        .highlight { background-color: yellow; }
+        .special { font-weight: bold; }
+        .warning { color: red; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="app"&gt;
+        &lt;header class="site-header"&gt;
+            &lt;h1&gt;My Website&lt;/h1&gt;
+            &lt;nav class="main-nav"&gt;
+                &lt;ul&gt;
+                    &lt;li&gt;&lt;a href="/home" class="nav-link active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="/about" class="nav-link"&gt;About&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="/contact" class="nav-link"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/nav&gt;
+        &lt;/header&gt;
+        
+        &lt;main class="content"&gt;
+            &lt;section class="intro"&gt;
+                &lt;h2&gt;Welcome&lt;/h2&gt;
+                &lt;p class="first-paragraph"&gt;This is the first paragraph.&lt;/p&gt;
+                &lt;p&gt;This is the second paragraph.&lt;/p&gt;
+                &lt;p class="highlight special"&gt;This is a special highlighted paragraph.&lt;/p&gt;
+            &lt;/section&gt;
+            
+            &lt;section class="products"&gt;
+                &lt;h2&gt;Products&lt;/h2&gt;
+                &lt;div class="product" data-category="electronics" data-price="299"&gt;
+                    &lt;h3&gt;Smartphone&lt;/h3&gt;
+                    &lt;p class="price"&gt;$299&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="product" data-category="books" data-price="19"&gt;
+                    &lt;h3&gt;JavaScript Book&lt;/h3&gt;
+                    &lt;p class="price"&gt;$19&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="product" data-category="electronics" data-price="499"&gt;
+                    &lt;h3&gt;Laptop&lt;/h3&gt;
+                    &lt;p class="price"&gt;$499&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/section&gt;
+            
+            &lt;form id="contact-form"&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="name"&gt;Name:&lt;/label&gt;
+                    &lt;input type="text" id="name" name="name" required&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="email"&gt;Email:&lt;/label&gt;
+                    &lt;input type="email" id="email" name="email" required&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="age"&gt;Age:&lt;/label&gt;
+                    &lt;input type="number" id="age" name="age" min="18" max="99"&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="newsletter"&gt;Subscribe:&lt;/label&gt;
+                    &lt;input type="checkbox" id="newsletter" name="newsletter" checked&gt;
+                &lt;/div&gt;
+                &lt;button type="submit" class="btn btn-primary" disabled&gt;Submit&lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/main&gt;
+        
+        &lt;footer class="site-footer"&gt;
+            &lt;p&gt;&amp;copy; 2026 My Website&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // ===========================================
+        // BASIC SELECTIONS
+        // ===========================================
+        
+        // Select by element type
+        const firstParagraph = document.querySelector('p');
+        console.log('First paragraph:', firstParagraph);
+        
+        const firstButton = document.querySelector('button');
+        console.log('First button:', firstButton);
+        
+        // Select by class
+        const highlightElement = document.querySelector('.highlight');
+        console.log('First element with highlight class:', highlightElement);
+        
+        // Select by ID (though getElementById is better)
+        const contactForm = document.querySelector('#contact-form');
+        console.log('Contact form:', contactForm);
+        
+        // Select by attribute
+        const emailInput = document.querySelector('[type="email"]');
+        console.log('Email input:', emailInput);
+        
+        const requiredInput = document.querySelector('[required]');
+        console.log('First required input:', requiredInput);
+        
+        const electronicsProduct = document.querySelector('[data-category="electronics"]');
+        console.log('First electronics product:', electronicsProduct);
+        
+        // ===========================================
+        // COMBINATOR SELECTIONS
+        // ===========================================
+        
+        // Descendant selector (space)
+        const navLink = document.querySelector('.main-nav a');
+        console.log('First nav link:', navLink);
+        
+        // Child selector (>)
+        const directChild = document.querySelector('.products > h2');
+        console.log('H2 directly inside products:', directChild);
+        
+        // Adjacent sibling selector (+)
+        const afterH2 = document.querySelector('h2 + p');
+        console.log('Element immediately after h2:', afterH2);
+        
+        // ===========================================
+        // PSEUDO-CLASS SELECTIONS
+        // ===========================================
+        
+        const firstListItem = document.querySelector('li:first-child');
+        console.log('First li:', firstListItem);
+        
+        const lastListItem = document.querySelector('li:last-child');
+        console.log('Last li:', lastListItem);
+        
+        const thirdProduct = document.querySelector('.product:nth-child(3)');
+        console.log('Third product:', thirdProduct);
+        
+        const checkedCheckbox = document.querySelector('input:checked');
+        console.log('Checked checkbox:', checkedCheckbox);
+        
+        const disabledButton = document.querySelector('button:disabled');
+        console.log('Disabled button:', disabledButton);
+        
+        // ===========================================
+        // COMPLEX SELECTORS
+        // ===========================================
+        
+        // Multiple class condition
+        const specialHighlight = document.querySelector('.highlight.special');
+        console.log('Element with both highlight and special classes:', specialHighlight);
+        
+        // Attribute and element combination
+        const expensiveElectronics = document.querySelector('[data-category="electronics"][data-price="499"]');
+        console.log('Electronics with price 499:', expensiveElectronics);
+        
+        // Complex hierarchy
+        const activeNavLink = document.querySelector('.main-nav ul li a.active');
+        console.log('Active nav link:', activeNavLink);
+        
+        // ===========================================
+        // SCENARIO: BUILDING A PRODUCT FILTER
+        // ===========================================
+        
+        function filterProducts(category) {
+            // Select all products first
+            const allProducts = document.querySelectorAll('.product');
+            
+            // Hide all products
+            allProducts.forEach(product =&gt; {
+                product.style.display = 'none';
+            });
+            
+            // Show only products of selected category
+            const categoryProducts = document.querySelectorAll(`[data-category="${category}"]`);
+            categoryProducts.forEach(product =&gt; {
+                product.style.display = 'block';
+            });
+            
+            // Update active filter UI
+            const previousActiveFilter = document.querySelector('.filter-btn.active');
+            if (previousActiveFilter) {
+                previousActiveFilter.classList.remove('active');
+            }
+            
+            const currentFilter = document.querySelector(`.filter-btn[data-filter="${category}"]`);
+            if (currentFilter) {
+                currentFilter.classList.add('active');
+            }
+        }
+        
+        // ===========================================
+        // SCENARIO: FORM VALIDATION HELPER
+        // ===========================================
+        
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('input[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field =&gt; {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    
+                    // Find the closest error message container or create one
+                    let errorSpan = document.querySelector(`#error-${field.id}`);
+                    if (!errorSpan) {
+                        errorSpan = document.createElement('span');
+                        errorSpan.id = `error-${field.id}`;
+                        errorSpan.className = 'error-message';
+                        field.parentNode.appendChild(errorSpan);
+                    }
+                    
+                    errorSpan.textContent = `${field.name} is required`;
+                    field.classList.add('error');
+                } else {
+                    // Clear error
+                    const errorSpan = document.querySelector(`#error-${field.id}`);
+                    if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                    field.classList.remove('error');
+                }
+            });
+            
+            return isValid;
+        }
+        
+        // ===========================================
+        // SCENARIO: DYNAMIC STYLING
+        // ===========================================
+        
+        // Find the first product and highlight it
+        const firstProduct = document.querySelector('.product');
+        if (firstProduct) {
+            firstProduct.style.border = '2px solid gold';
+            firstProduct.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.5)';
+        }
+        
+        // Find element with specific content using attribute contains
+        const smartphoneProduct = document.querySelector('[data-category="electronics"] h3');
+        if (smartphoneProduct &amp;&amp; smartphoneProduct.textContent.includes('Smartphone')) {
+            smartphoneProduct.style.color = 'blue';
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Example 2: Dynamic Content Manipulation with querySelector()</h4>
+
+        <pre><code>// Creating a dynamic tab interface
+function createTabs() {
+    const container = document.querySelector('#tab-container');
+    if (!container) return;
+    
+    // Create tabs
+    const tabsData = [
+        { id: 'tab1', title: 'Tab 1', content: 'Content for tab 1' },
+        { id: 'tab2', title: 'Tab 2', content: 'Content for tab 2' },
+        { id: 'tab3', title: 'Tab 3', content: 'Content for tab 3' }
+    ];
+    
+    // Create tab buttons container
+    const tabButtons = document.createElement('div');
+    tabButtons.className = 'tab-buttons';
+    
+    // Create tab content container
+    const tabContent = document.createElement('div');
+    tabContent.className = 'tab-content';
+    
+    tabsData.forEach((tab, index) =&gt; {
+        const button = document.createElement('button');
+        button.className = 'tab-btn';
+        if (index === 0) button.classList.add('active');
+        button.setAttribute('data-tab', tab.id);
+        button.textContent = tab.title;
+        tabButtons.appendChild(button);
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.id = tab.id;
+        contentDiv.className = 'tab-pane';
+        if (index === 0) contentDiv.classList.add('active');
+        contentDiv.textContent = tab.content;
+        tabContent.appendChild(contentDiv);
+    });
+    
+    container.appendChild(tabButtons);
+    container.appendChild(tabContent);
+    
+    // Add event listeners using querySelector
+    container.addEventListener('click', (e) =&gt; {
+        if (e.target.classList.contains('tab-btn')) {
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.tab-btn');
+            allButtons.forEach(btn =&gt; btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            e.target.classList.add('active');
+            
+            // Get target tab id
+            const tabId = e.target.getAttribute('data-tab');
+            
+            // Hide all tab panes
+            const allPanes = document.querySelectorAll('.tab-pane');
+            allPanes.forEach(pane =&gt; pane.classList.remove('active'));
+            
+            // Show selected tab pane
+            const selectedPane = document.querySelector(`#${tabId}`);
+            if (selectedPane) {
+                selectedPane.classList.add('active');
+            }
+        }
+    });
+}</code></pre>
+
+        <h4>Example 3: Error Handling with querySelector()</h4>
+
+        <pre><code>// Safe querySelector patterns
+function safeQuerySelector(selector, context = document) {
+    try {
+        const element = context.querySelector(selector);
+        if (!element) {
+            console.warn(`No element found for selector: "${selector}"`);
+            return null;
+        }
+        return element;
+    } catch (error) {
+        console.error(`Invalid selector: "${selector}"`, error);
+        return null;
+    }
+}
+
+// Usage
+const element = safeQuerySelector('div#complex[attr="value"]:nth-child(3)');
+if (element) {
+    // Safe to use
+}
+
+// Specific selectors with fallbacks
+function getElementWithFallback(primarySelector, fallbackSelector) {
+    let element = document.querySelector(primarySelector);
+    if (!element &amp;&amp; fallbackSelector) {
+        console.log(`Falling back to: ${fallbackSelector}`);
+        element = document.querySelector(fallbackSelector);
+    }
+    return element;
+}
+
+// Context-based selection (searching within an element)
+function findWithinParent(parentSelector, childSelector) {
+    const parent = document.querySelector(parentSelector);
+    if (!parent) {
+        console.warn(`Parent not found: ${parentSelector}`);
+        return null;
+    }
+    
+    return parent.querySelector(childSelector);
+}
+
+// Example
+const productPrice = findWithinParent('.product:first-child', '.price');</code></pre>
+
+        <hr>
+
+        <!-- querySelectorAll() - THE COLLECTION GATHERER -->
+        <h2 id="queryselectorall---the-collection-gatherer">querySelectorAll() - THE COLLECTION GATHERER</h2>
+
+        <h3>Syntax and Basic Usage</h3>
+
+        <pre><code>// Basic syntax - returns a STATIC NodeList of ALL matching elements
+const elements = document.querySelectorAll(selector);
+
+// Examples
+const allParagraphs = document.querySelectorAll('p');
+const allButtons = document.querySelectorAll('.btn');
+const allInputs = document.querySelectorAll('input[type="text"]');
+const allActiveItems = document.querySelectorAll('.nav-item.active');</code></pre>
+
+        <h3>Understanding NodeList vs Array</h3>
+
+        <pre><code>// querySelectorAll returns a NodeList, NOT an Array
+const paragraphs = document.querySelectorAll('p');
+
+console.log(paragraphs instanceof NodeList); // true
+console.log(paragraphs instanceof Array);    // false
+console.log(Array.isArray(paragraphs));      // false
+
+// NodeList has forEach method (in modern browsers)
+paragraphs.forEach(p =&gt; {
+    console.log(p.textContent);
+});
+
+// But NodeList lacks other array methods
+// paragraphs.map(...)        ❌ TypeError
+// paragraphs.filter(...)     ❌ TypeError
+// paragraphs.reduce(...)     ❌ TypeError
+
+// Converting NodeList to Array
+const paragraphsArray = Array.from(paragraphs);
+// or
+const paragraphsArray2 = [...paragraphs];
+
+// Now you can use all array methods
+paragraphsArray
+    .filter(p =&gt; p.textContent.includes('important'))
+    .map(p =&gt; p.style.color = 'red');</code></pre>
+
+        <h3>Static vs Live Collections</h3>
+
+        <pre><code>// querySelectorAll returns a STATIC (non-live) NodeList
+const staticDivs = document.querySelectorAll('div');
+console.log(staticDivs.length); // Let's say it's 5
+
+// Add a new div dynamically
+const newDiv = document.createElement('div');
+document.body.appendChild(newDiv);
+
+console.log(staticDivs.length); // STILL 5 - static collection doesn't update
+
+// Compare with getElementsByTagName which returns LIVE HTMLCollection
+const liveDivs = document.getElementsByTagName('div');
+console.log(liveDivs.length); // Initially 5
+
+document.body.appendChild(newDiv.cloneNode());
+console.log(liveDivs.length); // NOW 6 - live collection updates automatically</code></pre>
+
+        <h3>Comprehensive Examples with querySelectorAll()</h3>
+
+        <h4>Example 1: Basic Collection Operations</h4>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;querySelectorAll Demo&lt;/title&gt;
+    &lt;style&gt;
+        .todo-item { padding: 10px; margin: 5px; border: 1px solid #ccc; }
+        .todo-item.completed { text-decoration: line-through; opacity: 0.6; }
+        .todo-item.highlight { background-color: #ffffcc; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Todo List&lt;/h1&gt;
+    &lt;ul id="todo-list"&gt;
+        &lt;li class="todo-item"&gt;Buy groceries&lt;/li&gt;
+        &lt;li class="todo-item completed"&gt;Finish project report&lt;/li&gt;
+        &lt;li class="todo-item"&gt;Call mom&lt;/li&gt;
+        &lt;li class="todo-item completed"&gt;Pay bills&lt;/li&gt;
+        &lt;li class="todo-item"&gt;Schedule dentist appointment&lt;/li&gt;
+        &lt;li class="todo-item"&gt;Buy birthday gift&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;button id="add-todo"&gt;Add Todo&lt;/button&gt;
+    &lt;button id="show-completed"&gt;Show Completed&lt;/button&gt;
+    &lt;button id="show-pending"&gt;Show Pending&lt;/button&gt;
+    &lt;button id="highlight-long"&gt;Highlight Long Tasks&lt;/button&gt;
+
+    &lt;script&gt;
+        // ===========================================
+        // BASIC SELECTION AND ITERATION
+        // ===========================================
+        
+        // Select all todo items
+        const allTodos = document.querySelectorAll('.todo-item');
+        console.log(`Total todos: ${allTodos.length}`);
+        
+        // Using forEach to iterate
+        allTodos.forEach((todo, index) =&gt; {
+            console.log(`${index + 1}: ${todo.textContent}`);
+        });
+        
+        // Traditional for loop
+        for (let i = 0; i &lt; allTodos.length; i++) {
+            allTodos[i].setAttribute('data-index', i);
+        }
+        
+        // for...of loop (works because NodeList is iterable)
+        for (const todo of allTodos) {
+            todo.title = 'Click to toggle completion';
+        }
+        
+        // ===========================================
+        // FILTERING THE COLLECTION
+        // ===========================================
+        
+        // Find completed todos (using class selector)
+        const completedTodos = document.querySelectorAll('.todo-item.completed');
+        console.log(`Completed: ${completedTodos.length}`);
+        
+        // Find pending todos (not completed)
+        // Can't do :not(.completed) with querySelectorAll? Actually you can!
+        const pendingTodos = document.querySelectorAll('.todo-item:not(.completed)');
+        console.log(`Pending: ${pendingTodos.length}`);
+        
+        // Using Array methods after conversion
+        const todoArray = Array.from(allTodos);
+        
+        const longTasks = todoArray.filter(todo =&gt; todo.textContent.length &gt; 15);
+        console.log('Long tasks:', longTasks.map(t =&gt; t.textContent));
+        
+        // ===========================================
+        // MANIPULATING ALL MATCHING ELEMENTS
+        // ===========================================
+        
+        // Add click event to all todos
+        document.querySelectorAll('.todo-item').forEach(todo =&gt; {
+            todo.addEventListener('click', function(e) {
+                this.classList.toggle('completed');
+                
+                // Show how many are now completed
+                const completedCount = document.querySelectorAll('.todo-item.completed').length;
+                console.log(`Completed: ${completedCount}/${allTodos.length}`);
+            });
+        });
+        
+        // ===========================================
+        // BUTTON FUNCTIONALITIES
+        // ===========================================
+        
+        document.getElementById('show-completed').addEventListener('click', () =&gt; {
+            // Hide all
+            document.querySelectorAll('.todo-item').forEach(todo =&gt; {
+                todo.style.display = 'none';
+            });
+            
+            // Show only completed
+            document.querySelectorAll('.todo-item.completed').forEach(todo =&gt; {
+                todo.style.display = 'block';
+            });
+        });
+        
+        document.getElementById('show-pending').addEventListener('click', () =&gt; {
+            // Hide all
+            document.querySelectorAll('.todo-item').forEach(todo =&gt; {
+                todo.style.display = 'none';
+            });
+            
+            // Show only pending
+            document.querySelectorAll('.todo-item:not(.completed)').forEach(todo =&gt; {
+                todo.style.display = 'block';
+            });
+        });
+        
+        document.getElementById('show-all').addEventListener('click', () =&gt; {
+            document.querySelectorAll('.todo-item').forEach(todo =&gt; {
+                todo.style.display = 'block';
+            });
+        });
+        
+        document.getElementById('highlight-long').addEventListener('click', () =&gt; {
+            // Remove highlight from all
+            document.querySelectorAll('.todo-item').forEach(todo =&gt; {
+                todo.classList.remove('highlight');
+            });
+            
+            // Add highlight to long tasks
+            Array.from(document.querySelectorAll('.todo-item'))
+                .filter(todo =&gt; todo.textContent.length &gt; 15)
+                .forEach(todo =&gt; {
+                    todo.classList.add('highlight');
+                });
+        });
+        
+        // ===========================================
+        // DYNAMIC ADDITIONS WITH QUERYSELECTORALL
+        // ===========================================
+        
+        document.getElementById('add-todo').addEventListener('click', () =&gt; {
+            const newTodo = document.createElement('li');
+            newTodo.className = 'todo-item';
+            newTodo.textContent = `New Task ${document.querySelectorAll('.todo-item').length + 1}`;
+            
+            document.getElementById('todo-list').appendChild(newTodo);
+            
+            // Need to re-attach event listeners to new items
+            // Better approach: event delegation on parent
+            newTodo.addEventListener('click', function() {
+                this.classList.toggle('completed');
+            });
+        });
+        
+        // Better approach: Event delegation
+        document.getElementById('todo-list').addEventListener('click', (e) =&gt; {
+            if (e.target.classList.contains('todo-item')) {
+                e.target.classList.toggle('completed');
+            }
+        });
+        
+        // ===========================================
+        // ADVANCED SELECTOR COMBINATIONS
+        // ===========================================
+        
+        // Select todos that are NOT the first and NOT the last
+        const middleTodos = document.querySelectorAll('.todo-item:not(:first-child):not(:last-child)');
+        console.log('Middle todos:', middleTodos.length);
+        
+        // Select todos with even index (CSS uses 1-based indexing)
+        const evenTodos = document.querySelectorAll('.todo-item:nth-child(even)');
+        console.log('Even todos:', evenTodos.length);
+        
+        // Select every third todo
+        const everyThirdTodo = document.querySelectorAll('.todo-item:nth-child(3n)');
+        console.log('Every third todo:', everyThirdTodo.length);
+        
+        // Complex: Select completed items that are not the first
+        const completedNotFirst = document.querySelectorAll('.todo-item.completed:not(:first-child)');
+        console.log('Completed not first:', completedNotFirst.length);
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Example 2: Table Manipulation with querySelectorAll()</h4>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Table Manipulation&lt;/title&gt;
+    &lt;style&gt;
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; cursor: pointer; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .highlight { background-color: #ffeb3b !important; }
+        .selected { background-color: #b0e0e6 !important; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table id="data-table"&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th data-sort="id"&gt;ID&lt;/th&gt;
+                &lt;th data-sort="name"&gt;Name&lt;/th&gt;
+                &lt;th data-sort="age"&gt;Age&lt;/th&gt;
+                &lt;th data-sort="city"&gt;City&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;John Doe&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;td&gt;New York&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;Jane Smith&lt;/td&gt;&lt;td&gt;34&lt;/td&gt;&lt;td&gt;Los Angeles&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;Bob Johnson&lt;/td&gt;&lt;td&gt;22&lt;/td&gt;&lt;td&gt;Chicago&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;Alice Brown&lt;/td&gt;&lt;td&gt;41&lt;/td&gt;&lt;td&gt;Houston&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;Charlie Wilson&lt;/td&gt;&lt;td&gt;30&lt;/td&gt;&lt;td&gt;Phoenix&lt;/td&gt;&lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+    &lt;div style="margin-top: 20px;"&gt;
+        &lt;button id="highlight-above-30"&gt;Highlight Age &gt; 30&lt;/button&gt;
+        &lt;button id="select-even-rows"&gt;Select Even Rows&lt;/button&gt;
+        &lt;button id="count-by-city"&gt;Count by City&lt;/button&gt;
+        &lt;button id="find-name-contains"&gt;Find Names with 'o'&lt;/button&gt;
+        &lt;button id="reset"&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // ===========================================
+        // SELECTING TABLE ELEMENTS
+        // ===========================================
+        
+        const table = document.querySelector('#data-table');
+        const headers = document.querySelectorAll('#data-table th');
+        const rows = document.querySelectorAll('#data-table tbody tr');
+        const cells = document.querySelectorAll('#data-table td');
+        
+        console.log(`Headers: ${headers.length}`);
+        console.log(`Rows: ${rows.length}`);
+        console.log(`Cells: ${cells.length}`);
+        
+        // ===========================================
+        // FILTERING TABLE DATA
+        // ===========================================
+        
+        function highlightRowsAboveAge(age) {
+            // Clear previous highlights
+            document.querySelectorAll('#data-table tr').forEach(row =&gt; {
+                row.classList.remove('highlight');
+            });
+            
+            // Get all rows, but skip header
+            const dataRows = document.querySelectorAll('#data-table tbody tr');
+            
+            dataRows.forEach(row =&gt; {
+                const ageCell = row.querySelector('td:nth-child(3)'); // Age is 3rd column
+                if (ageCell &amp;&amp; parseInt(ageCell.textContent) &gt; age) {
+                    row.classList.add('highlight');
+                }
+            });
+            
+            const count = document.querySelectorAll('#data-table .highlight').length;
+            console.log(`${count} rows have age &gt; ${age}`);
+        }
+        
+        // ===========================================
+        // WORKING WITH SPECIFIC COLUMNS
+        // ===========================================
+        
+        function getAllNames() {
+            const nameCells = document.querySelectorAll('#data-table tbody td:nth-child(2)');
+            return Array.from(nameCells).map(cell =&gt; cell.textContent);
+        }
+        
+        function findRowsWithNameContaining(text) {
+            // Clear previous selection
+            document.querySelectorAll('#data-table .selected').forEach(row =&gt; {
+                row.classList.remove('selected');
+            });
+            
+            const nameCells = document.querySelectorAll('#data-table tbody td:nth-child(2)');
+            nameCells.forEach(cell =&gt; {
+                if (cell.textContent.toLowerCase().includes(text.toLowerCase())) {
+                    cell.parentElement.classList.add('selected');
+                }
+            });
+            
+            const count = document.querySelectorAll('#data-table .selected').length;
+            console.log(`Found ${count} names containing "${text}"`);
+        }
+        
+        // ===========================================
+        // DATA AGGREGATION
+        // ===========================================
+        
+        function countByCity() {
+            const cityCells = document.querySelectorAll('#data-table tbody td:nth-child(4)');
+            const cityCount = {};
+            
+            cityCells.forEach(cell =&gt; {
+                const city = cell.textContent.trim();
+                cityCount[city] = (cityCount[city] || 0) + 1;
+            });
+            
+            console.log('Count by city:', cityCount);
+            return cityCount;
+        }
+        
+        function calculateAverageAge() {
+            const ageCells = document.querySelectorAll('#data-table tbody td:nth-child(3)');
+            const ages = Array.from(ageCells).map(cell =&gt; parseInt(cell.textContent));
+            const sum = ages.reduce((acc, age) =&gt; acc + age, 0);
+            const avg = sum / ages.length;
+            
+            console.log(`Average age: ${avg.toFixed(2)}`);
+            return avg;
+        }
+        
+        // ===========================================
+        // SORTING TABLE (using querySelectorAll)
+        // ===========================================
+        
+        headers.forEach(header =&gt; {
+            header.addEventListener('click', function() {
+                const column = this.getAttribute('data-sort');
+                const tbody = document.querySelector('#data-table tbody');
+                const rows = document.querySelectorAll('#data-table tbody tr');
+                
+                // Convert rows to array for sorting
+                const rowsArray = Array.from(rows);
+                
+                // Determine column index
+                let colIndex = Array.from(this.parentElement.children).indexOf(this);
+                
+                // Sort rows
+                rowsArray.sort((rowA, rowB) =&gt; {
+                    const cellA = rowA.children[colIndex].textContent;
+                    const cellB = rowB.children[colIndex].textContent;
+                    
+                    if (column === 'age' || column === 'id') {
+                        return parseInt(cellA) - parseInt(cellB);
+                    } else {
+                        return cellA.localeCompare(cellB);
+                    }
+                });
+                
+                // Clear and re-append sorted rows
+                tbody.innerHTML = '';
+                rowsArray.forEach(row =&gt; tbody.appendChild(row));
+            });
+        });
+        
+        // ===========================================
+        // EVENT HANDLERS FOR BUTTONS
+        // ===========================================
+        
+        document.getElementById('highlight-above-30').addEventListener('click', () =&gt; {
+            highlightRowsAboveAge(30);
+        });
+        
+        document.getElementById('select-even-rows').addEventListener('click', () =&gt; {
+            // Clear all selected rows first
+            document.querySelectorAll('#data-table .selected').forEach(row =&gt; {
+                row.classList.remove('selected');
+            });
+            
+            // Select even rows (using :nth-child(even) but be careful with header)
+            const evenRows = document.querySelectorAll('#data-table tbody tr:nth-child(even)');
+            evenRows.forEach(row =&gt; row.classList.add('selected'));
+            
+            console.log(`Selected ${evenRows.length} even rows`);
+        });
+        
+        document.getElementById('count-by-city').addEventListener('click', () =&gt; {
+            countByCity();
+            calculateAverageAge();
+        });
+        
+        document.getElementById('find-name-contains').addEventListener('click', () =&gt; {
+            findRowsWithNameContaining('o');
+        });
+        
+        document.getElementById('reset').addEventListener('click', () =&gt; {
+            document.querySelectorAll('#data-table tr').forEach(row =&gt; {
+                row.classList.remove('highlight', 'selected');
+            });
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h4>Example 3: Form Manipulation with querySelectorAll()</h4>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Form Manipulation&lt;/title&gt;
+    &lt;style&gt;
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input.error { border-color: red; }
+        .error-message { color: red; font-size: 0.85em; margin-top: 5px; }
+        .checkbox-group label { display: inline; font-weight: normal; margin-left: 5px; }
+        .checkbox-group input { width: auto; }
+        button { padding: 10px 20px; margin-right: 10px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="registration-form"&gt;
+        &lt;h2&gt;User Registration&lt;/h2&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="fullname"&gt;Full Name:&lt;/label&gt;
+            &lt;input type="text" id="fullname" name="fullname" required&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="email"&gt;Email:&lt;/label&gt;
+            &lt;input type="email" id="email" name="email" required&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="password"&gt;Password:&lt;/label&gt;
+            &lt;input type="password" id="password" name="password" required minlength="8"&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="confirm-password"&gt;Confirm Password:&lt;/label&gt;
+            &lt;input type="password" id="confirm-password" name="confirm_password" required&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="country"&gt;Country:&lt;/label&gt;
+            &lt;select id="country" name="country"&gt;
+                &lt;option value=""&gt;Select a country&lt;/option&gt;
+                &lt;option value="us"&gt;United States&lt;/option&gt;
+                &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
+                &lt;option value="ca"&gt;Canada&lt;/option&gt;
+                &lt;option value="au"&gt;Australia&lt;/option&gt;
+            &lt;/select&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label&gt;Gender:&lt;/label&gt;
+            &lt;div class="checkbox-group"&gt;
+                &lt;input type="radio" id="male" name="gender" value="male"&gt;
+                &lt;label for="male"&gt;Male&lt;/label&gt;
+                &lt;input type="radio" id="female" name="gender" value="female"&gt;
+                &lt;label for="female"&gt;Female&lt;/label&gt;
+                &lt;input type="radio" id="other" name="gender" value="other"&gt;
+                &lt;label for="other"&gt;Other&lt;/label&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label&gt;Interests:&lt;/label&gt;
+            &lt;div class="checkbox-group"&gt;
+                &lt;input type="checkbox" id="tech" name="interests" value="tech"&gt;
+                &lt;label for="tech"&gt;Technology&lt;/label&gt;
+                &lt;input type="checkbox" id="sports" name="interests" value="sports"&gt;
+                &lt;label for="sports"&gt;Sports&lt;/label&gt;
+                &lt;input type="checkbox" id="music" name="interests" value="music"&gt;
+                &lt;label for="music"&gt;Music&lt;/label&gt;
+                &lt;input type="checkbox" id="art" name="interests" value="art"&gt;
+                &lt;label for="art"&gt;Art&lt;/label&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;label for="bio"&gt;Bio:&lt;/label&gt;
+            &lt;textarea id="bio" name="bio" rows="4"&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="form-group"&gt;
+            &lt;input type="checkbox" id="terms" name="terms" required&gt;
+            &lt;label for="terms" style="display: inline;"&gt;I accept the terms and conditions&lt;/label&gt;
+        &lt;/div&gt;
+        
+        &lt;button type="submit"&gt;Register&lt;/button&gt;
+        &lt;button type="button" id="reset-form"&gt;Reset&lt;/button&gt;
+        &lt;button type="button" id="fill-sample"&gt;Fill Sample Data&lt;/button&gt;
+        &lt;button type="button" id="count-fields"&gt;Count Form Fields&lt;/button&gt;
+    &lt;/form&gt;
+
+    &lt;div id="form-stats" style="margin-top: 20px; padding: 10px; background: #f5f5f5;"&gt;&lt;/div&gt;
+
+    &lt;script&gt;
+        // ===========================================
+        // SELECTING FORM ELEMENTS
+        // ===========================================
+        
+        const form = document.querySelector('#registration-form');
+        
+        // Select by input type
+        const textInputs = document.querySelectorAll('input[type="text"]');
+        const emailInputs = document.querySelectorAll('input[type="email"]');
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+        
+        console.log(`Text inputs: ${textInputs.length}`);
+        console.log(`Email inputs: ${emailInputs.length}`);
+        console.log(`Password inputs: ${passwordInputs.length}`);
+        console.log(`Checkboxes: ${checkboxes.length}`);
+        console.log(`Radio buttons: ${radioButtons.length}`);
+        
+        // Select by attribute
+        const requiredFields = document.querySelectorAll('[required]');
+        console.log(`Required fields: ${requiredFields.length}`);
+        
+        const fieldsWithName = document.querySelectorAll('[name]');
+        console.log(`Fields with name attribute: ${fieldsWithName.length}`);
+        
+        // ===========================================
+        // FORM STATISTICS FUNCTION
+        // ===========================================
+        
+        function updateFormStats() {
+            const stats = document.querySelector('#form-stats');
+            if (!stats) return;
+            
+            const allInputs = document.querySelectorAll('#registration-form input, #registration-form select, #registration-form textarea');
+            const textInputs = document.querySelectorAll('#registration-form input[type="text"]');
+            const emailInputs = document.querySelectorAll('#registration-form input[type="email"]');
+            const passwordInputs = document.querySelectorAll('#registration-form input[type="password"]');
+            const checkboxes = document.querySelectorAll('#registration-form input[type="checkbox"]');
+            const radios = document.querySelectorAll('#registration-form input[type="radio"]');
+            const selects = document.querySelectorAll('#registration-form select');
+            const textareas = document.querySelectorAll('#registration-form textarea');
+            
+            const filledFields = Array.from(allInputs).filter(input =&gt; {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    return input.checked;
+                } else {
+                    return input.value &amp;&amp; input.value.trim() !== '';
+                }
+            });
+            
+            stats.innerHTML = `
+                &lt;strong&gt;Form Statistics:&lt;/strong&gt;&lt;br&gt;
+                Total fields: ${allInputs.length}&lt;br&gt;
+                Text inputs: ${textInputs.length}&lt;br&gt;
+                Email inputs: ${emailInputs.length}&lt;br&gt;
+                Password inputs: ${passwordInputs.length}&lt;br&gt;
+                Checkboxes: ${checkboxes.length}&lt;br&gt;
+                Radio buttons: ${radios.length}&lt;br&gt;
+                Select dropdowns: ${selects.length}&lt;br&gt;
+                Textareas: ${textareas.length}&lt;br&gt;
+                Filled fields: ${filledFields.length}&lt;br&gt;
+                Required fields: ${requiredFields.length}
+            `;
+        }
+        
+        // Call initially
+        updateFormStats();
+        
+        // Update stats on input
+        document.querySelectorAll('#registration-form input, #registration-form select, #registration-form textarea').forEach(field =&gt; {
+            field.addEventListener('input', updateFormStats);
+            field.addEventListener('change', updateFormStats);
+        });
+        
+        // ===========================================
+        // FORM VALIDATION
+        // ===========================================
+        
+        function validateForm(e) {
+            e.preventDefault();
+            
+            // Clear all previous error messages
+            document.querySelectorAll('.error-message').forEach(el =&gt; el.remove());
+            document.querySelectorAll('.error').forEach(el =&gt; el.classList.remove('error'));
+            
+            let isValid = true;
+            const errors = [];
+            
+            // Validate required fields
+            document.querySelectorAll('[required]').forEach(field =&gt; {
+                if (field.type === 'checkbox') {
+                    if (!field.checked) {
+                        isValid = false;
+                        errors.push(`Please check ${field.id || 'the required checkbox'}`);
+                        field.classList.add('error');
+                        
+                        // Add error message
+                        const error = document.createElement('div');
+                        error.className = 'error-message';
+                        error.textContent = `This field is required`;
+                        field.parentElement.appendChild(error);
+                    }
+                } else {
+                    if (!field.value || field.value.trim() === '') {
+                        isValid = false;
+                        errors.push(`${field.name || field.id} is required`);
+                        field.classList.add('error');
+                        
+                        // Add error message
+                        const error = document.createElement('div');
+                        error.className = 'error-message';
+                        error.textContent = `This field is required`;
+                        field.parentElement.appendChild(error);
+                    }
+                }
+            });
+            
+            // Validate email format
+            document.querySelectorAll('input[type="email"]').forEach(emailField =&gt; {
+                if (emailField.value &amp;&amp; !emailField.value.includes('@')) {
+                    isValid = false;
+                    errors.push('Please enter a valid email address');
+                    emailField.classList.add('error');
+                    
+                    const error = document.createElement('div');
+                    error.className = 'error-message';
+                    error.textContent = 'Please enter a valid email address';
+                    emailField.parentElement.appendChild(error);
+                }
+            });
+            
+            // Validate password match
+            const password = document.querySelector('#password');
+            const confirmPassword = document.querySelector('#confirm-password');
+            
+            if (password.value &amp;&amp; confirmPassword.value &amp;&amp; password.value !== confirmPassword.value) {
+                isValid = false;
+                errors.push('Passwords do not match');
+                
+                password.classList.add('error');
+                confirmPassword.classList.add('error');
+                
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.textContent = 'Passwords do not match';
+                confirmPassword.parentElement.appendChild(error);
+            }
+            
+            // Validate terms checkbox specifically
+            const termsCheckbox = document.querySelector('#terms');
+            if (!termsCheckbox.checked) {
+                isValid = false;
+                errors.push('You must accept the terms and conditions');
+                termsCheckbox.classList.add('error');
+                
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.textContent = 'You must accept the terms';
+                termsCheckbox.parentElement.appendChild(error);
+            }
+            
+            if (isValid) {
+                // Get all form data
+                const formData = {};
+                document.querySelectorAll('[name]').forEach(field =&gt; {
+                    if (field.type === 'checkbox') {
+                        if (!formData[field.name]) {
+                            formData[field.name] = [];
+                        }
+                        if (field.checked) {
+                            formData[field.name].push(field.value);
+                        }
+                    } else if (field.type === 'radio') {
+                        if (field.checked) {
+                            formData[field.name] = field.value;
+                        }
+                    } else {
+                        formData[field.name] = field.value;
+                    }
+                });
+                
+                console.log('Form submitted successfully!', formData);
+                alert('Form submitted successfully! Check console for data.');
+            } else {
+                console.log('Validation errors:', errors);
+                alert('Please fix the errors in the form.');
+            }
+        }
+        
+        form.addEventListener('submit', validateForm);
+        
+        // ===========================================
+        // RESET FORM
+        // ===========================================
+        
+        document.getElementById('reset-form').addEventListener('click', () =&gt; {
+            form.reset();
+            
+            // Clear error messages and error classes
+            document.querySelectorAll('.error-message').forEach(el =&gt; el.remove());
+            document.querySelectorAll('.error').forEach(el =&gt; el.classList.remove('error'));
+            
+            updateFormStats();
+        });
+        
+        // ===========================================
+        // FILL SAMPLE DATA
+        // ===========================================
+        
+        document.getElementById('fill-sample').addEventListener('click', () =&gt; {
+            const sampleData = {
+                fullname: 'John Doe',
+                email: 'john.doe@example.com',
+                password: 'password123',
+                confirm_password: 'password123',
+                country: 'us',
+                gender: 'male',
+                interests: ['tech', 'music'],
+                bio: 'I am a web developer interested in learning more about JavaScript.',
+                terms: true
+            };
+            
+            // Set text inputs
+            document.querySelector('#fullname').value = sampleData.fullname;
+            document.querySelector('#email').value = sampleData.email;
+            document.querySelector('#password').value = sampleData.password;
+            document.querySelector('#confirm-password').value = sampleData.confirm_password;
+            
+            // Set select
+            document.querySelector('#country').value = sampleData.country;
+            
+            // Set radio
+            document.querySelector(`input[name="gender"][value="${sampleData.gender}"]`).checked = true;
+            
+            // Set checkboxes
+            document.querySelectorAll('input[name="interests"]').forEach(cb =&gt; {
+                cb.checked = sampleData.interests.includes(cb.value);
+            });
+            
+            // Set textarea
+            document.querySelector('#bio').value = sampleData.bio;
+            
+            // Set terms
+            document.querySelector('#terms').checked = sampleData.terms;
+            
+            // Clear any error messages
+            document.querySelectorAll('.error-message').forEach(el =&gt; el.remove());
+            document.querySelectorAll('.error').forEach(el =&gt; el.classList.remove('error'));
+            
+            updateFormStats();
+        });
+        
+        // ===========================================
+        // COUNT FIELDS BUTTON
+        // ===========================================
+        
+        document.getElementById('count-fields').addEventListener('click', () =&gt; {
+            const textInputs = document.querySelectorAll('input[type="text"]').length;
+            const emailInputs = document.querySelectorAll('input[type="email"]').length;
+            const passwordInputs = document.querySelectorAll('input[type="password"]').length;
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]').length;
+            const radios = document.querySelectorAll('input[type="radio"]').length;
+            const selects = document.querySelectorAll('select').length;
+            const textareas = document.querySelectorAll('textarea').length;
+            
+            const total = textInputs + emailInputs + passwordInputs + checkboxes + radios + selects + textareas;
+            
+            alert(`Form field count:\n
+                Text inputs: ${textInputs}\n
+                Email inputs: ${emailInputs}\n
+                Password inputs: ${passwordInputs}\n
+                Checkboxes: ${checkboxes}\n
+                Radio buttons: ${radios}\n
+                Select dropdowns: ${selects}\n
+                Textareas: ${textareas}\n
+                ------------------\n
+                TOTAL: ${total}
+            `);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <!-- DEEP COMPARATIVE ANALYSIS -->
+        <h2 id="deep-comparative-analysis">DEEP COMPARATIVE ANALYSIS</h2>
+
+        <h3>Comprehensive Comparison Table</h3>
+
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th><code>getElementById()</code></th>
+                    <th><code>querySelector()</code></th>
+                    <th><code>querySelectorAll()</code></th>
+                </tr>
+                <tr>
+                    <td><strong>Return Type</strong></td>
+                    <td>Element or <code>null</code></td>
+                    <td>Element or <code>null</code></td>
+                    <td>Static NodeList</td>
+                </tr>
+                <tr>
+                    <td><strong>Number of Elements</strong></td>
+                    <td>Single (first with ID)</td>
+                    <td>Single (first match)</td>
+                    <td>Multiple (all matches)</td>
+                </tr>
+                <tr>
+                    <td><strong>Selector Syntax</strong></td>
+                    <td>ID only (no <code>#</code> needed)</td>
+                    <td>Any CSS selector</td>
+                    <td>Any CSS selector</td>
+                </tr>
+                <tr>
+                    <td><strong>Performance</strong></td>
+                    <td>Fastest</td>
+                    <td>Medium</td>
+                    <td>Medium</td>
+                </tr>
+                <tr>
+                    <td><strong>Live Collection?</strong></td>
+                    <td>No (element reference is live, but selection isn't a collection)</td>
+                    <td>No (returns element)</td>
+                    <td>No (static snapshot)</td>
+                </tr>
+                <tr>
+                    <td><strong>Browser Support</strong></td>
+                    <td>IE 6+</td>
+                    <td>IE 8+ (CSS2), IE9+ (CSS3)</td>
+                    <td>IE 8+ (CSS2), IE9+ (CSS3)</td>
+                </tr>
+                <tr>
+                    <td><strong>Use Case</strong></td>
+                    <td>Unique element with ID</td>
+                    <td>First matching element</td>
+                    <td>All matching elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Can select by ID</strong></td>
+                    <td>Yes (specialized)</td>
+                    <td>Yes (with <code>#</code>)</td>
+                    <td>Yes (with <code>#</code>)</td>
+                </tr>
+                <tr>
+                    <td><strong>Can select by Class</strong></td>
+                    <td>No</td>
+                    <td>Yes (with <code>.</code>)</td>
+                    <td>Yes (with <code>.</code>)</td>
+                </tr>
+                <tr>
+                    <td><strong>Can select by Tag</strong></td>
+                    <td>No</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Can select by Attribute</strong></td>
+                    <td>No</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Can use pseudo-classes</strong></td>
+                    <td>No</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><strong>Error with invalid selector</strong></td>
+                    <td>N/A (only takes string)</td>
+                    <td>Throws error</td>
+                    <td>Throws error</td>
+                </tr>
+                <tr>
+                    <td><strong>Chaining</strong></td>
+                    <td>Not needed</td>
+                    <td>Can chain</td>
+                    <td>Can chain</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Performance Benchmarking</h3>
+
+        <pre><code>// Comprehensive performance test
+function performanceBenchmark() {
+    console.log('=== PERFORMANCE BENCHMARK ===');
+    
+    // Setup: Create 1000 divs with various identifiers
+    for (let i = 0; i &lt; 1000; i++) {
+        const div = document.createElement('div');
+        div.id = `test-id-${i}`;
+        div.className = `test-class test-class-${i % 10}`;
+        div.setAttribute('data-index', i);
+        div.textContent = `Item ${i}`;
+        document.body.appendChild(div);
+    }
+    
+    // Test 1: getElementById
+    console.time('getElementById (single)');
+    for (let i = 0; i &lt; 1000; i++) {
+        const el = document.getElementById(`test-id-${i}`);
+    }
+    console.timeEnd('getElementById (single)');
+    
+    // Test 2: querySelector with ID
+    console.time('querySelector (ID)');
+    for (let i = 0; i &lt; 1000; i++) {
+        const el = document.querySelector(`#test-id-${i}`);
+    }
+    console.timeEnd('querySelector (ID)');
+    
+    // Test 3: querySelector with class
+    console.time('querySelector (class first)');
+    for (let i = 0; i &lt; 100; i++) {
+        const el = document.querySelector('.test-class-5');
+    }
+    console.timeEnd('querySelector (class first)');
+    
+    // Test 4: querySelectorAll with class
+    console.time('querySelectorAll (class all)');
+    for (let i = 0; i &lt; 100; i++) {
+        const els = document.querySelectorAll('.test-class-5');
+    }
+    console.timeEnd('querySelectorAll (class all)');
+    
+    // Test 5: getElementsByClassName (live collection)
+    console.time('getElementsByClassName');
+    for (let i = 0; i &lt; 100; i++) {
+        const els = document.getElementsByClassName('test-class-5');
+    }
+    console.timeEnd('getElementsByClassName');
+    
+    // Test 6: Complex selector
+    console.time('querySelectorAll (complex)');
+    for (let i = 0; i &lt; 100; i++) {
+        const els = document.querySelectorAll('div[data-index].test-class-5');
+    }
+    console.timeEnd('querySelectorAll (complex)');
+    
+    // Cleanup
+    const createdDivs = document.querySelectorAll('div[id^="test-id-"]');
+    createdDivs.forEach(div =&gt; div.remove());
+}
+
+// Typical results:
+// getElementById (single): ~0.5ms
+// querySelector (ID): ~1.2ms  
+// querySelector (class first): ~0.8ms
+// querySelectorAll (class all): ~1.5ms
+// getElementsByClassName: ~0.3ms (live collection)
+// querySelectorAll (complex): ~2.1ms</code></pre>
+
+        <h3>When to Use Which Method</h3>
+
+        <pre><code>// ===========================================
+// USE getElementById() WHEN:
+// ===========================================
+
+// 1. You need a specific, unique element
+const mainHeader = document.getElementById('main-header');
+
+// 2. Performance is critical (it's the fastest)
+const submitButton = document.getElementById('submit-btn');
+
+// 3. You're working with legacy code
+const oldElement = document.getElementById('legacy-element');
+
+// 4. You know the ID exists and is unique
+const userProfile = document.getElementById('user-profile-123');
+
+// 5. You want the simplest, most readable code
+const loginForm = document.getElementById('login-form');
+
+// ===========================================
+// USE querySelector() WHEN:
+// ===========================================
+
+// 1. You need the first element matching a complex selector
+const firstActiveMenuItem = document.querySelector('.nav-menu .active');
+
+// 2. You're selecting by class but only need the first one
+const firstErrorMessage = document.querySelector('.error-message');
+
+// 3. You need to select by attribute
+const firstEmailInput = document.querySelector('input[type="email"]');
+
+// 4. You need to select by tag name but only first
+const firstParagraph = document.querySelector('p');
+
+// 5. You need to combine selectors
+const firstProductCard = document.querySelector('.product-card:not(.out-of-stock)');
+
+// 6. You need to select based on relationship
+const firstChildOfNav = document.querySelector('nav > ul > li:first-child');
+
+// ===========================================
+// USE querySelectorAll() WHEN:
+// ===========================================
+
+// 1. You need ALL elements matching a selector
+const allButtons = document.querySelectorAll('button');
+
+// 2. You need to iterate over multiple elements
+document.querySelectorAll('.todo-item').forEach(item =&gt; {
+    item.addEventListener('click', handleTodoClick);
+});
+
+// 3. You need to apply changes to multiple elements
+document.querySelectorAll('.highlight').forEach(el =&gt; {
+    el.style.backgroundColor = 'yellow';
+});
+
+// 4. You need to get a count of elements
+const errorCount = document.querySelectorAll('.error').length;
+
+// 5. You need to filter elements based on criteria
+const visibleItems = document.querySelectorAll('.item:not(.hidden)');
+
+// 6. You need to work with a subset of elements
+const firstThreeItems = Array.from(document.querySelectorAll('.item')).slice(0, 3);
+
+// 7. You need to perform data extraction
+const allPrices = Array.from(document.querySelectorAll('.price')).map(el =&gt; 
+    parseFloat(el.textContent.replace('$', ''))
+);</code></pre>
+
+        <hr>
+
+        <!-- COMMON PATTERNS AND BEST PRACTICES -->
+        <h2 id="common-patterns-and-best-patterns">COMMON PATTERNS AND BEST PRACTICES</h2>
+
+        <h3>Pattern 1: Safe Element Selection</h3>
+
+        <pre><code>// Safe selection wrapper
+function getElement(selector, context = document) {
+    if (selector.startsWith('#')) {
+        // It's an ID selector
+        const id = selector.substring(1);
+        return context.getElementById(id) || context.querySelector(selector);
+    } else {
+        // It's a complex selector
+        return context.querySelector(selector);
+    }
+}
+
+// Safe multiple selection
+function getElements(selector, context = document) {
+    return context.querySelectorAll(selector);
+}
+
+// Usage
+const header = getElement('#main-header');
+const items = getElements('.list-item');
+
+if (header) {
+    // Safe to use header
+}
+
+items.forEach(item =&gt; {
+    // Safe to use each item
+});</code></pre>
+
+        <h3>Pattern 2: Caching Selections</h3>
+
+        <pre><code>// BAD: Querying DOM repeatedly
+function badPattern() {
+    document.getElementById('counter').textContent = count;
+    document.getElementById('counter').style.color = 'red';
+    document.getElementById('counter').classList.add('highlight');
+}
+
+// GOOD: Cache the selection
+function goodPattern() {
+    const counterEl = document.getElementById('counter');
+    if (!counterEl) return;
+    
+    counterEl.textContent = count;
+    counterEl.style.color = 'red';
+    counterEl.classList.add('highlight');
+}
+
+// GOOD: Cache for multiple uses
+class Component {
+    constructor() {
+        // Cache elements during initialization
+        this.container = document.getElementById('app-container');
+        this.form = document.querySelector('#app-container form');
+        this.inputs = this.form ? this.form.querySelectorAll('input') : [];
+        this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
+    }
+    
+    updateUI() {
+        // Use cached elements
+        if (this.inputs.length) {
+            this.inputs.forEach(input =&gt; {
+                // Do something with inputs
+            });
+        }
+    }
+}</code></pre>
+
+        <h3>Pattern 3: Chaining and Context</h3>
+
+        <pre><code>// Selecting within a specific context
+const container = document.getElementById('product-list');
+
+// Now search only within container
+const productItems = container.querySelectorAll('.product-item');
+const firstProduct = container.querySelector('.product-item');
+const saleItems = container.querySelectorAll('.product-item.on-sale');
+
+// Chaining selections
+const element = document
+    .getElementById('main-content')
+    ?.querySelector('.article')
+    ?.querySelector('h2');
+
+// Safe chaining with optional chaining
+const text = document
+    .getElementById('user-profile')
+    ?.querySelector('.user-name')
+    ?.textContent ?? 'Unknown User';</code></pre>
+
+        <h3>Pattern 4: Dynamic Element Handling</h3>
+
+        <pre><code>// Dealing with dynamically added elements
+class DynamicList {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.items = [];
+        this.setupEventDelegation();
+    }
+    
+    setupEventDelegation() {
+        // Use event delegation instead of directly attaching to items
+        this.container.addEventListener('click', (e) =&gt; {
+            // Find if the clicked element or its parent is an item
+            const item = e.target.closest('.list-item');
+            if (item) {
+                this.handleItemClick(item);
+            }
+        });
+    }
+    
+    addItem(text) {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.textContent = text;
+        this.container.appendChild(item);
+        this.items.push(item);
+        
+        // No need to re-attach click handlers!
+    }
+    
+    handleItemClick(item) {
+        console.log('Clicked:', item.textContent);
+    }
+    
+    refreshItems() {
+        // Re-query for items (useful if they might have changed)
+        this.items = Array.from(this.container.querySelectorAll('.list-item'));
+    }
+}</code></pre>
+
+        <h3>Pattern 5: Form Data Collection</h3>
+
+        <pre><code>// Comprehensive form data collection
+function collectFormData(formSelector) {
+    const form = document.querySelector(formSelector);
+    if (!form) return null;
+    
+    const formData = {};
+    
+    // Get all form controls
+    const elements = form.querySelectorAll('input, select, textarea, button');
+    
+    elements.forEach(element =&gt; {
+        if (!element.name) return; // Skip elements without name
+        
+        if (element.type === 'checkbox') {
+            if (!formData[element.name]) {
+                formData[element.name] = [];
+            }
+            if (element.checked) {
+                formData[element.name].push(element.value);
+            }
+        } else if (element.type === 'radio') {
+            if (element.checked) {
+                formData[element.name] = element.value;
+            }
+        } else if (element.type === 'file') {
+            // Handle file inputs specially
+            formData[element.name] = element.files;
+        } else {
+            formData[element.name] = element.value;
+        }
+    });
+    
+    return formData;
+}
+
+// Usage
+const formData = collectFormData('#registration-form');
+console.log(formData);</code></pre>
+
+        <h3>Pattern 6: Validation and Error Handling</h3>
+
+        <pre><code>// Validate selectors before use
+function isValidSelector(selector) {
+    try {
+        document.querySelector(selector);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Safe query with error handling
+function safeQuery(selector, context = document) {
+    if (!selector || typeof selector !== 'string') {
+        console.error('Invalid selector provided');
+        return null;
+    }
+    
+    try {
+        const result = context.querySelector(selector);
+        if (!result) {
+            console.warn(`No element found for selector: ${selector}`);
+        }
+        return result;
+    } catch (error) {
+        console.error(`Invalid CSS selector: ${selector}`, error);
+        return null;
+    }
+}
+
+// Safe query all with error handling
+function safeQueryAll(selector, context = document) {
+    if (!selector || typeof selector !== 'string') {
+        console.error('Invalid selector provided');
+        return [];
+    }
+    
+    try {
+        const results = context.querySelectorAll(selector);
+        return results;
+    } catch (error) {
+        console.error(`Invalid CSS selector: ${selector}`, error);
+        return [];
+    }
+}</code></pre>
+
+        <hr>
+
+        <!-- REAL-WORLD APPLICATION SCENARIOS -->
+        <h2 id="real-world-application-scenarios">REAL-WORLD APPLICATION SCENARIOS</h2>
+
+        <h3>Scenario 1: E-commerce Product Filter</h3>
+
+        <pre><code>&lt;div class="filters"&gt;
+    &lt;select id="category-filter"&gt;
+        &lt;option value="all"&gt;All Categories&lt;/option&gt;
+        &lt;option value="electronics"&gt;Electronics&lt;/option&gt;
+        &lt;option value="clothing"&gt;Clothing&lt;/option&gt;
+        &lt;option value="books"&gt;Books&lt;/option&gt;
+    &lt;/select&gt;
+    
+    &lt;input type="range" id="price-filter" min="0" max="1000" step="10"&gt;
+    &lt;span id="price-value"&gt;$0 - $1000&lt;/span&gt;
+    
+    &lt;div class="checkbox-filters"&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="in-stock"&gt; In Stock Only&lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="on-sale"&gt; On Sale&lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="new-arrivals"&gt; New Arrivals&lt;/label&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="products-container"&gt;
+    &lt;!-- Products will be loaded here --&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+class ProductFilter {
+    constructor() {
+        this.products = [];
+        this.filters = {
+            category: 'all',
+            maxPrice: 1000,
+            inStock: false,
+            onSale: false,
+            newArrivals: false
+        };
+        
+        this.init();
+    }
+    
+    async init() {
+        await this.loadProducts();
+        this.cacheElements();
+        this.setupEventListeners();
+        this.renderProducts();
+    }
+    
+    async loadProducts() {
+        // Simulating API call
+        this.products = [
+            { id: 1, name: 'Laptop', category: 'electronics', price: 999, inStock: true, onSale: false, newArrival: true },
+            { id: 2, name: 'T-Shirt', category: 'clothing', price: 25, inStock: true, onSale: true, newArrival: false },
+            { id: 3, name: 'JavaScript Book', category: 'books', price: 45, inStock: false, onSale: false, newArrival: true },
+            // ... more products
+        ];
+    }
+    
+    cacheElements() {
+        this.categoryFilter = document.getElementById('category-filter');
+        this.priceFilter = document.getElementById('price-filter');
+        this.priceValue = document.getElementById('price-value');
+        this.checkboxFilters = document.querySelectorAll('.checkbox-filters input');
+        this.productsContainer = document.getElementById('products-container');
+    }
+    
+    setupEventListeners() {
+        this.categoryFilter.addEventListener('change', () =&gt; {
+            this.filters.category = this.categoryFilter.value;
+            this.applyFilters();
+        });
+        
+        this.priceFilter.addEventListener('input', () =&gt; {
+            this.filters.maxPrice = parseInt(this.priceFilter.value);
+            this.priceValue.textContent = `$0 - $${this.filters.maxPrice}`;
+            this.applyFilters();
+        });
+        
+        this.checkboxFilters.forEach(checkbox =&gt; {
+            checkbox.addEventListener('change', () =&gt; {
+                this.filters[checkbox.value] = checkbox.checked;
+                this.applyFilters();
+            });
+        });
+    }
+    
+    applyFilters() {
+        const filteredProducts = this.products.filter(product =&gt; {
+            // Category filter
+            if (this.filters.category !== 'all' &amp;&amp; product.category !== this.filters.category) {
+                return false;
+            }
+            
+            // Price filter
+            if (product.price &gt; this.filters.maxPrice) {
+                return false;
+            }
+            
+            // Stock filter
+            if (this.filters.inStock &amp;&amp; !product.inStock) {
+                return false;
+            }
+            
+            // Sale filter
+            if (this.filters.onSale &amp;&amp; !product.onSale) {
+                return false;
+            }
+            
+            // New arrival filter
+            if (this.filters.newArrivals &amp;&amp; !product.newArrival) {
+                return false;
+            }
+            
+            return true;
+        });
+        
+        this.renderProducts(filteredProducts);
+    }
+    
+    renderProducts(products = this.products) {
+        if (!this.productsContainer) return;
+        
+        if (products.length === 0) {
+            this.productsContainer.innerHTML = '&lt;p&gt;No products found&lt;/p&gt;';
+            return;
+        }
+        
+        this.productsContainer.innerHTML = products.map(product =&gt; `
+            &lt;div class="product-card ${product.inStock ? '' : 'out-of-stock'}"&gt;
+                &lt;h3&gt;${product.name}&lt;/h3&gt;
+                &lt;p&gt;Price: $${product.price}&lt;/p&gt;
+                &lt;p&gt;Category: ${product.category}&lt;/p&gt;
+                ${product.onSale ? '&lt;span class="sale-badge"&gt;SALE!&lt;/span&gt;' : ''}
+                ${product.newArrival ? '&lt;span class="new-badge"&gt;NEW!&lt;/span&gt;' : ''}
+                ${product.inStock ? 
+                    '&lt;button class="add-to-cart"&gt;Add to Cart&lt;/button&gt;' : 
+                    '&lt;span class="out-of-stock-label"&gt;Out of Stock&lt;/span&gt;'}
+            &lt;/div&gt;
+        `).join('');
+        
+        // Add event listeners to new buttons
+        this.productsContainer.querySelectorAll('.add-to-cart').forEach(button =&gt; {
+            button.addEventListener('click', (e) =&gt; {
+                const productCard = e.target.closest('.product-card');
+                const productName = productCard.querySelector('h3').textContent;
+                this.addToCart(productName);
+            });
+        });
+    }
+    
+    addToCart(productName) {
+        console.log(`Added ${productName} to cart`);
+        // Implement cart logic
+    }
+}
+
+// Initialize
+const productFilter = new ProductFilter();
+&lt;/script&gt;</code></pre>
+
+        <h3>Scenario 2: Tabbed Interface Component</h3>
+
+        <pre><code>class TabbedInterface {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.tabs = [];
+        this.panels = [];
+        this.activeTabIndex = 0;
+        
+        if (this.container) {
+            this.init();
+        }
+    }
+    
+    init() {
+        this.cacheElements();
+        this.setupTabs();
+        this.activateTab(this.activeTabIndex);
+    }
+    
+    cacheElements() {
+        // Find tabs and panels using various selectors
+        this.tabButtons = this.container.querySelectorAll('.tab-button');
+        this.tabPanels = this.container.querySelectorAll('.tab-panel');
+        
+        // Validate we have matching counts
+        if (this.tabButtons.length !== this.tabPanels.length) {
+            console.warn('Mismatch between tab buttons and panels');
+        }
+    }
+    
+    setupTabs() {
+        this.tabButtons.forEach((button, index) =&gt; {
+            button.addEventListener('click', () =&gt; this.activateTab(index));
+            
+            // Set accessibility attributes
+            button.setAttribute('role', 'tab');
+            button.setAttribute('aria-selected', 'false');
+            button.setAttribute('tabindex', '-1');
+            
+            // Get or create panel ID
+            const panelId = button.getAttribute('data-panel') || `panel-${index}`;
+            button.setAttribute('aria-controls', panelId);
+        });
+        
+        this.tabPanels.forEach((panel, index) =&gt; {
+            panel.setAttribute('role', 'tabpanel');
+            panel.setAttribute('aria-labelledby', this.tabButtons[index]?.id || `tab-${index}`);
+        });
+    }
+    
+    activateTab(index) {
+        if (index &lt; 0 || index &gt;= this.tabButtons.length) return;
+        
+        // Deactivate all tabs
+        this.tabButtons.forEach(button =&gt; {
+            button.classList.remove('active');
+            button.setAttribute('aria-selected', 'false');
+            button.setAttribute('tabindex', '-1');
+        });
+        
+        // Hide all panels
+        this.tabPanels.forEach(panel =&gt; {
+            panel.classList.remove('active');
+            panel.setAttribute('hidden', '');
+        });
+        
+        // Activate selected tab
+        this.tabButtons[index].classList.add('active');
+        this.tabButtons[index].setAttribute('aria-selected', 'true');
+        this.tabButtons[index].setAttribute('tabindex', '0');
+        this.tabButtons[index].focus();
+        
+        // Show selected panel
+        this.tabPanels[index].classList.add('active');
+        this.tabPanels[index].removeAttribute('hidden');
+        
+        this.activeTabIndex = index;
+        
+        // Dispatch custom event
+        this.container.dispatchEvent(new CustomEvent('tabchange', {
+            detail: { index, tab: this.tabs[index], panel: this.panels[index] }
+        }));
+    }
+    
+    addTab(title, content) {
+        // Create new tab button
+        const newTabButton = document.createElement('button');
+        newTabButton.className = 'tab-button';
+        newTabButton.textContent = title;
+        
+        // Create new panel
+        const newPanel = document.createElement('div');
+        newPanel.className = 'tab-panel';
+        newPanel.innerHTML = content;
+        
+        // Add to DOM
+        const tabList = this.container.querySelector('.tab-list');
+        const panelContainer = this.container.querySelector('.tab-panels');
+        
+        if (tabList &amp;&amp; panelContainer) {
+            tabList.appendChild(newTabButton);
+            panelContainer.appendChild(newPanel);
+            
+            // Refresh cache
+            this.cacheElements();
+            this.setupTabs();
+        }
+    }
+    
+    removeTab(index) {
+        if (index &lt; 0 || index &gt;= this.tabButtons.length) return;
+        
+        // Remove from DOM
+        this.tabButtons[index].remove();
+        this.tabPanels[index].remove();
+        
+        // Refresh cache
+        this.cacheElements();
+        
+        // Activate a valid tab
+        if (this.tabButtons.length &gt; 0) {
+            const newIndex = Math.min(index, this.tabButtons.length - 1);
+            this.activateTab(newIndex);
+        }
+    }
+}</code></pre>
+
+        <hr>
+
+        <!-- ADVANCED TECHNIQUES -->
+        <h2 id="advanced-techniques">ADVANCED TECHNIQUES</h2>
+
+        <h3>Technique 1: XPath Integration</h3>
+
+        <pre><code>// Sometimes you need XPath for complex queries
+function getElementsByXPath(xpath, context = document) {
+    const result = [];
+    const query = document.evaluate(
+        xpath,
+        context,
+        null,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        null
+    );
+    
+    for (let i = 0; i &lt; query.snapshotLength; i++) {
+        result.push(query.snapshotItem(i));
+    }
+    
+    return result;
+}
+
+// Usage
+const paragraphsWithText = getElementsByXPath('//p[contains(text(), "important")]');
+const elementsWithClass = getElementsByXPath('//*[@class="highlight"]');</code></pre>
+
+        <h3>Technique 2: Custom Pseudo-selectors</h3>
+
+        <pre><code>// Add custom pseudo-selectors using a helper function
+function queryWithCustom(selector, customFilters = {}) {
+    // First, get all elements that match the base selector
+    const baseSelector = selector.split(':')[0];
+    const elements = Array.from(document.querySelectorAll(baseSelector));
+    
+    // Apply custom filters
+    return elements.filter(el =&gt; {
+        for (const [filterName, filterFn] of Object.entries(customFilters)) {
+            if (selector.includes(`:${filterName}`) &amp;&amp; !filterFn(el)) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+
+// Define custom filters
+const customFilters = {
+    'visible': el =&gt; el.offsetParent !== null,
+    'empty-text': el =&gt; el.textContent.trim() === '',
+    'has-children': el =&gt; el.children.length &gt; 0,
+    'price-under': el =&gt; {
+        const price = parseFloat(el.getAttribute('data-price'));
+        return !isNaN(price) &amp;&amp; price &lt; 100;
+    }
+};
+
+// Usage
+const visibleItems = queryWithCustom('div:visible', customFilters);
+const cheapProducts = queryWithCustom('.product:price-under', customFilters);</code></pre>
+
+        <h3>Technique 3: Virtual DOM Selection Simulation</h3>
+
+        <pre><code>class VirtualDOM {
+    constructor(rootSelector) {
+        this.root = document.querySelector(rootSelector);
+        this.virtualTree = this.buildVirtualTree(this.root);
+    }
+    
+    buildVirtualTree(element) {
+        if (!element) return null;
+        
+        const children = Array.from(element.children).map(child =&gt; 
+            this.buildVirtualTree(child)
+        ).filter(Boolean);
+        
+        return {
+            tagName: element.tagName.toLowerCase(),
+            id: element.id,
+            className: element.className,
+            attributes: this.getElementAttributes(element),
+            textContent: element.textContent,
+            children: children,
+            element: element // Reference to real DOM
+        };
+    }
+    
+    getElementAttributes(element) {
+        const attrs = {};
+        Array.from(element.attributes).forEach(attr =&gt; {
+            attrs[attr.name] = attr.value;
+        });
+        return attrs;
+    }
+    
+    querySelector(selector) {
+        // Implement virtual querying
+        const results = this.querySelectorAll(selector);
+        return results[0] || null;
+    }
+    
+    querySelectorAll(selector) {
+        const results = [];
+        const virtualNodes = [this.virtualTree];
+        
+        while (virtualNodes.length) {
+            const node = virtualNodes.shift();
+            
+            // Check if this node matches
+            if (this.matchesSelector(node, selector)) {
+                results.push(node);
+            }
+            
+            // Add children to queue
+            if (node.children &amp;&amp; node.children.length) {
+                virtualNodes.push(...node.children);
+            }
+        }
+        
+        return results;
+    }
+    
+    matchesSelector(node, selector) {
+        // Simplified matching logic
+        if (selector.startsWith('#')) {
+            return node.id === selector.substring(1);
+        }
+        
+        if (selector.startsWith('.')) {
+            const className = selector.substring(1);
+            return node.className.split(' ').includes(className);
+        }
+        
+        // Tag name selector
+        return node.tagName === selector;
+    }
+}</code></pre>
+
+        <h3>Technique 4: Intersection Observer with Selection</h3>
+
+        <pre><code>class LazyLoader {
+    constructor(selector, options = {}) {
+        this.elements = document.querySelectorAll(selector);
+        this.options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1,
+            ...options
+        };
+        
+        this.init();
+    }
+    
+    init() {
+        this.observer = new IntersectionObserver((entries) =&gt; {
+            entries.forEach(entry =&gt; {
+                if (entry.isIntersecting) {
+                    this.loadElement(entry.target);
+                    this.observer.unobserve(entry.target);
+                }
+            });
+        }, this.options);
+        
+        this.elements.forEach(element =&gt; {
+            this.observer.observe(element);
+        });
+    }
+    
+    loadElement(element) {
+        // Load image or content
+        if (element.tagName === 'IMG') {
+            const dataSrc = element.getAttribute('data-src');
+            if (dataSrc) {
+                element.src = dataSrc;
+            }
+        }
+        
+        // Load background image
+        const dataBg = element.getAttribute('data-background');
+        if (dataBg) {
+            element.style.backgroundImage = `url(${dataBg})`;
+        }
+        
+        // Dispatch loaded event
+        element.dispatchEvent(new CustomEvent('loaded'));
+    }
+}
+
+// Usage
+const lazyImages = new LazyLoader('img[data-src]');</code></pre>
+
+        <hr>
+
+        <!-- ERROR HANDLING AND DEBUGGING -->
+        <h2 id="error-handling-and-debugging">ERROR HANDLING AND DEBUGGING</h2>
+
+        <h3>Common Errors and Solutions</h3>
+
+        <pre><code>// ===========================================
+// ERROR 1: Invalid Selector Syntax
+// ===========================================
+
+try {
+    const element = document.querySelector('div[data-value="invalid"');
+} catch (error) {
+    console.error('Invalid selector:', error.message);
+    // Handle error gracefully
+}
+
+// Solution: Validate selectors
+function isValidSelector(selector) {
+    try {
+        document.querySelector(selector);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+// ===========================================
+// ERROR 2: Element Not Found
+// ===========================================
+
+const element = document.getElementById('non-existent');
+console.log(element); // null
+
+// Solution: Always check before use
+if (element) {
+    // Use element safely
+} else {
+    console.warn('Element not found, using fallback');
+    // Use fallback element
+}
+
+// ===========================================
+// ERROR 3: Querying Before DOM is Ready
+// ===========================================
+
+// This might fail if script runs before DOM is loaded
+const header = document.getElementById('header'); // May be null
+
+// Solutions:
+
+// 1. Place script at end of body
+// 2. Use DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () =&gt; {
+    const header = document.getElementById('header');
+    // Safe to use header
+});
+
+// 3. Use defer attribute in script tag
+// &lt;script src="script.js" defer&gt;&lt;/script&gt;
+
+// ===========================================
+// ERROR 4: Selecting from Wrong Context
+// ===========================================
+
+const container = document.getElementById('container');
+// This searches the entire document, not just container
+const items = document.querySelectorAll('.item'); 
+
+// Correct:
+const containerItems = container.querySelectorAll('.item');
+
+// ===========================================
+// ERROR 5: Assuming querySelectorAll Returns Array
+// ===========================================
+
+const items = document.querySelectorAll('.item');
+items.map(item =&gt; item.textContent); // ❌ TypeError
+
+// Correct:
+const itemsArray = Array.from(items);
+itemsArray.map(item =&gt; item.textContent); // ✅ Works
+
+// Or use spread operator
+const itemsArray2 = [...items];
+
+// ===========================================
+// ERROR 6: Modifying a Live NodeList While Iterating
+// ===========================================
+
+// This doesn't apply to querySelectorAll (static)
+// But if you use getElementsByClassName:
+
+const liveItems = document.getElementsByClassName('item');
+for (let item of liveItems) {
+    if (someCondition) {
+        liveItems.remove(item); // This will cause issues
+    }
+}
+
+// Solution: Convert to array first
+const safeItems = Array.from(liveItems);
+safeItems.forEach(item =&gt; {
+    if (someCondition) {
+        item.remove(); // Safe
+    }
+});</code></pre>
+
+        <h3>Debugging Techniques</h3>
+
+        <pre><code>// Technique 1: Logging selections
+function debugSelection(selector) {
+    console.group(`Debugging selector: ${selector}`);
+    
+    try {
+        const single = document.querySelector(selector);
+        const all = document.querySelectorAll(selector);
+        
+        console.log('querySelector result:', single);
+        console.log('querySelectorAll count:', all.length);
+        console.log('querySelectorAll results:', all);
+        
+        if (all.length &gt; 0) {
+            console.log('First element HTML:', all[0].outerHTML);
+        }
+        
+        // Check if selector might be too broad
+        const totalElements = document.querySelectorAll('*').length;
+        console.log(`Selected ${all.length} out of ${totalElements} total elements`);
+    } catch (error) {
+        console.error('Invalid selector:', error.message);
+    }
+    
+    console.groupEnd();
+}
+
+// Technique 2: Visual highlighting
+function highlightElements(selector, color = 'yellow') {
+    const elements = document.querySelectorAll(selector);
+    
+    elements.forEach((el, index) =&gt; {
+        const originalStyles = {
+            backgroundColor: el.style.backgroundColor,
+            border: el.style.border,
+            transition: el.style.transition
+        };
+        
+        el.style.transition = 'all 0.3s ease';
+        el.style.backgroundColor = color;
+        el.style.border = `2px solid ${color === 'yellow' ? 'orange' : 'red'}`;
+        
+        // Store original styles
+        el.dataset.originalStyles = JSON.stringify(originalStyles);
+        
+        // Auto-remove highlight after 3 seconds
+        setTimeout(() =&gt; {
+            const original = JSON.parse(el.dataset.originalStyles || '{}');
+            el.style.backgroundColor = original.backgroundColor || '';
+            el.style.border = original.border || '';
+            el.style.transition = original.transition || '';
+            delete el.dataset.originalStyles;
+        }, 3000);
+    });
+    
+    console.log(`Highlighted ${elements.length} elements matching "${selector}"`);
+}
+
+// Technique 3: Selector tester
+class SelectorTester {
+    constructor() {
+        this.createUI();
+    }
+    
+    createUI() {
+        const panel = document.createElement('div');
+        panel.id = 'selector-tester';
+        panel.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        `;
+        
+        panel.innerHTML = `
+            &lt;h3 style="margin:0 0 10px 0;"&gt;Selector Tester&lt;/h3&gt;
+            &lt;input type="text" id="test-selector" placeholder="Enter CSS selector" style="width:200px; padding:5px;"&gt;
+            &lt;button id="test-btn"&gt;Test&lt;/button&gt;
+            &lt;div id="selector-results" style="margin-top:10px;"&gt;&lt;/div&gt;
+        `;
+        
+        document.body.appendChild(panel);
+        
+        document.getElementById('test-btn').addEventListener('click', () =&gt; {
+            this.testSelector();
+        });
+        
+        document.getElementById('test-selector').addEventListener('keyup', (e) =&gt; {
+            if (e.key === 'Enter') {
+                this.testSelector();
+            }
+        });
+    }
+    
+    testSelector() {
+        const selector = document.getElementById('test-selector').value;
+        const resultsDiv = document.getElementById('selector-results');
+        
+        try {
+            const elements = document.querySelectorAll(selector);
+            resultsDiv.innerHTML = `
+                &lt;strong&gt;Results:&lt;/strong&gt;&lt;br&gt;
+                Found: ${elements.length} element(s)&lt;br&gt;
+                Valid: ✓ Yes&lt;br&gt;
+                ${elements.length &gt; 0 ? 'First: ' + elements[0].tagName : ''}
+            `;
+            
+            // Highlight matches briefly
+            this.highlight(elements);
+        } catch (error) {
+            resultsDiv.innerHTML = `
+                &lt;strong style="color:red"&gt;Error:&lt;/strong&gt;&lt;br&gt;
+                ${error.message}
+            `;
+        }
+    }
+    
+    highlight(elements) {
+        elements.forEach(el =&gt; {
+            const originalOutline = el.style.outline;
+            el.style.outline = '2px solid red';
+            el.style.outlineOffset = '2px';
+            
+            setTimeout(() =&gt; {
+                el.style.outline = originalOutline;
+            }, 2000);
+        });
+    }
+}
+
+// Initialize when needed
+// const tester = new SelectorTester();</code></pre>
+
+        <hr>
+
+        <!-- PRACTICE EXERCISES AND SOLUTIONS -->
+        <h2 id="practice-exercises-and-solutions">PRACTICE EXERCISES AND SOLUTIONS</h2>
+
+        <h3>Exercise 1: Basic Selection Practice</h3>
+        <p><strong>Objective:</strong> Practice selecting elements using different methods.</p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Selection Practice&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="app"&gt;
+        &lt;header id="main-header" class="header"&gt;
+            &lt;h1&gt;Welcome to DOM Practice&lt;/h1&gt;
+        &lt;/header&gt;
+        
+        &lt;nav id="main-nav"&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="#" class="nav-link active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#" class="nav-link"&gt;About&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="#" class="nav-link"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/nav&gt;
+        
+        &lt;main id="main-content"&gt;
+            &lt;section class="section" id="section1"&gt;
+                &lt;h2&gt;Section 1&lt;/h2&gt;
+                &lt;p class="paragraph"&gt;First paragraph in section 1.&lt;/p&gt;
+                &lt;p class="paragraph"&gt;Second paragraph in section 1.&lt;/p&gt;
+            &lt;/section&gt;
+            
+            &lt;section class="section" id="section2"&gt;
+                &lt;h2&gt;Section 2&lt;/h2&gt;
+                &lt;p class="paragraph"&gt;First paragraph in section 2.&lt;/p&gt;
+                &lt;p class="paragraph highlight"&gt;Highlighted paragraph in section 2.&lt;/p&gt;
+            &lt;/section&gt;
+            
+            &lt;article class="post" data-category="tech"&gt;
+                &lt;h3&gt;Tech Post&lt;/h3&gt;
+                &lt;p&gt;Tech content here.&lt;/p&gt;
+            &lt;/article&gt;
+            
+            &lt;article class="post" data-category="news"&gt;
+                &lt;h3&gt;News Post&lt;/h3&gt;
+                &lt;p&gt;News content here.&lt;/p&gt;
+            &lt;/article&gt;
+            
+            &lt;form id="search-form"&gt;
+                &lt;input type="text" name="search" placeholder="Search..."&gt;
+                &lt;input type="checkbox" name="advanced" id="advanced"&gt;
+                &lt;label for="advanced"&gt;Advanced search&lt;/label&gt;
+                &lt;button type="submit"&gt;Search&lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/main&gt;
+        
+        &lt;footer id="main-footer"&gt;
+            &lt;p&gt;&amp;copy; 2026&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // TASK 1: Select elements using getElementById
+        console.log('=== TASK 1: getElementById ===');
+        
+        // 1. Select the main header
+        const header = document.getElementById('main-header');
+        console.log('Main header:', header);
+        
+        // 2. Select the main navigation
+        const nav = document.getElementById('main-nav');
+        console.log('Main nav:', nav);
+        
+        // 3. Select the main content
+        const content = document.getElementById('main-content');
+        console.log('Main content:', content);
+        
+        // 4. Select the footer
+        const footer = document.getElementById('main-footer');
+        console.log('Footer:', footer);
+        
+        // 5. Try to select a non-existent element
+        const nonExistent = document.getElementById('does-not-exist');
+        console.log('Non-existent:', nonExistent); // Should be null
+        
+        // TASK 2: Select elements using querySelector
+        console.log('\n=== TASK 2: querySelector ===');
+        
+        // 1. Select the first paragraph
+        const firstParagraph = document.querySelector('p');
+        console.log('First paragraph:', firstParagraph);
+        
+        // 2. Select the element with class "highlight"
+        const highlight = document.querySelector('.highlight');
+        console.log('Highlight element:', highlight);
+        
+        // 3. Select the element with id "section2"
+        const section2 = document.querySelector('#section2');
+        console.log('Section 2:', section2);
+        
+        // 4. Select the first post with data-category="tech"
+        const techPost = document.querySelector('[data-category="tech"]');
+        console.log('Tech post:', techPost);
+        
+        // 5. Select the checkbox
+        const checkbox = document.querySelector('input[type="checkbox"]');
+        console.log('Checkbox:', checkbox);
+        
+        // 6. Select a link inside navigation
+        const navLink = document.querySelector('#main-nav a');
+        console.log('Nav link:', navLink);
+        
+        // 7. Select the second paragraph in section 1 (using child combinator)
+        const secondParaSection1 = document.querySelector('#section1 p:nth-child(2)');
+        console.log('Second paragraph in section 1:', secondParaSection1);
+        
+        // TASK 3: Select elements using querySelectorAll
+        console.log('\n=== TASK 3: querySelectorAll ===');
+        
+        // 1. Select all paragraphs
+        const allParagraphs = document.querySelectorAll('p');
+        console.log('All paragraphs count:', allParagraphs.length);
+        allParagraphs.forEach((p, i) =&gt; console.log(`Paragraph ${i + 1}:`, p));
+        
+        // 2. Select all sections
+        const allSections = document.querySelectorAll('.section');
+        console.log('All sections count:', allSections.length);
+        
+        // 3. Select all posts
+        const allPosts = document.querySelectorAll('.post');
+        console.log('All posts count:', allPosts.length);
+        
+        // 4. Select all checkboxes
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        console.log('All checkboxes:', allCheckboxes.length);
+        
+        // 5. Select all links in navigation
+        const allNavLinks = document.querySelectorAll('#main-nav a');
+        console.log('All nav links:', allNavLinks.length);
+        
+        // 6. Select all elements with class "paragraph" inside sections
+        const allSectionParagraphs = document.querySelectorAll('.section .paragraph');
+        console.log('Paragraphs inside sections:', allSectionParagraphs.length);
+        
+        // 7. Select all inputs (any type)
+        const allInputs = document.querySelectorAll('input');
+        console.log('All inputs:', allInputs.length);
+        
+        // TASK 4: Combine and manipulate
+        console.log('\n=== TASK 4: Manipulation ===');
+        
+        // 1. Add a new class to all paragraphs
+        allParagraphs.forEach(p =&gt; {
+            p.classList.add('processed');
+        });
+        console.log('Added "processed" class to all paragraphs');
+        
+        // 2. Change text of first paragraph
+        if (firstParagraph) {
+            firstParagraph.textContent = 'This paragraph was modified!';
+        }
+        
+        // 3. Add a border to all sections
+        allSections.forEach(section =&gt; {
+            section.style.border = '1px solid blue';
+            section.style.padding = '10px';
+            section.style.margin = '5px';
+        });
+        
+        // 4. Disable all checkboxes
+        allCheckboxes.forEach(cb =&gt; {
+            cb.disabled = true;
+        });
+        
+        // 5. Count elements by type
+        const elementCounts = {
+            divs: document.querySelectorAll('div').length,
+            sections: document.querySelectorAll('section').length,
+            articles: document.querySelectorAll('article').length,
+            paragraphs: document.querySelectorAll('p').length,
+            links: document.querySelectorAll('a').length,
+            inputs: document.querySelectorAll('input').length,
+            buttons: document.querySelectorAll('button').length
+        };
+        console.log('Element counts:', elementCounts);
+        
+        // TASK 5: Advanced selections
+        console.log('\n=== TASK 5: Advanced Selections ===');
+        
+        // 1. Select the first element that is not a paragraph
+        const firstNonParagraph = document.querySelector('body > *:not(p)');
+        console.log('First non-paragraph child of body:', firstNonParagraph);
+        
+        // 2. Select all elements with either class "paragraph" or "highlight"
+        const combinedClasses = document.querySelectorAll('.paragraph, .highlight');
+        console.log('Elements with paragraph or highlight class:', combinedClasses.length);
+        
+        // 3. Select all empty elements (with no content)
+        const emptyElements = document.querySelectorAll(':empty');
+        console.log('Empty elements:', emptyElements.length);
+        
+        // 4. Select all elements with data attributes
+        const dataElements = document.querySelectorAll('[data-category]');
+        console.log('Elements with data attributes:', dataElements.length);
+        
+        // 5. Select the parent of the highlight element
+        if (highlight) {
+            const parent = highlight.parentElement;
+            console.log('Parent of highlight:', parent);
+            
+            // Select all siblings of highlight
+            const siblings = Array.from(parent.children).filter(child =&gt; child !== highlight);
+            console.log('Siblings of highlight:', siblings);
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3>Exercise 2: Building an Interactive To-Do List</h3>
+        <p><strong>Objective:</strong> Practice selection methods in a practical application.</p>
+
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Todo List - Selection Practice&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .todo-container { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        .todo-input { width: 70%; padding: 8px; margin-right: 10px; }
+        .todo-btn { padding: 8px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .todo-btn:hover { background: #45a049; }
+        .todo-list { list-style: none; padding: 0; }
+        .todo-item { background: white; margin: 5px 0; padding: 10px; border-radius: 3px; display: flex; align-items: center; }
+        .todo-item.completed { background: #e0e0e0; text-decoration: line-through; opacity: 0.7; }
+        .todo-item input[type="checkbox"] { margin-right: 10px; }
+        .todo-text { flex: 1; }
+        .delete-btn { background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+        .delete-btn:hover { background: #da190b; }
+        .stats { margin-top: 20px; padding: 10px; background: #e0e0e0; border-radius: 3px; display: flex; gap: 20px; }
+        .filter-btns { margin: 10px 0; }
+        .filter-btn { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
+        .filter-btn.active { background: #4CAF50; color: white; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Interactive Todo List&lt;/h1&gt;
+    
+    &lt;div class="todo-container"&gt;
+        &lt;div&gt;
+            &lt;input type="text" id="todo-input" class="todo-input" placeholder="Enter a new task..."&gt;
+            &lt;button id="add-btn" class="todo-btn"&gt;Add Task&lt;/button&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="filter-btns"&gt;
+            &lt;button class="filter-btn active" data-filter="all"&gt;All&lt;/button&gt;
+            &lt;button class="filter-btn" data-filter="active"&gt;Active&lt;/button&gt;
+            &lt;button class="filter-btn" data-filter="completed"&gt;Completed&lt;/button&gt;
+        &lt;/div&gt;
+        
+        &lt;ul class="todo-list" id="todo-list"&gt;
+            &lt;!-- Tasks will be added here --&gt;
+        &lt;/ul&gt;
+        
+        &lt;div class="stats"&gt;
+            &lt;span&gt;Total: &lt;span id="total-count"&gt;0&lt;/span&gt;&lt;/span&gt;
+            &lt;span&gt;Completed: &lt;span id="completed-count"&gt;0&lt;/span&gt;&lt;/span&gt;
+            &lt;span&gt;Pending: &lt;span id="pending-count"&gt;0&lt;/span&gt;&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        class TodoApp {
+            constructor() {
+                this.todos = [];
+                this.currentFilter = 'all';
+                
+                // Cache elements using various selection methods
+                this.cacheElements();
+                this.setupEventListeners();
+                this.loadFromStorage();
+                this.render();
+            }
+            
+            cacheElements() {
+                // Using getElementById
+                this.input = document.getElementById('todo-input');
+                this.addBtn = document.getElementById('add-btn');
+                this.todoList = document.getElementById('todo-list');
+                this.totalSpan = document.getElementById('total-count');
+                this.completedSpan = document.getElementById('completed-count');
+                this.pendingSpan = document.getElementById('pending-count');
+                
+                // Using querySelectorAll for filter buttons
+                this.filterBtns = document.querySelectorAll('.filter-btn');
+                
+                // Using querySelector for active filter
+                this.activeFilterBtn = document.querySelector('.filter-btn.active');
+            }
+            
+            setupEventListeners() {
+                // Add task
+                this.addBtn.addEventListener('click', () =&gt; this.addTodo());
+                this.input.addEventListener('keypress', (e) =&gt; {
+                    if (e.key === 'Enter') this.addTodo();
+                });
+                
+                // Filter buttons
+                this.filterBtns.forEach(btn =&gt; {
+                    btn.addEventListener('click', (e) =&gt; this.setFilter(e.target.dataset.filter));
+                });
+                
+                // Event delegation for todo items (since they're dynamically added)
+                this.todoList.addEventListener('click', (e) =&gt; {
+                    const target = e.target;
+                    
+                    // Handle checkbox toggle
+                    if (target.classList.contains('todo-checkbox')) {
+                        const id = target.dataset.id;
+                        this.toggleTodo(id);
+                    }
+                    
+                    // Handle delete button
+                    if (target.classList.contains('delete-btn')) {
+                        const id = target.dataset.id;
+                        this.deleteTodo(id);
+                    }
+                });
+            }
+            
+            addTodo() {
+                const text = this.input.value.trim();
+                if (!text) return;
+                
+                const todo = {
+                    id: Date.now().toString(),
+                    text: text,
+                    completed: false
+                };
+                
+                this.todos.push(todo);
+                this.saveToStorage();
+                this.render();
+                
+                this.input.value = '';
+                this.input.focus();
+            }
+            
+            toggleTodo(id) {
+                const todo = this.todos.find(t =&gt; t.id === id);
+                if (todo) {
+                    todo.completed = !todo.completed;
+                    this.saveToStorage();
+                    this.render();
+                }
+            }
+            
+            deleteTodo(id) {
+                this.todos = this.todos.filter(t =&gt; t.id !== id);
+                this.saveToStorage();
+                this.render();
+            }
+            
+            setFilter(filter) {
+                this.currentFilter = filter;
+                
+                // Update active button state
+                this.filterBtns.forEach(btn =&gt; {
+                    if (btn.dataset.filter === filter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                this.render();
+            }
+            
+            getFilteredTodos() {
+                switch(this.currentFilter) {
+                    case 'active':
+                        return this.todos.filter(t =&gt; !t.completed);
+                    case 'completed':
+                        return this.todos.filter(t =&gt; t.completed);
+                    default:
+                        return this.todos;
+                }
+            }
+            
+            render() {
+                const filteredTodos = this.getFilteredTodos();
+                
+                // Generate HTML
+                this.todoList.innerHTML = filteredTodos.map(todo =&gt; `
+                    &lt;li class="todo-item ${todo.completed ? 'completed' : ''}" data-id="${todo.id}"&gt;
+                        &lt;input type="checkbox" class="todo-checkbox" data-id="${todo.id}" ${todo.completed ? 'checked' : ''}&gt;
+                        &lt;span class="todo-text"&gt;${todo.text}&lt;/span&gt;
+                        &lt;button class="delete-btn" data-id="${todo.id}"&gt;Delete&lt;/button&gt;
+                    &lt;/li&gt;
+                `).join('');
+                
+                // Update stats
+                this.updateStats();
+            }
+            
+            updateStats() {
+                const total = this.todos.length;
+                const completed = this.todos.filter(t =&gt; t.completed).length;
+                const pending = total - completed;
+                
+                this.totalSpan.textContent = total;
+                this.completedSpan.textContent = completed;
+                this.pendingSpan.textContent = pending;
+            }
+            
+            saveToStorage() {
+                localStorage.setItem('todos', JSON.stringify(this.todos));
+            }
+            
+            loadFromStorage() {
+                const saved = localStorage.getItem('todos');
+                if (saved) {
+                    this.todos = JSON.parse(saved);
+                }
+            }
+        }
+        
+        // Initialize the app
+        const app = new TodoApp();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <hr>
+
+        <!-- INTERVIEW QUESTIONS AND ANSWERS -->
+        <h2 id="interview-questions-and-answers">INTERVIEW QUESTIONS AND ANSWERS</h2>
+
+        <h3>Beginner Level Questions</h3>
+
+        <p><strong>Q1: What's the difference between <code>getElementById()</code> and
+                <code>querySelector()</code>?</strong></p>
+        <p><strong>A:</strong> <code>getElementById()</code> is specifically for selecting an element by its ID and is
+            the fastest method. <code>querySelector()</code> is more versatile—it can select elements by ID (with
+            <code>#</code>), class (with <code>.</code>), tag name, attributes, or complex CSS selectors, but it only
+            returns the first match.
+        </p>
+
+        <pre><code>// getElementById - fastest, ID only
+const el1 = document.getElementById('header');
+
+// querySelector - versatile, any CSS selector
+const el2 = document.querySelector('#header'); // Same as above but slower
+const el3 = document.querySelector('.nav-item'); // First element with class
+const el4 = document.querySelector('div > p'); // First p directly inside div</code></pre>
+
+        <p><strong>Q2: What does <code>querySelectorAll()</code> return and how is it different from an array?</strong>
+        </p>
+        <p><strong>A:</strong> <code>querySelectorAll()</code> returns a static NodeList, which is array-like but not an
+            array. It has a <code>forEach()</code> method in modern browsers but lacks other array methods like
+            <code>map()</code>, <code>filter()</code>, and <code>reduce()</code>. You can convert it to an array using
+            <code>Array.from()</code> or the spread operator.
+        </p>
+
+        <pre><code>const items = document.querySelectorAll('.item');
+
+// NodeList methods
+items.forEach(item =&gt; console.log(item)); // Works
+
+// Array methods - won't work directly
+// items.map(...) // ❌ TypeError
+
+// Convert to array
+const itemsArray = Array.from(items);
+// or
+const itemsArray2 = [...items];
+
+// Now you can use all array methods
+itemsArray.map(item =&gt; item.textContent);</code></pre>
+
+        <p><strong>Q3: How do you select an element with a specific data attribute?</strong></p>
+        <p><strong>A:</strong> Use attribute selectors with <code>querySelector()</code> or
+            <code>querySelectorAll()</code>.
+        </p>
+
+        <pre><code>// Select first element with data-user-id attribute
+const user = document.querySelector('[data-user-id]');
+
+// Select element with specific data value
+const admin = document.querySelector('[data-role="admin"]');
+
+// Select all elements with data-category starting with "book"
+const bookItems = document.querySelectorAll('[data-category^="book"]');
+
+// Select all elements with data-price greater than 100 (using custom logic)
+const expensiveItems = document.querySelectorAll('[data-price]');
+expensiveItems.forEach(item =&gt; {
+    if (parseInt(item.dataset.price) &gt; 100) {
+        // Do something
+    }
+});</code></pre>
+
+        <h3>Intermediate Level Questions</h3>
+
+        <p><strong>Q4: What's the performance difference between these selection methods?</strong></p>
+        <p><strong>A:</strong> Generally, <code>getElementById()</code> is fastest, followed by
+            <code>getElementsByClassName()</code> (live collection), then <code>querySelector()</code> and
+            <code>querySelectorAll()</code>. However, for most applications, the difference is negligible unless you're
+            doing thousands of operations.
+        </p>
+
+        <pre><code>// Performance order (fastest to slowest):
+// 1. getElementById()
+// 2. getElementsByClassName() / getElementsByTagName()
+// 3. querySelector() / querySelectorAll()
+
+// Why? getElementById() uses a specialized lookup table
+// getElementsByClassName() returns a live collection without building it fully
+// querySelector() must parse and evaluate a CSS selector</code></pre>
+
+        <p><strong>Q5: How do you handle the situation when an element might not exist?</strong></p>
+        <p><strong>A:</strong> Always check if the element exists before manipulating it.</p>
+
+        <pre><code>// Good practice
+const element = document.getElementById('maybe-exists');
+if (element) {
+    // Safe to use element
+    element.classList.add('found');
+} else {
+    console.warn('Element not found, using fallback');
+    // Use fallback or create element
+}
+
+// Using optional chaining (modern browsers)
+element?.classList.add('found');
+
+// Using nullish coalescing for fallback
+const text = element?.textContent ?? 'Default text';</code></pre>
+
+        <p><strong>Q6: How do you select elements that are dynamically added to the DOM?</strong></p>
+        <p><strong>A:</strong> Use event delegation or re-query after addition.</p>
+
+        <pre><code>// Method 1: Event delegation (recommended)
+document.addEventListener('click', (e) =&gt; {
+    if (e.target.matches('.dynamic-button')) {
+        console.log('Dynamic button clicked');
+    }
+});
+
+// Method 2: Re-query after addition
+function addNewItem() {
+    const newItem = document.createElement('div');
+    newItem.className = 'item';
+    container.appendChild(newItem);
+    
+    // Re-select all items
+    const allItems = document.querySelectorAll('.item');
+    console.log(`Now have ${allItems.length} items`);
+}
+
+// Method 3: MutationObserver (advanced)
+const observer = new MutationObserver((mutations) =&gt; {
+    mutations.forEach(mutation =&gt; {
+        mutation.addedNodes.forEach(node =&gt; {
+            if (node.nodeType === 1 &amp;&amp; node.matches('.item')) {
+                console.log('New item added:', node);
+            }
+        });
+    });
+});
+
+observer.observe(container, { childList: true, subtree: true });</code></pre>
+
+        <h3>Advanced Level Questions</h3>
+
+        <p><strong>Q7: Explain the difference between live and static collections with examples.</strong></p>
+        <p><strong>A:</strong> Live collections (like those from <code>getElementsByClassName()</code>) automatically
+            update when the DOM changes. Static collections (from <code>querySelectorAll()</code>) are snapshots that
+            don't change.</p>
+
+        <pre><code>// Live collection - updates automatically
+const liveItems = document.getElementsByClassName('item');
+console.log(liveItems.length); // 2
+
+document.body.appendChild(document.createElement('div')).className = 'item';
+console.log(liveItems.length); // 3 - automatically updated!
+
+// Static collection - doesn't update
+const staticItems = document.querySelectorAll('.item');
+console.log(staticItems.length); // 3 (assuming we have 3 now)
+
+document.body.appendChild(document.createElement('div')).className = 'item';
+console.log(staticItems.length); // STILL 3 - snapshot doesn't update
+
+// Implications:
+// Live collections can cause unexpected behavior if you're iterating while modifying
+// Static collections are safer for iteration with modifications</code></pre>
+
+        <p><strong>Q8: How would you implement your own <code>querySelectorAll()</code> function?</strong></p>
+        <p><strong>A:</strong> A simplified version would need to traverse the DOM and check each element against the
+            selector.</p>
+
+        <pre><code>function simpleQuerySelectorAll(selector, context = document) {
+    const results = [];
+    const allElements = context.getElementsByTagName('*');
+    
+    // Simple selector parser (very simplified)
+    const parseSelector = (sel) =&gt; {
+        if (sel.startsWith('#')) {
+            return { type: 'id', value: sel.substring(1) };
+        } else if (sel.startsWith('.')) {
+            return { type: 'class', value: sel.substring(1) };
+        } else {
+            return { type: 'tag', value: sel };
+        }
+    };
+    
+    const parsed = parseSelector(selector);
+    
+    for (let element of allElements) {
+        switch (parsed.type) {
+            case 'id':
+                if (element.id === parsed.value) results.push(element);
+                break;
+            case 'class':
+                if (element.classList.contains(parsed.value)) results.push(element);
+                break;
+            case 'tag':
+                if (element.tagName.toLowerCase() === parsed.value) results.push(element);
+                break;
+        }
+    }
+    
+    return results;
+}
+
+// Usage
+const items = simpleQuerySelectorAll('.item');
+console.log(items); // Array of matching elements</code></pre>
+
+        <p><strong>Q9: How do you select elements that contain specific text content?</strong></p>
+        <p><strong>A:</strong> There's no CSS selector for text content, so you need to filter after selection.</p>
+
+        <pre><code>// Select all paragraphs containing "important"
+const importantParas = Array.from(document.querySelectorAll('p'))
+    .filter(p =&gt; p.textContent.includes('important'));
+
+// Create a custom function
+function findElementsByText(selector, text) {
+    return Array.from(document.querySelectorAll(selector))
+        .filter(el =&gt; el.textContent.includes(text));
+}
+
+// Usage
+const warningDivs = findElementsByText('div', 'Warning');
+console.log(warningDivs);
+
+// Case-insensitive version
+function findElementsByTextCaseInsensitive(selector, text) {
+    const lowerText = text.toLowerCase();
+    return Array.from(document.querySelectorAll(selector))
+        .filter(el =&gt; el.textContent.toLowerCase().includes(lowerText));
+}
+
+// Using XPath (alternative approach)
+function findByTextXPath(text) {
+    const xpath = `//*[contains(text(), '${text}')]`;
+    const result = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        null
+    );
+    
+    const elements = [];
+    for (let i = 0; i &lt; result.snapshotLength; i++) {
+        elements.push(result.snapshotItem(i));
+    }
+    
+    return elements;
+}</code></pre>
+
+        <p><strong>Q10: How would you optimize multiple selections in a performance-critical application?</strong></p>
+        <p><strong>A:</strong> Cache selections, use specific selectors, and minimize DOM access.</p>
+
+        <pre><code>class OptimizedSelector {
+    constructor() {
+        // Cache all frequently used elements
+        this.cache = new Map();
+        this.observer = new MutationObserver(() =&gt; this.invalidateCache());
+        this.observer.observe(document.body, { 
+            childList: true, 
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['id', 'class']
+        });
+    }
+    
+    getElement(selector) {
+        if (this.cache.has(selector)) {
+            const cached = this.cache.get(selector);
+            // Check if cached element is still in DOM
+            if (cached &amp;&amp; document.body.contains(cached)) {
+                return cached;
+            }
+        }
+        
+        const element = document.querySelector(selector);
+        this.cache.set(selector, element);
+        return element;
+    }
+    
+    getElements(selector) {
+        // For multiple elements, we might not want to cache as aggressively
+        return document.querySelectorAll(selector);
+    }
+    
+    invalidateCache() {
+        // Only invalidate entries that might be affected
+        // This is simplified - real implementation would be more sophisticated
+        this.cache.clear();
+    }
+    
+    // Batch DOM reads
+    batchRead(selectors) {
+        const results = {};
+        selectors.forEach(selector =&gt; {
+            results[selector] = this.getElement(selector);
+        });
+        return results;
+    }
+    
+    // Batch DOM writes
+    batchWrite(updates) {
+        // Use requestAnimationFrame to batch writes
+        requestAnimationFrame(() =&gt; {
+            updates.forEach(update =&gt; {
+                const { selector, property, value } = update;
+                const element = this.getElement(selector);
+                if (element) {
+                    element[property] = value;
+                }
+            });
+        });
+    }
+}
+
+// Usage
+const selector = new OptimizedSelector();
+
+// Cached access
+const header = selector.getElement('#header');
+const nav = selector.getElement('#nav');
+
+// Batch reads
+const elements = selector.batchRead(['#header', '#nav', '.content']);
+
+// Batch writes
+selector.batchWrite([
+    { selector: '#header', property: 'textContent', value: 'New Title' },
+    { selector: '.highlight', property: 'style.backgroundColor', value: 'yellow' }
+]);</code></pre>
+
+        <hr>
+
+        <!-- REFERENCE CHEAT SHEET -->
+        <h2 id="reference-cheat-sheet">REFERENCE CHEAT SHEET</h2>
+
+        <h3>Quick Reference Card</h3>
+
+        <pre><code>// ===========================================
+// getElementById() - FASTEST, SINGLE ELEMENT
+// ===========================================
+document.getElementById('id')                 // Element or null
+
+// ===========================================
+// querySelector() - FIRST MATCH, ANY CSS
+// ===========================================
+document.querySelector('tag')                 // First &lt;tag&gt;
+document.querySelector('.class')              // First with class
+document.querySelector('#id')                  // First with ID
+document.querySelector('[attr]')                // First with attribute
+document.querySelector('tag.class')            // First tag with class
+document.querySelector('parent > child')       // First direct child
+document.querySelector('tag:first-child')      // First child of its parent
+document.querySelector('tag:nth-child(2)')     // Second child
+
+// ===========================================
+// querySelectorAll() - ALL MATCHES, STATIC NODELIST
+// ===========================================
+document.querySelectorAll('tag')               // All &lt;tag&gt;
+document.querySelectorAll('.class')            // All with class
+document.querySelectorAll('[attr="value"]')    // All with attribute
+document.querySelectorAll('tag1, tag2')        // All tag1 and tag2
+
+// ===========================================
+// CONVERTING NODELIST TO ARRAY
+// ===========================================
+Array.from(document.querySelectorAll('.class'))
+[...document.querySelectorAll('.class')]
+
+// ===========================================
+// COMMON SELECTOR PATTERNS
+// ===========================================
+// Attribute selectors
+[attr]                                        // Has attribute
+[attr="value"]                                // Exact match
+[attr^="value"]                               // Starts with
+[attr$="value"]                               // Ends with
+[attr*="value"]                               // Contains
+[attr~="value"]                               // Whole word
+
+// Pseudo-classes
+:first-child                                  // First child
+:last-child                                   // Last child
+:nth-child(n)                                 // Nth child
+:nth-child(odd)                               // Odd children
+:nth-child(even)                              // Even children
+:not(selector)                                // Not matching
+:empty                                        // No children
+:checked                                      // Checked inputs
+:disabled                                     // Disabled inputs
+:enabled                                      // Enabled inputs
+:required                                     // Required inputs
+:optional                                     // Optional inputs
+
+// Combinators
+div p                                         // Descendant
+div > p                                       // Direct child
+h2 + p                                        // Adjacent sibling
+h2 ~ p                                        // General sibling
+
+// ===========================================
+// CHECKING EXISTENCE
+// ===========================================
+if (element) { /* exists */ }
+if (!element) { /* doesn't exist */ }
+element?.method()                             // Optional chaining
+
+// ===========================================
+// CONTEXTUAL SELECTION
+// ===========================================
+parent.querySelector('.child')                 // Search within parent
+parent.querySelectorAll('.child')              // All within parent</code></pre>
+
+        <h3>Selector Testing Table</h3>
+
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Selector</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Matches</th>
+                </tr>
+                <tr>
+                    <td><code>#header</code></td>
+                    <td>ID selector</td>
+                    <td><code>#main-header</code></td>
+                    <td><code>&lt;div id="main-header"&gt;</code></td>
+                </tr>
+                <tr>
+                    <td><code>.nav-item</code></td>
+                    <td>Class selector</td>
+                    <td><code>.active</code></td>
+                    <td><code>&lt;li class="nav-item active"&gt;</code></td>
+                </tr>
+                <tr>
+                    <td><code>div</code></td>
+                    <td>Type selector</td>
+                    <td><code>p</code></td>
+                    <td>All paragraphs</td>
+                </tr>
+                <tr>
+                    <td><code>*</code></td>
+                    <td>Universal</td>
+                    <td><code>*</code></td>
+                    <td>All elements</td>
+                </tr>
+                <tr>
+                    <td><code>input[type="text"]</code></td>
+                    <td>Attribute</td>
+                    <td><code>[data-id]</code></td>
+                    <td>Elements with data-id</td>
+                </tr>
+                <tr>
+                    <td><code>div > p</code></td>
+                    <td>Child</td>
+                    <td><code>ul > li</code></td>
+                    <td>Li directly in ul</td>
+                </tr>
+                <tr>
+                    <td><code>div p</code></td>
+                    <td>Descendant</td>
+                    <td><code>article p</code></td>
+                    <td>P anywhere in article</td>
+                </tr>
+                <tr>
+                    <td><code>h2 + p</code></td>
+                    <td>Adjacent sibling</td>
+                    <td><code>h1 + p</code></td>
+                    <td>P immediately after h1</td>
+                </tr>
+                <tr>
+                    <td><code>h2 ~ p</code></td>
+                    <td>General sibling</td>
+                    <td><code>h2 ~ p</code></td>
+                    <td>Any P after h2</td>
+                </tr>
+                <tr>
+                    <td><code>:first-child</code></td>
+                    <td>First child</td>
+                    <td><code>li:first-child</code></td>
+                    <td>First li in any list</td>
+                </tr>
+                <tr>
+                    <td><code>:last-child</code></td>
+                    <td>Last child</td>
+                    <td><code>li:last-child</code></td>
+                    <td>Last li in any list</td>
+                </tr>
+                <tr>
+                    <td><code>:nth-child(2)</code></td>
+                    <td>Second child</td>
+                    <td><code>tr:nth-child(2)</code></td>
+                    <td>Second row in table</td>
+                </tr>
+                <tr>
+                    <td><code>:not(.hidden)</code></td>
+                    <td>Negation</td>
+                    <td><code>div:not(.hidden)</code></td>
+                    <td>Divs without hidden class</td>
+                </tr>
+                <tr>
+                    <td><code>[href^="https"]</code></td>
+                    <td>Starts with</td>
+                    <td><code>a[href^="https"]</code></td>
+                    <td>Secure links</td>
+                </tr>
+                <tr>
+                    <td><code>[href$=".pdf"]</code></td>
+                    <td>Ends with</td>
+                    <td><code>a[href$=".pdf"]</code></td>
+                    <td>PDF links</td>
+                </tr>
+                <tr>
+                    <td><code>[src*="logo"]</code></td>
+                    <td>Contains</td>
+                    <td><code>img[src*="logo"]</code></td>
+                    <td>Images with "logo" in src</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Method Selection Flowchart</h3>
+
+        <pre>Start: Need to select element(s)
+              │
+              ▼
+    ┌─────────────────┐
+    │ Do you need a   │
+    │ single element? │
+    └─────────────────┘
+         │        │
+        Yes       No (need multiple)
+         │        │
+         ▼        ▼
+    ┌────────┐   ┌─────────────────┐
+    │Do you  │   │Do you need to   │
+    │know the│   │filter or use    │
+    │exact ID│   │complex criteria?│
+    └────────┘   └─────────────────┘
+         │        │         │       │
+        Yes       No       Yes      No
+         │        │         │       │
+         ▼        ▼         ▼       ▼
+    ┌────────┐ ┌────────┐ ┌────────────┐ ┌────────────┐
+    │getElement│ │query  │ │querySelector│ │getElements │
+    │ ById()  │ │Selector│ │   All()    │ │ByClassName/│
+    └────────┘ └────────┘ └────────────┘ │TagName (if │
+                                          │  live coll.)│
+                                          └────────────┘</pre>
+
+        <hr>
+
+        <h2>CONCLUSION</h2>
+
+        <p>Understanding DOM selection methods is fundamental to web development. This vast note has covered:</p>
+
+        <ol>
+            <li><strong>getElementById()</strong> - The fastest method for selecting unique elements by ID</li>
+            <li><strong>querySelector()</strong> - The versatile method for selecting the first element matching any CSS
+                selector</li>
+            <li><strong>querySelectorAll()</strong> - The method for selecting all elements matching a CSS selector</li>
+        </ol>
+
+        <h3>Key Takeaways:</h3>
+
+        <ul>
+            <li><strong>Performance matters</strong> but choose readability first, optimize later</li>
+            <li><strong>Always check for existence</strong> before manipulating elements</li>
+            <li><strong>Cache your selections</strong> when using elements multiple times</li>
+            <li><strong>Use the right tool</strong> for the job—don't use <code>querySelector()</code> when
+                <code>getElementById()</code> is more appropriate
+            </li>
+            <li><strong>Understand return types</strong>—NodeList vs Array vs single Element</li>
+            <li><strong>Consider context</strong>—search within specific elements when possible</li>
+            <li><strong>Master CSS selectors</strong>—they're the key to effective <code>querySelector()</code> usage
+            </li>
+        </ul>
+
+        <h3>Final Best Practices Checklist:</h3>
+
+        <pre><code>// ✅ DO THIS:
+const element = document.getElementById('unique-id');
+if (element) {
+    // Manipulate safely
+}
+
+const elements = document.querySelectorAll('.items');
+elements.forEach(el =&gt; {
+    // Work with each element
+});
+
+const context = document.querySelector('.container');
+const children = context.querySelectorAll('.child');
+
+// ❌ AVOID THIS:
+document.getElementById('unique-id').style.color = 'red'; // No null check
+
+const items = document.querySelectorAll('.item');
+items.map(item =&gt; item.textContent); // Map doesn't exist on NodeList
+
+document.querySelector('#unique-id'); // Slower than getElementById</code></pre>
+
+        <p>Remember: DOM selection is the gateway to all dynamic web interactions. Master these methods, and you've
+            mastered the first step in creating interactive web applications!</p>
+
+        <hr>
+
+        <footer>
+            ⚡ Selecting DOM Elements · complete reference · all content preserved
+        </footer>
+    </div>
+</body>
+
+</html>

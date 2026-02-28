@@ -53,7 +53,7 @@ if ($status && $status !== 'all') {
     $types .= "s";
 }
 
-// Filter by program type (from users table or applications table)
+// Filter by program type
 if ($program_type) {
     $sql .= " AND (p.program_type = ? OR (p.program_type IS NULL AND EXISTS (
         SELECT 1 FROM user_profiles up2 
@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Application Management - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
@@ -214,33 +214,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             --under-review: #8b5cf6;
             --approved: #10b981;
             --rejected: #ef4444;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-left: env(safe-area-inset-left);
+            --safe-right: env(safe-area-inset-right);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
             background-color: #f1f5f9;
             color: var(--dark);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         .admin-container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
         }
 
-        /* Mobile Sidebar */
+        /* Mobile First Approach */
         .mobile-header {
-            display: none;
+            display: flex;
             background: var(--dark);
             color: white;
-            padding: 1rem;
+            padding: 0.75rem 1rem;
+            padding-top: max(0.75rem, var(--safe-top));
             position: sticky;
             top: 0;
             z-index: 100;
@@ -251,6 +264,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
+        }
+
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-header-left h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .mobile-header-left p {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 0.1rem;
         }
 
         .mobile-menu-btn {
@@ -260,20 +292,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background-color 0.2s;
         }
 
+        .mobile-menu-btn:active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mobile Sidebar */
         .mobile-sidebar {
             position: fixed;
             top: 0;
-            left: -280px;
-            width: 280px;
+            left: -100%;
+            width: min(85%, 320px);
             height: 100vh;
+            height: -webkit-fill-available;
             background: var(--dark);
             color: white;
             z-index: 1000;
-            transition: left 0.3s ease;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            padding-bottom: var(--safe-bottom);
         }
 
         .mobile-sidebar.active {
@@ -281,11 +327,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .mobile-sidebar-header {
-            padding: 1.5rem;
+            padding: 1.5rem 1.25rem;
+            padding-top: max(1.5rem, var(--safe-top));
             border-bottom: 1px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .mobile-sidebar-header h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
         }
 
         .close-sidebar {
@@ -295,6 +352,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-sidebar:active {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-overlay {
@@ -306,6 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
+            backdrop-filter: blur(3px);
         }
 
         .sidebar-overlay.active {
@@ -314,10 +383,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         /* Desktop Sidebar */
         .sidebar {
+            display: none;
             width: 250px;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
@@ -326,19 +395,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .main-content {
             flex: 1;
-            margin-left: 250px;
             padding: 1rem;
-            transition: margin-left 0.3s ease;
+            padding-bottom: calc(1rem + var(--safe-bottom));
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-header {
+                display: none;
+            }
+
+            .sidebar {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 1.5rem;
+            }
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 1.5rem 1.5rem 1.5rem;
+            padding-top: max(1.5rem, var(--safe-top));
             border-bottom: 1px solid #334155;
         }
 
         .sidebar-header h2 {
-            font-size: 1.5rem;
-            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
         }
 
         .sidebar-nav ul {
@@ -353,14 +442,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: #cbd5e1;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-size: 0.95rem;
+            min-height: 48px;
         }
 
-        .sidebar-nav a:hover,
+        .sidebar-nav a:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -373,66 +466,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-size: 1.1rem;
         }
 
+        /* Header Section */
         .header {
             background: white;
             padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
         }
 
         .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 100%;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .header h1 {
             color: var(--dark);
-            font-size: 1.5rem;
-            line-height: 1.3;
+            font-size: 1.35rem;
+            font-weight: 600;
         }
 
         .user-info {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-top: 1px solid #e2e8f0;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 1.1rem;
             flex-shrink: 0;
         }
 
+        @media (min-width: 640px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .user-info {
+                border-top: none;
+                padding: 0;
+            }
+        }
+
+        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .stat-card {
             background: white;
             padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             border-left: 4px solid var(--primary);
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
         .stat-card.pending {
@@ -452,39 +555,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .stat-number {
-            font-size: 1.75rem;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 0.25rem;
-            line-height: 1;
+            line-height: 1.2;
         }
 
         .stat-label {
             color: #64748b;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+            line-height: 1.3;
         }
 
+        @media (min-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Filters Section */
         .filters-card {
             background: white;
-            padding: 1.25rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
         }
 
         .filters-card h3 {
             margin-bottom: 1rem;
             color: var(--dark);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .filter-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
-            align-items: end;
         }
 
         .form-group {
@@ -493,21 +610,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.6rem 0.75rem;
+            padding: 0.75rem;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            font-size: 1rem;
             background: white;
             -webkit-appearance: none;
             appearance: none;
+            min-height: 48px;
         }
 
         select.form-control {
@@ -515,22 +633,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 16px 12px;
-            padding-right: 2rem;
+            padding-right: 2.5rem;
         }
 
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .filter-actions .btn {
+            flex: 1;
+        }
+
+        @media (min-width: 768px) {
+            .filter-form {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1rem;
+                align-items: end;
+            }
+
+            .filter-actions {
+                margin-top: 0;
+            }
+        }
+
+        /* Buttons */
         .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
             border: none;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            font-size: 0.9rem;
-            white-space: nowrap;
+            font-size: 0.95rem;
+            min-height: 48px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -538,7 +686,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:active {
             background: var(--secondary);
         }
 
@@ -547,7 +695,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: var(--dark);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:active {
             background: #cbd5e1;
         }
 
@@ -562,25 +710,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .btn-sm {
-            padding: 0.35rem 0.75rem;
-            font-size: 0.85rem;
-            gap: 0.35rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            min-height: 40px;
         }
 
+        .btn-block-mobile {
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .btn-block-mobile {
+                width: auto;
+            }
+        }
+
+        /* Applications Section */
         .applications-table {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
         }
 
         .table-header {
-            padding: 1.25rem;
+            padding: 1rem;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
+        }
+
+        .table-header h3 {
+            color: var(--dark);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .table-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-header-actions .btn {
+            flex: 1;
         }
 
         @media (min-width: 768px) {
@@ -589,59 +763,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 justify-content: space-between;
                 align-items: center;
             }
+
+            .table-header-actions {
+                width: auto;
+            }
+
+            .table-header-actions .btn {
+                flex: none;
+            }
         }
 
-        .table-header h3 {
-            color: var(--dark);
-            font-size: 1.2rem;
+        /* Mobile Card View */
+        .mobile-app-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s;
         }
 
-        .table-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        .mobile-app-card:active {
+            transform: scale(0.99);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
+        .mobile-app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
         }
 
-        thead {
-            background: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        th {
-            padding: 0.875rem;
-            text-align: left;
+        .mobile-app-title {
             font-weight: 600;
             color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-app-subtitle {
+            color: #64748b;
             font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
         }
 
-        td {
-            padding: 0.875rem;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: top;
+        .mobile-app-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
         }
 
-        tbody tr:hover {
+        .mobile-app-details {
             background: #f8fafc;
+            border-radius: 10px;
+            padding: 0.75rem;
+            margin: 0.75rem 0;
         }
 
+        .mobile-app-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mobile-app-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-app-detail-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .mobile-app-detail-value {
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .mobile-app-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .mobile-app-actions .btn {
+            flex: 1;
+        }
+
+        /* Status Badges */
         .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+            letter-spacing: 0.3px;
         }
 
         .status-pending {
@@ -665,107 +888,136 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
             background: #e0f2fe;
             color: #0369a1;
-            white-space: nowrap;
         }
 
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
+        /* Desktop Table */
+        .desktop-table {
+            display: none;
         }
 
+        @media (min-width: 1024px) {
+            .mobile-app-card {
+                display: none;
+            }
+
+            .desktop-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 900px;
+            }
+
+            thead {
+                background: #f8fafc;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            th {
+                padding: 1rem;
+                text-align: left;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                white-space: nowrap;
+            }
+
+            td {
+                padding: 1rem;
+                border-bottom: 1px solid #e2e8f0;
+                vertical-align: middle;
+            }
+
+            tbody tr:hover {
+                background: #f8fafc;
+            }
+        }
+
+        /* Checkbox Styling */
         .checkbox-cell {
-            width: 40px;
+            width: 50px;
             text-align: center;
         }
 
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* Bulk Actions */
         .bulk-actions {
-            background: #f8fafc;
+            background: white;
             padding: 1rem;
             border-top: 1px solid #e2e8f0;
+            position: sticky;
+            bottom: 0;
+            z-index: 50;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
 
-        @media (min-width: 640px) {
-            .bulk-actions {
-                flex-direction: row;
-                align-items: center;
-                gap: 1rem;
-            }
+        .bulk-actions-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .bulk-actions select {
+        .bulk-actions .btn {
             width: 100%;
         }
 
-        @media (min-width: 640px) {
-            .bulk-actions select {
-                width: 200px;
-            }
-        }
-
-        .pagination {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        @media (min-width: 640px) {
-            .pagination {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .pagination-info {
+        .selected-count {
             color: #64748b;
             font-size: 0.9rem;
-        }
-
-        .page-numbers {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .page-link {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            min-width: 40px;
             text-align: center;
+            font-weight: 500;
         }
 
-        .page-link:hover,
-        .page-link.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        @media (min-width: 640px) {
+            .bulk-actions-row {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .bulk-actions select {
+                flex: 2;
+            }
+
+            .bulk-actions .btn {
+                flex: 1;
+            }
+
+            .selected-count {
+                text-align: right;
+            }
         }
 
+        /* Alerts */
         .alert {
             padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
+            font-size: 0.95rem;
         }
 
         .alert-success {
@@ -780,19 +1032,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             border: 1px solid #fecaca;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #64748b;
+        .alert i {
+            font-size: 1.25rem;
+            flex-shrink: 0;
         }
 
-        .empty-state i {
-            font-size: 2.5rem;
+        /* Reminder Alert */
+        .reminder-alert {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 1px solid #fbbf24;
+            border-radius: 10px;
+            padding: 1rem;
             margin-bottom: 1rem;
-            color: #cbd5e1;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
         }
 
-        /* Reminder Modal Styles */
+        .reminder-alert i {
+            color: #d97706;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .reminder-alert p {
+            color: #92400e;
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .reminder-alert button {
+            background: none;
+            border: none;
+            color: #92400e;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.25rem;
+            white-space: nowrap;
+        }
+
+        /* Reminder Modal */
         .reminder-modal {
             display: none;
             position: fixed;
@@ -802,9 +1084,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding: 1rem;
+            padding: 0;
         }
 
         .reminder-modal.active {
@@ -813,24 +1095,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .reminder-content {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px 20px 0 0;
             width: 100%;
-            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.3s ease;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
         }
 
-        @keyframes slideIn {
+        @keyframes slideUp {
             from {
-                opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(100%);
             }
 
             to {
-                opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .reminder-modal {
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .reminder-content {
+                border-radius: 12px;
+                max-width: 600px;
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         }
 
@@ -838,10 +1142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             padding: 1.25rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            border-radius: 12px 12px 0 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .reminder-header h3 {
@@ -855,58 +1161,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             padding: 1.25rem;
         }
 
-        .reminder-applications {
-            margin: 1.25rem 0;
-        }
-
-        .reminder-app {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        @media (min-width: 480px) {
-            .reminder-app {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .reminder-app-info h4 {
-            margin-bottom: 0.25rem;
-            color: var(--dark);
-            font-size: 1rem;
-        }
-
-        .reminder-app-info p {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .reminder-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
         .reminder-tasks {
             background: #f0f9ff;
             border: 1px solid #bae6fd;
-            border-radius: 8px;
-            padding: 1.25rem;
+            border-radius: 10px;
+            padding: 1rem;
             margin-bottom: 1.25rem;
         }
 
         .reminder-tasks h4 {
             color: #0369a1;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -918,7 +1183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .task-list li {
-            padding: 0.75rem;
+            padding: 0.75rem 0;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: flex-start;
@@ -936,19 +1201,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             flex-shrink: 0;
         }
 
+        .reminder-app {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .reminder-app-info h4 {
+            margin-bottom: 0.25rem;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .reminder-app-info p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .reminder-app-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .reminder-app-actions .btn {
+            flex: 1;
+            min-height: 40px;
+            padding: 0.5rem;
+        }
+
         .reminder-footer {
             padding: 1rem;
             border-top: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            position: sticky;
+            bottom: 0;
+            background: white;
         }
 
         @media (min-width: 480px) {
             .reminder-footer {
                 flex-direction: row;
                 justify-content: flex-end;
-                gap: 1rem;
+            }
+
+            .reminder-app {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .reminder-app-actions {
+                margin-top: 0;
             }
         }
 
@@ -956,257 +1265,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             background: none;
             border: none;
             color: white;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            padding: 0;
-            width: 32px;
-            height: 32px;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: background-color 0.3s;
-            flex-shrink: 0;
+            transition: background-color 0.2s;
         }
 
-        .close-reminder:hover {
+        .close-reminder:active {
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .reminder-alert {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border: 1px solid #fbbf24;
-            border-radius: 8px;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        /* Pagination */
+        .pagination {
             padding: 1rem;
-            margin-bottom: 1.25rem;
             display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
+            flex-direction: column;
+            gap: 1rem;
+            border-top: 1px solid #e2e8f0;
         }
 
-        .reminder-alert i {
-            color: #d97706;
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            margin-top: 0.125rem;
+        .pagination-info {
+            color: #64748b;
+            font-size: 0.9rem;
+            text-align: center;
         }
 
-        .reminder-alert p {
-            color: #92400e;
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.4;
+        .page-numbers {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        /* Responsive Styles */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 220px;
-            }
-
-            .main-content {
-                margin-left: 220px;
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            }
+        .page-link {
+            padding: 0.6rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            min-width: 44px;
+            text-align: center;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        @media (max-width: 768px) {
-            .mobile-header {
-                display: block;
-            }
+        .page-link:active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
 
-            .sidebar {
-                display: none;
-            }
+        .page-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
 
-            .main-content {
-                margin-left: 0;
-                padding: 0.75rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-
-            .stat-card {
-                padding: 0.875rem;
-                min-height: 90px;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-            }
-
-            .filter-form {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            .header {
-                padding: 1rem;
-                margin-bottom: 1rem;
-            }
-
-            .header h1 {
-                font-size: 1.3rem;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .user-info {
-                width: 100;
+        @media (min-width: 640px) {
+            .pagination {
+                flex-direction: row;
                 justify-content: space-between;
-                padding-top: 0.5rem;
-                border-top: 1px solid #e2e8f0;
+                align-items: center;
+            }
+
+            .pagination-info {
+                text-align: left;
+            }
+
+            .page-numbers {
+                justify-content: flex-end;
             }
         }
 
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 0.5rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                min-height: 80px;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .actions .btn {
-                width: 100%;
-            }
-
-            .reminder-actions {
-                width: 100%;
-            }
-
-            .reminder-actions .btn {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .table-header {
-                padding: 1rem;
-            }
-
-            .filters-card {
-                padding: 1rem;
-            }
-
-            .filters-card h3 {
-                font-size: 1.1rem;
-            }
+        /* Pull to refresh indicator */
+        .ptr-indicator {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: #64748b;
         }
 
-        /* Touch-friendly improvements */
-        input[type="checkbox"] {
-            transform: scale(1.2);
-            margin: 0.25rem;
+        /* Touch optimizations */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
+        input,
+        textarea,
         select,
         button,
-        .btn {
-            min-height: 44px;
+        a {
+            -webkit-touch-callout: default;
+            -webkit-user-select: text;
+            user-select: text;
         }
 
-        .form-control {
-            min-height: 44px;
-        }
-
-        /* Mobile table card view */
-        .mobile-app-card {
-            display: none;
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary);
-        }
-
-        .mobile-app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .mobile-app-info {
-            flex: 1;
-        }
-
-        .mobile-app-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-            font-size: 1rem;
-        }
-
-        .mobile-app-details {
-            display: grid;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-        }
-
-        .mobile-app-detail {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .mobile-app-detail:last-child {
-            border-bottom: none;
-        }
-
-        .mobile-app-detail-label {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .mobile-app-detail-value {
-            font-weight: 500;
-            font-size: 0.9rem;
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .table-container {
-                display: none;
-            }
-
-            .mobile-app-card {
-                display: block;
-            }
-
-            .bulk-actions {
-                position: sticky;
-                bottom: 0;
-                background: white;
-                border-top: 2px solid var(--primary);
-                z-index: 50;
-            }
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior-y: contain;
         }
     </style>
 </head>
@@ -1216,13 +1403,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         <!-- Mobile Header -->
         <div class="mobile-header">
             <div class="mobile-header-content">
-                <div>
-                    <h2 style="font-size: 1.1rem; color: white;">Impact Digital Academy</h2>
-                    <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.25rem;">Admin Dashboard</p>
+                <div class="mobile-header-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h2>Impact Digital Academy</h2>
+                        <p>Admin Dashboard</p>
+                    </div>
                 </div>
-                <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem;">
+                    <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
+                </div>
             </div>
         </div>
 
@@ -1233,10 +1425,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         <div class="mobile-sidebar" id="mobileSidebar">
             <div class="mobile-sidebar-header">
                 <div>
-                    <h2 style="font-size: 1.25rem;">Impact Digital Academy</h2>
-                    <p style="color: #94a3b8; font-size: 0.85rem;">Admin Dashboard</p>
+                    <h2>Impact Digital Academy</h2>
+                    <p>Admin Dashboard</p>
                 </div>
-                <button class="close-sidebar" onclick="toggleSidebar()">
+                <button class="close-sidebar" onclick="toggleSidebar()" aria-label="Close menu">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1266,7 +1458,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2>Impact Digital Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <p>Admin Dashboard</p>
             </div>
             <nav class="sidebar-nav">
                 <ul>
@@ -1298,10 +1490,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     <h1>Application Management</h1>
                     <div class="user-info">
                         <div class="user-avatar">
-                            <?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                            <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
                         </div>
                         <div>
-                            <div style="font-weight: 500; font-size: 0.95rem;"><?php echo $_SESSION['user_name']; ?></div>
+                            <div style="font-weight: 500;"><?php echo $_SESSION['user_name'] ?? 'Admin'; ?></div>
                             <div style="font-size: 0.85rem; color: #64748b;">Administrator</div>
                         </div>
                     </div>
@@ -1331,12 +1523,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>
                         <strong>Reminder:</strong> You have <?php echo count($reminder_applications); ?>
-                        recently approved application(s). Don't forget to complete the setup!
-                        <button type="button" onclick="showReminderModal()"
-                            style="background: none; border: none; color: #92400e; 
-                                       text-decoration: underline; cursor: pointer; margin-left: 0.5rem; display: inline;">
-                            View Details
-                        </button>
+                        recently approved application(s).
+                        <button type="button" onclick="showReminderModal()">View Details</button>
                     </p>
                 </div>
             <?php endif; ?>
@@ -1344,23 +1532,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <!-- Statistics -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number"><?php echo $stats['total']; ?></div>
-                    <div class="stat-label">Total Applications</div>
+                    <div class="stat-number"><?php echo $stats['total'] ?? 0; ?></div>
+                    <div class="stat-label">Total</div>
                 </div>
                 <div class="stat-card pending">
-                    <div class="stat-number"><?php echo $stats['pending']; ?></div>
-                    <div class="stat-label">Pending Review</div>
+                    <div class="stat-number"><?php echo $stats['pending'] ?? 0; ?></div>
+                    <div class="stat-label">Pending</div>
                 </div>
                 <div class="stat-card review">
-                    <div class="stat-number"><?php echo $stats['under_review']; ?></div>
-                    <div class="stat-label">Under Review</div>
+                    <div class="stat-number"><?php echo $stats['under_review'] ?? 0; ?></div>
+                    <div class="stat-label">Review</div>
                 </div>
                 <div class="stat-card approved">
-                    <div class="stat-number"><?php echo $stats['approved']; ?></div>
+                    <div class="stat-number"><?php echo $stats['approved'] ?? 0; ?></div>
                     <div class="stat-label">Approved</div>
                 </div>
                 <div class="stat-card rejected">
-                    <div class="stat-number"><?php echo $stats['rejected']; ?></div>
+                    <div class="stat-number"><?php echo $stats['rejected'] ?? 0; ?></div>
                     <div class="stat-label">Rejected</div>
                 </div>
             </div>
@@ -1373,33 +1561,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                             <i class="fas fa-bell"></i>
                             Complete Student Setup
                         </h3>
-                        <button type="button" class="close-reminder" onclick="closeReminderModal()">
+                        <button type="button" class="close-reminder" onclick="closeReminderModal()" aria-label="Close">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     <div class="reminder-body">
-                        <p style="margin-bottom: 1.25rem;">The following applications have been approved. Please complete these required setup steps:</p>
+                        <p style="margin-bottom: 1rem;">The following applications have been approved. Please complete these required setup steps:</p>
 
                         <div class="reminder-tasks">
                             <h4><i class="fas fa-tasks"></i> Required Actions</h4>
                             <ul class="task-list">
                                 <li>
                                     <i class="fas fa-user-check"></i>
-                                    <span><strong>Assign Student Role:</strong> Update user role to "student" in the Users module</span>
+                                    <span><strong>Assign Student Role:</strong> Update user role to "student"</span>
                                 </li>
                                 <li>
                                     <i class="fas fa-user-graduate"></i>
-                                    <span><strong>Enroll in Program:</strong> Add student to their approved program in the Academic module</span>
+                                    <span><strong>Enroll in Program:</strong> Add student to their approved program</span>
                                 </li>
                                 <li>
                                     <i class="fas fa-envelope"></i>
-                                    <span><strong>Send Welcome Email:</strong> Notify student about their approval and next steps</span>
+                                    <span><strong>Send Welcome Email:</strong> Notify student about approval</span>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="reminder-applications">
-                            <h4 style="margin-bottom: 1rem; font-size: 1rem;">Approved Applications</h4>
+                            <h4 style="margin-bottom: 1rem;">Approved Applications</h4>
                             <?php foreach ($reminder_applications as $app): ?>
                                 <div class="reminder-app">
                                     <div class="reminder-app-info">
@@ -1409,10 +1597,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                             <p><strong>Program:</strong> <?php echo htmlspecialchars($app['program_name']); ?></p>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="reminder-actions">
+                                    <div class="reminder-app-actions">
                                         <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php?search=<?php echo urlencode($app['email']); ?>"
                                             class="btn btn-primary btn-sm" target="_blank">
-                                            <i class="fas fa-user-edit"></i> Assign Role
+                                            <i class="fas fa-user-edit"></i> Role
                                         </a>
                                         <a href="<?php echo BASE_URL; ?>modules/admin/academic/enrollments/add.php?application_id=<?php echo $app['id']; ?>"
                                             class="btn btn-success btn-sm" target="_blank">
@@ -1424,11 +1612,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         </div>
                     </div>
                     <div class="reminder-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeReminderModal()">
-                            <i class="fas fa-check"></i> I'll Do This Later
+                        <button type="button" class="btn btn-secondary btn-block-mobile" onclick="closeReminderModal()">
+                            Later
                         </button>
-                        <button type="button" class="btn btn-primary" onclick="markAsCompleted()">
-                            <i class="fas fa-clipboard-check"></i> Mark as Completed
+                        <button type="button" class="btn btn-primary btn-block-mobile" onclick="markAsCompleted()">
+                            <i class="fas fa-check"></i> Completed
                         </button>
                     </div>
                 </div>
@@ -1472,11 +1660,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <label>To Date</label>
                         <input type="date" name="date_to" class="form-control" value="<?php echo $date_to; ?>">
                     </div>
-                    <div class="form-group" style="display: flex; gap: 0.5rem;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            <i class="fas fa-filter"></i> Apply Filters
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Apply
                         </button>
-                        <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-secondary" style="flex: 1;">
+                        <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-secondary">
                             <i class="fas fa-redo"></i> Clear
                         </a>
                     </div>
@@ -1487,9 +1675,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <div class="applications-table">
                 <div class="table-header">
                     <h3>Applications List</h3>
-                    <div>
+                    <div class="table-header-actions">
                         <a href="<?php echo BASE_URL; ?>modules/admin/applications/history.php" class="btn btn-secondary">
-                            <i class="fas fa-history"></i> View History
+                            <i class="fas fa-history"></i> History
                         </a>
                     </div>
                 </div>
@@ -1499,7 +1687,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
                     <?php if (!empty($applications)): ?>
                         <!-- Desktop Table View -->
-                        <div class="table-container">
+                        <div class="desktop-table">
                             <table>
                                 <thead>
                                     <tr>
@@ -1509,7 +1697,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                         <th>ID</th>
                                         <th>Applicant</th>
                                         <th>Email</th>
-                                        <th>Applying As</th>
+                                        <th>Role</th>
                                         <th>Program</th>
                                         <th>Submitted</th>
                                         <th>Status</th>
@@ -1537,31 +1725,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                             <td>
                                                 <?php if ($app['program_name']): ?>
                                                     <strong><?php echo htmlspecialchars($app['program_code']); ?></strong><br>
-                                                    <small style="color: #64748b;"><?php echo htmlspecialchars($app['program_name']); ?></small>
+                                                    <small><?php echo htmlspecialchars($app['program_name']); ?></small>
                                                 <?php else: ?>
                                                     <span style="color: #64748b;">N/A</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <?php echo date('M j, Y', strtotime($app['created_at'])); ?><br>
-                                                <small style="color: #64748b;"><?php echo date('g:i A', strtotime($app['created_at'])); ?></small>
+                                                <?php echo date('M j, Y', strtotime($app['created_at'])); ?>
                                             </td>
                                             <td>
                                                 <span class="status-badge status-<?php echo str_replace('_', '-', $app['status']); ?>">
                                                     <?php echo ucfirst(str_replace('_', ' ', $app['status'])); ?>
                                                 </span>
                                             </td>
-                                            <td class="actions">
-                                                <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>"
-                                                    class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-eye"></i> Review
-                                                </a>
-                                                <?php if ($app['status'] === 'pending'): ?>
-                                                    <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>&action=review"
-                                                        class="btn btn-secondary btn-sm">
-                                                        <i class="fas fa-search"></i> Start Review
+                                            <td>
+                                                <div style="display: flex; gap: 0.5rem;">
+                                                    <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-eye"></i>
                                                     </a>
-                                                <?php endif; ?>
+                                                    <?php if ($app['status'] === 'pending'): ?>
+                                                        <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>&action=review"
+                                                            class="btn btn-secondary btn-sm">
+                                                            <i class="fas fa-search"></i>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -1573,55 +1762,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <?php foreach ($applications as $app): ?>
                             <div class="mobile-app-card">
                                 <div class="mobile-app-header">
-                                    <div class="mobile-app-info">
+                                    <div>
                                         <div class="mobile-app-title">
                                             <?php echo htmlspecialchars($app['first_name'] . ' ' . $app['last_name']); ?>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                                            <span class="status-badge status-<?php echo str_replace('_', '-', $app['status']); ?>">
-                                                <?php echo ucfirst(str_replace('_', ' ', $app['status'])); ?>
-                                            </span>
-                                            <span class="role-badge">
-                                                <?php echo ucfirst($app['applying_as']); ?>
-                                            </span>
+                                        <div class="mobile-app-subtitle">
+                                            #<?php echo str_pad($app['id'], 4, '0', STR_PAD_LEFT); ?>
                                         </div>
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <input type="checkbox" name="selected_applications[]"
-                                            value="<?php echo $app['id']; ?>" class="application-checkbox">
-                                    </div>
+                                    <input type="checkbox" name="selected_applications[]"
+                                        value="<?php echo $app['id']; ?>" class="application-checkbox">
                                 </div>
+
+                                <div class="mobile-app-badges">
+                                    <span class="status-badge status-<?php echo str_replace('_', '-', $app['status']); ?>">
+                                        <?php echo ucfirst(str_replace('_', ' ', $app['status'])); ?>
+                                    </span>
+                                    <span class="role-badge">
+                                        <?php echo ucfirst($app['applying_as']); ?>
+                                    </span>
+                                </div>
+
                                 <div class="mobile-app-details">
-                                    <div class="mobile-app-detail">
-                                        <span class="mobile-app-detail-label">ID:</span>
-                                        <span class="mobile-app-detail-value">#<?php echo str_pad($app['id'], 4, '0', STR_PAD_LEFT); ?></span>
-                                    </div>
-                                    <div class="mobile-app-detail">
+                                    <div class="mobile-app-detail-row">
                                         <span class="mobile-app-detail-label">Email:</span>
                                         <span class="mobile-app-detail-value"><?php echo htmlspecialchars($app['email']); ?></span>
                                     </div>
-                                    <div class="mobile-app-detail">
+                                    <div class="mobile-app-detail-row">
+                                        <span class="mobile-app-detail-label">Phone:</span>
+                                        <span class="mobile-app-detail-value"><?php echo $app['phone'] ?? 'N/A'; ?></span>
+                                    </div>
+                                    <div class="mobile-app-detail-row">
                                         <span class="mobile-app-detail-label">Program:</span>
                                         <span class="mobile-app-detail-value">
                                             <?php echo $app['program_name'] ? htmlspecialchars($app['program_code']) : 'N/A'; ?>
                                         </span>
                                     </div>
-                                    <div class="mobile-app-detail">
+                                    <div class="mobile-app-detail-row">
                                         <span class="mobile-app-detail-label">Submitted:</span>
                                         <span class="mobile-app-detail-value">
                                             <?php echo date('M j, Y', strtotime($app['created_at'])); ?>
                                         </span>
                                     </div>
                                 </div>
-                                <div class="actions" style="margin-top: 1rem;">
+
+                                <div class="mobile-app-actions">
                                     <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>"
-                                        class="btn btn-primary btn-sm" style="flex: 1;">
+                                        class="btn btn-primary">
                                         <i class="fas fa-eye"></i> Review
                                     </a>
                                     <?php if ($app['status'] === 'pending'): ?>
                                         <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>&action=review"
-                                            class="btn btn-secondary btn-sm" style="flex: 1;">
-                                            <i class="fas fa-search"></i> Start Review
+                                            class="btn btn-secondary">
+                                            <i class="fas fa-search"></i> Start
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -1630,24 +1823,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
                         <!-- Bulk Actions -->
                         <div class="bulk-actions">
-                            <select name="bulk_action" class="form-control">
-                                <option value="">Bulk Actions</option>
-                                <option value="under_review">Mark as Under Review</option>
-                                <option value="approved">Approve Selected</option>
-                                <option value="rejected">Reject Selected</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-play"></i> Apply
-                            </button>
-                            <span style="color: #64748b; font-size: 0.9rem;">
+                            <div class="bulk-actions-row">
+                                <select name="bulk_action" class="form-control">
+                                    <option value="">Bulk Actions</option>
+                                    <option value="under_review">Mark Under Review</option>
+                                    <option value="approved">Approve</option>
+                                    <option value="rejected">Reject</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">
+                                    Apply
+                                </button>
+                            </div>
+                            <div class="selected-count">
                                 <span id="selectedCount">0</span> applications selected
-                            </span>
+                            </div>
                         </div>
                     <?php else: ?>
                         <div class="empty-state">
                             <i class="fas fa-file-alt"></i>
-                            <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem;">No Applications Found</h3>
-                            <p>There are no applications matching your filters.</p>
+                            <h3>No Applications Found</h3>
+                            <p>Try adjusting your filters</p>
                         </div>
                     <?php endif; ?>
                 </form>
@@ -1770,7 +1965,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                 .then(data => {
                     if (data.success) {
                         closeReminderModal();
-                        // Hide the reminder alert if it exists
                         const reminderAlert = document.getElementById('reminderAlert');
                         if (reminderAlert) {
                             reminderAlert.style.display = 'none';
@@ -1809,34 +2003,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             }
         });
 
-        // Touch-friendly form controls
-        document.querySelectorAll('select').forEach(select => {
-            select.addEventListener('touchstart', function() {
-                this.style.backgroundColor = '#f8fafc';
+        // Touch-friendly optimizations
+        document.querySelectorAll('select, .btn, a').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
             });
-
-            select.addEventListener('touchend', function() {
-                setTimeout(() => {
-                    this.style.backgroundColor = '';
-                }, 150);
+            element.addEventListener('touchend', function() {
+                this.style.opacity = '';
             });
         });
 
-        // Adjust layout on orientation change
+        // Handle orientation change
         window.addEventListener('orientationchange', function() {
             setTimeout(() => {
                 window.scrollTo(0, 0);
             }, 100);
         });
 
-        // Prevent zoom on mobile for better UX
-        document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
+        // Prevent zoom on double-tap for better UX
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
                 e.preventDefault();
             }
-        }, {
-            passive: false
-        });
+            lastTouchEnd = now;
+        }, false);
+
+        // Swipe to close sidebar
+        let touchStartX = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', function(e) {
+            const sidebar = document.getElementById('mobileSidebar');
+            const touchEndX = e.changedTouches[0].screenX;
+            const diffX = touchEndX - touchStartX;
+
+            if (sidebar.classList.contains('active') && diffX < -50) {
+                toggleSidebar();
+            }
+        }, false);
     </script>
 </body>
 

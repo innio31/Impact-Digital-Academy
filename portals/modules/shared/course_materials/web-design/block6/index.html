@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- responsive meta tag – mobile first -->
+    <!-- responsive meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Block 4 · JavaScript Programming Fundamentals · interactive</title>
+    <title>Block 6 · Modern JS · Intro to React</title>
     <style>
-        /* -------------------- RESET + BASE (mobile first) -------------------- */
+        /* ---------- same vibe as block5, slightly warmer tech ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -16,9 +16,9 @@
 
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f2e9f0;
-            /* soft lavender hint */
-            color: #2d2a3b;
+            background: #edecf2;
+            /* gentle violet-grey – modern twist */
+            color: #1e293b;
             line-height: 1.5;
             min-height: 100vh;
             padding: 0.8rem;
@@ -27,24 +27,22 @@
             justify-content: center;
         }
 
-        /* main container – fully responsive, relative units */
         .landing-wrapper {
             max-width: 1400px;
             width: 100%;
             margin: 0 auto;
             background: white;
             border-radius: 2.5rem;
-            box-shadow: 0 25px 40px -25px #3f2e4b;
+            box-shadow: 0 30px 45px -30px #2b2b4b;
             overflow: hidden;
             padding: 1.8rem 1.5rem;
             transition: padding 0.2s;
         }
 
-        /* typography scales fluidly */
         h1 {
-            font-size: clamp(2.2rem, 8vw, 3.8rem);
+            font-size: clamp(2.2rem, 8vw, 4rem);
             font-weight: 750;
-            background: linear-gradient(145deg, #5e3c7e, #9e4f7a);
+            background: linear-gradient(145deg, #3b3f8f, #c9516c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -58,7 +56,8 @@
         }
 
         .block-badge {
-            background: #7c5295;
+            background: #4a4e9e;
+            /* reactish purple-blue */
             color: white;
             font-size: clamp(1rem, 4vw, 1.5rem);
             font-weight: 500;
@@ -72,14 +71,14 @@
 
         .subhead {
             font-size: clamp(1.2rem, 5vw, 1.8rem);
-            color: #76548c;
-            border-left: 8px solid #c67fb0;
+            color: #3d4392;
+            border-left: 8px solid #dd768c;
             padding-left: 1.2rem;
             margin: 0.8rem 0 2rem;
             font-weight: 360;
         }
 
-        /* responsive grid – mobile → desktop */
+        /* responsive grid */
         .overview-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -98,18 +97,19 @@
         }
 
         .card {
-            background: #f9f1fc;
+            background: #f5f3ff;
+            /* light lavender */
             border-radius: 2rem;
             padding: 1.5rem 1.5rem;
-            border: 1px solid #dbbde2;
-            box-shadow: 0 12px 28px -15px #3d2b4b;
+            border: 1px solid #c7c1e0;
+            box-shadow: 0 12px 28px -15px #2a264f;
             height: fit-content;
         }
 
         .card h2 {
             font-size: clamp(1.6rem, 5vw, 2.2rem);
-            color: #67437e;
-            border-bottom: 3px solid #cc8abb;
+            color: #383d88;
+            border-bottom: 3px solid #dd768c;
             padding-bottom: 0.6rem;
             margin-bottom: 1.2rem;
             display: flex;
@@ -131,7 +131,8 @@
         }
 
         .learning-list li::before {
-            content: "⚡";
+            content: "⚛️";
+            /* react atom mini */
             font-size: 1.3rem;
             flex-shrink: 0;
         }
@@ -145,13 +146,13 @@
 
         .topic-tag {
             background: white;
-            border: 1px solid #c27fb0;
+            border: 1px solid #b1a9d0;
             padding: 0.5rem 1.2rem;
             border-radius: 60px;
             font-size: clamp(0.85rem, 2.5vw, 1rem);
             font-weight: 500;
-            color: #5b3b73;
-            box-shadow: 0 4px 10px #f1e2f8;
+            color: #3d3580;
+            box-shadow: 0 4px 10px #e4defa;
             white-space: nowrap;
         }
 
@@ -162,7 +163,6 @@
             }
         }
 
-        /* resource block – full width flexible */
         .resource-links {
             display: flex;
             flex-direction: column;
@@ -171,15 +171,15 @@
         }
 
         .resource-block {
-            background: #f0e1fc;
+            background: #efebfc;
             border-radius: 1.8rem;
             padding: 1.2rem 1.2rem;
-            border-left: 8px solid #8b5fa0;
+            border-left: 8px solid #5b5fab;
         }
 
         .resource-block p {
             font-weight: 600;
-            color: #4f3672;
+            color: #2e317c;
             font-size: clamp(1rem, 4vw, 1.2rem);
             margin-bottom: 0.8rem;
         }
@@ -195,27 +195,26 @@
             text-decoration: none;
             padding: 0.8rem 1.2rem;
             border-radius: 60px;
-            color: #573e74;
+            color: #363b84;
             font-weight: 550;
-            border: 1px solid #c191cf;
+            border: 1px solid #b3abcf;
             transition: 0.15s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: clamp(0.9rem, 3vw, 1rem);
-            box-shadow: 0 3px 10px #f3e5fa;
+            box-shadow: 0 3px 10px #e3defa;
             word-break: break-word;
         }
 
-        /* topic sections */
         .topic-section {
             margin: 2.8rem 0 2rem;
         }
 
         .topic-section h3 {
             font-size: clamp(1.8rem, 6vw, 2.5rem);
-            color: #67437e;
-            border-left: 10px solid #d897c4;
+            color: #383d88;
+            border-left: 10px solid #dd768c;
             padding-left: 1.2rem;
             margin: 2rem 0 1.5rem;
             line-height: 1.2;
@@ -240,20 +239,20 @@
         }
 
         .topic-card {
-            background: #fbf3ff;
+            background: #f8f6ff;
             border-radius: 2rem;
             padding: 1.5rem;
-            border: 1px solid #dbb2dd;
+            border: 1px solid #cdc3e8;
             height: 100%;
         }
 
         .topic-card h4 {
             font-size: clamp(1.4rem, 4vw, 1.8rem);
-            color: #67437e;
+            color: #383d88;
             margin-bottom: 1rem;
             display: flex;
             gap: 10px;
-            border-bottom: 2px dashed #cb99c2;
+            border-bottom: 2px dashed #beb3dc;
             padding-bottom: 0.6rem;
             flex-wrap: wrap;
         }
@@ -271,19 +270,18 @@
 
         .dot-list li::before {
             content: "✦";
-            color: #9c5fa0;
+            color: #5b5fab;
             font-size: 1.2rem;
             position: absolute;
             left: 0;
         }
 
-        /* activities – flex with wrapping */
         .activity-case {
-            background: #f2e2fb;
+            background: #eae5fc;
             border-radius: 2rem;
             padding: 1.8rem 1.2rem;
             margin: 2.5rem 0;
-            border: 2px solid #b175b4;
+            border: 2px solid #bcb1df;
         }
 
         .flex-act {
@@ -299,12 +297,12 @@
             padding: 1.5rem;
             flex: 1 1 240px;
             min-width: 200px;
-            border-bottom: 6px solid #9569b0;
+            border-bottom: 6px solid #5f64b0;
             font-size: clamp(0.9rem, 3vw, 1rem);
         }
 
         .badge {
-            background: #7c5295;
+            background: #4a4e9e;
             color: white;
             font-size: 0.8rem;
             padding: 0.2rem 1.2rem;
@@ -313,9 +311,8 @@
             margin-bottom: 0.8rem;
         }
 
-        /* assessment table – responsive with overflow */
         .assessment-zone {
-            background: #eddff5;
+            background: #edeaff;
             border-radius: 2.2rem;
             padding: 1.8rem 1.2rem;
             margin: 2.5rem 0;
@@ -327,12 +324,12 @@
             margin: 1.8rem 0;
             border-radius: 1.5rem;
             overflow: hidden;
-            box-shadow: 0 6px 18px rgba(65, 35, 85, 0.12);
+            box-shadow: 0 6px 18px rgba(35, 30, 75, 0.12);
             font-size: clamp(0.85rem, 2.8vw, 1rem);
         }
 
         th {
-            background: #7c5295;
+            background: #4a4e9e;
             color: white;
             font-weight: 600;
             padding: 0.9rem 0.8rem;
@@ -340,8 +337,8 @@
 
         td {
             padding: 0.8rem 0.8rem;
-            border-bottom: 1px solid #dbbde2;
-            background: #fcf6ff;
+            border-bottom: 1px solid #cfc6ec;
+            background: #fdfcff;
         }
 
         @media (max-width: 500px) {
@@ -372,16 +369,15 @@
         }
 
         .quiz-grid div {
-            background: #f3e3fd;
+            background: #f1edff;
             padding: 0.6rem 1rem;
             border-radius: 40px;
             font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-            border: 1px solid #dbb2dd;
+            border: 1px solid #c6bcdf;
         }
 
-        /* footer + project block */
         .footer-links {
-            background: #eeddfa;
+            background: #eae5fc;
             border-radius: 2rem;
             padding: 1.8rem 1.5rem;
             margin: 2.5rem 0 1rem;
@@ -401,7 +397,7 @@
         }
 
         .btn-project {
-            background: #6b3f84;
+            background: #4a4e9e;
             color: white;
             padding: 1rem 2rem;
             border-radius: 60px;
@@ -411,7 +407,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 14px -6px #482f5a;
+            box-shadow: 0 8px 14px -6px #2b2b60;
             border: 2px solid white;
             white-space: wrap;
             text-align: center;
@@ -420,7 +416,7 @@
         hr {
             border: none;
             height: 3px;
-            background: linear-gradient(to right, #eed2f0, #fcf4ff, #eed2f0);
+            background: linear-gradient(to right, #ddd2f5, #fcfdff, #ddd2f5);
             margin: 2rem 0;
         }
 
@@ -433,26 +429,26 @@
         }
 
         .bottom-nav a {
-            background: #f3e5fa;
+            background: #f1edff;
             padding: 0.6rem 1.2rem;
             border-radius: 40px;
             text-decoration: none;
-            color: #4c2f69;
+            color: #373b7c;
             font-weight: 500;
             font-size: clamp(0.8rem, 2.5vw, 1rem);
-            border: 1px solid #ca9dcb;
+            border: 1px solid #bdb2de;
         }
 
         footer {
             margin-top: 2.5rem;
             text-align: center;
-            color: #59417a;
+            color: #43478f;
             font-size: clamp(0.9rem, 3vw, 1rem);
         }
 
         code {
             word-break: break-word;
-            background: #f2e4fc;
+            background: #eae5fc;
             padding: 0.1rem 0.3rem;
             border-radius: 6px;
         }
@@ -461,180 +457,175 @@
 
 <body>
     <div class="landing-wrapper">
-        <!-- header -->
-        <h1>⚡ JAVASCRIPT PROGRAMMING FUNDAMENTALS</h1>
-        <div class="block-badge">block four · syntax · data structures · control flow</div>
-        <div class="subhead">build logical thinking & interactivity with modern JS</div>
+        <!-- header (block 6 theme) -->
+        <h1>⚛️ MODERN JS + INTRO TO REACT</h1>
+        <div class="block-badge">block six · ES6+ · components · props · state</div>
+        <div class="subhead">arrow functions · destructuring · modules · react hooks · JSX</div>
 
         <!-- objectives + core topics grid -->
         <div class="overview-grid">
             <div class="card">
                 <h2>🎯 learning objectives</h2>
                 <ul class="learning-list">
-                    <li>Understand and use JS syntax, variables (<code>let</code>/<code>const</code>), and data types.
-                    </li>
-                    <li>Work with operators for calculations and comparisons.</li>
-                    <li>Implement control flow using conditionals and loops.</li>
-                    <li>Write and invoke functions to organize code.</li>
-                    <li>Create and manipulate basic arrays and objects.</li>
-                    <li>Explore template literals, string methods, and scope.</li>
+                    <li>Use modern ES6+ features: arrow functions, destructuring, spread, template literals.</li>
+                    <li>Organize code with <code>import</code> / <code>export</code> (modules).</li>
+                    <li>Understand component‑based architecture &amp; why React simplifies complex UI.</li>
+                    <li>Build functional components with JSX and embed JavaScript expressions.</li>
+                    <li>Pass data via <strong>props</strong> from parent to child.</li>
+                    <li>Manage dynamic data with the <code>useState</code> hook — read &amp; update state.</li>
+                    <li>Handle events (<code>onClick</code>, <code>onChange</code>) and update state accordingly.</li>
+                    <li>Render lists using <code>.map()</code> and the <code>key</code> prop.</li>
                 </ul>
             </div>
             <div class="card">
                 <h2>📘 core topics</h2>
                 <div class="topic-cloud">
-                    <span class="topic-tag">let & const</span>
-                    <span class="topic-tag">numbers / strings</span>
-                    <span class="topic-tag">booleans</span>
-                    <span class="topic-tag">=== / !==</span>
+                    <span class="topic-tag">arrow functions</span>
+                    <span class="topic-tag">destructuring</span>
+                    <span class="topic-tag">spread operator</span>
                     <span class="topic-tag">template literals</span>
-                    <span class="topic-tag">if / else</span>
-                    <span class="topic-tag">for / while</span>
-                    <span class="topic-tag">functions</span>
-                    <span class="topic-tag">return / scope</span>
-                    <span class="topic-tag">arrays []</span>
-                    <span class="topic-tag">objects {}</span>
-                    <span class="topic-tag">logical && || !</span>
-                    <span class="topic-tag">ternary operator</span>
-                    <span class="topic-tag">string methods</span>
-                    <span class="topic-tag">break & continue</span>
+                    <span class="topic-tag">import/export</span>
+                    <span class="topic-tag">React components</span>
+                    <span class="topic-tag">JSX</span>
+                    <span class="topic-tag">props</span>
+                    <span class="topic-tag">useState</span>
+                    <span class="topic-tag">onClick / onChange</span>
+                    <span class="topic-tag">.map() & key</span>
+                    <span class="topic-tag">Vite + React</span>
+                    <span class="topic-tag">virtual DOM</span>
                 </div>
             </div>
         </div>
 
-        <!-- module pages (deep dives) -->
+        <!-- module pages (deep dives) : block6 specific -->
         <div class="resource-links">
             <div class="resource-block">
-                <p>📄 module pages – code & concepts</p>
+                <p>📄 module pages – from ES6 to React</p>
                 <div class="page-grid">
-                    <a href="1-js-intro.html" target="_blank" rel="noopener noreferrer" class="page-link">📜 1. intro,
-                        script tag, let/const</a>
-                    <a href="2-js-datatypes.html" target="_blank" rel="noopener noreferrer" class="page-link">🔢 2. data
-                        types & operators</a>
-                    <a href="3-js-strings.html" target="_blank" rel="noopener noreferrer" class="page-link">🧵 3.
-                        strings
-                        & template literals</a>
-                    <a href="4-js-conditionals.html" target="_blank" rel="noopener noreferrer" class="page-link">⚖️ 4.
-                        if/else & ternary</a>
-                    <a href="5-js-loops.html" target="_blank" rel="noopener noreferrer" class="page-link">🔄 5. for /
-                        while loops</a>
-                    <a href="6-js-functions.html" target="_blank" rel="noopener noreferrer" class="page-link">🧩 6.
-                        functions (declarations & expressions)</a>
-                    <a href="7-js-return-scope.html" target="_blank" rel="noopener noreferrer" class="page-link">📦 7.
-                        return & scope</a>
-                    <a href="8-js-arrays-objects.html" target="_blank" rel="noopener noreferrer" class="page-link">🗂️
-                        8.
-                        arrays & objects</a>
+                    <a href="1-es6-features.html" target="_blank" rel="noopener" class="page-link">🏹 1. arrow /
+                        destructuring / spread</a>
+                    <a href="2-modules.html" target="_blank" rel="noopener" class="page-link">📦 2. import / export
+                        modules</a>
+                    <a href="3-react-intro.html" target="_blank" rel="noopener" class="page-link">⚛️ 3. why React? setup
+                        with Vite</a>
+                    <a href="4-jsx.html" target="_blank" rel="noopener" class="page-link">🔮 4. JSX & expressions</a>
+                    <a href="5-props.html" target="_blank" rel="noopener" class="page-link">📤 5. props (parent →
+                        child)</a>
+                    <a href="6-usestate.html" target="_blank" rel="noopener" class="page-link">🎣 6. useState hook</a>
+                    <a href="7-events-react.html" target="_blank" rel="noopener" class="page-link">🖱️ 7. event handling
+                        in React</a>
+                    <a href="8-lists-keys.html" target="_blank" rel="noopener" class="page-link">📋 8. lists & key
+                        prop</a>
                 </div>
             </div>
         </div>
 
-        <!-- JavaScript foundations deep dive -->
+        <!-- modern js + react deep dive cards -->
         <div class="topic-section">
-            <h3>🧠 CORE JS BUILDING BLOCKS</h3>
+            <h3>🧩 ES6+ & REACT CORE PATTERNS</h3>
             <div class="mini-grid">
                 <div class="topic-card">
-                    <h4>📦 variables & types</h4>
+                    <h4>🏹 modern JS (ES6+)</h4>
                     <ul class="dot-list">
-                        <li><code>let</code> vs <code>const</code> (block scope)</li>
-                        <li>Primitive types: number, string, boolean, null, undefined</li>
-                        <li><code>typeof</code> operator</li>
+                        <li><code>const</code> / <code>let</code>, arrow functions</li>
+                        <li>destructuring: <code>{name}</code> / <code>[first]</code></li>
+                        <li>spread: <code>...arr</code>, <code>...obj</code></li>
+                        <li>template literals: `` ${} ``</li>
                     </ul>
                 </div>
                 <div class="topic-card">
-                    <h4>🧮 operators</h4>
+                    <h4>📦 modules</h4>
                     <ul class="dot-list">
-                        <li>arithmetic: <code>+ - * / %</code></li>
-                        <li>comparison: <code>=== !== &lt; &gt; &lt;= &gt;=</code></li>
-                        <li>logical: <code>&amp;&amp; || !</code></li>
-                        <li>assignment: <code>= += -=</code></li>
+                        <li><code>export default</code> / <code>export const</code></li>
+                        <li><code>import Component from './file'</code></li>
+                        <li>clean code splitting</li>
                     </ul>
                 </div>
                 <div class="topic-card">
-                    <h4>📝 strings & literals</h4>
+                    <h4>⚛️ react components</h4>
                     <ul class="dot-list">
-                        <li><code>.toUpperCase()</code>, <code>.includes()</code>, <code>.length</code></li>
-                        <li>template literals: <code>`Hello ${name}`</code></li>
-                        <li>escape characters & concatenation</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- second row -->
-            <div class="mini-grid" style="margin-top:1.5rem;">
-                <div class="topic-card">
-                    <h4>⚡ control flow</h4>
-                    <ul class="dot-list">
-                        <li><code>if / else if / else</code></li>
-                        <li>ternary operator <code>condition ? a : b</code></li>
-                        <li>switch (optional)</li>
-                    </ul>
-                </div>
-                <div class="topic-card">
-                    <h4>🔄 loops</h4>
-                    <ul class="dot-list">
-                        <li><code>for</code> (initialization; condition; increment)</li>
-                        <li><code>while</code> loops</li>
-                        <li><code>break</code> and <code>continue</code></li>
-                    </ul>
-                </div>
-                <div class="topic-card">
-                    <h4>🧩 functions</h4>
-                    <ul class="dot-list">
-                        <li>function declaration / expression</li>
-                        <li>parameters & arguments</li>
-                        <li><code>return</code> and side effects</li>
-                        <li>global vs local scope</li>
+                        <li>functional component</li>
+                        <li>JSX = JavaScript + XML</li>
+                        <li><code>{expression}</code> inside JSX</li>
+                        <li>component tree</li>
                     </ul>
                 </div>
             </div>
-            <!-- third row : arrays & objects -->
             <div class="mini-grid" style="margin-top:1.5rem;">
                 <div class="topic-card">
-                    <h4>🗃️ arrays</h4>
+                    <h4>📤 props</h4>
                     <ul class="dot-list">
-                        <li><code>let arr = [1, 2, 3]</code></li>
-                        <li>access by index, <code>.length</code></li>
-                        <li>basic methods: <code>push</code>, <code>pop</code></li>
+                        <li>parent → child data flow</li>
+                        <li><code>&lt;Card name="Alex" /&gt;</code></li>
+                        <li><code>props.name</code> in child</li>
+                        <li>props are read‑only</li>
                     </ul>
                 </div>
                 <div class="topic-card">
-                    <h4>📂 objects</h4>
+                    <h4>🎣 useState</h4>
                     <ul class="dot-list">
-                        <li><code>{ key: value }</code> – dot / bracket notation</li>
-                        <li>nested properties</li>
-                        <li>adding / updating properties</li>
+                        <li><code>const [count, setCount] = useState(0)</code></li>
+                        <li>reading state, updating with setter</li>
+                        <li>triggers re‑render</li>
                     </ul>
                 </div>
                 <div class="topic-card">
-                    <h4>🔁 iteration</h4>
+                    <h4>🖱️ events in react</h4>
                     <ul class="dot-list">
-                        <li>loop over an array</li>
-                        <li><code>for...in</code> for objects</li>
-                        <li>array of objects (practical data)</li>
+                        <li><code>onClick={handleClick}</code></li>
+                        <li><code>onChange={(e) =&gt; setName(e.target.value)}</code></li>
+                        <li>update state on user input</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mini-grid" style="margin-top:1.5rem;">
+                <div class="topic-card">
+                    <h4>📋 lists & keys</h4>
+                    <ul class="dot-list">
+                        <li><code>.map()</code> to generate elements</li>
+                        <li><code>key</code> prop for performance</li>
+                        <li>unique, stable key (like id)</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>⚡ virtual DOM</h4>
+                    <ul class="dot-list">
+                        <li>conceptual: efficient updates</li>
+                        <li>diffing & reconciliation</li>
+                    </ul>
+                </div>
+                <div class="topic-card">
+                    <h4>🛠️ react + vite</h4>
+                    <ul class="dot-list">
+                        <li>quick project setup</li>
+                        <li><code>npm create vite@latest</code></li>
+                        <li>modern build tooling</li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- hands‑on activities -->
+        <!-- hands‑on activities (block6 flavour) -->
         <div class="activity-case">
-            <h2 style="color: #67437e; border-bottom: 3px solid #cb99c2; padding-bottom: 0.8rem;">🧪 hands‑on activities
+            <h2 style="color: #383d88; border-bottom: 3px solid #dd768c; padding-bottom: 0.8rem;">🧪 hands‑on activities
             </h2>
             <div class="flex-act">
-                <div class="act-item"><span class="badge">tip calc</span><strong>flexible tip</strong><br>write a script
-                    that calculates a tip based on bill amount & percentage.</div>
-                <div class="act-item"><span class="badge">guess game</span><strong>number
-                        guessing</strong><br>conditionals + loops – random number, hints, limited attempts.</div>
-                <div class="act-item"><span class="badge">student stats</span><strong>array & objects</strong><br>array
-                    of student objects; find student or average grade.</div>
-                <div class="act-item"><span class="badge">drill</span><strong>template literals &
-                        methods</strong><br>use string methods and backticks to format messages.</div>
+                <div class="act-item"><span class="badge">🔁 refactor</span><strong>ES6 module
+                        conversion</strong><br>Take a small vanilla JS project (e.g. block5 task list) and split into
+                    modules using import/export.</div>
+                <div class="act-item"><span class="badge">🃏 profile card</span><strong>UserProfile
+                        component</strong><br>Functional component that receives name, avatar, bio via props. Render
+                    multiple cards.</div>
+                <div class="act-item"><span class="badge">🔢 counter</span><strong>useState practice</strong><br>Build a
+                    counter with increment/decrement/reset. See state updates in real time.</div>
+                <div class="act-item"><span class="badge">📝 workshop</span><strong>simple todo (react)</strong><br>Add
+                    task, list with .map(), key, and maybe a "done" toggle using state.</div>
             </div>
         </div>
 
-        <!-- assessment + quiz -->
+        <!-- assessment + quiz preview -->
         <div class="assessment-zone">
-            <h2 style="color: #67437e;">📋 assessment</h2>
+            <h2 style="color: #383d88;">📋 assessment</h2>
             <div class="table-wrapper">
                 <table>
                     <tr>
@@ -644,55 +635,57 @@
                     </tr>
                     <tr>
                         <td><strong>coding exercise</strong></td>
-                        <td>Build a simple "to‑do list task manager" (console) – arrays, objects, functions, loops to
-                            add, list, and mark tasks as complete.</td>
-                        <td>JavaScript</td>
+                        <td>Build a "Product List with Add to Cart". Each product shows name + price. Click "Add"
+                            updates cart total (state) and optionally list of added items. Use props, useState, events,
+                            and .map().</td>
+                        <td>React (Vite) + JSX</td>
                     </tr>
                     <tr>
                         <td><strong>quiz</strong></td>
-                        <td>syntax, data types, operators, conditionals, loops, functions, basic arrays/objects</td>
+                        <td>ES6+ features (arrow, destructuring, spread, modules) + React fundamentals (components,
+                            props, useState, keys).</td>
                         <td>20 questions</td>
                     </tr>
                 </table>
             </div>
-            <!-- mini quiz preview -->
+            <!-- mini quiz preview: block 6 topics -->
             <div class="quiz-mini">
-                <h4 style="color: #67437e;">✏️ quiz sample – do you know?</h4>
+                <h4 style="color: #383d88;">✏️ quiz sample – do you know modern React?</h4>
                 <div class="quiz-grid">
-                    <div>• difference <code>let</code> vs <code>const</code>?</div>
-                    <div>• <code>===</code> vs <code>==</code>?</div>
-                    <div>• template literal <code>`${var}`</code> vs concatenation?</div>
-                    <div>• how does a <code>for</code> loop work?</div>
-                    <div>• function declaration vs expression?</div>
-                    <div>• global vs local scope?</div>
-                    <div>• access object property <code>obj.prop</code> vs <code>obj['prop']</code>?</div>
-                    <div>• what does <code>.includes()</code> do?</div>
-                    <div>• logical && and || short‑circuit?</div>
-                    <div>• break vs continue in loops?</div>
+                    <div>• difference between <code>export default</code> and named export?</div>
+                    <div>• what does destructuring <code>{brand, price}</code> do?</div>
+                    <div>• how to pass data from parent to child in React?</div>
+                    <div>• what is the <code>key</code> prop used for in lists?</div>
+                    <div>• <code>useState</code> returns an array with …?</div>
+                    <div>• how do you write an arrow function implicitly returning an object?</div>
+                    <div>• why use <code>onChange</code> with <code>setName(e.target.value)</code>?</div>
+                    <div>• spread operator <code>...items</code> inside a new array?</div>
+                    <div>• JSX – can we use <code>if</code> statements directly inside?</div>
+                    <div>• what does <code>onClick={() =&gt; setCount(c+1)}</code> do?</div>
                 </div>
             </div>
         </div>
 
-        <!-- final project block -->
+        <!-- final project block (interactive product cart / todo) -->
         <div class="footer-links">
             <div>
-                <span style="font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; color: #6b3f84;">🧩 final
+                <span style="font-size: clamp(1.6rem, 6vw, 2.2rem); font-weight: 700; color: #4a4e9e;">🧩 final
                     project</span><br>
-                <span style="font-size: 1.1rem;">interactive console task manager</span>
+                <span style="font-size: 1.1rem;">product list with add‑to‑cart · React, state & props</span>
             </div>
-            <a href="project-todo-console.html" target="_blank" class="btn-project">📂 open project brief →</a>
+            <a href="project-react.html" target="_blank" class="btn-project">📂 open project brief →</a>
         </div>
 
         <hr>
-        <!-- bottom navigation (compact) -->
+
+        <!-- bottom navigation (quick topics) -->
         <div class="bottom-nav">
-            <a href="#">intro & variables</a><a href="#">operators</a><a href="#">strings</a><a
-                href="#">conditionals</a><a href="#">loops</a><a href="#">functions</a><a href="#">return/scope</a><a
-                href="#">arrays/objects</a>
+            <a href="#">ES6+</a><a href="#">modules</a><a href="#">react intro</a><a href="#">JSX</a>
+            <a href="#">props</a><a href="#">useState</a><a href="#">events</a><a href="#">lists/keys</a>
         </div>
 
         <footer>
-            ⚡ Block 4 – JavaScript Programming Fundamentals · syntax · control flow · data structures
+            ⚛️ Block 6 – Modern JavaScript & Introduction to React · components · props · state · hooks
         </footer>
     </div>
 </body>

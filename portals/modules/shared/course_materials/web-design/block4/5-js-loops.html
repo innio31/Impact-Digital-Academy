@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 4 · JavaScript Control Flow · Loops (for, while, break, continue)</title>
+    <style>
+        /* -------------------- RESET + BASE (mobile first) - consistent with previous file -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f2e9f0;
+            color: #2d2a3b;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -25px #3f2e4b;
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #5e3c7e, #9e4f7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            word-break: break-word;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            color: #67437e;
+            border-left: 10px solid #d897c4;
+            padding-left: 1.2rem;
+            margin: 2rem 0 1.5rem;
+            line-height: 1.2;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            color: #67437e;
+            margin: 1.8rem 0 1rem;
+            border-bottom: 2px dashed #cb99c2;
+            padding-bottom: 0.5rem;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 3.5vw, 1.4rem);
+            color: #76548c;
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        .block-badge {
+            background: #7c5295;
+            color: white;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 500;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .subhead {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            color: #76548c;
+            border-left: 8px solid #c67fb0;
+            padding-left: 1.2rem;
+            margin: 0.8rem 0 2rem;
+            font-weight: 360;
+        }
+
+        .table-of-contents {
+            background: #f9f1fc;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            margin: 2rem 0;
+            border: 1px solid #dbbde2;
+        }
+
+        .table-of-contents ul {
+            columns: 2;
+            list-style: none;
+        }
+
+        .table-of-contents li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .table-of-contents li::before {
+            content: "✦";
+            color: #9c5fa0;
+            position: absolute;
+            left: 0;
+        }
+
+        pre {
+            background: #fbf3ff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border: 1px solid #dbb2dd;
+            box-shadow: 0 12px 28px -15px #3d2b4b;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f2e4fc;
+            padding: 0.1rem 0.3rem;
+            border-radius: 6px;
+            color: #5b3b73;
+            font-size: 0.95em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #2d2a3b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fcf6ff;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: 0 6px 18px rgba(65, 35, 85, 0.12);
+        }
+
+        th {
+            background: #7c5295;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem 0.8rem;
+            border-bottom: 1px solid #dbbde2;
+            background: #fcf6ff;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #eed2f0, #fcf4ff, #eed2f0);
+            margin: 2rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 1.2rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .note-box {
+            background: #f0e1fc;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            border-left: 8px solid #8b5fa0;
+            margin: 1.5rem 0;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            color: #59417a;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        @media (max-width: 680px) {
+            .table-of-contents ul {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>COMPREHENSIVE NOTE: CONTROL FLOW - LOOPS IN JAVASCRIPT</h1>
+        <div class="block-badge">Mastering Code Repetition: for, while, break, and continue</div>
+        <div class="subhead">block four · loops · iteration · control flow</div>
+
+        <hr>
+
+        <h2>TABLE OF CONTENTS</h2>
+        <div class="table-of-contents">
+            <ul>
+                <li>1. Introduction to Loops</li>
+                <li>2. The `for` Loop</li>
+                <li> - Syntax and Structure</li>
+                <li> - Execution Flow</li>
+                <li> - Variations and Patterns</li>
+                <li> - Common Use Cases</li>
+                <li> - Nested for Loops</li>
+                <li>3. The `while` Loop</li>
+                <li> - Syntax and Structure</li>
+                <li> - Execution Flow</li>
+                <li> - When to Use while vs for</li>
+                <li> - Common Use Cases</li>
+                <li>4. The `do...while` Loop</li>
+                <li> - Syntax and Structure</li>
+                <li> - Key Differences from while</li>
+                <li>5. Loop Control Statements</li>
+                <li> - The `break` Statement</li>
+                <li> - The `continue` Statement</li>
+                <li> - Labeled Statements for Nested Loops</li>
+                <li>6. Advanced Loop Patterns</li>
+                <li> - Infinite Loops</li>
+                <li> - Looping Through Arrays</li>
+                <li> - Looping Through Objects</li>
+                <li> - Performance Considerations</li>
+                <li>7. Common Pitfalls and Best Practices</li>
+                <li>8. Real-World Examples and Applications</li>
+                <li>9. Practice Exercises</li>
+                <li>10. Summary and Quick Reference</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>1. INTRODUCTION TO LOOPS</h2>
+
+        <h3>What are Loops?</h3>
+        <p>Loops are fundamental control structures in programming that allow you to execute a block of code repeatedly
+            based on a specified condition. Instead of writing the same code multiple times, loops enable automation and
+            efficiency.</p>
+
+        <h3>Why Do We Need Loops?</h3>
+        <pre><code>// WITHOUT a loop (inefficient)
+console.log("Day 1");
+console.log("Day 2");
+console.log("Day 3");
+// ... imagine writing this 365 times!
+
+// WITH a loop (efficient)
+for (let day = 1; day <= 365; day++) {
+    console.log(`Day ${day}`);
+}</code></pre>
+
+        <h3>Types of Loops in JavaScript</h3>
+        <p>JavaScript provides several loop types:<br>
+            1. <strong>`for` loop</strong> - When you know how many times to repeat<br>
+            2. <strong>`while` loop</strong> - When you don't know how many times to repeat<br>
+            3. <strong>`do...while` loop</strong> - When you need to execute at least once<br>
+            4. <strong>`for...in` loop</strong> - For iterating over object properties<br>
+            5. <strong>`for...of` loop</strong> - For iterating over iterable objects (ES6+)</p>
+        <p>This note focuses on <code>for</code> and <code>while</code> loops, along with <code>break</code> and
+            <code>continue</code> statements.
+        </p>
+
+        <hr>
+
+        <h2>2. THE `for` LOOP</h2>
+
+        <h3>2.1 Syntax and Structure</h3>
+        <pre><code>for (initialization; condition; increment/decrement) {
+    // code block to be executed
+}</code></pre>
+        <p><strong>Components Explained:</strong><br>
+            - <strong>Initialization</strong>: Executed once before the loop starts (usually declares a counter
+            variable)<br>
+            - <strong>Condition</strong>: Evaluated before each iteration; if <code>true</code>, the loop continues; if
+            <code>false</code>, the loop stops<br>
+            - <strong>Increment/Decrement</strong>: Executed after each iteration (updates the counter)
+        </p>
+
+        <h3>2.2 Execution Flow Diagram</h3>
+        <pre><code>START
+  |
+  V
+[Initialization]  ←─── Once at the beginning
+  |
+  V
+[Condition] ──False──→ [Exit Loop]
+  |                       |
+ True                     V
+  |                    (Loop ends)
+  V
+[Loop Body]
+  |
+  V
+[Increment/Decrement]
+  |
+  └─────────→ Back to Condition</code></pre>
+
+        <h3>2.3 Basic Examples</h3>
+        <p><strong>Example 1: Counting from 1 to 5</strong></p>
+        <pre><code>for (let i = 1; i <= 5; i++) {
+    console.log(i);
+}
+// Output: 1, 2, 3, 4, 5</code></pre>
+        <p><strong>Example 2: Counting down from 5 to 1</strong></p>
+        <pre><code>for (let i = 5; i >= 1; i--) {
+    console.log(i);
+}
+// Output: 5, 4, 3, 2, 1</code></pre>
+        <p><strong>Example 3: Stepping by 2</strong></p>
+        <pre><code>for (let i = 0; i <= 10; i += 2) {
+    console.log(i);
+}
+// Output: 0, 2, 4, 6, 8, 10</code></pre>
+
+        <h3>2.4 Variations and Patterns</h3>
+
+        <h4>Multiple Variables in Initialization</h4>
+        <pre><code>for (let i = 0, j = 10; i < j; i++, j--) {
+    console.log(`i: ${i}, j: ${j}`);
+}
+// Output:
+// i: 0, j: 10
+// i: 1, j: 9
+// i: 2, j: 8
+// i: 3, j: 7
+// i: 4, j: 6</code></pre>
+
+        <h4>Empty Statements (All Optional)</h4>
+        <pre><code>// All three parts are optional, but semicolons are required
+let i = 0;
+for (; i < 5; ) {
+    console.log(i);
+    i++;
+}
+// Output: 0, 1, 2, 3, 4</code></pre>
+
+        <h4>Infinite for Loop (Use with caution!)</h4>
+        <pre><code>// This will run forever - always ensure there's a way to exit
+for (;;) {
+    console.log("This will run forever!");
+    // Must have a break condition inside
+    if (someCondition) break;
+}</code></pre>
+
+        <h3>2.5 Common Use Cases</h3>
+
+        <h4>Summing Numbers</h4>
+        <pre><code>// Calculate sum of first 10 natural numbers
+let sum = 0;
+for (let i = 1; i <= 10; i++) {
+    sum += i;
+}
+console.log(`Sum: ${sum}`); // Output: Sum: 55</code></pre>
+
+        <h4>Factorial Calculation</h4>
+        <pre><code>function factorial(n) {
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+console.log(factorial(5)); // Output: 120</code></pre>
+
+        <h4>Finding Maximum in Array</h4>
+        <pre><code>const numbers = [45, 78, 12, 90, 34, 67];
+let max = numbers[0];
+
+for (let i = 1; i < numbers.length; i++) {
+    if (numbers[i] > max) {
+        max = numbers[i];
+    }
+}
+console.log(`Maximum: ${max}`); // Output: Maximum: 90</code></pre>
+
+        <h3>2.6 Nested for Loops</h3>
+
+        <h4>Multiplication Table</h4>
+        <pre><code>// Generate multiplication table up to 5x5
+for (let i = 1; i <= 5; i++) {
+    let row = "";
+    for (let j = 1; j <= 5; j++) {
+        row += (i * j).toString().padStart(4, " ");
+    }
+    console.log(row);
+}
+// Output:
+//    1    2    3    4    5
+//    2    4    6    8   10
+//    3    6    9   12   15
+//    4    8   12   16   20
+//    5   10   15   20   25</code></pre>
+
+        <h4>Pattern Printing</h4>
+        <pre><code>// Print a right-angled triangle
+for (let i = 1; i <= 5; i++) {
+    let pattern = "";
+    for (let j = 1; j <= i; j++) {
+        pattern += "* ";
+    }
+    console.log(pattern);
+}
+// Output:
+// *
+// * *
+// * * *
+// * * * *
+// * * * * *</code></pre>
+
+        <h4>2D Array Traversal</h4>
+        <pre><code>const matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[i].length; j++) {
+        console.log(`Element at [${i}][${j}]: ${matrix[i][j]}`);
+    }
+}</code></pre>
+
+        <hr>
+
+        <h2>3. THE `while` LOOP</h2>
+
+        <h3>3.1 Syntax and Structure</h3>
+        <pre><code>while (condition) {
+    // code block to be executed
+    // Update the condition variable to avoid infinite loop
+}</code></pre>
+
+        <h3>3.2 Execution Flow Diagram</h3>
+        <pre><code>      START
+        |
+        V
+   [Condition] ──False──→ [Exit Loop]
+        |                       |
+       True                      V
+        |                    (Loop ends)
+        V
+   [Loop Body]
+        |
+        V
+   [Update Variable]
+        |
+        └───────→ Back to Condition</code></pre>
+
+        <h3>3.3 Basic Examples</h3>
+        <p><strong>Example 1: Count from 1 to 5</strong></p>
+        <pre><code>let count = 1;
+while (count <= 5) {
+    console.log(count);
+    count++;
+}
+// Output: 1, 2, 3, 4, 5</code></pre>
+        <p><strong>Example 2: User Input Validation</strong></p>
+        <pre><code>let userInput = "";
+while (userInput !== "yes" && userInput !== "no") {
+    userInput = prompt("Please enter 'yes' or 'no':");
+}
+console.log(`You entered: ${userInput}`);</code></pre>
+        <p><strong>Example 3: Halving until less than 1</strong></p>
+        <pre><code>let number = 100;
+while (number > 1) {
+    console.log(number);
+    number /= 2;
+}
+// Output: 100, 50, 25, 12.5, 6.25, 3.125, 1.5625</code></pre>
+
+        <h3>3.4 When to Use while vs for</h3>
+        <table>
+            <tr>
+                <th>Scenario</th>
+                <th>Use for Loop</th>
+                <th>Use while Loop</th>
+            </tr>
+            <tr>
+                <td>Known number of iterations</td>
+                <td>✓</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Unknown number of iterations</td>
+                <td></td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Counting/index-based</td>
+                <td>✓</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Condition-based (e.g., user input)</td>
+                <td></td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Array traversal</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Reading file until EOF</td>
+                <td></td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>Game loop</td>
+                <td></td>
+                <td>✓</td>
+            </tr>
+        </table>
+
+        <h3>3.5 Common Use Cases</h3>
+
+        <h4>Finding First Number Divisible by Both 3 and 7</h4>
+        <pre><code>let number = 1;
+while (true) {
+    if (number % 3 === 0 && number % 7 === 0) {
+        console.log(`Found: ${number}`);
+        break;
+    }
+    number++;
+}
+// Output: Found: 21</code></pre>
+
+        <h4>Calculating Compound Interest Until Target is Reached</h4>
+        <pre><code>let principal = 1000;
+let rate = 0.05; // 5% annual interest
+let target = 2000;
+let years = 0;
+
+while (principal < target) {
+    principal += principal * rate;
+    years++;
+}
+
+console.log(`It will take ${years} years to reach $${target}`);</code></pre>
+
+        <h4>Processing Queue</h4>
+        <pre><code>let queue = ["task1", "task2", "task3", "task4"];
+
+while (queue.length > 0) {
+    let currentTask = queue.shift();
+    console.log(`Processing: ${currentTask}`);
+    // Simulate some processing
+}</code></pre>
+
+        <hr>
+
+        <h2>4. THE `do...while` LOOP</h2>
+
+        <h3>4.1 Syntax and Structure</h3>
+        <pre><code>do {
+    // code block to be executed at least once
+} while (condition);</code></pre>
+
+        <h3>4.2 Key Differences from while</h3>
+        <p>The <strong>main difference</strong> is that <code>do...while</code> executes the code block <strong>at least
+                once</strong> before checking the condition.</p>
+        <pre><code>// while loop - may never execute
+let x = 10;
+while (x < 5) {
+    console.log("This will never print");
+    x++;
+}
+
+// do...while - executes at least once
+let y = 10;
+do {
+    console.log("This will print once"); // Output: This will print once
+    y++;
+} while (y < 5);</code></pre>
+
+        <h3>4.3 Practical Examples</h3>
+
+        <h4>Menu System</h4>
+        <pre><code>let choice;
+do {
+    choice = prompt(
+        "Menu:\n1. Start Game\n2. Settings\n3. High Scores\n4. Exit\nChoose an option:"
+    );
+    
+    switch(choice) {
+        case "1":
+            console.log("Starting game...");
+            break;
+        case "2":
+            console.log("Opening settings...");
+            break;
+        case "3":
+            console.log("Showing high scores...");
+            break;
+        case "4":
+            console.log("Exiting...");
+            break;
+        default:
+            console.log("Invalid option!");
+    }
+} while (choice !== "4");</code></pre>
+
+        <h4>Number Guessing Game</h4>
+        <pre><code>const secretNumber = Math.floor(Math.random() * 10) + 1;
+let guess;
+let attempts = 0;
+
+do {
+    guess = parseInt(prompt("Guess a number between 1 and 10:"));
+    attempts++;
+    
+    if (guess > secretNumber) {
+        console.log("Too high!");
+    } else if (guess < secretNumber) {
+        console.log("Too low!");
+    }
+} while (guess !== secretNumber);
+
+console.log(`Correct! It took you ${attempts} attempts.`);</code></pre>
+
+        <hr>
+
+        <h2>5. LOOP CONTROL STATEMENTS</h2>
+
+        <h3>5.1 The `break` Statement</h3>
+        <p>The <code>break</code> statement <strong>terminates the current loop</strong> immediately and transfers
+            control to the statement following the loop.</p>
+
+        <h4>Basic break Example</h4>
+        <pre><code>// Find the first number greater than 50 that's divisible by 7
+for (let i = 1; i <= 100; i++) {
+    if (i > 50 && i % 7 === 0) {
+        console.log(`Found: ${i}`);
+        break; // Exit the loop immediately
+    }
+}
+// Output: Found: 56</code></pre>
+
+        <h4>break in while Loop</h4>
+        <pre><code>// Search in an array
+const fruits = ["apple", "banana", "orange", "grape", "mango"];
+let searchFor = "orange";
+let index = 0;
+
+while (index < fruits.length) {
+    if (fruits[index] === searchFor) {
+        console.log(`Found ${searchFor} at position ${index}`);
+        break;
+    }
+    index++;
+}
+// Output: Found orange at position 2</code></pre>
+
+        <h4>break in Nested Loops</h4>
+        <pre><code>// break only exits the innermost loop
+for (let i = 0; i < 3; i++) {
+    console.log(`Outer loop: i = ${i}`);
+    for (let j = 0; j < 3; j++) {
+        if (i === 1 && j === 1) {
+            console.log("  Breaking inner loop");
+            break; // Only breaks the inner for loop
+        }
+        console.log(`  Inner loop: j = ${j}`);
+    }
+}</code></pre>
+
+        <h3>5.2 The `continue` Statement</h3>
+        <p>The <code>continue</code> statement <strong>skips the rest of the current iteration</strong> and jumps to the
+            next iteration of the loop.</p>
+
+        <h4>Basic continue Example</h4>
+        <pre><code>// Print only odd numbers from 1 to 10
+for (let i = 1; i <= 10; i++) {
+    if (i % 2 === 0) {
+        continue; // Skip even numbers
+    }
+    console.log(i);
+}
+// Output: 1, 3, 5, 7, 9</code></pre>
+
+        <h4>continue in while Loop</h4>
+        <pre><code>// Process only valid items
+let items = ["apple", "", "banana", null, "orange", undefined, "grape"];
+let i = 0;
+
+while (i < items.length) {
+    if (!items[i]) { // Skip null, undefined, empty strings
+        i++;
+        continue;
+    }
+    console.log(`Processing: ${items[i]}`);
+    i++;
+}
+// Output: Processing: apple, Processing: banana, Processing: orange, Processing: grape</code></pre>
+
+        <h4>continue in Nested Loops</h4>
+        <pre><code>// Print a pattern skipping certain positions
+for (let i = 1; i <= 5; i++) {
+    let line = "";
+    for (let j = 1; j <= 5; j++) {
+        if (i === j) {
+            continue; // Skip diagonal elements
+        }
+        line += `${i},${j} `;
+    }
+    console.log(line);
+}</code></pre>
+
+        <h3>5.3 Labeled Statements for Nested Loops</h3>
+        <p>Labels allow you to <code>break</code> or <code>continue</code> to a specific outer loop.</p>
+
+        <h4>Breaking to Outer Loop</h4>
+        <pre><code>outerLoop: for (let i = 0; i < 3; i++) {
+    console.log(`Outer: ${i}`);
+    for (let j = 0; j < 3; j++) {
+        if (i === 1 && j === 1) {
+            console.log("  Breaking to outer loop");
+            break outerLoop; // Exits both loops
+        }
+        console.log(`  Inner: ${j}`);
+    }
+}
+// Output:
+// Outer: 0
+//   Inner: 0
+//   Inner: 1
+//   Inner: 2
+// Outer: 1
+//   Inner: 0
+//   Inner: 1
+//   Breaking to outer loop</code></pre>
+
+        <h4>Continue with Labels</h4>
+        <pre><code>outerLoop: for (let i = 0; i < 3; i++) {
+    console.log(`Week ${i + 1}:`);
+    for (let j = 0; j < 7; j++) {
+        if (j === 5 || j === 6) {
+            continue outerLoop; // Skip weekends entirely
+        }
+        console.log(`  Day ${j + 1}: Study`);
+    }
+}
+// Output:
+// Week 1:
+//   Day 1: Study
+//   Day 2: Study
+//   Day 3: Study
+//   Day 4: Study
+//   Day 5: Study
+// Week 2:
+//   Day 1: Study
+//   Day 2: Study
+//   ... (and so on, skipping weekends)</code></pre>
+
+        <hr>
+
+        <h2>6. ADVANCED LOOP PATTERNS</h2>
+
+        <h3>6.1 Infinite Loops</h3>
+
+        <h4>Creating Infinite Loops</h4>
+        <pre><code>// for loop infinite
+for (;;) {
+    console.log("This runs forever...");
+    if (Math.random() > 0.9) break; // Random exit condition
+}
+
+// while loop infinite
+while (true) {
+    let userInput = prompt("Enter 'quit' to exit:");
+    if (userInput === "quit") break;
+}</code></pre>
+
+        <h4>Real-World Example: Server Listening</h4>
+        <pre><code>// Simulating a server that runs forever
+function startServer() {
+    let requestCount = 0;
+    console.log("Server started. Listening for requests...");
+    
+    while (true) {
+        // Simulate waiting for a request
+        let request = simulateIncomingRequest();
+        requestCount++;
+        
+        if (request === "SHUTDOWN") {
+            console.log("Shutdown signal received. Stopping server...");
+            break;
+        }
+        
+        processRequest(request);
+        
+        if (requestCount % 100 === 0) {
+            console.log(`Processed ${requestCount} requests`);
+        }
+    }
+}</code></pre>
+
+        <h3>6.2 Looping Through Arrays</h3>
+
+        <h4>Traditional for Loop</h4>
+        <pre><code>const colors = ["red", "green", "blue", "yellow"];
+
+for (let i = 0; i < colors.length; i++) {
+    console.log(`Color ${i + 1}: ${colors[i]}`);
+}</code></pre>
+
+        <h4>for...of Loop (ES6)</h4>
+        <pre><code>const colors = ["red", "green", "blue", "yellow"];
+
+for (const color of colors) {
+    console.log(`Color: ${color}`);
+}</code></pre>
+
+        <h4>forEach Method</h4>
+        <pre><code>const colors = ["red", "green", "blue", "yellow"];
+
+colors.forEach((color, index) => {
+    console.log(`Color ${index + 1}: ${color}`);
+});</code></pre>
+
+        <h3>6.3 Looping Through Objects</h3>
+
+        <h4>for...in Loop</h4>
+        <pre><code>const person = {
+    name: "John",
+    age: 30,
+    city: "New York",
+    occupation: "Developer"
+};
+
+for (let key in person) {
+    console.log(`${key}: ${person[key]}`);
+}
+// Output:
+// name: John
+// age: 30
+// city: New York
+// occupation: Developer</code></pre>
+
+        <h4>Combining Object.keys() with for Loop</h4>
+        <pre><code>const person = {
+    name: "John",
+    age: 30,
+    city: "New York"
+};
+
+const keys = Object.keys(person);
+for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    console.log(`${key}: ${person[key]}`);
+}</code></pre>
+
+        <h4>Object.entries() with for...of</h4>
+        <pre><code>const person = {
+    name: "John",
+    age: 30,
+    city: "New York"
+};
+
+for (const [key, value] of Object.entries(person)) {
+    console.log(`${key}: ${value}`);
+}</code></pre>
+
+        <h3>6.4 Performance Considerations</h3>
+
+        <h4>Loop Performance Comparison</h4>
+        <pre><code>// Test data
+const largeArray = new Array(1000000).fill(0).map((_, i) => i);
+
+// Method 1: Standard for loop (fastest)
+console.time("Standard for");
+for (let i = 0; i < largeArray.length; i++) {
+    let item = largeArray[i];
+}
+console.timeEnd("Standard for");
+
+// Method 2: for...of loop
+console.time("for...of");
+for (const item of largeArray) {
+    let current = item;
+}
+console.timeEnd("for...of");
+
+// Method 3: forEach
+console.time("forEach");
+largeArray.forEach(item => {
+    let current = item;
+});
+console.timeEnd("forEach");</code></pre>
+
+        <h4>Optimization Tips</h4>
+        <pre><code>// BAD: Calculating length on each iteration
+for (let i = 0; i < array.length; i++) { }
+
+// GOOD: Cache the length
+for (let i = 0, len = array.length; i < len; i++) { }
+
+// BAD: Creating functions inside loop
+for (let i = 0; i < 1000; i++) {
+    setTimeout(() => console.log(i), 1000); // Creates 1000 functions
+}
+
+// GOOD: Define function outside
+function logNumber(num) {
+    console.log(num);
+}
+for (let i = 0; i < 1000; i++) {
+    setTimeout(logNumber, 1000, i);
+}</code></pre>
+
+        <hr>
+
+        <h2>7. COMMON PITFALLS AND BEST PRACTICES</h2>
+
+        <h3>7.1 Common Mistakes</h3>
+
+        <h4>Off-by-One Errors</h4>
+        <pre><code>// WRONG: Using <= instead of <
+let numbers = [10, 20, 30, 40];
+for (let i = 0; i <= numbers.length; i++) {
+    console.log(numbers[i]); // Last iteration prints undefined
+}
+
+// CORRECT
+for (let i = 0; i < numbers.length; i++) {
+    console.log(numbers[i]);
+}</code></pre>
+
+        <h4>Infinite Loops</h4>
+        <pre><code>// WRONG: Forgetting to increment
+let i = 0;
+while (i < 10) {
+    console.log(i);
+    // Missing i++
+}
+
+// WRONG: Condition never becomes false
+for (let i = 10; i > 0; i++) { // Should be i--
+    console.log(i);
+}</code></pre>
+
+        <h4>Modifying Array While Iterating</h4>
+        <pre><code>// Problematic: Removing items while iterating
+let fruits = ["apple", "banana", "orange", "grape"];
+for (let i = 0; i < fruits.length; i++) {
+    if (fruits[i] === "banana") {
+        fruits.splice(i, 1); // Removes banana
+        // Now the array shifts, skipping "orange"
+    }
+}
+console.log(fruits); // ["apple", "orange", "grape"]
+
+// Solution: Iterate backwards
+for (let i = fruits.length - 1; i >= 0; i--) {
+    if (fruits[i] === "orange") {
+        fruits.splice(i, 1);
+    }
+}</code></pre>
+
+        <h4>Using var Instead of let in Loops</h4>
+        <pre><code>// Problem with var
+for (var i = 0; i < 5; i++) {
+    setTimeout(() => console.log(i), 1000); // Prints 5, 5, 5, 5, 5
+}
+
+// Solution with let
+for (let j = 0; j < 5; j++) {
+    setTimeout(() => console.log(j), 1000); // Prints 0, 1, 2, 3, 4
+}</code></pre>
+
+        <h3>7.2 Best Practices</h3>
+
+        <h4>Choose the Right Loop</h4>
+        <pre><code>// Use for when you know the number of iterations
+for (let i = 0; i < 10; i++) {
+    processItem(i);
+}
+
+// Use while when condition-based
+let data = getData();
+while (data) {
+    processData(data);
+    data = getData();
+}
+
+// Use do...while when you need at least one execution
+let userChoice;
+do {
+    userChoice = getUserInput();
+} while (!isValid(userChoice));</code></pre>
+
+        <h4>Keep Loops Simple and Focused</h4>
+        <pre><code>// BAD: Too much happening in one loop
+for (let i = 0; i < users.length; i++) {
+    // Validate
+    // Process
+    // Save to database
+    // Send email
+    // Log activity
+}
+
+// GOOD: Break into multiple loops or functions
+for (let i = 0; i < users.length; i++) {
+    validateUser(users[i]);
+}
+for (let i = 0; i < users.length; i++) {
+    processUser(users[i]);
+}</code></pre>
+
+        <h4>Use Descriptive Variable Names</h4>
+        <pre><code>// BAD
+for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < a[i].length; j++) {
+        // What are i and j?
+    }
+}
+
+// GOOD
+for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+        console.log(`Value at [${row}][${col}]: ${matrix[row][col]}`);
+    }
+}</code></pre>
+
+        <h4>Limit break and continue Usage</h4>
+        <pre><code>// HARD TO READ: Multiple breaks and continues
+for (let i = 0; i < data.length; i++) {
+    if (data[i].isInvalid) continue;
+    if (data[i].isProcessed) continue;
+    if (data[i].isSpecial) {
+        processSpecial(data[i]);
+        if (shouldStop) break;
+        continue;
+    }
+    processNormal(data[i]);
+    if (isComplete) break;
+}
+
+// EASIER TO READ: Restructure logic
+for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    
+    if (shouldProcessItem(item)) {
+        processItem(item);
+    }
+    
+    if (shouldStopProcessing(item)) {
+        break;
+    }
+}</code></pre>
+
+        <hr>
+
+        <h2>8. REAL-WORLD EXAMPLES AND APPLICATIONS</h2>
+
+        <h3>Example 1: Data Validation and Cleaning</h3>
+        <pre><code>/**
+ * Clean and validate user data from a form
+ */
+function cleanUserData(users) {
+    const cleanedUsers = [];
+    
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i];
+        
+        // Skip invalid entries
+        if (!user || typeof user !== 'object') {
+            console.log(`Skipping invalid entry at index ${i}`);
+            continue;
+        }
+        
+        // Validate required fields
+        if (!user.email || !user.email.includes('@')) {
+            console.log(`User ${i} has invalid email, skipping`);
+            continue;
+        }
+        
+        if (!user.age || user.age < 18 || user.age > 120) {
+            console.log(`User ${i} has invalid age, skipping`);
+            continue;
+        }
+        
+        // Clean the data
+        const cleanedUser = {
+            email: user.email.toLowerCase().trim(),
+            age: Math.floor(user.age),
+            name: user.name ? user.name.trim() : 'Anonymous',
+            joinDate: user.joinDate || new Date().toISOString()
+        };
+        
+        cleanedUsers.push(cleanedUser);
+        
+        // Stop if we have enough valid users
+        if (cleanedUsers.length >= 100) {
+            console.log("Reached maximum valid users");
+            break;
+        }
+    }
+    
+    return cleanedUsers;
+}
+
+// Usage
+const rawUsers = [
+    { email: "JOHN@EXAMPLE.COM", age: 25, name: "John " },
+    { email: "invalid-email", age: 30 },
+    null,
+    { email: "jane@example.com", age: 17, name: "Jane" },
+    { email: "bob@example.com", age: 150, name: "Bob" },
+    { email: "alice@example.com", age: 28, name: "Alice" }
+];
+
+const validUsers = cleanUserData(rawUsers);
+console.log(validUsers);</code></pre>
+
+        <h3>Example 2: Pagination Implementation</h3>
+        <pre><code>/**
+ * Simulate fetching paginated data from an API
+ */
+async function fetchAllPages(baseUrl, maxPages = 10) {
+    let allData = [];
+    let page = 1;
+    let hasMorePages = true;
+    
+    while (hasMorePages && page <= maxPages) {
+        try {
+            console.log(`Fetching page ${page}...`);
+            
+            // Simulate API call
+            const response = await fetch(`${baseUrl}?page=${page}&limit=50`);
+            const data = await response.json();
+            
+            if (!data.items || data.items.length === 0) {
+                console.log("No more items found");
+                hasMorePages = false;
+                break;
+            }
+            
+            allData = [...allData, ...data.items];
+            
+            // Check if we've reached the end
+            if (data.items.length < 50 || data.isLastPage) {
+                console.log("Reached last page");
+                hasMorePages = false;
+            }
+            
+            page++;
+            
+            // Rate limiting - don't overwhelm the server
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+        } catch (error) {
+            console.error(`Error fetching page ${page}:`, error);
+            // Retry logic
+            if (page < maxPages) {
+                console.log("Retrying in 5 seconds...");
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                continue;
+            } else {
+                break;
+            }
+        }
+    }
+    
+    return allData;
+}
+
+// Usage (conceptual)
+// const allUsers = await fetchAllPages('https://api.example.com/users');</code></pre>
+
+        <h3>Example 3: Game Loop with Collision Detection</h3>
+        <pre><code>/**
+ * Simple game loop with collision detection
+ */
+class Game {
+    constructor() {
+        this.players = [];
+        this.enemies = [];
+        this.bullets = [];
+        this.gameOver = false;
+        this.score = 0;
+    }
+    
+    update() {
+        // Update player positions based on input
+        for (let i = 0; i < this.players.length; i++) {
+            this.players[i].update();
+        }
+        
+        // Update enemy positions
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].update();
+            
+            // Remove enemies that are off-screen
+            if (this.enemies[i].isOffScreen()) {
+                this.enemies.splice(i, 1);
+                i--; // Adjust index after removal
+                continue;
+            }
+        }
+        
+        // Update bullets
+        for (let i = 0; i < this.bullets.length; i++) {
+            this.bullets[i].update();
+            
+            // Check bullet-enemy collisions
+            let bullet = this.bullets[i];
+            let bulletHit = false;
+            
+            for (let j = 0; j < this.enemies.length; j++) {
+                if (this.checkCollision(bullet, this.enemies[j])) {
+                    // Enemy hit!
+                    this.score += 10;
+                    this.enemies.splice(j, 1);
+                    bulletHit = true;
+                    break; // Bullet can only hit one enemy
+                }
+            }
+            
+            if (bulletHit || bullet.isOffScreen()) {
+                this.bullets.splice(i, 1);
+                i--; // Adjust index after removal
+            }
+        }
+        
+        // Check player-enemy collisions
+        for (let i = 0; i < this.players.length; i++) {
+            for (let j = 0; j < this.enemies.length; j++) {
+                if (this.checkCollision(this.players[i], this.enemies[j])) {
+                    this.gameOver = true;
+                    console.log("Game Over! Final score:", this.score);
+                    return; // Exit the update loop immediately
+                }
+            }
+        }
+    }
+    
+    checkCollision(obj1, obj2) {
+        // Simple bounding box collision detection
+        return !(obj2.x > obj1.x + obj1.width ||
+                 obj2.x + obj2.width < obj1.x ||
+                 obj2.y > obj1.y + obj1.height ||
+                 obj2.y + obj2.height < obj1.y);
+    }
+}</code></pre>
+
+        <h3>Example 4: Text Processing - Word Frequency Counter</h3>
+        <pre><code>/**
+ * Count word frequency in a large text
+ */
+function countWordFrequency(text) {
+    const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+    const frequency = {};
+    
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        
+        // Skip very short words
+        if (word.length < 3) {
+            continue;
+        }
+        
+        // Skip common stop words
+        const stopWords = ['the', 'and', 'for', 'that', 'this', 'with'];
+        if (stopWords.includes(word)) {
+            continue;
+        }
+        
+        // Increment frequency
+        frequency[word] = (frequency[word] || 0) + 1;
+    }
+    
+    return frequency;
+}
+
+/**
+ * Get top N most frequent words
+ */
+function getTopWords(frequency, n = 10) {
+    const words = Object.keys(frequency);
+    
+    // Simple bubble sort (not efficient for large datasets)
+    for (let i = 0; i < words.length - 1; i++) {
+        for (let j = 0; j < words.length - i - 1; j++) {
+            if (frequency[words[j]] < frequency[words[j + 1]]) {
+                // Swap
+                [words[j], words[j + 1]] = [words[j + 1], words[j]];
+            }
+        }
+    }
+    
+    return words.slice(0, n).map(word => ({
+        word,
+        count: frequency[word]
+    }));
+}
+
+// Usage
+const sampleText = "The quick brown fox jumps over the lazy dog. The dog barks at the fox.";
+const frequency = countWordFrequency(sampleText);
+const topWords = getTopWords(frequency, 5);
+console.log("Top words:", topWords);</code></pre>
+
+        <hr>
+
+        <h2>9. PRACTICE EXERCISES</h2>
+
+        <h3>Exercise 1: FizzBuzz</h3>
+        <p>Write a program that prints numbers from 1 to 100. For multiples of 3, print "Fizz" instead of the number.
+            For multiples of 5, print "Buzz". For numbers that are multiples of both 3 and 5, print "FizzBuzz".</p>
+        <pre><code>// Your solution here
+for (let i = 1; i <= 100; i++) {
+    // Implement FizzBuzz logic
+}</code></pre>
+
+        <h3>Exercise 2: Prime Number Finder</h3>
+        <p>Find all prime numbers between 1 and 100 using nested loops.</p>
+        <pre><code>function findPrimes(limit) {
+    const primes = [];
+    
+    // Your code here
+    
+    return primes;
+}</code></pre>
+
+        <h3>Exercise 3: Pattern Printing</h3>
+        <p>Print the following pattern using nested loops:</p>
+        <pre><code>1
+1 2
+1 2 3
+1 2 3 4
+1 2 3 4 5</code></pre>
+
+        <h3>Exercise 4: Array Manipulation</h3>
+        <p>Given an array of numbers, remove all duplicates using a loop and <code>continue</code>.</p>
+        <pre><code>const numbers = [1, 2, 3, 2, 4, 3, 5, 1, 6];
+// Expected output: [1, 2, 3, 4, 5, 6]</code></pre>
+
+        <h3>Exercise 5: Guessing Game with Limits</h3>
+        <p>Create a number guessing game where the user has 5 attempts. Use <code>break</code> when they guess correctly
+            and track attempts.</p>
+        <pre><code>const secretNumber = Math.floor(Math.random() * 20) + 1;
+let attempts = 0;
+const maxAttempts = 5;
+
+// Your game logic here</code></pre>
+
+        <h3>Exercise 6: Matrix Multiplication</h3>
+        <p>Multiply two 3x3 matrices using nested loops.</p>
+        <pre><code>const matrixA = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+const matrixB = [
+    [9, 8, 7],
+    [6, 5, 4],
+    [3, 2, 1]
+];
+
+// Calculate matrixC = matrixA * matrixB</code></pre>
+
+        <h3>Exercise 7: Text Animation</h3>
+        <p>Create a loading animation using loops and <code>setTimeout</code>.</p>
+        <pre><code>function loadingAnimation() {
+    const frames = ['|', '/', '-', '\\'];
+    let i = 0;
+    
+    // Your animation code here
+}
+
+loadingAnimation();</code></pre>
+
+        <h3>Exercise 8: Data Validation Loop</h3>
+        <p>Write a program that continuously asks the user for a password until they enter a valid one.
+            Requirements:<br>
+            - At least 8 characters<br>
+            - Contains at least one number<br>
+            - Contains at least one uppercase letter<br>
+            Use <code>break</code> when valid, and provide feedback for invalid attempts.</p>
+
+        <hr>
+
+        <h2>10. SUMMARY AND QUICK REFERENCE</h2>
+
+        <h3>Loop Types Quick Reference</h3>
+        <table>
+            <tr>
+                <th>Loop Type</th>
+                <th>Syntax</th>
+                <th>When to Use</th>
+            </tr>
+            <tr>
+                <td><code>for</code></td>
+                <td><code>for (init; cond; inc) { }</code></td>
+                <td>Known number of iterations</td>
+            </tr>
+            <tr>
+                <td><code>while</code></td>
+                <td><code>while (cond) { }</code></td>
+                <td>Unknown iterations, condition-based</td>
+            </tr>
+            <tr>
+                <td><code>do...while</code></td>
+                <td><code>do { } while (cond);</code></td>
+                <td>Must execute at least once</td>
+            </tr>
+            <tr>
+                <td><code>for...in</code></td>
+                <td><code>for (key in obj) { }</code></td>
+                <td>Iterating object properties</td>
+            </tr>
+            <tr>
+                <td><code>for...of</code></td>
+                <td><code>for (item of iterable) { }</code></td>
+                <td>Iterating arrays, strings, etc.</td>
+            </tr>
+        </table>
+
+        <h3>Control Statements Quick Reference</h3>
+        <table>
+            <tr>
+                <th>Statement</th>
+                <th>Effect</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><code>break</code></td>
+                <td>Exits the current loop</td>
+                <td><code>if (found) break;</code></td>
+            </tr>
+            <tr>
+                <td><code>continue</code></td>
+                <td>Skips to next iteration</td>
+                <td><code>if (invalid) continue;</code></td>
+            </tr>
+            <tr>
+                <td><code>break label</code></td>
+                <td>Exits labeled loop</td>
+                <td><code>break outerLoop;</code></td>
+            </tr>
+            <tr>
+                <td><code>continue label</code></td>
+                <td>Continues labeled loop</td>
+                <td><code>continue outerLoop;</code></td>
+            </tr>
+        </table>
+
+        <h3>Common Patterns Cheat Sheet</h3>
+        <pre><code>// Counting up
+for (let i = 0; i < n; i++) { }
+
+// Counting down
+for (let i = n - 1; i >= 0; i--) { }
+
+// Stepping by 2
+for (let i = 0; i < n; i += 2) { }
+
+// Infinite loop
+while (true) { }
+
+// Loop with early exit
+for (let i = 0; i < n; i++) {
+    if (condition) break;
+}
+
+// Loop skipping items
+for (let i = 0; i < n; i++) {
+    if (skipCondition) continue;
+    // process item
+}
+
+// Nested loops
+for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+        // process matrix[i][j]
+    }
+}
+
+// Array iteration
+for (let i = 0; i < array.length; i++) {
+    const item = array[i];
+}
+
+// Array iteration (modern)
+for (const item of array) { }
+
+// Object iteration
+for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+        const value = object[key];
+    }
+}</code></pre>
+
+        <h3>Performance Tips</h3>
+        <p>1. <strong>Cache array length</strong> in for loops:
+            <code>for (let i = 0, len = arr.length; i < len; i++)</code><br>
+            2. <strong>Use appropriate loop type</strong> for the task<br>
+            3. <strong>Avoid function creation</strong> inside loops<br>
+            4. <strong>Minimize DOM access</strong> inside loops<br>
+            5. <strong>Use <code>break</code> early</strong> when condition is met<br>
+            6. <strong>Consider memory usage</strong> with large loops
+        </p>
+
+        <h3>Common Errors to Avoid</h3>
+        <p>- ❌ Off-by-one errors (using <code>&lt;=</code> instead of <code>&lt;</code>)<br>
+            - ❌ Infinite loops (forgetting to increment)<br>
+            - ❌ Modifying arrays while iterating forward<br>
+            - ❌ Using <code>var</code> in loop counters (use <code>let</code>)<br>
+            - ❌ Unnecessary computations inside loops</p>
+
+        <hr>
+
+        <h2>FINAL THOUGHTS</h2>
+        <p>Loops are one of the most fundamental concepts in programming. Mastering them requires understanding:<br>
+            - <strong>When</strong> to use each type of loop<br>
+            - <strong>How</strong> to control loop execution with <code>break</code> and <code>continue</code><br>
+            - <strong>How</strong> to avoid common pitfalls<br>
+            - <strong>How</strong> to optimize loop performance</p>
+        <p>Practice regularly with different scenarios, and soon loop logic will become second nature. Remember: the
+            best loop is the one that makes your code <strong>clear, maintainable, and efficient</strong> for the
+            specific task at hand.</p>
+        <p>---</p>
+        <p><em>"Loops are like the heartbeat of your program - they keep things running, repeating the essential
+                operations that bring your code to life."</em></p>
+        <p><strong>Happy Coding!</strong> 🚀</p>
+
+        <footer>
+            ⚡ Block 4 – JavaScript Programming Fundamentals · Control Flow · Loops (for, while, break, continue)
+        </footer>
+    </div>
+</body>
+
+</html>

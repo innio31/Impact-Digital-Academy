@@ -184,7 +184,7 @@
     <div class="guide-container">
 
         <!-- MAIN TITLE -->
-        <h1># COMPREHENSIVE GUIDE: STRINGS & TEMPLATE LITERALS IN JAVASCRIPT</h1>
+        <h1>STRINGS & TEMPLATE LITERALS IN JAVASCRIPT</h1>
 
         <!-- TABLE OF CONTENTS -->
         <div class="toc">
@@ -726,7 +726,7 @@ console.log(str.replaceAll("World", "JavaScript")); // "Hello JavaScript, JavaSc
 console.log(str.replaceAll(/World/g, "JavaScript")); // Also works
 
 // Practical: Sanitizing input
-const userInput = "This <script>alert('hack')</script> is dangerous";
+const userInput = "This &lt;script&gt;alert('hack')&lt;/script&gt; is dangerous";
 const safe = userInput.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 console.log(safe); // "This &lt;script&gt;alert('hack')&lt;/script&gt; is dangerous"
 

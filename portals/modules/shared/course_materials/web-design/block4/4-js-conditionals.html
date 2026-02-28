@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONTROL FLOW · CONDITIONALS · complete notes</title>
+    <style>
+        /* minimalist reset – preserve all content, only readability */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f6f2fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1e1a2b;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .document {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -20px #382e44;
+            padding: 2.5rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            color: #2b1b3a;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 14px solid #a96faf;
+            padding-left: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 4px solid #dec5e6;
+            padding-bottom: 0.4rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #4a2f5e;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            color: #5b3e73;
+        }
+
+        hr {
+            margin: 2rem 0;
+            border: 2px dashed #dac0e6;
+        }
+
+        p,
+        li {
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            color: #23202a;
+        }
+
+        pre,
+        code {
+            background: #f0e5fa;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            border-radius: 18px;
+        }
+
+        pre {
+            padding: 1.6rem 2rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: inset 0 0 0 2px white, 0 8px 20px #d3c1df;
+            border: 1px solid #c49fcf;
+            margin: 1.8rem 0;
+        }
+
+        code {
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            background: #eadcf5;
+            color: #2e173c;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            border-radius: 1.6rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px #e1d0ea;
+        }
+
+        th {
+            background: #9569b0;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            font-size: 1.2rem;
+        }
+
+        td {
+            background: #fbf4ff;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #dbbde2;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+            margin: 1.2rem 0;
+        }
+
+        li {
+            margin: 0.6rem 0;
+        }
+
+        .badge {
+            background: #7c5295;
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .toc {
+            background: #f2e5fb;
+            padding: 2rem 2rem;
+            border-radius: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #b889cf;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin: 0.8rem 0;
+            font-size: 1.2rem;
+        }
+
+        .toc li::before {
+            content: "▹";
+            color: #8d61aa;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        hr.sep {
+            border: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #eed2f0, #ffffff, #eed2f0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document">
+
+        <!-- exact title from source -->
+        <h1>CONTROL FLOW: CONDITIONALS IN JAVASCRIPT</h1>
+        <h2>A Comprehensive Guide to Decision-Making in Programming</h2>
+
+        <hr class="sep">
+
+        <!-- TABLE OF CONTENTS (exactly as written) -->
+        <div class="toc">
+            <h2>TABLE OF CONTENTS</h2>
+            <ul>
+                <li>1. <strong>Introduction to Control Flow</strong> - What is Control Flow? - The Importance of
+                    Decision-Making in Code - Boolean Logic and Truthy/Falsy Values</li>
+                <li>2. <strong>The <code>if</code> Statement</strong> - Basic Syntax - How It Works - Practical Examples
+                    - Common Use Cases</li>
+                <li>3. <strong>The <code>else</code> Clause</strong> - Syntax and Structure - Providing Alternatives -
+                    Examples and Applications</li>
+                <li>4. <strong>The <code>else if</code> Ladder</strong> - Handling Multiple Conditions - Syntax and Best
+                    Practices - Real-World Scenarios</li>
+                <li>5. <strong>Nested Conditionals</strong> - When and How to Nest - Potential Pitfalls - Alternatives
+                    to Deep Nesting</li>
+                <li>6. <strong>The Ternary Operator</strong> - Syntax and Structure - When to Use (and When Not to) -
+                    Chaining Ternaries - Comparison with <code>if/else</code></li>
+                <li>7. <strong>Advanced Conditional Patterns</strong> - Switch Statements (Brief Overview) - Logical
+                    Operators for Conditional Execution - Short-Circuit Evaluation - Optional Chaining and Nullish
+                    Coalescing</li>
+                <li>8. <strong>Common Pitfalls and Best Practices</strong> - Debugging Conditionals - Code Readability -
+                    Performance Considerations</li>
+                <li>9. <strong>Practical Projects and Exercises</strong></li>
+                <li>10. <strong>Summary and Reference</strong></li>
+            </ul>
+        </div>
+
+        <!-- every single line, heading, subheading, code block, table preserved exactly -->
+        <h1>1. INTRODUCTION TO CONTROL FLOW</h1>
+        <h2>1.1 What is Control Flow?</h2>
+        <p>Imagine you're following a recipe. The instructions might say:</p>
+        <p><em>"If the dough is sticky, add more flour. Otherwise, knead for 10 minutes."</em></p>
+        <p>This is exactly how control flow works in programming. It's the order in which individual statements,
+            instructions, or function calls are executed or evaluated. Without control flow, programs would simply
+            execute line by line from top to bottom, unable to respond to different situations or user inputs.</p>
+        <p><strong>Control flow</strong> is the fundamental mechanism that allows our programs to make decisions, repeat
+            actions, and respond dynamically to different inputs and situations.</p>
+
+        <h2>1.2 The Importance of Decision-Making in Code</h2>
+        <p>Consider these everyday applications that rely on conditional logic:</p>
+        <ul>
+            <li><strong>Login Systems</strong>: "If the password is correct, grant access. Else, show an error message."
+            </li>
+            <li><strong>E-commerce Sites</strong>: "If the user is a premium member, apply a 20% discount. Else, show
+                standard prices."</li>
+            <li><strong>Games</strong>: "If the player's health reaches zero, end the game. Else, continue playing."
+            </li>
+            <li><strong>Forms</strong>: "If the email field is empty, display 'Required Field'. Else, proceed."</li>
+            <li><strong>Navigation Apps</strong>: "If there's traffic on the current route, suggest an alternative."
+            </li>
+        </ul>
+        <p>Without conditionals, our programs would be like a elevator that only goes to one floor, regardless of which
+            button you press!</p>
+
+        <h2>1.3 Boolean Logic and Truthy/Falsy Values</h2>
+        <p>Before diving into conditionals, we must understand what JavaScript evaluates as <code>true</code> or
+            <code>false</code>.</p>
+        <h3>Boolean Primitives</h3>
+        <pre><code>let isLoggedIn = true;
+let isDeleted = false;</code></pre>
+
+        <h3>Truthy Values</h3>
+        <p>In JavaScript, a <strong>truthy</strong> value is a value that is considered <code>true</code> when
+            encountered in a Boolean context. All values are truthy unless they are defined as falsy.</p>
+        <pre><code>// All of these evaluate to TRUE in a conditional
+if (true)
+if ({})           // empty object
+if ([])           // empty array
+if (42)           // any non-zero number
+if ("0")          // any non-empty string (even "false" as a string!)
+if ("hello")      // non-empty string
+if (new Date())   // any object
+if (Infinity)     // Infinity
+if (-42)          // non-zero negative number</code></pre>
+
+        <h3>Falsy Values</h3>
+        <p>A <strong>falsy</strong> value is a value that is considered <code>false</code> when encountered in a Boolean
+            context. There are only 8 falsy values in JavaScript:</p>
+        <pre><code>// The 8 FALSY values in JavaScript:
+if (false)        // boolean false
+if (null)         // null
+if (undefined)    // undefined
+if (0)            // number zero
+if (-0)           // negative zero
+if (0n)           // BigInt zero
+if (NaN)          // Not a Number
+if ("")           // empty string
+
+// All of the above evaluate to FALSE</code></pre>
+
+        <h3>Understanding Truthy/Falsy in Practice</h3>
+        <pre><code>// This is why we can write concise checks:
+let username = "";
+
+if (username) {
+    console.log("Welcome, " + username);
+} else {
+    console.log("Please enter a username"); // This runs because "" is falsy
+}
+
+// But be careful with "0" and "false" as strings:
+let value = "false";  // This is a NON-empty string
+if (value) {
+    console.log("This will run!"); // "false" as a string is truthy!
+}
+
+let number = "0";     // This is a NON-empty string
+if (number) {
+    console.log("This will also run!"); // "0" as a string is truthy!
+}</code></pre>
+
+        <h3>The Boolean() Function</h3>
+        <pre><code>console.log(Boolean("hello"));      // true
+console.log(Boolean(""));           // false
+console.log(Boolean(42));           // true
+console.log(Boolean(0));            // false
+console.log(Boolean([]));           // true (empty array)
+console.log(Boolean({}));           // true (empty object)
+console.log(Boolean(null));         // false
+console.log(Boolean(undefined));    // false</code></pre>
+
+        <h3>The Double NOT Operator (<code>!!</code>)</h3>
+        <pre><code>console.log(!!"hello");     // true
+console.log(!!"");          // false
+console.log(!!42);          // true
+console.log(!!0);           // false
+console.log(!![]);          // true
+console.log(!!null);        // false</code></pre>
+
+        <hr>
+        <h1>2. THE <code>if</code> STATEMENT</h1>
+        <h2>2.1 Basic Syntax</h2>
+        <pre><code>// Basic syntax
+if (condition) {
+    // Code to execute if condition is true
+}</code></pre>
+        <p><strong>Key Points:</strong> - The condition is always placed inside parentheses <code>()</code> - The code
+            to execute is wrapped in curly braces <code>{}</code> - The condition is evaluated to a boolean
+            (<code>true</code> or <code>false</code>)</p>
+
+        <h2>2.2 How It Works</h2>
+        <pre><code>let temperature = 25;
+
+if (temperature > 30) {
+    console.log("It's hot outside! 🥵");
+}
+
+if (temperature <= 30) {
+    console.log("It's pleasant weather. 😊");
+}
+
+// Output: "It's pleasant weather. 😊"</code></pre>
+
+        <h2>2.3 Practical Examples</h2>
+        <h3>Example 1: Age Verification</h3>
+        <pre><code>let userAge = 18;
+
+if (userAge >= 18) {
+    console.log("You are eligible to vote.");
+    console.log("You can apply for a driver's license.");
+}</code></pre>
+        <h3>Example 2: User Input Validation</h3>
+        <pre><code>let searchQuery = "JavaScript tutorial";
+
+if (searchQuery.length > 0) {
+    console.log(`Searching for: "${searchQuery}"`);
+    // Here you would typically trigger the search function
+}</code></pre>
+        <h3>Example 3: Financial Applications</h3>
+        <pre><code>let accountBalance = 500;
+let withdrawalAmount = 200;
+
+if (withdrawalAmount <= accountBalance) {
+    accountBalance -= withdrawalAmount;
+    console.log(`Withdrawal successful. New balance: $${accountBalance}`);
+}</code></pre>
+        <h3>Example 4: Game Development</h3>
+        <pre><code>let playerHealth = 0;
+
+if (playerHealth <= 0) {
+    console.log("GAME OVER!");
+    console.log("Respawning at checkpoint...");
+    playerHealth = 100; // Reset health
+}</code></pre>
+
+        <h2>2.4 Common Use Cases</h2>
+        <h3>Checking if an Object Has Properties</h3>
+        <pre><code>let user = {
+    name: "Alice",
+    email: "alice@example.com"
+};
+
+if (user.email) {
+    console.log(`Sending email to ${user.email}`);
+    // Code to send email
+}
+
+if (user.phone) {
+    console.log(`Calling ${user.phone}`); // This won't execute
+}</code></pre>
+
+        <h3>Array Validation</h3>
+        <pre><code>let shoppingCart = ["laptop", "mouse", "keyboard"];
+
+if (shoppingCart.length > 0) {
+    console.log(`You have ${shoppingCart.length} items in your cart`);
+    console.log("Proceed to checkout?");
+}</code></pre>
+
+        <h3>Environment Checks</h3>
+        <pre><code>let environment = "production"; // Could be "development", "staging", etc.
+
+if (environment === "production") {
+    console.log("Running in production mode");
+    // Disable debug logs, use production APIs
+}
+
+if (environment === "development") {
+    console.log("Running in development mode");
+    // Enable verbose logging, use mock data
+}</code></pre>
+
+        <h2>2.5 Important Notes and Gotchas</h2>
+        <h3>Curly Braces Are Optional (But Don't Skip Them!)</h3>
+        <pre><code>// This works, but it's risky:
+if (5 > 3)
+    console.log("Five is greater than three"); // This runs
+    console.log("This line runs ALWAYS!");     // NOT part of the if!
+
+// Always use curly braces for clarity and safety:
+if (5 > 3) {
+    console.log("Five is greater than three");
+    console.log("This is clearly part of the if block");
+}</code></pre>
+
+        <h3>Assignment vs. Comparison</h3>
+        <pre><code>let x = 5;
+
+// Common mistake: using = instead of ===
+if (x = 10) {  // This assigns 10 to x, then checks if 10 is truthy (it is!)
+    console.log("This will ALWAYS run!");
+}
+
+// Correct way:
+if (x === 10) {
+    console.log("This runs only if x equals 10");
+}</code></pre>
+
+        <h3>Complex Conditions</h3>
+        <pre><code>let age = 25;
+let hasLicense = true;
+let isSuspended = false;
+
+// You can combine multiple conditions
+if (age >= 18 && hasLicense && !isSuspended) {
+    console.log("You can legally drive!");
+}</code></pre>
+
+        <hr>
+        <h1>3. THE <code>else</code> CLAUSE</h1>
+        <h2>3.1 Syntax and Structure</h2>
+        <pre><code>// Basic syntax
+if (condition) {
+    // Code to execute if condition is true
+} else {
+    // Code to execute if condition is false
+}</code></pre>
+        <h2>3.2 How It Works</h2>
+        <pre><code>let isRaining = true;
+
+if (isRaining) {
+    console.log("Take an umbrella! ☔");
+} else {
+    console.log("Enjoy the sunshine! 😎");
+}
+
+// Output depends on the value of isRaining</code></pre>
+
+        <h2>3.3 Practical Examples</h2>
+        <h3>Example 1: Login System</h3>
+        <pre><code>let enteredPassword = "secret123";
+let correctPassword = "secret123";
+
+if (enteredPassword === correctPassword) {
+    console.log("Login successful!");
+    console.log("Redirecting to dashboard...");
+} else {
+    console.log("Login failed!");
+    console.log("Incorrect password. Please try again.");
+}</code></pre>
+        <h3>Example 2: Even or Odd Number</h3>
+        <pre><code>let number = 7;
+
+if (number % 2 === 0) {
+    console.log(`${number} is even.`);
+} else {
+    console.log(`${number} is odd.`);
+}
+// Output: 7 is odd.</code></pre>
+        <h3>Example 3: Temperature Converter Decision</h3>
+        <pre><code>let temperature = 32; // Fahrenheit
+let unit = "C"; // User wants Celsius
+
+if (unit === "C") {
+    let celsius = (temperature - 32) * 5/9;
+    console.log(`${temperature}°F = ${celsius.toFixed(1)}°C`);
+} else {
+    console.log(`Temperature is ${temperature}°F`);
+}</code></pre>
+        <h3>Example 4: E-commerce Discount</h3>
+        <pre><code>let purchaseAmount = 150;
+let isMember = false;
+
+if (isMember || purchaseAmount > 100) {
+    let discount = purchaseAmount * 0.1;
+    let finalAmount = purchaseAmount - discount;
+    console.log(`You got a 10% discount! Final amount: $${finalAmount}`);
+} else {
+    console.log(`No discount applied. Total: $${purchaseAmount}`);
+}</code></pre>
+
+        <h2>3.4 Real-World Applications</h2>
+        <h3>Form Validation</h3>
+        <pre><code>let emailInput = "user@example.com";
+
+if (emailInput.includes("@") && emailInput.includes(".")) {
+    console.log("Email format is valid.");
+    // Proceed with form submission
+} else {
+    console.log("Please enter a valid email address.");
+    // Show error message to user
+}</code></pre>
+
+        <h3>Access Control</h3>
+        <pre><code>let userRole = "admin";
+let isLoggedIn = true;
+
+if (isLoggedIn && userRole === "admin") {
+    console.log("Welcome to the admin panel.");
+    console.log("You have full access to all features.");
+} else {
+    console.log("Access denied.");
+    console.log("You don't have permission to view this page.");
+}</code></pre>
+
+        <h3>Game Mechanics</h3>
+        <pre><code>let playerScore = 95;
+let winningScore = 100;
+
+if (playerScore >= winningScore) {
+    console.log("🎉 VICTORY! You win the game!");
+    console.log("Unlocking next level...");
+} else {
+    let pointsNeeded = winningScore - playerScore;
+    console.log(`Keep playing! You need ${pointsNeeded} more points to win.`);
+}</code></pre>
+
+        <h3>Banking Application</h3>
+        <pre><code>let accountBalance = 1000;
+let withdrawalAmount = 1200;
+
+if (withdrawalAmount <= accountBalance) {
+    accountBalance -= withdrawalAmount;
+    console.log(`Withdrawal successful. New balance: $${accountBalance}`);
+} else {
+    console.log("Insufficient funds!");
+    console.log(`Your balance is $${accountBalance}.`);
+    console.log(`You need $${withdrawalAmount - accountBalance} more.`);
+}</code></pre>
+
+        <h2>3.5 The Dangling Else Problem</h2>
+        <pre><code>// This is clear and works as expected:
+if (condition1)
+    if (condition2)
+        statement1;
+    else
+        statement2;  // This else belongs to if(condition2)
+
+// Using curly braces makes it explicit:
+if (condition1) {
+    if (condition2) {
+        statement1;
+    } else {
+        statement2;  // Clearly belongs to if(condition2)
+    }
+}</code></pre>
+
+        <h2>3.6 Best Practices for Using <code>else</code></h2>
+        <h3>Be Explicit with Conditions</h3>
+        <pre><code>// Good: Clear and readable
+if (userScore >= 100) {
+    console.log("You reached level 2!");
+} else {
+    console.log(`You need ${100 - userScore} more points for next level.`);
+}
+
+// Avoid: Redundant condition
+if (userScore >= 100) {
+    console.log("You reached level 2!");
+} 
+if (userScore < 100) {  // This is redundant; use else instead
+    console.log(`You need ${100 - userScore} more points.`);
+}</code></pre>
+        <h3>Handle All Possible Cases</h3>
+        <pre><code>function getGradeDescription(grade) {
+    if (grade >= 90) {
+        return "Excellent";
+    } else {
+        return "Keep studying"; // Catches all grades below 90
+    }
+}</code></pre>
+        <h3>Consider the "Early Return" Pattern</h3>
+        <pre><code>// Without early return (using else)
+function processOrder(order) {
+    if (order.isValid) {
+        // 20 lines of order processing
+        return "Order processed";
+    } else {
+        return "Invalid order";
+    }
+}
+
+// With early return (cleaner, no else needed)
+function processOrder(order) {
+    if (!order.isValid) {
+        return "Invalid order";
+    }
+    
+    // 20 lines of order processing
+    // No need for else, as we've already returned
+    return "Order processed";
+}</code></pre>
+
+        <hr>
+        <h1>4. THE <code>else if</code> LADDER</h1>
+        <h2>4.1 Handling Multiple Conditions</h2>
+        <pre><code>// Basic syntax
+if (condition1) {
+    // Code executes if condition1 is true
+} else if (condition2) {
+    // Code executes if condition1 is false AND condition2 is true
+} else if (condition3) {
+    // Code executes if condition1 and condition2 are false AND condition3 is true
+} else {
+    // Code executes if all above conditions are false
+}</code></pre>
+        <h2>4.2 How It Works</h2>
+        <pre><code>let score = 85;
+
+if (score >= 90) {
+    console.log("Grade: A");
+} else if (score >= 80) {
+    console.log("Grade: B"); // This runs (85 >= 80)
+} else if (score >= 70) {
+    console.log("Grade: C"); // Skipped
+} else if (score >= 60) {
+    console.log("Grade: D"); // Skipped
+} else {
+    console.log("Grade: F"); // Skipped
+}</code></pre>
+        <p><strong>Important:</strong> The conditions are checked in order, and execution stops at the first
+            <code>true</code> condition.</p>
+
+        <h2>4.3 Practical Examples</h2>
+        <h3>Example 1: Traffic Light System</h3>
+        <pre><code>let trafficLight = "yellow";
+
+if (trafficLight === "red") {
+    console.log("STOP! 🛑");
+} else if (trafficLight === "yellow") {
+    console.log("SLOW DOWN! ⚠️");
+} else if (trafficLight === "green") {
+    console.log("GO! 🟢");
+} else {
+    console.log("Invalid traffic light color");
+}
+// Output: SLOW DOWN! ⚠️</code></pre>
+        <h3>Example 2: Weather Recommendations</h3>
+        <pre><code>let temperature = 15; // Celsius
+
+if (temperature >= 30) {
+    console.log("It's hot! Wear shorts and a t-shirt. 🩳");
+    console.log("Don't forget sunscreen! ☀️");
+} else if (temperature >= 20) {
+    console.log("Pleasant weather. A light jacket is fine. 🧥");
+} else if (temperature >= 10) {
+    console.log("It's cool. Wear a warm jacket. 🧥");
+} else if (temperature >= 0) {
+    console.log("It's cold. Wear a heavy coat and gloves. 🧤");
+} else {
+    console.log("Freezing! Stay indoors if possible. ❄️");
+}</code></pre>
+        <h3>Example 3: Time-Based Greeting</h3>
+        <pre><code>let hour = new Date().getHours(); // Gets current hour (0-23)
+
+if (hour < 12) {
+    console.log("Good morning! ☀️");
+} else if (hour < 18) {
+    console.log("Good afternoon! 😊");
+} else if (hour < 22) {
+    console.log("Good evening! 🌆");
+} else {
+    console.log("Good night! 🌙");
+}</code></pre>
+        <h3>Example 4: User Role Permissions</h3>
+        <pre><code>let userRole = "editor";
+
+if (userRole === "admin") {
+    console.log("Full access: Can read, write, delete, and manage users.");
+} else if (userRole === "editor") {
+    console.log("Editor access: Can read and write content."); // This runs
+} else if (userRole === "viewer") {
+    console.log("Viewer access: Can only read content.");
+} else {
+    console.log("Guest access: Limited read-only access.");
+}</code></pre>
+
+        <h2>4.4 Real-World Scenarios</h2>
+        <h3>E-commerce Shipping Calculator</h3>
+        <pre><code>let orderTotal = 75;
+let shippingCost;
+
+if (orderTotal >= 100) {
+    shippingCost = 0;
+    console.log("You get FREE shipping!");
+} else if (orderTotal >= 50) {
+    shippingCost = 5;
+    console.log("Shipping cost: $5");
+} else if (orderTotal >= 25) {
+    shippingCost = 8;
+    console.log("Shipping cost: $8");
+} else {
+    shippingCost = 10;
+    console.log("Shipping cost: $10");
+}
+
+console.log(`Order total: $${orderTotal + shippingCost}`);</code></pre>
+
+        <h3>BMI Classification</h3>
+        <pre><code>let weight = 70; // kg
+let height = 1.75; // meters
+let bmi = weight / (height * height);
+
+console.log(`Your BMI is: ${bmi.toFixed(1)}`);
+
+if (bmi < 18.5) {
+    console.log("Category: Underweight");
+    console.log("Health risk: Increased risk");
+} else if (bmi < 25) {
+    console.log("Category: Normal weight");
+    console.log("Health risk: Low risk");
+} else if (bmi < 30) {
+    console.log("Category: Overweight");
+    console.log("Health risk: Increased risk");
+} else if (bmi < 35) {
+    console.log("Category: Obese Class I");
+    console.log("Health risk: High risk");
+} else {
+    console.log("Category: Obese Class II or III");
+    console.log("Health risk: Very high risk");
+}</code></pre>
+
+        <h3>Restaurant Menu Suggestion</h3>
+        <pre><code>let timeOfDay = "morning";
+let isWeekend = false;
+
+if (timeOfDay === "morning") {
+    if (isWeekend) {
+        console.log("Serving: Brunch Specials 🥞");
+    } else {
+        console.log("Serving: Breakfast Menu 🍳");
+    }
+} else if (timeOfDay === "afternoon") {
+    console.log("Serving: Lunch Menu 🥪");
+} else if (timeOfDay === "evening") {
+    console.log("Serving: Dinner Menu 🍽️");
+} else {
+    console.log("Kitchen is closed");
+}</code></pre>
+
+        <h2>4.5 Order Matters!</h2>
+        <pre><code>let age = 65;
+
+// WRONG ORDER - Specific condition after general
+if (age >= 18) {
+    console.log("Adult"); // This runs (65 >= 18)
+} else if (age >= 65) {
+    console.log("Senior"); // This NEVER runs for seniors!
+} else if (age >= 13) {
+    console.log("Teenager");
+} else {
+    console.log("Child");
+}
+// Output: "Adult" (not "Senior" as intended!)
+
+// CORRECT ORDER - Most specific first
+if (age >= 65) {
+    console.log("Senior"); // This runs for 65+
+} else if (age >= 18) {
+    console.log("Adult");  // Runs for 18-64
+} else if (age >= 13) {
+    console.log("Teenager"); // Runs for 13-17
+} else {
+    console.log("Child"); // Runs for 0-12
+}
+// Output: "Senior"</code></pre>
+
+        <pre><code>let number = 500;
+
+// WRONG - General condition first
+if (number > 0) {
+    console.log("Positive"); // This runs for ALL positive numbers
+} else if (number > 100) {
+    console.log("Greater than 100"); // Never runs!
+} else if (number > 1000) {
+    console.log("Greater than 1000"); // Never runs!
+}
+
+// CORRECT - Specific to general
+if (number > 1000) {
+    console.log("Greater than 1000");
+} else if (number > 100) {
+    console.log("Greater than 100"); // This runs for 500
+} else if (number > 0) {
+    console.log("Positive but not >100");
+}</code></pre>
+
+        <h2>4.6 Best Practices for <code>else if</code> Ladders</h2>
+        <h3>Keep Conditions Mutually Exclusive When Possible</h3>
+        <pre><code>// Good: Conditions don't overlap
+if (category === "A") {
+    handleCategoryA();
+} else if (category === "B") {
+    handleCategoryB();
+} else if (category === "C") {
+    handleCategoryC();
+} else {
+    handleUnknownCategory();
+}</code></pre>
+
+        <h3>Consider Using Switch for Many Related Conditions</h3>
+        <pre><code>// Many else ifs (okay but verbose)
+if (day === "Monday") {
+    console.log("Start of work week");
+} else if (day === "Friday") {
+    console.log("TGIF!");
+} else if (day === "Saturday" || day === "Sunday") {
+    console.log("Weekend!");
+} else {
+    console.log("Midweek");
+}
+
+// Switch statement (cleaner for this case)
+switch(day) {
+    case "Monday":
+        console.log("Start of work week");
+        break;
+    case "Friday":
+        console.log("TGIF!");
+        break;
+    case "Saturday":
+    case "Sunday":
+        console.log("Weekend!");
+        break;
+    default:
+        console.log("Midweek");
+}</code></pre>
+
+        <h3>Don't Nest Too Deeply</h3>
+        <pre><code>// Hard to read:
+if (condition1) {
+    if (condition2) {
+        if (condition3) {
+            // Do something
+        } else {
+            // Handle condition3 false
+        }
+    } else {
+        // Handle condition2 false
+    }
+} else {
+    // Handle condition1 false
+}
+
+// Better: Use logical operators
+if (condition1 && condition2 && condition3) {
+    // Do something
+} else if (condition1 && condition2) {
+    // Handle condition3 false
+} else if (condition1) {
+    // Handle condition2 false
+} else {
+    // Handle condition1 false
+}</code></pre>
+
+        <hr>
+        <h1>5. NESTED CONDITIONALS</h1>
+        <h2>5.1 When and How to Nest</h2>
+        <pre><code>// Basic structure
+if (outerCondition) {
+    // Code for outer condition true
+    
+    if (innerCondition) {
+        // Code for both outer and inner true
+    } else {
+        // Code for outer true but inner false
+    }
+} else {
+    // Code for outer condition false
+}</code></pre>
+
+        <h2>5.2 Practical Examples</h2>
+        <h3>Example 1: Movie Ticket Pricing</h3>
+        <pre><code>let age = 65;
+let isStudent = false;
+let isWeekend = false;
+
+if (age < 0) {
+    console.log("Invalid age");
+} else {
+    if (age >= 65) {
+        console.log("Senior Citizen Discount: $5 ticket");
+    } else if (age >= 18) {
+        if (isStudent && !isWeekend) {
+            console.log("Student Weekday Special: $7 ticket");
+        } else {
+            console.log("Adult Regular Price: $12 ticket");
+        }
+    } else {
+        console.log("Child Price: $8 ticket");
+    }
+}</code></pre>
+
+        <h3>Example 2: Login Authentication with Role Check</h3>
+        <pre><code>let isAuthenticated = true;
+let userRole = "admin";
+let hasPermission = true;
+
+if (isAuthenticated) {
+    console.log("User is logged in.");
+    
+    if (userRole === "admin") {
+        console.log("Welcome, Admin!");
+        
+        if (hasPermission) {
+            console.log("You can access all system settings.");
+        } else {
+            console.log("Your admin account has restricted access.");
+        }
+    } else if (userRole === "editor") {
+        console.log("Welcome, Editor!");
+        console.log("You can edit content.");
+    } else {
+        console.log("Welcome, User!");
+        console.log("You have basic access.");
+    }
+} else {
+    console.log("Please log in to continue.");
+}</code></pre>
+
+        <h3>Example 3: Banking Transaction with Multiple Validations</h3>
+        <pre><code>let accountBalance = 1000;
+let withdrawalAmount = 500;
+let accountType = "savings";
+let dailyWithdrawalLimit = 1000;
+let withdrawnToday = 300;
+
+// Check if account exists and is active
+let accountExists = true;
+let accountActive = true;
+
+if (accountExists) {
+    if (accountActive) {
+        console.log("Account verified.");
+        
+        // Check withdrawal amount
+        if (withdrawalAmount > 0) {
+            if (withdrawalAmount <= accountBalance) {
+                if (withdrawalAmount + withdrawnToday <= dailyWithdrawalLimit) {
+                    accountBalance -= withdrawalAmount;
+                    withdrawnToday += withdrawalAmount;
+                    console.log(`Withdrawal successful! New balance: $${accountBalance}`);
+                    
+                    // Additional check for savings account
+                    if (accountType === "savings" && accountBalance < 500) {
+                        console.log("Warning: Savings account below minimum balance ($500)");
+                    }
+                } else {
+                    console.log("Daily withdrawal limit exceeded.");
+                }
+            } else {
+                console.log("Insufficient funds.");
+            }
+        } else {
+            console.log("Invalid withdrawal amount.");
+        }
+    } else {
+        console.log("Account is deactivated.");
+    }
+} else {
+    console.log("Account not found.");
+}</code></pre>
+
+        <h2>5.3 Potential Pitfalls of Deep Nesting</h2>
+        <h3>The "Pyramid of Doom"</h3>
+        <pre><code>// This is hard to read and maintain:
+function processUserData(user) {
+    if (user) {
+        if (user.isActive) {
+            if (user.hasCompletedProfile) {
+                if (user.emailVerified) {
+                    if (user.subscriptionActive) {
+                        // 20 lines of code here
+                        console.log("User can access premium content");
+                    } else {
+                        console.log("Subscription not active");
+                    }
+                } else {
+                    console.log("Email not verified");
+                }
+            } else {
+                console.log("Profile incomplete");
+            }
+        } else {
+            console.log("User account is inactive");
+        }
+    } else {
+        console.log("No user provided");
+    }
+}</code></pre>
+
+        <h2>5.4 Alternatives to Deep Nesting</h2>
+        <h3>Technique 1: Early Returns (Guard Clauses)</h3>
+        <pre><code>// Much cleaner with guard clauses:
+function processUserData(user) {
+    if (!user) {
+        console.log("No user provided");
+        return;
+    }
+    
+    if (!user.isActive) {
+        console.log("User account is inactive");
+        return;
+    }
+    
+    if (!user.hasCompletedProfile) {
+        console.log("Profile incomplete");
+        return;
+    }
+    
+    if (!user.emailVerified) {
+        console.log("Email not verified");
+        return;
+    }
+    
+    if (!user.subscriptionActive) {
+        console.log("Subscription not active");
+        return;
+    }
+    
+    // 20 lines of code here
+    console.log("User can access premium content");
+}</code></pre>
+
+        <h3>Technique 2: Combine Conditions with Logical Operators</h3>
+        <pre><code>// Instead of deep nesting:
+if (user) {
+    if (user.age >= 18) {
+        if (user.hasID) {
+            if (user.notBlacklisted) {
+                console.log("Can enter the venue");
+            }
+        }
+    }
+}
+
+// Combine with &&:
+if (user && user.age >= 18 && user.hasID && user.notBlacklisted) {
+    console.log("Can enter the venue");
+}</code></pre>
+
+        <h3>Technique 3: Extract Logic into Functions</h3>
+        <pre><code>function isEligibleForVenue(user) {
+    if (!user) return false;
+    if (user.age < 18) return false;
+    if (!user.hasID) return false;
+    if (user.blacklisted) return false;
+    return true;
+}
+
+if (isEligibleForVenue(user)) {
+    console.log("Can enter the venue");
+}</code></pre>
+
+        <h3>Technique 4: Use Switch or Lookup Tables for Simple Conditions</h3>
+        <pre><code>// Instead of nested conditionals for menu options:
+let menuSelection = "edit";
+let userRole = "editor";
+
+if (userRole === "admin") {
+    if (menuSelection === "view") {
+        // handle
+    } else if (menuSelection === "edit") {
+        // handle
+    } else if (menuSelection === "delete") {
+        // handle
+    }
+} else if (userRole === "editor") {
+    if (menuSelection === "view") {
+        // handle
+    } else if (menuSelection === "edit") {
+        // handle
+    }
+}
+
+// Better: Use permission objects
+const permissions = {
+    admin: { view: true, edit: true, delete: true },
+    editor: { view: true, edit: true, delete: false },
+    viewer: { view: true, edit: false, delete: false }
+};
+
+if (permissions[userRole]?.[menuSelection]) {
+    console.log("Action permitted");
+}</code></pre>
+
+        <h2>5.5 Best Practices for Nesting</h2>
+        <h3>Rule of Thumb: Avoid Nesting Beyond 3 Levels</h3>
+        <h3>Use Descriptive Variable Names</h3>
+        <pre><code>// Clear
+if (userLoggedIn) {
+    if (userHasPremiumSubscription) {
+        // show premium content
+    }
+}
+
+// Unclear
+if (a) {
+    if (b) {
+        // what does this mean?
+    }
+}</code></pre>
+
+        <h3>Consider Extracting Nested Logic</h3>
+        <pre><code>// Original nested version
+function processOrder(order) {
+    if (order) {
+        if (order.items.length > 0) {
+            if (order.payment.verified) {
+                if (order.shipping.address) {
+                    // process order
+                }
+            }
+        }
+    }
+}
+
+// Refactored version
+function hasValidOrder(order) {
+    return order && 
+           order.items.length > 0 && 
+           order.payment.verified && 
+           order.shipping.address;
+}
+
+function processOrder(order) {
+    if (!hasValidOrder(order)) {
+        console.log("Invalid order");
+        return;
+    }
+    // process order
+}</code></pre>
+
+        <hr>
+        <h1>6. THE TERNARY OPERATOR</h1>
+        <h2>6.1 Syntax and Structure</h2>
+        <pre><code>// Syntax:
+condition ? expressionIfTrue : expressionIfFalse
+
+// Basic example:
+let age = 20;
+let status = age >= 18 ? "adult" : "minor";
+console.log(status); // "adult"</code></pre>
+        <h2>6.2 How It Works</h2>
+        <pre><code>// This ternary:
+let message = score >= 60 ? "Pass" : "Fail";
+
+// Is equivalent to this if/else:
+let message;
+if (score >= 60) {
+    message = "Pass";
+} else {
+    message = "Fail";
+}</code></pre>
+
+        <h2>6.3 Practical Examples</h2>
+        <h3>Example 1: Basic Assignment</h3>
+        <pre><code>// Setting default values
+let username = inputUsername ? inputUsername : "Guest";
+
+// Checking existence
+let displayName = user.name ? user.name : "Anonymous";
+
+// Simple calculations
+let shippingCost = orderTotal > 100 ? 0 : 10;</code></pre>
+
+        <h3>Example 2: Inline in Template Literals</h3>
+        <pre><code>let isLoggedIn = true;
+let hour = 14;
+
+let greeting = `Good ${hour < 12 ? "morning" : "afternoon"}, ${isLoggedIn ? username : "guest"}!`;
+console.log(greeting); // "Good afternoon, guest!" (or username if logged in)</code></pre>
+
+        <h3>Example 3: Conditional Rendering in HTML/React</h3>
+        <pre><code>// In plain JavaScript:
+let buttonHTML = isSubscribed 
+    ? '<button class="subscribed">Subscribed</button>'
+    : '<button class="subscribe">Subscribe</button>';
+
+// In React (JSX):
+return (
+    &lt;div&gt;
+        {isLoggedIn ? (
+            &lt;Dashboard user={user} /&gt;
+        ) : (
+            &lt;LoginForm /&gt;
+        )}
+    &lt;/div&gt;
+);</code></pre>
+
+        <h3>Example 4: Function Returns</h3>
+        <pre><code>function getFee(isMember) {
+    return isMember ? "$2.00" : "$10.00";
+}
+
+console.log(getFee(true));  // "$2.00"
+console.log(getFee(false)); // "$10.00"</code></pre>
+
+        <h3>Example 5: CSS Classes</h3>
+        <pre><code>// In JavaScript for web development
+let buttonClass = isActive 
+    ? "btn btn-active" 
+    : "btn btn-inactive";
+
+// In React
+&lt;div className={`user-card ${isSelected ? "selected" : ""}`}&gt;</code></pre>
+
+        <h2>6.4 When to Use the Ternary Operator</h2>
+        <h3>GOOD Use Cases:</h3>
+        <pre><code>// 1. Simple assignments based on a condition
+let accessLevel = user.isAdmin ? "admin" : "user";
+
+// 2. Returning simple values from functions
+function getPrice(isMember) {
+    return isMember ? 10 : 15;
+}
+
+// 3. Inline conditional rendering
+let icon = isFavorite ? "★" : "☆";
+
+// 4. Setting default values
+let name = inputName ? inputName : "Anonymous";
+// Or using the newer nullish coalescing operator:
+let name = inputName ?? "Anonymous";</code></pre>
+
+        <h3>BAD Use Cases:</h3>
+        <pre><code>// BAD - Too complex
+let result = (a > b) ? (a > c ? a : c) : (b > c ? b : c);
+
+// GOOD
+let max;
+if (a > b) {
+    max = a > c ? a : c;
+} else {
+    max = b > c ? b : c;
+}</code></pre>
+
+        <pre><code>// BAD - Side effects
+isValid ? saveData() : showError();
+
+// GOOD
+if (isValid) {
+    saveData();
+} else {
+    showError();
+}</code></pre>
+
+        <pre><code>// BAD - Hard to read
+let message = user.isActive ? (user.isPremium ? "Premium Active User" : "Free Active User") : "Inactive User";
+
+// GOOD - Clearer with if/else
+let message;
+if (user.isActive) {
+    message = user.isPremium ? "Premium Active User" : "Free Active User";
+} else {
+    message = "Inactive User";
+}</code></pre>
+
+        <h2>6.5 Chaining Ternary Operators</h2>
+        <pre><code>// Chained ternary for grade calculation
+let grade = score >= 90 ? "A"
+          : score >= 80 ? "B"
+          : score >= 70 ? "C"
+          : score >= 60 ? "D"
+          : "F";
+
+// This is equivalent to:
+let grade;
+if (score >= 90) {
+    grade = "A";
+} else if (score >= 80) {
+    grade = "B";
+} else if (score >= 70) {
+    grade = "C";
+} else if (score >= 60) {
+    grade = "D";
+} else {
+    grade = "F";
+}</code></pre>
+
+        <h2>6.6 Comparison: Ternary vs. if/else</h2>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Ternary Operator</th>
+                <th>if/else Statement</th>
+            </tr>
+            <tr>
+                <td><strong>Use Case</strong></td>
+                <td>Simple conditions</td>
+                <td>Complex logic</td>
+            </tr>
+            <tr>
+                <td><strong>Readability</strong></td>
+                <td>Good for simple cases</td>
+                <td>Better for complex cases</td>
+            </tr>
+            <tr>
+                <td><strong>Lines of Code</strong></td>
+                <td>1 line</td>
+                <td>Multiple lines</td>
+            </tr>
+            <tr>
+                <td><strong>Can contain blocks</strong></td>
+                <td>No (single expressions only)</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Multiple statements</strong></td>
+                <td>No</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td><strong>Return value</strong></td>
+                <td>Yes (returns a value)</td>
+                <td>No (doesn't return)</td>
+            </tr>
+            <tr>
+                <td><strong>Nesting</strong></td>
+                <td>Becomes unreadable quickly</td>
+                <td>Can be managed</td>
+            </tr>
+        </table>
+
+        <h3>Example of Both Approaches:</h3>
+        <pre><code>// Ternary
+function canVote(age, citizenship) {
+    return age >= 18 && citizenship === "citizen" 
+        ? "Eligible to vote" 
+        : "Not eligible to vote";
+}
+
+// if/else
+function canVote(age, citizenship) {
+    if (age >= 18 && citizenship === "citizen") {
+        return "Eligible to vote";
+    } else {
+        return "Not eligible to vote";
+    }
+}</code></pre>
+
+        <h2>6.7 Common Patterns and Tricks</h2>
+        <h3>Using Ternary for Optional Function Arguments</h3>
+        <pre><code>function greet(name) {
+    name = name ? name : "Guest";
+    console.log(`Hello, ${name}!`);
+}
+
+// Modern approach (nullish coalescing)
+function greet(name) {
+    name = name ?? "Guest";
+    console.log(`Hello, ${name}!`);
+}</code></pre>
+        <h3>Conditional Property Access</h3>
+        <pre><code>let config = {
+    theme: user.preferences.theme ? user.preferences.theme : "light",
+    fontSize: user.preferences.fontSize ?? 16
+};</code></pre>
+        <h3>In Array Methods</h3>
+        <pre><code>let numbers = [1, 2, 3, 4, 5];
+let classified = numbers.map(n => n % 2 === 0 ? "even" : "odd");
+console.log(classified); // ["odd", "even", "odd", "even", "odd"]</code></pre>
+
+        <hr>
+        <h1>7. ADVANCED CONDITIONAL PATTERNS</h1>
+        <h2>7.1 Switch Statement (Brief Overview)</h2>
+        <pre><code>let day = 3;
+let dayName;
+
+switch (day) {
+    case 1:
+        dayName = "Monday";
+        break;
+    case 2:
+        dayName = "Tuesday";
+        break;
+    case 3:
+        dayName = "Wednesday";
+        break;
+    case 4:
+        dayName = "Thursday";
+        break;
+    case 5:
+        dayName = "Friday";
+        break;
+    case 6:
+    case 7:
+        dayName = "Weekend";
+        break;
+    default:
+        dayName = "Invalid day";
+}
+
+console.log(dayName); // "Wednesday"</code></pre>
+
+        <h2>7.2 Logical Operators for Conditional Execution</h2>
+        <h3>The AND Operator (<code>&amp;&amp;</code>) for Guard Clauses</h3>
+        <pre><code>// Instead of:
+if (user && user.isLoggedIn) {
+    displayDashboard();
+}
+
+// You can write:
+user && user.isLoggedIn && displayDashboard();
+
+// Common pattern in React:
+{isLoading && &lt;Spinner /&gt;}
+{error && &lt;ErrorMessage message={error} /&gt;}
+{users.length > 0 && &lt;UserList users={users} /&gt;}</code></pre>
+
+        <h3>The OR Operator (<code>||</code>) for Default Values</h3>
+        <pre><code>// Traditional way:
+let port;
+if (process.env.PORT) {
+    port = process.env.PORT;
+} else {
+    port = 3000;
+}
+
+// Using OR:
+let port = process.env.PORT || 3000;
+
+// Multiple defaults:
+let theme = userTheme || systemTheme || "light";</code></pre>
+
+        <h3>The Nullish Coalescing Operator (<code>??</code>)</h3>
+        <pre><code>// || treats all falsy values as fallback triggers
+let count = 0 || 10;  // 10 (because 0 is falsy)
+
+// ?? only triggers for null/undefined
+let count = 0 ?? 10;   // 0 (0 is not null or undefined)
+
+// Useful for:
+let name = inputName ?? "Anonymous";
+let config = userConfig ?? defaultConfig;</code></pre>
+
+        <h2>7.3 Short-Circuit Evaluation</h2>
+        <pre><code>// AND short-circuits on first falsy value
+false && console.log("This never runs"); // false
+true && console.log("This runs"); // logs and returns the result
+
+// OR short-circuits on first truthy value
+true || console.log("This never runs"); // true
+false || console.log("This runs"); // logs
+
+// Practical example:
+function processUser(user) {
+    // Safely access nested properties without error
+    let email = user && user.profile && user.profile.email;
+    
+    // With optional chaining (ES2020)
+    let email = user?.profile?.email;
+}</code></pre>
+
+        <h2>7.4 Optional Chaining (<code>?.</code>)</h2>
+        <pre><code>let user = {
+    name: "Alice",
+    address: {
+        city: "New York"
+    }
+};
+
+// Old way (error-prone)
+let zipCode = user.address.zipCode; // Error if address missing
+
+// Old safe way (verbose)
+let zipCode = user && user.address && user.address.zipCode;
+
+// With optional chaining
+let zipCode = user?.address?.zipCode; // undefined (no error)
+let city = user?.address?.city; // "New York"
+
+// With function calls
+let result = obj.method?.(); // Only call if method exists</code></pre>
+
+        <h2>7.5 Combining Advanced Patterns</h2>
+        <pre><code>// Real-world example: API response handling
+function processApiResponse(response) {
+    // Safe access with defaults
+    let data = response?.data ?? [];
+    let status = response?.status ?? "unknown";
+    let message = response?.message ?? "No message provided";
+    
+    // Conditional processing
+    let processedData = data
+        .filter(item => item.isActive)
+        .map(item => ({
+            ...item,
+            displayName: item.name ?? "Unnamed",
+            category: item.category?.toUpperCase() ?? "GENERAL"
+        }));
+    
+    // Conditional return
+    return {
+        status,
+        message,
+        count: processedData.length,
+        items: processedData.length > 0 ? processedData : null
+    };
+}</code></pre>
+
+        <hr>
+        <h1>8. COMMON PITFALLS AND BEST PRACTICES</h1>
+        <h2>8.1 Common Mistakes to Avoid</h2>
+        <h3>Mistake 1: Using Assignment Instead of Comparison</h3>
+        <pre><code>// WRONG
+if (username = "admin") { // Always true (assignment)
+    console.log("Welcome admin");
+}
+
+// CORRECT
+if (username === "admin") {
+    console.log("Welcome admin");
+}</code></pre>
+
+        <h3>Mistake 2: Forgetting About Type Coercion</h3>
+        <pre><code>// WRONG - Loose equality can be confusing
+if (1 == "1") { // true, but may not be what you want
+    console.log("They're equal");
+}
+
+// CORRECT - Use strict equality
+if (1 === "1") { // false
+    console.log("They're not equal");
+}
+
+// Common issue:
+if (0 == false) { // true (coerced)
+    console.log("This runs!");
+}
+
+if (0 === false) { // false (different types)
+    console.log("This doesn't run!");
+}</code></pre>
+
+        <h3>Mistake 3: Overly Complex Conditions</h3>
+        <pre><code>// WRONG - Too complex
+if ((user && user.isActive && (user.role === "admin" || user.role === "editor" || user.permissions?.includes("write"))) && !user.isSuspended && (user.lastLogin > oneMonthAgo || user.hasActiveSubscription)) {
+    // handle
+}
+
+// CORRECT - Break it down
+const isActiveUser = user && user.isActive && !user.isSuspended;
+const hasWriteAccess = ["admin", "editor"].includes(user?.role) || user?.permissions?.includes("write");
+const isRecentUser = user?.lastLogin > oneMonthAgo || user?.hasActiveSubscription;
+
+if (isActiveUser && hasWriteAccess && isRecentUser) {
+    // handle
+}</code></pre>
+
+        <h3>Mistake 4: Not Handling Edge Cases</h3>
+        <pre><code>// WRONG - Crashes if users is null
+function getFirstUserName(users) {
+    return users[0].name;
+}
+
+// CORRECT - Handle edge cases
+function getFirstUserName(users) {
+    if (!users || users.length === 0 || !users[0]) {
+        return "No users";
+    }
+    return users[0].name;
+}</code></pre>
+
+        <h3>Mistake 5: Deep Nesting</h3>
+        <pre><code>// WRONG - Pyramid of doom
+if (condition1) {
+    if (condition2) {
+        if (condition3) {
+            if (condition4) {
+                // do something
+            }
+        }
+    }
+}
+
+// CORRECT - Use guard clauses or combine conditions
+if (!condition1 || !condition2 || !condition3 || !condition4) {
+    return;
+}
+// do something</code></pre>
+
+        <h2>8.2 Best Practices Summary</h2>
+        <h3>1. Use Clear and Descriptive Names</h3>
+        <pre><code>// GOOD
+let isEligibleForDiscount = purchaseAmount > 100 && isMember;
+
+// BAD
+let x = a > 100 && b;</code></pre>
+
+        <h3>2. Keep Conditions Simple</h3>
+        <pre><code>// GOOD
+let isWeekend = day === "Saturday" || day === "Sunday";
+if (isWeekend) {
+    // handle weekend
+}
+
+// BAD
+if (day === "Saturday" || day === "Sunday" || day === "Friday" && hour > 17) {
+    // too complex
+}</code></pre>
+
+        <h3>3. Use Early Returns</h3>
+        <pre><code>// GOOD
+function validateUser(user) {
+    if (!user) return { valid: false, error: "No user" };
+    if (!user.email) return { valid: false, error: "Email required" };
+    if (!user.email.includes("@")) return { valid: false, error: "Invalid email" };
+    
+    return { valid: true, user };
+}</code></pre>
+
+        <h3>4. Prefer Readability Over Cleverness</h3>
+        <pre><code>// CLEVER (hard to understand)
+let result = a ? (b ? c : d) : (e ? f : g);
+
+// READABLE
+let result;
+if (a) {
+    result = b ? c : d;
+} else {
+    result = e ? f : g;
+}</code></pre>
+
+        <h3>5. Use Positive Condition Names</h3>
+        <pre><code>// GOOD
+if (isLoggedIn) { ... }
+if (hasPermission) { ... }
+if (isValid) { ... }
+
+// BAD
+if (!isNotLoggedOut) { ... } // Double negative
+if (!noPermission) { ... }    // Confusing</code></pre>
+
+        <h2>8.3 Debugging Conditionals</h2>
+        <h3>Using Console Logs</h3>
+        <pre><code>function checkAccess(user) {
+    console.log("Checking access for user:", user);
+    
+    if (!user) {
+        console.log("Access denied: No user");
+        return false;
+    }
+    
+    console.log("User role:", user.role);
+    console.log("User active:", user.isActive);
+    
+    let hasAccess = user.isActive && (user.role === "admin" || user.role === "editor");
+    console.log("Access granted?", hasAccess);
+    
+    return hasAccess;
+}</code></pre>
+
+        <h3>Common Debugging Techniques</h3>
+        <pre><code>// Log the actual values
+console.log({ age, isStudent, isMember }); // Object logging for clarity
+
+// Check types
+console.log(typeof age, age);
+console.log(typeof isStudent, isStudent);
+
+// Verify complex conditions piece by piece
+let condition1 = age >= 18;
+let condition2 = isStudent || isMember;
+console.log({ condition1, condition2 });
+
+if (condition1 && condition2) {
+    // handle
+}</code></pre>
+
+        <hr>
+        <h1>9. PRACTICAL PROJECTS AND EXERCISES</h1>
+        <h2>Exercise 1: Simple Calculator with Conditions</h2>
+        <pre><code>function calculator(num1, num2, operation) {
+    // TODO: Implement using if/else if/else
+    // Operations: "add", "subtract", "multiply", "divide"
+    // Handle division by zero
+    // Return appropriate result or error message
+}
+
+// Test cases
+console.log(calculator(10, 5, "add"));      // 15
+console.log(calculator(10, 5, "subtract")); // 5
+console.log(calculator(10, 5, "multiply")); // 50
+console.log(calculator(10, 0, "divide"));   // "Error: Cannot divide by zero"
+console.log(calculator(10, 5, "modulo"));   // "Error: Invalid operation"</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function calculator(num1, num2, operation) {
+    if (operation === "add") {
+        return num1 + num2;
+    } else if (operation === "subtract") {
+        return num1 - num2;
+    } else if (operation === "multiply") {
+        return num1 * num2;
+    } else if (operation === "divide") {
+        if (num2 === 0) {
+            return "Error: Cannot divide by zero";
+        } else {
+            return num1 / num2;
+        }
+    } else {
+        return "Error: Invalid operation";
+    }
+}</code></pre>
+
+        <h2>Exercise 2: Grade Calculator with Multiple Conditions</h2>
+        <pre><code>function calculateGrade(score, attendance) {
+    // TODO: Calculate grade based on:
+    // A: score >= 90 AND attendance >= 90
+    // B: score >= 80 AND attendance >= 80
+    // C: score >= 70 AND attendance >= 70
+    // D: score >= 60 AND attendance >= 60
+    // F: anything else
+    // If score is high but attendance is low, deduct one letter grade
+    
+    return "Grade";
+}
+
+// Test cases
+console.log(calculateGrade(95, 95)); // "A"
+console.log(calculateGrade(95, 85)); // "B" (high score, low attendance)
+console.log(calculateGrade(82, 95)); // "B"
+console.log(calculateGrade(65, 90)); // "C" (passing score, good attendance)
+console.log(calculateGrade(55, 95)); // "F" (failing score)</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function calculateGrade(score, attendance) {
+    // Base grade from score
+    let baseGrade;
+    if (score >= 90) baseGrade = "A";
+    else if (score >= 80) baseGrade = "B";
+    else if (score >= 70) baseGrade = "C";
+    else if (score >= 60) baseGrade = "D";
+    else baseGrade = "F";
+    
+    // Apply attendance penalty if needed
+    if (baseGrade !== "F") { // Can't go below F
+        if (attendance < 60) {
+            return "F";
+        } else if (attendance < 70 && baseGrade === "D") {
+            return "F";
+        } else if (attendance < 70) {
+            // Deduct one letter grade
+            if (baseGrade === "A") return "B";
+            if (baseGrade === "B") return "C";
+            if (baseGrade === "C") return "D";
+            if (baseGrade === "D") return "F";
+        } else if (attendance < 80 && baseGrade === "C") {
+            return "D";
+        } else if (attendance < 80 && baseGrade === "B") {
+            return "C";
+        } else if (attendance < 80 && baseGrade === "A") {
+            return "B";
+        } else if (attendance < 90 && baseGrade === "A") {
+            return "B";
+        }
+    }
+    
+    return baseGrade;
+}</code></pre>
+
+        <h2>Exercise 3: E-commerce Discount System</h2>
+        <pre><code>function calculateDiscount(price, userType, cartTotal, isHoliday) {
+    // TODO: Apply discounts in this order:
+    // 1. Holiday discount: 15% if isHoliday is true
+    // 2. User type discount: 
+    //    - "premium": 20%
+    //    - "regular": 10%
+    //    - "new": 5%
+    // 3. Cart total discount: additional 5% if cartTotal > 200
+    // Discounts should stack (applied sequentially)
+    
+    return finalPrice;
+}
+
+// Test cases
+console.log(calculateDiscount(100, "premium", 250, true));  // Apply all discounts
+console.log(calculateDiscount(50, "new", 150, false));      // Only new user discount
+console.log(calculateDiscount(300, "regular", 300, false)); // Regular + cart discount</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function calculateDiscount(price, userType, cartTotal, isHoliday) {
+    let finalPrice = price;
+    let discounts = [];
+    
+    // Apply holiday discount
+    if (isHoliday) {
+        finalPrice = finalPrice * 0.85; // 15% off
+        discounts.push("holiday (15%)");
+    }
+    
+    // Apply user type discount
+    if (userType === "premium") {
+        finalPrice = finalPrice * 0.8; // 20% off
+        discounts.push("premium (20%)");
+    } else if (userType === "regular") {
+        finalPrice = finalPrice * 0.9; // 10% off
+        discounts.push("regular (10%)");
+    } else if (userType === "new") {
+        finalPrice = finalPrice * 0.95; // 5% off
+        discounts.push("new (5%)");
+    }
+    
+    // Apply cart total discount
+    if (cartTotal > 200) {
+        finalPrice = finalPrice * 0.95; // Additional 5% off
+        discounts.push("bulk (5%)");
+    }
+    
+    console.log(`Applied discounts: ${discounts.join(", ") || "none"}`);
+    return finalPrice.toFixed(2);
+}</code></pre>
+
+        <h2>Exercise 4: Login Validation System</h2>
+        <pre><code>function validateLogin(username, password, rememberMe) {
+    // TODO: Validate login credentials
+    // Rules:
+    // - Username must be at least 3 characters
+    // - Password must be at least 8 characters
+    // - Password must contain at least one number and one uppercase letter
+    // - If rememberMe is true, set session length to 30 days, else 1 day
+    
+    // Return object with { success: boolean, message: string, sessionDays: number }
+}
+
+// Test cases
+console.log(validateLogin("jo", "password", false));      // Invalid username
+console.log(validateLogin("john", "pass", false));        // Invalid password
+console.log(validateLogin("john", "Password123", false)); // Valid, 1 day session
+console.log(validateLogin("john", "Password123", true));  // Valid, 30 day session</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function validateLogin(username, password, rememberMe) {
+    // Check username
+    if (!username || username.length < 3) {
+        return {
+            success: false,
+            message: "Username must be at least 3 characters",
+            sessionDays: 0
+        };
+    }
+    
+    // Check password length
+    if (!password || password.length < 8) {
+        return {
+            success: false,
+            message: "Password must be at least 8 characters",
+            sessionDays: 0
+        };
+    }
+    
+    // Check for number and uppercase in password
+    let hasNumber = false;
+    let hasUppercase = false;
+    
+    for (let i = 0; i < password.length; i++) {
+        let char = password[i];
+        if (char >= '0' && char <= '9') {
+            hasNumber = true;
+        }
+        if (char >= 'A' && char <= 'Z') {
+            hasUppercase = true;
+        }
+    }
+    
+    if (!hasNumber || !hasUppercase) {
+        return {
+            success: false,
+            message: "Password must contain at least one number and one uppercase letter",
+            sessionDays: 0
+        };
+    }
+    
+    // All validations passed
+    return {
+        success: true,
+        message: "Login successful",
+        sessionDays: rememberMe ? 30 : 1
+    };
+}</code></pre>
+
+        <h2>Exercise 5: Rock, Paper, Scissors Game</h2>
+        <pre><code>function rockPaperScissors(playerChoice) {
+    // TODO: Implement rock, paper, scissors game
+    // Player chooses: "rock", "paper", or "scissors"
+    // Computer randomly chooses one
+    // Determine winner:
+    // - Rock beats Scissors
+    // - Scissors beats Paper
+    // - Paper beats Rock
+    // - Same choice = tie
+    
+    // Return object with { playerChoice, computerChoice, result }
+}
+
+// Test multiple times to see different outcomes
+console.log(rockPaperScissors("rock"));</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function rockPaperScissors(playerChoice) {
+    // Validate player choice
+    let validChoices = ["rock", "paper", "scissors"];
+    if (!validChoices.includes(playerChoice)) {
+        return {
+            error: "Invalid choice. Choose rock, paper, or scissors"
+        };
+    }
+    
+    // Computer choice
+    let randomIndex = Math.floor(Math.random() * 3);
+    let computerChoice = validChoices[randomIndex];
+    
+    // Determine winner
+    let result;
+    if (playerChoice === computerChoice) {
+        result = "tie";
+    } else if (
+        (playerChoice === "rock" && computerChoice === "scissors") ||
+        (playerChoice === "paper" && computerChoice === "rock") ||
+        (playerChoice === "scissors" && computerChoice === "paper")
+    ) {
+        result = "win";
+    } else {
+        result = "lose";
+    }
+    
+    return {
+        playerChoice,
+        computerChoice,
+        result,
+        message: result === "tie" ? "It's a tie!" : 
+                 result === "win" ? "You win! 🎉" : "Computer wins! 🤖"
+    };
+}</code></pre>
+
+        <h2>Mini Project: Interactive Quiz Application</h2>
+        <pre><code>// Build a quiz app with:
+// - Array of questions with multiple choice answers
+// - Track score
+// - Different feedback based on performance
+// - Conditional display of results
+
+let quizQuestions = [
+    {
+        question: "What does HTML stand for?",
+        options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"],
+        correct: 0
+    },
+    {
+        question: "Which of the following is a JavaScript data type?",
+        options: ["String", "Integer", "Float", "Character"],
+        correct: 0
+    },
+    {
+        question: "What does CSS stand for?",
+        options: ["Creative Style Sheets", "Cascading Style Sheets", "Computer Style Sheets", "Colorful Style Sheets"],
+        correct: 1
+    }
+];
+
+function runQuiz(answers) {
+    // TODO: Grade the quiz and provide feedback
+    // Score calculation
+    // Performance message based on score
+    // Recommendations for improvement
+}
+
+// Example answers (indices of selected options)
+let userAnswers = [0, 1, 1]; // First two correct, last one wrong
+console.log(runQuiz(userAnswers));</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>function runQuiz(answers) {
+    if (!answers || answers.length !== quizQuestions.length) {
+        return {
+            error: "Please answer all questions"
+        };
+    }
+    
+    // Calculate score
+    let correctCount = 0;
+    let results = [];
+    
+    for (let i = 0; i < quizQuestions.length; i++) {
+        let isCorrect = answers[i] === quizQuestions[i].correct;
+        if (isCorrect) {
+            correctCount++;
+        }
+        
+        results.push({
+            question: quizQuestions[i].question,
+            userAnswer: quizQuestions[i].options[answers[i]],
+            correctAnswer: quizQuestions[i].options[quizQuestions[i].correct],
+            isCorrect
+        });
+    }
+    
+    let percentage = (correctCount / quizQuestions.length) * 100;
+    
+    // Generate feedback based on performance
+    let feedback;
+    if (percentage === 100) {
+        feedback = "Perfect score! Excellent work! 🏆";
+    } else if (percentage >= 80) {
+        feedback = "Great job! You really know your stuff! 🌟";
+    } else if (percentage >= 60) {
+        feedback = "Good effort! A little more study and you'll be there! 📚";
+    } else if (percentage >= 40) {
+        feedback = "Not bad, but keep practicing! 💪";
+    } else {
+        feedback = "Time to hit the books! Don't give up! 📖";
+    }
+    
+    return {
+        score: correctCount,
+        totalQuestions: quizQuestions.length,
+        percentage: percentage.toFixed(1) + "%",
+        feedback,
+        details: results,
+        passed: percentage >= 60
+    };
+}</code></pre>
+
+        <hr>
+        <h1>10. SUMMARY AND REFERENCE</h1>
+        <h2>Quick Reference Card</h2>
+        <h3>If Statement</h3>
+        <pre><code>if (condition) {
+    // code runs if condition is true
+}</code></pre>
+        <h3>If-Else Statement</h3>
+        <pre><code>if (condition) {
+    // runs if true
+} else {
+    // runs if false
+}</code></pre>
+        <h3>Else-If Ladder</h3>
+        <pre><code>if (condition1) {
+    // runs if condition1 is true
+} else if (condition2) {
+    // runs if condition1 is false and condition2 is true
+} else if (condition3) {
+    // runs if condition1 and condition2 are false and condition3 is true
+} else {
+    // runs if all conditions are false
+}</code></pre>
+        <h3>Ternary Operator</h3>
+        <pre><code>let result = condition ? valueIfTrue : valueIfFalse;</code></pre>
+        <h3>Truthy and Falsy Values</h3>
+        <pre><code>// Falsy (evaluate to false)
+false, 0, -0, 0n, "", null, undefined, NaN
+
+// Everything else is truthy</code></pre>
+        <h3>Comparison Operators</h3>
+        <pre><code>==  // loose equality (with type coercion)
+=== // strict equality (no type coercion)
+!=  // loose inequality
+!== // strict inequality
+>   // greater than
+<   // less than
+>=  // greater than or equal
+<=  // less than or equal</code></pre>
+        <h3>Logical Operators</h3>
+        <pre><code>&&  // AND - all conditions must be true
+||  // OR - at least one condition must be true
+!   // NOT - reverses boolean value</code></pre>
+        <h3>Modern Operators (ES2020+)</h3>
+        <pre><code>??  // nullish coalescing (checks only null/undefined)
+?.  // optional chaining (safe property access)</code></pre>
+
+        <h2>Key Takeaways</h2>
+        <ol>
+            <li><strong>Control flow</strong> is how programs make decisions</li>
+            <li><strong>If statements</strong> are the foundation of conditional logic</li>
+            <li><strong>Else</strong> provides an alternative path</li>
+            <li><strong>Else if</strong> handles multiple conditions</li>
+            <li><strong>Ternary operators</strong> offer concise syntax for simple conditions</li>
+            <li><strong>Truthy/falsy</strong> understanding is crucial for effective conditionals</li>
+            <li><strong>Readability</strong> should always be prioritized over cleverness</li>
+            <li><strong>Edge cases</strong> must be handled to prevent bugs</li>
+            <li><strong>Guard clauses</strong> and <strong>early returns</strong> reduce nesting</li>
+            <li><strong>Practice</strong> is essential for mastering conditionals</li>
+        </ol>
+
+        <h2>Common Patterns Cheat Sheet</h2>
+        <h3>Default Values</h3>
+        <pre><code>let name = inputName || "Guest";          // old way
+let name = inputName ?? "Guest";           // new way (nullish)</code></pre>
+        <h3>Guard Clauses</h3>
+        <pre><code>function process(data) {
+    if (!data) return;
+    if (!data.isValid) return;
+    // main logic here
+}</code></pre>
+        <h3>Safe Property Access</h3>
+        <pre><code>let city = user?.address?.city ?? "Unknown";</code></pre>
+        <h3>Conditional Rendering</h3>
+        <pre><code>let element = condition && <Component />;
+let element = condition ? <TrueComp /> : <FalseComp />;</code></pre>
+        <h3>Multiple Conditions</h3>
+        <pre><code>let isValid = age >= 18 && hasLicense && !isSuspended;</code></pre>
+
+        <h2>Final Thoughts</h2>
+        <p>Conditionals are the decision-makers of your code. They bring your programs to life, allowing them to respond
+            intelligently to different inputs, situations, and user actions. Master them, and you've mastered one of the
+            most fundamental concepts in programming.</p>
+        <p>Remember:</p>
+        <ul>
+            <li><strong>Start simple</strong>, then add complexity as needed</li>
+            <li><strong>Test all paths</strong> - true, false, and edge cases</li>
+            <li><strong>Keep it readable</strong> - your future self will thank you</li>
+            <li><strong>Practice daily</strong> - conditionals are everywhere!</li>
+        </ul>
+        <hr>
+        <p><em>"The art of programming is the art of organizing complexity, of mastering multitude and avoiding its
+                bastard chaos as effectively as possible."</em> - Edsger W. Dijkstra</p>
+
+        <!-- end of preserved content -->
+    </div>
+</body>
+
+</html>

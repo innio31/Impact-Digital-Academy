@@ -1,0 +1,3498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Events & Event Listeners – complete notes</title>
+    <style>
+        /* minimalist style – only for readability, content is untouched */
+        body {
+            background: #f5f7fb;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem 1rem;
+            color: #1a2634;
+        }
+
+        .document-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -15px #b0c4d9;
+            padding: 2.5rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1e4b6b;
+            border-bottom: 2px solid #c6dcef;
+            padding-bottom: 0.3rem;
+            margin-top: 2.2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 4px solid #32749e;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1.8rem 0;
+            background: #f2f7fd;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #d8e4f0;
+        }
+
+        th {
+            background: #2c5f83;
+            color: white;
+            padding: 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #c0d3e6;
+        }
+
+        pre {
+            background: #1e2b3a;
+            color: #e4f0fb;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            box-shadow: inset 0 0 8px #0b1a24;
+            margin: 1.5rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code:not(pre code) {
+            background: #e2ebf3;
+            color: #174567;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.6rem;
+            font-size: 0.95rem;
+            font-family: monospace;
+        }
+
+        blockquote {
+            border-left: 6px solid #32749e;
+            background: #e9f1fa;
+            padding: 1rem 1.8rem;
+            margin: 1.5rem 0;
+            border-radius: 1rem;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c1d9ed, white);
+            margin: 2.5rem 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.8rem;
+        }
+
+        .table-of-contents {
+            background: #e6f0fa;
+            padding: 1.6rem 2rem;
+            border-radius: 2rem;
+            margin: 1.5rem 0 2.5rem;
+        }
+
+        .table-of-contents a {
+            text-decoration: none;
+            color: #1d5377;
+            font-weight: 500;
+        }
+
+        .table-of-contents li {
+            margin: 0.4rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #2b688b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>Introduction to Events &amp; Event Listeners</h1>
+
+        <h2>Table of Contents</h2>
+        <div class="table-of-contents">
+            <ul>
+                <li><a href="#understanding-events-in-javascript">1. Understanding Events in JavaScript</a></li>
+                <li><a href="#the-event-flow-mechanism">2. The Event Flow Mechanism</a></li>
+                <li><a href="#adding-event-listeners-with-addeventlistener">3. Adding Event Listeners with
+                        addEventListener()</a></li>
+                <li><a href="#common-events-in-detail">4. Common Events in Detail</a></li>
+                <li><a href="#the-event-object">5. The Event Object</a></li>
+                <li><a href="#event-propagation-bubbling-and-capturing">6. Event Propagation: Bubbling and Capturing</a>
+                </li>
+                <li><a href="#removing-event-listeners">7. Removing Event Listeners</a></li>
+                <li><a href="#event-delegation-pattern">8. Event Delegation Pattern</a></li>
+                <li><a href="#performance-considerations">9. Performance Considerations</a></li>
+                <li><a href="#practical-examples-and-use-cases">10. Practical Examples and Use Cases</a></li>
+                <li><a href="#best-practices-and-common-pitfalls">11. Best Practices and Common Pitfalls</a></li>
+                <li><a href="#advanced-event-concepts">12. Advanced Event Concepts</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2 id="understanding-events-in-javascript">1. Understanding Events in JavaScript</h2>
+        <h3>What is an Event?</h3>
+        <p>An <strong>event</strong> is a signal that something has occurred in the browser. Events are at the heart of
+            interactive web applications - they're the way JavaScript detects and responds to user actions and browser
+            state changes.</p>
+        <p>Think of events like this:</p>
+        <ul>
+            <li><strong>User clicks a button</strong> → Click event fires</li>
+            <li><strong>User presses a key</strong> → Key event fires</li>
+            <li><strong>Web page finishes loading</strong> → Load event fires</li>
+            <li><strong>User moves mouse</strong> → Mouse movement events fire</li>
+            <li><strong>Form is submitted</strong> → Submit event fires</li>
+        </ul>
+
+        <h3>The Event-Driven Programming Paradigm</h3>
+        <p>JavaScript in the browser uses an <strong>event-driven programming model</strong>. This means:</p>
+        <ul>
+            <li>The program doesn't run in a linear sequence</li>
+            <li>Instead, it sits and waits for events to occur</li>
+            <li>When an event occurs, the program responds by running specific code (called an <strong>event
+                    handler</strong> or <strong>event listener</strong>)</li>
+        </ul>
+
+        <pre><code>// Analogy: Restaurant Kitchen
+// - The kitchen staff (program) doesn't randomly cook food
+// - They wait for orders (events) to come in
+// - When an order arrives, they execute the recipe (event handler)
+// - Different orders trigger different recipes
+</code></pre>
+
+        <h3>Types of Events</h3>
+        <p>Events can be categorized into several groups:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Examples</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Mouse Events</strong></td>
+                    <td><code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>,
+                        <code>mousemove</code></td>
+                    <td>User interacts with mouse</td>
+                </tr>
+                <tr>
+                    <td><strong>Keyboard Events</strong></td>
+                    <td><code>keydown</code>, <code>keyup</code>, <code>keypress</code></td>
+                    <td>User interacts with keyboard</td>
+                </tr>
+                <tr>
+                    <td><strong>Form Events</strong></td>
+                    <td><code>submit</code>, <code>change</code>, <code>focus</code>, <code>blur</code>,
+                        <code>input</code></td>
+                    <td>User interacts with forms</td>
+                </tr>
+                <tr>
+                    <td><strong>Document/Window Events</strong></td>
+                    <td><code>load</code>, <code>resize</code>, <code>scroll</code>, <code>unload</code></td>
+                    <td>Browser or page state changes</td>
+                </tr>
+                <tr>
+                    <td><strong>Drag Events</strong></td>
+                    <td><code>dragstart</code>, <code>drag</code>, <code>dragend</code>, <code>drop</code></td>
+                    <td>User drags elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Clipboard Events</strong></td>
+                    <td><code>copy</code>, <code>cut</code>, <code>paste</code></td>
+                    <td>User interacts with clipboard</td>
+                </tr>
+                <tr>
+                    <td><strong>Media Events</strong></td>
+                    <td><code>play</code>, <code>pause</code>, <code>ended</code></td>
+                    <td>Video/audio playback changes</td>
+                </tr>
+                <tr>
+                    <td><strong>Touch Events</strong></td>
+                    <td><code>touchstart</code>, <code>touchmove</code>, <code>touchend</code></td>
+                    <td>User touches touchscreen</td>
+                </tr>
+                <tr>
+                    <td><strong>Focus Events</strong></td>
+                    <td><code>focus</code>, <code>blur</code>, <code>focusin</code>, <code>focusout</code></td>
+                    <td>Element gains/loses focus</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="the-event-flow-mechanism">2. The Event Flow Mechanism</h2>
+        <h3>How Events Travel Through the DOM</h3>
+        <p>When an event occurs on an element, it doesn't just happen on that single element. It travels through the
+            document in a specific path. Understanding this flow is crucial for mastering event handling.</p>
+        <h3>The Three Phases of Event Flow</h3>
+        <p>According to the W3C DOM Events specification, event flow has three phases:</p>
+        <pre><code>                    Capturing Phase    Target Phase    Bubbling Phase
+                         │                  │               │
+                         ▼                  ▼               ▼
+     ┌─────────────────────────────────────────────────────────┐
+     │                       window                             │
+     │                         │                                 │
+     │                      document                             │
+     │                         │                                 │
+     │                      &lt;html&gt;                             │
+     │                         │                                 │
+     │                      &lt;body&gt;                             │
+     │                         │                                 │
+     │                      &lt;div&gt;                              │
+     │                         │                                 │
+     │                      &lt;button&gt;  ←─────── Event Target    │
+     └─────────────────────────────────────────────────────────┘
+</code></pre>
+        <ol>
+            <li><strong>Capturing Phase (Capture Phase)</strong><br>Event starts from the <code>window</code> and
+                travels DOWN to the target element<br>Rarely used in practice, but available for special
+                cases<br>Listeners registered for this phase fire before the target phase</li>
+            <li><strong>Target Phase</strong><br>Event reaches the element that triggered it<br>Listeners on the target
+                element fire</li>
+            <li><strong>Bubbling Phase</strong><br>Event travels BACK UP from the target to the
+                <code>window</code><br>This is the phase most event handlers work in (default behavior)<br>Allows for
+                event delegation</li>
+        </ol>
+        <h3>Visual Representation of Event Flow</h3>
+        <pre><code>// Example HTML structure:
+// &lt;body&gt;
+//   &lt;div id="parent"&gt;
+//     &lt;button id="child"&gt;Click Me!&lt;/button&gt;
+//   &lt;/div&gt;
+// &lt;/body&gt;
+
+// If you click the button, the event travels:
+// 1. window (capturing) → document → body → div → button (target)
+// 2. button (target) ← div ← body ← document ← window (bubbling)
+
+// Code to demonstrate the flow:
+const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+
+// Capturing phase listener (third parameter true)
+document.body.addEventListener('click', () => {
+    console.log('1. Body - Capturing Phase');
+}, true);
+
+parent.addEventListener('click', () => {
+    console.log('2. Parent - Capturing Phase');
+}, true);
+
+child.addEventListener('click', () => {
+    console.log('3. Child - Target Phase (both capturing and bubbling)');
+}, true); // This actually runs in target phase, not capturing
+
+// Bubbling phase listeners (third parameter false or omitted)
+child.addEventListener('click', () => {
+    console.log('4. Child - Bubbling Phase');
+});
+
+parent.addEventListener('click', () => {
+    console.log('5. Parent - Bubbling Phase');
+});
+
+document.body.addEventListener('click', () => {
+    console.log('6. Body - Bubbling Phase');
+});
+
+// Console output when clicking the button:
+// 1. Body - Capturing Phase
+// 2. Parent - Capturing Phase
+// 3. Child - Target Phase (both capturing and bubbling)
+// 4. Child - Bubbling Phase
+// 5. Parent - Bubbling Phase
+// 6. Body - Bubbling Phase
+</code></pre>
+
+        <hr>
+
+        <h2 id="adding-event-listeners-with-addeventlistener">3. Adding Event Listeners with addEventListener()</h2>
+        <h3>The Modern Way to Handle Events</h3>
+        <p><code>addEventListener()</code> is the recommended method for attaching event handlers. It provides more
+            flexibility and control compared to older methods like inline event handlers
+            (<code>onclick=&quot;...&quot;</code>) or DOM element properties (<code>element.onclick = function</code>).
+        </p>
+        <h3>Syntax and Parameters</h3>
+        <pre><code>element.addEventListener(event, function, options);
+</code></pre>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>event</code></td>
+                    <td>String representing the event type (e.g., 'click', 'mouseover')</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><code>function</code></td>
+                    <td>The function to run when event occurs (callback)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td><code>options</code></td>
+                    <td>Object or boolean specifying characteristics</td>
+                    <td>No</td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>The Options Parameter (Third Parameter)</h3>
+        <p>The third parameter can be a boolean or an options object:</p>
+        <h4>Boolean Usage (Legacy)</h4>
+        <pre><code>// false (default) - Listener runs in bubbling phase
+element.addEventListener('click', handler, false);
+
+// true - Listener runs in capturing phase
+element.addEventListener('click', handler, true);
+</code></pre>
+        <h4>Options Object (Modern Approach)</h4>
+        <pre><code>element.addEventListener('click', handler, {
+    capture: false,      // Use capturing phase? (default: false)
+    once: false,         // Run only once then auto-remove? (default: false)
+    passive: false       // Can't call preventDefault()? (default: false)
+});
+</code></pre>
+        <h3>Detailed Explanation of Options</h3>
+        <h4>1. <code>capture</code> (boolean)</h4>
+        <pre><code>// Listener fires during capturing phase
+element.addEventListener('click', () => {
+    console.log('This runs during capturing phase');
+}, { capture: true });
+
+// Or using the shorthand
+element.addEventListener('click', handler, true); // capture = true
+</code></pre>
+        <h4>2. <code>once</code> (boolean) - Auto-remove after first execution</h4>
+        <pre><code>const button = document.getElementById('submit-btn');
+
+// This will only run ONCE, no matter how many times you click
+button.addEventListener('click', () => {
+    console.log('Form submitted!');
+    // This will only log once
+}, { once: true });
+
+// Practical example: One-time initialization
+const initButton = document.getElementById('init');
+initButton.addEventListener('click', () => {
+    initializeApp();
+    console.log('App initialized');
+}, { once: true });
+</code></pre>
+        <h4>3. <code>passive</code> (boolean) - Performance optimization</h4>
+        <pre><code>// For scroll events, passive: true tells browser you won't call preventDefault()
+// This allows for smoother scrolling performance
+window.addEventListener('scroll', () => {
+    updateScrollPosition();
+}, { passive: true });
+
+// Cannot call preventDefault() inside passive listeners
+window.addEventListener('touchstart', (e) => {
+    // This will NOT work and might throw a warning
+    e.preventDefault(); // Ignored in passive listener
+}, { passive: true });
+</code></pre>
+        <h3>Multiple Listeners on the Same Element</h3>
+        <p>One of the biggest advantages of <code>addEventListener()</code> is that you can attach multiple handlers to
+            the same event on the same element:</p>
+        <pre><code>const button = document.getElementById('myButton');
+
+// First handler
+button.addEventListener('click', () => {
+    console.log('Handler 1: Button was clicked');
+});
+
+// Second handler - runs independently
+button.addEventListener('click', () => {
+    console.log('Handler 2: Also handling the click');
+});
+
+// Third handler - maybe for analytics
+button.addEventListener('click', () => {
+    trackUserAction('button_click');
+});
+
+// All three will execute when button is clicked
+</code></pre>
+        <h3>Comparing Event Handling Methods</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Example</th>
+                    <th>Pros</th>
+                    <th>Cons</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Inline HTML</strong></td>
+                    <td><code>&lt;button onclick=&quot;alert('Clicked')&quot;&gt;</code></td>
+                    <td>Simple for quick tests</td>
+                    <td>Mixes JS with HTML, no multiple handlers</td>
+                </tr>
+                <tr>
+                    <td><strong>DOM Property</strong></td>
+                    <td><code>button.onclick = function</code></td>
+                    <td>Cleaner separation</td>
+                    <td>Only one handler per event</td>
+                </tr>
+                <tr>
+                    <td><strong>addEventListener()</strong></td>
+                    <td><code>button.addEventListener('click', fn)</code></td>
+                    <td>Multiple handlers, fine control, all events</td>
+                    <td>Slightly more verbose</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="common-events-in-detail">4. Common Events in Detail</h2>
+        <h2>A. CLICK EVENT (<code>click</code>)</h2>
+        <p>The <code>click</code> event fires when a pointing device button (usually a mouse) is pressed and released on
+            a single element.</p>
+        <h3>Characteristics</h3>
+        <ul>
+            <li>Fires after both <code>mousedown</code> and <code>mouseup</code> events occur on the same element</li>
+            <li>Works on almost all HTML elements</li>
+            <li>Can be triggered by keyboard (Enter or Space) on focusable elements</li>
+        </ul>
+        <h3>Basic Usage</h3>
+        <pre><code>const button = document.querySelector('button');
+
+button.addEventListener('click', function(event) {
+    console.log('Button was clicked!');
+    // 'this' refers to the element that triggered the event
+    console.log('Clicked element:', this);
+    console.log('Event type:', event.type);
+});
+</code></pre>
+        <h3>Advanced Click Examples</h3>
+        <h4>1. Detecting Left, Middle, or Right Click</h4>
+        <pre><code>element.addEventListener('click', (event) => {
+    // event.button tells you which mouse button was pressed
+    switch(event.button) {
+        case 0:
+            console.log('Left button clicked');
+            break;
+        case 1:
+            console.log('Middle button clicked');
+            break;
+        case 2:
+            console.log('Right button clicked');
+            break;
+    }
+    
+    // Check if modifier keys were pressed
+    if (event.ctrlKey) console.log('Ctrl was held');
+    if (event.shiftKey) console.log('Shift was held');
+    if (event.altKey) console.log('Alt was held');
+    if (event.metaKey) console.log('Meta/Windows key was held');
+});
+</code></pre>
+        <h4>2. Double-Click Prevention</h4>
+        <pre><code>let clickTimer = null;
+const doubleClickThreshold = 300; // milliseconds
+
+element.addEventListener('click', (event) => {
+    if (clickTimer === null) {
+        // First click
+        clickTimer = setTimeout(() => {
+            console.log('Single click detected');
+            clickTimer = null;
+        }, doubleClickThreshold);
+    } else {
+        // Second click within threshold
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        console.log('Double click detected');
+    }
+});
+</code></pre>
+        <h4>3. Click Outside Element (Modal/Dropdown Closing)</h4>
+        <pre><code>const modal = document.getElementById('modal');
+const button = document.getElementById('open-modal');
+
+button.addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevent immediate triggering of document click
+    modal.style.display = 'block';
+});
+
+document.addEventListener('click', (event) => {
+    // Check if click was outside the modal AND not on the button
+    if (!modal.contains(event.target) && event.target !== button) {
+        modal.style.display = 'none';
+    }
+});
+</code></pre>
+        <h4>4. Throttling Clicks (Prevent Double Submission)</h4>
+        <pre><code>const submitButton = document.getElementById('submit');
+
+submitButton.addEventListener('click', (event) => {
+    // Disable the button immediately
+    submitButton.disabled = true;
+    submitButton.textContent = 'Processing...';
+    
+    // Simulate form submission
+    submitForm().then(() => {
+        // Re-enable after 3 seconds (or on error)
+        setTimeout(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit';
+        }, 3000);
+    });
+});
+</code></pre>
+
+        <h2>B. MOUSEOVER EVENT (<code>mouseover</code>)</h2>
+        <p>The <code>mouseover</code> event fires when a pointing device is moved onto the element that has the listener
+            attached, or onto one of its children.</p>
+        <h3>Characteristics</h3>
+        <ul>
+            <li><strong>Bubbles</strong> - fires on target, then bubbles up</li>
+            <li>Fires every time mouse enters the element or any child</li>
+            <li>Related to <code>mouseenter</code> (which doesn't bubble)</li>
+        </ul>
+        <h3>Basic Usage</h3>
+        <pre><code>const box = document.getElementById('hover-box');
+
+box.addEventListener('mouseover', (event) => {
+    console.log('Mouse entered the box or a child element');
+    box.style.backgroundColor = 'lightblue';
+    box.style.transform = 'scale(1.05)';
+    box.style.transition = 'all 0.3s ease';
+});
+
+box.addEventListener('mouseout', (event) => {
+    console.log('Mouse left the box');
+    box.style.backgroundColor = '';
+    box.style.transform = 'scale(1)';
+});
+</code></pre>
+        <h3>Advanced Mouseover Examples</h3>
+        <h4>1. Distinguishing Between Element and Children</h4>
+        <pre><code>const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+
+parent.addEventListener('mouseover', (event) => {
+    // event.target is the element that triggered the event
+    // event.currentTarget is the element the listener is attached to
+    if (event.target === parent) {
+        console.log('Mouse entered the PARENT directly');
+    } else if (event.target === child) {
+        console.log('Mouse entered the CHILD');
+        console.log('This also triggers parent mouseover due to bubbling');
+    }
+});
+</code></pre>
+        <h4>2. Creating a Mega Menu (Dropdown on Hover)</h4>
+        <pre><code>const menuItem = document.getElementById('menu-item');
+const dropdown = document.getElementById('dropdown');
+let hoverTimer;
+
+menuItem.addEventListener('mouseover', () => {
+    // Clear any existing timer to hide dropdown
+    clearTimeout(hoverTimer);
+    
+    // Show dropdown immediately
+    dropdown.style.display = 'block';
+    dropdown.style.opacity = '1';
+});
+
+menuItem.addEventListener('mouseout', () => {
+    // Don't hide immediately, wait to see if user moves to dropdown
+    hoverTimer = setTimeout(() => {
+        dropdown.style.display = 'none';
+    }, 300); // 300ms grace period
+});
+
+// Keep dropdown visible when hovering over it
+dropdown.addEventListener('mouseover', () => {
+    clearTimeout(hoverTimer);
+});
+
+dropdown.addEventListener('mouseout', () => {
+    dropdown.style.display = 'none';
+});
+</code></pre>
+        <h4>3. Tooltip System</h4>
+        <pre><code>const elements = document.querySelectorAll('[data-tooltip]');
+const tooltip = document.getElementById('tooltip');
+
+elements.forEach(element => {
+    element.addEventListener('mouseover', (event) => {
+        const tooltipText = element.dataset.tooltip;
+        
+        // Position tooltip near mouse
+        tooltip.textContent = tooltipText;
+        tooltip.style.display = 'block';
+        tooltip.style.left = event.pageX + 10 + 'px';
+        tooltip.style.top = event.pageY + 10 + 'px';
+    });
+    
+    element.addEventListener('mousemove', (event) => {
+        // Update position as mouse moves
+        tooltip.style.left = event.pageX + 10 + 'px';
+        tooltip.style.top = event.pageY + 10 + 'px';
+    });
+    
+    element.addEventListener('mouseout', () => {
+        tooltip.style.display = 'none';
+    });
+});
+</code></pre>
+        <h4>4. Image Gallery Preview</h4>
+        <pre><code>const thumbnails = document.querySelectorAll('.thumbnail');
+const preview = document.getElementById('preview');
+const previewImage = document.getElementById('preview-image');
+
+thumbnails.forEach(thumb => {
+    thumb.addEventListener('mouseover', () => {
+        const highResSrc = thumb.dataset.highres;
+        
+        // Load high-res image on hover
+        previewImage.src = highResSrc;
+        preview.classList.add('visible');
+        
+        // Add zoom effect
+        preview.style.transform = 'scale(1.1)';
+    });
+    
+    thumb.addEventListener('mouseout', () => {
+        preview.classList.remove('visible');
+        preview.style.transform = 'scale(1)';
+    });
+});
+</code></pre>
+        <h3>Difference Between mouseover/mouseout and mouseenter/mouseleave</h3>
+        <pre><code>const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+
+// mouseover/mouseout - BUBBLES
+parent.addEventListener('mouseover', () => {
+    console.log('mouseover: Fires when entering parent OR child');
+});
+
+// mouseenter/mouseleave - DOES NOT BUBBLE
+parent.addEventListener('mouseenter', () => {
+    console.log('mouseenter: Fires ONLY when entering parent directly');
+});
+
+// Demonstration:
+// Move mouse into parent (not child)
+// Output: "mouseover: Fires when entering parent OR child"
+// Output: "mouseenter: Fires ONLY when entering parent directly"
+
+// Move mouse from parent into child
+// Output: "mouseover: Fires when entering parent OR child" (again!)
+// No mouseenter output (already inside parent)
+</code></pre>
+
+        <h2>C. KEYUP EVENT (<code>keyup</code>)</h2>
+        <p>The <code>keyup</code> event fires when a keyboard key is released.</p>
+        <h3>Characteristics</h3>
+        <ul>
+            <li>Fires after <code>keydown</code> and before any default browser action</li>
+            <li>Fires for all keys (including modifier keys like Shift, Ctrl)</li>
+            <li>Can be used on any element, but commonly on <code>document</code> or form inputs</li>
+        </ul>
+        <h3>Basic Usage</h3>
+        <pre><code>document.addEventListener('keyup', (event) => {
+    console.log(`Key released: ${event.key}`);
+    console.log(`Key code: ${event.code}`);
+});
+
+// On a specific input field
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('keyup', (event) => {
+    console.log(`Current value: ${searchInput.value}`);
+    performSearch(searchInput.value);
+});
+</code></pre>
+        <h3>Advanced Keyup Examples</h3>
+        <h4>1. Detecting Specific Keys</h4>
+        <pre><code>document.addEventListener('keyup', (event) => {
+    // Check which key was released
+    switch(event.key) {
+        case 'Enter':
+            console.log('Enter key released');
+            submitForm();
+            break;
+        case 'Escape':
+            console.log('Escape key released');
+            closeModal();
+            break;
+        case 'ArrowUp':
+            console.log('Arrow Up released');
+            navigateUp();
+            break;
+        case 'ArrowDown':
+            console.log('Arrow Down released');
+            navigateDown();
+            break;
+        case ' ':
+        case 'Spacebar': // Older browsers
+            console.log('Spacebar released');
+            togglePlay();
+            break;
+    }
+});
+</code></pre>
+        <h4>2. Keyboard Shortcuts (Hotkeys)</h4>
+        <pre><code>let ctrlPressed = false;
+let shiftPressed = false;
+
+document.addEventListener('keydown', (event) => {
+    // Track modifier keys
+    if (event.key === 'Control') ctrlPressed = true;
+    if (event.key === 'Shift') shiftPressed = true;
+});
+
+document.addEventListener('keyup', (event) => {
+    // Handle combinations when the main key is released
+    if (event.key === 's' &amp;&amp; ctrlPressed) {
+        event.preventDefault(); // Prevent browser save dialog
+        console.log('Ctrl+S pressed - Save document');
+        saveDocument();
+    }
+    
+    if (event.key === 'p' &amp;&amp; ctrlPressed &amp;&amp; shiftPressed) {
+        event.preventDefault();
+        console.log('Ctrl+Shift+P pressed - Print preview');
+        showPrintPreview();
+    }
+    
+    if (event.key === 'k' &amp;&amp; ctrlPressed) {
+        event.preventDefault();
+        console.log('Ctrl+K pressed - Search');
+        focusSearchBar();
+    }
+    
+    // Reset modifier keys when they're released
+    if (event.key === 'Control') ctrlPressed = false;
+    if (event.key === 'Shift') shiftPressed = false;
+});
+
+// Also reset if window loses focus while keys are pressed
+window.addEventListener('blur', () => {
+    ctrlPressed = false;
+    shiftPressed = false;
+});
+</code></pre>
+        <h4>3. Input Validation on Keyup</h4>
+        <pre><code>const usernameInput = document.getElementById('username');
+const validationMessage = document.getElementById('validation-message');
+
+usernameInput.addEventListener('keyup', (event) => {
+    const value = usernameInput.value;
+    const errors = [];
+    
+    // Real-time validation
+    if (value.length &lt; 3) {
+        errors.push('Must be at least 3 characters');
+    }
+    
+    if (!/^[a-zA-Z0-9]+$/.test(value)) {
+        errors.push('Only letters and numbers allowed');
+    }
+    
+    if (value.length &gt; 20) {
+        errors.push('Must be less than 20 characters');
+    }
+    
+    // Display validation results
+    if (errors.length &gt; 0) {
+        validationMessage.textContent = errors.join(', ');
+        validationMessage.style.color = 'red';
+        usernameInput.style.borderColor = 'red';
+    } else {
+        validationMessage.textContent = '✓ Username available';
+        validationMessage.style.color = 'green';
+        usernameInput.style.borderColor = 'green';
+    }
+    
+    // Debounce for performance (don't validate on EVERY keystroke)
+    clearTimeout(usernameInput.debounceTimer);
+    usernameInput.debounceTimer = setTimeout(() => {
+        checkUsernameAvailability(value);
+    }, 500);
+});
+</code></pre>
+        <h4>4. Search as You Type (with Debouncing)</h4>
+        <pre><code>const searchBox = document.getElementById('search-box');
+const resultsContainer = document.getElementById('results');
+let debounceTimer;
+
+searchBox.addEventListener('keyup', (event) => {
+    const searchTerm = searchBox.value.trim();
+    
+    // Clear previous timer
+    clearTimeout(debounceTimer);
+    
+    // Don't search for very short terms
+    if (searchTerm.length &lt; 2) {
+        resultsContainer.innerHTML = '';
+        return;
+    }
+    
+    // Wait for user to stop typing
+    debounceTimer = setTimeout(() => {
+        console.log(`Searching for: ${searchTerm}`);
+        
+        // Show loading indicator
+        resultsContainer.innerHTML = '&lt;div class="loading"&gt;Searching...&lt;/div&gt;';
+        
+        // Perform search (simulated with setTimeout)
+        setTimeout(() => {
+            const results = performSearch(searchTerm);
+            displayResults(results);
+        }, 500);
+    }, 300); // Wait 300ms after last keystroke
+});
+
+// Special handling for Enter key (immediate search)
+searchBox.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        clearTimeout(debounceTimer);
+        const searchTerm = searchBox.value.trim();
+        if (searchTerm) {
+            console.log('Enter pressed - immediate search');
+            performImmediateSearch(searchTerm);
+        }
+    }
+});
+</code></pre>
+        <h4>5. Form Navigation with Arrow Keys</h4>
+        <pre><code>const formInputs = document.querySelectorAll('input, select, textarea');
+let currentFocus = 0;
+
+// Set initial focus
+if (formInputs.length &gt; 0) {
+    formInputs[0].focus();
+}
+
+document.addEventListener('keyup', (event) => {
+    // Only handle arrow keys
+    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+        return;
+    }
+    
+    // Find currently focused element
+    const focusedElement = document.activeElement;
+    const currentIndex = Array.from(formInputs).indexOf(focusedElement);
+    
+    if (currentIndex === -1) return; // Focus not on our form inputs
+    
+    event.preventDefault(); // Prevent scrolling
+    
+    switch(event.key) {
+        case 'ArrowDown':
+        case 'ArrowRight':
+            // Move to next field
+            if (currentIndex &lt; formInputs.length - 1) {
+                formInputs[currentIndex + 1].focus();
+            }
+            break;
+        case 'ArrowUp':
+        case 'ArrowLeft':
+            // Move to previous field
+            if (currentIndex &gt; 0) {
+                formInputs[currentIndex - 1].focus();
+            }
+            break;
+    }
+});
+</code></pre>
+        <h4>6. Game Controls with Keyup</h4>
+        <pre><code>// Simple game controls
+const gameState = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+    space: false
+};
+
+document.addEventListener('keydown', (event) => {
+    // Set flags on keydown
+    switch(event.key) {
+        case 'ArrowUp': gameState.up = true; break;
+        case 'ArrowDown': gameState.down = true; break;
+        case 'ArrowLeft': gameState.left = true; break;
+        case 'ArrowRight': gameState.right = true; break;
+        case ' ': gameState.space = true; break;
+    }
+    event.preventDefault(); // Prevent scrolling
+});
+
+document.addEventListener('keyup', (event) => {
+    // Clear flags on keyup
+    switch(event.key) {
+        case 'ArrowUp': gameState.up = false; break;
+        case 'ArrowDown': gameState.down = false; break;
+        case 'ArrowLeft': gameState.left = false; break;
+        case 'ArrowRight': gameState.right = false; break;
+        case ' ': gameState.space = false; break;
+    }
+    
+    // Log current state for debugging
+    console.log('Game state:', gameState);
+});
+
+// Game loop (simulated)
+function gameLoop() {
+    if (gameState.up) movePlayer('up');
+    if (gameState.down) movePlayer('down');
+    if (gameState.left) movePlayer('left');
+    if (gameState.right) movePlayer('right');
+    if (gameState.space) playerShoot();
+    
+    requestAnimationFrame(gameLoop);
+}
+gameLoop();
+</code></pre>
+        <h3>Key Properties Reference</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>event.key</code></td>
+                    <td>The key value</td>
+                    <td>'a', 'Enter', 'ArrowUp'</td>
+                </tr>
+                <tr>
+                    <td><code>event.code</code></td>
+                    <td>Physical key code</td>
+                    <td>'KeyA', 'Enter', 'ArrowUp'</td>
+                </tr>
+                <tr>
+                    <td><code>event.ctrlKey</code></td>
+                    <td>Ctrl key pressed?</td>
+                    <td>true/false</td>
+                </tr>
+                <tr>
+                    <td><code>event.shiftKey</code></td>
+                    <td>Shift key pressed?</td>
+                    <td>true/false</td>
+                </tr>
+                <tr>
+                    <td><code>event.altKey</code></td>
+                    <td>Alt key pressed?</td>
+                    <td>true/false</td>
+                </tr>
+                <tr>
+                    <td><code>event.metaKey</code></td>
+                    <td>Meta/Windows key?</td>
+                    <td>true/false</td>
+                </tr>
+                <tr>
+                    <td><code>event.repeat</code></td>
+                    <td>Key being held?</td>
+                    <td>true/false</td>
+                </tr>
+                <tr>
+                    <td><code>event.location</code></td>
+                    <td>Key location</td>
+                    <td>0 (standard), 1 (left), 2 (right)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="the-event-object">5. The Event Object</h2>
+        <h3>What is the Event Object?</h3>
+        <p>When an event occurs, the browser creates an <strong>event object</strong> containing detailed information
+            about the event. This object is automatically passed to the event handler function.</p>
+        <h3>Accessing the Event Object</h3>
+        <pre><code>// Method 1: Explicit parameter (most common)
+element.addEventListener('click', function(event) {
+    console.log(event); // The event object
+});
+
+// Method 2: Using the 'event' variable (older IE)
+element.addEventListener('click', function() {
+    console.log(window.event); // Not recommended
+});
+
+// Method 3: Arrow function
+element.addEventListener('click', (event) => {
+    console.log(event.type); // 'click'
+    console.log(event.target); // The element clicked
+});
+</code></pre>
+        <h3>Comprehensive Event Object Properties</h3>
+        <pre><code>element.addEventListener('click', (event) => {
+    // ===== GENERAL PROPERTIES =====
+    console.log(event.type);           // Type of event (e.g., 'click')
+    console.log(event.target);         // Element that triggered the event
+    console.log(event.currentTarget);  // Element listener is attached to
+    console.log(event.eventPhase);     // 1:capturing, 2:target, 3:bubbling
+    console.log(event.timeStamp);      // Time event occurred
+    
+    // ===== MOUSE EVENT PROPERTIES =====
+    console.log(event.clientX);        // X coordinate relative to viewport
+    console.log(event.clientY);        // Y coordinate relative to viewport
+    console.log(event.pageX);          // X coordinate relative to page
+    console.log(event.pageY);          // Y coordinate relative to page
+    console.log(event.screenX);        // X coordinate relative to screen
+    console.log(event.screenY);        // Y coordinate relative to screen
+    
+    console.log(event.button);          // Which mouse button (0:left, 1:middle, 2:right)
+    console.log(event.buttons);         // Which buttons are pressed (bitmask)
+    console.log(event.relatedTarget);   // For mouseover/mouseout - the other element
+    
+    // ===== KEYBOARD EVENT PROPERTIES =====
+    // (only available for keyboard events)
+    console.log(event.key);             // Key value ('a', 'Enter', etc.)
+    console.log(event.code);            // Physical key code ('KeyA', 'Enter')
+    console.log(event.repeat);          // Is the key being held down?
+    console.log(event.isComposing);     // Is part of a composition session?
+    
+    // ===== MODIFIER KEYS =====
+    console.log(event.ctrlKey);         // Ctrl key pressed?
+    console.log(event.shiftKey);        // Shift key pressed?
+    console.log(event.altKey);          // Alt key pressed?
+    console.log(event.metaKey);         // Meta/Windows key pressed?
+    
+    // ===== TOUCH EVENT PROPERTIES =====
+    // (only available for touch events)
+    console.log(event.touches);          // All touch points
+    console.log(event.targetTouches);    // Touch points on target
+    console.log(event.changedTouches);   // Touch points that changed
+});
+</code></pre>
+        <h3>Important Event Object Methods</h3>
+        <pre><code>element.addEventListener('click', (event) => {
+    // 1. preventDefault() - Stops default browser behavior
+    event.preventDefault();
+    // Example: Prevent link from navigating
+    // Example: Prevent form from submitting
+    
+    // 2. stopPropagation() - Stops event from bubbling/capturing
+    event.stopPropagation();
+    // Event will not trigger listeners on parent elements
+    
+    // 3. stopImmediatePropagation() - Stops propagation AND other listeners on same element
+    event.stopImmediatePropagation();
+    // Other listeners on this element won't fire either
+});
+</code></pre>
+        <h3>Practical Examples with Event Object</h3>
+        <h4>1. Creating a Custom Context Menu</h4>
+        <pre><code>document.addEventListener('contextmenu', (event) => {
+    event.preventDefault(); // Prevent default browser context menu
+    
+    const menu = document.getElementById('custom-menu');
+    menu.style.display = 'block';
+    menu.style.left = event.pageX + 'px';
+    menu.style.top = event.pageY + 'px';
+    
+    // Close menu when clicking elsewhere
+    document.addEventListener('click', function closeMenu() {
+        menu.style.display = 'none';
+        document.removeEventListener('click', closeMenu);
+    }, { once: true });
+});
+</code></pre>
+        <h4>2. Drawing Application (Mouse Coordinates)</h4>
+        <pre><code>const canvas = document.getElementById('drawing-canvas');
+const ctx = canvas.getContext('2d');
+let isDrawing = false;
+
+canvas.addEventListener('mousedown', (event) => {
+    isDrawing = true;
+    ctx.beginPath();
+    ctx.moveTo(event.offsetX, event.offsetY);
+});
+
+canvas.addEventListener('mousemove', (event) => {
+    if (!isDrawing) return;
+    
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+    
+    // Display coordinates
+    document.getElementById('coords').textContent = 
+        `X: ${event.offsetX}, Y: ${event.offsetY}`;
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+});
+
+canvas.addEventListener('mouseleave', () => {
+    isDrawing = false;
+});
+</code></pre>
+        <h4>3. Tracking Mouse Speed</h4>
+        <pre><code>let lastX = 0;
+let lastY = 0;
+let lastTime = 0;
+
+document.addEventListener('mousemove', (event) => {
+    const currentTime = Date.now();
+    
+    if (lastTime !== 0) {
+        const timeDiff = currentTime - lastTime;
+        const distX = Math.abs(event.clientX - lastX);
+        const distY = Math.abs(event.clientY - lastY);
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        const speed = distance / timeDiff; // pixels per millisecond
+        
+        console.log(`Mouse speed: ${(speed * 1000).toFixed(2)} px/second`);
+    }
+    
+    lastX = event.clientX;
+    lastY = event.clientY;
+    lastTime = currentTime;
+});
+</code></pre>
+
+        <hr>
+
+        <h2 id="event-propagation-bubbling-and-capturing">6. Event Propagation: Bubbling and Capturing</h2>
+        <h3>Understanding Event Propagation</h3>
+        <p>Event propagation is the mechanism that defines how events travel through the DOM tree. This is one of the
+            most important concepts in JavaScript event handling.</p>
+        <h3>Event Bubbling (Default)</h3>
+        <p>With bubbling, the event first triggers on the innermost target element, then successively triggers on its
+            ancestors up to the root.</p>
+        <pre><code>// HTML:
+// &lt;div id="grandparent"&gt;
+//   &lt;div id="parent"&gt;
+//     &lt;button id="child"&gt;Click me!&lt;/button&gt;
+//   &lt;/div&gt;
+// &lt;/div&gt;
+
+const grandparent = document.getElementById('grandparent');
+const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+
+// All listeners use default bubbling (third parameter false or omitted)
+grandparent.addEventListener('click', () => {
+    console.log('Grandparent clicked (bubbling)');
+});
+
+parent.addEventListener('click', () => {
+    console.log('Parent clicked (bubbling)');
+});
+
+child.addEventListener('click', () => {
+    console.log('Child clicked (bubbling)');
+});
+
+// When you click the button, console shows:
+// "Child clicked (bubbling)"
+// "Parent clicked (bubbling)" 
+// "Grandparent clicked (bubbling)"
+</code></pre>
+        <h3>Event Capturing (Also Called &quot;Trickling&quot;)</h3>
+        <p>With capturing, the event first triggers on the outermost ancestor, then successively triggers on its
+            descendants down to the target.</p>
+        <pre><code>// Same HTML structure
+grandparent.addEventListener('click', () => {
+    console.log('Grandparent clicked (capturing)');
+}, true); // Note: true for capturing
+
+parent.addEventListener('click', () => {
+    console.log('Parent clicked (capturing)');
+}, true);
+
+child.addEventListener('click', () => {
+    console.log('Child clicked (capturing)');
+}, true);
+
+// When you click the button, console shows:
+// "Grandparent clicked (capturing)"
+// "Parent clicked (capturing)"
+// "Child clicked (capturing)"
+</code></pre>
+        <h3>Mixing Bubbling and Capturing</h3>
+        <p>When you have both capturing and bubbling listeners:</p>
+        <pre><code>grandparent.addEventListener('click', () => {
+    console.log('Grandparent - capturing');
+}, true);
+
+grandparent.addEventListener('click', () => {
+    console.log('Grandparent - bubbling');
+}); // default false
+
+parent.addEventListener('click', () => {
+    console.log('Parent - capturing');
+}, true);
+
+parent.addEventListener('click', () => {
+    console.log('Parent - bubbling');
+});
+
+child.addEventListener('click', () => {
+    console.log('Child - capturing (but actually target phase)');
+}, true);
+
+child.addEventListener('click', () => {
+    console.log('Child - bubbling (target phase)');
+});
+
+// Console output when clicking child:
+// "Grandparent - capturing"  (capturing phase)
+// "Parent - capturing"        (capturing phase)
+// "Child - capturing (but actually target phase)"  (target phase)
+// "Child - bubbling (target phase)"                (target phase)
+// "Parent - bubbling"         (bubbling phase)
+// "Grandparent - bubbling"    (bubbling phase)
+</code></pre>
+        <h3>Stopping Propagation</h3>
+        <h4>1. stopPropagation()</h4>
+        <pre><code>parent.addEventListener('click', (event) => {
+    console.log('Parent clicked');
+    event.stopPropagation(); // Stops further propagation
+});
+
+child.addEventListener('click', (event) => {
+    console.log('Child clicked');
+    // This will still run because it's before stopPropagation
+});
+
+grandparent.addEventListener('click', () => {
+    console.log('Grandparent clicked'); // This will NOT run
+});
+
+// Clicking child outputs:
+// "Child clicked"
+// "Parent clicked"
+// (Grandparent never gets the event)
+</code></pre>
+        <h4>2. stopImmediatePropagation()</h4>
+        <pre><code>child.addEventListener('click', (event) => {
+    console.log('First handler');
+});
+
+child.addEventListener('click', (event) => {
+    console.log('Second handler');
+    event.stopImmediatePropagation(); // Stops all other handlers
+});
+
+child.addEventListener('click', (event) => {
+    console.log('Third handler'); // This will NOT run
+});
+
+// Clicking child outputs:
+// "First handler"
+// "Second handler"
+// (Third handler doesn't run, and no bubbling occurs)
+</code></pre>
+        <h3>Practical Applications of Event Propagation</h3>
+        <h4>1. Modal/Dialog Click Outside</h4>
+        <pre><code>const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modal-content');
+
+modal.addEventListener('click', () => {
+    // Click on modal background closes it
+    modal.style.display = 'none';
+});
+
+modalContent.addEventListener('click', (event) => {
+    // Prevent clicks on modal content from closing modal
+    event.stopPropagation();
+});
+</code></pre>
+        <h4>2. Dropdown Menu</h4>
+        <pre><code>const dropdown = document.getElementById('dropdown');
+const menu = document.getElementById('menu');
+
+document.addEventListener('click', () => {
+    // Click anywhere closes menu
+    menu.style.display = 'none';
+});
+
+dropdown.addEventListener('click', (event) => {
+    // Toggle menu on button click
+    event.stopPropagation();
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+});
+
+menu.addEventListener('click', (event) => {
+    // Prevent menu clicks from closing the menu
+    event.stopPropagation();
+});
+</code></pre>
+        <h4>3. Nested Sortable Lists</h4>
+        <pre><code>// Only allow dragging on specific handles
+const items = document.querySelectorAll('.sortable-item');
+
+items.forEach(item => {
+    item.addEventListener('mousedown', (event) => {
+        if (event.target.classList.contains('drag-handle')) {
+            // Start dragging only if clicking the handle
+            startDragging(item);
+            event.stopPropagation();
+        }
+    });
+    
+    // Parent items shouldn't trigger when clicking on children
+    item.addEventListener('click', (event) => {
+        if (event.target !== item) {
+            // Click was on a child element
+            console.log('Child clicked, not processing parent click');
+            return;
+        }
+        console.log('Parent item clicked directly');
+    });
+});
+</code></pre>
+
+        <hr>
+
+        <h2 id="removing-event-listeners">7. Removing Event Listeners</h2>
+        <h3>The Importance of Removing Listeners</h3>
+        <p>Removing event listeners is crucial for:</p>
+        <ul>
+            <li>Preventing memory leaks</li>
+            <li>Avoiding multiple executions of the same handler</li>
+            <li>Cleaning up before removing elements from DOM</li>
+        </ul>
+        <h3>removeEventListener() Method</h3>
+        <pre><code>element.removeEventListener(event, handler, options);
+</code></pre>
+        <h3>Critical Requirement: Function Reference</h3>
+        <p>The function passed to <code>removeEventListener()</code> must be the <strong>exact same function
+                object</strong> that was passed to <code>addEventListener()</code>.</p>
+        <pre><code>// ❌ WRONG - This WON'T work
+element.addEventListener('click', () => {
+    console.log('Clicked');
+});
+element.removeEventListener('click', () => {
+    console.log('Clicked');
+}); // Different function objects!
+
+// ✅ CORRECT - Store the function reference
+function handleClick() {
+    console.log('Clicked');
+}
+
+element.addEventListener('click', handleClick);
+element.removeEventListener('click', handleClick); // Works!
+
+// ✅ CORRECT - Using a variable
+const myHandler = function() {
+    console.log('Clicked');
+};
+
+element.addEventListener('click', myHandler);
+element.removeEventListener('click', myHandler); // Works!
+</code></pre>
+        <h3>Removing with Options</h3>
+        <pre><code>// When adding with options, you need to pass the same options to remove
+function handler() {
+    console.log('Event handled');
+}
+
+// Adding with capture: true
+element.addEventListener('click', handler, true);
+element.removeEventListener('click', handler, true); // Works
+
+// Adding with options object
+element.addEventListener('click', handler, { 
+    capture: true,
+    passive: false 
+});
+element.removeEventListener('click', handler, { 
+    capture: true,
+    passive: false 
+}); // Works
+</code></pre>
+        <h3>Practical Examples</h3>
+        <h4>1. One-Time Event Listener (Manual)</h4>
+        <pre><code>const button = document.getElementById('once-button');
+
+function handleOnce() {
+    console.log('This will only run once');
+    button.removeEventListener('click', handleOnce);
+}
+
+button.addEventListener('click', handleOnce);
+// Using the 'once' option is easier:
+button.addEventListener('click', handleOnce, { once: true });
+</code></pre>
+        <h4>2. Cleanup on Element Removal</h4>
+        <pre><code>class Component {
+    constructor(element) {
+        this.element = element;
+        this.handleClick = this.handleClick.bind(this);
+        this.init();
+    }
+    
+    init() {
+        this.element.addEventListener('click', this.handleClick);
+        this.element.addEventListener('mouseover', this.handleMouseOver);
+    }
+    
+    handleClick() {
+        console.log('Element clicked');
+    }
+    
+    handleMouseOver() {
+        console.log('Mouse over element');
+    }
+    
+    destroy() {
+        // Clean up all listeners
+        this.element.removeEventListener('click', this.handleClick);
+        this.element.removeEventListener('mouseover', this.handleMouseOver);
+        
+        // Remove from DOM
+        this.element.remove();
+        
+        // Nullify references for garbage collection
+        this.element = null;
+    }
+}
+
+// Usage
+const comp = new Component(document.getElementById('my-element'));
+// Later, when done:
+comp.destroy();
+</code></pre>
+        <h4>3. Debounced Resize Handler</h4>
+        <pre><code>class ResizeManager {
+    constructor() {
+        this.handleResize = this.debounce(this.handleResize.bind(this), 250);
+        this.init();
+    }
+    
+    init() {
+        window.addEventListener('resize', this.handleResize);
+    }
+    
+    handleResize() {
+        console.log('Window resized (debounced)');
+        // Perform expensive operations here
+    }
+    
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    destroy() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+}
+
+// Usage
+const manager = new ResizeManager();
+// Later, when component unmounts:
+manager.destroy();
+</code></pre>
+        <h4>4. Event Listener for Dynamic Elements</h4>
+        <pre><code>function setupDynamicListeners() {
+    const handlers = new Map();
+    
+    function addListener(element, eventType, handler) {
+        // Store handler reference
+        if (!handlers.has(element)) {
+            handlers.set(element, {});
+        }
+        
+        const elementHandlers = handlers.get(element);
+        elementHandlers[eventType] = handler;
+        
+        element.addEventListener(eventType, handler);
+    }
+    
+    function removeListener(element, eventType) {
+        const elementHandlers = handlers.get(element);
+        if (elementHandlers &amp;&amp; elementHandlers[eventType]) {
+            element.removeEventListener(eventType, elementHandlers[eventType]);
+            delete elementHandlers[eventType];
+        }
+    }
+    
+    function removeAllListeners(element) {
+        const elementHandlers = handlers.get(element);
+        if (elementHandlers) {
+            Object.entries(elementHandlers).forEach(([eventType, handler]) => {
+                element.removeEventListener(eventType, handler);
+            });
+            handlers.delete(element);
+        }
+    }
+    
+    return { addListener, removeListener, removeAllListeners };
+}
+
+// Usage
+const listenerManager = setupDynamicListeners();
+const button = document.getElementById('my-button');
+
+function myHandler() {
+    console.log('Button clicked');
+}
+
+listenerManager.addListener(button, 'click', myHandler);
+// Later...
+listenerManager.removeListener(button, 'click');
+</code></pre>
+        <h4>5. AbortController for Multiple Listener Cleanup (Modern Approach)</h4>
+        <pre><code>// Modern browsers support AbortController for cleaning up multiple listeners
+const controller = new AbortController();
+const signal = controller.signal;
+
+// Add multiple listeners with the same signal
+element.addEventListener('click', handleClick, { signal });
+element.addEventListener('mouseover', handleMouseOver, { signal });
+window.addEventListener('resize', handleResize, { signal });
+
+// Later, remove ALL listeners at once
+controller.abort(); // Removes all listeners added with this signal
+
+// Also works with once option
+element.addEventListener('click', () => {
+    console.log('This will run once');
+}, { once: true, signal }); // Combines once and abortable
+</code></pre>
+
+        <hr>
+
+        <h2 id="event-delegation-pattern">8. Event Delegation Pattern</h2>
+        <h3>What is Event Delegation?</h3>
+        <p>Event delegation is a technique where you attach a single event listener to a parent element to handle events
+            for multiple current or future child elements. It leverages event bubbling.</p>
+        <h3>Why Use Event Delegation?</h3>
+        <ul>
+            <li><strong>Performance</strong>: Fewer event listeners means less memory usage</li>
+            <li><strong>Dynamic Content</strong>: Automatically works for elements added after page load</li>
+            <li><strong>Cleaner Code</strong>: Centralized event handling logic</li>
+        </ul>
+        <h3>Basic Event Delegation</h3>
+        <pre><code>// Instead of this (adding listeners to each button):
+document.querySelectorAll('.delete-btn').forEach(btn =&gt; {
+    btn.addEventListener('click', handleDelete);
+});
+
+// Do this (single listener on parent):
+document.getElementById('todo-list').addEventListener('click', (event) =&gt; {
+    if (event.target.classList.contains('delete-btn')) {
+        handleDelete(event);
+    }
+});
+</code></pre>
+        <h3>Complete Event Delegation Examples</h3>
+        <h4>1. Todo List with Dynamic Items</h4>
+        <pre><code>const todoList = document.getElementById('todo-list');
+const addButton = document.getElementById('add-todo');
+const newTodoInput = document.getElementById('new-todo');
+
+// Single event listener for the entire list
+todoList.addEventListener('click', (event) => {
+    const target = event.target;
+    
+    // Handle delete button clicks
+    if (target.classList.contains('delete-btn')) {
+        const todoItem = target.closest('.todo-item');
+        todoItem.remove();
+        showNotification('Todo deleted');
+    }
+    
+    // Handle checkbox changes
+    if (target.classList.contains('todo-checkbox')) {
+        const todoItem = target.closest('.todo-item');
+        todoItem.classList.toggle('completed');
+        updateTodoCount();
+    }
+    
+    // Handle edit button
+    if (target.classList.contains('edit-btn')) {
+        const todoItem = target.closest('.todo-item');
+        const todoText = todoItem.querySelector('.todo-text');
+        enableEditing(todoText);
+    }
+});
+
+// Add new todo (dynamically)
+addButton.addEventListener('click', () => {
+    const text = newTodoInput.value.trim();
+    if (text) {
+        const todoItem = createTodoElement(text);
+        todoList.appendChild(todoItem);
+        newTodoInput.value = '';
+    }
+});
+
+function createTodoElement(text) {
+    const div = document.createElement('div');
+    div.className = 'todo-item';
+    div.innerHTML = `
+        &lt;input type="checkbox" class="todo-checkbox"&gt;
+        &lt;span class="todo-text"&gt;${text}&lt;/span&gt;
+        &lt;button class="edit-btn"&gt;Edit&lt;/button&gt;
+        &lt;button class="delete-btn"&gt;Delete&lt;/button&gt;
+    `;
+    return div;
+}
+</code></pre>
+        <h4>2. Table with Row Actions</h4>
+        <pre><code>const dataTable = document.getElementById('data-table');
+
+dataTable.addEventListener('click', (event) => {
+    const target = event.target;
+    const row = target.closest('tr');
+    
+    if (!row) return;
+    
+    // Get row data
+    const rowData = Array.from(row.cells).map(cell =&gt; cell.textContent);
+    
+    // Handle different actions
+    if (target.classList.contains('view-btn')) {
+        showDetails(rowData);
+    }
+    
+    if (target.classList.contains('edit-btn')) {
+        editRow(row);
+    }
+    
+    if (target.classList.contains('delete-btn')) {
+        if (confirm('Are you sure?')) {
+            row.remove();
+        }
+    }
+    
+    // Handle row selection
+    if (target.type === 'checkbox' &amp;&amp; target.classList.contains('row-selector')) {
+        updateSelectionCount();
+    }
+});
+
+// Handle header checkbox (select all)
+dataTable.querySelector('thead').addEventListener('change', (event) => {
+    if (event.target.classList.contains('select-all')) {
+        const isChecked = event.target.checked;
+        const checkboxes = dataTable.querySelectorAll('.row-selector');
+        checkboxes.forEach(cb =&gt; cb.checked = isChecked);
+        updateSelectionCount();
+    }
+});
+</code></pre>
+        <h4>3. Dropdown Menu with Delegation</h4>
+        <pre><code>const dropdownContainer = document.getElementById('dropdown-container');
+
+dropdownContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    
+    // Toggle dropdown on button click
+    if (target.classList.contains('dropdown-btn')) {
+        const dropdown = target.nextElementSibling;
+        const isVisible = dropdown.style.display === 'block';
+        
+        // Close all other dropdowns first
+        document.querySelectorAll('.dropdown-menu').forEach(menu =&gt; {
+            menu.style.display = 'none';
+        });
+        
+        // Toggle current
+        dropdown.style.display = isVisible ? 'none' : 'block';
+        
+        event.stopPropagation();
+    }
+    
+    // Handle dropdown item selection
+    if (target.classList.contains('dropdown-item')) {
+        const value = target.dataset.value;
+        const text = target.textContent;
+        const dropdownBtn = target.closest('.dropdown').querySelector('.dropdown-btn');
+        
+        dropdownBtn.textContent = text;
+        dropdownBtn.dataset.selectedValue = value;
+        
+        // Close the dropdown
+        target.closest('.dropdown-menu').style.display = 'none';
+        
+        // Trigger custom event
+        dropdownBtn.dispatchEvent(new CustomEvent('selectionChange', {
+            detail: { value, text }
+        }));
+    }
+});
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu =&gt; {
+        menu.style.display = 'none';
+    });
+});
+</code></pre>
+        <h4>4. Form Validation with Delegation</h4>
+        <pre><code>const form = document.getElementById('registration-form');
+
+form.addEventListener('input', (event) => {
+    const field = event.target;
+    
+    // Only validate fields with validation rules
+    if (!field.hasAttribute('data-validate')) return;
+    
+    const value = field.value;
+    const fieldName = field.name;
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Validation rules based on field type/name
+    switch(fieldName) {
+        case 'email':
+            isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            errorMessage = 'Please enter a valid email';
+            break;
+        case 'password':
+            isValid = value.length &gt;= 8;
+            errorMessage = 'Password must be at least 8 characters';
+            break;
+        case 'username':
+            isValid = /^[a-zA-Z0-9]{3,}$/.test(value);
+            errorMessage = 'Username must be at least 3 alphanumeric characters';
+            break;
+    }
+    
+    // Show/hide error message
+    const errorElement = field.nextElementSibling;
+    if (errorElement &amp;&amp; errorElement.classList.contains('error-message')) {
+        if (!isValid &amp;&amp; value.length &gt; 0) {
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
+            field.classList.add('invalid');
+        } else {
+            errorElement.style.display = 'none';
+            field.classList.remove('invalid');
+        }
+    }
+    
+    // Update form validity
+    updateFormValidity();
+});
+
+form.addEventListener('focusout', (event) => {
+    // Validate on blur for better UX
+    const field = event.target;
+    if (field.hasAttribute('data-validate')) {
+        // Trigger validation by dispatching input event
+        field.dispatchEvent(new Event('input'));
+    }
+});
+</code></pre>
+        <h4>5. Drag and Drop with Delegation</h4>
+        <pre><code>const dragContainer = document.getElementById('drag-container');
+let draggedItem = null;
+
+dragContainer.addEventListener('dragstart', (event) => {
+    if (event.target.classList.contains('draggable')) {
+        draggedItem = event.target;
+        event.dataTransfer.setData('text/plain', event.target.id);
+        event.target.classList.add('dragging');
+    }
+});
+
+dragContainer.addEventListener('dragend', (event) => {
+    if (event.target.classList.contains('draggable')) {
+        event.target.classList.remove('dragging');
+        document.querySelectorAll('.drop-zone').forEach(zone =&gt; {
+            zone.classList.remove('drag-over');
+        });
+    }
+});
+
+dragContainer.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    const dropZone = event.target.closest('.drop-zone');
+    if (dropZone) {
+        dropZone.classList.add('drag-over');
+    }
+});
+
+dragContainer.addEventListener('dragleave', (event) => {
+    const dropZone = event.target.closest('.drop-zone');
+    if (dropZone) {
+        dropZone.classList.remove('drag-over');
+    }
+});
+
+dragContainer.addEventListener('drop', (event) => {
+    event.preventDefault();
+    
+    const dropZone = event.target.closest('.drop-zone');
+    if (dropZone &amp;&amp; draggedItem) {
+        const dropZoneId = dropZone.dataset.zoneId;
+        
+        // Handle drop based on zone
+        if (dropZoneId === 'trash') {
+            draggedItem.remove();
+        } else if (dropZoneId === 'container') {
+            dropZone.appendChild(draggedItem);
+        }
+        
+        dropZone.classList.remove('drag-over');
+    }
+});
+</code></pre>
+        <h4>6. Event Delegation with Data Attributes</h4>
+        <pre><code>const app = document.getElementById('app');
+
+app.addEventListener('click', (event) => {
+    const target = event.target;
+    
+    // Use data attributes for actions
+    const action = target.closest('[data-action]')?.dataset.action;
+    
+    if (!action) return;
+    
+    const itemId = target.closest('[data-id]')?.dataset.id;
+    const itemType = target.closest('[data-type]')?.dataset.type;
+    
+    switch(action) {
+        case 'delete':
+            deleteItem(itemId, itemType);
+            break;
+        case 'edit':
+            editItem(itemId, itemType);
+            break;
+        case 'duplicate':
+            duplicateItem(itemId, itemType);
+            break;
+        case 'archive':
+            archiveItem(itemId, itemType);
+            break;
+        case 'move-up':
+            moveItem(itemId, itemType, 'up');
+            break;
+        case 'move-down':
+            moveItem(itemId, itemType, 'down');
+            break;
+    }
+    
+    // Track action for analytics
+    trackUserAction(action, { itemId, itemType });
+});
+
+function deleteItem(id, type) {
+    const item = document.querySelector(`[data-id="${id}"][data-type="${type}"]`);
+    if (item &amp;&amp; confirm(`Delete this ${type}?`)) {
+        item.remove();
+        showNotification(`${type} deleted successfully`);
+    }
+}
+</code></pre>
+        <h3>Benefits of Event Delegation</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Without Delegation</th>
+                    <th>With Delegation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Listeners</strong></td>
+                    <td>One per element</td>
+                    <td>One for all elements</td>
+                </tr>
+                <tr>
+                    <td><strong>Dynamic Elements</strong></td>
+                    <td>Need to reattach</td>
+                    <td>Works automatically</td>
+                </tr>
+                <tr>
+                    <td><strong>Memory Usage</strong></td>
+                    <td>Higher</td>
+                    <td>Lower</td>
+                </tr>
+                <tr>
+                    <td><strong>Initialization</strong></td>
+                    <td>More code</td>
+                    <td>Less code</td>
+                </tr>
+                <tr>
+                    <td><strong>Performance</strong></td>
+                    <td>Slower to set up</td>
+                    <td>Faster to set up</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h2 id="performance-considerations">9. Performance Considerations</h2>
+        <h3>Why Event Performance Matters</h3>
+        <p>Poorly managed events can lead to:</p>
+        <ul>
+            <li>Janky scrolling and animations</li>
+            <li>High CPU/memory usage</li>
+            <li>Battery drain on mobile devices</li>
+            <li>Unresponsive user interfaces</li>
+        </ul>
+        <h3>1. Event Throttling and Debouncing</h3>
+        <h4>Debouncing (Wait for pause)</h4>
+        <pre><code>function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Usage with input
+const searchInput = document.getElementById('search');
+const debouncedSearch = debounce((event) => {
+    console.log('Searching for:', event.target.value);
+    performSearch(event.target.value);
+}, 300);
+
+searchInput.addEventListener('input', debouncedSearch);
+</code></pre>
+        <h4>Throttling (Limit execution rate)</h4>
+        <pre><code>function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() =&gt; inThrottle = false, limit);
+        }
+    };
+}
+
+// Usage with scroll
+const throttledScroll = throttle(() =&gt; {
+    console.log('Scroll position:', window.scrollY);
+    updateScrollIndicator();
+}, 100);
+
+window.addEventListener('scroll', throttledScroll);
+</code></pre>
+        <h4>RequestAnimationFrame for Visual Updates</h4>
+        <pre><code>// Best for animations and visual updates
+let ticking = false;
+
+window.addEventListener('scroll', () =&gt; {
+    if (!ticking) {
+        window.requestAnimationFrame(() =&gt; {
+            updateParallaxEffect(window.scrollY);
+            ticking = false;
+        });
+        ticking = true;
+    }
+});
+
+window.addEventListener('resize', () =&gt; {
+    if (!ticking) {
+        window.requestAnimationFrame(() =&gt; {
+            recalculateLayout();
+            ticking = false;
+        });
+        ticking = true;
+    }
+});
+</code></pre>
+        <h3>2. Passive Event Listeners</h3>
+        <pre><code>// Without passive - browser must wait for JS to see if preventDefault() is called
+// This can cause jank during scrolling
+document.addEventListener('touchstart', (event) =&gt; {
+    // Do something
+    // Browser must wait to see if we call preventDefault()
+});
+
+// With passive: true - browser can scroll immediately
+document.addEventListener('touchstart', (event) =&gt; {
+    // Do something
+    // We promise NOT to call preventDefault()
+}, { passive: true });
+
+// Great for scroll performance
+window.addEventListener('scroll', updateUI, { passive: true });
+window.addEventListener('touchmove', handleTouch, { passive: true });
+window.addEventListener('wheel', handleWheel, { passive: true });
+
+// For events where you might need preventDefault
+document.addEventListener('touchstart', (event) =&gt; {
+    if (shouldPreventDefault(event)) {
+        event.preventDefault();
+    }
+}, { passive: false }); // Explicitly set to false when needed
+</code></pre>
+        <h3>3. Event Listener Count Optimization</h3>
+        <pre><code>// ❌ BAD: Many listeners
+document.querySelectorAll('.item').forEach(item =&gt; {
+    item.addEventListener('click', handleItemClick);
+    item.addEventListener('mouseover', handleItemHover);
+    item.addEventListener('mouseout', handleItemHoverEnd);
+});
+
+// ✅ GOOD: Event delegation with single listener
+document.getElementById('container').addEventListener('click', (event) =&gt; {
+    if (event.target.classList.contains('item')) {
+        handleItemClick(event);
+    }
+});
+
+// ✅ GOOD: Use maps for multiple events
+const eventMap = {
+    'click': handleClick,
+    'mouseover': handleHover,
+    'mouseout': handleHoverEnd
+};
+
+Object.entries(eventMap).forEach(([eventType, handler]) =&gt; {
+    document.getElementById('container').addEventListener(eventType, (event) =&gt; {
+        if (event.target.classList.contains('item')) {
+            handler(event);
+        }
+    });
+});
+</code></pre>
+        <h3>4. Memory Leak Prevention</h3>
+        <pre><code>class Component {
+    constructor(elementId) {
+        this.element = document.getElementById(elementId);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleScroll = this.throttle(this.handleScroll.bind(this), 100);
+        
+        this.init();
+    }
+    
+    init() {
+        this.element.addEventListener('click', this.handleClick);
+        window.addEventListener('scroll', this.handleScroll);
+        
+        // Store reference for cleanup
+        this.cleanupFunctions = [
+            () =&gt; this.element.removeEventListener('click', this.handleClick),
+            () =&gt; window.removeEventListener('scroll', this.handleScroll)
+        ];
+    }
+    
+    handleClick() {
+        console.log('Component clicked');
+    }
+    
+    handleScroll() {
+        console.log('Window scrolled');
+    }
+    
+    throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() =&gt; inThrottle = false, limit);
+            }
+        };
+    }
+    
+    destroy() {
+        // Clean up all listeners
+        this.cleanupFunctions.forEach(cleanup =&gt; cleanup());
+        
+        // Remove element if needed
+        if (this.element &amp;&amp; this.element.parentNode) {
+            this.element.parentNode.removeChild(this.element);
+        }
+        
+        // Nullify references
+        this.element = null;
+        this.cleanupFunctions = null;
+    }
+}
+
+// Usage
+const comp = new Component('my-component');
+// When done:
+comp.destroy();
+</code></pre>
+        <h3>5. Lazy Event Listener Attachment</h3>
+        <pre><code>class LazyComponent {
+    constructor(selector) {
+        this.selector = selector;
+        this.observer = null;
+        this.initIntersectionObserver();
+    }
+    
+    initIntersectionObserver() {
+        this.observer = new IntersectionObserver((entries) =&gt; {
+            entries.forEach(entry =&gt; {
+                if (entry.isIntersecting) {
+                    this.attachListeners(entry.target);
+                    this.observer.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '50px' }); // Start loading 50px before visible
+        
+        // Observe all matching elements
+        document.querySelectorAll(this.selector).forEach(element =&gt; {
+            this.observer.observe(element);
+        });
+    }
+    
+    attachListeners(element) {
+        console.log('Attaching listeners to:', element);
+        element.addEventListener('click', this.handleClick);
+        element.addEventListener('mouseover', this.handleHover);
+        // Add expensive listeners only when needed
+    }
+    
+    handleClick() {
+        console.log('Element clicked');
+    }
+    
+    handleHover() {
+        console.log('Element hovered');
+    }
+}
+
+// Usage
+const lazyComp = new LazyComponent('.lazy-component');
+</code></pre>
+        <h3>6. Performance Metrics and Monitoring</h3>
+        <pre><code>class EventPerformanceMonitor {
+    constructor() {
+        this.metrics = {
+            click: { count: 0, totalTime: 0 },
+            scroll: { count: 0, totalTime: 0 },
+            keyup: { count: 0, totalTime: 0 }
+        };
+    }
+    
+    monitorEvent(element, eventType, handler) {
+        const wrappedHandler = (event) =&gt; {
+            const startTime = performance.now();
+            
+            // Execute original handler
+            handler(event);
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            // Record metrics
+            this.metrics[eventType].count++;
+            this.metrics[eventType].totalTime += duration;
+            
+            // Log slow handlers
+            if (duration &gt; 16) { // 16ms = 60fps threshold
+                console.warn(`Slow ${eventType} handler: ${duration.toFixed(2)}ms`);
+            }
+        };
+        
+        element.addEventListener(eventType, wrappedHandler);
+    }
+    
+    getAverageTime(eventType) {
+        const metric = this.metrics[eventType];
+        if (metric.count === 0) return 0;
+        return metric.totalTime / metric.count;
+    }
+    
+    report() {
+        console.table({
+            'Click Avg Time': `${this.getAverageTime('click').toFixed(2)}ms`,
+            'Scroll Avg Time': `${this.getAverageTime('scroll').toFixed(2)}ms`,
+            'Keyup Avg Time': `${this.getAverageTime('keyup').toFixed(2)}ms`
+        });
+    }
+}
+
+// Usage
+const monitor = new EventPerformanceMonitor();
+const button = document.getElementById('my-button');
+
+monitor.monitorEvent(button, 'click', () =&gt; {
+    // Expensive operation
+    for (let i = 0; i &lt; 1000000; i++) {
+        Math.sqrt(i);
+    }
+});
+</code></pre>
+
+        <hr>
+
+        <h2 id="practical-examples-and-use-cases">10. Practical Examples and Use Cases</h2>
+        <h3>1. Custom Slider/Carousel</h3>
+        <pre><code>class ImageCarousel {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.slides = this.container.querySelectorAll('.slide');
+        this.currentIndex = 0;
+        this.autoplayInterval = null;
+        
+        this.init();
+    }
+    
+    init() {
+        // Navigation buttons
+        this.container.querySelector('.prev').addEventListener('click', () =&gt; this.prev());
+        this.container.querySelector('.next').addEventListener('click', () =&gt; this.next());
+        
+        // Dot indicators
+        this.container.querySelectorAll('.dot').forEach((dot, index) =&gt; {
+            dot.addEventListener('click', () =&gt; this.goToSlide(index));
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keyup', (event) =&gt; {
+            if (event.key === 'ArrowLeft') this.prev();
+            if (event.key === 'ArrowRight') this.next();
+        });
+        
+        // Touch events for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        this.container.addEventListener('touchstart', (event) =&gt; {
+            touchStartX = event.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        this.container.addEventListener('touchend', (event) =&gt; {
+            touchEndX = event.changedTouches[0].screenX;
+            this.handleSwipe(touchStartX, touchEndX);
+        });
+        
+        // Mouse drag
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeft = 0;
+        
+        const slider = this.container.querySelector('.slider');
+        
+        slider.addEventListener('mousedown', (event) =&gt; {
+            isDragging = true;
+            startX = event.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+            slider.style.cursor = 'grabbing';
+        });
+        
+        slider.addEventListener('mouseleave', () =&gt; {
+            isDragging = false;
+            slider.style.cursor = 'grab';
+        });
+        
+        slider.addEventListener('mouseup', () =&gt; {
+            isDragging = false;
+            slider.style.cursor = 'grab';
+        });
+        
+        slider.addEventListener('mousemove', (event) =&gt; {
+            if (!isDragging) return;
+            event.preventDefault();
+            const x = event.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2;
+            slider.scrollLeft = scrollLeft - walk;
+        });
+        
+        // Autoplay
+        this.startAutoplay();
+        
+        // Pause autoplay on hover
+        this.container.addEventListener('mouseenter', () =&gt; this.stopAutoplay());
+        this.container.addEventListener('mouseleave', () =&gt; this.startAutoplay());
+    }
+    
+    next() {
+        this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+        this.updateSlider();
+    }
+    
+    prev() {
+        this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+        this.updateSlider();
+    }
+    
+    goToSlide(index) {
+        this.currentIndex = index;
+        this.updateSlider();
+    }
+    
+    handleSwipe(start, end) {
+        const threshold = 50;
+        if (start - end &gt; threshold) {
+            this.next();
+        } else if (end - start &gt; threshold) {
+            this.prev();
+        }
+    }
+    
+    updateSlider() {
+        const slider = this.container.querySelector('.slider');
+        const slideWidth = this.slides[0].offsetWidth;
+        slider.scrollTo({
+            left: this.currentIndex * slideWidth,
+            behavior: 'smooth'
+        });
+        
+        // Update dots
+        this.container.querySelectorAll('.dot').forEach((dot, index) =&gt; {
+            dot.classList.toggle('active', index === this.currentIndex);
+        });
+    }
+    
+    startAutoplay() {
+        this.autoplayInterval = setInterval(() =&gt; this.next(), 3000);
+    }
+    
+    stopAutoplay() {
+        clearInterval(this.autoplayInterval);
+    }
+}
+</code></pre>
+        <h3>2. Infinite Scroll with Pagination</h3>
+        <pre><code>class InfiniteScroll {
+    constructor(containerId, loaderId, fetchFunction) {
+        this.container = document.getElementById(containerId);
+        this.loader = document.getElementById(loaderId);
+        this.fetchFunction = fetchFunction;
+        this.page = 1;
+        this.loading = false;
+        this.hasMore = true;
+        
+        this.init();
+    }
+    
+    init() {
+        // Initial load
+        this.loadMore();
+        
+        // Scroll event with throttling
+        const throttledScroll = this.throttle(this.checkScroll.bind(this), 200);
+        window.addEventListener('scroll', throttledScroll, { passive: true });
+        
+        // Optional: manual load more button
+        const loadMoreBtn = document.getElementById('load-more');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', () =&gt; this.loadMore());
+        }
+    }
+    
+    checkScroll() {
+        if (!this.hasMore || this.loading) return;
+        
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        // Load more when user is 200px from bottom
+        if (scrollY + windowHeight &gt;= documentHeight - 200) {
+            this.loadMore();
+        }
+    }
+    
+    async loadMore() {
+        if (this.loading || !this.hasMore) return;
+        
+        this.loading = true;
+        this.showLoader();
+        
+        try {
+            const data = await this.fetchFunction(this.page);
+            
+            if (data.items.length === 0) {
+                this.hasMore = false;
+                this.showEndMessage();
+            } else {
+                this.renderItems(data.items);
+                this.page++;
+            }
+        } catch (error) {
+            console.error('Error loading more items:', error);
+            this.showError();
+        } finally {
+            this.loading = false;
+            this.hideLoader();
+        }
+    }
+    
+    renderItems(items) {
+        items.forEach(item =&gt; {
+            const element = this.createItemElement(item);
+            this.container.appendChild(element);
+            
+            // Add fade-in animation
+            requestAnimationFrame(() =&gt; {
+                element.classList.add('visible');
+            });
+        });
+    }
+    
+    createItemElement(item) {
+        const div = document.createElement('div');
+        div.className = 'item fade-in';
+        div.innerHTML = `
+            &lt;h3&gt;${item.title}&lt;/h3&gt;
+            &lt;p&gt;${item.description}&lt;/p&gt;
+        `;
+        return div;
+    }
+    
+    showLoader() {
+        if (this.loader) {
+            this.loader.style.display = 'block';
+        }
+    }
+    
+    hideLoader() {
+        if (this.loader) {
+            this.loader.style.display = 'none';
+        }
+    }
+    
+    showEndMessage() {
+        const message = document.createElement('div');
+        message.className = 'end-message';
+        message.textContent = 'No more items to load';
+        this.container.appendChild(message);
+    }
+    
+    showError() {
+        const error = document.createElement('div');
+        error.className = 'error-message';
+        error.textContent = 'Error loading items. Click to retry.';
+        error.addEventListener('click', () =&gt; this.loadMore());
+        this.container.appendChild(error);
+    }
+    
+    throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() =&gt; inThrottle = false, limit);
+            }
+        };
+    }
+}
+
+// Usage
+const infiniteScroll = new InfiniteScroll(
+    'item-container',
+    'loader',
+    async (page) =&gt; {
+        const response = await fetch(`/api/items?page=${page}`);
+        return response.json();
+    }
+);
+</code></pre>
+        <h3>3. Form Wizard with Validation</h3>
+        <pre><code>class FormWizard {
+    constructor(formId, steps) {
+        this.form = document.getElementById(formId);
+        this.steps = steps;
+        this.currentStep = 0;
+        this.formData = {};
+        
+        this.init();
+    }
+    
+    init() {
+        this.renderStep();
+        
+        // Navigation buttons
+        this.form.querySelector('.next-btn').addEventListener('click', 
+            (e) =&gt; this.nextStep(e));
+        this.form.querySelector('.prev-btn').addEventListener('click', 
+            (e) =&gt; this.prevStep(e));
+        
+        // Save progress on input
+        this.form.addEventListener('input', (event) =&gt; {
+            const { name, value } = event.target;
+            this.formData[name] = value;
+        });
+        
+        // Handle enter key for next step
+        this.form.addEventListener('keyup', (event) =&gt; {
+            if (event.key === 'Enter' &amp;&amp; !event.shiftKey) {
+                event.preventDefault();
+                if (this.currentStep &lt; this.steps.length - 1) {
+                    this.nextStep(event);
+                }
+            }
+        });
+        
+        // Handle form submission
+        this.form.addEventListener('submit', (e) =&gt; this.handleSubmit(e));
+    }
+    
+    renderStep() {
+        const step = this.steps[this.currentStep];
+        
+        // Render step content
+        const contentDiv = this.form.querySelector('.step-content');
+        contentDiv.innerHTML = step.render(this.formData);
+        
+        // Update progress indicator
+        this.updateProgress();
+        
+        // Update button states
+        this.updateButtons();
+        
+        // Focus first input
+        setTimeout(() =&gt; {
+            const firstInput = contentDiv.querySelector('input, select, textarea');
+            if (firstInput) firstInput.focus();
+        }, 100);
+    }
+    
+    nextStep(event) {
+        event.preventDefault();
+        
+        if (this.validateStep()) {
+            this.saveStepData();
+            
+            if (this.currentStep &lt; this.steps.length - 1) {
+                this.currentStep++;
+                this.renderStep();
+            }
+        }
+    }
+    
+    prevStep(event) {
+        event.preventDefault();
+        
+        if (this.currentStep &gt; 0) {
+            this.currentStep--;
+            this.renderStep();
+        }
+    }
+    
+    validateStep() {
+        const step = this.steps[this.currentStep];
+        const errors = step.validate(this.formData);
+        
+        const errorDiv = this.form.querySelector('.error-messages');
+        if (errors.length &gt; 0) {
+            errorDiv.innerHTML = errors.map(e =&gt; `&lt;div&gt;${e}&lt;/div&gt;`).join('');
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        
+        errorDiv.style.display = 'none';
+        return true;
+    }
+    
+    saveStepData() {
+        const step = this.steps[this.currentStep];
+        const fields = step.getFields();
+        
+        fields.forEach(field =&gt; {
+            const input = this.form.querySelector(`[name="${field}"]`);
+            if (input) {
+                this.formData[field] = input.value;
+            }
+        });
+    }
+    
+    updateProgress() {
+        const progressBar = this.form.querySelector('.progress-bar');
+        const progressPercent = ((this.currentStep + 1) / this.steps.length) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        progressBar.setAttribute('aria-valuenow', progressPercent);
+    }
+    
+    updateButtons() {
+        const prevBtn = this.form.querySelector('.prev-btn');
+        const nextBtn = this.form.querySelector('.next-btn');
+        const submitBtn = this.form.querySelector('.submit-btn');
+        
+        prevBtn.disabled = this.currentStep === 0;
+        
+        if (this.currentStep === this.steps.length - 1) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
+        } else {
+            nextBtn.style.display = 'block';
+            submitBtn.style.display = 'none';
+            nextBtn.textContent = this.currentStep === this.steps.length - 2 ? 
+                'Review' : 'Next';
+        }
+    }
+    
+    async handleSubmit(event) {
+        event.preventDefault();
+        
+        if (this.validateStep()) {
+            this.saveStepData();
+            
+            try {
+                const response = await fetch('/api/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.formData)
+                });
+                
+                if (response.ok) {
+                    this.showSuccess();
+                } else {
+                    this.showError('Submission failed');
+                }
+            } catch (error) {
+                this.showError('Network error');
+            }
+        }
+    }
+    
+    showSuccess() {
+        this.form.innerHTML = `
+            &lt;div class="success-message"&gt;
+                &lt;h2&gt;Thank You!&lt;/h2&gt;
+                &lt;p&gt;Your form has been submitted successfully.&lt;/p&gt;
+                &lt;button onclick="window.location.reload()"&gt;Start Over&lt;/button&gt;
+            &lt;/div&gt;
+        `;
+    }
+    
+    showError(message) {
+        const errorDiv = this.form.querySelector('.error-messages');
+        errorDiv.innerHTML = `&lt;div&gt;${message}&lt;/div&gt;`;
+        errorDiv.style.display = 'block';
+    }
+}
+
+// Usage
+const wizard = new FormWizard('wizard-form', [
+    {
+        name: 'personal',
+        render: (data) =&gt; `
+            &lt;h3&gt;Personal Information&lt;/h3&gt;
+            &lt;input type="text" name="fullName" placeholder="Full Name" 
+                value="${data.fullName || ''}" required&gt;
+            &lt;input type="email" name="email" placeholder="Email" 
+                value="${data.email || ''}" required&gt;
+        `,
+        validate: (data) =&gt; {
+            const errors = [];
+            if (!data.fullName) errors.push('Name is required');
+            if (!data.email?.includes('@')) errors.push('Valid email required');
+            return errors;
+        },
+        getFields: () =&gt; ['fullName', 'email']
+    },
+    {
+        name: 'address',
+        render: (data) =&gt; `
+            &lt;h3&gt;Address&lt;/h3&gt;
+            &lt;input type="text" name="address" placeholder="Street Address" 
+                value="${data.address || ''}"&gt;
+            &lt;input type="text" name="city" placeholder="City" 
+                value="${data.city || ''}"&gt;
+        `,
+        validate: () =&gt; [], // Optional step
+        getFields: () =&gt; ['address', 'city']
+    }
+]);
+</code></pre>
+
+        <hr>
+
+        <h2 id="best-practices-and-common-pitfalls">11. Best Practices and Common Pitfalls</h2>
+        <h3>DO's and DON'Ts</h3>
+        <h4>✅ DO: Use Event Delegation for Dynamic Elements</h4>
+        <pre><code>// GOOD
+document.getElementById('container').addEventListener('click', (e) =&gt; {
+    if (e.target.matches('.dynamic-button')) {
+        handleClick(e);
+    }
+});
+</code></pre>
+        <h4>❌ DON'T: Attach Listeners to Many Elements</h4>
+        <pre><code>// BAD
+document.querySelectorAll('.item').forEach(item =&gt; {
+    item.addEventListener('click', handleClick);
+});
+</code></pre>
+        <h4>✅ DO: Remove Listeners When Done</h4>
+        <pre><code>// GOOD
+function init() {
+    const handler = () =&gt; console.log('clicked');
+    element.addEventListener('click', handler);
+    
+    return () =&gt; element.removeEventListener('click', handler);
+}
+</code></pre>
+        <h4>❌ DON'T: Forget to Unbind</h4>
+        <pre><code>// BAD - memory leak
+class Component {
+    constructor() {
+        window.addEventListener('resize', this.handleResize);
+    }
+    // No cleanup method
+}
+</code></pre>
+        <h4>✅ DO: Use Passive Listeners for Scroll</h4>
+        <pre><code>// GOOD
+window.addEventListener('scroll', updateUI, { passive: true });
+</code></pre>
+        <h4>❌ DON'T: Block the Main Thread</h4>
+        <pre><code>// BAD
+element.addEventListener('mousemove', () =&gt; {
+    // Expensive operation on every mouse movement
+    heavyComputation();
+});
+</code></pre>
+        <h4>✅ DO: Use Throttling/Debouncing</h4>
+        <pre><code>// GOOD
+element.addEventListener('mousemove', throttle(handleMove, 100));
+</code></pre>
+        <h3>Common Pitfalls and Solutions</h3>
+        <h4>Pitfall 1: Event Listener Memory Leaks</h4>
+        <pre><code>// PROBLEM
+function setup() {
+    const element = document.getElementById('temp');
+    window.addEventListener('resize', () =&gt; {
+        console.log(element.offsetWidth); // Closure keeps element alive
+    });
+    // element gets removed but listener keeps reference
+    element.remove();
+}
+
+// SOLUTION
+function setup() {
+    const element = document.getElementById('temp');
+    const handler = () =&gt; console.log(element.offsetWidth);
+    window.addEventListener('resize', handler);
+    
+    // Cleanup function
+    return () =&gt; {
+        window.removeEventListener('resize', handler);
+    };
+}
+</code></pre>
+        <h4>Pitfall 2: Event Handler Binding</h4>
+        <pre><code>// PROBLEM
+class Component {
+    constructor() {
+        this.element.addEventListener('click', this.handleClick);
+        // 'this' inside handleClick will be the element, not the component instance
+    }
+    
+    handleClick() {
+        console.log(this); // this = element, not Component
+    }
+}
+
+// SOLUTION 1: Bind in constructor
+class Component {
+    constructor() {
+        this.handleClick = this.handleClick.bind(this);
+        this.element.addEventListener('click', this.handleClick);
+    }
+    
+    handleClick() {
+        console.log(this); // this = Component instance
+    }
+}
+
+// SOLUTION 2: Arrow function
+class Component {
+    constructor() {
+        this.element.addEventListener('click', (e) =&gt; this.handleClick(e));
+    }
+    
+    handleClick(e) {
+        console.log(this); // this = Component instance
+    }
+}
+
+// SOLUTION 3: Class property arrow function
+class Component {
+    handleClick = (e) =&gt; {
+        console.log(this); // this = Component instance
+    }
+    
+    constructor() {
+        this.element.addEventListener('click', this.handleClick);
+    }
+}
+</code></pre>
+        <h4>Pitfall 3: Event Interference</h4>
+        <pre><code>// PROBLEM
+modal.addEventListener('click', closeModal);
+modalContent.addEventListener('click', (e) =&gt; {
+    // Clicking content still closes modal due to bubbling
+});
+
+// SOLUTION
+modalContent.addEventListener('click', (e) =&gt; {
+    e.stopPropagation(); // Prevent bubbling to modal
+});
+
+// Or check target in parent
+modal.addEventListener('click', (e) =&gt; {
+    if (e.target === modal) { // Only if clicking background
+        closeModal();
+    }
+});
+</code></pre>
+        <h4>Pitfall 4: Form Submission Issues</h4>
+        <pre><code>// PROBLEM
+form.addEventListener('submit', (e) =&gt; {
+    // Forgot e.preventDefault()
+    // Form submits and page reloads
+});
+
+// SOLUTION
+form.addEventListener('submit', (e) =&gt; {
+    e.preventDefault();
+    // Handle form with JavaScript
+});
+
+// Also handle enter key
+form.addEventListener('keyup', (e) =&gt; {
+    if (e.key === 'Enter' &amp;&amp; e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        // Submit form
+    }
+});
+</code></pre>
+        <h4>Pitfall 5: Touch and Mouse Events Conflict</h4>
+        <pre><code>// PROBLEM
+element.addEventListener('click', handleClick);
+element.addEventListener('touchstart', handleTouch);
+// Both fire on mobile devices
+
+// SOLUTION
+let isTouch = false;
+
+element.addEventListener('touchstart', (e) =&gt; {
+    isTouch = true;
+    handleTouch(e);
+});
+
+element.addEventListener('click', (e) =&gt; {
+    if (!isTouch) {
+        handleClick(e);
+    }
+    isTouch = false; // Reset
+});
+
+element.addEventListener('touchend', () =&gt; {
+    setTimeout(() =&gt; { isTouch = false; }, 0);
+});
+</code></pre>
+        <h3>Browser Compatibility Checklist</h3>
+        <pre><code>// Check for addEventListener support
+if (window.addEventListener) {
+    // Modern browsers
+    element.addEventListener('click', handler);
+} else if (window.attachEvent) {
+    // Old IE
+    element.attachEvent('onclick', handler);
+}
+
+// Passive event listener detection
+let supportsPassive = false;
+try {
+    window.addEventListener('test', null, 
+        Object.defineProperty({}, 'passive', {
+            get: () =&gt; { supportsPassive = true; return true; }
+        })
+    );
+} catch(e) {}
+
+// Use safely
+element.addEventListener('touchstart', handler, 
+    supportsPassive ? { passive: true } : false
+);
+</code></pre>
+
+        <hr>
+
+        <h2 id="advanced-event-concepts">12. Advanced Event Concepts</h2>
+        <h3>1. Custom Events</h3>
+        <pre><code>// Creating and dispatching custom events
+class EventEmitter {
+    constructor(element) {
+        this.element = element;
+    }
+    
+    emit(eventName, detail = {}) {
+        const event = new CustomEvent(eventName, {
+            bubbles: true,
+            cancelable: true,
+            composed: true, // For shadow DOM
+            detail
+        });
+        
+        this.element.dispatchEvent(event);
+    }
+    
+    on(eventName, handler) {
+        this.element.addEventListener(eventName, handler);
+        return this; // For chaining
+    }
+    
+    off(eventName, handler) {
+        this.element.removeEventListener(eventName, handler);
+        return this;
+    }
+    
+    once(eventName, handler) {
+        const wrapper = (e) =&gt; {
+            handler(e);
+            this.off(eventName, wrapper);
+        };
+        this.on(eventName, wrapper);
+        return this;
+    }
+}
+
+// Usage
+const emitter = new EventEmitter(document.getElementById('app'));
+
+// Listen for custom event
+emitter.on('userLogin', (e) =&gt; {
+    console.log('User logged in:', e.detail.user);
+    showNotification(`Welcome ${e.detail.user.name}!`);
+});
+
+// Emit event somewhere else
+emitter.emit('userLogin', {
+    user: { id: 1, name: 'John' },
+    timestamp: Date.now()
+});
+
+// Form validation with custom events
+class ValidatedForm {
+    constructor(formElement) {
+        this.form = formElement;
+        this.setupValidation();
+    }
+    
+    setupValidation() {
+        this.form.addEventListener('input', (e) =&gt; {
+            this.validateField(e.target);
+        });
+        
+        this.form.addEventListener('submit', (e) =&gt; {
+            e.preventDefault();
+            
+            if (this.validateAll()) {
+                // Dispatch custom event for successful validation
+                const event = new CustomEvent('formValid', {
+                    detail: this.getFormData()
+                });
+                this.form.dispatchEvent(event);
+            }
+        });
+        
+        // Listen for custom validation request
+        this.form.addEventListener('validateField', (e) =&gt; {
+            this.validateField(e.detail.field);
+        });
+    }
+    
+    validateField(field) {
+        const isValid = field.checkValidity();
+        
+        // Dispatch field validation event
+        const event = new CustomEvent('fieldValidated', {
+            bubbles: true,
+            detail: {
+                field: field.name,
+                isValid,
+                value: field.value
+            }
+        });
+        field.dispatchEvent(event);
+        
+        return isValid;
+    }
+    
+    validateAll() {
+        const fields = Array.from(this.form.elements);
+        return fields.every(field =&gt; this.validateField(field));
+    }
+    
+    getFormData() {
+        return new FormData(this.form);
+    }
+}
+</code></pre>
+        <h3>2. Event Composition and Shadow DOM</h3>
+        <pre><code>// Working with events in Shadow DOM
+class WebComponent extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+    }
+    
+    connectedCallback() {
+        this.render();
+        this.setupEvents();
+    }
+    
+    render() {
+        this.shadowRoot.innerHTML = `
+            &lt;style&gt;
+                button { color: red; }
+                .internal { font-weight: bold; }
+            &lt;/style&gt;
+            &lt;div class="internal"&gt;
+                &lt;button&gt;Click me&lt;/button&gt;
+            &lt;/div&gt;
+        `;
+    }
+    
+    setupEvents() {
+        // Event inside shadow DOM
+        const button = this.shadowRoot.querySelector('button');
+        
+        // This event can be heard outside if composed: true
+        button.addEventListener('click', (e) =&gt; {
+            this.dispatchEvent(new CustomEvent('internalClick', {
+                bubbles: true,
+                composed: true, // Allows event to cross shadow boundary
+                detail: { from: 'shadow-dom' }
+            }));
+        });
+        
+        // Event that stays inside shadow DOM
+        this.shadowRoot.addEventListener('mouseover', (e) =&gt; {
+            console.log('Mouse over in shadow DOM');
+        });
+    }
+}
+
+customElements.define('web-component', WebComponent);
+
+// Listening from outside
+document.querySelector('web-component').addEventListener('internalClick', (e) =&gt; {
+    console.log('Caught internal event:', e.detail);
+});
+</code></pre>
+        <h3>3. Event Observables with RxJS</h3>
+        <pre><code>// Using RxJS for advanced event handling
+// (Requires RxJS library)
+
+class SearchComponent {
+    constructor(inputElement) {
+        this.input = inputElement;
+        this.setupObservable();
+    }
+    
+    setupObservable() {
+        // Create observable from input events
+        const input$ = rxjs.fromEvent(this.input, 'input');
+        
+        // Transform stream
+        this.search$ = input$.pipe(
+            rxjs.operators.map(e =&gt; e.target.value),
+            rxjs.operators.debounceTime(300),
+            rxjs.operators.distinctUntilChanged(),
+            rxjs.operators.filter(term =&gt; term.length &gt;= 2),
+            rxjs.operators.switchMap(term =&gt; this.searchAPI(term))
+        );
+        
+        // Subscribe to results
+        this.search$.subscribe(results =&gt; {
+            this.displayResults(results);
+        });
+    }
+    
+    searchAPI(term) {
+        // Return observable from fetch
+        return rxjs.from(
+            fetch(`/api/search?q=${term}`)
+                .then(res =&gt; res.json())
+        ).pipe(
+            rxjs.operators.catchError(error =&gt; {
+                console.error('Search error:', error);
+                return rxjs.of([]);
+            })
+        );
+    }
+    
+    displayResults(results) {
+        console.log('Search results:', results);
+        // Update UI
+    }
+}
+
+// Multiple event sources
+class MultiEventComponent {
+    constructor(element) {
+        // Combine multiple event streams
+        const clicks$ = rxjs.fromEvent(element, 'click');
+        const moves$ = rxjs.fromEvent(document, 'mousemove');
+        const keys$ = rxjs.fromEvent(document, 'keyup');
+        
+        // Merge streams
+        const allEvents$ = rxjs.merge(
+            clicks$.pipe(rxjs.operators.mapTo('click')),
+            moves$.pipe(
+                rxjs.operators.throttleTime(100),
+                rxjs.operators.mapTo('move')
+            ),
+            keys$.pipe(rxjs.operators.mapTo('key'))
+        );
+        
+        // Subscribe to all
+        allEvents$.subscribe(eventType =&gt; {
+            console.log('Event occurred:', eventType);
+        });
+    }
+}
+</code></pre>
+        <h3>4. Gesture Recognition</h3>
+        <pre><code>class GestureRecognizer {
+    constructor(element) {
+        this.element = element;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.touchStartTime = 0;
+        this.lastTapTime = 0;
+        
+        this.setupGestureDetection();
+    }
+    
+    setupGestureDetection() {
+        // Single touch gestures
+        this.element.addEventListener('touchstart', (e) =&gt; {
+            const touch = e.touches[0];
+            this.touchStartX = touch.clientX;
+            this.touchStartY = touch.clientY;
+            this.touchStartTime = Date.now();
+        });
+        
+        this.element.addEventListener('touchend', (e) =&gt; {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - this.touchStartX;
+            const deltaY = touch.clientY - this.touchStartY;
+            const deltaTime = Date.now() - this.touchStartTime;
+            
+            this.detectTap(deltaTime, deltaX, deltaY);
+            this.detectSwipe(deltaTime, deltaX, deltaY);
+            this.detectLongPress(deltaTime, deltaX, deltaY);
+        });
+        
+        // Multi-touch gestures
+        this.element.addEventListener('touchstart', (e) =&gt; {
+            if (e.touches.length === 2) {
+                this.startPinchDistance = this.getDistance(
+                    e.touches[0],
+                    e.touches[1]
+                );
+            }
+        });
+        
+        this.element.addEventListener('touchmove', (e) =&gt; {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = this.getDistance(
+                    e.touches[0],
+                    e.touches[1]
+                );
+                
+                if (this.startPinchDistance) {
+                    const scale = currentDistance / this.startPinchDistance;
+                    this.detectPinch(scale);
+                }
+            }
+        });
+    }
+    
+    getDistance(touch1, touch2) {
+        const dx = touch1.clientX - touch2.clientX;
+        const dy = touch1.clientY - touch2.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+    
+    detectTap(deltaTime, deltaX, deltaY) {
+        if (deltaTime &lt; 300 &amp;&amp; Math.abs(deltaX) &lt; 10 &amp;&amp; Math.abs(deltaY) &lt; 10) {
+            // Check for double tap
+            const now = Date.now();
+            if (now - this.lastTapTime &lt; 300) {
+                this.triggerGesture('doubleTap', {
+                    x: this.touchStartX,
+                    y: this.touchStartY
+                });
+            } else {
+                this.triggerGesture('tap', {
+                    x: this.touchStartX,
+                    y: this.touchStartY
+                });
+            }
+            this.lastTapTime = now;
+        }
+    }
+    
+    detectSwipe(deltaTime, deltaX, deltaY) {
+        if (deltaTime &lt; 500 &amp;&amp; (Math.abs(deltaX) &gt; 50 || Math.abs(deltaY) &gt; 50)) {
+            let direction;
+            if (Math.abs(deltaX) &gt; Math.abs(deltaY)) {
+                direction = deltaX &gt; 0 ? 'right' : 'left';
+            } else {
+                direction = deltaY &gt; 0 ? 'down' : 'up';
+            }
+            
+            this.triggerGesture('swipe', {
+                direction,
+                distance: Math.max(Math.abs(deltaX), Math.abs(deltaY)),
+                velocity: Math.max(Math.abs(deltaX), Math.abs(deltaY)) / deltaTime
+            });
+        }
+    }
+    
+    detectLongPress(deltaTime, deltaX, deltaY) {
+        if (deltaTime &gt; 500 &amp;&amp; Math.abs(deltaX) &lt; 20 &amp;&amp; Math.abs(deltaY) &lt; 20) {
+            this.triggerGesture('longPress', {
+                x: this.touchStartX,
+                y: this.touchStartY,
+                duration: deltaTime
+            });
+        }
+    }
+    
+    detectPinch(scale) {
+        this.triggerGesture('pinch', {
+            scale,
+            type: scale &gt; 1 ? 'zoomIn' : 'zoomOut'
+        });
+    }
+    
+    triggerGesture(gesture, data) {
+        const event = new CustomEvent(gesture, {
+            detail: data,
+            bubbles: true
+        });
+        this.element.dispatchEvent(event);
+    }
+}
+
+// Usage
+const element = document.getElementById('gesture-area');
+const recognizer = new GestureRecognizer(element);
+
+element.addEventListener('tap', (e) =&gt; {
+    console.log('Tap at:', e.detail);
+});
+
+element.addEventListener('doubleTap', (e) =&gt; {
+    console.log('Double tap!');
+});
+
+element.addEventListener('swipe', (e) =&gt; {
+    console.log('Swiped:', e.detail.direction);
+});
+
+element.addEventListener('pinch', (e) =&gt; {
+    console.log('Pinch:', e.detail.type, 'scale:', e.detail.scale);
+});
+</code></pre>
+        <h3>5. Virtual Scrolling with Events</h3>
+        <pre><code>class VirtualScroller {
+    constructor(containerId, itemHeight, totalItems, renderFunction) {
+        this.container = document.getElementById(containerId);
+        this.itemHeight = itemHeight;
+        this.totalItems = totalItems;
+        this.renderFunction = renderFunction;
+        
+        this.visibleItems = Math.ceil(this.container.clientHeight / itemHeight) + 5;
+        this.scrollTop = 0;
+        this.startIndex = 0;
+        
+        this.init();
+    }
+    
+    init() {
+        // Set container styles
+        this.container.style.position = 'relative';
+        this.container.style.overflowY = 'auto';
+        
+        // Create content holder
+        this.content = document.createElement('div');
+        this.content.style.position = 'relative';
+        this.content.style.height = `${this.totalItems * this.itemHeight}px`;
+        this.container.appendChild(this.content);
+        
+        // Add scroll listener
+        this.container.addEventListener('scroll', () =&gt; {
+            window.requestAnimationFrame(() =&gt; this.update());
+        }, { passive: true });
+        
+        // Initial render
+        this.update();
+    }
+    
+    update() {
+        this.scrollTop = this.container.scrollTop;
+        
+        // Calculate visible range
+        this.startIndex = Math.floor(this.scrollTop / this.itemHeight);
+        this.startIndex = Math.max(0, this.startIndex - 2); // Add buffer
+        
+        const endIndex = Math.min(
+            this.totalItems - 1,
+            this.startIndex + this.visibleItems
+        );
+        
+        this.renderRange(this.startIndex, endIndex);
+    }
+    
+    renderRange(start, end) {
+        // Remove old items
+        while (this.content.firstChild) {
+            this.content.removeChild(this.content.firstChild);
+        }
+        
+        // Render new items
+        for (let i = start; i &lt;= end; i++) {
+            const item = this.renderFunction(i);
+            item.style.position = 'absolute';
+            item.style.top = `${i * this.itemHeight}px`;
+            item.style.width = '100%';
+            item.style.height = `${this.itemHeight}px`;
+            
+            this.content.appendChild(item);
+        }
+    }
+    
+    scrollToIndex(index) {
+        this.container.scrollTop = index * this.itemHeight;
+    }
+}
+
+// Usage
+const scroller = new VirtualScroller(
+    'virtual-list',
+    50, // item height
+    10000, // total items
+    (index) =&gt; {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.textContent = `Item ${index + 1}`;
+        return div;
+    }
+);
+</code></pre>
+
+        <hr>
+
+        <h2>Summary: Key Takeaways</h2>
+        <h3>Core Concepts</h3>
+        <ol>
+            <li><strong>Events</strong> are signals that something has occurred in the browser</li>
+            <li><strong>Event Listeners</strong> are functions that wait for and respond to events</li>
+            <li><strong>Event Object</strong> contains detailed information about the event</li>
+            <li><strong>Event Propagation</strong> determines how events travel through the DOM</li>
+        </ol>
+        <h3>Best Practices</h3>
+        <ul>
+            <li>Use <strong>event delegation</strong> for dynamic content</li>
+            <li><strong>Remove listeners</strong> when they're no longer needed</li>
+            <li><strong>Throttle/debounce</strong> high-frequency events</li>
+            <li>Use <strong>passive listeners</strong> for scroll performance</li>
+            <li><strong>Prevent default</strong> behavior when necessary</li>
+            <li><strong>Stop propagation</strong> selectively</li>
+        </ul>
+        <h3>Common Events</h3>
+        <ul>
+            <li><code>click</code> - Mouse click</li>
+            <li><code>mouseover</code> / <code>mouseout</code> - Mouse enter/leave</li>
+            <li><code>keyup</code> / <code>keydown</code> - Keyboard interaction</li>
+            <li><code>submit</code> - Form submission</li>
+            <li><code>load</code> - Resource loading</li>
+            <li><code>scroll</code> - Scrolling</li>
+            <li><code>input</code> / <code>change</code> - Form input changes</li>
+        </ul>
+        <h3>Performance Tips</h3>
+        <ul>
+            <li>Less listeners is better (use delegation)</li>
+            <li>Use <code>requestAnimationFrame</code> for visual updates</li>
+            <li>Implement virtual scrolling for large lists</li>
+            <li>Lazy load event listeners when possible</li>
+            <li>Monitor and profile event performance</li>
+        </ul>
+        <h3>Memory Management</h3>
+        <ul>
+            <li>Always clean up listeners in component <code>destroy()</code> methods</li>
+            <li>Be careful with closures that capture large objects</li>
+            <li>Use <code>AbortController</code> for cleaning up multiple listeners</li>
+            <li>Nullify references after removal</li>
+        </ul>
+        <h3>Modern Features</h3>
+        <ul>
+            <li><strong>Passive listeners</strong> for scroll performance</li>
+            <li><strong>Once option</strong> for one-time listeners</li>
+            <li><strong>Custom events</strong> for application-specific needs</li>
+            <li><strong>Composed events</strong> for crossing shadow DOM boundaries</li>
+            <li><strong>Observables</strong> for complex event streams</li>
+        </ul>
+
+        <hr>
+        <footer>
+            <p>This comprehensive guide covers everything from basic event concepts to advanced patterns and performance
+                optimization. Remember that mastering events is crucial for creating interactive, performant web
+                applications. Practice these concepts, experiment with different patterns, and always consider the user
+                experience when implementing event handling.</p>
+        </footer>
+
+    </div> <!-- end .document-wrapper -->
+</body>
+
+</html>

@@ -1,0 +1,3191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation – content & attributes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f5fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #1d2f3f;
+            line-height: 1.6;
+            padding: 1.5rem;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px rgba(18, 52, 77, 0.15);
+            padding: 2.2rem 2rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1e4f6e;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 14px solid #cc8b74;
+            padding-left: 1.4rem;
+            margin: 0 0 1.2rem 0;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 2.5rem 0 1.2rem 0;
+            padding-bottom: 0.4rem;
+            border-bottom: 3px solid #c5d9ec;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            margin: 2rem 0 1rem;
+            color: #26648b;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            margin: 1.4rem 0 0.6rem;
+            color: #2b5c7e;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        a {
+            color: #1d5f8e;
+            text-decoration: underline wavy #cc8b74 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: #f4fafd;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 18px rgba(0, 45, 70, 0.06);
+        }
+
+        th {
+            background: #2b6c8f;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            text-align: left;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #cbdae7;
+            background: #fbfeff;
+        }
+
+        pre {
+            background: #1e2d3c;
+            color: #e1effb;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            margin: 1.4rem 0;
+            box-shadow: inset 0 0 0 1px #2e4a62;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #e5f0f8;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.9em;
+            color: #19465f;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .block-badge {
+            display: inline-block;
+            background: #26648b;
+            color: white;
+            border-radius: 60px;
+            padding: 0.2rem 1.8rem;
+            font-size: 1.2rem;
+            margin: 0.5rem 0 1.8rem;
+        }
+
+        hr {
+            margin: 2.8rem 0;
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #cbddee, #ffffff, #cbddee);
+        }
+
+        .table-of-contents {
+            background: #e3f0fa;
+            padding: 1.5rem 2rem;
+            border-radius: 2rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .table-of-contents ul {
+            columns: 3 220px;
+            column-gap: 2rem;
+            list-style: none;
+            margin-top: 0.8rem;
+        }
+
+        .table-of-contents li {
+            margin: 0.3rem 0;
+        }
+
+        .table-of-contents a {
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #4682b4;
+        }
+
+        .footnote {
+            background: #f3f9ff;
+            padding: 1.8rem;
+            border-radius: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .example-block {
+            border-left: 8px solid #cc8b74;
+            background: #f6fafe;
+            padding: 1rem 1.5rem;
+            margin: 1.8rem 0;
+            border-radius: 0 2rem 2rem 0;
+        }
+
+        hr.sep {
+            width: 60px;
+            height: 4px;
+            background: #cc8b74;
+            margin: 2rem auto;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 650px) {
+            .document-wrapper {
+                padding: 1.2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>DOM Manipulation - Content and Attributes</h1>
+
+        <div class="block-badge">📘 complete reference — every line preserved</div>
+
+        <!-- Table of Contents (exact from source) -->
+        <div class="table-of-contents">
+            <h2 style="border-bottom: none; padding-bottom: 0; margin-top:0;">Table of Contents</h2>
+            <ul>
+                <li><a href="#introduction">1. Introduction to DOM Manipulation</a></li>
+                <li><a href="#understanding-content">2. Understanding Element Content</a></li>
+                <li><a href="#innerhtml-deep-dive">3. .innerHTML - Deep Dive</a></li>
+                <li><a href="#textcontent-deep-dive">4. .textContent - Deep Dive</a></li>
+                <li><a href="#comparison">5. .innerHTML vs .textContent Comparison</a></li>
+                <li><a href="#working-with-attributes">6. Working with Attributes</a></li>
+                <li><a href="#getattribute-deep-dive">7. .getAttribute() - Deep Dive</a></li>
+                <li><a href="#setattribute-deep-dive">8. .setAttribute() - Deep Dive</a></li>
+                <li><a href="#advanced-techniques">9. Advanced Techniques & Best Practices</a></li>
+                <li><a href="#practical-examples">10. Practical Examples & Use Cases</a></li>
+                <li><a href="#performance">11. Performance Considerations</a></li>
+                <li><a href="#security">12. Security Implications</a></li>
+                <li><a href="#compatibility">13. Browser Compatibility</a></li>
+                <li><a href="#pitfalls">14. Common Pitfalls & Debugging</a></li>
+                <li><a href="#interview-questions">15. Interview Questions & Answers</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <!-- START OF EXACT STUDY NOTES (every line) -->
+
+        <h2 id="introduction">1. Introduction to DOM Manipulation</h2>
+
+        <h3>What is the DOM?</h3>
+        <p>The Document Object Model (DOM) is a programming interface for HTML and XML documents. It represents the page
+            so that programs can change the document structure, style, and content. The DOM represents the document as
+            nodes and objects, allowing programming languages like JavaScript to interact with the page.</p>
+
+        <h3>Why Manipulate Content and Attributes?</h3>
+        <p>Content and attribute manipulation is fundamental to creating dynamic web applications. Every interactive
+            website you've ever used relies on these concepts to:</p>
+        <ul>
+            <li>Update text without reloading the page</li>
+            <li>Show/hide elements dynamically</li>
+            <li>Change image sources</li>
+            <li>Update links and buttons</li>
+            <li>Modify form behaviors</li>
+            <li>Create single-page applications</li>
+        </ul>
+
+        <h3>The Document Object</h3>
+        <p>Before we dive into manipulating elements, we need to understand the <code>document</code> object:</p>
+        <pre><code>console.log(document); // The entire HTML document
+console.log(document.body); // The body element
+console.log(document.head); // The head element
+console.log(document.documentElement); // The &lt;html&gt; element</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="understanding-content">2. Understanding Element Content</h2>
+
+        <h3>What Constitutes "Element Content"?</h3>
+        <p>Element content can be broken down into several categories:</p>
+        <ol>
+            <li><strong>Text Content</strong>: The actual text visible to users</li>
+            <li><strong>HTML Content</strong>: Nested HTML elements and markup</li>
+            <li><strong>CDATA Sections</strong>: Unparsed character data</li>
+            <li><strong>Comments</strong>: HTML comments within the element</li>
+            <li><strong>Entity References</strong>: HTML entities like <code>&amp;nbsp;</code> or
+                <code>&amp;copy;</code>
+            </li>
+        </ol>
+
+        <h3>The Element Interface</h3>
+        <p>Every HTML element in JavaScript implements the <code>Element</code> interface, which provides properties and
+            methods for accessing content:</p>
+        <pre><code>// Getting an element reference
+const div = document.querySelector('div');
+const p = document.getElementById('paragraph');
+const elements = document.getElementsByClassName('content');</code></pre>
+
+        <h3>Types of Content Properties</h3>
+        <p>JavaScript provides three main properties for accessing element content:</p>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Parses HTML</th>
+                <th>Security Risk</th>
+                <th>Performance</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td><code>innerHTML</code></td>
+                <td>Yes</td>
+                <td>High</td>
+                <td>Slower</td>
+                <td>When you need to insert HTML</td>
+            </tr>
+            <tr>
+                <td><code>textContent</code></td>
+                <td>No</td>
+                <td>Low</td>
+                <td>Fast</td>
+                <td>For plain text only</td>
+            </tr>
+            <tr>
+                <td><code>innerText</code></td>
+                <td>No</td>
+                <td>Low</td>
+                <td>Slowest</td>
+                <td>When you need rendered text</td>
+            </tr>
+        </table>
+        <blockquote><strong>Note</strong>: We'll focus on <code>innerHTML</code> and <code>textContent</code> as they're
+            the most commonly used and important for this lesson.</blockquote>
+
+        <hr class="sep">
+
+        <h2 id="innerhtml-deep-dive">3. .innerHTML - Deep Dive</h2>
+
+        <h3>What is innerHTML?</h3>
+        <p><code>innerHTML</code> is a property of DOM elements that gets or sets the HTML markup contained within an
+            element. It treats the content as HTML, meaning it parses and renders any HTML tags.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre><code>// Getting innerHTML
+const htmlContent = element.innerHTML;
+
+// Setting innerHTML
+element.innerHTML = '&lt;p&gt;New &lt;strong&gt;HTML&lt;/strong&gt; content&lt;/p&gt;';</code></pre>
+
+        <h3>How innerHTML Works</h3>
+        <p>When you read <code>innerHTML</code>, it returns a string containing the HTML serialization of all child
+            nodes:</p>
+        <pre><code>&lt;div id="example"&gt;
+    &lt;p&gt;Hello &lt;strong&gt;World&lt;/strong&gt;!&lt;/p&gt;
+    &lt;!-- This is a comment --&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    const div = document.getElementById('example');
+    console.log(div.innerHTML);
+    // Output: 
+    // "
+    //     &lt;p&gt;Hello &lt;strong&gt;World&lt;/strong&gt;!&lt;/p&gt;
+    //     &lt;!-- This is a comment --&gt;
+    // "
+&lt;/script&gt;</code></pre>
+
+        <h3>Setting innerHTML: Behind the Scenes</h3>
+        <p>When you set <code>innerHTML</code>, the browser:</p>
+        <ol>
+            <li><strong>Parses</strong> the string as HTML</li>
+            <li><strong>Creates</strong> new DOM nodes from the parsed HTML</li>
+            <li><strong>Removes</strong> all existing child nodes</li>
+            <li><strong>Replaces</strong> them with the new nodes</li>
+        </ol>
+        <pre><code>// Step by step what happens:
+element.innerHTML = '&lt;span&gt;New Content&lt;/span&gt;';
+
+// 1. String is parsed: '&lt;span&gt;New Content&lt;/span&gt;'
+// 2. Browser creates: document.createElement('span')
+// 3. Text node created: 'New Content'
+// 4. Old children are removed
+// 5. New span is appended</code></pre>
+
+        <h3>Complex innerHTML Examples</h3>
+        <h4>Example 1: Building a Card Component</h4>
+        <pre><code>function createCard(title, description, imageUrl) {
+    const container = document.getElementById('card-container');
+    
+    container.innerHTML += `
+        &lt;div class="card"&gt;
+            &lt;img src="${imageUrl}" alt="${title}" class="card-image"&gt;
+            &lt;div class="card-content"&gt;
+                &lt;h3&gt;${title}&lt;/h3&gt;
+                &lt;p&gt;${description}&lt;/p&gt;
+                &lt;button class="card-btn" onclick="handleClick('${title}')"&gt;
+                    Learn More
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    `;
+}
+
+// Usage
+createCard(
+    'JavaScript', 
+    'A powerful programming language', 
+    'images/js-logo.png'
+);</code></pre>
+
+        <h4>Example 2: Creating a Table Dynamically</h4>
+        <pre><code>function generateDataTable(data) {
+    const table = document.getElementById('data-table');
+    
+    let tableHTML = '&lt;thead&gt;&lt;tr&gt;';
+    
+    // Add headers
+    if (data.length &gt; 0) {
+        Object.keys(data[0]).forEach(key =&gt; {
+            tableHTML += `&lt;th&gt;${key}&lt;/th&gt;`;
+        });
+    }
+    tableHTML += '&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;';
+    
+    // Add rows
+    data.forEach(row =&gt; {
+        tableHTML += '&lt;tr&gt;';
+        Object.values(row).forEach(value =&gt; {
+            tableHTML += `&lt;td&gt;${value}&lt;/td&gt;`;
+        });
+        tableHTML += '&lt;/tr&gt;';
+    });
+    
+    tableHTML += '&lt;/tbody&gt;';
+    table.innerHTML = tableHTML;
+}
+
+// Usage
+const users = [
+    { id: 1, name: 'Alice', email: 'alice@example.com' },
+    { id: 2, name: 'Bob', email: 'bob@example.com' }
+];
+generateDataTable(users);</code></pre>
+
+        <h4>Example 3: Nested HTML Structures</h4>
+        <pre><code>function createNavigation(menuItems) {
+    const nav = document.getElementById('navigation');
+    
+    let navHTML = '&lt;ul class="nav-menu"&gt;';
+    
+    menuItems.forEach(item =&gt; {
+        if (item.submenu) {
+            navHTML += `
+                &lt;li class="nav-item dropdown"&gt;
+                    &lt;a href="#"&gt;${item.title}&lt;/a&gt;
+                    &lt;ul class="dropdown-menu"&gt;
+                        ${item.submenu.map(sub =&gt; 
+                            `&lt;li&gt;&lt;a href="${sub.url}"&gt;${sub.title}&lt;/a&gt;&lt;/li&gt;`
+                        ).join('')}
+                    &lt;/ul&gt;
+                &lt;/li&gt;
+            `;
+        } else {
+            navHTML += `
+                &lt;li class="nav-item"&gt;
+                    &lt;a href="${item.url}"&gt;${item.title}&lt;/a&gt;
+                &lt;/li&gt;
+            `;
+        }
+    });
+    
+    navHTML += '&lt;/ul&gt;';
+    nav.innerHTML = navHTML;
+}</code></pre>
+
+        <h3>innerHTML with Template Literals (ES6+)</h3>
+        <pre><code>const user = {
+    name: 'John',
+    age: 30,
+    skills: ['HTML', 'CSS', 'JavaScript']
+};
+
+const profileCard = `
+    &lt;div class="profile-card"&gt;
+        &lt;h2&gt;${user.name}&lt;/h2&gt;
+        &lt;p&gt;Age: ${user.age}&lt;/p&gt;
+        &lt;div class="skills"&gt;
+            ${user.skills.map(skill =&gt; 
+                `&lt;span class="skill-tag"&gt;${skill}&lt;/span&gt;`
+            ).join('')}
+        &lt;/div&gt;
+    &lt;/div&gt;
+`;
+
+document.body.innerHTML = profileCard;</code></pre>
+
+        <h3>innerHTML and Script Execution</h3>
+        <p>A critical thing to understand: scripts inserted via <code>innerHTML</code> do not execute:</p>
+        <pre><code>// This WILL NOT execute the script
+element.innerHTML = '&lt;script&gt;alert("Hello")&lt;/script&gt;';
+
+// This WILL execute (using alternative methods)
+const script = document.createElement('script');
+script.textContent = 'alert("Hello")';
+document.body.appendChild(script);</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="textcontent-deep-dive">4. .textContent - Deep Dive</h2>
+
+        <h3>What is textContent?</h3>
+        <p><code>textContent</code> is a property that gets or sets the text content of an element and all its
+            descendants. It ignores any HTML tags and returns only the text.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre><code>// Getting textContent
+const text = element.textContent;
+
+// Setting textContent
+element.textContent = 'This is plain text';</code></pre>
+
+        <h3>How textContent Works</h3>
+        <p>When you read <code>textContent</code>, it concatenates the text of all child nodes:</p>
+        <pre><code>&lt;div id="example"&gt;
+    &lt;p&gt;Hello &lt;strong&gt;World&lt;/strong&gt;!&lt;/p&gt;
+    &lt;!-- This is a comment --&gt;
+    &lt;style&gt;p { color: red; }&lt;/style&gt;
+    &lt;script&gt;console.log('test');&lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    const div = document.getElementById('example');
+    console.log(div.textContent);
+    // Output: "Hello World!"
+    // Note: Comments, styles, and scripts are ignored
+&lt;/script&gt;</code></pre>
+
+        <h3>Setting textContent: Behind the Scenes</h3>
+        <pre><code>element.textContent = 'New Text';
+
+// What happens:
+// 1. All child nodes are removed
+// 2. A single text node is created: 'New Text'
+// 3. That text node is appended to the element</code></pre>
+
+        <h3>textContent vs innerText</h3>
+        <p>It's crucial to understand the difference:</p>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>textContent</th>
+                <th>innerText</th>
+            </tr>
+            <tr>
+                <td>Returns all text</td>
+                <td>Yes, including hidden</td>
+                <td>Only visible text</td>
+            </tr>
+            <tr>
+                <td>Performance</td>
+                <td>Fast</td>
+                <td>Slower (triggers reflow)</td>
+            </tr>
+            <tr>
+                <td>Script/Style content</td>
+                <td>Included</td>
+                <td>Excluded</td>
+            </tr>
+            <tr>
+                <td>Whitespace</td>
+                <td>Preserves</td>
+                <td>Collapses</td>
+            </tr>
+        </table>
+        <pre><code>&lt;div style="display: none;"&gt;
+    Hidden text
+&lt;/div&gt;
+&lt;div&gt;
+    Visible text
+&lt;/div&gt;
+
+&lt;script&gt;
+    console.log(document.body.textContent);
+    // Includes: "Hidden textVisible text"
+    
+    console.log(document.body.innerText);
+    // Only: "Visible text" (after layout calculation)
+&lt;/script&gt;</code></pre>
+
+        <h3>Advanced textContent Examples</h3>
+        <h4>Example 1: Safe User Input Display</h4>
+        <pre><code>// NEVER use innerHTML for user input!
+const userComment = '&lt;script&gt;stealData()&lt;/script&gt;Hello!';
+
+// Safe way
+const commentDiv = document.getElementById('comment');
+commentDiv.textContent = userComment;
+// Displays exactly: &lt;script&gt;stealData()&lt;/script&gt;Hello!</code></pre>
+
+        <h4>Example 2: Search/Highlight Functionality</h4>
+        <pre><code>function searchAndCount(searchTerm) {
+    const content = document.getElementById('article-content');
+    const text = content.textContent;
+    
+    const occurrences = (text.match(new RegExp(searchTerm, 'gi')) || []).length;
+    
+    console.log(`Found "${searchTerm}" ${occurrences} times`);
+    return occurrences;
+}
+
+// Usage
+searchAndCount('JavaScript');</code></pre>
+
+        <h4>Example 3: Text Statistics</h4>
+        <pre><code>function getTextStats(element) {
+    const text = element.textContent;
+    
+    return {
+        characters: text.length,
+        words: text.trim().split(/\s+/).length,
+        sentences: text.split(/[.!?]+/).length - 1,
+        paragraphs: text.split(/\n\s*\n/).length,
+        first100Chars: text.slice(0, 100) + '...'
+    };
+}
+
+const stats = getTextStats(document.body);
+console.log(stats);</code></pre>
+
+        <h4>Example 4: Creating a Plain Text Version</h4>
+        <pre><code>function createPlainTextView(htmlElement) {
+    const clone = htmlElement.cloneNode(true);
+    
+    // Convert line breaks
+    clone.innerHTML = clone.innerHTML
+        .replace(/&lt;br\s*\/?&gt;/g, '\n')
+        .replace(/&lt;\/p&gt;/g, '\n\n')
+        .replace(/&lt;\/h[1-6]&gt;/g, '\n\n');
+    
+    return clone.textContent;
+}
+
+// Usage
+const article = document.getElementById('article');
+const plainText = createPlainTextView(article);</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="comparison">5. .innerHTML vs .textContent Comparison</h2>
+
+        <h3>Detailed Comparison Table</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>innerHTML</th>
+                <th>textContent</th>
+            </tr>
+            <tr>
+                <td><strong>Parses HTML</strong></td>
+                <td>Yes</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>Security Risk</strong></td>
+                <td>High (XSS)</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Slower</td>
+                <td>Fast</td>
+            </tr>
+            <tr>
+                <td><strong>Preserves HTML Tags</strong></td>
+                <td>Yes</td>
+                <td>No (removes)</td>
+            </tr>
+            <tr>
+                <td><strong>Returns</strong></td>
+                <td>HTML string</td>
+                <td>Plain text</td>
+            </tr>
+            <tr>
+                <td><strong>Script Execution</strong></td>
+                <td>No (injected scripts don't run)</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td><strong>Use Case</strong></td>
+                <td>When you need HTML structure</td>
+                <td>For text-only updates</td>
+            </tr>
+            <tr>
+                <td><strong>Whitespace</strong></td>
+                <td>Preserves as in HTML</td>
+                <td>Preserves all whitespace</td>
+            </tr>
+            <tr>
+                <td><strong>Child Nodes</strong></td>
+                <td>Replaces all</td>
+                <td>Replaces all</td>
+            </tr>
+        </table>
+
+        <h3>Performance Comparison</h3>
+        <pre><code>// Performance test
+function performanceTest() {
+    const div = document.createElement('div');
+    const iterations = 10000;
+    
+    console.time('innerHTML');
+    for (let i = 0; i &lt; iterations; i++) {
+        div.innerHTML = 'test';
+    }
+    console.timeEnd('innerHTML');
+    
+    console.time('textContent');
+    for (let i = 0; i &lt; iterations; i++) {
+        div.textContent = 'test';
+    }
+    console.timeEnd('textContent');
+}
+
+// Results (approximate):
+// innerHTML: ~15ms
+// textContent: ~2ms</code></pre>
+
+        <h3>Memory Usage Considerations</h3>
+        <pre><code>// innerHTML creates new nodes each time
+function memoryTest() {
+    const container = document.getElementById('container');
+    
+    // This creates and destroys many nodes
+    for (let i = 0; i &lt; 1000; i++) {
+        container.innerHTML = `&lt;span&gt;Item ${i}&lt;/span&gt;`;
+        // Old span is removed, new one created
+    }
+    
+    // More memory efficient
+    const items = [];
+    for (let i = 0; i &lt; 1000; i++) {
+        items.push(`Item ${i}`);
+    }
+    container.textContent = items.join(', ');
+}</code></pre>
+
+        <h3>When to Use Each</h3>
+        <h4>Use innerHTML when:</h4>
+        <pre><code>// 1. You need to insert HTML structure
+element.innerHTML = '&lt;div class="card"&gt;&lt;h3&gt;Title&lt;/h3&gt;&lt;p&gt;Content&lt;/p&gt;&lt;/div&gt;';
+
+// 2. You're building complex layouts from strings
+modal.innerHTML = `
+    &lt;div class="modal-header"&gt;
+        &lt;h2&gt;${title}&lt;/h2&gt;
+        &lt;button class="close"&gt;&amp;times;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-body"&gt;
+        ${bodyContent}
+    &lt;/div&gt;
+`;
+
+// 3. You're working with template strings from a server
+fetch('/template.html')
+    .then(res =&gt; res.text())
+    .then(html =&gt; {
+        container.innerHTML = html;
+    });</code></pre>
+
+        <h4>Use textContent when:</h4>
+        <pre><code>// 1. Displaying user-generated content
+commentDisplay.textContent = userComment; // SAFE
+
+// 2. Simple text updates
+counter.textContent = `Count: ${count}`;
+
+// 3. Reading text for processing
+const text = article.textContent;
+const words = text.split(' ');
+
+// 4. Preventing XSS attacks
+// NEVER do this:
+element.innerHTML = userInput;
+// Always do this:
+element.textContent = userInput;</code></pre>
+
+        <h3>Converting Between Formats</h3>
+        <pre><code>// HTML to Text
+function htmlToText(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent;
+}
+
+// Text to HTML (with escaping)
+function textToHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML; // Now HTML-escaped
+}
+
+// Usage
+const userInput = '&lt;script&gt;alert("xss")&lt;/script&gt;';
+const safeHtml = textToHtml(userInput);
+console.log(safeHtml); 
+// Output: &amp;lt;script&amp;gt;alert("xss")&amp;lt;/script&amp;gt;</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="working-with-attributes">6. Working with Attributes</h2>
+
+        <h3>What are Attributes?</h3>
+        <p>Attributes provide additional information about HTML elements. They appear as name-value pairs in the opening
+            tag:</p>
+        <pre><code>&lt;img src="image.jpg" alt="Description" width="500" height="600"&gt;
+&lt;!--  |    |           |    |            |     |         |     --&gt;
+&lt;!-- name value       name value        name value      name value --&gt;</code></pre>
+
+        <h3>Types of Attributes</h3>
+        <h4>1. Global Attributes (work with all elements)</h4>
+        <ul>
+            <li><code>id</code>, <code>class</code>, <code>style</code>, <code>title</code></li>
+            <li><code>lang</code>, <code>dir</code>, <code>accesskey</code></li>
+            <li><code>hidden</code>, <code>tabindex</code>, <code>contenteditable</code></li>
+        </ul>
+        <h4>2. Event Handler Attributes</h4>
+        <ul>
+            <li><code>onclick</code>, <code>onload</code>, <code>onmouseover</code></li>
+            <li><code>onchange</code>, <code>onsubmit</code>, <code>onfocus</code></li>
+        </ul>
+        <h4>3. Element-Specific Attributes</h4>
+        <ul>
+            <li><code>&lt;img&gt;</code>: <code>src</code>, <code>alt</code>, <code>width</code>, <code>height</code>
+            </li>
+            <li><code>&lt;a&gt;</code>: <code>href</code>, <code>target</code>, <code>download</code></li>
+            <li><code>&lt;input&gt;</code>: <code>type</code>, <code>value</code>, <code>placeholder</code>,
+                <code>required</code>
+            </li>
+            <li><code>&lt;video&gt;</code>: <code>controls</code>, <code>autoplay</code>, <code>loop</code></li>
+        </ul>
+        <h4>4. ARIA Attributes (accessibility)</h4>
+        <ul>
+            <li><code>role</code>, <code>aria-label</code>, <code>aria-hidden</code></li>
+            <li><code>aria-expanded</code>, <code>aria-checked</code></li>
+        </ul>
+        <h4>5. Data Attributes (custom)</h4>
+        <ul>
+            <li><code>data-*</code> (e.g., <code>data-id</code>, <code>data-user-role</code>)</li>
+        </ul>
+
+        <h3>Accessing Attributes</h3>
+        <pre><code>const element = document.getElementById('myElement');
+
+// Method 1: Direct property access (for some attributes)
+element.id = 'newId';
+element.className = 'new-class'; // Note: 'class' is reserved, use 'className'
+element.src = 'new-image.jpg';
+
+// Method 2: Using getAttribute/setAttribute (recommended)
+element.setAttribute('data-custom', 'value');
+const value = element.getAttribute('data-custom');
+
+// Method 3: Using dataset (for data-* attributes)
+element.dataset.userId = '123';
+console.log(element.dataset.userId); // '123'</code></pre>
+
+        <h3>The Attribute vs Property Distinction</h3>
+        <pre><code>&lt;input type="text" value="Initial" id="myInput"&gt;
+
+&lt;script&gt;
+const input = document.getElementById('myInput');
+
+// Attribute (initial HTML value)
+console.log(input.getAttribute('value')); // "Initial"
+
+// Property (current value, can change)
+console.log(input.value); // "Initial"
+
+// User types "New Value" in the input
+console.log(input.getAttribute('value')); // Still "Initial"
+console.log(input.value); // "New Value" (changed)
+
+// Setting property doesn't update attribute
+input.value = 'Changed';
+console.log(input.getAttribute('value')); // "Initial"
+
+// Setting attribute updates property (usually)
+input.setAttribute('value', 'Updated');
+console.log(input.value); // "Updated"
+&lt;/script&gt;</code></pre>
+
+        <h3>Common Attribute Manipulation Patterns</h3>
+        <h4>Example 1: Toggle Password Visibility</h4>
+        <pre><code>function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleButton = document.getElementById('toggleBtn');
+    
+    const type = passwordInput.getAttribute('type');
+    
+    if (type === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        toggleButton.textContent = 'Hide';
+    } else {
+        passwordInput.setAttribute('type', 'password');
+        toggleButton.textContent = 'Show';
+    }
+}</code></pre>
+
+        <h4>Example 2: Dynamic Link Updater</h4>
+        <pre><code>function updateLinks(userRole) {
+    const links = document.querySelectorAll('a[data-role-based]');
+    
+    links.forEach(link =&gt; {
+        const href = link.getAttribute('href');
+        const roleHref = link.getAttribute(`data-${userRole}-href`);
+        
+        if (roleHref) {
+            link.setAttribute('href', roleHref);
+        }
+        
+        if (userRole === 'admin') {
+            link.removeAttribute('hidden');
+        } else {
+            link.setAttribute('hidden', 'true');
+        }
+    });
+}</code></pre>
+
+        <h4>Example 3: Image Fallback Handler</h4>
+        <pre><code>function handleImageError(img) {
+    // Get fallback from data attribute
+    const fallback = img.getAttribute('data-fallback');
+    
+    if (fallback &amp;&amp; img.getAttribute('src') !== fallback) {
+        img.setAttribute('src', fallback);
+        img.setAttribute('alt', 'Image failed to load');
+        
+        // Add error class
+        img.setAttribute('class', img.getAttribute('class') + ' image-error');
+    }
+}
+
+// Usage in HTML:
+// &lt;img src="profile.jpg" data-fallback="default.jpg" onerror="handleImageError(this)"&gt;</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="getattribute-deep-dive">7. .getAttribute() - Deep Dive</h2>
+
+        <h3>What is getAttribute()?</h3>
+        <p><code>getAttribute()</code> is a method that returns the value of a specified attribute on the element. If
+            the attribute doesn't exist, it returns <code>null</code>.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre><code>const value = element.getAttribute(attributeName);</code></pre>
+
+        <h3>How getAttribute() Works</h3>
+        <pre><code>&lt;div id="main" class="container" data-user="123" hidden&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    const div = document.getElementById('main');
+    
+    console.log(div.getAttribute('id')); // "main"
+    console.log(div.getAttribute('class')); // "container"
+    console.log(div.getAttribute('data-user')); // "123"
+    console.log(div.getAttribute('hidden')); // "" (empty string)
+    console.log(div.getAttribute('nonexistent')); // null
+&lt;/script&gt;</code></pre>
+
+        <h3>Important Characteristics</h3>
+        <h4>1. Always Returns a String or null</h4>
+        <pre><code>&lt;div maxlength="10"&gt;&lt;/div&gt;
+&lt;input type="checkbox" checked&gt;
+
+&lt;script&gt;
+    const div = document.querySelector('div');
+    const checkbox = document.querySelector('input');
+    
+    console.log(typeof div.getAttribute('maxlength')); // "string"
+    console.log(div.getAttribute('maxlength')); // "10"
+    
+    console.log(checkbox.getAttribute('checked')); // "" (empty string)
+    console.log(checkbox.checked); // true (boolean property)
+&lt;/script&gt;</code></pre>
+
+        <h4>2. Case Insensitivity</h4>
+        <pre><code>&lt;div Data-Custom="value"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    const div = document.querySelector('div');
+    console.log(div.getAttribute('data-custom')); // "value"
+    console.log(div.getAttribute('Data-Custom')); // "value"
+&lt;/script&gt;</code></pre>
+
+        <h4>3. Returns EXACT Original Value</h4>
+        <pre><code>&lt;a href="https://example.com" id="link"&gt;Link&lt;/a&gt;
+
+&lt;script&gt;
+    const link = document.getElementById('link');
+    
+    // Property normalizes
+    console.log(link.href); // "https://example.com/" (may add trailing slash)
+    
+    // Attribute returns exactly what's in HTML
+    console.log(link.getAttribute('href')); // "https://example.com"
+&lt;/script&gt;</code></pre>
+
+        <h3>Advanced getAttribute Examples</h3>
+        <h4>Example 1: Data Extraction for Analytics</h4>
+        <pre><code>function trackUserInteractions() {
+    const interactiveElements = document.querySelectorAll(
+        '[data-track-click], [data-track-hover]'
+    );
+    
+    interactiveElements.forEach(element =&gt; {
+        const clickEvent = element.getAttribute('data-track-click');
+        const hoverEvent = element.getAttribute('data-track-hover');
+        
+        if (clickEvent) {
+            element.addEventListener('click', () =&gt; {
+                sendToAnalytics({
+                    event: 'click',
+                    category: clickEvent,
+                    element: element.tagName,
+                    id: element.getAttribute('id'),
+                    classes: element.getAttribute('class')
+                });
+            });
+        }
+        
+        // Similar for hover...
+    });
+}
+
+function sendToAnalytics(data) {
+    console.log('Analytics:', data);
+    // Send to server
+}</code></pre>
+
+        <h4>Example 2: Form Validation Helper</h4>
+        <pre><code>function validateForm(formElement) {
+    const inputs = formElement.querySelectorAll('input, select, textarea');
+    let isValid = true;
+    
+    inputs.forEach(input =&gt; {
+        const required = input.getAttribute('required');
+        const minLength = input.getAttribute('minlength');
+        const maxLength = input.getAttribute('maxlength');
+        const pattern = input.getAttribute('pattern');
+        
+        const value = input.value;
+        
+        if (required !== null &amp;&amp; !value.trim()) {
+            isValid = false;
+            highlightError(input, 'This field is required');
+        }
+        
+        if (minLength &amp;&amp; value.length &lt; parseInt(minLength)) {
+            isValid = false;
+            highlightError(input, `Minimum length is ${minLength}`);
+        }
+        
+        if (pattern &amp;&amp; value) {
+            const regex = new RegExp(pattern);
+            if (!regex.test(value)) {
+                isValid = false;
+                highlightError(input, 'Invalid format');
+            }
+        }
+    });
+    
+    return isValid;
+}</code></pre>
+
+        <h4>Example 3: Creating a Configuration System</h4>
+        <pre><code>class Widget {
+    constructor(element) {
+        this.element = element;
+        this.config = this.parseConfig();
+        this.init();
+    }
+    
+    parseConfig() {
+        return {
+            theme: this.element.getAttribute('data-theme') || 'light',
+            animation: this.element.getAttribute('data-animation') !== 'false',
+            speed: parseInt(this.element.getAttribute('data-speed')) || 300,
+            position: this.element.getAttribute('data-position') || 'bottom',
+            onComplete: this.element.getAttribute('data-on-complete'),
+            colors: this.parseColors()
+        };
+    }
+    
+    parseColors() {
+        const colorsAttr = this.element.getAttribute('data-colors');
+        if (!colorsAttr) return ['#007bff', '#6c757d'];
+        
+        return colorsAttr.split(',').map(c =&gt; c.trim());
+    }
+    
+    init() {
+        console.log('Widget initialized with:', this.config);
+        // Use config to set up widget
+    }
+}
+
+// Usage
+// &lt;div class="widget" data-theme="dark" data-speed="500" data-colors="#ff0000,#00ff00"&gt;&lt;/div&gt;
+const widget = new Widget(document.querySelector('.widget'));</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="setattribute-deep-dive">8. .setAttribute() - Deep Dive</h2>
+
+        <h3>What is setAttribute()?</h3>
+        <p><code>setAttribute()</code> is a method that adds a new attribute or changes the value of an existing
+            attribute on the specified element.</p>
+
+        <h3>Basic Syntax</h3>
+        <pre><code>element.setAttribute(name, value);</code></pre>
+
+        <h3>How setAttribute() Works</h3>
+        <pre><code>&lt;div id="myDiv"&gt;Content&lt;/div&gt;
+
+&lt;script&gt;
+    const div = document.getElementById('myDiv');
+    
+    // Add a new attribute
+    div.setAttribute('class', 'highlight');
+    
+    // Change existing attribute
+    div.setAttribute('id', 'newId');
+    
+    // Add boolean attribute
+    div.setAttribute('hidden', '');
+    
+    // Add data attribute
+    div.setAttribute('data-index', '5');
+&lt;/script&gt;</code></pre>
+
+        <h3>Important Characteristics</h3>
+        <h4>1. Always Sets as String</h4>
+        <pre><code>div.setAttribute('maxlength', 10); // Value becomes "10"
+div.setAttribute('checked', true); // Value becomes "true" (string)</code></pre>
+
+        <h4>2. Overwrites Existing Value</h4>
+        <pre><code>div.setAttribute('class', 'old-class');
+console.log(div.getAttribute('class')); // "old-class"
+
+div.setAttribute('class', 'new-class');
+console.log(div.getAttribute('class')); // "new-class" (overwritten)</code></pre>
+
+        <h4>3. Special Case: Class Attribute</h4>
+        <pre><code>// For class attribute, use 'class' with setAttribute
+div.setAttribute('class', 'new-class');
+
+// But when using property, it's 'className'
+div.className = 'new-class'; // Equivalent</code></pre>
+
+        <h4>4. Boolean Attributes</h4>
+        <pre><code>// Both are equivalent and mean "true"
+input.setAttribute('disabled', '');
+input.setAttribute('disabled', 'disabled');
+
+// To remove a boolean attribute
+input.removeAttribute('disabled');</code></pre>
+
+        <h3>Advanced setAttribute Examples</h3>
+        <h4>Example 1: Dynamic Theme Switcher</h4>
+        <pre><code>class ThemeSwitcher {
+    constructor() {
+        this.root = document.documentElement;
+        this.currentTheme = 'light';
+    }
+    
+    setTheme(themeName) {
+        // Remove old theme attribute
+        this.root.removeAttribute('data-theme');
+        
+        // Set new theme
+        this.root.setAttribute('data-theme', themeName);
+        
+        // Update meta theme-color for mobile browsers
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+            const colors = {
+                light: '#ffffff',
+                dark: '#1a1a1a',
+                blue: '#007bff'
+            };
+            metaTheme.setAttribute('content', colors[themeName]);
+        }
+        
+        this.currentTheme = themeName;
+    }
+    
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
+    }
+}
+
+// Usage
+const switcher = new ThemeSwitcher();
+switcher.setTheme('dark');</code></pre>
+
+        <h4>Example 2: Accessibility Enhancer</h4>
+        <pre><code>function enhanceAccessibility() {
+    // Add ARIA attributes to common elements
+    document.querySelectorAll('button').forEach(button =&gt; {
+        if (!button.getAttribute('aria-label')) {
+            button.setAttribute('aria-label', button.textContent.trim());
+        }
+    });
+    
+    // Add role attributes to custom components
+    document.querySelectorAll('.tab-container').forEach(tabGroup =&gt; {
+        tabGroup.setAttribute('role', 'tablist');
+    });
+    
+    document.querySelectorAll('.tab').forEach(tab =&gt; {
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('tabindex', '0');
+        
+        // Set aria-selected based on active class
+        const isSelected = tab.classList.contains('active');
+        tab.setAttribute('aria-selected', isSelected.toString());
+    });
+    
+    // Add skip navigation link
+    const skipLink = document.createElement('a');
+    skipLink.setAttribute('href', '#main-content');
+    skipLink.setAttribute('class', 'skip-link');
+    skipLink.setAttribute('aria-label', 'Skip to main content');
+    skipLink.textContent = 'Skip to content';
+    
+    document.body.insertBefore(skipLink, document.body.firstChild);
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', enhanceAccessibility);</code></pre>
+
+        <h4>Example 3: Image Lazy Loading Implementation</h4>
+        <pre><code>class LazyLoader {
+    constructor() {
+        this.images = document.querySelectorAll('img[data-src]');
+        this.init();
+    }
+    
+    init() {
+        if ('IntersectionObserver' in window) {
+            this.setupIntersectionObserver();
+        } else {
+            this.fallbackLoad();
+        }
+    }
+    
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) =&gt; {
+            entries.forEach(entry =&gt; {
+                if (entry.isIntersecting) {
+                    this.loadImage(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        
+        this.images.forEach(img =&gt; observer.observe(img));
+    }
+    
+    loadImage(img) {
+        const src = img.getAttribute('data-src');
+        const srcset = img.getAttribute('data-srcset');
+        
+        if (src) {
+            img.setAttribute('src', src);
+            img.removeAttribute('data-src');
+        }
+        
+        if (srcset) {
+            img.setAttribute('srcset', srcset);
+            img.removeAttribute('data-srcset');
+        }
+        
+        // Add loaded class for animation
+        img.setAttribute('class', img.getAttribute('class') + ' loaded');
+        
+        // Set aria-label if not present
+        if (!img.getAttribute('alt')) {
+            img.setAttribute('alt', 'Lazy loaded image');
+        }
+    }
+    
+    fallbackLoad() {
+        // Simple fallback for older browsers
+        this.images.forEach(img =&gt; this.loadImage(img));
+    }
+}
+
+// Usage
+// &lt;img data-src="real-image.jpg" data-srcset="small.jpg 300w, large.jpg 1000w" alt=""&gt;
+const lazyLoader = new LazyLoader();</code></pre>
+
+        <h4>Example 4: Form Auto-Saver</h4>
+        <pre><code>class FormAutoSaver {
+    constructor(formSelector) {
+        this.form = document.querySelector(formSelector);
+        this.fields = this.form.querySelectorAll('input, select, textarea');
+        this.init();
+    }
+    
+    init() {
+        // Set up data-save attributes if not present
+        this.fields.forEach(field =&gt; {
+            if (!field.hasAttribute('data-save')) {
+                field.setAttribute('data-save', 'true');
+            }
+            
+            const fieldName = field.getAttribute('name') || field.id;
+            if (fieldName) {
+                field.setAttribute('data-field-id', fieldName);
+            }
+        });
+        
+        // Load saved data
+        this.loadSavedData();
+        
+        // Set up auto-save on input
+        this.form.addEventListener('input', debounce(() =&gt; {
+            this.saveFormData();
+        }, 1000));
+    }
+    
+    saveFormData() {
+        const data = {};
+        
+        this.fields.forEach(field =&gt; {
+            if (field.getAttribute('data-save') === 'true') {
+                const id = field.getAttribute('data-field-id');
+                data[id] = field.value;
+            }
+        });
+        
+        localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
+        
+        // Show saved indicator
+        this.showSavedIndicator();
+    }
+    
+    loadSavedData() {
+        const saved = localStorage.getItem(this.getStorageKey());
+        if (!saved) return;
+        
+        try {
+            const data = JSON.parse(saved);
+            
+            this.fields.forEach(field =&gt; {
+                const id = field.getAttribute('data-field-id');
+                if (id &amp;&amp; data[id] !== undefined) {
+                    field.value = data[id];
+                }
+            });
+        } catch (e) {
+            console.error('Failed to load saved data');
+        }
+    }
+    
+    getStorageKey() {
+        return `form-save-${this.form.getAttribute('id') || 'unknown'}`;
+    }
+    
+    showSavedIndicator() {
+        let indicator = this.form.querySelector('.save-indicator');
+        
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.setAttribute('class', 'save-indicator');
+            indicator.setAttribute('aria-live', 'polite');
+            this.form.appendChild(indicator);
+        }
+        
+        indicator.textContent = '✓ Saved';
+        indicator.setAttribute('data-visible', 'true');
+        
+        setTimeout(() =&gt; {
+            indicator.setAttribute('data-visible', 'false');
+        }, 2000);
+    }
+}
+
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () =&gt; {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="advanced-techniques">9. Advanced Techniques & Best Practices</h2>
+
+        <h3>Combining Content and Attribute Manipulation</h3>
+
+        <h4>Example 1: Building a Dynamic Tooltip System</h4>
+        <pre><code>class TooltipSystem {
+    constructor() {
+        this.tooltips = document.querySelectorAll('[data-tooltip]');
+        this.init();
+    }
+    
+    init() {
+        this.tooltips.forEach(element =&gt; {
+            // Set up ARIA attributes
+            element.setAttribute('aria-describedby', `tooltip-${this.generateId()}`);
+            
+            // Add event listeners
+            element.addEventListener('mouseenter', this.showTooltip.bind(this));
+            element.addEventListener('mouseleave', this.hideTooltip.bind(this));
+            element.addEventListener('focus', this.showTooltip.bind(this));
+            element.addEventListener('blur', this.hideTooltip.bind(this));
+        });
+    }
+    
+    showTooltip(event) {
+        const element = event.target;
+        const text = element.getAttribute('data-tooltip');
+        const position = element.getAttribute('data-tooltip-position') || 'top';
+        
+        // Create tooltip element
+        const tooltip = document.createElement('div');
+        tooltip.setAttribute('class', `tooltip tooltip-${position}`);
+        tooltip.setAttribute('id', `tooltip-${this.generateId()}`);
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.textContent = text;
+        
+        // Position tooltip
+        document.body.appendChild(tooltip);
+        this.positionTooltip(tooltip, element, position);
+        
+        // Store reference
+        element.setAttribute('data-tooltip-id', tooltip.id);
+    }
+    
+    hideTooltip(event) {
+        const element = event.target;
+        const tooltipId = element.getAttribute('data-tooltip-id');
+        
+        if (tooltipId) {
+            const tooltip = document.getElementById(tooltipId);
+            if (tooltip) {
+                tooltip.remove();
+            }
+            element.removeAttribute('data-tooltip-id');
+        }
+    }
+    
+    positionTooltip(tooltip, element, position) {
+        const elementRect = element.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        
+        let top, left;
+        
+        switch(position) {
+            case 'top':
+                top = elementRect.top - tooltipRect.height - 10;
+                left = elementRect.left + (elementRect.width / 2) - (tooltipRect.width / 2);
+                break;
+            case 'bottom':
+                top = elementRect.bottom + 10;
+                left = elementRect.left + (elementRect.width / 2) - (tooltipRect.width / 2);
+                break;
+            case 'left':
+                top = elementRect.top + (elementRect.height / 2) - (tooltipRect.height / 2);
+                left = elementRect.left - tooltipRect.width - 10;
+                break;
+            case 'right':
+                top = elementRect.top + (elementRect.height / 2) - (tooltipRect.height / 2);
+                left = elementRect.right + 10;
+                break;
+        }
+        
+        tooltip.style.top = `${top + window.scrollY}px`;
+        tooltip.style.left = `${left + window.scrollX}px`;
+    }
+    
+    generateId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+}</code></pre>
+
+        <h4>Example 2: Internationalization (i18n) System</h4>
+        <pre><code>class I18nSystem {
+    constructor(translations) {
+        this.translations = translations;
+        this.currentLang = 'en';
+        this.elements = document.querySelectorAll('[data-i18n]');
+    }
+    
+    setLanguage(lang) {
+        this.currentLang = lang;
+        document.documentElement.setAttribute('lang', lang);
+        
+        this.elements.forEach(element =&gt; {
+            const key = element.getAttribute('data-i18n');
+            const translation = this.getTranslation(key);
+            
+            if (translation) {
+                // Handle different element types
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.setAttribute('placeholder', translation);
+                } else if (element.tagName === 'IMG') {
+                    element.setAttribute('alt', translation);
+                } else if (element.tagName === 'META') {
+                    element.setAttribute('content', translation);
+                } else {
+                    element.textContent = translation;
+                }
+            }
+        });
+    }
+    
+    getTranslation(key) {
+        return this.translations[this.currentLang]?.[key] || key;
+    }
+    
+    addTranslations(lang, translations) {
+        this.translations[lang] = {
+            ...this.translations[lang],
+            ...translations
+        };
+    }
+}
+
+// Usage
+const i18n = new I18nSystem({
+    en: {
+        'welcome': 'Welcome to our site',
+        'email': 'Email Address',
+        'submit': 'Submit'
+    },
+    es: {
+        'welcome': 'Bienvenido a nuestro sitio',
+        'email': 'Dirección de correo electrónico',
+        'submit': 'Enviar'
+    }
+});
+
+// Later...
+i18n.setLanguage('es');</code></pre>
+
+        <h3>Performance Optimization Techniques</h3>
+
+        <h4>1. Batch DOM Operations</h4>
+        <pre><code>// BAD: Multiple reflows
+function badUpdate(items) {
+    const list = document.getElementById('list');
+    items.forEach(item =&gt; {
+        list.innerHTML += `&lt;li&gt;${item}&lt;/li&gt;`; // Reflow each time
+    });
+}
+
+// GOOD: Single reflow
+function goodUpdate(items) {
+    const list = document.getElementById('list');
+    const fragment = document.createDocumentFragment();
+    
+    items.forEach(item =&gt; {
+        const li = document.createElement('li');
+        li.textContent = item;
+        fragment.appendChild(li);
+    });
+    
+    list.appendChild(fragment); // Single reflow
+}
+
+// GOOD: Using innerHTML once
+function goodUpdateInnerHTML(items) {
+    const list = document.getElementById('list');
+    const html = items.map(item =&gt; `&lt;li&gt;${item}&lt;/li&gt;`).join('');
+    list.innerHTML = html; // Single reflow
+}</code></pre>
+
+        <h4>2. Cache DOM References</h4>
+        <pre><code>// BAD: Repeated DOM queries
+function badHandler() {
+    document.getElementById('myElement').style.color = 'red';
+    document.getElementById('myElement').textContent = 'Updated';
+    document.getElementById('myElement').setAttribute('data-updated', 'true');
+}
+
+// GOOD: Cache reference
+function goodHandler() {
+    const element = document.getElementById('myElement');
+    element.style.color = 'red';
+    element.textContent = 'Updated';
+    element.setAttribute('data-updated', 'true');
+}</code></pre>
+
+        <h4>3. Use Document Fragments</h4>
+        <pre><code>// Create complex structures off-DOM
+function createComplexStructure(data) {
+    const fragment = document.createDocumentFragment();
+    
+    data.forEach(item =&gt; {
+        const card = document.createElement('div');
+        card.setAttribute('class', 'card');
+        card.setAttribute('data-id', item.id);
+        
+        const title = document.createElement('h3');
+        title.textContent = item.title;
+        
+        const desc = document.createElement('p');
+        desc.textContent = item.description;
+        
+        card.appendChild(title);
+        card.appendChild(desc);
+        fragment.appendChild(card);
+    });
+    
+    return fragment;
+}
+
+// Append once
+document.getElementById('container').appendChild(
+    createComplexStructure(largeDataset)
+);</code></pre>
+
+        <h4>4. Debounce Expensive Operations</h4>
+        <pre><code>// For scroll/resize handlers
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() =&gt; func.apply(this, args), wait);
+    };
+}
+
+window.addEventListener('scroll', debounce(() =&gt; {
+    // Expensive DOM operations here
+    updateElementPositions();
+}, 100));</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="practical-examples">10. Practical Examples & Use Cases</h2>
+
+        <h3>Example 1: Dynamic Table of Contents Generator</h3>
+        <pre><code>class TableOfContents {
+    constructor(containerSelector, contentSelector) {
+        this.container = document.querySelector(containerSelector);
+        this.content = document.querySelector(contentSelector);
+        this.headings = this.content.querySelectorAll('h1, h2, h3');
+        
+        this.generate();
+    }
+    
+    generate() {
+        const toc = document.createElement('nav');
+        toc.setAttribute('aria-label', 'Table of Contents');
+        
+        const title = document.createElement('h2');
+        title.textContent = 'Contents';
+        toc.appendChild(title);
+        
+        const list = document.createElement('ul');
+        let currentLevel = 1;
+        let currentList = list;
+        
+        this.headings.forEach((heading, index) =&gt; {
+            // Add ID if not present
+            if (!heading.id) {
+                heading.setAttribute('id', `section-${index}`);
+            }
+            
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent;
+            
+            // Adjust nesting level
+            while (level > currentLevel) {
+                const newList = document.createElement('ul');
+                currentList.lastElementChild?.appendChild(newList);
+                currentList = newList;
+                currentLevel++;
+            }
+            
+            while (level &lt; currentLevel) {
+                currentList = currentList.parentElement?.closest('ul') || list;
+                currentLevel--;
+            }
+            
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            
+            link.setAttribute('href', `#${heading.id}`);
+            link.textContent = text;
+            
+            // Smooth scroll
+            link.addEventListener('click', (e) =&gt; {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            item.appendChild(link);
+            currentList.appendChild(item);
+        });
+        
+        toc.appendChild(list);
+        this.container.innerHTML = ''; // Clear container
+        this.container.appendChild(toc);
+    }
+}
+
+// Usage
+new TableOfContents('#toc-container', '#article-content');</code></pre>
+
+        <h3>Example 2: Interactive Data Grid</h3>
+        <pre><code>class DataGrid {
+    constructor(containerId, columns, data) {
+        this.container = document.getElementById(containerId);
+        this.columns = columns;
+        this.data = data;
+        this.sortColumn = null;
+        this.sortDirection = 'asc';
+        
+        this.render();
+    }
+    
+    render() {
+        const grid = document.createElement('div');
+        grid.setAttribute('class', 'data-grid');
+        grid.setAttribute('role', 'grid');
+        
+        // Header
+        const header = this.renderHeader();
+        grid.appendChild(header);
+        
+        // Rows
+        const tbody = document.createElement('div');
+        tbody.setAttribute('role', 'rowgroup');
+        
+        this.getSortedData().forEach((row, index) =&gt; {
+            const rowElement = this.renderRow(row, index);
+            tbody.appendChild(rowElement);
+        });
+        
+        grid.appendChild(tbody);
+        
+        // Update container
+        this.container.innerHTML = '';
+        this.container.appendChild(grid);
+    }
+    
+    renderHeader() {
+        const header = document.createElement('div');
+        header.setAttribute('class', 'grid-header');
+        header.setAttribute('role', 'row');
+        
+        this.columns.forEach(column =&gt; {
+            const cell = document.createElement('div');
+            cell.setAttribute('role', 'columnheader');
+            cell.setAttribute('class', 'grid-cell');
+            
+            const content = document.createElement('span');
+            content.textContent = column.label;
+            
+            // Sort indicator
+            if (this.sortColumn === column.field) {
+                const indicator = document.createElement('span');
+                indicator.setAttribute('class', `sort-indicator ${this.sortDirection}`);
+                indicator.textContent = this.sortDirection === 'asc' ? ' ↑' : ' ↓';
+                content.appendChild(indicator);
+            }
+            
+            cell.appendChild(content);
+            
+            // Add click handler for sorting
+            cell.addEventListener('click', () =&gt; this.sort(column.field));
+            cell.setAttribute('aria-sort', this.getSortAria(column.field));
+            
+            header.appendChild(cell);
+        });
+        
+        return header;
+    }
+    
+    renderRow(row, index) {
+        const rowElement = document.createElement('div');
+        rowElement.setAttribute('role', 'row');
+        rowElement.setAttribute('class', 'grid-row');
+        rowElement.setAttribute('data-row-index', index);
+        
+        this.columns.forEach(column =&gt; {
+            const cell = document.createElement('div');
+            cell.setAttribute('role', 'gridcell');
+            cell.setAttribute('class', 'grid-cell');
+            
+            // Format cell content based on column type
+            let value = row[column.field];
+            
+            if (column.format) {
+                value = column.format(value);
+            }
+            
+            if (column.type === 'number') {
+                cell.setAttribute('data-value', value);
+                cell.style.textAlign = 'right';
+            }
+            
+            cell.textContent = value ?? '';
+            
+            // Add inline editing
+            if (column.editable) {
+                cell.setAttribute('data-editable', 'true');
+                cell.addEventListener('dblclick', () =&gt; this.editCell(cell, row, column));
+            }
+            
+            rowElement.appendChild(cell);
+        });
+        
+        return rowElement;
+    }
+    
+    sort(field) {
+        if (this.sortColumn === field) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = field;
+            this.sortDirection = 'asc';
+        }
+        
+        this.render();
+    }
+    
+    getSortedData() {
+        if (!this.sortColumn) return this.data;
+        
+        return [...this.data].sort((a, b) =&gt; {
+            let aVal = a[this.sortColumn];
+            let bVal = b[this.sortColumn];
+            
+            if (typeof aVal === 'number') {
+                return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+            
+            aVal = String(aVal).toLowerCase();
+            bVal = String(bVal).toLowerCase();
+            
+            const comparison = aVal.localeCompare(bVal);
+            return this.sortDirection === 'asc' ? comparison : -comparison;
+        });
+    }
+    
+    getSortAria(field) {
+        if (field !== this.sortColumn) return 'none';
+        return this.sortDirection === 'asc' ? 'ascending' : 'descending';
+    }
+    
+    editCell(cell, row, column) {
+        const currentValue = row[column.field];
+        const input = document.createElement('input');
+        
+        input.setAttribute('type', column.type === 'number' ? 'number' : 'text');
+        input.setAttribute('value', currentValue);
+        input.setAttribute('class', 'grid-edit-input');
+        
+        // Replace cell content with input
+        cell.innerHTML = '';
+        cell.appendChild(input);
+        input.focus();
+        
+        const saveEdit = () =&gt; {
+            const newValue = column.type === 'number' 
+                ? parseFloat(input.value) 
+                : input.value;
+            
+            row[column.field] = newValue;
+            cell.removeAttribute('data-editing');
+            this.render(); // Re-render grid
+        };
+        
+        input.addEventListener('blur', saveEdit);
+        input.addEventListener('keypress', (e) =&gt; {
+            if (e.key === 'Enter') saveEdit();
+        });
+    }
+}
+
+// Usage
+const grid = new DataGrid(
+    'grid-container',
+    [
+        { field: 'id', label: 'ID', type: 'number' },
+        { field: 'name', label: 'Name', editable: true },
+        { field: 'age', label: 'Age', type: 'number', editable: true },
+        { field: 'email', label: 'Email', editable: true }
+    ],
+    [
+        { id: 1, name: 'Alice', age: 30, email: 'alice@example.com' },
+        { id: 2, name: 'Bob', age: 25, email: 'bob@example.com' }
+    ]
+);</code></pre>
+
+        <h3>Example 3: Dynamic Form Builder</h3>
+        <pre><code>class FormBuilder {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.fields = [];
+        this.form = null;
+    }
+    
+    addField(type, name, label, options = {}) {
+        this.fields.push({
+            type,
+            name,
+            label,
+            ...options
+        });
+        return this; // For chaining
+    }
+    
+    build() {
+        this.form = document.createElement('form');
+        this.form.setAttribute('class', 'dynamic-form');
+        this.form.setAttribute('novalidate', 'true');
+        
+        this.fields.forEach(field =&gt; {
+            const fieldGroup = this.createFieldGroup(field);
+            this.form.appendChild(fieldGroup);
+        });
+        
+        // Add submit button
+        const submitGroup = document.createElement('div');
+        submitGroup.setAttribute('class', 'form-group');
+        
+        const submitBtn = document.createElement('button');
+        submitBtn.setAttribute('type', 'submit');
+        submitBtn.setAttribute('class', 'btn btn-primary');
+        submitBtn.textContent = 'Submit';
+        
+        submitGroup.appendChild(submitBtn);
+        this.form.appendChild(submitGroup);
+        
+        // Add validation on submit
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        
+        this.container.innerHTML = '';
+        this.container.appendChild(this.form);
+        
+        return this.form;
+    }
+    
+    createFieldGroup(field) {
+        const group = document.createElement('div');
+        group.setAttribute('class', 'form-group');
+        group.setAttribute('data-field', field.name);
+        
+        // Label
+        const label = document.createElement('label');
+        label.setAttribute('for', field.name);
+        label.textContent = field.label;
+        
+        if (field.required) {
+            const required = document.createElement('span');
+            required.setAttribute('class', 'required');
+            required.textContent = ' *';
+            label.appendChild(required);
+        }
+        
+        group.appendChild(label);
+        
+        // Input/field
+        let input;
+        
+        switch (field.type) {
+            case 'select':
+                input = this.createSelect(field);
+                break;
+            case 'textarea':
+                input = this.createTextarea(field);
+                break;
+            case 'checkbox':
+            case 'radio':
+                input = this.createCheckable(field);
+                break;
+            default:
+                input = this.createInput(field);
+        }
+        
+        group.appendChild(input);
+        
+        // Help text
+        if (field.help) {
+            const help = document.createElement('small');
+            help.setAttribute('class', 'help-text');
+            help.textContent = field.help;
+            group.appendChild(help);
+        }
+        
+        // Error message container
+        const error = document.createElement('div');
+        error.setAttribute('class', 'error-message');
+        error.setAttribute('id', `error-${field.name}`);
+        error.setAttribute('role', 'alert');
+        group.appendChild(error);
+        
+        return group;
+    }
+    
+    createInput(field) {
+        const input = document.createElement('input');
+        
+        input.setAttribute('type', field.type || 'text');
+        input.setAttribute('id', field.name);
+        input.setAttribute('name', field.name);
+        
+        if (field.placeholder) {
+            input.setAttribute('placeholder', field.placeholder);
+        }
+        
+        if (field.required) {
+            input.setAttribute('required', '');
+        }
+        
+        if (field.pattern) {
+            input.setAttribute('pattern', field.pattern);
+        }
+        
+        if (field.min !== undefined) {
+            input.setAttribute('min', field.min);
+        }
+        
+        if (field.max !== undefined) {
+            input.setAttribute('max', field.max);
+        }
+        
+        if (field.value !== undefined) {
+            input.setAttribute('value', field.value);
+        }
+        
+        // Real-time validation
+        input.addEventListener('blur', () =&gt; this.validateField(field, input));
+        
+        return input;
+    }
+    
+    createSelect(field) {
+        const select = document.createElement('select');
+        select.setAttribute('id', field.name);
+        select.setAttribute('name', field.name);
+        
+        if (field.required) {
+            select.setAttribute('required', '');
+        }
+        
+        if (field.multiple) {
+            select.setAttribute('multiple', '');
+        }
+        
+        // Default empty option
+        const defaultOption = document.createElement('option');
+        defaultOption.setAttribute('value', '');
+        defaultOption.textContent = '-- Select --';
+        select.appendChild(defaultOption);
+        
+        // Options from field.options
+        if (field.options) {
+            field.options.forEach(opt =&gt; {
+                const option = document.createElement('option');
+                option.setAttribute('value', opt.value);
+                option.textContent = opt.label;
+                
+                if (opt.selected) {
+                    option.setAttribute('selected', '');
+                }
+                
+                select.appendChild(option);
+            });
+        }
+        
+        select.addEventListener('blur', () =&gt; this.validateField(field, select));
+        
+        return select;
+    }
+    
+    createTextarea(field) {
+        const textarea = document.createElement('textarea');
+        
+        textarea.setAttribute('id', field.name);
+        textarea.setAttribute('name', field.name);
+        textarea.setAttribute('rows', field.rows || 4);
+        
+        if (field.placeholder) {
+            textarea.setAttribute('placeholder', field.placeholder);
+        }
+        
+        if (field.required) {
+            textarea.setAttribute('required', '');
+        }
+        
+        if (field.maxlength) {
+            textarea.setAttribute('maxlength', field.maxlength);
+        }
+        
+        if (field.value) {
+            textarea.textContent = field.value;
+        }
+        
+        textarea.addEventListener('blur', () =&gt; this.validateField(field, textarea));
+        
+        return textarea;
+    }
+    
+    createCheckable(field) {
+        const container = document.createElement('div');
+        container.setAttribute('class', 'checkable-group');
+        
+        const input = document.createElement('input');
+        input.setAttribute('type', field.type);
+        input.setAttribute('id', field.name);
+        input.setAttribute('name', field.name);
+        
+        if (field.checked) {
+            input.setAttribute('checked', '');
+        }
+        
+        if (field.value !== undefined) {
+            input.setAttribute('value', field.value);
+        }
+        
+        container.appendChild(input);
+        
+        // Label for checkable (inline)
+        const inlineLabel = document.createElement('label');
+        inlineLabel.setAttribute('for', field.name);
+        inlineLabel.setAttribute('class', 'checkable-label');
+        inlineLabel.textContent = field.checkableLabel || field.label;
+        
+        container.appendChild(inlineLabel);
+        
+        return container;
+    }
+    
+    validateField(field, input) {
+        const errorElement = document.getElementById(`error-${field.name}`);
+        let isValid = true;
+        let message = '';
+        
+        // Required validation
+        if (field.required &amp;&amp; !input.value) {
+            isValid = false;
+            message = `${field.label} is required`;
+        }
+        
+        // Pattern validation
+        if (isValid &amp;&amp; field.pattern &amp;&amp; input.value) {
+            const regex = new RegExp(field.pattern);
+            if (!regex.test(input.value)) {
+                isValid = false;
+                message = field.patternMessage || `Invalid format for ${field.label}`;
+            }
+        }
+        
+        // Min/Max for numbers
+        if (isValid &amp;&amp; field.type === 'number' &amp;&amp; input.value) {
+            const value = parseFloat(input.value);
+            
+            if (field.min !== undefined &amp;&amp; value &lt; field.min) {
+                isValid = false;
+                message = `${field.label} must be at least ${field.min}`;
+            }
+            
+            if (field.max !== undefined &amp;&amp; value > field.max) {
+                isValid = false;
+                message = `${field.label} must be at most ${field.max}`;
+            }
+        }
+        
+        // Update UI
+        const group = input.closest('.form-group');
+        
+        if (!isValid) {
+            group.setAttribute('data-invalid', 'true');
+            errorElement.textContent = message;
+            input.setAttribute('aria-invalid', 'true');
+            input.setAttribute('aria-describedby', `error-${field.name}`);
+        } else {
+            group.removeAttribute('data-invalid');
+            errorElement.textContent = '';
+            input.removeAttribute('aria-invalid');
+            input.removeAttribute('aria-describedby');
+        }
+        
+        return isValid;
+    }
+    
+    handleSubmit(event) {
+        event.preventDefault();
+        
+        let isFormValid = true;
+        
+        // Validate all fields
+        this.fields.forEach(field =&gt; {
+            const input = this.form.querySelector(`[name="${field.name}"]`);
+            if (input &amp;&amp; !this.validateField(field, input)) {
+                isFormValid = false;
+            }
+        });
+        
+        if (isFormValid) {
+            const formData = new FormData(this.form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Trigger custom event
+            const submitEvent = new CustomEvent('form-valid-submit', {
+                detail: { data }
+            });
+            this.form.dispatchEvent(submitEvent);
+            
+            console.log('Form submitted with data:', data);
+        }
+    }
+}
+
+// Usage
+const builder = new FormBuilder('form-container');
+
+builder
+    .addField('text', 'username', 'Username', {
+        required: true,
+        placeholder: 'Enter username',
+        pattern: '[a-zA-Z0-9]{3,20}',
+        patternMessage: 'Username must be 3-20 alphanumeric characters',
+        help: '3-20 characters, letters and numbers only'
+    })
+    .addField('email', 'email', 'Email Address', {
+        required: true,
+        placeholder: 'Enter email',
+        help: 'We\'ll never share your email'
+    })
+    .addField('number', 'age', 'Age', {
+        min: 18,
+        max: 120,
+        help: 'Must be 18 or older'
+    })
+    .addField('select', 'country', 'Country', {
+        required: true,
+        options: [
+            { value: 'us', label: 'United States' },
+            { value: 'uk', label: 'United Kingdom' },
+            { value: 'ca', label: 'Canada' }
+        ]
+    })
+    .addField('textarea', 'bio', 'Biography', {
+        placeholder: 'Tell us about yourself...',
+        maxlength: 500,
+        rows: 5,
+        help: 'Maximum 500 characters'
+    })
+    .addField('checkbox', 'terms', 'Terms', {
+        checkableLabel: 'I agree to the terms and conditions',
+        required: true
+    })
+    .build();
+
+// Listen for valid submission
+document.querySelector('.dynamic-form').addEventListener('form-valid-submit', (e) =&gt; {
+    console.log('Valid form data:', e.detail.data);
+    // Submit to server, etc.
+});</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="performance">11. Performance Considerations</h2>
+
+        <h3>Measuring Performance Impact</h3>
+        <pre><code>// Performance measurement utility
+class DOMPerformanceMonitor {
+    static measure(operation, fn) {
+        const start = performance.now();
+        fn();
+        const end = performance.now();
+        
+        console.log(`${operation}: ${(end - start).toFixed(2)}ms`);
+        return end - start;
+    }
+    
+    static compare(operations) {
+        const results = {};
+        
+        operations.forEach(op =&gt; {
+            results[op.name] = this.measure(op.name, op.fn);
+        });
+        
+        console.table(results);
+        return results;
+    }
+}
+
+// Example comparison
+DOMPerformanceMonitor.compare([
+    {
+        name: 'innerHTML',
+        fn: () =&gt; {
+            const div = document.getElementById('test');
+            div.innerHTML = '&lt;span&gt;1&lt;/span&gt;&lt;span&gt;2&lt;/span&gt;&lt;span&gt;3&lt;/span&gt;';
+        }
+    },
+    {
+        name: 'createElement',
+        fn: () =&gt; {
+            const div = document.getElementById('test');
+            div.innerHTML = ''; // Clear
+            for (let i = 1; i &lt;= 3; i++) {
+                const span = document.createElement('span');
+                span.textContent = i;
+                div.appendChild(span);
+            }
+        }
+    },
+    {
+        name: 'textContent',
+        fn: () =&gt; {
+            const div = document.getElementById('test');
+            div.textContent = '123';
+        }
+    }
+]);</code></pre>
+
+        <h3>Optimization Strategies</h3>
+        <h4>1. Batch DOM Reads and Writes</h4>
+        <pre><code>// BAD: Layout thrashing
+function badLayout() {
+    const elements = document.querySelectorAll('.item');
+    
+    elements.forEach(el =&gt; {
+        const width = el.offsetWidth; // Read
+        el.style.width = (width + 10) + 'px'; // Write
+        // Forces layout recalculation
+    });
+}
+
+// GOOD: Batch reads, then writes
+function goodLayout() {
+    const elements = document.querySelectorAll('.item');
+    const widths = [];
+    
+    // Batch reads
+    elements.forEach(el =&gt; {
+        widths.push(el.offsetWidth);
+    });
+    
+    // Batch writes
+    elements.forEach((el, i) =&gt; {
+        el.style.width = (widths[i] + 10) + 'px';
+    });
+}</code></pre>
+
+        <h4>2. Use CSS Classes Instead of Individual Style Properties</h4>
+        <pre><code>// BAD: Multiple style changes
+function badStyle(element) {
+    element.style.display = 'block';
+    element.style.color = 'red';
+    element.style.fontSize = '16px';
+    element.style.padding = '10px';
+}
+
+// GOOD: Use class
+function goodStyle(element) {
+    element.classList.add('active-element');
+}
+
+// CSS:
+// .active-element {
+//     display: block;
+//     color: red;
+//     font-size: 16px;
+//     padding: 10px;
+// }</code></pre>
+
+        <h4>3. Use requestAnimationFrame for Visual Updates</h4>
+        <pre><code>// Smooth animation
+function animateElement(element, targetLeft) {
+    const startTime = performance.now();
+    const startLeft = element.offsetLeft;
+    const distance = targetLeft - startLeft;
+    
+    function animation(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / 1000, 1); // 1 second animation
+        
+        const currentLeft = startLeft + (distance * progress);
+        element.style.left = currentLeft + 'px';
+        
+        if (progress &lt; 1) {
+            requestAnimationFrame(animation);
+        }
+    }
+    
+    requestAnimationFrame(animation);
+}</code></pre>
+
+        <h4>4. Virtual Scrolling for Large Lists</h4>
+        <pre><code>class VirtualScroller {
+    constructor(containerId, itemHeight, totalItems, renderItem) {
+        this.container = document.getElementById(containerId);
+        this.itemHeight = itemHeight;
+        this.totalItems = totalItems;
+        this.renderItem = renderItem;
+        this.visibleItems = Math.ceil(this.container.clientHeight / itemHeight) + 2;
+        
+        this.setup();
+    }
+    
+    setup() {
+        // Set container position
+        this.container.style.position = 'relative';
+        this.container.style.overflowY = 'auto';
+        
+        // Create content holder with total height
+        this.content = document.createElement('div');
+        this.content.style.position = 'relative';
+        this.content.style.height = (this.totalItems * this.itemHeight) + 'px';
+        
+        this.container.appendChild(this.content);
+        
+        // Add scroll listener
+        this.container.addEventListener('scroll', () =&gt; this.update());
+        
+        // Initial render
+        this.update();
+    }
+    
+    update() {
+        const scrollTop = this.container.scrollTop;
+        const startIndex = Math.floor(scrollTop / this.itemHeight);
+        const endIndex = Math.min(startIndex + this.visibleItems, this.totalItems);
+        
+        // Remove old items
+        this.content.innerHTML = '';
+        
+        // Render visible items
+        for (let i = startIndex; i &lt; endIndex; i++) {
+            const item = this.renderItem(i);
+            item.style.position = 'absolute';
+            item.style.top = (i * this.itemHeight) + 'px';
+            item.style.height = this.itemHeight + 'px';
+            item.style.width = '100%';
+            
+            this.content.appendChild(item);
+        }
+    }
+}
+
+// Usage
+const scroller = new VirtualScroller(
+    'list-container',
+    50, // item height
+    10000, // 10,000 items
+    (index) =&gt; {
+        const div = document.createElement('div');
+        div.textContent = `Item ${index + 1}`;
+        div.setAttribute('data-index', index);
+        return div;
+    }
+);</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="security">12. Security Implications</h2>
+
+        <h3>Cross-Site Scripting (XSS) Attacks</h3>
+        <h4>What is XSS?</h4>
+        <p>XSS is a security vulnerability that allows attackers to inject malicious scripts into web pages viewed by
+            other users.</p>
+
+        <h4>Dangerous Patterns</h4>
+        <pre><code>// DANGEROUS: Direct user input in innerHTML
+function dangerousDisplay(userInput) {
+    document.getElementById('output').innerHTML = userInput;
+    // If userInput is '&lt;script&gt;stealCookies()&lt;/script&gt;', it won't execute scripts,
+    // but can still inject harmful HTML/JS via event handlers:
+    // '&lt;img src="x" onerror="stealData()"&gt;'
+}
+
+// DANGEROUS: Using user input in attributes
+function dangerousAttribute(userInput) {
+    element.setAttribute('onclick', userInput);
+    // If userInput is 'alert(document.cookie)', it will execute!
+}
+
+// DANGEROUS: Using user input in href/javascript:
+function dangerousHref(userInput) {
+    link.setAttribute('href', `javascript:${userInput}`);
+    // If userInput is 'alert("XSS")', it will execute!
+}</code></pre>
+
+        <h4>Safe Practices</h4>
+        <pre><code>// SAFE: Using textContent
+function safeDisplay(userInput) {
+    document.getElementById('output').textContent = userInput;
+    // All HTML tags are displayed as text, not parsed
+}
+
+// SAFE: Using createElement and textContent
+function safeBuild(userInput) {
+    const div = document.createElement('div');
+    div.textContent = userInput;
+    document.body.appendChild(div);
+}
+
+// SAFE: Using setAttribute with validation
+function safeAttribute(userInput) {
+    // Validate/encode input
+    const safeValue = encodeURIComponent(userInput);
+    element.setAttribute('data-user', safeValue);
+}
+
+// SAFE: Using dataset for custom data
+function safeData(userInput) {
+    // dataset automatically encodes
+    element.dataset.userInput = userInput;
+}</code></pre>
+
+        <h3>Input Sanitization</h3>
+        <pre><code>class Sanitizer {
+    static escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+    
+    static sanitizeAttribute(name, value) {
+        // Block event handlers and javascript: URLs
+        const dangerousPatterns = [
+            /^on/i, // onclick, onload, etc.
+            /^javascript:/i,
+            /^data:/i,
+            /^vbscript:/i
+        ];
+        
+        if (dangerousPatterns.some(pattern =&gt; pattern.test(name) || pattern.test(value))) {
+            return null;
+        }
+        
+        return value;
+    }
+    
+    static sanitizeURL(url) {
+        const parsed = new URL(url, window.location.origin);
+        const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
+        
+        if (allowedProtocols.includes(parsed.protocol)) {
+            return url;
+        }
+        
+        return '#';
+    }
+    
+    static sanitizeHTML(html) {
+        const template = document.createElement('template');
+        template.innerHTML = html;
+        
+        // Remove dangerous elements
+        const scripts = template.content.querySelectorAll('script, style, link, meta, object, embed');
+        scripts.forEach(el =&gt; el.remove());
+        
+        // Remove dangerous attributes
+        const allElements = template.content.querySelectorAll('*');
+        allElements.forEach(el =&gt; {
+            Array.from(el.attributes).forEach(attr =&gt; {
+                if (this.sanitizeAttribute(attr.name, attr.value) === null) {
+                    el.removeAttribute(attr.name);
+                }
+            });
+        });
+        
+        return template.innerHTML;
+    }
+}
+
+// Usage
+const userContent = '&lt;img src="x" onerror="alert(\'XSS\')"&gt;';
+const safe = Sanitizer.sanitizeHTML(userContent);
+// onerror attribute is removed</code></pre>
+
+        <h3>Content Security Policy (CSP)</h3>
+        <pre><code>&lt;!-- In your HTML head --&gt;
+&lt;meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://trusted-cdn.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https:;
+"&gt;</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="compatibility">13. Browser Compatibility</h2>
+
+        <h3>Feature Detection</h3>
+        <pre><code>// Check if a method exists
+if (element.setAttribute) {
+    element.setAttribute('data-test', 'value');
+} else {
+    // Fallback for very old browsers
+    element['data-test'] = 'value';
+}
+
+// Check for modern features
+function supportsDataset() {
+    return 'dataset' in document.createElement('div');
+}
+
+function supportsTemplate() {
+    return 'content' in document.createElement('template');
+}
+
+// Use with fallback
+if (supportsDataset()) {
+    element.dataset.user = '123';
+} else {
+    element.setAttribute('data-user', '123');
+}</code></pre>
+
+        <h3>Polyfills</h3>
+        <pre><code>// Polyfill for element.dataset (IE 10 and below)
+if (!('dataset' in document.createElement('div'))) {
+    Object.defineProperty(Element.prototype, 'dataset', {
+        get: function() {
+            const dataset = {};
+            const attributes = this.attributes;
+            
+            for (let i = 0; i &lt; attributes.length; i++) {
+                const attr = attributes[i];
+                if (attr.name.indexOf('data-') === 0) {
+                    const name = attr.name.slice(5)
+                        .replace(/-([a-z])/g, (_, letter) =&gt; letter.toUpperCase());
+                    dataset[name] = attr.value;
+                }
+            }
+            
+            return dataset;
+        }
+    });
+}
+
+// Polyfill for Element.matches (older browsers)
+if (!Element.prototype.matches) {
+    Element.prototype.matches = 
+        Element.prototype.matchesSelector ||
+        Element.prototype.mozMatchesSelector ||
+        Element.prototype.msMatchesSelector ||
+        Element.prototype.oMatchesSelector ||
+        Element.prototype.webkitMatchesSelector ||
+        function(s) {
+            const matches = (this.document || this.ownerDocument).querySelectorAll(s);
+            let i = matches.length;
+            while (--i &gt;= 0 &amp;&amp; matches.item(i) !== this) {}
+            return i &gt; -1;
+        };
+}</code></pre>
+
+        <h3>Compatibility Table</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>Chrome</th>
+                <th>Firefox</th>
+                <th>Safari</th>
+                <th>Edge</th>
+                <th>IE</th>
+            </tr>
+            <tr>
+                <td><code>innerHTML</code></td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>12+</td>
+                <td>5.5+</td>
+            </tr>
+            <tr>
+                <td><code>textContent</code></td>
+                <td>1+</td>
+                <td>2+</td>
+                <td>3+</td>
+                <td>12+</td>
+                <td>9+</td>
+            </tr>
+            <tr>
+                <td><code>setAttribute</code></td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>12+</td>
+                <td>5.5+</td>
+            </tr>
+            <tr>
+                <td><code>getAttribute</code></td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>1+</td>
+                <td>12+</td>
+                <td>5.5+</td>
+            </tr>
+            <tr>
+                <td><code>dataset</code></td>
+                <td>7+</td>
+                <td>6+</td>
+                <td>5.1+</td>
+                <td>12+</td>
+                <td>11+</td>
+            </tr>
+            <tr>
+                <td><code>classList</code></td>
+                <td>8+</td>
+                <td>3.6+</td>
+                <td>5.1+</td>
+                <td>12+</td>
+                <td>10+</td>
+            </tr>
+        </table>
+
+        <hr class="sep">
+
+        <h2 id="pitfalls">14. Common Pitfalls & Debugging</h2>
+
+        <h3>Pitfall 1: Forgetting that setAttribute Always Sets Strings</h3>
+        <pre><code>// Problem
+element.setAttribute('maxlength', 10); // Works, but it's a string
+element.setAttribute('disabled', false); // Sets disabled="false" which is truthy!
+
+// Solution
+if (someCondition) {
+    element.setAttribute('disabled', '');
+} else {
+    element.removeAttribute('disabled');
+}
+
+// Better: use property for boolean attributes
+element.disabled = someCondition;</code></pre>
+
+        <h3>Pitfall 2: Attribute vs Property Confusion</h3>
+        <pre><code>const input = document.querySelector('input');
+input.setAttribute('value', 'initial');
+
+// User changes value...
+console.log(input.value); // "user input"
+console.log(input.getAttribute('value')); // "initial" (still!)
+
+// To update both:
+input.value = 'new value';
+input.setAttribute('value', 'new value');</code></pre>
+
+        <h3>Pitfall 3: XSS Vulnerabilities</h3>
+        <pre><code>// DANGEROUS
+function updateUserProfile(userInput) {
+    profileDiv.innerHTML = userInput;
+}
+
+// SAFE
+function updateUserProfile(userInput) {
+    profileDiv.textContent = userInput;
+}
+
+// If you MUST use HTML:
+function updateUserProfile(userInput) {
+    const sanitized = Sanitizer.sanitizeHTML(userInput);
+    profileDiv.innerHTML = sanitized;
+}</code></pre>
+
+        <h3>Pitfall 4: Performance with innerHTML in Loops</h3>
+        <pre><code>// BAD - causes multiple reflows
+for (let i = 0; i &lt; 1000; i++) {
+    list.innerHTML += `&lt;li&gt;Item ${i}&lt;/li&gt;`;
+}
+
+// GOOD - single reflow
+let html = '';
+for (let i = 0; i &lt; 1000; i++) {
+    html += `&lt;li&gt;Item ${i}&lt;/li&gt;`;
+}
+list.innerHTML = html;
+
+// BEST - using DocumentFragment
+const fragment = document.createDocumentFragment();
+for (let i = 0; i &lt; 1000; i++) {
+    const li = document.createElement('li');
+    li.textContent = `Item ${i}`;
+    fragment.appendChild(li);
+}
+list.appendChild(fragment);</code></pre>
+
+        <h3>Debugging Techniques</h3>
+        <pre><code>class DOMDebugger {
+    static logElement(element, label = 'Element') {
+        console.group(label);
+        console.log('Tag:', element.tagName);
+        console.log('ID:', element.id);
+        console.log('Classes:', element.className);
+        console.log('Attributes:', this.getAttributes(element));
+        console.log('Content:', {
+            innerHTML: element.innerHTML.substring(0, 100) + '...',
+            textContent: element.textContent.substring(0, 100) + '...',
+            childCount: element.children.length
+        });
+        console.log('Dimensions:', element.getBoundingClientRect());
+        console.groupEnd();
+    }
+    
+    static getAttributes(element) {
+        const attrs = {};
+        for (let attr of element.attributes) {
+            attrs[attr.name] = attr.value;
+        }
+        return attrs;
+    }
+    
+    static watchAttribute(element, attrName) {
+        const original = element.getAttribute(attrName);
+        
+        Object.defineProperty(element, attrName, {
+            get() {
+                console.trace(`Getting ${attrName}:`, original);
+                return original;
+            },
+            set(value) {
+                console.trace(`Setting ${attrName} to:`, value);
+                original = value;
+                element.setAttribute(attrName, value);
+            }
+        });
+    }
+    
+    static traceDOMOperations(selector) {
+        const element = document.querySelector(selector);
+        const handler = {
+            get(target, prop) {
+                console.log(`Accessing property: ${prop}`);
+                return target[prop];
+            },
+            set(target, prop, value) {
+                console.log(`Setting property: ${prop} =`, value);
+                target[prop] = value;
+                return true;
+            }
+        };
+        
+        return new Proxy(element, handler);
+    }
+}
+
+// Usage
+const traced = DOMDebugger.traceDOMOperations('#myElement');
+traced.textContent = 'New content'; // Logs the operation</code></pre>
+
+        <hr class="sep">
+
+        <h2 id="interview-questions">15. Interview Questions & Answers</h2>
+
+        <h3>Basic Level Questions</h3>
+        <p><strong>Q1: What's the difference between innerHTML and textContent?</strong></p>
+        <p><strong>A:</strong></p>
+        <ul>
+            <li><code>innerHTML</code> parses content as HTML, allowing you to insert HTML tags. It's slower and poses
+                XSS risks.</li>
+            <li><code>textContent</code> treats content as plain text, escaping any HTML. It's faster and secure.</li>
+        </ul>
+        <p>Example:</p>
+        <pre><code>element.innerHTML = '&lt;strong&gt;Hello&lt;/strong&gt;'; // Displays bold Hello
+element.textContent = '&lt;strong&gt;Hello&lt;/strong&gt;'; // Displays &lt;strong&gt;Hello&lt;/strong&gt;</code></pre>
+
+        <p><strong>Q2: How do you get and set attributes in JavaScript?</strong></p>
+        <p><strong>A:</strong> Using <code>getAttribute()</code> and <code>setAttribute()</code>:</p>
+        <pre><code>// Get attribute
+const src = img.getAttribute('src');
+
+// Set attribute
+img.setAttribute('alt', 'A description');
+
+// Check if attribute exists
+if (img.hasAttribute('data-id')) {
+    // ...
+}
+
+// Remove attribute
+img.removeAttribute('data-id');</code></pre>
+
+        <p><strong>Q3: What's the difference between getAttribute() and direct property access?</strong></p>
+        <p><strong>A:</strong></p>
+        <ul>
+            <li><code>getAttribute()</code> returns the exact value from the HTML attribute (always a string or null)
+            </li>
+            <li>Property access returns the current JavaScript property value, which may be normalized</li>
+        </ul>
+        <p>Example:</p>
+        <pre><code>&lt;input type="checkbox" checked&gt;
+
+console.log(input.getAttribute('checked')); // "" (empty string)
+console.log(input.checked); // true (boolean)</code></pre>
+
+        <h3>Intermediate Level Questions</h3>
+        <p><strong>Q4: How would you prevent XSS attacks when using innerHTML?</strong></p>
+        <p><strong>A:</strong> Multiple strategies:</p>
+        <ol>
+            <li>Use <code>textContent</code> instead of <code>innerHTML</code> when possible</li>
+            <li>Sanitize user input before using in <code>innerHTML</code></li>
+            <li>Use Content Security Policy (CSP) headers</li>
+            <li>Use safe APIs like <code>document.createElement()</code> and <code>textContent</code></li>
+        </ol>
+        <p>Example:</p>
+        <pre><code>function safeHTML(userInput) {
+    // Sanitize
+    const sanitized = userInput
+        .replace(/&amp;/g, '&amp;amp;')
+        .replace(/&lt;/g, '&amp;lt;')
+        .replace(/&gt;/g, '&amp;gt;')
+        .replace(/"/g, '&amp;quot;')
+        .replace(/'/g, '&amp;#39;');
+    
+    element.innerHTML = sanitized;
+}</code></pre>
+
+        <p><strong>Q5: Explain the performance implications of innerHTML vs createElement</strong></p>
+        <p><strong>A:</strong></p>
+        <ul>
+            <li><code>innerHTML</code> is faster for initial creation of complex HTML structures</li>
+            <li><code>createElement</code> is more efficient for incremental updates</li>
+            <li><code>innerHTML</code> destroys and recreates all DOM nodes, losing event listeners</li>
+            <li><code>createElement</code> preserves existing nodes and allows for targeted updates</li>
+        </ul>
+
+        <p><strong>Q6: How do you handle data attributes in modern JavaScript?</strong></p>
+        <p><strong>A:</strong> Using the <code>dataset</code> property:</p>
+        <pre><code>&lt;div id="user" data-user-id="123" data-role="admin"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    const user = document.getElementById('user');
+    
+    // Reading
+    console.log(user.dataset.userId); // "123"
+    console.log(user.dataset.role); // "admin"
+    
+    // Writing
+    user.dataset.status = 'active';
+    // Results in: data-status="active"
+    
+    // Deleting
+    delete user.dataset.role;
+&lt;/script&gt;</code></pre>
+
+        <h3>Advanced Level Questions</h3>
+        <p><strong>Q7: How would you implement a function to safely set HTML content while preserving existing event
+                listeners on child elements?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre><code>function safeSetHTML(container, newHTML) {
+    // Create a temporary container
+    const temp = document.createElement('div');
+    temp.innerHTML = newHTML;
+    
+    // Transfer child nodes one by one
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    
+    while (temp.firstChild) {
+        container.appendChild(temp.firstChild);
+    }
+}
+
+// Alternative using replaceChildren (modern browsers)
+function safeSetHTMLModern(container, newHTML) {
+    const temp = document.createElement('div');
+    temp.innerHTML = newHTML;
+    container.replaceChildren(...temp.children);
+}</code></pre>
+
+        <p><strong>Q8: Explain how you would create a bidirectional binding between an input's value and an element's
+                text content.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre><code>class Binder {
+    constructor(inputSelector, outputSelector) {
+        this.input = document.querySelector(inputSelector);
+        this.output = document.querySelector(outputSelector);
+        
+        this.init();
+    }
+    
+    init() {
+        // Initial sync
+        this.updateOutput();
+        
+        // Listen to input events
+        this.input.addEventListener('input', () =&gt; this.updateOutput());
+        
+        // Observe attribute changes if needed
+        this.observeAttributeChanges();
+    }
+    
+    updateOutput() {
+        this.output.textContent = this.input.value;
+    }
+    
+    observeAttributeChanges() {
+        const observer = new MutationObserver((mutations) =&gt; {
+            mutations.forEach(mutation =&gt; {
+                if (mutation.attributeName === 'value') {
+                    this.updateOutput();
+                }
+            });
+        });
+        
+        observer.observe(this.input, { attributes: true });
+    }
+    
+    // Manual setter that updates both
+    setValue(value) {
+        this.input.value = value;
+        this.input.setAttribute('value', value);
+        this.updateOutput();
+    }
+}</code></pre>
+
+        <p><strong>Q9: How would you implement a custom attribute selector engine?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre><code>class AttributeSelector {
+    static find(attrName, attrValue = null, operator = '=') {
+        const elements = document.querySelectorAll('*');
+        const matches = [];
+        
+        elements.forEach(el =&gt; {
+            if (!el.hasAttribute(attrName)) return;
+            
+            const value = el.getAttribute(attrName);
+            
+            if (attrValue === null) {
+                matches.push(el);
+                return;
+            }
+            
+            switch(operator) {
+                case '=':
+                    if (value === attrValue) matches.push(el);
+                    break;
+                case '^=':
+                    if (value.startsWith(attrValue)) matches.push(el);
+                    break;
+                case '$=':
+                    if (value.endsWith(attrValue)) matches.push(el);
+                    break;
+                case '*=':
+                    if (value.includes(attrValue)) matches.push(el);
+                    break;
+                case '~=':
+                    if (value.split(/\s+/).includes(attrValue)) matches.push(el);
+                    break;
+                case '|=':
+                    if (value === attrValue || value.startsWith(attrValue + '-')) matches.push(el);
+                    break;
+            }
+        });
+        
+        return matches;
+    }
+    
+    static update(attrName, callback) {
+        const observer = new MutationObserver(mutations =&gt; {
+            mutations.forEach(mutation =&gt; {
+                if (mutation.type === 'attributes' &amp;&amp; mutation.attributeName === attrName) {
+                    callback(mutation.target);
+                }
+            });
+        });
+        
+        observer.observe(document.body, {
+            attributes: true,
+            subtree: true,
+            attributeFilter: [attrName]
+        });
+        
+        return observer;
+    }
+}
+
+// Usage
+const adminElements = AttributeSelector.find('data-role', 'admin');
+AttributeSelector.update('data-status', element =&gt; {
+    console.log('Status changed:', element.dataset.status);
+});</code></pre>
+
+        <p><strong>Q10: How would you implement a virtual DOM diffing system for attribute updates?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre><code>class VDOMAttribute {
+    static diff(oldAttrs, newAttrs) {
+        const patches = [];
+        
+        // Find removed attributes
+        for (let name in oldAttrs) {
+            if (!(name in newAttrs)) {
+                patches.push({
+                    type: 'REMOVE_ATTR',
+                    name
+                });
+            }
+        }
+        
+        // Find added or changed attributes
+        for (let name in newAttrs) {
+            if (!(name in oldAttrs) || oldAttrs[name] !== newAttrs[name]) {
+                patches.push({
+                    type: 'SET_ATTR',
+                    name,
+                    value: newAttrs[name]
+                });
+            }
+        }
+        
+        return patches;
+    }
+    
+    static patch(element, patches) {
+        patches.forEach(patch =&gt; {
+            if (patch.type === 'REMOVE_ATTR') {
+                element.removeAttribute(patch.name);
+            } else if (patch.type === 'SET_ATTR') {
+                element.setAttribute(patch.name, patch.value);
+            }
+        });
+    }
+    
+    static getAttributes(element) {
+        const attrs = {};
+        for (let attr of element.attributes) {
+            attrs[attr.name] = attr.value;
+        }
+        return attrs;
+    }
+    
+    static updateElement(element, newAttrs) {
+        const oldAttrs = this.getAttributes(element);
+        const patches = this.diff(oldAttrs, newAttrs);
+        this.patch(element, patches);
+        return patches.length; // Number of changes
+    }
+}
+
+// Usage
+const element = document.getElementById('myElement');
+const changes = VDOMAttribute.updateElement(element, {
+    class: 'new-class',
+    'data-active': 'true',
+    id: 'new-id'
+});
+console.log(`${changes} attributes updated`);</code></pre>
+
+        <hr>
+
+        <h2>Conclusion</h2>
+        <p>Mastering DOM content and attribute manipulation is essential for any web developer. This guide has covered:
+        </p>
+        <ul>
+            <li><strong>Core Concepts</strong>: Understanding <code>innerHTML</code>, <code>textContent</code>,
+                <code>getAttribute()</code>, and <code>setAttribute()</code>
+            </li>
+            <li><strong>Security</strong>: Protecting against XSS attacks through proper sanitization</li>
+            <li><strong>Performance</strong>: Optimizing DOM operations for smooth user experiences</li>
+            <li><strong>Best Practices</strong>: Writing maintainable, efficient, and secure code</li>
+            <li><strong>Advanced Patterns</strong>: Building complex, interactive applications</li>
+        </ul>
+
+        <h3>Key Takeaways</h3>
+        <ol>
+            <li><strong>Always prefer <code>textContent</code> over <code>innerHTML</code></strong> when working with
+                text to prevent XSS attacks</li>
+            <li><strong>Use <code>setAttribute()</code> for standard HTML attributes</strong> and <code>dataset</code>
+                for custom data attributes</li>
+            <li><strong>Batch DOM operations</strong> to minimize reflows and repaints</li>
+            <li><strong>Cache DOM references</strong> for frequently accessed elements</li>
+            <li><strong>Sanitize user input</strong> before inserting into the DOM</li>
+            <li><strong>Understand the attribute vs property distinction</strong> for complex applications</li>
+            <li><strong>Use feature detection and polyfills</strong> for cross-browser compatibility</li>
+        </ol>
+
+        <h3>Further Learning Resources</h3>
+        <ul>
+            <li><a href="#">MDN Web Docs: DOM Manipulation</a></li>
+            <li><a href="#">W3C DOM Specification</a></li>
+            <li><a href="#">OWASP XSS Prevention Cheat Sheet</a></li>
+            <li><a href="#">Web Performance Working Group</a></li>
+        </ul>
+
+        <hr>
+        <p><em>This comprehensive guide was created as a learning resource for web developers at all levels. Practice
+                these concepts regularly, build projects, and always stay curious about how the DOM works under the
+                hood.</em></p>
+
+        <!-- END OF EXACT STUDY NOTES -->
+    </div>
+</body>
+
+</html>

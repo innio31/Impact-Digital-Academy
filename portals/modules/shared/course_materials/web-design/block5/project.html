@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 5 · mini projects · DOM & events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* LIGHT theme (default) */
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #e9eef2;
+            color: #1e2b3a;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* DARK theme – toggled by class */
+        body.dark-mode {
+            background: #1a242b;
+            color: #e3eef8;
+        }
+
+        body.dark-mode .project-card,
+        body.dark-mode .interactive-block,
+        body.dark-mode .quiz-section,
+        body.dark-mode .code-block,
+        body.dark-mode .workshop-form,
+        body.dark-mode .task-item {
+            background: #2b3b47;
+            border-color: #4d6a80;
+            color: #eef7fd;
+        }
+
+        body.dark-mode button:not(.toggle-btn) {
+            background-color: #3f5f78;
+            color: white;
+            border-color: #91b8d1;
+        }
+
+        .projects-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -25px #1f3a4b;
+            overflow: hidden;
+            padding: 1.8rem 1.5rem;
+            transition: background 0.2s;
+        }
+
+        body.dark-mode .projects-wrapper {
+            background: #1f2e38;
+            box-shadow: 0 25px 40px -25px #070d11;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 3.2rem);
+            font-weight: 700;
+            background: linear-gradient(145deg, #1f5f7e, #bf6f5a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .module-badge {
+            background: #2c6e8f;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+        }
+
+        /* ----- grid for four activities ----- */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.8rem;
+            margin: 2.5rem 0;
+        }
+
+        @media (min-width: 700px) {
+            .activities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .project-card {
+            background: #f3f9ff;
+            border-radius: 2rem;
+            padding: 1.6rem 1.5rem;
+            border: 1px solid #c2d9ec;
+            box-shadow: 0 12px 20px -18px #143d54;
+            transition: background 0.2s;
+        }
+
+        .project-card h2 {
+            font-size: 1.8rem;
+            color: #215c7a;
+            border-bottom: 3px solid #cf8a72;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* to-do list specific */
+        .task-input-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .task-input-group input {
+            flex: 3 1 200px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #aac3d8;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .task-input-group button {
+            flex: 1 1 auto;
+            background: #236889;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .task-list {
+            list-style: none;
+            margin-top: 1.2rem;
+        }
+
+        .task-item {
+            background: white;
+            margin: 0.5rem 0;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #bad2e6;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            word-break: break-word;
+            cursor: pointer;
+            transition: background 0.2s, opacity 0.2s;
+        }
+
+        .task-item:hover {
+            background: #e2effa;
+        }
+
+        .task-item::before {
+            content: "☐";
+            font-size: 1.4rem;
+            color: #2c6e8f;
+        }
+
+        .task-item.done::before {
+            content: "✅";
+        }
+
+        /* dark mode toggle area */
+        .toggle-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .toggle-btn {
+            background: #215c7a;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px #b3d1e6;
+        }
+
+        .pill {
+            background: #cbe0f0;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        /* workshop: registration form */
+        .workshop-form {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-field label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #b6d0e3;
+            font-size: 1rem;
+        }
+
+        .error-msg {
+            color: #c0392b;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            min-height: 1.4rem;
+        }
+
+        body.dark-mode .error-msg {
+            color: #ffaaa5;
+        }
+
+        .password-hint {
+            font-size: 0.9rem;
+            color: #3a6a8f;
+            margin-bottom: 0.5rem;
+        }
+
+        button[type="submit"] {
+            background: #236889;
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* quiz assessment */
+        .quiz-section {
+            background: #e3f0fa;
+            border-radius: 2rem;
+            padding: 1.8rem 1.2rem;
+            margin: 2.8rem 0 1rem;
+            border: 2px solid #9fb8cf;
+        }
+
+        .question-box {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-option {
+            background: #eaf3fc;
+            margin: 0.6rem 0;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid #bad2e6;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .quiz-option:hover {
+            background: #cfdef0;
+        }
+
+        .quiz-option.selected {
+            background: #2c6e8f;
+            color: white;
+            border-color: #13445a;
+        }
+
+        .feedback {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            font-weight: 600;
+            min-height: 2.5rem;
+        }
+
+        .quiz-nav {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-nav button {
+            background: #215c7a;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .score-badge {
+            background: #1e506e;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #d0e2f0, #fcfdff, #d0e2f0);
+            margin: 2rem 0;
+        }
+
+        footer {
+            text-align: center;
+            color: #31678b;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="projects-wrapper">
+        <h1>🧪 BLOCK 5 · MINI PROJECTS</h1>
+        <div class="module-badge">DOM · events · interactivity</div>
+
+        <!-- activity 1 & 2 side by side (to-do + dark mode) -->
+        <div class="activities-grid">
+            <!-- TO-DO LIST (interactive activity) -->
+            <div class="project-card">
+                <h2>✅ 1. to‑do (click to remove)</h2>
+                <div class="task-input-group">
+                    <input type="text" id="taskInput" placeholder="e.g., review DOM events" />
+                    <button id="addTaskBtn">+ add task</button>
+                </div>
+                <ul class="task-list" id="taskListContainer">
+                    <li class="task-item">write quiz questions</li>
+                    <li class="task-item">practice classList</li>
+                </ul>
+                <p style="font-size:0.9rem; margin-top:0.8rem;">⚡ click on a task to remove it</p>
+            </div>
+
+            <!-- DARK MODE TOGGLE + mini style demo -->
+            <div class="project-card">
+                <h2>🌙 2. dark mode toggle</h2>
+                <div class="toggle-area">
+                    <button class="toggle-btn" id="darkModeToggle">switch to dark</button>
+                    <span class="pill">current: <span id="themeIndicator">light</span></span>
+                </div>
+                <p>Click the button toggles a <code>.dark-mode</code> class on the body — all cards adapt.</p>
+                <p style="margin-top:1rem;"><span style="background:#cf8a72; padding:0.2rem 1rem; border-radius:40px;">⬤
+                        live preview</span></p>
+            </div>
+        </div>
+
+        <!-- second row: workshop (form validation) + extra (quiz preview integrated later) -->
+        <div class="activities-grid">
+            <!-- WORKSHOP: registration form validation -->
+            <div class="project-card">
+                <h2>📋 3. registration validation</h2>
+                <div class="workshop-form" id="regForm">
+                    <div class="form-field">
+                        <label>👤 name *</label>
+                        <input type="text" id="regName" placeholder="e.g., Alex Rivera">
+                        <div class="error-msg" id="nameError"></div>
+                    </div>
+                    <div class="form-field">
+                        <label>📧 email *</label>
+                        <input type="email" id="regEmail" placeholder="name@example.com">
+                        <div class="error-msg" id="emailError"></div>
+                    </div>
+                    <div class="form-field">
+                        <label>🔒 password *</label>
+                        <input type="password" id="regPass" placeholder="min 4 chars">
+                        <div class="error-msg" id="passError"></div>
+                    </div>
+                    <div class="form-field">
+                        <label>🔁 confirm password *</label>
+                        <input type="password" id="regConfirm" placeholder="re-enter password">
+                        <div class="error-msg" id="confirmError"></div>
+                    </div>
+                    <div class="password-hint" id="pwMatchHint"></div>
+                    <button type="submit" id="registerBtn">create account</button>
+                    <div style="margin-top:0.8rem; font-size:0.9rem;" id="formSuccess"></div>
+                </div>
+            </div>
+
+            <!-- extra activity preview: mouseover gallery described, but we also embed simple demo (already included) -->
+            <div class="project-card">
+                <h2>🖼️ 4. mouseover gallery (demo)</h2>
+                <p>hover coloured boxes to see dynamic style change (event listener).</p>
+                <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1rem;" id="galleryDemo">
+                    <div style="width:70px; height:70px; background:#1f5f7e; border-radius:1rem;" class="gallery-cell">
+                    </div>
+                    <div style="width:70px; height:70px; background:#bf6f5a; border-radius:1rem;" class="gallery-cell">
+                    </div>
+                    <div style="width:70px; height:70px; background:#2c6e8f; border-radius:1rem;" class="gallery-cell">
+                    </div>
+                    <div style="width:70px; height:70px; background:#c9826b; border-radius:1rem;" class="gallery-cell">
+                    </div>
+                </div>
+                <p id="galleryMessage" style="margin-top:1rem; font-style:italic;">↑ hover changes border</p>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT: interactive quiz (coding exercise) -->
+        <div class="quiz-section" id="quizApp">
+            <h2 style="color:#215c7a; display: flex; gap:1rem; align-items: center;">📝 ASSESSMENT · interactive quiz
+                <span class="score-badge" id="scoreDisplay">0 / 3</span></h2>
+            <div class="question-box" id="quizContainer">
+                <div class="question-text" id="questionText">Loading...</div>
+                <div id="optionsArea"></div>
+                <div class="feedback" id="quizFeedback"></div>
+                <div class="quiz-nav">
+                    <button id="prevBtn" disabled>← previous</button>
+                    <button id="nextBtn">next →</button>
+                    <button id="submitQuiz" style="background:#aa7e6b;">submit & see score</button>
+                </div>
+            </div>
+            <p style="margin-top:1rem;">⭐ one question at a time, select answer, feedback, final score</p>
+        </div>
+
+        <!-- quick quiz (concept review) -->
+        <hr>
+        <div style="background:#e0eef9; border-radius:2rem; padding:1.5rem;">
+            <h3 style="color:#215c7a;">✏️ DOM QUIZ (concept check)</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.8rem;">
+                <div>✔️ <code>document.querySelector</code> vs <code>getElementById</code></div>
+                <div>✔️ <code>classList.toggle</code> effect</div>
+                <div>✔️ <code>preventDefault()</code> on form</div>
+                <div>✔️ <code>event.target</code> gives element</div>
+                <div>✔️ <code>innerHTML</code> vs <code>textContent</code></div>
+                <div>✔️ <code>appendChild</code> / <code>removeChild</code></div>
+            </div>
+        </div>
+        <footer>⚡ Block 5 · projects: to-do, dark mode, validation, quiz · all running with vanilla JS</footer>
+    </div>
+
+    <script>
+        (function () {
+            // ---------- 1. TO-DO LIST (add + remove on click) ----------
+            const taskInput = document.getElementById('taskInput');
+            const addBtn = document.getElementById('addTaskBtn');
+            const taskList = document.getElementById('taskListContainer');
+
+            function addTask(text) {
+                if (!text.trim()) return;
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.textContent = text;
+                // remove on click
+                li.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.remove();  // removes from DOM
+                });
+                taskList.appendChild(li);
+            }
+
+            addBtn.addEventListener('click', function () {
+                addTask(taskInput.value);
+                taskInput.value = '';
+            });
+
+            taskInput.addEventListener('keyup', function (e) {
+                if (e.key === 'Enter') {
+                    addTask(taskInput.value);
+                    taskInput.value = '';
+                }
+            });
+
+            // make existing items removable (if any)
+            document.querySelectorAll('.task-item').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.remove();
+                });
+            });
+
+            // ---------- 2. DARK MODE TOGGLE (body class) ----------
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const themeIndicator = document.getElementById('themeIndicator');
+            const body = document.body;
+
+            function updateThemeUI() {
+                const isDark = body.classList.contains('dark-mode');
+                themeIndicator.textContent = isDark ? 'dark' : 'light';
+                toggleBtn.textContent = isDark ? 'switch to light' : 'switch to dark';
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                updateThemeUI();
+            });
+            updateThemeUI(); // initial
+
+            // ---------- 3. WORKSHOP: form validation (empty, email, password match) ----------
+            const regName = document.getElementById('regName');
+            const regEmail = document.getElementById('regEmail');
+            const regPass = document.getElementById('regPass');
+            const regConfirm = document.getElementById('regConfirm');
+            const nameErr = document.getElementById('nameError');
+            const emailErr = document.getElementById('emailError');
+            const passErr = document.getElementById('passError');
+            const confirmErr = document.getElementById('confirmError');
+            const pwHint = document.getElementById('pwMatchHint');
+            const formSuccess = document.getElementById('formSuccess');
+            const registerBtn = document.getElementById('registerBtn');
+
+            function validateForm(e) {
+                if (e) e.preventDefault();
+                let isValid = true;
+
+                // name
+                if (!regName.value.trim()) {
+                    nameErr.textContent = 'name is required';
+                    isValid = false;
+                } else nameErr.textContent = '';
+
+                // email (basic: non-empty + includes '@')
+                const email = regEmail.value.trim();
+                if (!email) {
+                    emailErr.textContent = 'email required';
+                    isValid = false;
+                } else if (!email.includes('@') || !email.includes('.')) {
+                    emailErr.textContent = 'enter valid email (with @ and .)';
+                    isValid = false;
+                } else emailErr.textContent = '';
+
+                // password (min 4 chars)
+                const pass = regPass.value;
+                if (!pass) {
+                    passErr.textContent = 'password required';
+                    isValid = false;
+                } else if (pass.length < 4) {
+                    passErr.textContent = 'at least 4 characters';
+                    isValid = false;
+                } else passErr.textContent = '';
+
+                // confirm password match
+                const confirm = regConfirm.value;
+                if (!confirm) {
+                    confirmErr.textContent = 'please confirm password';
+                    isValid = false;
+                } else if (pass !== confirm) {
+                    confirmErr.textContent = 'passwords do not match';
+                    isValid = false;
+                } else confirmErr.textContent = '';
+
+                // realtime hint for match (not error but hint)
+                if (pass && confirm) {
+                    if (pass === confirm) pwHint.textContent = '✅ passwords match';
+                    else pwHint.textContent = '❌ passwords differ';
+                } else pwHint.textContent = '';
+
+                if (isValid) {
+                    formSuccess.textContent = '✅ registration ok! (no page reload)';
+                    // optionally reset fields
+                } else {
+                    formSuccess.textContent = '';
+                }
+                return false;
+            }
+
+            registerBtn.addEventListener('click', validateForm);
+            // also realtime hint on confirm field
+            regConfirm.addEventListener('input', validateForm);
+            regPass.addEventListener('input', validateForm);
+
+            // ---------- 4. mouseover gallery (event listener) ----------
+            const cells = document.querySelectorAll('.gallery-cell');
+            const msg = document.getElementById('galleryMessage');
+            cells.forEach(cell => {
+                cell.addEventListener('mouseover', function () {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.transition = '0.2s';
+                    this.style.border = '4px solid white';
+                    msg.textContent = 'hovering on ' + this.style.backgroundColor;
+                });
+                cell.addEventListener('mouseout', function () {
+                    this.style.transform = 'scale(1)';
+                    this.style.border = 'none';
+                    msg.textContent = '↑ hover changes border & scale';
+                });
+            });
+
+            // ---------- ASSESSMENT: INTERACTIVE QUIZ (one at a time, feedback, final score) ----------
+            const quizData = [
+                { question: "Which method selects the FIRST element matching a CSS selector?", options: ["getElementById", "querySelector", "querySelectorAll", "getElementsByClassName"], correct: 1 },
+                { question: "How do you add a CSS class to an element?", options: ["el.className = 'x'", "el.classList.add('x')", "el.addClass('x')", "el.style.class='x'"], correct: 1 },
+                { question: "Which event is fired when a form is submitted?", options: ["click", "change", "submit", "input"], correct: 2 }
+            ];
+
+            let currentIdx = 0;
+            let selectedAnswers = [null, null, null];  // store index per question
+            let quizLocked = false;  // for final submit we disable further changes
+
+            const questionEl = document.getElementById('questionText');
+            const optionsArea = document.getElementById('optionsArea');
+            const quizFeedback = document.getElementById('quizFeedback');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitQuizBtn = document.getElementById('submitQuiz');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+
+            function renderQuizQuestion() {
+                if (quizLocked) return;
+                const q = quizData[currentIdx];
+                questionEl.textContent = `Q${currentIdx + 1}: ${q.question}`;
+                let htmlStr = '';
+                q.options.forEach((opt, idx) => {
+                    const selectedClass = (selectedAnswers[currentIdx] === idx) ? 'selected' : '';
+                    htmlStr += `<div class="quiz-option ${selectedClass}" data-opt-index="${idx}">${opt}</div>`;
+                });
+                optionsArea.innerHTML = htmlStr;
+
+                // attach click listeners to options
+                document.querySelectorAll('.quiz-option').forEach(optDiv => {
+                    optDiv.addEventListener('click', function () {
+                        if (quizLocked) {
+                            quizFeedback.textContent = '⚠️ quiz already submitted, cannot change';
+                            return;
+                        }
+                        const idx = parseInt(this.dataset.optIndex);
+                        // remove selected from siblings
+                        this.parentElement.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+                        this.classList.add('selected');
+                        // store answer
+                        selectedAnswers[currentIdx] = idx;
+                        // immediate feedback (correct/wrong)
+                        const isCorrect = (idx === quizData[currentIdx].correct);
+                        quizFeedback.textContent = isCorrect ? '✓ correct' : '✗ wrong answer';
+                    });
+                });
+                // update navigation
+                prevBtn.disabled = (currentIdx === 0);
+                nextBtn.disabled = (currentIdx === quizData.length - 1);
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentIdx > 0) {
+                    currentIdx--;
+                    renderQuizQuestion();
+                    quizFeedback.textContent = ''; // clear temporary feedback
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentIdx < quizData.length - 1) {
+                    currentIdx++;
+                    renderQuizQuestion();
+                    quizFeedback.textContent = '';
+                }
+            });
+
+            submitQuizBtn.addEventListener('click', () => {
+                quizLocked = true;
+                // calculate final score
+                let correctCount = 0;
+                selectedAnswers.forEach((ans, qIdx) => {
+                    if (ans !== null && ans === quizData[qIdx].correct) correctCount++;
+                });
+                scoreDisplay.textContent = `${correctCount} / 3`;
+                quizFeedback.innerHTML = `🏁 final score: ${correctCount}/3. ${correctCount === 3 ? 'perfect!' : 'review wrong answers'}`;
+
+                // disable further option clicks via lock & visual disable
+                document.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.style.opacity = '0.6';
+                    opt.style.pointerEvents = 'none';
+                });
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                submitQuizBtn.disabled = true;
+            });
+
+            // initial render
+            renderQuizQuestion();
+
+            // reset visual for options if lock not set
+            // (nothing else)
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript modules – complete study guide</title>
+    <style>
+        /* reset + clean base – preserves every line */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef0f7;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
+            line-height: 1.65;
+        }
+
+        .master-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.8rem;
+            box-shadow: 0 30px 50px -20px #292952;
+            padding: 2.8rem 2.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(150deg, #1f2a6b, #b5486b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            border-left: 12px solid #b5486b;
+            letter-spacing: -0.01em;
+        }
+
+        .toc-block {
+            background: #edeaff;
+            border-radius: 2.5rem;
+            padding: 2rem 2.2rem;
+            margin: 2.2rem 0 2.8rem;
+            border: 1px solid #bcafe6;
+        }
+
+        .toc-block h2 {
+            font-size: 2rem;
+            color: #2d3170;
+            border-bottom: 3px dashed #a68fd6;
+            padding-bottom: 0.4rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .toc-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem 1.2rem;
+        }
+
+        .toc-links a {
+            background: white;
+            border: 1px solid #9d90c0;
+            padding: 0.5rem 1.3rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 550;
+            color: #2f347b;
+            font-size: 0.95rem;
+            box-shadow: 0 3px 10px #ddd6fd;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            color: #2d317c;
+            margin: 2.5rem 0 1.2rem;
+            border-left: 14px solid #dc7c9c;
+            padding-left: 1.2rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #363b88;
+            margin: 2rem 0 0.8rem;
+            border-bottom: 3px solid #e2d3fc;
+            padding-bottom: 0.2rem;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            color: #464b99;
+            margin: 1.6rem 0 0.3rem;
+        }
+
+        p,
+        li {
+            font-size: 1.08rem;
+            margin: 0.8rem 0;
+        }
+
+        pre,
+        .code-block {
+            background: #f3efff;
+            border: 1px solid #bfb2e0;
+            border-radius: 2rem;
+            padding: 1.6rem 1.8rem;
+            margin: 1.8rem 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.95rem;
+            box-shadow: inset 0 5px 15px #e4dafe;
+        }
+
+        code {
+            background: #ebe4fd;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.95em;
+            word-break: break-word;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2.2rem 0;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            box-shadow: 0 10px 25px #d7cff5;
+        }
+
+        th {
+            background: #4a4e9e;
+            color: white;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        td {
+            background: #fcfbff;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #cfc2ee;
+        }
+
+        ul,
+        ol {
+            margin: 0.6rem 0 1.2rem 2rem;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(90deg, #dfd2fc, white, #dfd2fc);
+            margin: 3rem 0;
+        }
+
+        .checklist-final {
+            background: #eae5fc;
+            border-radius: 2.5rem;
+            padding: 2.2rem 2.5rem;
+            margin: 3rem 0 1.5rem;
+            border: 3px solid #5e64ad;
+        }
+
+        .checklist-final ul {
+            columns: 2;
+            column-gap: 2.5rem;
+            list-style-type: '✓   ';
+        }
+
+        .footer-meta {
+            background: #f1edff;
+            border-radius: 3rem;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            font-size: 1.3rem;
+            color: #3d418b;
+            font-weight: 500;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 700px) {
+            .master-wrapper {
+                padding: 1.8rem;
+            }
+
+            .checklist-final ul {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="master-wrapper">
+
+        <h1>📦 JAVASCRIPT MODULES</h1>
+
+        <!-- table of contents - exactly as provided -->
+        <div class="toc-block" id="table-of-contents">
+            <h2>📑 Table of Contents</h2>
+            <div class="toc-links">
+                <a href="#introduction">1. Introduction</a>
+                <a href="#the-problem">2. The problem modules solve</a>
+                <a href="#history">3. History</a>
+                <a href="#es6-modules">4. ES6 modules</a>
+                <a href="#export-statement">5. export</a>
+                <a href="#import-statement">6. import</a>
+                <a href="#default-vs-named">7. Default vs named</a>
+                <a href="#module-scope">8. Module scope</a>
+                <a href="#dynamic-imports">9. Dynamic imports</a>
+                <a href="#best-practices">10. Best practices</a>
+                <a href="#pitfalls">11. Pitfalls & solutions</a>
+                <a href="#third-party">12. Third‑party modules</a>
+                <a href="#environments">13. Environments</a>
+                <a href="#examples">14. Practical examples</a>
+                <a href="#advanced-patterns">15. Advanced patterns</a>
+                <a href="#tools">16. Tools & bundlers</a>
+                <a href="#testing">17. Testing modules</a>
+                <a href="#future">18. Future</a>
+            </div>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <h2 id="introduction">1. Introduction to JavaScript Modules</h2>
+        <p>JavaScript modules are a way to split code into separate files and directories, making it more maintainable,
+            reusable, and organized. Think of modules as independent pieces of a puzzle that can be developed, tested,
+            and debugged separately, then combined to create a complete application.</p>
+        <h3>What Exactly is a Module?</h3>
+        <p>A module is a self-contained piece of code that:</p>
+        <ul>
+            <li>Has its own scope (variables and functions don't leak to the global scope)</li>
+            <li>Can explicitly declare dependencies on other modules</li>
+            <li>Can expose (export) specific functionality to other modules</li>
+            <li>Can consume (import) functionality from other modules</li>
+        </ul>
+        <pre><code>// mathOperations.js - A simple module
+export function add(a, b) {
+    return a + b;
+}
+
+export function subtract(a, b) {
+    return a - b;
+}
+
+const PI = 3.14159;
+export { PI };</code></pre>
+
+        <hr>
+
+        <!-- 2. THE PROBLEM -->
+        <h2 id="the-problem">2. The Problem Modules Solve</h2>
+        <p>Before modules, JavaScript had serious issues that made large applications difficult to build and maintain.
+        </p>
+        <h3>The Global Scope Pollution Problem</h3>
+        <p><strong>Without Modules (The Old Way):</strong></p>
+        <pre><code>&lt;!-- index.html --&gt;
+&lt;script src="user.js"&gt;&lt;/script&gt;
+&lt;script src="cart.js"&gt;&lt;/script&gt;
+&lt;script src="checkout.js"&gt;&lt;/script&gt;</code></pre>
+        <pre><code>// user.js
+var currentUser = "John";
+function getUserData() {
+    return currentUser;
+}
+// These variables are ALL GLOBAL!
+
+// cart.js
+var currentUser = "Jane"; // OOPS! Accidentally overwrote user.js variable
+function addToCart(item) {
+    console.log(currentUser); // "Jane" - wrong user!
+}
+
+// checkout.js
+function processPayment() {
+    console.log(currentUser); // "Jane" - the variable was overwritten globally
+}</code></pre>
+        <h3>Problems with the Script Tag Approach:</h3>
+        <ul>
+            <li><strong>Naming Conflicts</strong>: Variables and functions overwrite each other</li>
+            <li><strong>Dependency Management</strong>: You must manually ensure scripts load in correct order</li>
+            <li><strong>No Encapsulation</strong>: Everything is exposed to the global scope</li>
+            <li><strong>Performance</strong>: All scripts block rendering</li>
+            <li><strong>Maintainability</strong>: Impossible to know what depends on what</li>
+        </ul>
+        <h3>How Modules Solve This:</h3>
+        <pre><code>// user.js - As a module
+const currentUser = "John";
+export function getUserData() {
+    return currentUser;
+}
+// currentUser is PRIVATE to this module!
+
+// cart.js - As a module
+import { getUserData } from './user.js';
+const currentUser = "Jane"; // This is LOCAL to cart.js, no conflict
+export function addToCart(item) {
+    console.log(getUserData()); // "John" - correctly gets user from user.js
+    console.log(currentUser); // "Jane" - local variable
+}</code></pre>
+
+        <hr>
+
+        <!-- 3. HISTORY -->
+        <h2 id="history">3. History of JavaScript Modules</h2>
+        <p>Understanding the evolution of modules helps appreciate the current solution.</p>
+        <h3>The Early Days (Pre-2010)</h3>
+        <ul>
+            <li>Everything was global</li>
+            <li>Naming conventions like <code>myApp_user_current</code></li>
+            <li>The "Revealing Module Pattern" emerged</li>
+        </ul>
+        <h3>The Module Pattern (Manual Solution)</h3>
+        <pre><code>// The Module Pattern (before official modules)
+var MathModule = (function() {
+    // Private variables
+    var privateCounter = 0;
+    
+    // Private function
+    function privateLog(message) {
+        console.log(message);
+    }
+    
+    // Public API
+    return {
+        increment: function() {
+            privateCounter++;
+            privateLog('Counter incremented');
+        },
+        getCount: function() {
+            return privateCounter;
+        }
+    };
+})();
+
+// Usage
+MathModule.increment();
+console.log(MathModule.getCount()); // 1
+console.log(MathModule.privateCounter); // undefined (private!)</code></pre>
+
+        <h3>CommonJS (Node.js - 2009)</h3>
+        <pre><code>// math.js (CommonJS - used in Node.js)
+function add(a, b) {
+    return a + b;
+}
+
+module.exports = {
+    add: add
+};
+
+// app.js
+const math = require('./math.js');
+console.log(math.add(2, 3)); // 5</code></pre>
+
+        <h3>AMD (Asynchronous Module Definition)</h3>
+        <pre><code>// RequireJS style (for browsers)
+define(['dependency1', 'dependency2'], function(dep1, dep2) {
+    return {
+        method: function() {
+            return dep1.doSomething();
+        }
+    };
+});</code></pre>
+
+        <h3>UMD (Universal Module Definition)</h3>
+        <pre><code>(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // CommonJS
+        module.exports = factory(require('jquery'));
+    } else {
+        // Browser globals
+        root.myModule = factory(root.jQuery);
+    }
+}(this, function($) {
+    // Module code here
+}));</code></pre>
+
+        <h3>ES6 Modules (2015 - The Standard)</h3>
+        <p>The official, standardized module system for JavaScript.</p>
+
+        <hr>
+
+        <!-- 4. ES6 MODULES -->
+        <h2 id="es6-modules">4. ES6 Modules: The Modern Standard</h2>
+        <p>ES6 (ECMAScript 2015) introduced native modules to JavaScript. They are now supported in all modern browsers
+            and Node.js.</p>
+        <h3>Key Characteristics:</h3>
+        <ul>
+            <li><strong>Strict Mode by Default</strong>: Modules automatically run in strict mode</li>
+            <li><strong>Module Scope</strong>: Each module has its own top-level scope</li>
+            <li><strong>Static Structure</strong>: Imports and exports are determined at compile time</li>
+            <li><strong>Asynchronous Loading</strong>: Modules can be loaded asynchronously in browsers</li>
+        </ul>
+        <h3>Basic Syntax:</h3>
+        <pre><code>// 📁 utils.js
+export const VERSION = '1.0.0';
+
+export function formatDate(date) {
+    return new Date(date).toLocaleDateString();
+}
+
+// 📁 main.js
+import { VERSION, formatDate } from './utils.js';
+
+console.log(VERSION); // '1.0.0'
+console.log(formatDate('2024-01-15')); // '1/15/2024'</code></pre>
+
+        <h3>Using Modules in HTML:</h3>
+        <pre><code>&lt;!-- With script tag - module mode --&gt;
+&lt;script type="module" src="main.js"&gt;&lt;/script&gt;
+
+&lt;!-- Inline module script --&gt;
+&lt;script type="module"&gt;
+    import { formatDate } from './utils.js';
+    console.log(formatDate('2024-01-15'));
+&lt;/script&gt;
+
+&lt;!-- Regular scripts (non-module) can't import --&gt;
+&lt;script src="old-script.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h3>Module Paths:</h3>
+        <pre><code>// Relative paths (start with ./ or ../)
+import { something } from './local/file.js';
+import { something } from '../parent/file.js';
+
+// Absolute paths (from root of project)
+import { something } from '/js/file.js';
+
+// URL paths
+import { something } from 'https://example.com/js/file.js';
+
+// Bare specifiers (for packages - need bundler or import maps)
+import React from 'react'; // Requires special handling</code></pre>
+
+        <hr>
+
+        <!-- 5. EXPORT STATEMENT -->
+        <h2 id="export-statement">5. The <code>export</code> Statement</h2>
+        <p>The <code>export</code> statement is used to expose functions, objects, or primitive values from a module so
+            they can be used in other modules.</p>
+
+        <h3>Named Exports (Multiple per module)</h3>
+        <p><strong>Method 1: Inline exports</strong></p>
+        <pre><code>// 📁 math.js
+export const PI = 3.14159;
+export const E = 2.71828;
+
+export function add(x, y) {
+    return x + y;
+}
+
+export function multiply(x, y) {
+    return x * y;
+}
+
+export class Calculator {
+    constructor() {
+        this.result = 0;
+    }
+    
+    add(value) {
+        this.result += value;
+        return this;
+    }
+}</code></pre>
+
+        <p><strong>Method 2: Export list at the end</strong></p>
+        <pre><code>// 📁 math.js
+const PI = 3.14159;
+const E = 2.71828;
+
+function add(x, y) {
+    return x + y;
+}
+
+function multiply(x, y) {
+    return x * y;
+}
+
+class Calculator {
+    // ... class definition
+}
+
+// Export at the end
+export { PI, E, add, multiply, Calculator };</code></pre>
+
+        <p><strong>Method 3: Renaming with <code>as</code></strong></p>
+        <pre><code>// 📁 constants.js
+const INTERNAL_VALUE = 42;
+const API_KEY = 'abc123';
+
+export { 
+    INTERNAL_VALUE as VALUE, 
+    API_KEY as KEY 
+};
+
+// Now imported as VALUE and KEY, not INTERNAL_VALUE or API_KEY</code></pre>
+
+        <p><strong>Method 4: Re-exporting from other modules</strong></p>
+        <pre><code>// 📁 index.js (often called a "barrel" file)
+export { add, subtract } from './arithmetic.js';
+export { formatDate } from './date-utils.js';
+export { validateEmail } from './validators.js';
+
+// Or re-export everything
+export * from './utilities.js';
+
+// Or re-export with rename
+export { default as Button } from './Button.js';</code></pre>
+
+        <h3>Important Rules for Named Exports:</h3>
+        <ul>
+            <li>You can have multiple named exports per module</li>
+            <li>Named exports must have a name (can't export anonymous functions directly)</li>
+            <li>They must be at the top level (not inside blocks or functions)</li>
+        </ul>
+        <pre><code>// ✅ CORRECT
+export function doSomething() { }
+
+// ✅ CORRECT
+const value = 42;
+export { value };
+
+// ❌ INCORRECT - can't export inside function
+function bad() {
+    export const x = 5; // SyntaxError
+}
+
+// ❌ INCORRECT - can't export anonymous directly
+export const anon = function() { }; // This is fine (has name 'anon')
+export function() { }; // SyntaxError (anonymous)</code></pre>
+
+        <hr>
+
+        <!-- 6. IMPORT STATEMENT -->
+        <h2 id="import-statement">6. The <code>import</code> Statement</h2>
+        <p>The <code>import</code> statement is used to bring functionality from other modules into the current module.
+        </p>
+
+        <h3>Importing Named Exports</h3>
+        <p><strong>Basic import:</strong></p>
+        <pre><code>// 📁 app.js
+import { PI, add, Calculator } from './math.js';
+
+console.log(PI); // 3.14159
+console.log(add(2, 3)); // 5
+const calc = new Calculator();</code></pre>
+
+        <p><strong>Importing and renaming:</strong></p>
+        <pre><code>// 📁 app.js
+import { 
+    PI as MATH_PI, 
+    add as sum, 
+    Calculator as Calc 
+} from './math.js';
+
+console.log(MATH_PI);
+console.log(sum(5, 3)); // 8</code></pre>
+
+        <p><strong>Importing everything as a namespace object:</strong></p>
+        <pre><code>// 📁 app.js
+import * as MathUtils from './math.js';
+
+console.log(MathUtils.PI); // 3.14159
+console.log(MathUtils.add(2, 3)); // 5
+console.log(MathUtils.E); // 2.71828
+
+const calc = new MathUtils.Calculator();</code></pre>
+
+        <p><strong>Importing with side effects only:</strong></p>
+        <pre><code>// 📁 polyfills.js
+// This file doesn't export anything, but modifies globals
+Array.prototype.myMethod = function() { ... };
+
+// 📁 app.js
+import './polyfills.js'; // Just runs the module code, no imports</code></pre>
+
+        <h3>Combining Imports</h3>
+        <pre><code>// Import default and named from same module
+import React, { useState, useEffect } from 'react';
+
+// Import multiple named exports
+import { readFile, writeFile, access } from 'fs/promises';
+
+// Import default and rename named
+import myDefault, { named1 as myNamed1, named2 } from './module.js';</code></pre>
+
+        <h3>Import Rules:</h3>
+        <ul>
+            <li>Imports are hoisted (they run before the rest of the code)</li>
+            <li>Imports are read-only (you can't modify the imported binding)</li>
+            <li>Imports must be at the top level (not inside blocks)</li>
+        </ul>
+        <pre><code>// ✅ CORRECT
+import { helper } from './helper.js';
+console.log(helper());
+
+// ❌ INCORRECT - can't import conditionally with regular import
+if (needHelper) {
+    import { helper } from './helper.js'; // SyntaxError
+}
+
+// ✅ Use dynamic import for conditional loading (see later section)</code></pre>
+
+        <hr>
+
+        <!-- 7. DEFAULT VS NAMED -->
+        <h2 id="default-vs-named">7. Default vs Named Exports</h2>
+        <p>Understanding the difference between default and named exports is crucial for module design.</p>
+
+        <h3>Default Exports</h3>
+        <p>Each module can have at most ONE default export.</p>
+        <p><strong>Exporting defaults:</strong></p>
+        <pre><code>// 📁 logger.js
+// Method 1: Direct default export
+export default function log(message) {
+    console.log(`[LOG]: ${message}`);
+}
+
+// Method 2: Default export of an expression
+export default {
+    level: 'info',
+    log(message) {
+        console.log(`[${this.level}]: ${message}`);
+    }
+};
+
+// Method 3: Separate default export
+function log(message) {
+    console.log(message);
+}
+export default log;
+
+// Method 4: Default export of a class
+export default class Logger {
+    log(message) {
+        console.log(message);
+    }
+}</code></pre>
+
+        <p><strong>Importing defaults:</strong></p>
+        <pre><code>// 📁 app.js
+// You can name the default import ANYTHING
+import log from './logger.js';
+log('Hello World');
+
+import myLogger from './logger.js';
+myLogger('Hello World');
+
+import CustomLogger from './logger.js';
+CustomLogger('Hello World');</code></pre>
+
+        <h3>Key Differences: Default vs Named</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>Named Exports</th>
+                <th>Default Export</th>
+            </tr>
+            <tr>
+                <td>Number per module</td>
+                <td>Multiple</td>
+                <td>One</td>
+            </tr>
+            <tr>
+                <td>Import syntax</td>
+                <td><code>{ name }</code></td>
+                <td><code>name</code> (no braces)</td>
+            </tr>
+            <tr>
+                <td>Renaming</td>
+                <td><code>{ original as alias }</code></td>
+                <td>Can use any name</td>
+            </tr>
+            <tr>
+                <td>Export syntax</td>
+                <td><code>export const x</code></td>
+                <td><code>export default x</code></td>
+            </tr>
+            <tr>
+                <td>Tree-shaking friendly</td>
+                <td>Excellent</td>
+                <td>Good, but less optimal</td>
+            </tr>
+            <tr>
+                <td>Intent</td>
+                <td>Multiple utilities</td>
+                <td>Main functionality</td>
+            </tr>
+        </table>
+
+        <h3>When to Use Each</h3>
+        <p><strong>Use Named Exports when:</strong></p>
+        <ul>
+            <li>The module exports multiple utilities (like a math library)</li>
+            <li>You want to enforce exact import names for clarity</li>
+            <li>You want better IDE autocomplete</li>
+            <li>You're creating a utility library</li>
+        </ul>
+        <pre><code>// 📁 validators.js - Good for named exports
+export function validateEmail(email) { ... }
+export function validatePhone(phone) { ... }
+export function validateZipCode(zip) { ... }
+
+// 📁 app.js
+import { validateEmail, validatePhone } from './validators.js';</code></pre>
+
+        <p><strong>Use Default Exports when:</strong></p>
+        <ul>
+            <li>The module exports one main thing (like a class or main function)</li>
+            <li>You want to allow users to name it whatever they want</li>
+            <li>The module represents a single entity</li>
+        </ul>
+        <pre><code>// 📁 User.js - Good for default export
+export default class User {
+    constructor(name) {
+        this.name = name;
+    }
+    save() { ... }
+}
+
+// 📁 app.js
+import User from './User.js';
+import Person from './User.js'; // Also works, but confusing!</code></pre>
+
+        <h3>Combining Default and Named</h3>
+        <pre><code>// 📁 date-utils.js
+export default function formatDate(date) {
+    return date.toLocaleDateString();
+}
+
+export const DATE_FORMATS = {
+    SHORT: 'short',
+    LONG: 'long'
+};
+
+export function parseDate(str) {
+    return new Date(str);
+}
+
+// 📁 app.js
+import formatDate, { DATE_FORMATS, parseDate } from './date-utils.js';</code></pre>
+
+        <hr>
+
+        <!-- 8. MODULE SCOPE -->
+        <h2 id="module-scope">8. Module Scope and Execution</h2>
+        <p>Understanding how modules scope and execute is essential for writing predictable code.</p>
+
+        <h3>Module-Level Scope</h3>
+        <p>Each module has its own scope - variables declared at the top level are NOT global.</p>
+        <pre><code>// 📁 moduleA.js
+const privateVariable = 'Secret';
+export const publicVariable = 'Public';
+
+// This doesn't pollute global scope
+window.privateVariable; // undefined
+
+// 📁 moduleB.js
+import { publicVariable } from './moduleA.js';
+console.log(publicVariable); // 'Public'
+console.log(privateVariable); // ReferenceError - not accessible</code></pre>
+
+        <h3>Module Execution Order</h3>
+        <p>Modules are executed in the order they are imported, following the dependency graph.</p>
+        <pre><code>// 📁 a.js
+console.log('a starting');
+import { bValue } from './b.js';
+export const aValue = 'A';
+console.log('a done');
+
+// 📁 b.js
+console.log('b starting');
+import { aValue } from './a.js';
+export const bValue = 'B';
+console.log('b done');
+
+// 📁 main.js
+import './a.js';
+// Output:
+// b starting
+// b done
+// a starting
+// a done</code></pre>
+
+        <h3>Modules are Singletons</h3>
+        <p>Modules are evaluated only once, and the result is cached.</p>
+        <pre><code>// 📁 counter.js
+let count = 0;
+export function increment() {
+    count++;
+    return count;
+}
+export function getCount() {
+    return count;
+}
+
+// 📁 moduleA.js
+import { increment, getCount } from './counter.js';
+console.log(increment()); // 1
+console.log(getCount()); // 1
+
+// 📁 moduleB.js
+import { increment, getCount } from './counter.js';
+console.log(increment()); // 2 (not 1 - using same instance!)
+console.log(getCount()); // 2
+
+// 📁 main.js
+import './moduleA.js';
+import './moduleB.js';
+// counter is only initialized once, shared between all imports</code></pre>
+
+        <h3>Import Bindings are Live (but Read-Only)</h3>
+        <p>Imported values are live read-only views to the exporting module.</p>
+        <pre><code>// 📁 counter.js
+export let count = 0;
+export function increment() {
+    count++;
+}
+
+// 📁 app.js
+import { count, increment } from './counter.js';
+console.log(count); // 0
+increment();
+console.log(count); // 1 ✅ - The import updates!
+
+// But you cannot reassign the import
+count = 5; // ❌ TypeError: Assignment to constant variable</code></pre>
+
+        <h3>Top-Level <code>await</code> in Modules</h3>
+        <p>Modules can use <code>await</code> at the top level (not inside functions).</p>
+        <pre><code>// 📁 data.module.js
+const response = await fetch('https://api.example.com/data');
+export const data = await response.json();
+console.log('Data loaded');
+
+// 📁 main.js
+import { data } from './data.module.js';
+// The import waits for the data to be fetched before executing
+console.log(data); // Already available</code></pre>
+
+        <hr>
+
+        <!-- 9. DYNAMIC IMPORTS -->
+        <h2 id="dynamic-imports">9. Dynamic Imports</h2>
+        <p>Dynamic imports allow you to load modules on-demand, at runtime.</p>
+
+        <h3>Basic Dynamic Import</h3>
+        <pre><code>// Regular static import
+import { helper } from './helper.js';
+
+// Dynamic import (returns a Promise)
+import('./helper.js')
+    .then(module => {
+        module.helper();
+    })
+    .catch(error => {
+        console.error('Module failed to load', error);
+    });</code></pre>
+
+        <h3>Using Async/Await</h3>
+        <pre><code>async function loadUtils() {
+    try {
+        const utils = await import('./utils.js');
+        const formatters = await import('./formatters.js');
+        
+        utils.log('Modules loaded');
+        return formatters.formatDate(new Date());
+    } catch (error) {
+        console.error('Failed to load modules:', error);
+    }
+}</code></pre>
+
+        <h3>Use Cases for Dynamic Imports</h3>
+        <p><strong>1. Code Splitting / Route-based loading:</strong></p>
+        <pre><code>// 📁 router.js
+const routes = {
+    '/home': () => import('./pages/Home.js'),
+    '/about': () => import('./pages/About.js'),
+    '/contact': () => import('./pages/Contact.js')
+};
+
+async function navigate(route) {
+    const loadPage = routes[route];
+    if (loadPage) {
+        const pageModule = await loadPage();
+        pageModule.render();
+    }
+}</code></pre>
+
+        <p><strong>2. Conditional Loading:</strong></p>
+        <pre><code>async function loadPolyfills() {
+    if (!window.Promise) {
+        await import('./polyfills/promise.js');
+    }
+    if (!window.fetch) {
+        await import('./polyfills/fetch.js');
+    }
+    if (!Object.assign) {
+        await import('./polyfills/object-assign.js');
+    }
+}</code></pre>
+
+        <p><strong>3. Loading based on user interaction:</strong></p>
+        <pre><code>document.getElementById('chartsBtn').addEventListener('click', async () => {
+    const chartModule = await import('./ChartLibrary.js');
+    const chart = new chartModule.Chart('canvas');
+    chart.render();
+});</code></pre>
+
+        <p><strong>4. Loading based on environment:</strong></p>
+        <pre><code>async function getConfig() {
+    if (process.env.NODE_ENV === 'production') {
+        return await import('./config.prod.js');
+    } else {
+        return await import('./config.dev.js');
+    }
+}</code></pre>
+
+        <h3>Dynamic Import Features</h3>
+        <p><strong>Import with default export:</strong></p>
+        <pre><code>const module = await import('./logger.js');
+// Default export is available as .default
+module.default.log('Hello');</code></pre>
+        <p><strong>Destructuring:</strong></p>
+        <pre><code>const { default: log, LEVELS } = await import('./logger.js');
+log('Hello');
+console.log(LEVELS);</code></pre>
+        <p><strong>Loading multiple modules:</strong></p>
+        <pre><code>const [utils, constants] = await Promise.all([
+    import('./utils.js'),
+    import('./constants.js')
+]);</code></pre>
+
+        <hr>
+
+        <!-- 10. BEST PRACTICES -->
+        <h2 id="best-practices">10. Module Best Practices</h2>
+        <h3>File Organization</h3>
+        <p><strong>1. One module per file:</strong></p>
+        <pre><code>// ✅ GOOD: user.js
+export class User { ... }
+
+// ✅ GOOD: userService.js
+export function saveUser(user) { ... }
+
+// ❌ BAD: everything.js
+export class User { ... }
+export function saveUser(user) { ... }
+export const API_URL = '...';
+// Too much unrelated functionality in one file</code></pre>
+
+        <p><strong>2. Clear file naming:</strong></p>
+        <pre><code>// Descriptive names
+📁 user.model.js
+📁 user.service.js
+📁 user.controller.js
+📁 user.validators.js
+📁 user.routes.js</code></pre>
+
+        <p><strong>3. Index files as public API:</strong></p>
+        <pre><code>// 📁 services/index.js
+export { userService } from './user.service.js';
+export { authService } from './auth.service.js';
+export { paymentService } from './payment.service.js';
+
+// 📁 app.js
+// Clean imports from a single point
+import { userService, authService } from './services';</code></pre>
+
+        <h3>Export Best Practices</h3>
+        <p><strong>4. Prefer named exports for utilities:</strong></p>
+        <pre><code>// ✅ GOOD
+export function validateEmail() { ... }
+export function validatePassword() { ... }
+export function validatePhone() { ... }
+
+// ❌ Avoid default for multiple utilities
+export default {
+    validateEmail,
+    validatePassword,
+    validatePhone
+};
+// This loses tree-shaking benefits</code></pre>
+
+        <p><strong>5. Use default exports for main functionality:</strong></p>
+        <pre><code>// ✅ GOOD: Button.js (a component library)
+export default class Button { ... }
+
+// ✅ GOOD: logger.js (a single logging function)
+export default function log(message) { ... }</code></pre>
+
+        <p><strong>6. Be consistent across your project:</strong></p>
+        <pre><code>// Either consistently use named exports
+export function a() { }
+export function b() { }
+
+// Or consistently use default for main + named for utilities
+export default class Main { }
+export function utilA() { }
+export function utilB() { }
+
+// But don't mix randomly</code></pre>
+
+        <h3>Import Best Practices</h3>
+        <p><strong>7. Group and order imports:</strong></p>
+        <pre><code>// 1. External libraries (React, lodash, etc.)
+import React, { useState } from 'react';
+import { format } from 'date-fns';
+
+// 2. Internal modules (your own code)
+import { User } from '../models/user.model.js';
+import { validateUser } from '../validators/user.validators.js';
+
+// 3. Assets and styles (for bundlers)
+import logo from './logo.svg';
+import './styles.css';</code></pre>
+
+        <p><strong>8. Avoid deep imports:</strong></p>
+        <pre><code>// ❌ BAD - too deep, fragile
+import { helper } from '../../../../utils/helpers/string/helper.js';
+
+// ✅ GOOD - use index files or shorter paths
+import { helper } from '@/utils/helpers';</code></pre>
+
+        <p><strong>9. Import exactly what you need:</strong></p>
+        <pre><code>// ❌ BAD - imports everything
+import * as _ from 'lodash';
+_.get(obj, 'path');
+
+// ✅ GOOD - imports only what's needed
+import get from 'lodash/get';
+get(obj, 'path');</code></pre>
+
+        <h3>Module Design Principles</h3>
+        <p><strong>10. Keep modules focused (Single Responsibility):</strong></p>
+        <pre><code>// 📁 dateFormatter.js
+export function formatDate(date) { ... }
+export function formatTime(date) { ... }
+
+// 📁 dateParser.js
+export function parseDate(str) { ... }
+export function parseTime(str) { ... }</code></pre>
+
+        <p><strong>11. Minimize side effects:</strong></p>
+        <pre><code>// ❌ BAD - side effect on import
+console.log('Module loaded!'); // Side effect
+window.myLibrary = { ... }; // Side effect
+export function doWork() { ... }
+
+// ✅ GOOD - no side effects
+export function doWork() { ... }
+export function init() {
+    console.log('Module initialized');
+    window.myLibrary = { ... };
+}</code></pre>
+
+        <p><strong>12. Document your module API:</strong></p>
+        <pre><code>/**
+ * Utility functions for string manipulation
+ * @module stringUtils
+ */
+
+/**
+ * Capitalizes the first letter of a string
+ * @param {string} str - The input string
+ * @returns {string} The capitalized string
+ */
+export function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}</code></pre>
+
+        <hr>
+
+        <!-- 11. PITFALLS -->
+        <h2 id="pitfalls">11. Common Pitfalls and Solutions</h2>
+
+        <h3>Pitfall 1: Circular Dependencies</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// 📁 a.js
+import { bFunc } from './b.js';
+export function aFunc() {
+    console.log('aFunc');
+    bFunc();
+}
+
+// 📁 b.js
+import { aFunc } from './a.js';
+export function bFunc() {
+    console.log('bFunc');
+    aFunc(); // Circular!
+}</code></pre>
+        <p><strong>Solutions:</strong></p>
+        <p>1. <strong>Restructure to avoid circular dependencies:</strong></p>
+        <pre><code>// 📁 common.js
+export function sharedLogic() { ... }
+
+// 📁 a.js
+import { sharedLogic } from './common.js';
+export function aFunc() {
+    sharedLogic();
+}
+
+// 📁 b.js
+import { sharedLogic } from './common.js';
+export function bFunc() {
+    sharedLogic();
+}</code></pre>
+        <p>2. <strong>Use dynamic imports for one direction:</strong></p>
+        <pre><code>// 📁 a.js
+export async function aFunc() {
+    const { bFunc } = await import('./b.js');
+    bFunc();
+}</code></pre>
+
+        <h3>Pitfall 2: Module Path Confusion</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// ❌ Missing file extension
+import { helper } from './helper'; // May fail in browsers
+
+// ❌ Wrong path type
+import { helper } from 'helper'; // Bare specifier needs special handling</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>// ✅ Always include extensions in browsers
+import { helper } from './helper.js';
+
+// ✅ Use clear relative paths
+import { helper } from './utils/helper.js';
+import { config } from '../config.js';
+import { User } from '/models/User.js'; // Absolute from root</code></pre>
+
+        <h3>Pitfall 3: Trying to Modify Imports</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// 📁 config.js
+export let config = { theme: 'light' };
+
+// 📁 app.js
+import { config } from './config.js';
+config = { theme: 'dark' }; // ❌ TypeError - can't reassign import
+
+config.theme = 'dark'; // ✅ This works - modifying object properties is fine</code></pre>
+
+        <h3>Pitfall 4: Mixing Default and Named Incorrectly</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// 📁 math.js
+export default function add(a, b) { return a + b; }
+export const PI = 3.14;
+
+// 📁 app.js
+import { add } from './math.js'; // ❌ Wrong - add is default, not named
+import add, PI from './math.js'; // ❌ Wrong syntax</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>// ✅ Correct ways
+import add, { PI } from './math.js';
+import { default as add, PI } from './math.js';
+import * as math from './math.js'; math.default(2,3); math.PI;</code></pre>
+
+        <h3>Pitfall 5: Async Module Loading Issues</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// Trying to use dynamic import result before it loads
+let utils;
+import('./utils.js').then(module => { utils = module; });
+utils.doSomething(); // ❌ utils is still undefined</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>// ✅ Use async/await
+async function init() {
+    const utils = await import('./utils.js');
+    utils.doSomething();
+}
+init();
+
+// ✅ Or use Promise chaining properly
+import('./utils.js').then(utils => {
+    utils.doSomething();
+});</code></pre>
+
+        <h3>Pitfall 6: Module Caching Confusion</h3>
+        <p><strong>Problem:</strong></p>
+        <pre><code>// 📁 counter.js
+let count = 0;
+export function inc() { count++; }
+export function get() { return count; }
+
+// Different parts of app expecting independent counters
+// But modules are singletons!</code></pre>
+        <p><strong>Solution:</strong></p>
+        <pre><code>// ✅ Export a factory function instead
+export function createCounter() {
+    let count = 0;
+    return {
+        inc: () => count++,
+        get: () => count
+    };
+}
+
+// Now each importer can create their own counter
+import { createCounter } from './counter.js';
+const counter1 = createCounter();
+const counter2 = createCounter();</code></pre>
+
+        <hr>
+
+        <!-- 12. THIRD-PARTY MODULES -->
+        <h2 id="third-party">12. Working with Third-Party Modules</h2>
+        <h3>Installing from npm</h3>
+        <pre><code>npm install lodash
+npm install react
+npm install date-fns</code></pre>
+
+        <h3>Importing Third-Party Modules</h3>
+        <p><strong>CommonJS style (Node.js):</strong></p>
+        <pre><code>const _ = require('lodash');
+const express = require('express');</code></pre>
+        <p><strong>ES6 style (with bundlers or "type": "module" in Node.js):</strong></p>
+        <pre><code>import _ from 'lodash';
+import express from 'express';
+import { format, addDays } from 'date-fns';</code></pre>
+
+        <h3>Understanding Package Exports</h3>
+        <p>Modern packages define their API in <code>package.json</code>:</p>
+        <pre><code>{
+  "name": "my-package",
+  "exports": {
+    ".": "./index.js",
+    "./utils": "./utils.js",
+    "./styles.css": "./styles.css"
+  }
+}</code></pre>
+        <p>This allows:</p>
+        <pre><code>import myPackage from 'my-package';           // imports index.js
+import { helper } from 'my-package/utils';    // imports utils.js
+import 'my-package/styles.css';                // imports CSS</code></pre>
+
+        <h3>Import Maps</h3>
+        <p>Import maps allow mapping bare specifiers in the browser:</p>
+        <pre><code>&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "react": "https://esm.sh/react@18",
+    "react-dom": "https://esm.sh/react-dom",
+    "lodash/": "https://esm.sh/lodash/"
+  }
+}
+&lt;/script&gt;
+
+&lt;script type="module"&gt;
+  import React from 'react';
+  import { get } from 'lodash/get.js';
+&lt;/script&gt;</code></pre>
+
+        <hr>
+
+        <!-- 13. ENVIRONMENTS -->
+        <h2 id="environments">13. Modules in Different Environments</h2>
+        <h3>Modules in Browsers</h3>
+        <p><strong>Native browser support:</strong></p>
+        <pre><code>&lt;!-- Load module --&gt;
+&lt;script type="module" src="app.js"&gt;&lt;/script&gt;
+
+&lt;!-- Fallback for older browsers --&gt;
+&lt;script nomodule src="fallback.js"&gt;&lt;/script&gt;</code></pre>
+        <p><strong>Browser-specific considerations:</strong> CORS applies, modules are deferred by default, module
+            scripts don't block rendering.</p>
+
+        <h3>Modules in Node.js</h3>
+        <p><strong>Two module systems:</strong></p>
+        <pre><code>// CommonJS (default in Node.js)
+const fs = require('fs');
+module.exports = { myFunc };
+
+// ES Modules (need .mjs extension or "type": "module" in package.json)
+import fs from 'fs';
+export const myFunc = () => {};</code></pre>
+        <p><strong>package.json configuration:</strong></p>
+        <pre><code>{
+  "name": "my-app",
+  "type": "module",  // Use ES modules by default
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}</code></pre>
+
+        <h3>Modules in Bundlers (Webpack, Vite, Rollup)</h3>
+        <p>Bundlers add features like: importing non-JS files (CSS, images, JSON), path aliases, Hot Module Replacement
+            (HMR).</p>
+        <pre><code>// With a bundler, you can do:
+import logo from './logo.png';
+import styles from './styles.css';
+import data from './data.json';
+
+// Use path aliases
+import { User } from '@/models/User';
+import { api } from '@services/api';</code></pre>
+
+        <hr>
+
+        <!-- 14. EXAMPLES -->
+        <h2 id="examples">14. Practical Examples and Use Cases</h2>
+
+        <h3>Example 1: Building a Utility Library</h3>
+        <pre><code>// 📁 math/arithmetic.js
+export function add(a, b) { return a + b; }
+export function subtract(a, b) { return a - b; }
+export function multiply(a, b) { return a * b; }
+export function divide(a, b) { 
+    if (b === 0) throw new Error('Division by zero');
+    return a / b;
+}
+
+// 📁 math/statistics.js
+export function mean(numbers) {
+    return numbers.reduce((a, b) => a + b, 0) / numbers.length;
+}
+
+export function median(numbers) {
+    const sorted = [...numbers].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+// 📁 math/index.js
+export * from './arithmetic.js';
+export * from './statistics.js';
+
+// 📁 app.js
+import { add, mean } from './math/index.js';
+console.log(add(5, 3));      // 8
+console.log(mean([1,2,3,4])); // 2.5</code></pre>
+
+        <h3>Example 2: React Component with Modules</h3>
+        <pre><code>// 📁 components/Button/Button.js
+import React from 'react';
+import styles from './Button.module.css';
+import { useTheme } from '../../hooks/useTheme.js';
+
+export default function Button({ children, variant = 'primary', onClick }) {
+    const { theme } = useTheme();
+    
+    return (
+        &lt;button 
+            className={`${styles.button} ${styles[variant]}`}
+            style={{ backgroundColor: theme.colors[variant] }}
+            onClick={onClick}
+        &gt;
+            {children}
+        &lt;/button&gt;
+    );
+}
+
+// 📁 components/Button/index.js
+export { default } from './Button.js';
+
+// 📁 components/index.js
+export { default as Button } from './Button';
+export { default as Input } from './Input';
+export { default as Card } from './Card';
+
+// 📁 App.js
+import { Button, Input, Card } from './components';</code></pre>
+
+        <h3>Example 3: API Service Module</h3>
+        <pre><code>// 📁 services/api/config.js
+export const API_BASE_URL = 'https://api.example.com/v1';
+export const API_TIMEOUT = 5000;
+export const DEFAULT_HEADERS = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+};
+
+// 📁 services/api/client.js
+import { API_BASE_URL, API_TIMEOUT, DEFAULT_HEADERS } from './config.js';
+
+async function request(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+    
+    try {
+        const response = await fetch(url, {
+            ...options,
+            headers: { ...DEFAULT_HEADERS, ...options.headers },
+            signal: controller.signal
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+export const apiClient = {
+    get: (endpoint) => request(endpoint, { method: 'GET' }),
+    post: (endpoint, data) => request(endpoint, { 
+        method: 'POST', 
+        body: JSON.stringify(data) 
+    }),
+    put: (endpoint, data) => request(endpoint, { 
+        method: 'PUT', 
+        body: JSON.stringify(data) 
+    }),
+    delete: (endpoint) => request(endpoint, { method: 'DELETE' })
+};
+
+// 📁 services/api/users.js
+import { apiClient } from './client.js';
+
+export const userAPI = {
+    getAll: () => apiClient.get('/users'),
+    getById: (id) => apiClient.get(`/users/${id}`),
+    create: (userData) => apiClient.post('/users', userData),
+    update: (id, userData) => apiClient.put(`/users/${id}`, userData),
+    delete: (id) => apiClient.delete(`/users/${id}`)
+};
+
+// 📁 services/api/index.js
+export { userAPI } from './users.js';
+export { apiClient } from './client.js';
+export { API_BASE_URL } from './config.js';</code></pre>
+
+        <hr>
+
+        <!-- 15. ADVANCED PATTERNS -->
+        <h2 id="advanced-patterns">15. Advanced Module Patterns</h2>
+
+        <h3>Pattern 1: Module Factory Pattern</h3>
+        <p>Create configurable modules:</p>
+        <pre><code>// 📁 logger.factory.js
+export function createLogger(level = 'info') {
+    const levels = {
+        debug: 0,
+        info: 1,
+        warn: 2,
+        error: 3
+    };
+    
+    return {
+        debug: (...args) => levels[level] <= 0 && console.debug('[DEBUG]', ...args),
+        info: (...args) => levels[level] <= 1 && console.info('[INFO]', ...args),
+        warn: (...args) => levels[level] <= 2 && console.warn('[WARN]', ...args),
+        error: (...args) => levels[level] <= 3 && console.error('[ERROR]', ...args),
+        setLevel: (newLevel) => { level = newLevel; }
+    };
+}
+
+// 📁 app.js
+import { createLogger } from './logger.factory.js';
+
+const devLogger = createLogger('debug');
+devLogger.debug('Detailed debug info');
+
+const prodLogger = createLogger('error');
+prodLogger.info('This won't show in production');</code></pre>
+
+        <h3>Pattern 2: Singleton Module</h3>
+        <pre><code>// 📁 database.connection.js
+class DatabaseConnection {
+    constructor() {
+        if (DatabaseConnection.instance) {
+            return DatabaseConnection.instance;
+        }
+        this.connection = null;
+        this.connected = false;
+        DatabaseConnection.instance = this;
+    }
+    
+    async connect(url) {
+        if (!this.connected) {
+            this.connection = await createConnection(url);
+            this.connected = true;
+        }
+        return this.connection;
+    }
+    
+    async disconnect() {
+        if (this.connected) {
+            await this.connection.close();
+            this.connected = false;
+        }
+    }
+}
+
+const dbInstance = new DatabaseConnection();
+export default dbInstance;</code></pre>
+
+        <h3>Pattern 3: Plugin System</h3>
+        <pre><code>// 📁 plugins/registry.js
+const plugins = new Map();
+
+export function registerPlugin(name, plugin) {
+    if (plugins.has(name)) {
+        throw new Error(`Plugin ${name} already registered`);
+    }
+    plugins.set(name, plugin);
+    console.log(`Plugin ${name} registered`);
+}
+
+export function getPlugin(name) {
+    return plugins.get(name);
+}
+
+export function getAllPlugins() {
+    return Array.from(plugins.entries());
+}
+
+// 📁 plugins/markdown.js
+import { registerPlugin } from './registry.js';
+
+const markdownPlugin = {
+    name: 'markdown',
+    render: (text) => {
+        // Simple markdown to HTML conversion
+        return text
+            .replace(/# (.*)/g, '&lt;h1&gt;$1&lt;/h1&gt;')
+            .replace(/\*\*(.*)\*\*/g, '&lt;strong&gt;$1&lt;/strong&gt;');
+    }
+};
+
+registerPlugin('markdown', markdownPlugin);
+export default markdownPlugin;
+
+// 📁 app.js
+import './plugins/markdown.js';
+import { getPlugin } from './plugins/registry.js';
+
+const markdown = getPlugin('markdown');
+console.log(markdown.render('# Hello **World**'));</code></pre>
+
+        <h3>Pattern 4: Lazy Loading Module</h3>
+        <pre><code>// 📁 heavyModule.lazy.js
+let heavyModule = null;
+
+export async function loadHeavyModule() {
+    if (!heavyModule) {
+        heavyModule = await import('./heavyModule.js');
+    }
+    return heavyModule;
+}
+
+export async function doHeavyWork(data) {
+    const module = await loadHeavyModule();
+    return module.processData(data);
+}
+
+// 📁 app.js
+import { doHeavyWork } from './heavyModule.lazy.js';
+
+button.addEventListener('click', async () => {
+    const result = await doHeavyWork(userData);
+    displayResult(result);
+});</code></pre>
+
+        <hr>
+
+        <!-- 16. TOOLS -->
+        <h2 id="tools">16. Tools and Bundlers</h2>
+        <h3>Webpack</h3>
+        <pre><code>// webpack.config.js
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: 'babel-loader'
+            }
+        ]
+    }
+};</code></pre>
+
+        <h3>Vite (Modern, Fast)</h3>
+        <pre><code>// vite.config.js
+export default {
+    build: {
+        rollupOptions: {
+            input: {
+                main: 'index.html',
+                about: 'about.html'
+            }
+        }
+    }
+};</code></pre>
+
+        <h3>Rollup (Library-focused)</h3>
+        <pre><code>// rollup.config.js
+export default {
+    input: 'src/index.js',
+    output: [
+        {
+            file: 'dist/bundle.cjs.js',
+            format: 'cjs'
+        },
+        {
+            file: 'dist/bundle.esm.js',
+            format: 'esm'
+        }
+    ]
+};</code></pre>
+
+        <h3>ESLint for Modules</h3>
+        <pre><code>{
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2022
+    },
+    "rules": {
+        "import/no-unresolved": "error",
+        "import/named": "error",
+        "import/default": "error",
+        "import/export": "error"
+    }
+}</code></pre>
+
+        <hr>
+
+        <!-- 17. TESTING -->
+        <h2 id="testing">17. Testing Modules</h2>
+        <h3>Unit Testing with Jest</h3>
+        <pre><code>// 📁 math.js
+export function add(a, b) { return a + b; }
+export function multiply(a, b) { return a * b; }
+
+// 📁 math.test.js
+import { add, multiply } from './math.js';
+
+describe('Math module', () => {
+    test('add function', () => {
+        expect(add(2, 3)).toBe(5);
+        expect(add(-1, 1)).toBe(0);
+    });
+    
+    test('multiply function', () => {
+        expect(multiply(2, 3)).toBe(6);
+        expect(multiply(-2, 3)).toBe(-6);
+    });
+});</code></pre>
+
+        <h3>Mocking Modules</h3>
+        <pre><code>// 📁 userService.js
+import { apiClient } from './api.js';
+
+export async function getUser(id) {
+    return apiClient.get(`/users/${id}`);
+}
+
+// 📁 userService.test.js
+import { getUser } from './userService.js';
+import { apiClient } from './api.js';
+
+jest.mock('./api.js', () => ({
+    apiClient: {
+        get: jest.fn()
+    }
+}));
+
+test('getUser calls API with correct ID', async () => {
+    apiClient.get.mockResolvedValue({ id: 1, name: 'John' });
+    
+    const user = await getUser(1);
+    
+    expect(apiClient.get).toHaveBeenCalledWith('/users/1');
+    expect(user).toEqual({ id: 1, name: 'John' });
+});</code></pre>
+
+        <hr>
+
+        <!-- 18. FUTURE -->
+        <h2 id="future">18. Future of JavaScript Modules</h2>
+
+        <h3>Import Assertions / Attributes</h3>
+        <pre><code>// Import JSON with type assertion
+import data from './data.json' assert { type: 'json' };
+
+// Import CSS modules
+import styles from './styles.css' assert { type: 'css' };
+
+// Future: Import WASM modules
+import { add } from './math.wasm' assert { type: 'webassembly' };</code></pre>
+
+        <h3>Import Evaluation (Future Proposal)</h3>
+        <pre><code>// Dynamic evaluation of module code
+const module = await import('./template.js', {
+    evaluate: true,
+    with: { data: userData }
+});</code></pre>
+
+        <h3>Better Package Exports</h3>
+        <pre><code>{
+    "exports": {
+        ".": "./index.js",
+        "./utils": {
+            "import": "./utils.mjs",
+            "require": "./utils.cjs",
+            "browser": "./utils.browser.js"
+        }
+    }
+}</code></pre>
+
+        <hr>
+
+        <!-- FINAL CHECKLIST (EXACT) -->
+        <div class="checklist-final">
+            <h2 style="margin-top:0; border-left: none; color:#2e317c;">📋 Summary Checklist</h2>
+            <ul>
+                <li>Understand the difference between default and named exports</li>
+                <li>Know when to use each export type</li>
+                <li>Organize code with clear module boundaries</li>
+                <li>Use dynamic imports for code splitting</li>
+                <li>Avoid circular dependencies</li>
+                <li>Document module APIs</li>
+                <li>Test modules in isolation</li>
+                <li>Understand module execution order</li>
+                <li>Use consistent naming conventions</li>
+                <li>Leverage index files for clean APIs</li>
+                <li>Consider bundle size in module design</li>
+                <li>Handle errors in dynamic imports</li>
+            </ul>
+        </div>
+
+        <!-- FINAL PARAGRAPH -->
+        <p><em>This comprehensive guide covers JavaScript modules from basics to advanced patterns. Remember that
+                modules are not just a syntax feature but a fundamental way to think about code organization and
+                architecture. Practice these concepts by refactoring existing code into well-structured modules!</em>
+        </p>
+
+        <div class="footer-meta">
+            ⚛️ JAVASCRIPT MODULES – THE COMPLETE GUIDE · EXPORT · IMPORT · DYNAMIC · BEST PRACTICES
+        </div>
+
+    </div> <!-- master-wrapper -->
+</body>
+
+</html>

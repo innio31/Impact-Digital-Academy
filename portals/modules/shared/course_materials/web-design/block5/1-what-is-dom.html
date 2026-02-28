@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE DOCUMENT OBJECT MODEL (DOM) – complete study notes</title>
+    <style>
+        /* minimal styling for readability - does not alter content */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f5fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #002b36;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .document-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 50px -30px #0a2e3f;
+            padding: 2.8rem 2.5rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1a4b63;
+            font-weight: 650;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            border-left: 12px solid #3a7b9b;
+            padding-left: 1.5rem;
+            margin: 0 0 1.5rem 0;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #c16d52;
+            padding-bottom: 0.3rem;
+            margin: 2.8rem 0 1.2rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin: 2.2rem 0 1rem;
+            color: #235e7a;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        pre,
+        code {
+            background: #ecf3f9;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        pre {
+            padding: 1.6rem;
+            overflow-x: auto;
+            border: 1px solid #bed5e8;
+            margin: 1.8rem 0;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        code {
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+        }
+
+        pre code {
+            padding: 0;
+            background: transparent;
+        }
+
+        ul,
+        ol {
+            padding-left: 2.5rem;
+            margin: 1.2rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 2.2rem 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 50, 70, 0.1);
+        }
+
+        th {
+            background: #1e607e;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 1rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #c2d8ec;
+            background: #fbfeff;
+        }
+
+        hr {
+            border: none;
+            border-top: 3px solid #d6e6f2;
+            margin: 2.8rem 0;
+        }
+
+        .toc {
+            background: #e8f2fa;
+            padding: 2rem 2.2rem;
+            border-radius: 36px;
+            margin: 2rem 0 3rem;
+        }
+
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin: 0.5rem 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #1f6383;
+            font-weight: 550;
+            border-bottom: 1px dotted;
+        }
+
+        .toc a:hover {
+            border-bottom: 1px solid;
+        }
+
+        footer {
+            text-align: center;
+            color: #2e6a88;
+            margin-top: 3.5rem;
+            font-size: 1.1rem;
+            border-top: 2px dashed #c1daee;
+            padding-top: 2.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>THE DOCUMENT OBJECT MODEL (DOM)</h1>
+
+        <h2>Table of Contents</h2>
+        <div class="toc">
+            <ul>
+                <li><a href="#introduction">1. Introduction to the DOM</a></li>
+                <li><a href="#relationship">2. The Relationship Between HTML, CSS, and the DOM</a></li>
+                <li><a href="#document-object">3. The Document Object Explained</a></li>
+                <li><a href="#dom-tree">4. DOM Tree Structure and Nodes</a></li>
+                <li><a href="#node-types">5. DOM Node Types and Properties</a></li>
+                <li><a href="#rendering-engine">6. Browser Rendering Engine and DOM Construction</a></li>
+                <li><a href="#practical-applications">7. Practical Applications and Best Practices</a></li>
+                <li><a href="#pitfalls">8. Common Pitfalls and Debugging</a></li>
+                <li><a href="#advanced-concepts">9. Advanced DOM Concepts</a></li>
+                <li><a href="#performance">10. Performance Considerations</a></li>
+                <li><a href="#interview-questions">11. Interview Questions and Answers</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2 id="introduction">1. INTRODUCTION TO THE DOM</h2>
+
+        <h3>What is the DOM?</h3>
+        <p>The Document Object Model (DOM) is a programming interface for web documents. It represents the page so that
+            programs can change the document structure, style, and content. The DOM represents the document as nodes and
+            objects, allowing programming languages to interact with the page.</p>
+        <p><strong>Key Definition:</strong> The DOM is a cross-platform and language-independent interface that treats
+            an HTML or XML document as a tree structure wherein each node is an object representing a part of the
+            document.</p>
+
+        <h3>Historical Context</h3>
+        <ul>
+            <li><strong>1998:</strong> DOM Level 1 specification became a W3C Recommendation</li>
+            <li><strong>2000:</strong> DOM Level 2 introduced, adding mouse events and CSS support</li>
+            <li><strong>2004:</strong> DOM Level 3 added keyboard events and XPath support</li>
+            <li><strong>2015:</strong> DOM Living Standard adopted by WHATWG, continuously updated</li>
+        </ul>
+
+        <h3>Why the DOM Matters</h3>
+        <p>The DOM is fundamental to modern web development because it:</p>
+        <ol>
+            <li><strong>Enables Dynamic Content:</strong> Without the DOM, web pages would be static documents</li>
+            <li><strong>Provides a Standardized Interface:</strong> Works consistently across different browsers</li>
+            <li><strong>Allows Language Independence:</strong> Though primarily used with JavaScript, any language can
+                interact with the DOM</li>
+            <li><strong>Forms the Foundation of Web Frameworks:</strong> React, Vue, and Angular all abstract the DOM
+            </li>
+            <li><strong>Facilitates Accessibility:</strong> Screen readers and assistive technologies use the DOM</li>
+        </ol>
+
+        <h3>Real-World Analogy</h3>
+        <p>Think of the DOM as a digital blueprint of a house:</p>
+        <ul>
+            <li><strong>HTML</strong> is the architect's initial plan (what rooms go where)</li>
+            <li><strong>CSS</strong> is the interior designer's specifications (colors, furniture placement)</li>
+            <li><strong>DOM</strong> is the actual 3D model you can walk through and interact with</li>
+            <li><strong>JavaScript</strong> is your hand that can move furniture, repaint walls, or add new rooms</li>
+        </ul>
+
+        <hr>
+
+        <h2 id="relationship">2. THE RELATIONSHIP BETWEEN HTML, CSS, AND THE DOM</h2>
+
+        <h3>How They Work Together</h3>
+        <pre>graph TD
+    A[HTML Source Code] --&gt; B[Browser Parsing]
+    C[CSS Source Code] --&gt; B
+    B --&gt; D[DOM Tree Creation]
+    D --&gt; E[Render Tree Creation]
+    E --&gt; F[Layout/Paint]
+    F --&gt; G[Final Visual Display]</pre>
+
+        <h3>HTML → DOM Transformation</h3>
+        <p>When a browser receives an HTML document, it doesn't just display it—it transforms it.</p>
+        <p><strong>HTML Source:</strong></p>
+        <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;p id="main-text"&gt;Hello World!&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+        <p><strong>Resulting DOM Tree Structure:</strong></p>
+        <pre>document (root)
+    └── html
+        ├── head
+        │   └── title
+        │       └── "My Page"
+        └── body
+            └── div (class="container")
+                └── p (id="main-text")
+                    └── "Hello World!"</pre>
+
+        <h3>Critical Distinction: HTML vs. DOM</h3>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>HTML</th>
+                <th>DOM</th>
+            </tr>
+            <tr>
+                <td><strong>Nature</strong></td>
+                <td>Text string</td>
+                <td>Object-oriented tree structure</td>
+            </tr>
+            <tr>
+                <td><strong>State</strong></td>
+                <td>Static (source code)</td>
+                <td>Dynamic (live representation)</td>
+            </tr>
+            <tr>
+                <td><strong>Modification</strong></td>
+                <td>Requires server round-trip</td>
+                <td>Can be modified instantly</td>
+            </tr>
+            <tr>
+                <td><strong>Error Tolerance</strong></td>
+                <td>Must be well-formed</td>
+                <td>Browser corrects errors</td>
+            </tr>
+            <tr>
+                <td><strong>Location</strong></td>
+                <td>On server</td>
+                <td>In browser memory</td>
+            </tr>
+        </table>
+
+        <p><strong>Example of Error Correction:</strong></p>
+        <pre>&lt;!-- Malformed HTML --&gt;
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Cell 1
+        &lt;td&gt;Cell 2
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;!-- Browser's DOM representation (corrected) --&gt;
+&lt;table&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Cell 1&lt;/td&gt;
+            &lt;td&gt;Cell 2&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+
+        <h3>CSS and the DOM</h3>
+        <p>CSS interacts with the DOM in several ways:</p>
+        <p><strong>1. Style Resolution:</strong></p>
+        <pre>/* CSS Rule */
+.container p {
+    color: blue;
+    font-size: 16px;
+}</pre>
+        <p>The browser:</p>
+        <ul>
+            <li>Traverses the DOM</li>
+            <li>Finds all &lt;p&gt; elements inside elements with class "container"</li>
+            <li>Applies the styles</li>
+        </ul>
+
+        <p><strong>2. Computed Styles:</strong></p>
+        <p>JavaScript can access how CSS affects DOM elements:</p>
+        <pre>const element = document.getElementById('main-text');
+const styles = window.getComputedStyle(element);
+console.log(styles.color); // "rgb(0, 0, 255)"
+console.log(styles.fontSize); // "16px"</pre>
+
+        <p><strong>3. CSSOM (CSS Object Model):</strong></p>
+        <p>Parallel to the DOM, browsers create a CSSOM:</p>
+        <pre>// Accessing stylesheets via the DOM
+const styleSheets = document.styleSheets;
+const firstRule = styleSheets[0].cssRules[0];
+console.log(firstRule.selectorText); // ".container p"</pre>
+
+        <h3>The Critical Rendering Path</h3>
+        <p>Understanding how HTML, CSS, and the DOM interact is crucial for performance:</p>
+        <pre>1. HTML Parsing → DOM Construction
+            ↓
+2. CSS Parsing → CSSOM Construction
+            ↓
+3. DOM + CSSOM → Render Tree (only visible elements)
+            ↓
+4. Layout → Calculate positions and sizes
+            ↓
+5. Paint → Render pixels to screen</pre>
+
+        <p><strong>Render Tree vs. DOM:</strong></p>
+        <ul>
+            <li>The Render Tree excludes invisible elements (<code>display: none</code>)</li>
+            <li>Includes pseudo-elements (<code>::before</code>, <code>::after</code>)</li>
+            <li>Contains only elements that will actually be drawn</li>
+        </ul>
+        <pre>&lt;div style="display: none"&gt;Hidden&lt;/div&gt; &lt;!-- In DOM, not in Render Tree --&gt;
+&lt;div&gt;Visible&lt;/div&gt; &lt;!-- In both DOM and Render Tree --&gt;
+&lt;div&gt;::before&lt;/div&gt; &lt;!-- Not in DOM, but in Render Tree --&gt;</pre>
+
+        <hr>
+
+        <h2 id="document-object">3. THE DOCUMENT OBJECT EXPLAINED</h2>
+
+        <h3>What is the Document Object?</h3>
+        <p>The <code>document</code> object is the entry point to the DOM. It represents the entire web page and
+            provides methods and properties to query, traverse, and manipulate the DOM tree.</p>
+
+        <h3>The Document Interface Hierarchy</h3>
+        <pre>EventTarget (root)
+    └── Node
+        └── Document
+            └── HTMLDocument (document object)</pre>
+
+        <h3>Core Properties of the Document Object</h3>
+        <p><strong>Document Metadata Properties:</strong></p>
+        <pre>document.title = "New Page Title";        // Gets/sets page title
+document.URL;                              // Returns complete URL
+document.domain;                           // Returns domain name
+document.referrer;                          // Returns referring URL
+document.lastModified;                       // Last modification date
+document.characterSet;                        // Character encoding
+document.contentType;                          // MIME type
+document.designMode = "on";                     // Makes page editable</pre>
+
+        <p><strong>Document Section Properties:</strong></p>
+        <pre>document.documentElement;  // Returns the &lt;html&gt; element
+document.body;             // Returns the &lt;body&gt; element
+document.head;             // Returns the &lt;head&gt; element
+document.forms;            // Returns all &lt;form&gt; elements
+document.images;           // Returns all &lt;img&gt; elements
+document.links;            // Returns all &lt;a&gt; elements with href
+document.scripts;          // Returns all &lt;script&gt; elements
+document.styleSheets;      // Returns all CSS style sheets</pre>
+
+        <h3>Essential Document Methods</h3>
+        <p><strong>Element Selection Methods:</strong></p>
+        <pre>// Modern methods (recommended)
+document.querySelector('.my-class');           // Returns first match
+document.querySelectorAll('p');                 // Returns all matches (NodeList)
+document.getElementById('main');                // Returns single element
+document.getElementsByClassName('card');        // Returns live HTMLCollection
+document.getElementsByTagName('div');           // Returns live HTMLCollection
+
+// Legacy methods (still supported)
+document.all;                                    // Returns all elements (deprecated)
+document.layers;                                 // Netscape 4 only (obsolete)</pre>
+
+        <p><strong>Element Creation Methods:</strong></p>
+        <pre>// Creating elements
+const div = document.createElement('div');
+const text = document.createTextNode('Hello');
+const comment = document.createComment('This is a comment');
+const fragment = document.createDocumentFragment();
+
+// Creating attributes
+div.setAttribute('class', 'container');
+div.id = 'main-container';</pre>
+
+        <p><strong>DOM Manipulation Methods:</strong></p>
+        <pre>// Insertion
+parent.appendChild(child);
+parent.insertBefore(newChild, referenceChild);
+parent.replaceChild(newChild, oldChild);
+
+// Removal
+parent.removeChild(child);
+element.remove();  // Modern way
+
+// Cloning
+const clone = element.cloneNode(true);  // deep clone
+const shallowClone = element.cloneNode(false);  // only the element itself</pre>
+
+        <h3>The Document Lifecycle</h3>
+        <p><strong>Ready States:</strong></p>
+        <pre>console.log(document.readyState);  // "loading", "interactive", or "complete"
+
+document.addEventListener('readystatechange', () => {
+    if (document.readyState === 'interactive') {
+        console.log('DOM is ready, but resources still loading');
+    }
+    if (document.readyState === 'complete') {
+        console.log('Page fully loaded');
+    }
+});</pre>
+
+        <p><strong>DOMContentLoaded vs. Load Events:</strong></p>
+        <pre>// DOM is ready (HTML parsed, DOM tree built)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM is ready!');
+});
+
+// Everything loaded (images, stylesheets, etc.)
+window.addEventListener('load', () => {
+    console.log('Page fully loaded!');
+});</pre>
+
+        <h3>Browser Compatibility and Standards</h3>
+        <p>The <code>document</code> object implements multiple interfaces:</p>
+        <ul>
+            <li><strong>Document:</strong> Core document functionality</li>
+            <li><strong>HTMLDocument:</strong> HTML-specific features</li>
+            <li><strong>DocumentOrShadowRoot:</strong> Mixin for shadow DOM</li>
+            <li><strong>GlobalEventHandlers:</strong> For event handling</li>
+        </ul>
+        <pre>// Check if a feature exists
+if (document.querySelector) {
+    // Use modern selector
+} else {
+    // Fallback to older methods
+}</pre>
+
+        <hr>
+
+        <h2 id="dom-tree">4. DOM TREE STRUCTURE AND NODES</h2>
+
+        <h3>Understanding the Tree Structure</h3>
+        <p>The DOM represents an HTML document as a hierarchical tree of nodes. This structure is fundamental to how we
+            navigate and manipulate web pages.</p>
+        <p><strong>Visual Representation:</strong></p>
+        <pre>                    document (root node)
+                          │
+                    ┌─────┴─────┐
+                    │           │
+                 DOCTYPE      html (element)
+                              /    \
+                          head      body
+                         /    \     /  \
+                     meta   title  div  script
+                       │      │     │      │
+                   attribute "My Page" class  "app.js"
+                              "content"</pre>
+
+        <h3>Tree Terminology</h3>
+        <p><strong>Key Terms:</strong></p>
+        <ul>
+            <li><strong>Root Node:</strong> The topmost node (document)</li>
+            <li><strong>Parent Node:</strong> A node that has children</li>
+            <li><strong>Child Node:</strong> A node directly under another node</li>
+            <li><strong>Sibling Nodes:</strong> Nodes sharing the same parent</li>
+            <li><strong>Descendant:</strong> Any node nested within another</li>
+            <li><strong>Ancestor:</strong> Any node containing another</li>
+        </ul>
+
+        <p><strong>Navigation Properties:</strong></p>
+        <pre>const element = document.querySelector('.my-element');
+
+// Parent relationships
+element.parentNode;           // Parent node (any type)
+element.parentElement;        // Parent element (must be element)
+
+// Child relationships
+element.childNodes;           // All child nodes (including text/comments)
+element.children;             // Only child elements
+element.firstChild;           // First child node
+element.firstElementChild;    // First child element
+element.lastChild;            // Last child node
+element.lastElementChild;     // Last child element
+
+// Sibling relationships
+element.nextSibling;          // Next sibling node
+element.nextElementSibling;   // Next sibling element
+element.previousSibling;      // Previous sibling node
+element.previousElementSibling; // Previous sibling element</pre>
+
+        <h3>Walking the DOM Tree</h3>
+        <p><strong>Manual Traversal:</strong></p>
+        <pre>function walkDOM(node, depth = 0) {
+    console.log('  '.repeat(depth) + node.nodeName);
+    
+    for (let child of node.childNodes) {
+        walkDOM(child, depth + 1);
+    }
+}
+
+walkDOM(document.documentElement);</pre>
+
+        <p><strong>Using TreeWalker API:</strong></p>
+        <pre>const treeWalker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_ELEMENT,
+    {
+        acceptNode: (node) => {
+            if (node.tagName === 'SCRIPT') {
+                return NodeFilter.FILTER_REJECT;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+        }
+    }
+);
+
+while (treeWalker.nextNode()) {
+    console.log(treeWalker.currentNode);
+}</pre>
+
+        <h3>Node Relationships in Practice</h3>
+        <p><strong>Finding Related Elements:</strong></p>
+        <pre>// Find the nearest ancestor with a specific class
+function findAncestor(element, className) {
+    while (element && !element.classList.contains(className)) {
+        element = element.parentElement;
+    }
+    return element;
+}
+
+// Find all siblings after an element
+function getNextSiblings(element) {
+    const siblings = [];
+    while (element = element.nextElementSibling) {
+        siblings.push(element);
+    }
+    return siblings;
+}
+
+// Find all text nodes within an element
+function getTextNodes(element) {
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    
+    while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+    }
+    return textNodes;
+}</pre>
+
+        <hr>
+
+        <h2 id="node-types">5. DOM NODE TYPES AND PROPERTIES</h2>
+
+        <h3>Complete Node Type Reference</h3>
+        <p>The DOM specification defines 12 node types, each with a constant value:</p>
+        <pre>// Node type constants
+Node.ELEMENT_NODE                   // 1
+Node.ATTRIBUTE_NODE                  // 2 (deprecated)
+Node.TEXT_NODE                        // 3
+Node.CDATA_SECTION_NODE                // 4
+Node.ENTITY_REFERENCE_NODE              // 5 (deprecated)
+Node.ENTITY_NODE                         // 6 (deprecated)
+Node.PROCESSING_INSTRUCTION_NODE          // 7
+Node.COMMENT_NODE                          // 8
+Node.DOCUMENT_NODE                           // 9
+Node.DOCUMENT_TYPE_NODE                        // 10
+Node.DOCUMENT_FRAGMENT_NODE                      // 11
+Node.NOTATION_NODE                                  // 12 (deprecated)
+
+// Check node type
+if (node.nodeType === Node.ELEMENT_NODE) {
+    console.log('This is an element');
+}</pre>
+
+        <h3>Detailed Node Type Examples</h3>
+        <p><strong>1. ELEMENT_NODE (Type 1):</strong></p>
+        <pre>&lt;div id="example" class="container"&gt;Hello&lt;/div&gt;
+
+// Properties
+element.tagName;           // "DIV"
+element.id;                // "example"
+element.className;         // "container"
+element.attributes;        // NamedNodeMap of attributes
+element.innerHTML;         // "Hello"
+element.outerHTML;         // "&lt;div id="example" class="container"&gt;Hello&lt;/div&gt;"</pre>
+
+        <p><strong>2. TEXT_NODE (Type 3):</strong></p>
+        <pre>const text = document.createTextNode('Hello World');
+
+// Properties and methods
+text.data;                  // "Hello World"
+text.nodeValue;             // "Hello World"
+text.length;                // 11
+text.splitText(5);          // Splits at position 5
+text.appendData('!');       // Adds to the end
+text.deleteData(0, 5);      // Removes first 5 chars
+text.insertData(5, ' there'); // Inserts at position 5
+text.replaceData(0, 5, 'Hi'); // Replaces content</pre>
+
+        <p><strong>3. COMMENT_NODE (Type 8):</strong></p>
+        <pre>&lt;!-- This is a comment --&gt;
+const comment = document.createComment('This is a comment');
+
+comment.nodeValue;  // "This is a comment"
+comment.data;       // "This is a comment"</pre>
+
+        <p><strong>4. DOCUMENT_TYPE_NODE (Type 10):</strong></p>
+        <pre>&lt;!DOCTYPE html&gt;
+const doctype = document.doctype;
+
+doctype.name;        // "html"
+doctype.publicId;    // ""
+doctype.systemId;    // ""</pre>
+
+        <p><strong>5. DOCUMENT_FRAGMENT_NODE (Type 11):</strong></p>
+        <pre>const fragment = document.createDocumentFragment();
+
+// Use fragment for batch operations
+for (let i = 0; i &lt; 1000; i++) {
+    const li = document.createElement('li');
+    li.textContent = `Item ${i}`;
+    fragment.appendChild(li);
+}
+
+// Single reflow instead of 1000
+document.getElementById('list').appendChild(fragment);</pre>
+
+        <h3>Node Properties and Methods</h3>
+        <p><strong>Common Properties Across All Nodes:</strong></p>
+        <pre>node.nodeName;      // Tag name (DIV), #text, #comment, etc.
+node.nodeType;      // Number from 1-12
+node.nodeValue;     // Value (for text/comment nodes)
+node.parentNode;    // Parent node
+node.childNodes;    // NodeList of children
+node.firstChild;    // First child
+node.lastChild;     // Last child
+node.previousSibling; // Previous sibling
+node.nextSibling;   // Next sibling
+node.ownerDocument; // Document that owns this node</pre>
+
+        <p><strong>Important Node Methods:</strong></p>
+        <pre>node.appendChild(child);
+node.insertBefore(newChild, refChild);
+node.replaceChild(newChild, oldChild);
+node.removeChild(child);
+node.cloneNode(deep);
+node.hasChildNodes();
+node.normalize(); // Merges adjacent text nodes
+node.compareDocumentPosition(otherNode);
+node.contains(otherNode);
+node.isEqualNode(otherNode);
+node.isSameNode(otherNode);</pre>
+
+        <h3>Working with Different Node Types</h3>
+        <p><strong>Practical Example - Processing All Node Types:</strong></p>
+        <pre>function processNode(node) {
+    switch(node.nodeType) {
+        case Node.ELEMENT_NODE:
+            console.log('Element:', node.tagName);
+            // Process attributes
+            for (let attr of node.attributes) {
+                console.log(`  Attribute: ${attr.name}="${attr.value}"`);
+            }
+            break;
+            
+        case Node.TEXT_NODE:
+            const text = node.nodeValue.trim();
+            if (text) {
+                console.log('Text:', text);
+            }
+            break;
+            
+        case Node.COMMENT_NODE:
+            console.log('Comment:', node.nodeValue);
+            break;
+            
+        case Node.DOCUMENT_NODE:
+            console.log('Document node');
+            break;
+            
+        case Node.DOCUMENT_TYPE_NODE:
+            console.log('Doctype:', node.name);
+            break;
+            
+        default:
+            console.log('Other node type:', node.nodeType);
+    }
+    
+    // Process children
+    for (let child of node.childNodes) {
+        processNode(child);
+    }
+}
+
+processNode(document);</pre>
+
+        <hr>
+
+        <h2 id="rendering-engine">6. BROWSER RENDERING ENGINE AND DOM CONSTRUCTION</h2>
+
+        <h3>How Browsers Build the DOM</h3>
+        <p>Understanding how browsers construct the DOM is crucial for performance optimization.</p>
+        <p><strong>Step-by-Step Process:</strong></p>
+        <pre>1. Bytes → Characters → Tokens → Nodes → DOM
+   (HTML)   (UTF-16)   (Tags)   (Objects) (Tree)
+
+2. Concurrent CSS parsing: Bytes → Characters → Tokens → Rules → CSSOM
+
+3. JavaScript execution blocks parsing (unless async/defer)</pre>
+
+        <h3>The HTML Parsing Algorithm</h3>
+        <p><strong>Tokenization Phase:</strong></p>
+        <pre>&lt;!-- HTML Source --&gt;
+&lt;p&gt;Hello &lt;strong&gt;World&lt;/strong&gt;&lt;/p&gt;</pre>
+
+        <p><strong>Token Stream:</strong></p>
+        <pre>1. &lt;p&gt;                (StartTag: p)
+2. "Hello "          (Character token)
+3. &lt;strong&gt;          (StartTag: strong)
+4. "World"           (Character token)
+5. &lt;/strong&gt;         (EndTag: strong)
+6. &lt;/p&gt;              (EndTag: p)</pre>
+
+        <p><strong>Tree Construction Phase:</strong></p>
+        <pre>HTML Parser
+    ↓
+Tree builder
+    ↓
+DOM Tree
+    ↓
+Script execution (if encountered)
+    ↓
+Continue parsing</pre>
+
+        <h3>The Speculative Parsing Optimizations</h3>
+        <p>Modern browsers implement speculative parsing:</p>
+        <pre>// The parser will continue even while scripts download
+&lt;script src="heavy.js"&gt;&lt;/script&gt;
+&lt;img src="image.jpg"&gt;  &lt;!-- This will be requested early --&gt;</pre>
+
+        <h3>Reflow and Repaint</h3>
+        <p><strong>Reflow (Layout):</strong> Calculating positions and dimensions<br><strong>Repaint:</strong> Drawing
+            pixels to screen</p>
+
+        <p><strong>What Triggers Reflow:</strong></p>
+        <pre>// Adding/removing elements
+element.appendChild(newChild);
+
+// Changing dimensions
+element.style.width = '100px';
+
+// Changing content
+element.textContent = 'new text';
+
+// Reading certain properties (forces reflow)
+const height = element.offsetHeight;
+const width = element.offsetWidth;
+element.getBoundingClientRect();
+
+// Window resize
+window.addEventListener('resize', () => {});</pre>
+
+        <p><strong>What Triggers Repaint:</strong></p>
+        <pre>// Changing colors
+element.style.color = 'red';
+element.style.backgroundColor = 'black';
+
+// Changing visibility (not affecting layout)
+element.style.visibility = 'hidden';</pre>
+
+        <h3>Optimization Strategies</h3>
+        <p><strong>Batch DOM Operations:</strong></p>
+        <pre>// BAD - multiple reflows
+for (let i = 0; i &lt; 100; i++) {
+    const li = document.createElement('li');
+    list.appendChild(li);
+}
+
+// GOOD - single reflow
+const fragment = document.createDocumentFragment();
+for (let i = 0; i &lt; 100; i++) {
+    const li = document.createElement('li');
+    fragment.appendChild(li);
+}
+list.appendChild(fragment);</pre>
+
+        <p><strong>Use CSS Classes Instead of Inline Styles:</strong></p>
+        <pre>// BAD - multiple repaints
+element.style.padding = '10px';
+element.style.margin = '10px';
+element.style.color = 'blue';
+
+// GOOD - single repaint
+element.classList.add('my-styles');</pre>
+
+        <p><strong>Read/Write Batching:</strong></p>
+        <pre>// BAD - multiple forced reflows
+const height1 = element1.offsetHeight;
+element1.style.height = height1 + 10 + 'px';
+const height2 = element2.offsetHeight;
+element2.style.height = height2 + 10 + 'px';
+
+// GOOD - batch reads then writes
+const heights = [element1.offsetHeight, element2.offsetHeight];
+element1.style.height = heights[0] + 10 + 'px';
+element2.style.height = heights[1] + 10 + 'px';</pre>
+
+        <hr>
+
+        <h2 id="practical-applications">7. PRACTICAL APPLICATIONS AND BEST PRACTICES</h2>
+
+        <h3>Common DOM Manipulation Patterns</h3>
+
+        <p><strong>1. Element Creation and Insertion:</strong></p>
+        <pre>// Creating a complex element
+function createCard(title, content, imageUrl) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = title;
+    
+    const cardBody = document.createElement('div');
+    cardBody.className = 'card-body';
+    
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = title;
+    titleEl.className = 'card-title';
+    
+    const contentEl = document.createElement('p');
+    contentEl.textContent = content;
+    
+    cardBody.appendChild(titleEl);
+    cardBody.appendChild(contentEl);
+    card.appendChild(img);
+    card.appendChild(cardBody);
+    
+    return card;
+}
+
+// Insert in multiple positions
+container.prepend(card);  // First child
+container.append(card);   // Last child
+container.before(card);   // Before container
+container.after(card);    // After container</pre>
+
+        <p><strong>2. Efficient Event Handling (Event Delegation):</strong></p>
+        <pre>// Without delegation (BAD for many items)
+document.querySelectorAll('.item').forEach(item => {
+    item.addEventListener('click', handleClick);
+});
+
+// With delegation (GOOD)
+document.querySelector('.item-list').addEventListener('click', (e) => {
+    const item = e.target.closest('.item');
+    if (item) {
+        console.log('Item clicked:', item);
+        handleItemClick(item);
+    }
+});</pre>
+
+        <p><strong>3. Template Literals vs. DOM Methods:</strong></p>
+        <pre>// Using innerHTML (fast but dangerous with user input)
+function renderUserBad(user) {
+    container.innerHTML += `
+        &lt;div class="user-card"&gt;
+            &lt;h3&gt;${user.name}&lt;/h3&gt;
+            &lt;p&gt;${user.email}&lt;/p&gt;
+        &lt;/div&gt;
+    `;
+}
+
+// Using DOM methods (safer, better for updates)
+function renderUserGood(user) {
+    const card = document.createElement('div');
+    card.className = 'user-card';
+    
+    const title = document.createElement('h3');
+    title.textContent = user.name;
+    
+    const email = document.createElement('p');
+    email.textContent = user.email;
+    
+    card.append(title, email);
+    container.appendChild(card);
+}</pre>
+
+        <p><strong>4. Attribute Manipulation:</strong></p>
+        <pre>// Data attributes
+element.dataset.userId = '12345';
+element.dataset.role = 'admin';
+
+// Custom attributes (use dataset instead)
+element.setAttribute('data-custom', 'value');
+element.getAttribute('data-custom');
+
+// ARIA attributes for accessibility
+element.setAttribute('aria-label', 'Close button');
+element.setAttribute('role', 'button');
+element.setAttribute('aria-expanded', 'false');</pre>
+
+        <h3>Best Practices</h3>
+
+        <p><strong>1. Cache DOM References:</strong></p>
+        <pre>// BAD - multiple queries
+for (let i = 0; i &lt; 10; i++) {
+    document.querySelector('.item').style.color = 'red';
+}
+
+// GOOD - cache reference
+const item = document.querySelector('.item');
+for (let i = 0; i &lt; 10; i++) {
+    item.style.color = 'red';
+}</pre>
+
+        <p><strong>2. Use Modern APIs:</strong></p>
+        <pre>// Old way
+var element = document.getElementById('main');
+var children = element.getElementsByTagName('div');
+
+// Modern way
+const element = document.querySelector('#main');
+const children = element.querySelectorAll('div');
+const firstChild = element.querySelector('div');</pre>
+
+        <p><strong>3. Handle Dynamic Content:</strong></p>
+        <pre>// Observer for dynamic content
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+            console.log('New nodes added:', mutation.addedNodes);
+        }
+    });
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});</pre>
+
+        <p><strong>4. Memory Management:</strong></p>
+        <pre>// Clean up event listeners
+function setupComponent() {
+    const button = document.querySelector('#myButton');
+    const handler = () => console.log('clicked');
+    
+    button.addEventListener('click', handler);
+    
+    // Return cleanup function
+    return () => {
+        button.removeEventListener('click', handler);
+    };
+}
+
+const cleanup = setupComponent();
+// Later, when component is destroyed
+cleanup();</pre>
+
+        <hr>
+
+        <h2 id="pitfalls">8. COMMON PITFALLS AND DEBUGGING</h2>
+
+        <h3>Frequent DOM Mistakes</h3>
+
+        <p><strong>1. Manipulating DOM Before Ready:</strong></p>
+        <pre>// BAD - script in head
+&lt;script&gt;
+    document.getElementById('main').style.color = 'red'; // null error
+&lt;/script&gt;
+
+// GOOD - wait for DOM
+&lt;script&gt;
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('main').style.color = 'red';
+    });
+&lt;/script&gt;</pre>
+
+        <p><strong>2. Live vs. Static Collections:</strong></p>
+        <pre>// HTMLCollection (live) - updates automatically
+const liveDivs = document.getElementsByTagName('div');
+// NodeList (static) - snapshot
+const staticDivs = document.querySelectorAll('div');
+
+// Modifying while iterating live collection causes issues
+for (let div of liveDivs) {  // Infinite loop!
+    const newDiv = document.createElement('div');
+    document.body.appendChild(newDiv);
+}</pre>
+
+        <p><strong>3. Forgetting to Prevent Default:</strong></p>
+        <pre>// BAD - form submits and page refreshes
+form.addEventListener('submit', () => {
+    console.log('Form submitted');
+});
+
+// GOOD - prevent default
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    console.log('Form submitted');
+});</pre>
+
+        <p><strong>4. innerHTML Security Issues:</strong></p>
+        <pre>// DANGEROUS - XSS vulnerability
+const userInput = "&lt;img src='x' onerror='alert(\"hacked\")'&gt;";
+element.innerHTML = userInput;
+
+// SAFE - use textContent
+element.textContent = userInput;
+
+// SAFE - sanitize if you must use innerHTML
+function sanitizeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}</pre>
+
+        <h3>Debugging Techniques</h3>
+
+        <p><strong>1. Console Methods:</strong></p>
+        <pre>// Log element details
+console.log(element);                    // HTML representation
+console.dir(element);                     // Object properties
+console.table(element.attributes);         // Table of attributes
+
+// Check computed styles
+console.log(window.getComputedStyle(element));
+
+// Trace element ancestry
+console.log(element.closest('.container'));</pre>
+
+        <p><strong>2. Breakpoints and Debugging:</strong></p>
+        <pre>// Add debugger statement
+function complexFunction(element) {
+    debugger; // Execution will pause here
+    element.style.color = 'red';
+    // Step through code
+}</pre>
+
+        <p><strong>3. Monitor Events:</strong></p>
+        <pre>// Log all clicks on an element
+monitorEvents(element, 'click');
+
+// Log multiple events
+monitorEvents(element, ['mouseover', 'mouseout']);
+
+// Stop monitoring
+unmonitorEvents(element);</pre>
+
+        <p><strong>4. Performance Measurement:</strong></p>
+        <pre>// Measure DOM operation performance
+console.time('DOM operation');
+for (let i = 0; i &lt; 1000; i++) {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+}
+console.timeEnd('DOM operation');</pre>
+
+        <h3>Browser DevTools Tips</h3>
+        <p><strong>Elements Panel:</strong></p>
+        <ul>
+            <li><strong>Inspect element:</strong> Right-click → Inspect</li>
+            <li><strong>Modify on the fly:</strong> Double-click any property</li>
+            <li><strong>Break on...</strong> Right-click element → Break on → attribute modifications</li>
+        </ul>
+        <p><strong>Console Panel:</strong></p>
+        <pre>// $0 refers to currently selected element in Elements panel
+$0.style.backgroundColor = 'yellow';
+
+// $$ is querySelectorAll shorthand
+$$('.item').forEach(el => el.classList.add('highlight'));
+
+// $_ is last evaluated result
+$_ // returns previous result</pre>
+
+        <hr>
+
+        <h2 id="advanced-concepts">9. ADVANCED DOM CONCEPTS</h2>
+
+        <h3>Shadow DOM</h3>
+        <p>The Shadow DOM provides encapsulation for DOM trees and styles.</p>
+        <pre>// Creating a shadow root
+const host = document.getElementById('widget-host');
+const shadow = host.attachShadow({mode: 'open'}); // or 'closed'
+
+// Adding content to shadow DOM
+shadow.innerHTML = `
+    &lt;style&gt;
+        p { color: red; } /* Won't affect outside */
+    &lt;/style&gt;
+    &lt;p&gt;Inside shadow DOM&lt;/p&gt;
+`;
+
+// Accessing shadow DOM
+if (host.shadowRoot) { // null if mode='closed'
+    console.log(host.shadowRoot.querySelector('p'));
+}</pre>
+
+        <p><strong>Benefits of Shadow DOM:</strong></p>
+        <ul>
+            <li>Style encapsulation</li>
+            <li>DOM encapsulation</li>
+            <li>Custom elements integration</li>
+        </ul>
+
+        <h3>Custom Elements</h3>
+        <p>Creating reusable components with the DOM:</p>
+        <pre>// Define a custom element
+class UserCard extends HTMLElement {
+    constructor() {
+        super();
+        
+        // Attach shadow DOM
+        const shadow = this.attachShadow({mode: 'open'});
+        
+        // Create structure
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('class', 'user-card');
+        
+        const name = document.createElement('h3');
+        name.textContent = this.getAttribute('name');
+        
+        const email = document.createElement('p');
+        email.textContent = this.getAttribute('email');
+        
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .user-card {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin: 5px;
+            }
+            h3 { margin: 0; color: #333; }
+        `;
+        
+        shadow.appendChild(style);
+        shadow.appendChild(wrapper);
+        wrapper.appendChild(name);
+        wrapper.appendChild(email);
+    }
+}
+
+// Register the element
+customElements.define('user-card', UserCard);</pre>
+
+        <p><strong>Usage in HTML:</strong></p>
+        <pre>&lt;user-card name="John Doe" email="john@example.com"&gt;&lt;/user-card&gt;</pre>
+
+        <h3>Range and Selection APIs</h3>
+        <p>Working with selected text and ranges:</p>
+        <pre>// Create a range
+const range = document.createRange();
+const element = document.getElementById('content');
+range.selectNodeContents(element);
+
+// Manipulate range
+range.setStart(element.firstChild, 5);
+range.setEnd(element.lastChild, 10);
+
+// Apply formatting
+const span = document.createElement('span');
+span.style.backgroundColor = 'yellow';
+range.surroundContents(span);
+
+// Get user selection
+const selection = window.getSelection();
+if (selection.rangeCount &gt; 0) {
+    const selectedRange = selection.getRangeAt(0);
+    console.log(selectedRange.toString());
+}</pre>
+
+        <h3>Intersection Observer</h3>
+        <p>Efficiently detect when elements enter/leave the viewport:</p>
+        <pre>const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            console.log('Element is visible:', entry.target);
+            
+            // Load image or trigger animation
+            entry.target.src = entry.target.dataset.src;
+            
+            // Stop observing after loading
+            observer.unobserve(entry.target);
+        }
+    });
+}, {
+    threshold: 0.5, // 50% visible
+    rootMargin: '50px' // Start loading 50px before
+});
+
+// Observe all images with data-src
+document.querySelectorAll('img[data-src]').forEach(img => {
+    observer.observe(img);
+});</pre>
+
+        <h3>MutationObserver</h3>
+        <p>Watch for changes in the DOM:</p>
+        <pre>const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        switch(mutation.type) {
+            case 'childList':
+                console.log('Nodes added/removed');
+                console.log('Added:', mutation.addedNodes);
+                console.log('Removed:', mutation.removedNodes);
+                break;
+                
+            case 'attributes':
+                console.log(`Attribute ${mutation.attributeName} changed`);
+                console.log('Old value:', mutation.oldValue);
+                console.log('New value:', mutation.target.getAttribute(mutation.attributeName));
+                break;
+                
+            case 'characterData':
+                console.log('Text content changed');
+                break;
+        }
+    });
+});
+
+// Start observing
+observer.observe(document.getElementById('dynamic-content'), {
+    childList: true,
+    attributes: true,
+    characterData: true,
+    subtree: true,
+    attributeOldValue: true,
+    characterDataOldValue: true
+});
+
+// Stop observing
+// observer.disconnect();</pre>
+
+        <hr>
+
+        <h2 id="performance">10. PERFORMANCE CONSIDERATIONS</h2>
+
+        <h3>DOM Access and Manipulation Cost</h3>
+        <p><strong>Why DOM operations are expensive:</strong></p>
+        <ol>
+            <li>Cross-boundary communication (JS ↔ Rendering engine)</li>
+            <li>Layout recalculations</li>
+            <li>Paint operations</li>
+            <li>Memory allocation</li>
+        </ol>
+
+        <p><strong>Performance Metrics:</strong></p>
+        <pre>// Measure DOM operation time
+const start = performance.now();
+for (let i = 0; i &lt; 1000; i++) {
+    document.body.appendChild(document.createElement('div'));
+}
+const end = performance.now();
+console.log(`Time: ${end - start}ms`);
+
+// Use Performance API for detailed analysis
+performance.mark('dom-start');
+// DOM operations...
+performance.mark('dom-end');
+performance.measure('dom-operation', 'dom-start', 'dom-end');</pre>
+
+        <h3>Optimization Techniques</h3>
+
+        <p><strong>1. Batch DOM Operations:</strong></p>
+        <pre>// BAD
+function addItemsBad(count) {
+    const list = document.getElementById('list');
+    for (let i = 0; i &lt; count; i++) {
+        const item = document.createElement('li');
+        item.textContent = `Item ${i}`;
+        list.appendChild(item); // Reflow each time
+    }
+}
+
+// GOOD
+function addItemsGood(count) {
+    const list = document.getElementById('list');
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i &lt; count; i++) {
+        const item = document.createElement('li');
+        item.textContent = `Item ${i}`;
+        fragment.appendChild(item);
+    }
+    list.appendChild(fragment); // Single reflow
+}</pre>
+
+        <p><strong>2. Virtual Scrolling for Large Lists:</strong></p>
+        <pre>// Only render visible items
+class VirtualScroller {
+    constructor(container, items, itemHeight) {
+        this.container = container;
+        this.items = items;
+        this.itemHeight = itemHeight;
+        this.visibleItems = Math.ceil(container.clientHeight / itemHeight) + 2;
+        
+        container.style.overflowY = 'auto';
+        container.addEventListener('scroll', () => this.render());
+        
+        this.render();
+    }
+    
+    render() {
+        const scrollTop = this.container.scrollTop;
+        const startIndex = Math.floor(scrollTop / this.itemHeight);
+        const endIndex = startIndex + this.visibleItems;
+        
+        const visibleData = this.items.slice(startIndex, endIndex);
+        this.container.innerHTML = visibleData.map(item => `
+            &lt;div style="height: ${this.itemHeight}px"&gt;
+                ${item}
+            &lt;/div&gt;
+        `).join('');
+    }
+}</pre>
+
+        <p><strong>3. Debouncing and Throttling:</strong></p>
+        <pre>// Debounce - wait for pause
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Throttle - limit execution rate
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Usage
+window.addEventListener('scroll', throttle(() => {
+    console.log('Scrolled');
+}, 100));</pre>
+
+        <h3>Memory Leaks and Cleanup</h3>
+        <p><strong>Common Memory Leak Patterns:</strong></p>
+        <pre>// 1. Detached DOM elements
+let detachedElement;
+function createLeak() {
+    const parent = document.createElement('div');
+    const child = document.createElement('p');
+    parent.appendChild(child);
+    detachedElement = child; // Reference keeps whole tree alive
+}
+
+// 2. Circular references
+function circularLeak() {
+    const element = document.getElementById('myElement');
+    const data = { element };
+    element.data = data; // Circular reference
+}
+
+// 3. Forgotten event listeners
+class Component {
+    constructor(element) {
+        this.element = element;
+        this.handler = this.handler.bind(this);
+        element.addEventListener('click', this.handler);
+        // Never removed
+    }
+}
+
+// Proper cleanup
+class Component {
+    constructor(element) {
+        this.element = element;
+        this.handler = this.handler.bind(this);
+        element.addEventListener('click', this.handler);
+    }
+    
+    destroy() {
+        this.element.removeEventListener('click', this.handler);
+        this.element = null;
+    }
+}</pre>
+
+        <hr>
+
+        <h2 id="interview-questions">11. INTERVIEW QUESTIONS AND ANSWERS</h2>
+
+        <h3>Basic Level Questions</h3>
+
+        <p><strong>Q1: What is the DOM and why is it important?</strong></p>
+        <p><strong>A:</strong> The Document Object Model (DOM) is a programming interface for HTML and XML documents. It
+            represents the page as a tree of objects that can be manipulated with programming languages like JavaScript.
+            The DOM is important because:</p>
+        <ul>
+            <li>It provides a structured representation of the document</li>
+            <li>It allows dynamic manipulation of content, structure, and style</li>
+            <li>It enables programmatic access to web page elements</li>
+            <li>It's language-independent and works across all browsers</li>
+        </ul>
+
+        <p><strong>Q2: What's the difference between <code>innerHTML</code> and <code>textContent</code>?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// innerHTML parses HTML tags
+element.innerHTML = '&lt;strong&gt;Hello&lt;/strong&gt;'; // Renders bold text
+
+// textContent treats everything as text
+element.textContent = '&lt;strong&gt;Hello&lt;/strong&gt;'; // Renders as plain text
+
+// Security implications
+userInput = '&lt;img src=x onerror="alert(\'XSS\')"&gt;';
+element.innerHTML = userInput; // DANGEROUS - executes script
+element.textContent = userInput; // SAFE - shows as text</pre>
+
+        <p><strong>Q3: Explain <code>document</code> vs <code>window</code> objects.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// window - global object representing the browser window
+window.innerHeight; // Window height
+window.location;    // URL information
+window.alert();     // Global functions
+
+// document - property of window, represents the web page
+document.body;      // Page body
+document.title;     // Page title
+document.getElementById(); // DOM methods
+
+// window is the container, document is the content
+window.document === document; // true</pre>
+
+        <p><strong>Q4: How do you create and remove elements?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// Creating
+const div = document.createElement('div');
+div.textContent = 'Hello';
+div.className = 'my-class';
+
+// Adding
+parent.appendChild(div);
+parent.prepend(div);
+parent.insertBefore(div, referenceChild);
+
+// Removing
+div.remove(); // Modern
+parent.removeChild(div); // Traditional</pre>
+
+        <h3>Intermediate Level Questions</h3>
+
+        <p><strong>Q5: Explain event delegation and its benefits.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// Event delegation - attaching event to parent
+document.getElementById('list').addEventListener('click', (e) => {
+    const target = e.target.closest('li');
+    if (target) {
+        console.log('List item clicked:', target.textContent);
+    }
+});
+
+// Benefits:
+// 1. Works for dynamically added elements
+// 2. Uses less memory (fewer event listeners)
+// 3. Cleaner code</pre>
+
+        <p><strong>Q6: What are the different ways to select elements in the DOM?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// By ID (fastest)
+const byId = document.getElementById('main');
+
+// By class name (live HTMLCollection)
+const byClass = document.getElementsByClassName('item');
+
+// By tag name (live HTMLCollection)
+const byTag = document.getElementsByTagName('div');
+
+// By CSS selector (first match)
+const firstMatch = document.querySelector('.item.active');
+
+// By CSS selector (all matches - static NodeList)
+const allMatches = document.querySelectorAll('.item');
+
+// By name attribute (for forms)
+const byName = document.getElementsByName('username');</pre>
+
+        <p><strong>Q7: Explain the difference between NodeList and HTMLCollection.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// HTMLCollection - live, only elements
+const liveCollection = document.getElementsByClassName('item');
+// NodeList - can be live or static
+const staticNodeList = document.querySelectorAll('.item');
+const liveNodeList = document.childNodes; // Live NodeList
+
+// HTMLCollection has named items
+const formElements = document.forms[0].elements;
+console.log(formElements.username); // Access by name/id
+
+// NodeList has forEach (most browsers)
+staticNodeList.forEach(el => console.log(el));
+
+// Both can be converted to array
+Array.from(liveCollection);
+[...staticNodeList];</pre>
+
+        <p><strong>Q8: How does the browser render a web page?</strong></p>
+        <p><strong>A:</strong> The rendering process:</p>
+        <ol>
+            <li><strong>Parse HTML</strong> → Create DOM tree</li>
+            <li><strong>Parse CSS</strong> → Create CSSOM tree</li>
+            <li><strong>Combine</strong> → Create Render Tree (visible elements only)</li>
+            <li><strong>Layout</strong> → Calculate positions and sizes</li>
+            <li><strong>Paint</strong> → Fill pixels</li>
+            <li><strong>Composite</strong> → Layers are combined</li>
+        </ol>
+
+        <h3>Advanced Level Questions</h3>
+
+        <p><strong>Q9: What's the difference between <code>display: none</code> and
+                <code>visibility: hidden</code>?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// display: none - element removed from render tree
+element.style.display = 'none';
+element.offsetHeight; // 0 - no space allocated
+
+// visibility: hidden - element invisible but occupies space
+element.style.visibility = 'hidden';
+element.offsetHeight; // Still has height
+
+// JavaScript implications
+element.style.display = 'none';
+element.getBoundingClientRect(); // All zeros
+
+element.style.visibility = 'hidden';
+element.getBoundingClientRect(); // Normal dimensions</pre>
+
+        <p><strong>Q10: How do you optimize DOM performance?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>// 1. Batch DOM reads/writes
+function optimizeDOM() {
+    // Read phase
+    const widths = elements.map(el => el.offsetWidth);
+    
+    // Write phase (using requestAnimationFrame)
+    requestAnimationFrame(() => {
+        elements.forEach((el, i) => {
+            el.style.width = (widths[i] * 2) + 'px';
+        });
+    });
+}
+
+// 2. Use document fragments
+const fragment = document.createDocumentFragment();
+// Add many elements to fragment
+container.appendChild(fragment); // Single reflow
+
+// 3. Virtualize long lists
+// Show only visible items in scrollable container
+
+// 4. Debounce expensive operations
+window.addEventListener('resize', debounce(() => {
+    // Recalculate layout
+}, 150));
+
+// 5. Use CSS classes instead of inline styles
+element.classList.add('new-styles'); // vs multiple style properties</pre>
+
+        <p><strong>Q11: Explain Shadow DOM and its use cases.</strong></p>
+        <p><strong>A:</strong> Shadow DOM provides encapsulation:</p>
+        <pre>class Tooltip extends HTMLElement {
+    constructor() {
+        super();
+        const shadow = this.attachShadow({mode: 'open'});
+        
+        // These styles won't affect outside
+        shadow.innerHTML = `
+            &lt;style&gt;
+                .tooltip { 
+                    background: black; 
+                    color: white;
+                }
+            &lt;/style&gt;
+            &lt;div class="tooltip"&gt;
+                &lt;slot&gt;&lt;/slot&gt; &lt;!-- Content goes here --&gt;
+            &lt;/div&gt;
+        `;
+    }
+}
+
+// Use cases:
+// - Web components
+// - Widget libraries
+// - Design systems
+// - Avoiding CSS conflicts</pre>
+
+        <p><strong>Q12: How would you implement infinite scrolling?</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>class InfiniteScroll {
+    constructor(container, loadMore) {
+        this.container = container;
+        this.loadMore = loadMore;
+        this.observer = null;
+        this.init();
+    }
+    
+    init() {
+        this.observer = new IntersectionObserver(
+            (entries) => {
+                const lastEntry = entries[0];
+                if (lastEntry.isIntersecting) {
+                    this.loadMore();
+                }
+            },
+            { threshold: 0.1 }
+        );
+        
+        // Observe sentinel element
+        this.sentinel = document.createElement('div');
+        this.container.appendChild(this.sentinel);
+        this.observer.observe(this.sentinel);
+    }
+    
+    addItems(newItems) {
+        // Insert before sentinel
+        this.sentinel.insertAdjacentHTML('beforebegin', newItems);
+    }
+    
+    destroy() {
+        this.observer.disconnect();
+        this.sentinel.remove();
+    }
+}</pre>
+
+        <h3>Practical Problem-Solving Questions</h3>
+
+        <p><strong>Q13: Write a function to find all text nodes containing a specific string.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>function findTextNodesContaining(container, searchString) {
+    const results = [];
+    const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: (node) => {
+                if (node.textContent.includes(searchString)) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_SKIP;
+            }
+        }
+    );
+    
+    while (walker.nextNode()) {
+        results.push(walker.currentNode);
+    }
+    
+    return results;
+}
+
+// Usage
+const textNodes = findTextNodesContaining(document.body, 'important');
+textNodes.forEach(node => {
+    const span = document.createElement('span');
+    span.style.backgroundColor = 'yellow';
+    node.parentNode.replaceChild(span, node);
+    span.appendChild(node);
+});</pre>
+
+        <p><strong>Q14: Create a function to track element visibility and impressions.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>class VisibilityTracker {
+    constructor() {
+        this.observers = new Map();
+    }
+    
+    track(element, callback, threshold = 0.5) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        callback({
+                            element: entry.target,
+                            ratio: entry.intersectionRatio,
+                            time: Date.now()
+                        });
+                        
+                        // Auto-unobserve after first impression
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold }
+        );
+        
+        observer.observe(element);
+        this.observers.set(element, observer);
+    }
+    
+    untrack(element) {
+        const observer = this.observers.get(element);
+        if (observer) {
+            observer.disconnect();
+            this.observers.delete(element);
+        }
+    }
+}
+
+// Usage
+const tracker = new VisibilityTracker();
+tracker.track(
+    document.querySelector('.ad-banner'),
+    (impression) => {
+        console.log('Ad viewed:', impression);
+        // Send to analytics
+    }
+);</pre>
+
+        <p><strong>Q15: Implement a simple templating engine using DOM.</strong></p>
+        <p><strong>A:</strong></p>
+        <pre>class SimpleTemplate {
+    constructor(template) {
+        this.template = template;
+    }
+    
+    render(data) {
+        const temp = document.createElement('div');
+        
+        // Replace {{key}} with values
+        const html = this.template.replace(
+            /\{\{(\w+)\}\}/g,
+            (match, key) => data[key] || ''
+        );
+        
+        temp.innerHTML = html;
+        
+        // Process conditionals
+        temp.querySelectorAll('[data-if]').forEach(el => {
+            const condition = data[el.dataset.if];
+            if (!condition) el.remove();
+        });
+        
+        // Process loops
+        temp.querySelectorAll('[data-for]').forEach(el => {
+            const [itemName, arrayName] = el.dataset.for.split(' in ');
+            const array = data[arrayName.trim()];
+            
+            if (Array.isArray(array)) {
+                const parent = el.parentNode;
+                const template = el.cloneNode(true);
+                template.removeAttribute('data-for');
+                
+                array.forEach(item => {
+                    const clone = template.cloneNode(true);
+                    clone.innerHTML = clone.innerHTML.replace(
+                        new RegExp(`{{\\s*${itemName}\\s*}}`, 'g'),
+                        item
+                    );
+                    parent.insertBefore(clone, el);
+                });
+            }
+            
+            el.remove(); // Remove original template
+        });
+        
+        return temp.children;
+    }
+}
+
+// Usage
+const template = new SimpleTemplate(`
+    &lt;div data-for="user in users"&gt;
+        &lt;h3&gt;{{user}}&lt;/h3&gt;
+        &lt;p data-if="showBio"&gt;Bio for {{user}}&lt;/p&gt;
+    &lt;/div&gt;
+`);
+
+const result = template.render({
+    users: ['Alice', 'Bob'],
+    showBio: true
+});</pre>
+
+        <hr>
+
+        <h2>Conclusion</h2>
+        <p>The Document Object Model is the foundation of interactive web development. Understanding it deeply allows
+            developers to:</p>
+        <ol>
+            <li><strong>Build dynamic applications</strong> that respond to user input</li>
+            <li><strong>Optimize performance</strong> by minimizing expensive operations</li>
+            <li><strong>Debug effectively</strong> by understanding how browsers interpret code</li>
+            <li><strong>Create accessible content</strong> that works with assistive technologies</li>
+            <li><strong>Implement complex features</strong> like infinite scroll, virtual lists, and custom components
+            </li>
+        </ol>
+
+        <h3>Key Takeaways</h3>
+        <ul>
+            <li>The DOM is a tree representation of your HTML document</li>
+            <li>It's language-independent but most commonly used with JavaScript</li>
+            <li>The <code>document</code> object is your entry point to the DOM</li>
+            <li>Understanding node relationships is crucial for navigation</li>
+            <li>Performance matters - batch operations and minimize reflows</li>
+            <li>Modern APIs like IntersectionObserver and MutationObserver provide powerful capabilities</li>
+            <li>Shadow DOM enables encapsulation for components</li>
+            <li>Event delegation is essential for dynamic content</li>
+            <li>Always consider memory leaks and cleanup</li>
+        </ul>
+
+        <h3>Further Learning Resources</h3>
+        <ol>
+            <li><strong>MDN Web Docs:</strong> The definitive DOM documentation</li>
+            <li><strong>WHATWG DOM Standard:</strong> The official specification</li>
+            <li><strong>Browser DevTools:</strong> Practice inspecting and debugging</li>
+            <li><strong>Framework Documentation:</strong> See how React/Vue abstract the DOM</li>
+            <li><strong>Performance Blogs:</strong> Learn advanced optimization techniques</li>
+        </ol>
+
+        <p>Remember: The DOM is not just an API—it's the bridge between your code and what users see and interact with.
+            Master it, and you master web development.</p>
+
+        <footer>
+            THE DOCUMENT OBJECT MODEL (DOM) – complete study notes · every line preserved
+        </footer>
+
+    </div>
+</body>
+
+</html>

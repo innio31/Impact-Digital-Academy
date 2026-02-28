@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Modern JS (ES6+) · complete study notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f1eef8;
+            color: #1e1e2f;
+            line-height: 1.6;
+            padding: 1.2rem;
+        }
+
+        .master-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.2rem;
+            box-shadow: 0 30px 45px -35px #2d263b;
+            padding: 2rem 1.8rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #232559;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            background: linear-gradient(135deg, #33387e, #ba4b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 12px solid #ba4b6b;
+            padding-left: 1.2rem;
+            margin: 1rem 0 1.5rem;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            border-bottom: 3px solid #d9819b;
+            padding-bottom: 0.3rem;
+            margin: 2.2rem 0 1.2rem;
+        }
+
+        h3 {
+            font-size: clamp(1.4rem, 4vw, 1.9rem);
+            margin: 1.8rem 0 1rem;
+            color: #33387e;
+            background: #f2ecfe;
+            display: inline-block;
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            margin: 1.4rem 0 0.6rem;
+            color: #40448c;
+        }
+
+        .table-of-contents {
+            background: #edeaff;
+            border-radius: 2rem;
+            padding: 1.6rem 2rem;
+            margin: 2rem 0;
+            border-left: 12px solid #5f64b0;
+        }
+
+        .table-of-contents ul {
+            columns: 2 220px;
+            list-style: none;
+        }
+
+        .table-of-contents li {
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .table-of-contents a {
+            text-decoration: none;
+            color: #363b84;
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+        }
+
+        pre {
+            background: #1e1e2f;
+            color: #f8f2ff;
+            padding: 1.2rem 1.5rem;
+            border-radius: 1.8rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            box-shadow: inset 0 0 10px #04040c;
+            border: 1px solid #5f5a9a;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: #edeaf9;
+            color: #232559;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: transparent;
+            color: #f0eaff;
+            padding: 0;
+        }
+
+        .badge-pitfall {
+            background: #ffe5e5;
+            border-left: 6px solid #b13e3e;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            margin: 1.2rem 0;
+        }
+
+        .badge-best {
+            background: #e2f0e8;
+            border-left: 6px solid #2d7a5b;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            margin: 1.2rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #c9bfec, white, #c9bfec);
+            margin: 2.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #faf8ff;
+            border-radius: 1.6rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px #ded1f0;
+            margin: 2rem 0;
+        }
+
+        th {
+            background: #464b9e;
+            color: white;
+            font-weight: 600;
+            padding: 1rem 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid #cfc6ec;
+            vertical-align: top;
+        }
+
+        .exercise-box {
+            background: #f6f2ff;
+            border-radius: 2rem;
+            padding: 1.2rem 1.8rem;
+            margin: 2rem 0;
+            border: 2px solid #bcafe0;
+        }
+
+        .summary-card {
+            background: #e5dffc;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #464b8b;
+            border-top: 2px dashed #bcafe0;
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .master-container {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="master-container">
+
+        <!-- title exactly as given -->
+        <h1>MODERN JAVASCRIPT (ES6+) FEATURES</h1>
+
+        <!-- TABLE OF CONTENTS (exact wording) -->
+        <div class="table-of-contents">
+            <h2 style="border-bottom: none; margin-top:0;">TABLE OF CONTENTS</h2>
+            <ul>
+                <li>1. Introduction to ECMAScript 2015 (ES6)</li>
+                <li>2. Arrow Functions</li>
+                <li>3. Destructuring Assignment</li>
+                <li>4. Spread Operator (...)</li>
+                <li>5. Template Literals</li>
+                <li>6. Practice Exercises &amp; Examples</li>
+                <li>7. Common Pitfalls &amp; Best Practices</li>
+            </ul>
+        </div>
+
+        <!-- 1. INTRODUCTION -->
+        <h2>1. INTRODUCTION TO ECMASCRIPT 2015 (ES6)</h2>
+        <h3>What is ES6?</h3>
+        <p>ECMAScript 2015, commonly known as ES6, was a major update to JavaScript that introduced significant
+            enhancements to the language. It was released in June 2015 and laid the foundation for modern JavaScript
+            development.</p>
+        <h3>Why ES6 Matters:</h3>
+        <ul>
+            <li><strong>Cleaner Code</strong>: More concise and readable syntax</li>
+            <li><strong>Better Performance</strong>: Optimized language features</li>
+            <li><strong>Improved Functionality</strong>: New capabilities that weren't possible before</li>
+            <li><strong>Industry Standard</strong>: Modern frameworks and libraries rely on ES6+</li>
+            <li><strong>Better Developer Experience</strong>: Less boilerplate, more expressive code</li>
+        </ul>
+        <h3>Browser Support:</h3>
+        <p>All modern browsers (Chrome, Firefox, Safari, Edge) fully support ES6. For older browsers, tools like Babel
+            can transpile ES6 code back to ES5.</p>
+        <hr>
+
+        <!-- 2. ARROW FUNCTIONS -->
+        <h2>2. ARROW FUNCTIONS</h2>
+        <h3>2.1 What Are Arrow Functions?</h3>
+        <p>Arrow functions provide a concise syntax for writing function expressions. They were introduced to solve
+            common problems with traditional functions, particularly the handling of the <code>this</code> keyword.</p>
+
+        <h3>2.2 Syntax Variations</h3>
+        <h4>Basic Syntax:</h4>
+        <pre><code>// Traditional Function
+function add(a, b) {
+    return a + b;
+}
+
+// Arrow Function
+const add = (a, b) => {
+    return a + b;
+};</code></pre>
+
+        <h4>Implicit Return (Single Expression):</h4>
+        <pre><code>// When the function body is a single expression, you can omit curly braces and 'return'
+const add = (a, b) => a + b;
+
+const square = x => x * x;  // Parentheses optional with single parameter
+
+// Real-world example
+const double = numbers => numbers.map(num => num * 2);</code></pre>
+
+        <h4>No Parameters:</h4>
+        <pre><code>// Must use empty parentheses
+const greet = () => console.log("Hello, World!");
+
+const getCurrentDate = () => new Date();
+
+const randomNumber = () => Math.floor(Math.random() * 100);</code></pre>
+
+        <h4>Single Parameter (Parentheses Optional):</h4>
+        <pre><code>// With parentheses
+const square = (x) => x * x;
+
+// Without parentheses (cleaner)
+const cube = x => x * x * x;
+
+// Both work the same way
+const double = x => x * 2;</code></pre>
+
+        <h4>Multiple Parameters:</h4>
+        <pre><code>// Parentheses are required for multiple parameters
+const multiply = (a, b) => a * b;
+
+const createUser = (name, age, email) => ({
+    name: name,
+    age: age,
+    email: email
+});</code></pre>
+
+        <h4>Returning Object Literals:</h4>
+        <pre><code>// To return an object literal, wrap it in parentheses
+const createPerson = (name, age) => ({ name: name, age: age });
+
+// Without parentheses, curly braces are interpreted as function body
+// This will cause an error:
+// const createPerson = (name, age) => { name: name, age: age };
+
+// Real-world example
+const formatUser = (user) => ({
+    fullName: `${user.firstName} ${user.lastName}`,
+    isAdult: user.age >= 18,
+    email: user.email.toLowerCase()
+});</code></pre>
+
+        <h3>2.3 Arrow Functions vs Traditional Functions</h3>
+        <h4>The 'this' Keyword - The Most Important Difference</h4>
+        <pre><code>**Traditional Function:**
+const person = {
+    name: "John",
+    hobbies: ["reading", "coding", "hiking"],
+    
+    // Traditional function - 'this' refers to the person object
+    showHobbies: function() {
+        this.hobbies.forEach(function(hobby) {
+            // 'this' inside here is NOT the person object! (it's undefined or window)
+            console.log(`${this.name} likes ${hobby}`); // ❌ Won't work
+        });
+    }
+};
+
+// Fix with traditional approach (workaround)
+const personFixed = {
+    name: "John",
+    hobbies: ["reading", "coding", "hiking"],
+    
+    showHobbies: function() {
+        const self = this;  // Store reference to 'this'
+        this.hobbies.forEach(function(hobby) {
+            console.log(`${self.name} likes ${hobby}`); // ✅ Works
+        });
+    }
+};</code></pre>
+
+        <pre><code>**Arrow Function:**
+const person = {
+    name: "John",
+    hobbies: ["reading", "coding", "hiking"],
+    
+    showHobbies: function() {
+        // Arrow function inherits 'this' from its surrounding scope (the showHobbies function)
+        this.hobbies.forEach(hobby => {
+            console.log(`${this.name} likes ${hobby}`); // ✅ Works perfectly!
+        });
+    }
+};
+
+// Even better - using arrow functions for methods (with caution)
+const betterPerson = {
+    name: "John",
+    hobbies: ["reading", "coding", "hiking"],
+    
+    // But be careful: arrow function as method doesn't work as expected
+    // showHobbies: () => {  // ❌ 'this' would be the global object (window)
+    //     this.hobbies.forEach(hobby => {
+    //         console.log(`${this.name} likes ${hobby}`);
+    //     });
+    // }
+    
+    // Best practice: use regular methods, arrow functions for callbacks
+    showHobbies() {  // Shorthand method syntax
+        this.hobbies.forEach(hobby => {
+            console.log(`${this.name} likes ${hobby}`);
+        });
+    }
+};</code></pre>
+
+        <h4>When NOT to Use Arrow Functions:</h4>
+        <pre><code>1. **Object Methods:**
+const calculator = {
+    value: 0,
+    
+    // ❌ Don't do this
+    add: (num) => {
+        this.value += num;  // 'this' is not calculator!
+    },
+    
+    // ✅ Do this
+    add(num) {
+        this.value += num;
+    }
+};
+
+2. **Constructor Functions:**
+// ❌ Can't use arrow functions as constructors
+const Person = (name) => {
+    this.name = name;  // TypeError: Person is not a constructor
+};
+
+// ✅ Use regular functions
+function Person(name) {
+    this.name = name;
+}
+
+3. **Event Handlers (when you need dynamic 'this'):**
+// ❌ Arrow function - 'this' doesn't refer to the button
+button.addEventListener('click', () => {
+    this.textContent = 'Clicked';  // 'this' is not the button
+});
+
+// ✅ Regular function - 'this' refers to the button
+button.addEventListener('click', function() {
+    this.textContent = 'Clicked';
+});
+
+4. **When you need the 'arguments' object:**
+// ❌ Arrow functions don't have their own 'arguments' object
+const sum = () => {
+    return Array.from(arguments).reduce((a, b) => a + b);  // ❌ arguments is not defined
+};
+
+// ✅ Regular function has 'arguments'
+function sum() {
+    return Array.from(arguments).reduce((a, b) => a + b);
+}
+
+// Alternative with rest parameters (ES6+)
+const sum = (...args) => args.reduce((a, b) => a + b);</code></pre>
+
+        <h3>2.4 Advanced Arrow Function Patterns</h3>
+        <h4>Immediately Invoked Function Expressions (IIFE):</h4>
+        <pre><code>// Traditional IIFE
+(function() {
+    console.log("Runs immediately");
+})();
+
+// Arrow function IIFE
+(() => {
+    console.log("Runs immediately");
+})();
+
+// With parameters
+((name) => {
+    console.log(`Hello, ${name}!`);
+})("Alice");</code></pre>
+
+        <h4>Callback Functions:</h4>
+        <pre><code>// Array methods
+const numbers = [1, 2, 3, 4, 5];
+
+// Filtering
+const evens = numbers.filter(num => num % 2 === 0);
+
+// Mapping
+const doubled = numbers.map(num => num * 2);
+
+// Reducing
+const sum = numbers.reduce((acc, curr) => acc + curr, 0);
+
+// Sorting objects
+const users = [
+    { name: "Alice", age: 30 },
+    { name: "Bob", age: 25 },
+    { name: "Charlie", age: 35 }
+];
+
+users.sort((a, b) => a.age - b.age);</code></pre>
+
+        <h4>Function Composition:</h4>
+        <pre><code>// Arrow functions make functional composition elegant
+const compose = (f, g) => x => f(g(x));
+
+const toUpperCase = str => str.toUpperCase();
+const exclaim = str => `${str}!`;
+
+const shout = compose(exclaim, toUpperCase);
+console.log(shout("hello"));  // "HELLO!"
+
+// Pipeline with multiple functions
+const pipeline = (...functions) =&gt; 
+    initialValue =&gt; functions.reduce((acc, fn) =&gt; fn(acc), initialValue);
+
+const processText = pipeline(
+    text =&gt; text.trim(),
+    text =&gt; text.toLowerCase(),
+    text =&gt; text.replace(/[^a-z0-9]/g, '-'),
+    text =&gt; text.slice(0, 50)
+);
+
+console.log(processText("  Hello World!  "));  // "hello-world"</code></pre>
+        <hr>
+
+        <!-- 3. DESTRUCTURING ASSIGNMENT -->
+        <h2>3. DESTRUCTURING ASSIGNMENT</h2>
+        <h3>3.1 What is Destructuring?</h3>
+        <p>Destructuring is a JavaScript expression that makes it possible to unpack values from arrays, or properties
+            from objects, into distinct variables. It provides a more concise way to extract data.</p>
+
+        <h3>3.2 Array Destructuring</h3>
+        <h4>Basic Array Destructuring:</h4>
+        <pre><code>// Traditional way
+const colors = ['red', 'green', 'blue'];
+const red = colors[0];
+const green = colors[1];
+const blue = colors[2];
+
+// Destructuring way
+const [red, green, blue] = colors;
+console.log(red);   // 'red'
+console.log(green); // 'green'
+console.log(blue);  // 'blue'</code></pre>
+
+        <h4>Skipping Elements:</h4>
+        <pre><code>const fruits = ['apple', 'banana', 'orange', 'grape', 'mango'];
+
+// Skip elements using commas
+const [first, , third, , fifth] = fruits;
+console.log(first);  // 'apple'
+console.log(third);  // 'orange'
+console.log(fifth);  // 'mango'
+
+// Skip all but first and last
+const [firstFruit, ...rest] = fruits;
+const lastFruit = rest.pop();
+console.log(firstFruit); // 'apple'
+console.log(lastFruit);  // 'mango'</code></pre>
+
+        <h4>Default Values:</h4>
+        <pre><code>// Provide fallback values for undefined array elements
+const colors = ['red'];
+const [primary, secondary = 'blue'] = colors;
+console.log(primary);   // 'red'
+console.log(secondary); // 'blue' (default value)
+
+// Works with functions too
+function getCoordinates() {
+    return [10, 20];
+}
+
+const [x = 0, y = 0, z = 0] = getCoordinates();
+console.log(x, y, z); // 10, 20, 0</code></pre>
+
+        <h4>Swapping Variables:</h4>
+        <pre><code>// Traditional way (requires a temporary variable)
+let a = 1, b = 2;
+let temp = a;
+a = b;
+b = temp;
+
+// With destructuring (clean and elegant)
+let x = 1, y = 2;
+[x, y] = [y, x];
+console.log(x, y); // 2, 1
+
+// Real-world example: sorting algorithm step
+let min = 10, max = 5;
+if (min > max) [min, max] = [max, min];
+console.log(min, max); // 5, 10</code></pre>
+
+        <h4>Nested Array Destructuring:</h4>
+        <pre><code>const nestedArray = [1, [2, 3, [4, 5]], 6];
+
+// Destructure nested arrays
+const [a, [b, c, [d, e]], f] = nestedArray;
+console.log(a, b, c, d, e, f); // 1, 2, 3, 4, 5, 6
+
+// Practical example: matrix operations
+const matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+const [[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]] = matrix;
+console.log(a11, a22, a33); // 1, 5, 9 (diagonal elements)</code></pre>
+
+        <h4>Rest with Array Destructuring:</h4>
+        <pre><code>const numbers = [1, 2, 3, 4, 5, 6, 7];
+
+// Capture remaining elements with rest pattern
+const [first, second, ...rest] = numbers;
+console.log(first);  // 1
+console.log(second); // 2
+console.log(rest);   // [3, 4, 5, 6, 7]
+
+// Practical use: splitting arrays
+function splitArray(arr) {
+    const [first, ...rest] = arr;
+    return { first, rest };
+}
+
+console.log(splitArray([10, 20, 30, 40])); // { first: 10, rest: [20, 30, 40] }</code></pre>
+
+        <h3>3.3 Object Destructuring</h3>
+        <h4>Basic Object Destructuring:</h4>
+        <pre><code>const person = {
+    name: 'Alice',
+    age: 30,
+    city: 'New York'
+};
+
+// Traditional way
+const name = person.name;
+const age = person.age;
+const city = person.city;
+
+// Destructuring way (variable names must match property names)
+const { name, age, city } = person;
+console.log(name); // 'Alice'
+console.log(age);  // 30
+console.log(city); // 'New York'</code></pre>
+
+        <h4>Assigning to Different Variable Names:</h4>
+        <pre><code>const user = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john@example.com'
+};
+
+// Rename properties during destructuring
+const { firstName: fName, lastName: lName, email: userEmail } = user;
+console.log(fName);     // 'John'
+console.log(lName);     // 'Doe'
+console.log(userEmail); // 'john@example.com'
+
+// Useful when variable names conflict
+const fullName = 'Existing Variable';
+const user = { fullName: 'John Doe' };
+const { fullName: userName } = user;
+console.log(userName); // 'John Doe'</code></pre>
+
+        <h4>Default Values:</h4>
+        <pre><code>const settings = {
+    theme: 'dark',
+    fontSize: 14
+};
+
+// Provide defaults for missing properties
+const { theme, fontSize = 16, showNotifications = true } = settings;
+console.log(theme);           // 'dark'
+console.log(fontSize);        // 14 (uses actual value, not default)
+console.log(showNotifications); // true (uses default)
+
+// Real-world example: API response handling
+function processUserData(apiResponse) {
+    const { 
+        data = [], 
+        status = 'pending', 
+        error = null,
+        timestamp = Date.now() 
+    } = apiResponse;
+    
+    return { data, status, error, timestamp };
+}</code></pre>
+
+        <h4>Nested Object Destructuring:</h4>
+        <pre><code>const company = {
+    name: 'Tech Corp',
+    address: {
+        street: '123 Main St',
+        city: 'San Francisco',
+        country: 'USA',
+        coordinates: {
+            lat: 37.7749,
+            lng: -122.4194
+        }
+    },
+    employees: 100
+};
+
+// Destructure nested objects
+const { 
+    name, 
+    address: { 
+        street, 
+        city, 
+        coordinates: { lat, lng } 
+    } 
+} = company;
+
+console.log(name);   // 'Tech Corp'
+console.log(street); // '123 Main St'
+console.log(lat);    // 37.7749
+console.log(lng);    // -122.4194
+
+// Note: address is not defined as a variable, only its properties are
+// console.log(address); // ReferenceError</code></pre>
+
+        <h4>Combining Destructuring with Rest:</h4>
+        <pre><code>const product = {
+    id: 1,
+    name: 'Laptop',
+    price: 999,
+    brand: 'TechBrand',
+    inStock: true,
+    specs: {
+        cpu: 'i7',
+        ram: '16GB'
+    }
+};
+
+// Extract specific properties and collect the rest
+const { id, name, ...productDetails } = product;
+console.log(id);             // 1
+console.log(name);           // 'Laptop'
+console.log(productDetails); 
+// { price: 999, brand: 'TechBrand', inStock: true, specs: {...} }
+
+// Useful for omitting sensitive data
+const user = {
+    username: 'johndoe',
+    password: 'secret123',
+    email: 'john@example.com',
+    ssn: '123-45-6789'
+};
+
+function getPublicUserData(user) {
+    const { password, ssn, ...publicData } = user;
+    return publicData; // { username: 'johndoe', email: 'john@example.com' }
+}</code></pre>
+
+        <h3>3.4 Advanced Destructuring Patterns</h3>
+        <h4>Function Parameter Destructuring:</h4>
+        <pre><code>// Destructure object parameters
+function createUser({ name, age, email = 'no-email@example.com' }) {
+    return {
+        name,
+        age,
+        email,
+        createdAt: new Date()
+    };
+}
+
+const user = createUser({ 
+    name: 'Alice', 
+    age: 28,
+    email: 'alice@example.com'
+});
+
+// Destructure array parameters
+function findFirstAndLast([first, ...rest]) {
+    const last = rest.pop();
+    return { first, last };
+}
+
+console.log(findFirstAndLast([1, 2, 3, 4, 5])); // { first: 1, last: 5 }
+
+// Complex destructuring with defaults
+function configureAPI({
+    baseURL = 'https://api.example.com',
+    timeout = 5000,
+    headers: {
+        'Content-Type': contentType = 'application/json',
+        Authorization: auth = null
+    } = {}
+} = {}) {
+    return { baseURL, timeout, contentType, auth };
+}
+
+console.log(configureAPI({
+    baseURL: 'https://custom.api.com',
+    headers: { Authorization: 'Bearer token' }
+}));</code></pre>
+
+        <h4>Destructuring in Loops:</h4>
+        <pre><code>const users = [
+    { id: 1, name: 'Alice', role: 'admin' },
+    { id: 2, name: 'Bob', role: 'user' },
+    { id: 3, name: 'Charlie', role: 'user' }
+];
+
+// Destructure in for...of loop
+for (const { id, name, role } of users) {
+    console.log(`${name} (ID: ${id}) is a ${role}`);
+}
+
+// With array methods
+users.forEach(({ name, role }) => {
+    console.log(`${name} works as ${role}`);
+});
+
+// Filtering based on destructured properties
+const adminNames = users
+    .filter(({ role }) => role === 'admin')
+    .map(({ name }) => name);</code></pre>
+
+        <h4>Computed Property Names with Destructuring:</h4>
+        <pre><code>const key = 'dynamicKey';
+const value = 'dynamicValue';
+
+const obj = {
+    [key]: value,
+    staticKey: 'static'
+};
+
+// Destructure with computed property names
+const { [key]: dynamicProperty, staticKey } = obj;
+console.log(dynamicProperty); // 'dynamicValue'
+console.log(staticKey);       // 'static'
+
+// Real-world example: handling dynamic form fields
+function processFormData(formData, fields) {
+    const result = {};
+    for (const field of fields) {
+        const { [field]: value } = formData;
+        result[field] = value || '';
+    }
+    return result;
+}</code></pre>
+
+        <h4>Mixed Destructuring (Arrays and Objects):</h4>
+        <pre><code>const data = {
+    title: 'Blog Post',
+    comments: [
+        { user: 'Alice', text: 'Great post!' },
+        { user: 'Bob', text: 'Thanks for sharing' }
+    ],
+    metadata: {
+        tags: ['javascript', 'es6']
+    }
+};
+
+// Destructure array inside object
+const { 
+    title, 
+    comments: [{ user: firstCommenter }], 
+    metadata: { tags: [primaryTag] } 
+} = data;
+
+console.log(title);          // 'Blog Post'
+console.log(firstCommenter); // 'Alice'
+console.log(primaryTag);     // 'javascript'
+
+// Array of objects destructuring
+const posts = [
+    { id: 1, title: 'Post 1', author: { name: 'Alice' } },
+    { id: 2, title: 'Post 2', author: { name: 'Bob' } }
+];
+
+const [{ title: firstPostTitle, author: { name: firstAuthor } }] = posts;
+console.log(firstPostTitle); // 'Post 1'
+console.log(firstAuthor);    // 'Alice'</code></pre>
+        <hr>
+
+        <!-- 4. SPREAD OPERATOR -->
+        <h2>4. SPREAD OPERATOR (...)</h2>
+        <h3>4.1 What is the Spread Operator?</h3>
+        <p>The spread operator (<code>...</code>) allows an iterable such as an array or object to be expanded in places
+            where zero or more arguments (for function calls) or elements (for array literals) are expected, or to copy
+            properties from one object to another.</p>
+
+        <h3>4.2 Spreading Arrays</h3>
+        <h4>Copying Arrays:</h4>
+        <pre><code>// Traditional way (shallow copy)
+const original = [1, 2, 3];
+const copy1 = original.slice();
+const copy2 = [].concat(original);
+
+// With spread (clean and intuitive)
+const original = [1, 2, 3];
+const copy = [...original];
+console.log(copy); // [1, 2, 3]
+console.log(copy === original); // false (different references)
+
+// Real-world example: preserving immutability
+const numbers = [1, 2, 3, 4, 5];
+const numbersCopy = [...numbers];
+numbersCopy.push(6);
+console.log(numbers); // [1, 2, 3, 4, 5] (original unchanged)
+console.log(numbersCopy); // [1, 2, 3, 4, 5, 6]</code></pre>
+
+        <h4>Combining Arrays:</h4>
+        <pre><code>// Traditional way
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = arr1.concat(arr2);
+
+// With spread
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2];
+console.log(combined); // [1, 2, 3, 4, 5, 6]
+
+// Add elements anywhere
+const withMiddle = [...arr1, 'middle', ...arr2];
+console.log(withMiddle); // [1, 2, 3, 'middle', 4, 5, 6]
+
+// Multiple arrays
+const more = [7, 8, 9];
+const all = [...arr1, ...arr2, ...more];
+console.log(all); // [1, 2, 3, 4, 5, 6, 7, 8, 9]</code></pre>
+
+        <h4>Adding Elements to Arrays:</h4>
+        <pre><code>// Add to beginning
+const numbers = [3, 4, 5];
+const withBeginning = [1, 2, ...numbers];
+console.log(withBeginning); // [1, 2, 3, 4, 5]
+
+// Add to end
+const withEnd = [...numbers, 6, 7];
+console.log(withEnd); // [3, 4, 5, 6, 7]
+
+// Add in middle
+const withMiddle = [1, ...numbers, 6];
+console.log(withMiddle); // [1, 3, 4, 5, 6]
+
+// Real-world example: Redux/state management
+const addTodo = (state, newTodo) => ({
+    ...state,
+    todos: [...state.todos, newTodo]
+});</code></pre>
+
+        <h4>Using Spread with Strings:</h4>
+        <pre><code>const str = "Hello";
+
+// Spread converts string to array of characters
+const chars = [...str];
+console.log(chars); // ['H', 'e', 'l', 'l', 'o']
+
+// Useful for string operations
+const uniqueChars = [...new Set("hello")];
+console.log(uniqueChars); // ['h', 'e', 'l', 'o']
+
+const reversed = [...str].reverse().join('');
+console.log(reversed); // 'olleH'</code></pre>
+
+        <h4>Spread with Sets and Maps:</h4>
+        <pre><code>// Convert Set to Array
+const mySet = new Set([1, 2, 3, 3, 4]);
+const arrFromSet = [...mySet];
+console.log(arrFromSet); // [1, 2, 3, 4]
+
+// Convert Map to Array of key-value pairs
+const myMap = new Map([['a', 1], ['b', 2]]);
+const arrFromMap = [...myMap];
+console.log(arrFromMap); // [['a', 1], ['b', 2]]
+
+// Combine multiple Sets
+const set1 = new Set([1, 2, 3]);
+const set2 = new Set([3, 4, 5]);
+const combinedSet = new Set([...set1, ...set2]);
+console.log([...combinedSet]); // [1, 2, 3, 4, 5]</code></pre>
+
+        <h3>4.3 Spreading Objects (ES2018+)</h3>
+        <h4>Copying Objects:</h4>
+        <pre><code>const original = { name: 'Alice', age: 30 };
+
+// Shallow copy with spread
+const copy = { ...original };
+console.log(copy); // { name: 'Alice', age: 30 }
+console.log(copy === original); // false
+
+// Real-world example: avoiding mutation
+const updateUser = (user, updates) => ({
+    ...user,
+    ...updates
+});
+
+const user = { name: 'Bob', age: 25, email: 'bob@example.com' };
+const updatedUser = updateUser(user, { age: 26, email: 'bob.new@example.com' });
+console.log(user); // Original unchanged</code></pre>
+
+        <h4>Merging Objects:</h4>
+        <pre><code>const obj1 = { a: 1, b: 2 };
+const obj2 = { c: 3, d: 4 };
+const obj3 = { e: 5, f: 6 };
+
+// Merge multiple objects
+const merged = { ...obj1, ...obj2, ...obj3 };
+console.log(merged); // { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 }
+
+// Property order matters - later properties overwrite earlier ones
+const base = { a: 1, b: 1 };
+const override = { b: 2, c: 2 };
+const result = { ...base, ...override };
+console.log(result); // { a: 1, b: 2, c: 2 }</code></pre>
+
+        <h4>Adding/Overriding Properties:</h4>
+        <pre><code>const user = { name: 'Alice', age: 30 };
+
+// Add new properties
+const withEmail = { ...user, email: 'alice@example.com' };
+console.log(withEmail); // { name: 'Alice', age: 30, email: 'alice@example.com' }
+
+// Override existing properties
+const updated = { ...user, age: 31 };
+console.log(updated); // { name: 'Alice', age: 31 }
+
+// Conditional property addition
+const addIf = (condition, key, value) => ({
+    ...user,
+    ...(condition && { [key]: value })
+});
+
+const result1 = addIf(true, 'isAdmin', true);
+console.log(result1); // { name: 'Alice', age: 30, isAdmin: true }</code></pre>
+
+        <h4>Shallow Copy Warning:</h4>
+        <pre><code>const original = {
+    name: 'Alice',
+    address: {
+        city: 'New York',
+        zip: '10001'
+    },
+    hobbies: ['reading', 'coding']
+};
+
+// Spread creates a shallow copy
+const copy = { ...original };
+
+// Modifying nested objects affects both!
+copy.address.city = 'Boston';
+copy.hobbies.push('swimming');
+
+console.log(original.address.city); // 'Boston' (changed!)
+console.log(original.hobbies); // ['reading', 'coding', 'swimming'] (changed!)
+console.log(copy.hobbies === original.hobbies); // true (same array reference)
+
+// Deep copy workaround (for simple structures)
+const deepCopy = JSON.parse(JSON.stringify(original));
+// Or use a utility like lodash's cloneDeep</code></pre>
+
+        <h3>4.4 Spread in Function Calls</h3>
+        <h4>Replacing apply():</h4>
+        <pre><code>// Traditional way with apply
+const numbers = [5, 10, 15, 20];
+const max1 = Math.max.apply(null, numbers);
+const min1 = Math.min.apply(null, numbers);
+
+// With spread (cleaner)
+const numbers = [5, 10, 15, 20];
+const max = Math.max(...numbers);
+const min = Math.min(...numbers);
+console.log(max, min); // 20, 5
+
+// Multiple spreads
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const allNumbers = Math.max(...arr1, ...arr2, 7, 8);
+console.log(allNumbers); // 8</code></pre>
+
+        <h4>Passing Array Elements as Arguments:</h4>
+        <pre><code>function sum(a, b, c) {
+    return a + b + c;
+}
+
+const numbers = [1, 2, 3];
+
+// Traditional way
+const result1 = sum(numbers[0], numbers[1], numbers[2]);
+
+// With spread
+const result2 = sum(...numbers);
+console.log(result2); // 6
+
+// Real-world example: date construction
+const dateComponents = [2023, 5, 15]; // Year, month (0-based), day
+const date = new Date(...dateComponents);
+console.log(date); // Thu Jun 15 2023
+
+// Push multiple items
+const fruits = ['apple', 'banana'];
+const moreFruits = ['orange', 'grape'];
+fruits.push(...moreFruits);
+console.log(fruits); // ['apple', 'banana', 'orange', 'grape']</code></pre>
+
+        <h3>4.5 Advanced Spread Patterns</h3>
+        <h4>Removing Properties from Objects:</h4>
+        <pre><code>const user = {
+    id: 1,
+    username: 'johndoe',
+    password: 'secret123',
+    email: 'john@example.com',
+    ssn: '123-45-6789'
+};
+
+// Remove 'password' and 'ssn' properties
+const { password, ssn, ...publicUser } = user;
+console.log(publicUser); // { id: 1, username: 'johndoe', email: 'john@example.com' }
+
+// Create a function to omit properties
+function omit(obj, keysToOmit) {
+    const result = { ...obj };
+    keysToOmit.forEach(key => delete result[key]);
+    return result;
+}
+
+const safeUser = omit(user, ['password', 'ssn']);</code></pre>
+
+        <h4>Conditional Spread:</h4>
+        <pre><code>// Add properties conditionally
+const isAdmin = true;
+const user = {
+    name: 'Alice',
+    age: 30,
+    ...(isAdmin && { role: 'admin', permissions: ['read', 'write', 'delete'] })
+};
+
+console.log(user); // Includes role and permissions
+
+// With ternary
+const theme = 'dark';
+const styles = {
+    backgroundColor: '#fff',
+    ...(theme === 'dark' ? { color: '#fff', backgroundColor: '#333' } : {})
+};</code></pre>
+
+        <h4>Spread with Default Values:</h4>
+        <pre><code>const defaultConfig = {
+    apiUrl: 'https://api.example.com',
+    timeout: 5000,
+    retries: 3,
+    cacheEnabled: true
+};
+
+function createConfig(userConfig = {}) {
+    return { ...defaultConfig, ...userConfig };
+}
+
+const config1 = createConfig({ timeout: 10000 });
+console.log(config1); 
+// { apiUrl: 'https://api.example.com', timeout: 10000, retries: 3, cacheEnabled: true }
+
+const config2 = createConfig({ apiUrl: 'https://custom.api.com', retries: 5 });
+console.log(config2);
+// { apiUrl: 'https://custom.api.com', timeout: 5000, retries: 5, cacheEnabled: true }</code></pre>
+
+        <h4>Rest vs Spread - The Difference:</h4>
+        <pre><code>// REST: Collects remaining elements into an array (used in destructuring)
+function sum(...numbers) {  // REST parameter
+    return numbers.reduce((total, num) => total + num, 0);
+}
+const [first, ...rest] = [1, 2, 3, 4];  // REST in destructuring
+
+// SPREAD: Expands an array into individual elements
+const arr = [1, 2, 3];
+const newArr = [...arr, 4, 5];  // SPREAD to expand
+console.log(Math.max(...arr));   // SPREAD in function call
+
+// They look the same (...) but serve opposite purposes</code></pre>
+        <hr>
+
+        <!-- 5. TEMPLATE LITERALS -->
+        <h2>5. TEMPLATE LITERALS</h2>
+        <h3>5.1 What are Template Literals?</h3>
+        <p>Template literals are string literals that allow embedded expressions, multi-line strings, and string
+            interpolation. They are enclosed by backticks (<code>`</code>) instead of single or double quotes.</p>
+
+        <h3>5.2 Basic Syntax</h3>
+        <h4>String Interpolation:</h4>
+        <pre><code>const name = 'Alice';
+const age = 30;
+
+// Traditional concatenation
+const message1 = 'Hello, my name is ' + name + ' and I am ' + age + ' years old.';
+
+// Template literal
+const message2 = `Hello, my name is ${name} and I am ${age} years old.`;
+
+console.log(message2);
+// 'Hello, my name is Alice and I am 30 years old.'</code></pre>
+
+        <h4>Multi-line Strings:</h4>
+        <pre><code>// Traditional way (painful)
+const html1 = '<div>\n' +
+              '    <h1>Title</h1>\n' +
+              '    <p>Paragraph</p>\n' +
+              '</div>';
+
+// Template literal (clean and readable)
+const html2 = `
+<div>
+    <h1>Title</h1>
+    <p>Paragraph</p>
+</div>
+`;
+
+// Perfect for HTML templates
+const createUserCard = (user) => `
+<div class="user-card">
+    <h2>${user.name}</h2>
+    <p>Email: ${user.email}</p>
+    <p>Role: ${user.role}</p>
+</div>
+`;</code></pre>
+
+        <h3>5.3 Expressions in Template Literals</h3>
+        <h4>Any JavaScript Expression:</h4>
+        <pre><code>const a = 10;
+const b = 5;
+
+// Arithmetic
+console.log(`Sum: ${a + b}`);        // 'Sum: 15'
+console.log(`Product: ${a * b}`);     // 'Product: 50'
+
+// Function calls
+const getGreeting = (name) => `Hello, ${name}!`;
+console.log(`${getGreeting('Alice')}`); // 'Hello, Alice!'
+
+// Ternary operators
+const age = 20;
+console.log(`${age >= 18 ? 'Adult' : 'Minor'}`); // 'Adult'
+
+// Method calls
+const user = { name: 'Bob', city: 'New York' };
+console.log(`${user.name.toUpperCase()} lives in ${user.city}`); // 'BOB lives in New York'
+
+// Array operations
+const numbers = [1, 2, 3, 4, 5];
+console.log(`Sum: ${numbers.reduce((a, b) => a + b)}`); // 'Sum: 15'</code></pre>
+
+        <h4>Nested Template Literals:</h4>
+        <pre><code>const people = [
+    { name: 'Alice', age: 30 },
+    { name: 'Bob', age: 25 },
+    { name: 'Charlie', age: 35 }
+];
+
+// Nested templates for complex structures
+const list = `
+<ul>
+    ${people.map(person => `
+        <li>
+            <strong>${person.name}</strong> (${person.age})
+        </li>
+    `).join('')}
+</ul>
+`;
+
+console.log(list);
+// <ul>
+//     <li><strong>Alice</strong> (30)</li>
+//     <li><strong>Bob</strong> (25)</li>
+//     <li><strong>Charlie</strong> (35)</li>
+// </ul></code></pre>
+
+        <h3>5.4 Tagged Templates</h3>
+        <p>Tagged templates allow you to parse template literals with a function.</p>
+        <h4>Basic Tagged Template:</h4>
+        <pre><code>function myTag(strings, ...values) {
+    console.log(strings); // Array of string literals
+    console.log(values);  // Array of interpolated values
+    
+    // Return processed string
+    return strings.reduce((result, str, i) => {
+        return result + str + (values[i] || '');
+    }, '');
+}
+
+const name = 'Alice';
+const age = 30;
+const result = myTag`Hello ${name}, you are ${age} years old.`;</code></pre>
+
+        <!-- In the Tagged Templates section, replace the XSS example with this escaped version: -->
+
+        <h4>Useful Examples of Tagged Templates:</h4>
+        <pre><code>**1. Internationalization (i18n):**
+function i18n(strings, ...values) {
+    // Simplified translation function
+    const translations = {
+        'Hello': 'Bonjour',
+        'world': 'monde'
+    };
+    
+    return strings.reduce((result, str, i) => {
+        // Translate each string part
+        const translatedStr = str.split(' ').map(word =&gt; 
+            translations[word] || word
+        ).join(' ');
+        
+        return result + translatedStr + (values[i] || '');
+    }, '');
+}
+
+const greeting = i18n`Hello ${'world'}!`;
+console.log(greeting); // 'Bonjour monde!'
+
+**2. Escaping HTML (XSS Prevention):**
+function escapeHTML(strings, ...values) {
+    const escape = (str) =&gt; {
+        return String(str)
+            .replace(/&amp;/g, '&amp;amp;')
+            .replace(/&lt;/g, '&amp;lt;')
+            .replace(/&gt;/g, '&amp;gt;')
+            .replace(/&quot;/g, '&amp;quot;')
+            .replace(/&#39;/g, '&amp;#39;');
+    };
+    
+    return strings.reduce((result, str, i) =&gt; {
+        return result + str + (values[i] ? escape(values[i]) : '');
+    }, '');
+}
+
+// This is just a demonstration - the script tag is escaped in the code example
+const userInput = '&lt;script&gt;alert("hack!")&lt;/script&gt;';
+const safe = escapeHTML`&lt;div&gt;${userInput}&lt;/div&gt;`;
+console.log(safe);
+// '&lt;div&gt;&amp;lt;script&amp;gt;alert("hack!")&amp;lt;/script&amp;gt;&lt;/div&gt;'
+
+**3. Styling with CSS-in-JS:**
+function css(strings, ...values) {
+    const style = strings.reduce((result, str, i) =&gt; {
+        return result + str + (values[i] || '');
+    }, '');
+    
+    // Parse and validate CSS
+    console.log('Injecting styles:', style);
+    return style;
+}
+
+const color = 'blue';
+const size = 14;
+
+const buttonStyle = css`
+    .button {
+        color: ${color};
+        font-size: ${size}px;
+        padding: ${size / 2}px;
+        
+        &amp;:hover {
+            background-color: ${color}20;
+        }
+    }
+`;</code></pre>
+
+        <!-- Also check Exercise 4 for any unescaped HTML -->
+        <div class="exercise-box">
+            <!-- In the Tagged Templates section, find and replace this entire block: -->
+
+            <h4>Useful Examples of Tagged Templates:</h4>
+            <pre><code>**1. Internationalization (i18n):**
+function i18n(strings, ...values) {
+    // Simplified translation function
+    const translations = {
+        'Hello': 'Bonjour',
+        'world': 'monde'
+    };
+    
+    return strings.reduce((result, str, i) => {
+        // Translate each string part
+        const translatedStr = str.split(' ').map(word =&gt; 
+            translations[word] || word
+        ).join(' ');
+        
+        return result + translatedStr + (values[i] || '');
+    }, '');
+}
+
+const greeting = i18n`Hello ${'world'}!`;
+console.log(greeting); // 'Bonjour monde!'
+
+**2. Escaping HTML (XSS Prevention):**
+function escapeHTML(strings, ...values) {
+    const escape = (str) =&gt; {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/&lt;/g, '&lt;')
+            .replace(/&gt;/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+    
+    return strings.reduce((result, str, i) =&gt; {
+        return result + str + (values[i] ? escape(values[i]) : '');
+    }, '');
+}
+
+// DEMO - the script tag is properly escaped in this example
+const userInput = '&lt;script&gt;alert("hack!")&lt;/script&gt;';
+const safe = escapeHTML`&lt;div&gt;${userInput}&lt;/div&gt;`;
+console.log(safe);
+// '&lt;div&gt;&amp;lt;script&amp;gt;alert("hack!")&amp;lt;/script&amp;gt;&lt;/div&gt;'
+
+**3. Styling with CSS-in-JS:**
+function css(strings, ...values) {
+    const style = strings.reduce((result, str, i) =&gt; {
+        return result + str + (values[i] || '');
+    }, '');
+    
+    // Parse and validate CSS
+    console.log('Injecting styles:', style);
+    return style;
+}
+
+const color = 'blue';
+const size = 14;
+
+const buttonStyle = css`
+    .button {
+        color: ${color};
+        font-size: ${size}px;
+        padding: ${size / 2}px;
+        
+        &amp;:hover {
+            background-color: ${color}20;
+        }
+    }
+`;</code></pre>
+
+            <!-- Also fix Exercise 4's HTML template -->
+            <div class="exercise-box">
+                <h3>Exercise 4: Template Literals</h3>
+                <p><strong>Problem:</strong> Create a function that generates an HTML email template:</p>
+                <pre><code>function generateEmailTemplate(user, order) {
+    // user: { name, email }
+    // order: { id, items: [{name, price, quantity}], total }
+    
+    // Generate HTML email with order summary
+    return `
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;style&gt;
+                .order-summary { font-family: Arial; }
+                .item { border-bottom: 1px solid #ccc; }
+                .total { font-weight: bold; }
+            &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;h1&gt;Thank you for your order, ${user.name}!&lt;/h1&gt;
+            &lt;p&gt;Order ID: ${order.id}&lt;/p&gt;
+            
+            &lt;h2&gt;Order Summary:&lt;/h2&gt;
+            &lt;div class="order-summary"&gt;
+                ${order.items.map(item =&gt; `
+                    &lt;div class="item"&gt;
+                        &lt;span&gt;${item.name}&lt;/span&gt;
+                        &lt;span&gt;Quantity: ${item.quantity}&lt;/span&gt;
+                        &lt;span&gt;Price: $${item.price}&lt;/span&gt;
+                        &lt;span&gt;Subtotal: $${item.price * item.quantity}&lt;/span&gt;
+                    &lt;/div&gt;
+                `).join('')}
+                
+                &lt;div class="total"&gt;
+                    Total: $${order.total}
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;p&gt;A confirmation email has been sent to ${user.email}&lt;/p&gt;
+        &lt;/body&gt;
+        &lt;/html&gt;
+    `;
+}
+
+// Test it
+const user = { name: "Alice", email: "alice@example.com" };
+const order = {
+    id: "ORD-123",
+    items: [
+        { name: "Laptop", price: 999, quantity: 1 },
+        { name: "Mouse", price: 25, quantity: 2 }
+    ],
+    total: 1049
+};
+
+console.log(generateEmailTemplate(user, order));</code></pre>
+            </div>
+
+            <!-- Fix the Quick Reference Summary section where HTML tags appear -->
+            <div class="summary-card">
+                <h2>QUICK REFERENCE SUMMARY</h2>
+                <h3>Arrow Functions</h3>
+                <pre><code>// Multiple params, multiple statements
+(param1, param2) =&gt; { 
+    // statements
+    return result;
+}
+
+// Single param, single expression (implicit return)
+param =&gt; expression
+
+// No params, returning object
+() =&gt; ({ key: 'value' })
+
+// Keep 'this' lexical scope</code></pre>
+
+                <h3>Destructuring</h3>
+                <pre><code>// Arrays
+const [a, b, ...rest] = [1, 2, 3, 4];
+
+// Objects
+const { prop: alias = default } = obj;
+
+// Nested
+const { a: { b } } = obj;
+
+// Function params
+function fn({ param1, param2 }) {}</code></pre>
+
+                <h3>Spread Operator</h3>
+                <pre><code>// Arrays
+const combined = [...arr1, ...arr2];
+const copy = [...original];
+
+// Objects
+const merged = {...obj1, ...obj2};
+
+// Function calls
+Math.max(...numbers);
+
+// Remove property
+const { remove, ...rest } = obj;</code></pre>
+
+                <h3>Template Literals</h3>
+                <pre><code>// Interpolation
+`Hello ${name}!`
+
+// Multi-line
+`
+&lt;div&gt;
+    &lt;h1&gt;${title}&lt;/h1&gt;
+&lt;/div&gt;
+`
+
+// Expressions
+`Result: ${a + b}`
+
+// Tagged templates
+tag`string ${value}`</code></pre>
+            </div>
+
+            <!-- CONCLUSION (exact) -->
+            <h2>CONCLUSION</h2>
+            <p>ES6+ features have revolutionized JavaScript development, making code more concise, readable, and
+                maintainable. Understanding these features is essential for modern web development:</p>
+            <ul>
+                <li><strong>Arrow Functions</strong> provide cleaner syntax and solve the <code>this</code> binding
+                    problem
+                </li>
+                <li><strong>Destructuring</strong> makes data extraction elegant and intuitive</li>
+                <li><strong>Spread Operator</strong> enables powerful array and object manipulation</li>
+                <li><strong>Template Literals</strong> simplify string creation and formatting</li>
+            </ul>
+            <p>Master these features, practice regularly, and always consider readability and performance in your
+                implementations. Happy coding! 🚀</p>
+
+            <footer>Complete study notes · Modern JavaScript (ES6+) · every line preserved</footer>
+        </div> <!-- master-container -->
+</body>
+
+</html>

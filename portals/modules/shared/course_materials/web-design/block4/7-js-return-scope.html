@@ -1,0 +1,3350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUNCTIONS - PART 2: THE RETURN STATEMENT & SCOPE (Complete)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4ecfb;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            color: #1e172c;
+            padding: 2rem 1.2rem;
+            line-height: 1.6;
+        }
+
+        .master-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 50px -30px #452b5c;
+            padding: 2.8rem 2.5rem;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 8vw, 4rem);
+            background: linear-gradient(145deg, #381f4b, #9f5f94);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-left: 16px solid #b587cf;
+            padding-left: 1.5rem;
+            margin: 0.2rem 0 1.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5.5vw, 2.8rem);
+            color: #402b55;
+            border-bottom: 4px solid #dbb2e2;
+            padding-bottom: 0.4rem;
+            margin: 2.5rem 0 1.2rem;
+        }
+
+        h3 {
+            font-size: clamp(1.6rem, 4vw, 2.1rem);
+            background: #eddffc;
+            padding: 0.4rem 1.8rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 2.2rem 0 1rem;
+            color: #3f2756;
+        }
+
+        h4 {
+            font-size: clamp(1.3rem, 3.8vw, 1.7rem);
+            color: #553b70;
+            margin: 1.8rem 0 0.6rem;
+            font-weight: 650;
+        }
+
+        p,
+        li {
+            font-size: 1.05rem;
+            color: #23202a;
+        }
+
+        pre,
+        .code-block {
+            background: #1d1628;
+            color: #f6ecfe;
+            padding: 1.5rem 1.8rem;
+            border-radius: 2rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 1.8rem 0;
+            border: 1px solid #8f68aa;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: inset 0 0 0 1px #5a3b70;
+        }
+
+        code:not(pre code) {
+            background: #eed9fc;
+            color: #3a2152;
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fcf4ff;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(87, 45, 109, 0.18);
+            margin: 2.2rem 0;
+        }
+
+        th {
+            background: #6d3f8e;
+            color: white;
+            font-weight: 600;
+            padding: 1.1rem 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #dab2e6;
+            background: #fefaff;
+        }
+
+        .note-important {
+            background: #f3e5fe;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            border-left: 14px solid #ad6bb0;
+            margin: 2.5rem 0;
+        }
+
+        ul,
+        ol {
+            margin: 1.2rem 0 1.2rem 2rem;
+        }
+
+        li {
+            margin: 0.6rem 0;
+        }
+
+        hr {
+            border: none;
+            height: 4px;
+            background: linear-gradient(to right, #dbb8ed, #faf0ff, #dbb8ed);
+            margin: 3rem 0;
+        }
+
+        .badge-code {
+            background: #7a4f99;
+            color: white;
+            font-size: 0.85rem;
+            border-radius: 40px;
+            padding: 0.3rem 1.4rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        .toc-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            background: #efdefc;
+            padding: 1.8rem;
+            border-radius: 4rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .toc-grid a {
+            background: white;
+            text-decoration: none;
+            color: #3b2153;
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            border: 1px solid #b286cb;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            background: #e5d1f5;
+            padding: 2rem;
+            border-radius: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+            font-size: 1.1rem;
+            color: #372249;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="master-wrapper">
+
+        <!-- exactly the title as given -->
+        <h1>FUNCTIONS - PART 2: THE RETURN STATEMENT &amp; SCOPE</h1>
+        <p style="font-size:1.6rem; color:#674785; margin-bottom:2rem;">A Comprehensive Guide to Understanding Return
+            Values and Variable Scope in JavaScript</p>
+
+        <hr>
+
+        <!-- TABLE OF CONTENTS (exact headings) -->
+        <h2 id="table-of-contents">TABLE OF CONTENTS</h2>
+        <div class="toc-grid">
+            <a href="#1-introduction-to-functions-review">1. Introduction to Functions Review</a>
+            <a href="#2-the-return-statement-deep-dive">2. The Return Statement: Deep Dive</a>
+            <a href="#3-variable-scope-the-foundation">3. Variable Scope: The Foundation</a>
+            <a href="#4-global-scope">4. Global Scope</a>
+            <a href="#5-local-scope-function-scope">5. Local Scope (Function Scope)</a>
+            <a href="#6-block-scope">6. Block Scope</a>
+            <a href="#7-scope-chain-and-lexical-scoping">7. Scope Chain and Lexical Scoping</a>
+            <a href="#8-variable-hoisting">8. Variable Hoisting</a>
+            <a href="#9-best-practices-and-common-pitfalls">9. Best Practices and Common Pitfalls</a>
+            <a href="#10-practical-examples-and-use-cases">10. Practical Examples and Use Cases</a>
+            <a href="#11-exercises-and-challenges">11. Exercises and Challenges</a>
+            <a href="#12-interview-questions">12. Interview Questions</a>
+        </div>
+
+        <!-- 1. INTRODUCTION TO FUNCTIONS REVIEW (exact subsections) -->
+        <h2 id="1-introduction-to-functions-review">1. INTRODUCTION TO FUNCTIONS REVIEW</h2>
+
+        <h3>1.1 What is a Function?</h3>
+        <p>A function is a reusable block of code designed to perform a specific task. Functions are fundamental
+            building blocks in JavaScript that help organize code, reduce repetition, and improve maintainability.</p>
+
+        <h4>Basic Function Syntax:</h4>
+        <pre>// Function declaration
+function functionName(parameters) {
+    // code to be executed
+}
+
+// Function expression
+const functionName = function(parameters) {
+    // code to be executed
+};
+
+// Arrow function (ES6+)
+const functionName = (parameters) => {
+    // code to be executed
+};</pre>
+
+        <h4>Example of a Simple Function:</h4>
+        <pre>function greet(name) {
+    console.log("Hello, " + name + "!");
+}
+
+greet("Alice"); // Output: Hello, Alice!</pre>
+
+        <h3>1.2 Why Functions Matter</h3>
+        <p>Functions are crucial for several reasons:</p>
+        <ol>
+            <li><strong>Code Reusability</strong>: Write once, use many times</li>
+            <li><strong>Modularity</strong>: Break complex problems into smaller pieces</li>
+            <li><strong>Abstraction</strong>: Hide complex logic behind simple function calls</li>
+            <li><strong>Maintainability</strong>: Easier to update and debug isolated code</li>
+            <li><strong>Testing</strong>: Functions can be tested independently</li>
+        </ol>
+
+        <!-- 2. THE RETURN STATEMENT: DEEP DIVE (everything) -->
+        <h2 id="2-the-return-statement-deep-dive">2. THE RETURN STATEMENT: DEEP DIVE</h2>
+
+        <h3>2.1 What is the Return Statement?</h3>
+        <p>The <code>return</code> statement ends function execution and specifies a value to be sent back to the
+            function caller. It is the primary way functions communicate results back to the code that called them.</p>
+
+        <h4>Basic Syntax:</h4>
+        <pre>function functionName() {
+    // some code
+    return value; // value can be any data type
+}</pre>
+
+        <h4>Simple Example:</h4>
+        <pre>function add(a, b) {
+    return a + b;
+}
+
+let result = add(5, 3);
+console.log(result); // Output: 8</pre>
+
+        <h3>2.2 The Importance of Return</h3>
+        <p>Without a return statement, functions return <code>undefined</code> by default:</p>
+        <pre>function noReturn() {
+    let x = 10;
+    let y = 20;
+    let sum = x + y;
+    // No return statement
+}
+
+let result = noReturn();
+console.log(result); // Output: undefined</pre>
+
+        <h3>2.3 Returning Different Data Types</h3>
+        <p>Functions can return any JavaScript data type:</p>
+
+        <h4>Returning Numbers:</h4>
+        <pre>function calculateArea(radius) {
+    return Math.PI * radius * radius;
+}
+
+let area = calculateArea(5);
+console.log(area); // Output: 78.53981633974483</pre>
+
+        <h4>Returning Strings:</h4>
+        <pre>function getFullName(firstName, lastName) {
+    return firstName + " " + lastName;
+}
+
+let fullName = getFullName("John", "Doe");
+console.log(fullName); // Output: John Doe</pre>
+
+        <h4>Returning Booleans:</h4>
+        <pre>function isEven(number) {
+    return number % 2 === 0;
+}
+
+console.log(isEven(4)); // Output: true
+console.log(isEven(7)); // Output: false</pre>
+
+        <h4>Returning Arrays:</h4>
+        <pre>function getFruits() {
+    return ["apple", "banana", "orange"];
+}
+
+let fruits = getFruits();
+console.log(fruits); // Output: ["apple", "banana", "orange"]
+console.log(fruits[1]); // Output: banana</pre>
+
+        <h4>Returning Objects:</h4>
+        <pre>function createUser(name, age, email) {
+    return {
+        name: name,
+        age: age,
+        email: email,
+        isActive: true
+    };
+}
+
+let user = createUser("Alice", 30, "alice@example.com");
+console.log(user);
+// Output: { name: "Alice", age: 30, email: "alice@example.com", isActive: true }</pre>
+
+        <h4>Returning Functions (Higher-Order Functions):</h4>
+        <pre>function multiplyBy(factor) {
+    return function(number) {
+        return number * factor;
+    };
+}
+
+let double = multiplyBy(2);
+let triple = multiplyBy(3);
+
+console.log(double(5)); // Output: 10
+console.log(triple(5)); // Output: 15</pre>
+
+        <h3>2.4 Return Immediately Ends Function Execution</h3>
+        <p>Once a <code>return</code> statement is encountered, the function stops executing immediately:</p>
+        <pre>function testReturn() {
+    console.log("This will print");
+    return "Returning now";
+    console.log("This will NEVER print"); // This code is unreachable
+}
+
+let result = testReturn();
+// Output: "This will print"
+console.log(result); // Output: "Returning now"</pre>
+
+        <h4>Practical Example: Early Exit</h4>
+        <pre>function divide(a, b) {
+    if (b === 0) {
+        return "Error: Cannot divide by zero";
+    }
+    return a / b;
+}
+
+console.log(divide(10, 2)); // Output: 5
+console.log(divide(10, 0)); // Output: Error: Cannot divide by zero</pre>
+
+        <h3>2.5 Multiple Return Statements</h3>
+        <p>Functions can have multiple return statements, typically used with conditional logic:</p>
+        <pre>function getGrade(score) {
+    if (score >= 90) {
+        return "A";
+    } else if (score >= 80) {
+        return "B";
+    } else if (score >= 70) {
+        return "C";
+    } else if (score >= 60) {
+        return "D";
+    } else {
+        return "F";
+    }
+}
+
+console.log(getGrade(95)); // Output: A
+console.log(getGrade(82)); // Output: B
+console.log(getGrade(45)); // Output: F</pre>
+
+        <h3>2.6 Returning vs. Logging</h3>
+        <p>A common point of confusion for beginners is the difference between returning a value and logging it:</p>
+        <pre>function addAndLog(a, b) {
+    let sum = a + b;
+    console.log(sum); // This just prints to console
+    // No return - function returns undefined
+}
+
+function addAndReturn(a, b) {
+    let sum = a + b;
+    return sum; // This sends the value back to the caller
+}
+
+let result1 = addAndLog(5, 3); // Prints: 8
+console.log(result1); // Output: undefined
+
+let result2 = addAndReturn(5, 3); // Nothing prints
+console.log(result2); // Output: 8 - we can use the returned value!</pre>
+
+        <h4>Key Difference:</h4>
+        <ul>
+            <li><strong>console.log()</strong>: For debugging, shows output in console but doesn't provide value to code
+            </li>
+            <li><strong>return</strong>: Provides value to calling code for further use</li>
+        </ul>
+
+        <h3>2.7 Returning Complex Expressions</h3>
+        <p>Return can handle complex expressions directly:</p>
+        <pre>function calculateCompoundInterest(principal, rate, time, n) {
+    return principal * Math.pow(1 + rate/n, n * time) - principal;
+}
+
+let interest = calculateCompoundInterest(1000, 0.05, 3, 12);
+console.log(interest.toFixed(2)); // Output: 161.47</pre>
+
+        <h3>2.8 The Ternary Operator with Return</h3>
+        <p>Combine ternary operator with return for concise conditional returns:</p>
+        <pre>function isEven(number) {
+    return number % 2 === 0 ? true : false;
+}
+
+// Even shorter (the comparison already returns boolean)
+function isEven(number) {
+    return number % 2 === 0;
+}
+
+function getFee(isMember) {
+    return isMember ? "$2.00" : "$10.00";
+}
+
+console.log(getFee(true)); // Output: $2.00
+console.log(getFee(false)); // Output: $10.00</pre>
+
+        <h3>2.9 Returning from Arrow Functions</h3>
+        <p>Arrow functions have special syntax for implicit returns:</p>
+        <pre>// Regular arrow function with explicit return
+const add = (a, b) => {
+    return a + b;
+};
+
+// Arrow function with implicit return (no curly braces)
+const add = (a, b) => a + b;
+
+// Implicit return of object (requires parentheses)
+const createUser = (name, age) => ({ name: name, age: age });
+
+console.log(add(5, 3)); // Output: 8
+console.log(createUser("Alice", 30)); // Output: { name: "Alice", age: 30 }</pre>
+
+        <h3>2.10 Return Statements in Different Function Types</h3>
+
+        <h4>Function Declaration:</h4>
+        <pre>function square(x) {
+    return x * x;
+}</pre>
+
+        <h4>Function Expression:</h4>
+        <pre>const square = function(x) {
+    return x * x;
+};</pre>
+
+        <h4>Arrow Function:</h4>
+        <pre>const square = (x) => {
+    return x * x;
+};
+
+// Implicit return
+const square = x => x * x;</pre>
+
+        <h4>Immediately Invoked Function Expression (IIFE):</h4>
+        <pre>let result = (function() {
+    let x = 10;
+    let y = 20;
+    return x + y;
+})();
+
+console.log(result); // Output: 30</pre>
+
+        <!-- 3. VARIABLE SCOPE: THE FOUNDATION -->
+        <h2 id="3-variable-scope-the-foundation">3. VARIABLE SCOPE: THE FOUNDATION</h2>
+
+        <h3>3.1 What is Scope?</h3>
+        <p>Scope determines the accessibility (visibility) of variables, functions, and objects in different parts of
+            your code during runtime. In simple terms, scope answers the question: "Where can I access this variable?"
+        </p>
+
+        <h4>The Three Types of Scope in JavaScript:</h4>
+        <ol>
+            <li><strong>Global Scope</strong>: Variables declared outside any function or block</li>
+            <li><strong>Local Scope (Function Scope)</strong>: Variables declared inside a function</li>
+            <li><strong>Block Scope</strong>: Variables declared inside a block <code>{}</code> with <code>let</code> or
+                <code>const</code></li>
+        </ol>
+
+        <h3>3.2 Why Scope Matters</h3>
+        <p>Understanding scope is crucial for several reasons:</p>
+        <ol>
+            <li><strong>Variable Isolation</strong>: Prevents naming conflicts</li>
+            <li><strong>Memory Management</strong>: Variables are garbage-collected when out of scope</li>
+            <li><strong>Code Security</strong>: Prevents unintended access to variables</li>
+            <li><strong>Modularity</strong>: Encapsulates code behavior</li>
+            <li><strong>Debugging</strong>: Easier to track variable values</li>
+        </ol>
+
+        <h4>Illustration of Scope Concept:</h4>
+        <pre>// Global scope
+let globalVar = "I'm global";
+
+function myFunction() {
+    // Function scope (local)
+    let localVar = "I'm local";
+    
+    if (true) {
+        // Block scope
+        let blockVar = "I'm block-scoped";
+        console.log(globalVar); // ✓ Accessible
+        console.log(localVar);   // ✓ Accessible
+        console.log(blockVar);   // ✓ Accessible
+    }
+    
+    console.log(globalVar); // ✓ Accessible
+    console.log(localVar);   // ✓ Accessible
+    // console.log(blockVar); // ✗ Not accessible (ReferenceError)
+}
+
+console.log(globalVar); // ✓ Accessible
+// console.log(localVar);  // ✗ Not accessible
+// console.log(blockVar);  // ✗ Not accessible</pre>
+
+        <h3>3.3 Variable Declaration Keywords and Scope</h3>
+        <p>JavaScript provides three keywords for variable declaration, each with different scoping behavior:</p>
+        <table>
+            <tr>
+                <th>Keyword</th>
+                <th>Scope</th>
+                <th>Can be Reassigned</th>
+                <th>Can be Redeclared</th>
+                <th>Hoisting Behavior</th>
+            </tr>
+            <tr>
+                <td><code>var</code></td>
+                <td>Function-scoped</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Hoisted (initialized as <code>undefined</code>)</td>
+            </tr>
+            <tr>
+                <td><code>let</code></td>
+                <td>Block-scoped</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>Hoisted (but not initialized - TDZ)</td>
+            </tr>
+            <tr>
+                <td><code>const</code></td>
+                <td>Block-scoped</td>
+                <td>No</td>
+                <td>No</td>
+                <td>Hoisted (but not initialized - TDZ)</td>
+            </tr>
+        </table>
+
+        <h4>Example Comparing Declaration Keywords:</h4>
+        <pre>// var - function scoped
+function varExample() {
+    if (true) {
+        var x = 10;
+    }
+    console.log(x); // Output: 10 (accessible outside block)
+}
+
+// let - block scoped
+function letExample() {
+    if (true) {
+        let y = 20;
+    }
+    // console.log(y); // Error: y is not defined
+}
+
+// const - block scoped, cannot be reassigned
+function constExample() {
+    const z = 30;
+    // z = 40; // Error: Assignment to constant variable
+    
+    const obj = { name: "Alice" };
+    obj.name = "Bob"; // This is allowed - object properties can change
+    console.log(obj); // Output: { name: "Bob" }
+}</pre>
+
+        <!-- 4. GLOBAL SCOPE -->
+        <h2 id="4-global-scope">4. GLOBAL SCOPE</h2>
+
+        <h3>4.1 What is Global Scope?</h3>
+        <p>Global scope is the outermost scope in JavaScript. Variables declared outside any function or block are in
+            the global scope and can be accessed from anywhere in the code.</p>
+
+        <h4>Creating Global Variables:</h4>
+        <pre>// These are all global variables
+var globalVar = "I'm a global var";
+let globalLet = "I'm a global let";
+const globalConst = "I'm a global const";
+
+// Even without keyword (NOT recommended)
+accidentalGlobal = "I'm accidentally global";
+
+function testFunction() {
+    console.log(globalVar);   // ✓ Accessible
+    console.log(globalLet);   // ✓ Accessible
+    console.log(globalConst); // ✓ Accessible
+    console.log(accidentalGlobal); // ✓ Accessible
+}
+
+testFunction();
+console.log(globalVar); // ✓ Accessible</pre>
+
+        <h3>4.2 The Global Object</h3>
+        <p>In browsers, the global object is <code>window</code>. In Node.js, it's <code>global</code>. Global variables
+            created with <code>var</code> become properties of the global object:</p>
+        <pre>// Browser environment
+var message = "Hello";
+console.log(window.message); // Output: Hello
+
+let greeting = "Hi";
+console.log(window.greeting); // Output: undefined (let doesn't attach to window)
+
+// Accessing global object
+console.log(window.document); // Access DOM
+console.log(window.console.log); // Access console</pre>
+
+        <h3>4.3 Problems with Global Variables</h3>
+        <p>While global variables seem convenient, they come with significant drawbacks:</p>
+
+        <h4>Problem 1: Naming Conflicts</h4>
+        <pre>// script1.js
+var count = 10;
+
+// script2.js
+var count = 20; // Overwrites the first count!
+
+console.log(count); // Output: 20 (unintended behavior)</pre>
+
+        <h4>Problem 2: Unintended Modification</h4>
+        <pre>let userScore = 100;
+
+function someFunction() {
+    // Maybe you forgot you already used userScore
+    let userScore = 50; // This creates a new local variable
+    // But what if you accidentally wrote:
+    // userScore = 50; // This would modify the global!
+}
+
+function anotherFunction() {
+    userScore = 200; // Accidentally modifying global
+    // Hard to track where changes come from
+}</pre>
+
+        <h4>Problem 3: Security Risks</h4>
+        <pre>// Sensitive data exposed globally
+var apiKey = "abc123secret";
+var userPassword = "mypassword";
+
+// Any script on the page can access these
+console.log(window.apiKey); // Easily exposed</pre>
+
+        <h4>Problem 4: Namespace Pollution</h4>
+        <pre>// Different developers working on same project
+// Developer A
+var total = 0;
+
+function calculateTotal() {
+    // uses total
+}
+
+// Developer B (unaware of Developer A's variable)
+var total = []; // Oops, changed the type!
+
+// Now Developer A's function breaks</pre>
+
+        <h3>4.4 Best Practices for Global Scope</h3>
+
+        <h4>Minimize Global Variables:</h4>
+        <pre>// BAD: Multiple global variables
+var userName = "Alice";
+var userAge = 30;
+var userEmail = "alice@example.com";
+
+// GOOD: Single global object (namespacing)
+var UserApp = {
+    name: "Alice",
+    age: 30,
+    email: "alice@example.com"
+};
+
+// BETTER: Use modules (ES6)
+// user.js
+export const user = {
+    name: "Alice",
+    age: 30,
+    email: "alice@example.com"
+};</pre>
+
+        <h4>Using IIFE to Avoid Globals:</h4>
+        <pre>// Before ES6 modules, IIFE was used to avoid globals
+(function() {
+    // All variables here are local to this function
+    let privateVar = "Can't access me outside";
+    let counter = 0;
+    
+    function increment() {
+        counter++;
+        console.log(counter);
+    }
+    
+    // Only expose what's needed
+    window.myApp = {
+        increment: increment
+        // privateVar and counter remain inaccessible
+    };
+})();
+
+console.log(window.myApp); // { increment: function }
+// console.log(privateVar); // Error: not defined</pre>
+
+        <h3>4.5 When Global Variables Are Acceptable</h3>
+        <p>There are legitimate use cases for global variables:</p>
+        <pre>// Constants that never change
+const APP_NAME = "My Application";
+const API_BASE_URL = "https://api.example.com";
+const MAX_LOGIN_ATTEMPTS = 5;
+
+// Application-wide configuration
+const CONFIG = {
+    theme: "dark",
+    language: "en",
+    version: "1.0.0"
+};
+
+// Framework/library exports
+window.React = React;
+window.jQuery = $;</pre>
+
+        <!-- 5. LOCAL SCOPE (FUNCTION SCOPE) -->
+        <h2 id="5-local-scope-function-scope">5. LOCAL SCOPE (FUNCTION SCOPE)</h2>
+
+        <h3>5.1 What is Local Scope?</h3>
+        <p>Local scope (also called function scope) refers to variables declared inside a function. These variables are
+            only accessible within that function and any nested functions.</p>
+
+        <h4>Basic Example:</h4>
+        <pre>function myFunction() {
+    let localVar = "I'm local to myFunction";
+    const alsoLocal = "Me too";
+    var oldStyleLocal = "I'm function-scoped with var";
+    
+    console.log(localVar); // ✓ Accessible
+    console.log(alsoLocal); // ✓ Accessible
+    console.log(oldStyleLocal); // ✓ Accessible
+}
+
+myFunction();
+// console.log(localVar); // Error: localVar is not defined
+// console.log(alsoLocal); // Error: alsoLocal is not defined
+// console.log(oldStyleLocal); // Error: oldStyleLocal is not defined</pre>
+
+        <h3>5.2 Parameters as Local Variables</h3>
+        <p>Function parameters are automatically treated as local variables within the function:</p>
+        <pre>function greet(name, age) {
+    // name and age are local to this function
+    let message = `Hello, ${name}! You are ${age} years old.`;
+    console.log(message);
+    console.log(name); // ✓ Accessible
+    console.log(age);  // ✓ Accessible
+}
+
+greet("Alice", 30);
+// console.log(name); // Error: name is not defined
+// console.log(age);  // Error: age is not defined</pre>
+
+        <h3>5.3 Nested Functions and Scope</h3>
+        <p>Functions can be nested, creating a scope chain:</p>
+        <pre>function outerFunction(outerParam) {
+    let outerVar = "I'm in outer";
+    
+    function middleFunction(middleParam) {
+        let middleVar = "I'm in middle";
+        
+        function innerFunction(innerParam) {
+            let innerVar = "I'm in inner";
+            
+            console.log(innerVar);    // ✓ Accessible
+            console.log(innerParam);   // ✓ Accessible
+            console.log(middleVar);    // ✓ Accessible (from middle scope)
+            console.log(middleParam);   // ✓ Accessible (from middle scope)
+            console.log(outerVar);      // ✓ Accessible (from outer scope)
+            console.log(outerParam);     // ✓ Accessible (from outer scope)
+            console.log(globalVar);      // ✓ Accessible (if global exists)
+        }
+        
+        innerFunction("inner arg");
+        // console.log(innerVar); // Error: not accessible here
+    }
+    
+    middleFunction("middle arg");
+    // console.log(middleVar); // Error: not accessible here
+    // console.log(innerVar);  // Error: not accessible here
+}
+
+outerFunction("outer arg");</pre>
+
+        <h3>5.4 Variable Shadowing</h3>
+        <p>When a variable in an inner scope has the same name as a variable in an outer scope, the inner variable
+            "shadows" the outer one:</p>
+        <pre>let name = "Global Alice";
+
+function demonstrateShadowing() {
+    let name = "Local Bob";
+    console.log(name); // Output: Local Bob (shadows global)
+    
+    function nestedFunction() {
+        let name = "Nested Charlie";
+        console.log(name); // Output: Nested Charlie
+    }
+    
+    nestedFunction();
+    console.log(name); // Output: Local Bob
+}
+
+demonstrateShadowing();
+console.log(name); // Output: Global Alice</pre>
+
+        <h4>Accessing Shadowed Global Variables:</h4>
+        <pre>let counter = 100;
+
+function shadowExample() {
+    let counter = 50;
+    console.log(counter); // Output: 50 (local)
+    
+    // Access global counter (in browser)
+    console.log(window.counter); // Output: 100
+}
+
+shadowExample();</pre>
+
+        <h3>5.5 The `var` Keyword and Function Scope</h3>
+        <p>Unlike <code>let</code> and <code>const</code>, <code>var</code> is function-scoped, not block-scoped:</p>
+        <pre>function varExample() {
+    if (true) {
+        var x = 10;
+        let y = 20;
+        const z = 30;
+    }
+    
+    console.log(x); // Output: 10 (var is function-scoped)
+    // console.log(y); // Error: y is not defined (let is block-scoped)
+    // console.log(z); // Error: z is not defined (const is block-scoped)
+}
+
+varExample();
+
+// Even more interesting:
+function loopExample() {
+    for (var i = 0; i < 5; i++) {
+        // loop body
+    }
+    console.log(i); // Output: 5 (var persists after loop)
+    
+    for (let j = 0; j < 5; j++) {
+        // loop body
+    }
+    // console.log(j); // Error: j is not defined
+}
+
+loopExample();</pre>
+
+        <h3>5.6 Benefits of Local Scope</h3>
+
+        <h4>Benefit 1: Encapsulation</h4>
+        <pre>function calculateOrderTotal(items) {
+    // These variables are hidden from outside
+    let subtotal = 0;
+    const TAX_RATE = 0.08;
+    let shipping = 5.99;
+    
+    for (let item of items) {
+        subtotal += item.price * item.quantity;
+    }
+    
+    let tax = subtotal * TAX_RATE;
+    let total = subtotal + tax + shipping;
+    
+    return {
+        subtotal: subtotal.toFixed(2),
+        tax: tax.toFixed(2),
+        shipping: shipping.toFixed(2),
+        total: total.toFixed(2)
+    };
+}
+
+let order = calculateOrderTotal([
+    { name: "Book", price: 15.99, quantity: 2 },
+    { name: "Pen", price: 1.50, quantity: 5 }
+]);
+
+console.log(order);
+// console.log(subtotal); // Error: can't access internal variables</pre>
+
+        <h4>Benefit 2: Memory Management</h4>
+        <pre>function processLargeData() {
+    // This large array exists only during function execution
+    let hugeArray = new Array(1000000).fill("data");
+    
+    let result = hugeArray.filter(item => item.length > 0);
+    
+    // After function returns, hugeArray can be garbage collected
+    return result.length;
+}
+
+processLargeData(); // Memory freed after execution</pre>
+
+        <h4>Benefit 3: Avoiding Naming Conflicts</h4>
+        <pre>// Multiple functions can use same variable names
+function calculateRectangleArea(width, height) {
+    let result = width * height;
+    return result;
+}
+
+function calculateCircleArea(radius) {
+    let result = Math.PI * radius * radius;
+    return result;
+}
+
+// No conflict because each 'result' is local to its function</pre>
+
+        <!-- 6. BLOCK SCOPE -->
+        <h2 id="6-block-scope">6. BLOCK SCOPE</h2>
+
+        <h3>6.1 Introduction to Block Scope</h3>
+        <p>Block scope, introduced in ES6 with <code>let</code> and <code>const</code>, restricts variable access to the
+            block in which it was declared. A block is defined by curly braces <code>{}</code>.</p>
+
+        <h4>What Creates a Block?</h4>
+        <pre>// if statement block
+if (condition) {
+    // block starts here
+    let blockVar = "I'm in an if block";
+    // block ends here
+}
+
+// for loop block
+for (let i = 0; i < 5; i++) {
+    // block starts here
+    let loopVar = "I'm in a loop block";
+    // block ends here
+}
+
+// while loop block
+while (condition) {
+    // block starts here
+    let whileVar = "I'm in a while block";
+    // block ends here
+}
+
+// switch statement block
+switch(value) {
+    case 1: {
+        // block starts here
+        let switchVar = "I'm in a switch block";
+        // block ends here
+        break;
+    }
+}
+
+// standalone block (rare but valid)
+{
+    // block starts here
+    let standaloneVar = "I'm in a standalone block";
+    // block ends here
+}
+// console.log(standaloneVar); // Error: not defined</pre>
+
+        <h3>6.2 <code>let</code> and <code>const</code> are Block-Scoped</h3>
+
+        <h4>Basic Block Scope Example:</h4>
+        <pre>{
+    let x = 10;
+    const y = 20;
+    var z = 30; // var ignores block scope
+    
+    console.log(x); // Output: 10
+    console.log(y); // Output: 20
+    console.log(z); // Output: 30
+}
+
+// console.log(x); // Error: x is not defined
+// console.log(y); // Error: y is not defined
+console.log(z); // Output: 30 (var "leaks" out of block)</pre>
+
+        <h4>Block Scope in Conditionals:</h4>
+        <pre>let message = "Hello";
+
+if (message.length > 0) {
+    let temp = message.toUpperCase();
+    const prefix = "Message: ";
+    var suffix = "!!!";
+    
+    console.log(prefix + temp + suffix); // Works fine
+}
+
+// console.log(temp);   // Error: temp is block-scoped
+// console.log(prefix); // Error: prefix is block-scoped
+console.log(suffix);    // Output: !!! (var is function/global scoped)</pre>
+
+        <h4>Block Scope in Loops:</h4>
+        <pre>// Classic loop problem with var
+for (var i = 0; i < 3; i++) {
+    // loop body
+}
+console.log(i); // Output: 3 (var "escapes")
+
+// With let - proper block scope
+for (let j = 0; j < 3; j++) {
+    // loop body
+}
+// console.log(j); // Error: j is not defined
+
+// Practical example: setTimeout in loop
+for (var k = 0; k < 3; k++) {
+    setTimeout(function() {
+        console.log(k); // Output: 3, 3, 3 (all reference same var)
+    }, 100);
+}
+
+for (let l = 0; l < 3; l++) {
+    setTimeout(function() {
+        console.log(l); // Output: 0, 1, 2 (each iteration has its own l)
+    }, 100);
+}</pre>
+
+        <h3>6.3 The Temporal Dead Zone (TDZ)</h3>
+        <p>The Temporal Dead Zone is the time between entering a block and the variable declaration where the variable
+            cannot be accessed.</p>
+
+        <h4>TDZ with <code>let</code>:</h4>
+        <pre>{
+    // TDZ starts here for 'x'
+    console.log("Before declaration");
+    // console.log(x); // Error: Cannot access 'x' before initialization
+    
+    let x = 10; // TDZ ends here
+    console.log(x); // Output: 10 (now accessible)
+}
+
+{
+    // Interesting example with function
+    function test() {
+        console.log(myVar); // Error? Actually, this works? Let's see...
+        var myVar = 5; // With var, it's undefined, not an error
+        
+        console.log(myLet); // Error: Cannot access before initialization
+        let myLet = 10;
+    }
+    
+    // test(); // Uncomment to see the error
+}</pre>
+
+        <h4>TDZ with <code>const</code>:</h4>
+        <pre>{
+    // console.log(PI); // Error: Cannot access before initialization
+    const PI = 3.14159;
+    console.log(PI); // Output: 3.14159
+}
+
+// TDZ with typeof operator
+{
+    // console.log(typeof myVar); // Output: undefined (var is hoisted)
+    // console.log(typeof myLet); // Error: Cannot access before initialization
+    
+    var myVar = 1;
+    let myLet = 2;
+}</pre>
+
+        <h3>6.4 Block Scope in Switch Statements</h3>
+        <p>Switch statements create blocks for each case when using curly braces:</p>
+        <pre>let color = "red";
+let hexValue;
+
+switch(color) {
+    case "red": {
+        let rgb = "rgb(255, 0, 0)";
+        hexValue = "#FF0000";
+        console.log(rgb); // Works here
+        break;
+    }
+    case "green": {
+        let rgb = "rgb(0, 255, 0)";
+        hexValue = "#00FF00";
+        console.log(rgb); // Works here, separate from red's rgb
+        break;
+    }
+}
+
+console.log(hexValue); // Works
+// console.log(rgb); // Error: rgb is not defined</pre>
+
+        <h3>6.5 Block Scope vs Function Scope Comparison</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>Function Scope (<code>var</code>)</th>
+                <th>Block Scope (<code>let</code>/<code>const</code>)</th>
+            </tr>
+            <tr>
+                <td>Visibility</td>
+                <td>Entire function</td>
+                <td>Within <code>{}</code> block only</td>
+            </tr>
+            <tr>
+                <td>Loop Variables</td>
+                <td>Leaks outside</td>
+                <td>Contained within loop</td>
+            </tr>
+            <tr>
+                <td>Redeclaration</td>
+                <td>Allowed in same scope</td>
+                <td>Not allowed in same scope</td>
+            </tr>
+            <tr>
+                <td>Hoisting</td>
+                <td>Hoisted (initialized <code>undefined</code>)</td>
+                <td>Hoisted (TDZ, not initialized)</td>
+            </tr>
+            <tr>
+                <td>Global Object</td>
+                <td>Becomes property (<code>window.var</code>)</td>
+                <td>No property created</td>
+            </tr>
+        </table>
+
+        <h4>Demonstration:</h4>
+        <pre>function comparisonDemo() {
+    // Function scope vs block scope
+    if (true) {
+        var functionScoped = "I'm function scoped";
+        let blockScoped = "I'm block scoped";
+        const alsoBlockScoped = "Me too";
+        
+        functionScoped = "Changed"; // ✓ OK
+        blockScoped = "Changed";    // ✓ OK
+        // alsoBlockScoped = "Changed"; // Error: can't reassign const
+    }
+    
+    console.log(functionScoped); // ✓ Works: "Changed"
+    // console.log(blockScoped);    // Error
+    // console.log(alsoBlockScoped); // Error
+}
+
+comparisonDemo();</pre>
+
+        <h3>6.6 Practical Uses of Block Scope</h3>
+
+        <h4>Use Case 1: Isolating Temporary Variables</h4>
+        <pre>function processItems(items) {
+    // Process first batch
+    {
+        let batch = items.slice(0, 10);
+        let temp = [];
+        for (let item of batch) {
+            temp.push(item * 2);
+        }
+        console.log("First batch processed:", temp);
+        // temp is discarded after this block
+    }
+    
+    // Process second batch
+    {
+        let batch = items.slice(10, 20);
+        let temp = []; // Can reuse variable name
+        for (let item of batch) {
+            temp.push(item * 3);
+        }
+        console.log("Second batch processed:", temp);
+    }
+    
+    // No variable pollution
+}
+
+processItems([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);</pre>
+
+        <h4>Use Case 2: Constants Within a Block</h4>
+        <pre>function calculateDiscount(price, userType) {
+    let discount = 0;
+    
+    if (userType === "premium") {
+        const PREMIUM_DISCOUNT = 0.2;
+        const MIN_PREMIUM_PURCHASE = 100;
+        
+        if (price >= MIN_PREMIUM_PURCHASE) {
+            discount = price * PREMIUM_DISCOUNT;
+        }
+        
+        // PREMIUM_DISCOUNT and MIN_PREMIUM_PURCHASE only exist here
+    }
+    
+    if (userType === "employee") {
+        const EMPLOYEE_DISCOUNT = 0.3;
+        const MAX_EMPLOYEE_DISCOUNT = 500;
+        
+        discount = Math.min(price * EMPLOYEE_DISCOUNT, MAX_EMPLOYEE_DISCOUNT);
+    }
+    
+    return discount;
+}
+
+console.log(calculateDiscount(200, "premium")); // Works
+console.log(calculateDiscount(200, "employee")); // Works</pre>
+
+        <!-- 7. SCOPE CHAIN AND LEXICAL SCOPING -->
+        <h2 id="7-scope-chain-and-lexical-scoping">7. SCOPE CHAIN AND LEXICAL SCOPING</h2>
+
+        <h3>7.1 What is the Scope Chain?</h3>
+        <p>The scope chain is the hierarchy of scopes that JavaScript uses to resolve variable references. When a
+            variable is accessed, JavaScript starts in the current scope and works its way up through outer scopes until
+            it finds the variable or reaches the global scope.</p>
+
+        <h4>Visualizing the Scope Chain:</h4>
+        <pre>// Global scope (level 0)
+let globalVar = "global";
+
+function outerFunction(outerParam) {
+    // outer function scope (level 1)
+    let outerVar = "outer";
+    
+    function middleFunction(middleParam) {
+        // middle function scope (level 2)
+        let middleVar = "middle";
+        
+        function innerFunction(innerParam) {
+            // inner function scope (level 3)
+            let innerVar = "inner";
+            
+            // Scope chain lookup:
+            console.log(innerVar);    // Found in level 3
+            console.log(innerParam);   // Found in level 3
+            console.log(middleVar);    // Found in level 2
+            console.log(middleParam);   // Found in level 2
+            console.log(outerVar);      // Found in level 1
+            console.log(outerParam);     // Found in level 1
+            console.log(globalVar);      // Found in level 0
+        }
+        
+        innerFunction("inner arg");
+    }
+    
+    middleFunction("middle arg");
+}
+
+outerFunction("outer arg");</pre>
+
+        <h3>7.2 How the Scope Chain Works</h3>
+
+        <h4>Step-by-Step Variable Resolution:</h4>
+        <pre>let x = "global x";
+let y = "global y";
+let z = "global z";
+
+function levelOne() {
+    let x = "levelOne x";
+    let y = "levelOne y";
+    
+    function levelTwo() {
+        let x = "levelTwo x";
+        
+        console.log(x); // Finds: levelTwo x (in current scope)
+        console.log(y); // Finds: levelOne y (in outer scope)
+        console.log(z); // Finds: global z (in global scope)
+        
+        // What about w?
+        // console.log(w); // Error: w is not defined (nowhere in chain)
+    }
+    
+    levelTwo();
+}
+
+levelOne();</pre>
+
+        <h4>The Scope Chain is Static (Lexical)</h4>
+        <p>The scope chain is determined by where functions are written, not where they are called:</p>
+        <pre>let globalVar = "I'm global";
+
+function outer() {
+    let outerVar = "I'm outer";
+    
+    function inner() {
+        let innerVar = "I'm inner";
+        console.log(innerVar); // "I'm inner"
+        console.log(outerVar); // "I'm outer" (from lexical scope)
+        console.log(globalVar); // "I'm global" (from lexical scope)
+    }
+    
+    return inner;
+}
+
+let myFunction = outer();
+
+// Even though we call myFunction() here, outside outer(),
+// it still remembers its lexical scope (closure)
+myFunction(); // Still accesses outerVar!</pre>
+
+        <h3>7.3 Lexical Scoping Explained</h3>
+        <p>Lexical scoping means that the scope of a variable is determined by its location in the source code. Nested
+            functions have access to variables declared in their outer scope.</p>
+
+        <h4>Lexical vs Dynamic Scoping:</h4>
+        <pre>// JavaScript uses lexical scoping
+let value = "global";
+
+function printValue() {
+    console.log(value);
+}
+
+function callWithLocal() {
+    let value = "local";
+    printValue(); // Prints: "global" (lexical scope)
+}
+
+callWithLocal(); 
+// If JavaScript used dynamic scoping, this would print "local"
+
+// Another example:
+function createFunction() {
+    let name = "Alice";
+    
+    function sayHello() {
+        console.log("Hello, " + name);
+    }
+    
+    return sayHello;
+}
+
+let greeting = createFunction();
+let name = "Bob"; // This doesn't affect the function
+greeting(); // Still prints: "Hello, Alice"</pre>
+
+        <h3>7.4 Closures and the Scope Chain</h3>
+        <p>A closure is created when a function retains access to its lexical scope even when executed outside that
+            scope.</p>
+
+        <h4>Basic Closure Example:</h4>
+        <pre>function createCounter() {
+    let count = 0; // Private variable
+    
+    return {
+        increment: function() {
+            count++;
+            return count;
+        },
+        decrement: function() {
+            count--;
+            return count;
+        },
+        getCount: function() {
+            return count;
+        }
+    };
+}
+
+let counter = createCounter();
+console.log(counter.increment()); // Output: 1
+console.log(counter.increment()); // Output: 2
+console.log(counter.getCount()); // Output: 2
+// console.log(count); // Error: count is not accessible</pre>
+
+        <h4>Practical Closure Examples:</h4>
+        <pre>// 1. Private variables
+function createBankAccount(initialBalance) {
+    let balance = initialBalance;
+    
+    return {
+        deposit: function(amount) {
+            if (amount > 0) {
+                balance += amount;
+                return `Deposited ${amount}. New balance: ${balance}`;
+            }
+            return "Invalid amount";
+        },
+        withdraw: function(amount) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                return `Withdrew ${amount}. New balance: ${balance}`;
+            }
+            return "Insufficient funds or invalid amount";
+        },
+        getBalance: function() {
+            return balance;
+        }
+    };
+}
+
+let account = createBankAccount(1000);
+console.log(account.deposit(500)); // Deposited 500. New balance: 1500
+console.log(account.withdraw(200)); // Withdrew 200. New balance: 1300
+console.log(account.getBalance()); // 1300
+
+// 2. Function factories
+function multiplyBy(factor) {
+    return function(number) {
+        return number * factor;
+    };
+}
+
+let double = multiplyBy(2);
+let triple = multiplyBy(3);
+let timesTen = multiplyBy(10);
+
+console.log(double(5));  // 10
+console.log(triple(5));  // 15
+console.log(timesTen(5)); // 50
+
+// 3. Event handlers with private state
+function setupButton(buttonId, clickCount) {
+    let clicks = 0;
+    let maxClicks = clickCount;
+    
+    document.getElementById(buttonId).addEventListener('click', function() {
+        clicks++;
+        if (clicks <= maxClicks) {
+            console.log(`Button clicked ${clicks} times`);
+        } else {
+            console.log("Maximum clicks reached");
+            this.disabled = true;
+        }
+    });
+}</pre>
+
+        <h3>7.5 Scope Chain Performance Implications</h3>
+        <p>Understanding the scope chain is important for performance:</p>
+        <pre>// SLOWER: Deep scope chain lookups
+let globalData = [1, 2, 3, 4, 5];
+
+function outer() {
+    function inner() {
+        function deepest() {
+            // Each variable lookup traverses the scope chain
+            for (let i = 0; i < globalData.length; i++) {
+                // Accessing globalData requires going up 3 levels
+                console.log(globalData[i]);
+            }
+        }
+        deepest();
+    }
+    inner();
+}
+
+// FASTER: Cache variables from outer scopes
+function optimized() {
+    function inner() {
+        function deepest() {
+            // Cache global variable in local scope
+            let data = globalData;
+            for (let i = 0; i < data.length; i++) {
+                console.log(data[i]); // Local lookup is faster
+            }
+        }
+        deepest();
+    }
+    inner();
+}</pre>
+
+        <!-- 8. VARIABLE HOISTING -->
+        <h2 id="8-variable-hoisting">8. VARIABLE HOISTING</h2>
+
+        <h3>8.1 What is Hoisting?</h3>
+        <p>Hoisting is JavaScript's default behavior of moving declarations to the top of their containing scope during
+            the compilation phase, before code execution.</p>
+
+        <h4>Visual Understanding:</h4>
+        <pre>// What you write:
+console.log(myVar);
+var myVar = 5;
+console.log(myVar);
+
+// How JavaScript interprets it (hoisting):
+var myVar; // Declaration is hoisted
+console.log(myVar); // undefined
+myVar = 5; // Assignment stays in place
+console.log(myVar); // 5</pre>
+
+        <h3>8.2 Hoisting with <code>var</code></h3>
+        <p>Variables declared with <code>var</code> are hoisted to the top of their function or global scope and
+            initialized with <code>undefined</code>:</p>
+        <pre>console.log(x); // Output: undefined (not an error!)
+var x = 10;
+console.log(x); // Output: 10
+
+// This is equivalent to:
+var x;
+console.log(x); // undefined
+x = 10;
+console.log(x); // 10</pre>
+
+        <h4>Hoisting in Functions:</h4>
+        <pre>function example() {
+    console.log(message); // Output: undefined
+    var message = "Hello";
+    console.log(message); // Output: Hello
+}
+
+example();
+
+// Equivalent to:
+function example() {
+    var message;
+    console.log(message); // undefined
+    message = "Hello";
+    console.log(message); // Hello
+}</pre>
+
+        <h4>The "var" Hoisting Trap:</h4>
+        <pre>var name = "Global";
+
+function confusion() {
+    console.log(name); // Output: undefined, NOT "Global"
+    var name = "Local";
+    console.log(name); // Output: Local
+}
+
+confusion();
+
+// Why? Because it's interpreted as:
+function confusion() {
+    var name; // hoisted local declaration shadows global
+    console.log(name); // undefined
+    name = "Local";
+    console.log(name); // Local
+}</pre>
+
+        <h3>8.3 Hoisting with <code>let</code> and <code>const</code></h3>
+        <p><code>let</code> and <code>const</code> are hoisted but not initialized. They exist in a Temporal Dead Zone
+            (TDZ) from the start of the block until the declaration is encountered:</p>
+        <pre>// console.log(a); // Error: Cannot access 'a' before initialization
+let a = 5;
+console.log(a); // 5
+
+// console.log(b); // Error: Cannot access 'b' before initialization
+const b = 10;
+console.log(b); // 10
+
+// This creates a TDZ
+{
+    // TDZ for x starts here
+    // console.log(x); // Error
+    let x = 20; // TDZ ends here
+    console.log(x); // 20
+}</pre>
+
+        <h4>TDZ with typeof:</h4>
+        <pre>console.log(typeof varVariable); // Output: undefined (var is hoisted)
+
+// console.log(typeof letVariable); // Error: Cannot access before initialization
+let letVariable = 5;
+
+{
+    // console.log(typeof blockVar); // Error: TDZ
+    const blockVar = 10;
+    console.log(typeof blockVar); // Output: number
+}</pre>
+
+        <h3>8.4 Function Hoisting</h3>
+        <p>Function declarations are hoisted entirely, meaning you can call them before they're defined:</p>
+        <pre>// This works!
+sayHello("Alice"); // Output: Hello, Alice!
+
+function sayHello(name) {
+    console.log("Hello, " + name + "!");
+}
+
+// This also works due to hoisting
+console.log(double(5)); // Output: 10
+
+function double(x) {
+    return x * 2;
+}</pre>
+
+        <h4>Function Expressions Are Not Hoisted:</h4>
+        <pre>// This doesn't work!
+// greet("Bob"); // Error: greet is not a function
+
+var greet = function(name) {
+    console.log("Hi, " + name + "!");
+};
+
+// This works after declaration
+greet("Bob"); // Output: Hi, Bob!
+
+// With let/const - even stricter
+// sayHi("Charlie"); // Error: Cannot access before initialization
+let sayHi = function(name) {
+    console.log("Hi, " + name + "!");
+};
+sayHi("Charlie"); // Works here</pre>
+
+        <h4>Comparison of Hoisting Behaviors:</h4>
+        <pre>// Function declaration - fully hoisted
+console.log(func1); // Output: function func1() {...}
+func1(); // Works: "func1"
+
+function func1() {
+    console.log("func1");
+}
+
+// var function expression - declaration hoisted, not assignment
+console.log(func2); // Output: undefined
+// func2(); // Error: func2 is not a function
+
+var func2 = function() {
+    console.log("func2");
+};
+
+console.log(func2); // Output: function
+func2(); // Works now
+
+// let/const function expression - in TDZ
+// console.log(func3); // Error: Cannot access before initialization
+// func3(); // Error
+
+let func3 = function() {
+    console.log("func3");
+};
+
+console.log(func3); // Works now
+func3(); // Works now</pre>
+
+        <h3>8.5 Order of Hoisting</h3>
+        <p>When multiple declarations exist, functions are hoisted first, then variables:</p>
+        <pre>// What you write:
+console.log(typeof foo); // ?
+var foo = "string";
+function foo() {
+    return "function";
+}
+console.log(typeof foo); // ?
+
+// How it's actually interpreted:
+function foo() {
+    return "function";
+}
+var foo; // redundant declaration (foo already exists)
+
+console.log(typeof foo); // "function" (function wins)
+foo = "string";
+console.log(typeof foo); // "string" (assignment overrides)</pre>
+
+        <h4>Complex Hoisting Example:</h4>
+        <pre>function testHoisting() {
+    console.log(a); // Output: function a() {...}
+    console.log(b); // Output: undefined
+    
+    var b = "b value";
+    
+    function a() {
+        return "a function";
+    }
+    
+    var a = "a value";
+    
+    console.log(a); // Output: "a value" (after assignment)
+    console.log(b); // Output: "b value"
+}
+
+testHoisting();
+
+// Interpreted as:
+function testHoisting() {
+    function a() { // function hoisted first
+        return "a function";
+    }
+    var b; // var hoisted next
+    
+    console.log(a); // function
+    console.log(b); // undefined
+    
+    b = "b value";
+    a = "a value"; // assignment overrides function
+    
+    console.log(a); // "a value"
+    console.log(b); // "b value"
+}</pre>
+
+        <!-- 9. BEST PRACTICES AND COMMON PITFALLS -->
+        <h2 id="9-best-practices-and-common-pitfalls">9. BEST PRACTICES AND COMMON PITFALLS</h2>
+
+        <h3>9.1 Best Practices for Return Statements</h3>
+
+        <h4>1. Always Return Something Consistent</h4>
+        <pre>// BAD: Inconsistent return values
+function getUserStatus(user) {
+    if (user.isActive) {
+        return "active";
+    }
+    // Implicitly returns undefined
+}
+
+// GOOD: Consistent return
+function getUserStatus(user) {
+    if (user.isActive) {
+        return "active";
+    }
+    return "inactive";
+}
+
+// Or use default value
+function getUserStatus(user) {
+    return user.isActive ? "active" : "inactive";
+}</pre>
+
+        <h4>2. Return Early for Error Cases</h4>
+        <pre>// BAD: Nested conditions
+function divide(a, b) {
+    if (b !== 0) {
+        if (typeof a === 'number' && typeof b === 'number') {
+            return a / b;
+        } else {
+            return "Invalid input";
+        }
+    } else {
+        return "Cannot divide by zero";
+    }
+}
+
+// GOOD: Early returns
+function divide(a, b) {
+    if (b === 0) {
+        return "Cannot divide by zero";
+    }
+    if (typeof a !== 'number' || typeof b !== 'number') {
+        return "Invalid input";
+    }
+    return a / b;
+}</pre>
+
+        <h4>3. Keep Functions Focused (Single Responsibility)</h4>
+        <pre>// BAD: Function does too much
+function processUserData(user) {
+    // Validate
+    if (!user.name || !user.email) {
+        return false;
+    }
+    
+    // Format
+    const formattedUser = {
+        name: user.name.toUpperCase(),
+        email: user.email.toLowerCase()
+    };
+    
+    // Save to database
+    database.save(formattedUser);
+    
+    // Send email
+    email.send(user.email, "Welcome!");
+    
+    return true;
+}
+
+// GOOD: Separate concerns
+function validateUser(user) {
+    return user.name && user.email;
+}
+
+function formatUser(user) {
+    return {
+        name: user.name.toUpperCase(),
+        email: user.email.toLowerCase()
+    };
+}
+
+function processUserData(user) {
+    if (!validateUser(user)) {
+        return false;
+    }
+    
+    const formattedUser = formatUser(user);
+    database.save(formattedUser);
+    email.send(user.email, "Welcome!");
+    
+    return true;
+}</pre>
+
+        <h4>4. Avoid Returning Magic Numbers/Values</h4>
+        <pre>// BAD: Magic values
+function findUser(id) {
+    if (userNotFound) {
+        return -1; // What does -1 mean?
+    }
+    return user;
+}
+
+// GOOD: Clear return values
+function findUser(id) {
+    if (userNotFound) {
+        return null; // Clear: no user found
+    }
+    return user;
+}
+
+// Even better with proper error handling
+function findUser(id) {
+    if (userNotFound) {
+        throw new Error("User not found");
+    }
+    return user;
+}</pre>
+
+        <h3>9.2 Best Practices for Scope</h3>
+
+        <h4>1. Minimize Global Variables</h4>
+        <pre>// BAD: Polluting global scope
+var appName = "MyApp";
+var appVersion = "1.0";
+var appConfig = { theme: "dark" };
+
+function initApp() {
+    // ...
+}
+
+// GOOD: Use modules or IIFE
+const App = (function() {
+    // Private variables
+    const appName = "MyApp";
+    const appVersion = "1.0";
+    const appConfig = { theme: "dark" };
+    
+    // Public API
+    return {
+        init: function() {
+            console.log(`${appName} v${appVersion} initializing...`);
+        },
+        getConfig: function() {
+            return { ...appConfig }; // Return copy
+        }
+    };
+})();
+
+App.init();</pre>
+
+        <h4>2. Use <code>const</code> by Default, <code>let</code> When Needed</h4>
+        <pre>// BAD: Using var or let unnecessarily
+var total = 100; // Should be const if not reassigned
+let name = "Alice"; // Should be const if not reassigned
+
+// GOOD: const by default
+const MAX_SIZE = 100;
+const user = { name: "Alice", age: 30 };
+
+// Only use let for variables that actually change
+let counter = 0;
+counter++;
+let currentUser = null;
+currentUser = fetchUser();</pre>
+
+        <h4>3. Create Private Variables with Closures</h4>
+        <pre>// BAD: Exposing internal state
+function createCounter() {
+    this.count = 0; // Public and modifiable
+}
+
+// GOOD: Encapsulated state
+function createCounter() {
+    let count = 0; // Private
+    
+    return {
+        increment() {
+            count++;
+            return count;
+        },
+        decrement() {
+            count--;
+            return count;
+        },
+        getCount() {
+            return count;
+        }
+    };
+}
+
+const counter = createCounter();
+console.log(counter.getCount()); // 0
+console.log(counter.increment()); // 1
+console.log(counter.count); // undefined</pre>
+
+        <h4>4. Be Explicit with Block Scope</h4>
+        <pre>// BAD: Implicit block confusion
+if (condition) 
+    let x = 10; // This will cause an error (missing braces)
+
+// GOOD: Always use braces
+if (condition) {
+    let x = 10;
+    // x is clearly scoped to this block
+}
+
+// For loops
+// BAD: var leaks
+for (var i = 0; i < 5; i++) {
+    // loop
+}
+console.log(i); // 5 - leaked!
+
+// GOOD: let keeps it contained
+for (let j = 0; j < 5; j++) {
+    // loop
+}
+// console.log(j); // Error - properly scoped</pre>
+
+        <h3>9.3 Common Pitfalls and How to Avoid Them</h3>
+
+        <h4>Pitfall 1: Forgetting to Return</h4>
+        <pre>// BUG: Forgot return statement
+function calculateTotal(price, tax) {
+    let total = price + (price * tax);
+    // Missing return!
+}
+
+let total = calculateTotal(100, 0.08);
+console.log(total); // undefined - bug!
+
+// FIXED:
+function calculateTotal(price, tax) {
+    let total = price + (price * tax);
+    return total;
+}
+
+// Even better: return directly
+function calculateTotal(price, tax) {
+    return price + (price * tax);
+}</pre>
+
+        <h4>Pitfall 2: Modifying Global Variables Accidentally</h4>
+        <pre>// BUG: Accidental global
+function process() {
+    result = 42; // Forgot var/let/const - becomes global!
+}
+
+process();
+console.log(result); // 42 - accidentally global
+
+// FIXED:
+function process() {
+    let result = 42; // Now local
+    return result;
+}
+
+let finalResult = process();
+console.log(finalResult); // 42
+console.log(result); // Error (if not defined elsewhere)</pre>
+
+        <h4>Pitfall 3: Confusing Scope in Callbacks</h4>
+        <pre>// BUG: Scope issue with 'this'
+function User(name) {
+    this.name = name;
+    
+    setTimeout(function() {
+        console.log("Hello, " + this.name); // 'this' is window/undefined
+    }, 1000);
+}
+
+// FIXED: Arrow function preserves 'this'
+function User(name) {
+    this.name = name;
+    
+    setTimeout(() => {
+        console.log("Hello, " + this.name); // Works correctly
+    }, 1000);
+}
+
+// OR: Store reference
+function User(name) {
+    this.name = name;
+    const self = this;
+    
+    setTimeout(function() {
+        console.log("Hello, " + self.name);
+    }, 1000);
+}</pre>
+
+        <h4>Pitfall 4: Loop Variable Issues</h4>
+        <pre>// BUG: Classic closure problem
+for (var i = 0; i < 5; i++) {
+    setTimeout(function() {
+        console.log(i); // Prints 5,5,5,5,5
+    }, 100);
+}
+
+// FIXED: Use let for block scope
+for (let i = 0; i < 5; i++) {
+    setTimeout(function() {
+        console.log(i); // Prints 0,1,2,3,4
+    }, 100);
+}
+
+// OR: Create closure with IIFE
+for (var i = 0; i < 5; i++) {
+    (function(j) {
+        setTimeout(function() {
+            console.log(j); // Prints 0,1,2,3,4
+        }, 100);
+    })(i);
+}</pre>
+
+        <h4>Pitfall 5: Assuming Block Scope for <code>var</code></h4>
+        <pre>// BUG: var doesn't respect block scope
+if (true) {
+    var x = 10;
+}
+console.log(x); // 10 - still accessible!
+
+// FIXED: Use let or const
+if (true) {
+    let y = 20;
+}
+// console.log(y); // Error - properly scoped</pre>
+
+        <h4>Pitfall 6: Re-declaring Variables</h4>
+        <pre>// BUG: Accidental redeclaration
+var x = 10;
+var x = 20; // No error, but confusing
+
+let y = 10;
+// let y = 20; // Error! Can't redeclare in same scope
+
+// FIXED: Use different names or reassign
+let z = 10;
+z = 20; // Reassignment, not redeclaration</pre>
+
+        <h4>Pitfall 7: TDZ Confusion</h4>
+        <pre>// BUG: Accessing before declaration
+function test() {
+    console.log(x); // undefined (var)
+    var x = 5;
+    
+    console.log(y); // Error: TDZ
+    let y = 10;
+}
+
+// FIXED: Declare at top of block
+function test() {
+    var x;
+    let y;
+    
+    x = 5;
+    y = 10;
+    
+    console.log(x); // 5
+    console.log(y); // 10
+}</pre>
+
+        <!-- 10. PRACTICAL EXAMPLES AND USE CASES -->
+        <h2 id="10-practical-examples-and-use-cases">10. PRACTICAL EXAMPLES AND USE CASES</h2>
+
+        <h3>10.1 Building a Simple Calculator</h3>
+        <pre>// Calculator module demonstrating scope and return values
+const Calculator = (function() {
+    // Private variables (function scope)
+    let history = [];
+    const MAX_HISTORY = 10;
+    
+    // Private helper functions
+    function validateNumbers(a, b) {
+        if (typeof a !== 'number' || typeof b !== 'number') {
+            throw new Error("Both arguments must be numbers");
+        }
+        return true;
+    }
+    
+    function addToHistory(operation, a, b, result) {
+        const entry = {
+            operation,
+            a,
+            b,
+            result,
+            timestamp: new Date().toISOString()
+        };
+        
+        history.unshift(entry);
+        if (history.length > MAX_HISTORY) {
+            history.pop();
+        }
+    }
+    
+    // Public API (returned object)
+    return {
+        add: function(a, b) {
+            validateNumbers(a, b);
+            const result = a + b;
+            addToHistory('add', a, b, result);
+            return result;
+        },
+        
+        subtract: function(a, b) {
+            validateNumbers(a, b);
+            const result = a - b;
+            addToHistory('subtract', a, b, result);
+            return result;
+        },
+        
+        multiply: function(a, b) {
+            validateNumbers(a, b);
+            const result = a * b;
+            addToHistory('multiply', a, b, result);
+            return result;
+        },
+        
+        divide: function(a, b) {
+            validateNumbers(a, b);
+            if (b === 0) {
+                throw new Error("Cannot divide by zero");
+            }
+            const result = a / b;
+            addToHistory('divide', a, b, result);
+            return result;
+        },
+        
+        getHistory: function() {
+            // Return a copy to prevent external modification
+            return [...history];
+        },
+        
+        clearHistory: function() {
+            history = [];
+            return "History cleared";
+        }
+    };
+})();
+
+// Usage
+console.log(Calculator.add(10, 5)); // 15
+console.log(Calculator.multiply(4, 3)); // 12
+console.log(Calculator.divide(100, 4)); // 25
+console.log(Calculator.getHistory());
+// Returns array of operations with timestamps</pre>
+
+        <h3>10.2 Shopping Cart System</h3>
+        <pre>// Shopping cart demonstrating complex scope usage
+function createShoppingCart() {
+    // Private cart data
+    let items = [];
+    let discountCode = null;
+    const taxRate = 0.08;
+    
+    // Private helper functions
+    function calculateSubtotal() {
+        return items.reduce((total, item) => {
+            return total + (item.price * item.quantity);
+        }, 0);
+    }
+    
+    function calculateDiscount(subtotal) {
+        if (discountCode === 'SAVE10') {
+            return subtotal * 0.1;
+        } else if (discountCode === 'SAVE20') {
+            return subtotal * 0.2;
+        }
+        return 0;
+    }
+    
+    function calculateTax(amount) {
+        return amount * taxRate;
+    }
+    
+    // Public methods
+    return {
+        addItem: function(name, price, quantity = 1) {
+            // Check if item already exists
+            const existingItem = items.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                items.push({
+                    name,
+                    price,
+                    quantity,
+                    id: Date.now() + Math.random()
+                });
+            }
+            
+            return `${quantity} x ${name} added to cart`;
+        },
+        
+        removeItem: function(itemId) {
+            const initialLength = items.length;
+            items = items.filter(item => item.id !== itemId);
+            
+            if (items.length < initialLength) {
+                return "Item removed";
+            }
+            return "Item not found";
+        },
+        
+        updateQuantity: function(itemId, newQuantity) {
+            const item = items.find(item => item.id === itemId);
+            if (item) {
+                if (newQuantity <= 0) {
+                    return this.removeItem(itemId);
+                }
+                item.quantity = newQuantity;
+                return `Quantity updated to ${newQuantity}`;
+            }
+            return "Item not found";
+        },
+        
+        applyDiscount: function(code) {
+            const validCodes = ['SAVE10', 'SAVE20'];
+            if (validCodes.includes(code)) {
+                discountCode = code;
+                return `Discount code ${code} applied`;
+            }
+            return "Invalid discount code";
+        },
+        
+        getCartSummary: function() {
+            const subtotal = calculateSubtotal();
+            const discount = calculateDiscount(subtotal);
+            const afterDiscount = subtotal - discount;
+            const tax = calculateTax(afterDiscount);
+            const total = afterDiscount + tax;
+            
+            return {
+                items: items.map(item => ({
+                    ...item,
+                    lineTotal: item.price * item.quantity
+                })),
+                subtotal: subtotal.toFixed(2),
+                discount: discount.toFixed(2),
+                afterDiscount: afterDiscount.toFixed(2),
+                tax: tax.toFixed(2),
+                total: total.toFixed(2),
+                itemCount: items.reduce((count, item) => count + item.quantity, 0)
+            };
+        },
+        
+        checkout: function() {
+            if (items.length === 0) {
+                return "Cart is empty";
+            }
+            
+            const summary = this.getCartSummary();
+            
+            // Process payment (simulated)
+            console.log("Processing payment...");
+            
+            // Clear cart after checkout
+            items = [];
+            discountCode = null;
+            
+            return {
+                message: "Checkout successful!",
+                receipt: summary
+            };
+        },
+        
+        clearCart: function() {
+            items = [];
+            discountCode = null;
+            return "Cart cleared";
+        }
+    };
+}
+
+// Usage
+const myCart = createShoppingCart();
+
+console.log(myCart.addItem("Laptop", 999.99));
+console.log(myCart.addItem("Mouse", 29.99, 2));
+console.log(myCart.applyDiscount("SAVE10"));
+
+const summary = myCart.getCartSummary();
+console.log("Cart Summary:", summary);
+
+const receipt = myCart.checkout();
+console.log("Receipt:", receipt);</pre>
+
+        <h3>10.3 User Authentication System</h3>
+        <pre>// Authentication system demonstrating scope and closures
+const AuthSystem = (function() {
+    // Private data
+    let users = [];
+    let currentUser = null;
+    let sessionTimeout = 30 * 60 * 1000; // 30 minutes
+    let sessionTimer = null;
+    
+    // Private validation functions
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function validatePassword(password) {
+        return password.length >= 8;
+    }
+    
+    function hashPassword(password) {
+        // In real app, use proper hashing (bcrypt, etc.)
+        // This is just a simple example
+        return btoa(password); // Base64 encode (NOT secure!)
+    }
+    
+    function findUserByEmail(email) {
+        return users.find(user => user.email === email);
+    }
+    
+    function startSession(user) {
+        if (sessionTimer) {
+            clearTimeout(sessionTimer);
+        }
+        
+        currentUser = user;
+        
+        // Auto-logout after session timeout
+        sessionTimer = setTimeout(() => {
+            logout();
+            console.log("Session expired - logged out automatically");
+        }, sessionTimeout);
+    }
+    
+    // Public API
+    return {
+        register: function(name, email, password) {
+            // Input validation
+            if (!name || !email || !password) {
+                return {
+                    success: false,
+                    message: "All fields are required"
+                };
+            }
+            
+            if (!validateEmail(email)) {
+                return {
+                    success: false,
+                    message: "Invalid email format"
+                };
+            }
+            
+            if (!validatePassword(password)) {
+                return {
+                    success: false,
+                    message: "Password must be at least 8 characters"
+                };
+            }
+            
+            // Check if user already exists
+            if (findUserByEmail(email)) {
+                return {
+                    success: false,
+                    message: "User already exists"
+                };
+            }
+            
+            // Create new user
+            const newUser = {
+                id: users.length + 1,
+                name,
+                email,
+                password: hashPassword(password),
+                createdAt: new Date().toISOString(),
+                lastLogin: null
+            };
+            
+            users.push(newUser);
+            
+            return {
+                success: true,
+                message: "Registration successful",
+                user: { id: newUser.id, name: newUser.name, email: newUser.email }
+            };
+        },
+        
+        login: function(email, password) {
+            // Find user
+            const user = findUserByEmail(email);
+            
+            if (!user) {
+                return {
+                    success: false,
+                    message: "User not found"
+                };
+            }
+            
+            // Verify password
+            if (user.password !== hashPassword(password)) {
+                return {
+                    success: false,
+                    message: "Invalid password"
+                };
+            }
+            
+            // Update last login
+            user.lastLogin = new Date().toISOString();
+            
+            // Start session
+            startSession({
+                id: user.id,
+                name: user.name,
+                email: user.email
+            });
+            
+            return {
+                success: true,
+                message: "Login successful",
+                user: { id: user.id, name: user.name, email: user.email }
+            };
+        },
+        
+        logout: function() {
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+                sessionTimer = null;
+            }
+            
+            currentUser = null;
+            
+            return {
+                success: true,
+                message: "Logout successful"
+            };
+        },
+        
+        getCurrentUser: function() {
+            if (!currentUser) {
+                return null;
+            }
+            
+            // Return copy to prevent mutation
+            return { ...currentUser };
+        },
+        
+        isAuthenticated: function() {
+            return currentUser !== null;
+        },
+        
+        getAllUsers: function() {
+            // Return safe version (no passwords)
+            return users.map(user => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                createdAt: user.createdAt,
+                lastLogin: user.lastLogin
+            }));
+        },
+        
+        changePassword: function(email, oldPassword, newPassword) {
+            const user = findUserByEmail(email);
+            
+            if (!user) {
+                return {
+                    success: false,
+                    message: "User not found"
+                };
+            }
+            
+            if (user.password !== hashPassword(oldPassword)) {
+                return {
+                    success: false,
+                    message: "Current password is incorrect"
+                };
+            }
+            
+            if (!validatePassword(newPassword)) {
+                return {
+                    success: false,
+                    message: "New password must be at least 8 characters"
+                };
+            }
+            
+            user.password = hashPassword(newPassword);
+            
+            return {
+                success: true,
+                message: "Password changed successfully"
+            };
+        }
+    };
+})();
+
+// Usage
+console.log(AuthSystem.register("Alice", "alice@email.com", "password123"));
+console.log(AuthSystem.login("alice@email.com", "password123"));
+console.log(AuthSystem.getCurrentUser());
+console.log(AuthSystem.isAuthenticated());
+console.log(AuthSystem.logout());
+console.log(AuthSystem.getCurrentUser());</pre>
+
+        <h3>10.4 Task Manager Application</h3>
+        <pre>// Task manager demonstrating scope and return values
+function createTaskManager() {
+    // Private variables
+    let tasks = [];
+    let categories = new Set(['Personal', 'Work', 'Shopping', 'Other']);
+    let nextId = 1;
+    
+    // Load from localStorage if available
+    function loadFromStorage() {
+        const saved = localStorage.getItem('taskManager');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                tasks = data.tasks || [];
+                categories = new Set(data.categories || ['Personal', 'Work', 'Shopping', 'Other']);
+                nextId = data.nextId || 1;
+            } catch (e) {
+                console.error('Failed to load tasks');
+            }
+        }
+    }
+    
+    // Save to localStorage
+    function saveToStorage() {
+        const data = {
+            tasks,
+            categories: Array.from(categories),
+            nextId
+        };
+        localStorage.setItem('taskManager', JSON.stringify(data));
+    }
+    
+    // Initialize
+    loadFromStorage();
+    
+    // Private helper functions
+    function findTaskById(id) {
+        return tasks.find(task => task.id === id);
+    }
+    
+    function filterTasksByStatus(status) {
+        return tasks.filter(task => task.status === status);
+    }
+    
+    function filterTasksByCategory(category) {
+        return tasks.filter(task => task.category === category);
+    }
+    
+    // Public API
+    return {
+        // Task CRUD operations
+        addTask: function(title, category = 'Other', priority = 'medium', dueDate = null) {
+            // Validation
+            if (!title || title.trim() === '') {
+                return {
+                    success: false,
+                    message: "Task title is required"
+                };
+            }
+            
+            if (!categories.has(category)) {
+                return {
+                    success: false,
+                    message: `Category must be one of: ${Array.from(categories).join(', ')}`
+                };
+            }
+            
+            const validPriorities = ['low', 'medium', 'high'];
+            if (!validPriorities.includes(priority)) {
+                return {
+                    success: false,
+                    message: "Priority must be low, medium, or high"
+                };
+            }
+            
+            const newTask = {
+                id: nextId++,
+                title: title.trim(),
+                category,
+                priority,
+                dueDate: dueDate || new Date().toISOString().split('T')[0],
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                completedAt: null
+            };
+            
+            tasks.push(newTask);
+            saveToStorage();
+            
+            return {
+                success: true,
+                message: "Task added successfully",
+                task: newTask
+            };
+        },
+        
+        getTask: function(id) {
+            const task = findTaskById(id);
+            if (!task) {
+                return {
+                    success: false,
+                    message: "Task not found"
+                };
+            }
+            
+            return {
+                success: true,
+                task: { ...task } // Return copy
+            };
+        },
+        
+        updateTask: function(id, updates) {
+            const task = findTaskById(id);
+            if (!task) {
+                return {
+                    success: false,
+                    message: "Task not found"
+                };
+            }
+            
+            // Apply updates
+            Object.assign(task, updates);
+            saveToStorage();
+            
+            return {
+                success: true,
+                message: "Task updated",
+                task: { ...task }
+            };
+        },
+        
+        deleteTask: function(id) {
+            const initialLength = tasks.length;
+            tasks = tasks.filter(task => task.id !== id);
+            
+            if (tasks.length < initialLength) {
+                saveToStorage();
+                return {
+                    success: true,
+                    message: "Task deleted"
+                };
+            }
+            
+            return {
+                success: false,
+                message: "Task not found"
+            };
+        },
+        
+        completeTask: function(id) {
+            const task = findTaskById(id);
+            if (!task) {
+                return {
+                    success: false,
+                    message: "Task not found"
+                };
+            }
+            
+            task.status = 'completed';
+            task.completedAt = new Date().toISOString();
+            saveToStorage();
+            
+            return {
+                success: true,
+                message: "Task marked as complete",
+                task: { ...task }
+            };
+        },
+        
+        // Query methods
+        getAllTasks: function(filter = {}) {
+            let filteredTasks = [...tasks];
+            
+            if (filter.status) {
+                filteredTasks = filteredTasks.filter(t => t.status === filter.status);
+            }
+            
+            if (filter.category) {
+                filteredTasks = filteredTasks.filter(t => t.category === filter.category);
+            }
+            
+            if (filter.priority) {
+                filteredTasks = filteredTasks.filter(t => t.priority === filter.priority);
+            }
+            
+            // Sort by priority and due date
+            filteredTasks.sort((a, b) => {
+                const priorityWeight = { high: 3, medium: 2, low: 1 };
+                const weightDiff = priorityWeight[b.priority] - priorityWeight[a.priority];
+                
+                if (weightDiff !== 0) return weightDiff;
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            });
+            
+            return filteredTasks.map(task => ({ ...task }));
+        },
+        
+        getPendingTasks: function() {
+            return filterTasksByStatus('pending').map(task => ({ ...task }));
+        },
+        
+        getCompletedTasks: function() {
+            return filterTasksByStatus('completed').map(task => ({ ...task }));
+        },
+        
+        getTasksByCategory: function(category) {
+            return filterTasksByCategory(category).map(task => ({ ...task }));
+        },
+        
+        // Category management
+        getCategories: function() {
+            return Array.from(categories);
+        },
+        
+        addCategory: function(category) {
+            if (categories.has(category)) {
+                return {
+                    success: false,
+                    message: "Category already exists"
+                };
+            }
+            
+            categories.add(category);
+            saveToStorage();
+            
+            return {
+                success: true,
+                message: "Category added",
+                categories: Array.from(categories)
+            };
+        },
+        
+        // Statistics
+        getStatistics: function() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.status === 'completed').length;
+            const pending = total - completed;
+            
+            const byPriority = {
+                high: tasks.filter(t => t.priority === 'high').length,
+                medium: tasks.filter(t => t.priority === 'medium').length,
+                low: tasks.filter(t => t.priority === 'low').length
+            };
+            
+            const byCategory = {};
+            categories.forEach(cat => {
+                byCategory[cat] = tasks.filter(t => t.category === cat).length;
+            });
+            
+            return {
+                total,
+                completed,
+                pending,
+                completionRate: total ? (completed / total * 100).toFixed(1) + '%' : '0%',
+                byPriority,
+                byCategory
+            };
+        },
+        
+        // Clear all tasks (with confirmation)
+        clearAllTasks: function(confirm = false) {
+            if (!confirm) {
+                return {
+                    success: false,
+                    message: "Please confirm with confirm=true"
+                };
+            }
+            
+            tasks = [];
+            nextId = 1;
+            saveToStorage();
+            
+            return {
+                success: true,
+                message: "All tasks cleared"
+            };
+        }
+    };
+}
+
+// Usage
+const taskManager = createTaskManager();
+
+console.log(taskManager.addTask("Finish project report", "Work", "high", "2024-03-01"));
+console.log(taskManager.addTask("Buy groceries", "Shopping", "medium"));
+console.log(taskManager.addTask("Call mom", "Personal", "high"));
+
+console.log(taskManager.getAllTasks());
+console.log(taskManager.completeTask(1));
+console.log(taskManager.getStatistics());
+console.log(taskManager.getPendingTasks());
+console.log(taskManager.addCategory("Health"));
+console.log(taskManager.getCategories());</pre>
+
+        <!-- 11. EXERCISES AND CHALLENGES -->
+        <h2 id="11-exercises-and-challenges">11. EXERCISES AND CHALLENGES</h2>
+
+        <h3>11.1 Beginner Exercises</h3>
+
+        <h4>Exercise 1: Basic Return Values</h4>
+        <pre>// TODO: Write a function that returns the sum of two numbers
+function sum(a, b) {
+    // Your code here
+}
+
+// TODO: Write a function that returns a greeting message
+function greet(name) {
+    // Your code here
+}
+
+// TODO: Write a function that returns whether a number is positive
+function isPositive(num) {
+    // Your code here
+}
+
+// Test your functions
+console.log(sum(5, 3)); // Should print: 8
+console.log(greet("Alice")); // Should print: "Hello, Alice!"
+console.log(isPositive(5)); // Should print: true
+console.log(isPositive(-3)); // Should print: false</pre>
+
+        <h4>Exercise 2: Early Returns</h4>
+        <pre>// TODO: Write a function that divides two numbers
+// Return "Error: Cannot divide by zero" if the divisor is 0
+function safeDivide(a, b) {
+    // Your code here
+}
+
+// TODO: Write a function that returns the length of a string
+// Return 0 if the input is not a string
+function getStringLength(str) {
+    // Your code here
+}
+
+// Test
+console.log(safeDivide(10, 2)); // Should print: 5
+console.log(safeDivide(10, 0)); // Should print: "Error: Cannot divide by zero"
+console.log(getStringLength("hello")); // Should print: 5
+console.log(getStringLength(123)); // Should print: 0</pre>
+
+        <h4>Exercise 3: Global vs Local Scope</h4>
+        <pre>let x = 10;
+
+function testScope() {
+    let x = 20;
+    console.log(x); // What will this print?
+}
+
+testScope();
+console.log(x); // What will this print?
+
+// Write your answers:
+// First console.log: ______
+// Second console.log: ______</pre>
+
+        <h4>Exercise 4: Variable Shadowing</h4>
+        <pre>let name = "Global";
+
+function outer() {
+    let name = "Outer";
+    
+    function inner() {
+        let name = "Inner";
+        console.log(name);
+    }
+    
+    inner();
+    console.log(name);
+}
+
+outer();
+console.log(name);
+
+// Write your answers:
+// First console.log: ______
+// Second console.log: ______
+// Third console.log: ______</pre>
+
+        <h3>11.2 Intermediate Exercises</h3>
+
+        <h4>Exercise 5: Create a Counter Function</h4>
+        <pre>function createCounter(startingValue = 0) {
+    // Your code here
+    // Should return an object with increment, decrement, and getValue methods
+}
+
+// Test
+const counter = createCounter(10);
+console.log(counter.getValue()); // Should print: 10
+console.log(counter.increment()); // Should print: 11
+console.log(counter.increment()); // Should print: 12
+console.log(counter.decrement()); // Should print: 11
+console.log(counter.count); // Should print: undefined (private)</pre>
+
+        <h4>Exercise 6: Temperature Converter</h4>
+        <pre>const TemperatureConverter = (function() {
+    // Your code here
+    // Should have convertToCelsius, convertToFahrenheit, and getHistory methods
+})();
+
+// Test
+console.log(TemperatureConverter.convertToFahrenheit(0)); // Should print: 32
+console.log(TemperatureConverter.convertToCelsius(32)); // Should print: 0
+console.log(TemperatureConverter.getHistory()); // Should show conversion history</pre>
+
+        <h4>Exercise 7: Scope Chain Puzzle</h4>
+        <pre>let a = 1;
+
+function one() {
+    let a = 2;
+    
+    function two() {
+        let a = 3;
+        
+        function three() {
+            console.log(a);
+        }
+        
+        three();
+        console.log(a);
+    }
+    
+    two();
+    console.log(a);
+}
+
+one();
+console.log(a);
+
+// Write your answers and explanation:
+// Outputs: 
+// 1. ______
+// 2. ______
+// 3. ______
+// 4. ______
+// Explanation: _________________________________________________</pre>
+
+        <h4>Exercise 8: Bank Account with Transactions</h4>
+        <pre>function createBankAccount(initialBalance) {
+    // Your code here
+    // Should have deposit, withdraw, getBalance, and getTransactionHistory methods
+    // Should not allow withdrawal if insufficient funds
+}
+
+// Test
+const account = createBankAccount(100);
+console.log(account.deposit(50)); // Should print: Deposited 50. New balance: 150
+console.log(account.withdraw(200)); // Should print: Insufficient funds
+console.log(account.withdraw(70)); // Should print: Withdrew 70. New balance: 80
+console.log(account.getTransactionHistory()); // Should show all transactions</pre>
+
+        <h3>11.3 Advanced Exercises</h3>
+
+        <h4>Exercise 9: Function Memoization</h4>
+        <pre>function memoize(fn) {
+    // Your code here
+    // Should return a function that caches results based on arguments
+}
+
+// Test with a slow function
+function slowSquare(n) {
+    console.log("Computing...");
+    return n * n;
+}
+
+const fastSquare = memoize(slowSquare);
+console.log(fastSquare(5)); // Should print "Computing..." then 25
+console.log(fastSquare(5)); // Should print 25 (no "Computing...")
+console.log(fastSquare(10)); // Should print "Computing..." then 100</pre>
+
+        <h4>Exercise 10: Module Pattern with Private State</h4>
+        <pre>const TaskManager = (function() {
+    // Your code here
+    // Should have addTask, completeTask, deleteTask, getTasks, and getStats methods
+})();
+
+// Test
+TaskManager.addTask("Learn JavaScript");
+TaskManager.addTask("Practice coding");
+TaskManager.completeTask(0);
+console.log(TaskManager.getTasks());
+console.log(TaskManager.getStats()); // Should show completion statistics</pre>
+
+        <h4>Exercise 11: Scope and Closures in Loops</h4>
+        <pre>// This code has a scope problem
+for (var i = 0; i < 3; i++) {
+    setTimeout(function() {
+        console.log(i); // Prints 3, 3, 3
+    }, 100);
+}
+
+// TODO: Fix it without changing var to let
+// (Practice using closures to capture the value)</pre>
+
+        <h4>Exercise 12: Rate Limiter</h4>
+        <pre>function createRateLimiter(fn, maxCallsPerMinute) {
+    // Your code here
+    // Should track calls and prevent exceeding the limit
+}
+
+// Test
+const limitedLog = createRateLimiter(console.log, 2);
+limitedLog("Hello"); // Should print
+limitedLog("World"); // Should print
+limitedLog("Again"); // Should not print (rate limit exceeded)</pre>
+
+        <h3>11.4 Challenge Projects</h3>
+
+        <h4>Challenge 1: Quiz Application</h4>
+        <pre>function createQuiz(questions) {
+    // Your code here
+    // Should have methods to get current question, submit answer, get score, and next question
+}
+
+// Test data
+const quizQuestions = [
+    {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        correct: 1
+    },
+    {
+        question: "What is the capital of France?",
+        options: ["London", "Berlin", "Paris", "Madrid"],
+        correct: 2
+    }
+];
+
+const quiz = createQuiz(quizQuestions);
+console.log(quiz.getCurrentQuestion()); // Should show first question
+console.log(quiz.submitAnswer(1)); // Should be correct
+console.log(quiz.getScore()); // Should show 1/1
+console.log(quiz.nextQuestion()); // Move to next question</pre>
+
+        <h4>Challenge 2: Shopping Cart with Discounts</h4>
+        <pre>function createAdvancedCart() {
+    // Your code here
+    // Should support adding items, removing items, applying discounts, and checkout
+}
+
+// Test
+const cart = createAdvancedCart();
+cart.addItem("Shirt", 25, 2);
+cart.addItem("Jeans", 50, 1);
+cart.applyPercentageDiscount("SHIRT20", "Shirt", 20);
+cart.applyBOGO("JEANSBOGO", "Jeans");
+console.log(cart.checkout()); // Should calculate final price with discounts</pre>
+
+        <!-- 12. INTERVIEW QUESTIONS -->
+        <h2 id="12-interview-questions">12. INTERVIEW QUESTIONS</h2>
+
+        <h3>12.1 Basic Interview Questions</h3>
+
+        <h4>Q1: What is the difference between <code>return</code> and <code>console.log()</code>?</h4>
+        <p><strong>Answer:</strong></p>
+        <ul>
+            <li><code>return</code> ends function execution and sends a value back to the caller, which can be used in
+                further code</li>
+            <li><code>console.log()</code> simply prints to the console for debugging but doesn't provide the value to
+                the calling code</li>
+        </ul>
+        <pre>function example() {
+    console.log("Printed");
+    return "Returned";
+}
+
+let result = example(); // Prints "Printed"
+console.log(result); // Prints "Returned"</pre>
+
+        <h4>Q2: Explain the different types of scope in JavaScript.</h4>
+        <p><strong>Answer:</strong></p>
+        <ol>
+            <li><strong>Global Scope</strong>: Variables declared outside any function, accessible everywhere</li>
+            <li><strong>Function Scope</strong>: Variables declared inside a function with <code>var</code>, accessible
+                only within that function</li>
+            <li><strong>Block Scope</strong>: Variables declared inside <code>{}</code> with <code>let</code> or
+                <code>const</code>, accessible only within that block</li>
+        </ol>
+
+        <h4>Q3: What is the difference between <code>var</code>, <code>let</code>, and <code>const</code>?</h4>
+        <p><strong>Answer:</strong></p>
+        <ul>
+            <li><code>var</code>: Function-scoped, can be redeclared, hoisted with undefined initialization</li>
+            <li><code>let</code>: Block-scoped, cannot be redeclared in same scope, hoisted but in TDZ</li>
+            <li><code>const</code>: Block-scoped, cannot be reassigned, must be initialized at declaration</li>
+        </ul>
+
+        <h4>Q4: What will this code output and why?</h4>
+        <pre>for (var i = 0; i < 3; i++) {
+    setTimeout(() => console.log(i), 100);
+}</pre>
+        <p><strong>Answer:</strong> Outputs <code>3, 3, 3</code> because <code>var</code> is function-scoped, so all
+            setTimeout callbacks share the same <code>i</code> reference, which becomes 3 after the loop ends.</p>
+
+        <h3>12.2 Intermediate Interview Questions</h3>
+
+        <h4>Q5: What is a closure and give an example?</h4>
+        <p><strong>Answer:</strong> A closure is a function that retains access to its lexical scope even when executed
+            outside that scope.</p>
+        <pre>function outer(x) {
+    return function(y) {
+        return x + y; // 'x' is from outer scope
+    };
+}
+
+const add5 = outer(5);
+console.log(add5(3)); // 8 - closure remembers x=5</pre>
+
+        <h4>Q6: Explain the Temporal Dead Zone (TDZ).</h4>
+        <p><strong>Answer:</strong> TDZ is the period between entering a block and the actual declaration of a
+            <code>let</code> or <code>const</code> variable, during which the variable cannot be accessed.</p>
+        <pre>{
+    // TDZ for x starts
+    // console.log(x); // Error!
+    let x = 10; // TDZ ends
+    console.log(x); // Works
+}</pre>
+
+        <h4>Q7: How would you create private variables in JavaScript?</h4>
+        <p><strong>Answer:</strong> Using closures and the module pattern:</p>
+        <pre>function createCounter() {
+    let count = 0; // Private
+    
+    return {
+        increment() { count++; return count; },
+        decrement() { count--; return count; },
+        getCount() { return count; }
+    };
+}</pre>
+
+        <h4>Q8: What is the scope chain?</h4>
+        <p><strong>Answer:</strong> The scope chain is the hierarchy of scopes that JavaScript uses to resolve variable
+            references. When accessing a variable, JS starts in the current scope and moves up through outer scopes
+            until it finds the variable or reaches global scope.</p>
+
+        <h3>12.3 Advanced Interview Questions</h3>
+
+        <h4>Q9: Explain hoisting in detail with all variable types.</h4>
+        <p><strong>Answer:</strong></p>
+        <ul>
+            <li>Function declarations: Fully hoisted (can be called before declaration)</li>
+            <li><code>var</code>: Declaration hoisted, initialized as undefined</li>
+            <li><code>let</code>/<code>const</code>: Declaration hoisted but not initialized (TDZ)</li>
+            <li>Function expressions: Hoisting depends on the variable keyword used</li>
+        </ul>
+        <pre>console.log(typeof func1); // "function"
+console.log(typeof func2); // "undefined"
+console.log(typeof x); // "undefined"
+// console.log(typeof y); // Error: TDZ
+
+function func1() {}
+var func2 = function() {};
+var x = 5;
+let y = 10;</pre>
+
+        <h4>Q10: How do you prevent variable leakage from loops?</h4>
+        <p><strong>Answer:</strong> Use <code>let</code> instead of <code>var</code>, or create a closure with IIFE:</p>
+        <pre>// Using let (ES6+)
+for (let i = 0; i < 5; i++) {
+    setTimeout(() => console.log(i), 100); // 0,1,2,3,4
+}
+
+// Using IIFE (pre-ES6)
+for (var i = 0; i < 5; i++) {
+    (function(j) {
+        setTimeout(() => console.log(j), 100); // 0,1,2,3,4
+    })(i);
+}</pre>
+
+        <h4>Q11: What's the difference between lexical scoping and dynamic scoping?</h4>
+        <p><strong>Answer:</strong></p>
+        <ul>
+            <li><strong>Lexical scoping</strong> (JavaScript): Scope is determined by where functions are written</li>
+            <li><strong>Dynamic scoping</strong>: Scope would be determined by where functions are called</li>
+        </ul>
+        <p>JavaScript uses lexical scoping, which is why closures work the way they do.</p>
+
+        <h4>Q12: Implement a function that can only be called once.</h4>
+        <pre>function once(fn) {
+    let called = false;
+    let result;
+    
+    return function(...args) {
+        if (!called) {
+            result = fn.apply(this, args);
+            called = true;
+            return result;
+        }
+        return result;
+    };
+}
+
+const initialize = once(() => {
+    console.log("Initializing...");
+    return "Ready";
+});
+
+console.log(initialize()); // "Initializing..." then "Ready"
+console.log(initialize()); // "Ready" (no initialization)</pre>
+
+        <h4>Q13: Explain memory leaks related to closures.</h4>
+        <p><strong>Answer:</strong> Closures can cause memory leaks if they maintain references to large objects that
+            are no longer needed:</p>
+        <pre>// Potential memory leak
+function processData(data) {
+    let hugeData = data; // Large dataset
+    
+    return function() {
+        // This closure keeps hugeData in memory
+        console.log(hugeData.length);
+    };
+}
+
+// Better: Nullify references when done
+function processDataBetter(data) {
+    let hugeData = data;
+    let result = hugeData.length;
+    hugeData = null; // Allow garbage collection
+    
+    return function() {
+        console.log(result);
+    };
+}</pre>
+
+        <h4>Q14: How would you implement a module system using closures?</h4>
+        <pre>const MyModule = (function() {
+    // Private members
+    const privateVar = "I'm private";
+    
+    function privateMethod() {
+        console.log("Private method");
+    }
+    
+    // Public API
+    return {
+        publicVar: "I'm public",
+        
+        publicMethod() {
+            console.log("Public method");
+            privateMethod(); // Can access private
+            console.log(privateVar); // Can access private
+        },
+        
+        getPrivateVar() {
+            return privateVar;
+        }
+    };
+})();
+
+console.log(MyModule.publicVar); // "I'm public"
+console.log(MyModule.getPrivateVar()); // "I'm private"
+// console.log(MyModule.privateVar); // undefined</pre>
+
+        <h4>Q15: What will this output and why?</h4>
+        <pre>function test() {
+    console.log(a);
+    console.log(b);
+    console.log(c);
+    
+    var a = 1;
+    let b = 2;
+    const c = 3;
+}
+
+test();</pre>
+        <p><strong>Answer:</strong></p>
+        <ul>
+            <li>First <code>console.log(a)</code>: <code>undefined</code> (var is hoisted)</li>
+            <li>Second <code>console.log(b)</code>: Error (let is in TDZ)</li>
+            <li>Third <code>console.log(c)</code>: Not reached due to error</li>
+        </ul>
+        <p>The function throws a ReferenceError when trying to access <code>b</code> before its declaration due to TDZ.
+        </p>
+
+        <hr>
+
+        <!-- CONCLUSION -->
+        <h2>CONCLUSION</h2>
+
+        <h3>Key Takeaways</h3>
+        <ol>
+            <li><strong>Return Statement</strong>: Essential for functions to output values; immediately ends function
+                execution; can return any data type including other functions.</li>
+            <li><strong>Global Scope</strong>: Accessible everywhere but should be minimized to avoid naming conflicts
+                and security issues.</li>
+            <li><strong>Local/Function Scope</strong>: Variables are confined to functions; provides encapsulation and
+                prevents unintended modifications.</li>
+            <li><strong>Block Scope</strong>: Created with <code>let</code> and <code>const</code> inside
+                <code>{}</code>; more precise control over variable lifetime.</li>
+            <li><strong>Scope Chain</strong>: JavaScript resolves variables by looking up through nested scopes;
+                determined lexically (by code structure).</li>
+            <li><strong>Closures</strong>: Functions retain access to their lexical scope; powerful for creating private
+                variables and function factories.</li>
+            <li><strong>Hoisting</strong>: Declarations are moved to the top; <code>var</code> is initialized with
+                <code>undefined</code>, <code>let</code>/<code>const</code> are in TDZ.</li>
+        </ol>
+
+        <h3>Best Practices Summary</h3>
+        <ul>
+            <li>✓ Always use <code>const</code> by default, <code>let</code> when reassignment needed</li>
+            <li>✓ Minimize global variables</li>
+            <li>✓ Use early returns for error handling</li>
+            <li>✓ Create private variables with closures</li>
+            <li>✓ Understand TDZ to avoid errors</li>
+            <li>✓ Be consistent with return values</li>
+            <li>✓ Use block scope with <code>let</code> and <code>const</code></li>
+        </ul>
+
+        <h3>Common Pitfalls to Avoid</h3>
+        <ul>
+            <li>✗ Forgetting to return values</li>
+            <li>✗ Accidentally creating global variables</li>
+            <li>✗ Assuming <code>var</code> has block scope</li>
+            <li>✗ Accessing <code>let</code>/<code>const</code> before declaration</li>
+            <li>✗ Creating unintended closures in loops</li>
+            <li>✗ Modifying outer scope variables unintentionally</li>
+        </ul>
+
+        <h3>Next Steps</h3>
+        <p>To deepen your understanding:</p>
+        <ol>
+            <li>Practice writing modular code with IIFEs and closures</li>
+            <li>Explore modern module systems (ES6 modules)</li>
+            <li>Study design patterns that leverage scope (Module, Revealing Module, Singleton)</li>
+            <li>Learn about memory management and garbage collection</li>
+            <li>Understand <code>this</code> binding and how it differs from scope</li>
+        </ol>
+
+        <hr>
+
+        <footer>
+            <em>"Understanding scope and closures is not just about passing interviews—it's about writing clean,
+                maintainable, and bug-free JavaScript code."</em><br><br>
+            ⚡ FUNCTIONS · RETURN STATEMENT · SCOPE — complete study notes · every line preserved
+        </footer>
+
+    </div><!-- end master wrapper -->
+</body>
+
+</html>
