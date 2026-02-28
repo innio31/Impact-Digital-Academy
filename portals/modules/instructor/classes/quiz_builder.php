@@ -85,83 +85,119 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $auto_submit = isset($_POST['auto_submit']) ? 1 : 0;
     $is_published = isset($_POST['is_published']) ? 1 : 0;
 
+    // New question selection fields
+    $question_selection_method = $_POST['question_selection_method'] ?? 'all';
+    $questions_to_show = !empty($_POST['questions_to_show']) ? intval($_POST['questions_to_show']) : null;
+    $questions_percentage = !empty($_POST['questions_percentage']) ? floatval($_POST['questions_percentage']) : null;
+    $randomize_per_student = isset($_POST['randomize_per_student']) ? 1 : 0;
+
     // Validate input
     if (empty($title)) {
         $quiz_update_error = "Quiz title is required";
     } else {
-        // Update quiz settings
-        $sql = "UPDATE quizzes SET 
-                title = ?, 
-                description = ?, 
-                instructions = ?, 
-                quiz_type = ?, 
-                total_points = ?, 
-                time_limit = ?, 
-                attempts_allowed = ?, 
-                shuffle_questions = ?, 
-                shuffle_options = ?, 
-                show_correct_answers = ?, 
-                show_points = ?, 
-                available_from = ?, 
-                available_to = ?, 
-                due_date = ?, 
-                auto_submit = ?, 
-                is_published = ?,
-                updated_at = CURRENT_TIMESTAMP 
-                WHERE id = ? AND instructor_id = ? AND class_id = ?";
+        // Get total questions count for validation
+        $count_sql = "SELECT COUNT(*) as total FROM quiz_questions WHERE quiz_id = ?";
+        $count_stmt = $conn->prepare($count_sql);
+        $count_stmt->bind_param("i", $quiz_id);
+        $count_stmt->execute();
+        $count_result = $count_stmt->get_result();
+        $total_questions = $count_result->fetch_assoc()['total'] ?? 0;
+        $count_stmt->close();
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            "ssssdiiiisssssiiiii",
-            $title,
-            $description,
-            $instructions,
-            $quiz_type,
-            $total_points,
-            $time_limit,
-            $attempts_allowed,
-            $shuffle_questions,
-            $shuffle_options,
-            $show_correct_answers,
-            $show_points,
-            $available_from,
-            $available_to,
-            $due_date,
-            $auto_submit,
-            $is_published,
-            $quiz_id,
-            $instructor_id,
-            $class_id
-        );
-
-        if ($stmt->execute()) {
-            $quiz_update_success = true;
-            $quiz_success_message = "Quiz settings updated successfully!";
-
-            // Update local quiz data
-            $quiz['title'] = $title;
-            $quiz['description'] = $description;
-            $quiz['instructions'] = $instructions;
-            $quiz['quiz_type'] = $quiz_type;
-            $quiz['total_points'] = $total_points;
-            $quiz['time_limit'] = $time_limit;
-            $quiz['attempts_allowed'] = $attempts_allowed;
-            $quiz['shuffle_questions'] = $shuffle_questions;
-            $quiz['shuffle_options'] = $shuffle_options;
-            $quiz['show_correct_answers'] = $show_correct_answers;
-            $quiz['show_points'] = $show_points;
-            $quiz['available_from'] = $available_from;
-            $quiz['available_to'] = $available_to;
-            $quiz['due_date'] = $due_date;
-            $quiz['auto_submit'] = $auto_submit;
-            $quiz['is_published'] = $is_published;
-
-            // Log activity
-            logActivity('quiz_settings_updated', "Updated settings for quiz: $title", 'quizzes', $quiz_id);
+        // Validate question selection based on total questions
+        if ($question_selection_method === 'random_count' && $questions_to_show > $total_questions) {
+            $quiz_update_error = "Number of questions to show cannot exceed total questions ($total_questions)";
+        } elseif ($question_selection_method === 'random_count' && $questions_to_show < 1) {
+            $quiz_update_error = "Number of questions to show must be at least 1";
+        } elseif ($question_selection_method === 'random_percentage' && ($questions_percentage < 1 || $questions_percentage > 100)) {
+            $quiz_update_error = "Percentage must be between 1 and 100";
         } else {
-            $quiz_update_error = "Failed to update quiz settings: " . $conn->error;
+            // Update quiz settings with new fields
+            $sql = "UPDATE quizzes SET 
+                    title = ?, 
+                    description = ?, 
+                    instructions = ?, 
+                    quiz_type = ?, 
+                    total_points = ?, 
+                    time_limit = ?, 
+                    attempts_allowed = ?, 
+                    shuffle_questions = ?, 
+                    shuffle_options = ?, 
+                    show_correct_answers = ?, 
+                    show_points = ?, 
+                    available_from = ?, 
+                    available_to = ?, 
+                    due_date = ?, 
+                    auto_submit = ?, 
+                    is_published = ?,
+                    question_selection_method = ?,
+                    questions_to_show = ?,
+                    questions_percentage = ?,
+                    randomize_per_student = ?,
+                    updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = ? AND instructor_id = ? AND class_id = ?";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                "ssssdiiiisssssiiiisssiiii",
+                $title,
+                $description,
+                $instructions,
+                $quiz_type,
+                $total_points,
+                $time_limit,
+                $attempts_allowed,
+                $shuffle_questions,
+                $shuffle_options,
+                $show_correct_answers,
+                $show_points,
+                $available_from,
+                $available_to,
+                $due_date,
+                $auto_submit,
+                $is_published,
+                $question_selection_method,
+                $questions_to_show,
+                $questions_percentage,
+                $randomize_per_student,
+                $quiz_id,
+                $instructor_id,
+                $class_id
+            );
+
+            if ($stmt->execute()) {
+                $quiz_update_success = true;
+                $quiz_success_message = "Quiz settings updated successfully!";
+
+                // Update local quiz data
+                $quiz['title'] = $title;
+                $quiz['description'] = $description;
+                $quiz['instructions'] = $instructions;
+                $quiz['quiz_type'] = $quiz_type;
+                $quiz['total_points'] = $total_points;
+                $quiz['time_limit'] = $time_limit;
+                $quiz['attempts_allowed'] = $attempts_allowed;
+                $quiz['shuffle_questions'] = $shuffle_questions;
+                $quiz['shuffle_options'] = $shuffle_options;
+                $quiz['show_correct_answers'] = $show_correct_answers;
+                $quiz['show_points'] = $show_points;
+                $quiz['available_from'] = $available_from;
+                $quiz['available_to'] = $available_to;
+                $quiz['due_date'] = $due_date;
+                $quiz['auto_submit'] = $auto_submit;
+                $quiz['is_published'] = $is_published;
+                $quiz['question_selection_method'] = $question_selection_method;
+                $quiz['questions_to_show'] = $questions_to_show;
+                $quiz['questions_percentage'] = $questions_percentage;
+                $quiz['randomize_per_student'] = $randomize_per_student;
+
+                // Log activity
+                logActivity('quiz_settings_updated', "Updated settings for quiz: $title", 'quizzes', $quiz_id);
+            } else {
+                $quiz_update_error = "Failed to update quiz settings: " . $conn->error;
+            }
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
 
@@ -1691,6 +1727,58 @@ function insertQuestionFromArray($data, $quiz_id, $conn)
                         </div>
                     </div>
 
+                    <!-- Question Selection Section -->
+                    <div class="settings-section">
+                        <h3><i class="fas fa-random"></i> Question Selection</h3>
+
+                        <div class="form-group">
+                            <label for="question_selection_method">How many questions should students see?</label>
+                            <select id="question_selection_method" name="question_selection_method" class="form-control" onchange="toggleQuestionSelection()">
+                                <option value="all" <?php echo ($quiz['question_selection_method'] ?? 'all') === 'all' ? 'selected' : ''; ?>>Show all questions</option>
+                                <option value="random_count" <?php echo ($quiz['question_selection_method'] ?? '') === 'random_count' ? 'selected' : ''; ?>>Show random number of questions</option>
+                                <option value="random_percentage" <?php echo ($quiz['question_selection_method'] ?? '') === 'random_percentage' ? 'selected' : ''; ?>>Show random percentage of questions</option>
+                            </select>
+                            <div class="form-help">
+                                Total questions available: <strong><?php echo count($questions); ?></strong>
+                            </div>
+                        </div>
+
+                        <div id="random_count_fields" style="display: <?php echo ($quiz['question_selection_method'] ?? '') === 'random_count' ? 'block' : 'none'; ?>;">
+                            <div class="form-group">
+                                <label for="questions_to_show">Number of questions to show</label>
+                                <input type="number" id="questions_to_show" name="questions_to_show"
+                                    class="form-control" min="1" max="<?php echo count($questions); ?>"
+                                    value="<?php echo $quiz['questions_to_show'] ?? min(20, count($questions)); ?>">
+                                <div class="form-help">
+                                    Enter the number of random questions each student will see (max: <?php echo count($questions); ?>)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="random_percentage_fields" style="display: <?php echo ($quiz['question_selection_method'] ?? '') === 'random_percentage' ? 'block' : 'none'; ?>;">
+                            <div class="form-group">
+                                <label for="questions_percentage">Percentage of questions to show</label>
+                                <input type="number" id="questions_percentage" name="questions_percentage"
+                                    class="form-control" min="1" max="100" step="1"
+                                    value="<?php echo $quiz['questions_percentage'] ?? 50; ?>">
+                                <div class="form-help">
+                                    This will show approximately <?php echo round(count($questions) * (($quiz['questions_percentage'] ?? 50) / 100)); ?> questions (<?php echo count($questions); ?> total)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check" style="margin-top: 1rem;">
+                            <input type="checkbox" id="randomize_per_student" name="randomize_per_student" value="1"
+                                <?php echo ($quiz['randomize_per_student'] ?? 1) ? 'checked' : ''; ?>>
+                            <label for="randomize_per_student">
+                                Different random questions for each student
+                            </label>
+                            <div class="form-help">
+                                If checked, each student will get a different random set of questions. If unchecked, all students will see the same random set.
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Publishing Section -->
                     <div class="settings-section">
                         <h3><i class="fas fa-globe"></i> Publishing</h3>
@@ -1757,10 +1845,53 @@ function insertQuestionFromArray($data, $quiz_id, $conn)
             window.location.hash = section === 'settings' ? '#quizSettings' : '';
         }
 
+        // Toggle question selection fields
+        function toggleQuestionSelection() {
+            const method = document.getElementById('question_selection_method').value;
+            const randomCountFields = document.getElementById('random_count_fields');
+            const randomPercentageFields = document.getElementById('random_percentage_fields');
+
+            randomCountFields.style.display = 'none';
+            randomPercentageFields.style.display = 'none';
+
+            if (method === 'random_count') {
+                randomCountFields.style.display = 'block';
+            } else if (method === 'random_percentage') {
+                randomPercentageFields.style.display = 'block';
+            }
+        }
+
         // Hash navigation
         window.addEventListener('DOMContentLoaded', function() {
             if (window.location.hash === '#quizSettings') {
                 showSection('settings');
+            }
+
+            // Initialize question selection fields
+            toggleQuestionSelection();
+
+            // Update percentage preview when input changes
+            const percentageInput = document.getElementById('questions_percentage');
+            if (percentageInput) {
+                percentageInput.addEventListener('input', function() {
+                    const totalQuestions = <?php echo count($questions); ?>;
+                    const percentage = this.value || 50;
+                    const approxQuestions = Math.round(totalQuestions * (percentage / 100));
+                    const helpText = this.closest('.form-group').querySelector('.form-help');
+                    if (helpText) {
+                        helpText.textContent = `This will show approximately ${approxQuestions} questions (${totalQuestions} total)`;
+                    }
+                });
+            }
+
+            const countInput = document.getElementById('questions_to_show');
+            if (countInput) {
+                countInput.addEventListener('input', function() {
+                    const max = <?php echo count($questions); ?>;
+                    if (this.value > max) {
+                        this.value = max;
+                    }
+                });
             }
         });
 

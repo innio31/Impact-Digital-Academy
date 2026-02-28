@@ -101,18 +101,70 @@ if ($result->num_rows > 0) {
     $stmt->close();
 }
 
-// Get questions for this quiz
-$order_clause = $quiz['shuffle_questions'] ? "ORDER BY RAND()" : "ORDER BY qq.order_number, qq.id";
-$questions_sql = "SELECT qq.* 
-                 FROM quiz_questions qq 
-                 WHERE qq.quiz_id = ?
-                 $order_clause";
-$stmt = $conn->prepare($questions_sql);
+// Get total questions count first
+$total_count_sql = "SELECT COUNT(*) as total FROM quiz_questions WHERE quiz_id = ?";
+$stmt = $conn->prepare($total_count_sql);
 $stmt->bind_param("i", $quiz_id);
+$stmt->execute();
+$total_count_result = $stmt->get_result();
+$total_questions_count = $total_count_result->fetch_assoc()['total'] ?? 0;
+$stmt->close();
+
+// Determine how many questions to show
+$questions_to_show = $total_questions_count; // Default to all
+
+if ($quiz['question_selection_method'] === 'random_count' && $quiz['questions_to_show'] > 0) {
+    $questions_to_show = min($quiz['questions_to_show'], $total_questions_count);
+} elseif ($quiz['question_selection_method'] === 'random_percentage' && $quiz['questions_percentage'] > 0) {
+    $questions_to_show = round($total_questions_count * ($quiz['questions_percentage'] / 100));
+    $questions_to_show = max(1, min($questions_to_show, $total_questions_count));
+}
+
+// Get questions for this quiz based on selection settings
+if ($questions_to_show >= $total_questions_count) {
+    // Show all questions
+    $order_clause = $quiz['shuffle_questions'] ? "ORDER BY RAND()" : "ORDER BY qq.order_number, qq.id";
+    $questions_sql = "SELECT qq.* 
+                     FROM quiz_questions qq 
+                     WHERE qq.quiz_id = ?
+                     $order_clause";
+    $stmt = $conn->prepare($questions_sql);
+    $stmt->bind_param("i", $quiz_id);
+} else {
+    // Show subset of questions
+    if ($quiz['randomize_per_student']) {
+        // Different random set for each student
+        $order_clause = $quiz['shuffle_questions'] ? "ORDER BY RAND()" : "ORDER BY RAND()"; // Always random for subset
+        $questions_sql = "SELECT qq.* 
+                         FROM quiz_questions qq 
+                         WHERE qq.quiz_id = ?
+                         $order_clause
+                         LIMIT ?";
+        $stmt = $conn->prepare($questions_sql);
+        $stmt->bind_param("ii", $quiz_id, $questions_to_show);
+    } else {
+        // Consistent random set for all students
+        // Use a seed based on quiz_id and attempt number to ensure consistency
+        $seed = $quiz_id . '_' . $quiz['previous_attempts'];
+        $questions_sql = "SELECT qq.* 
+                         FROM quiz_questions qq 
+                         WHERE qq.quiz_id = ?
+                         ORDER BY (RAND(?)) 
+                         LIMIT ?";
+        $stmt = $conn->prepare($questions_sql);
+        $stmt->bind_param("iii", $quiz_id, $seed, $questions_to_show);
+    }
+}
+
 $stmt->execute();
 $questions_result = $stmt->get_result();
 $questions = $questions_result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// If no questions found
+if (empty($questions)) {
+    die("No questions available for this quiz. Please contact your instructor.");
+}
 
 // Get options for questions (shuffled if needed)
 $question_ids = array_column($questions, 'id');
@@ -126,7 +178,10 @@ if (!empty($question_ids)) {
                    WHERE qo.question_id IN ($placeholders) 
                    $order_clause";
     $stmt = $conn->prepare($options_sql);
-    $stmt->bind_param(str_repeat('i', count($question_ids)), ...$question_ids);
+
+    // Dynamically bind parameters
+    $types = str_repeat('i', count($question_ids));
+    $stmt->bind_param($types, ...$question_ids);
     $stmt->execute();
     $options_result = $stmt->get_result();
 
@@ -136,13 +191,53 @@ if (!empty($question_ids)) {
     $stmt->close();
 }
 
+// Get previous answers if continuing an attempt
+$previous_answers = [];
+if ($attempt_status === 'continue') {
+    $answers_sql = "SELECT qa.question_id, qa.answer_text, qa.answer_file 
+                   FROM quiz_answers qa 
+                   WHERE qa.attempt_id = ?";
+    $stmt = $conn->prepare($answers_sql);
+    $stmt->bind_param("i", $attempt_id);
+    $stmt->execute();
+    $answers_result = $stmt->get_result();
+
+    while ($answer = $answers_result->fetch_assoc()) {
+        $previous_answers[$answer['question_id']] = $answer;
+    }
+    $stmt->close();
+}
+
+// Get flagged questions if continuing
+$flagged_questions = [];
+if ($attempt_status === 'continue') {
+    $flagged_sql = "SELECT question_id FROM quiz_flagged_questions 
+                   WHERE attempt_id = ?";
+    $stmt = $conn->prepare($flagged_sql);
+    $stmt->bind_param("i", $attempt_id);
+    $stmt->execute();
+    $flagged_result = $stmt->get_result();
+
+    while ($flagged = $flagged_result->fetch_assoc()) {
+        $flagged_questions[] = $flagged['question_id'];
+    }
+    $stmt->close();
+}
+
 $conn->close();
 
-// Initialize session for quiz tracking
-if (!isset($_SESSION['quiz_attempt'])) {
+// Initialize session for quiz tracking if new attempt
+if ($attempt_status === 'new') {
     $_SESSION['quiz_attempt'] = [
         'answers' => [],
         'flagged' => [],
+        'current_question' => 1
+    ];
+} else {
+    // Load previous session data
+    $_SESSION['quiz_attempt'] = [
+        'answers' => $previous_answers,
+        'flagged' => $flagged_questions,
         'current_question' => 1
     ];
 }
@@ -150,6 +245,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -171,7 +267,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
         .quiz-header {
             background: white;
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -192,6 +288,17 @@ if (!isset($_SESSION['quiz_attempt'])) {
             color: #666;
             font-weight: normal;
             margin-top: 5px;
+        }
+
+        .quiz-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            font-weight: normal;
         }
 
         .timer-container {
@@ -223,9 +330,17 @@ if (!isset($_SESSION['quiz_attempt'])) {
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         .progress-container {
@@ -366,6 +481,15 @@ if (!isset($_SESSION['quiz_attempt'])) {
             color: #333;
         }
 
+        .info-note {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e0f2fe;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #0369a1;
+        }
+
         .instructions-sidebar {
             background: #f8f9fa;
             padding: 15px;
@@ -401,7 +525,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
             background: white;
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -624,17 +748,24 @@ if (!isset($_SESSION['quiz_attempt'])) {
             transform: translateY(-2px);
         }
 
+        .selection-info {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
             }
-            
+
             .sidebar {
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #e0e0e0;
             }
-            
+
             .question-grid {
                 grid-template-columns: repeat(10, 1fr);
             }
@@ -646,29 +777,29 @@ if (!isset($_SESSION['quiz_attempt'])) {
                 gap: 15px;
                 padding: 15px;
             }
-            
+
             .timer-container {
                 width: 100%;
                 justify-content: space-between;
             }
-            
+
             .question-grid {
                 grid-template-columns: repeat(5, 1fr);
             }
-            
+
             .main-content {
                 padding: 20px;
             }
-            
+
             .question-container {
                 padding: 20px;
             }
-            
+
             .quiz-controls {
                 flex-direction: column;
                 gap: 10px;
             }
-            
+
             .control-btn {
                 width: 100%;
                 justify-content: center;
@@ -676,62 +807,84 @@ if (!isset($_SESSION['quiz_attempt'])) {
         }
     </style>
 </head>
+
 <body>
     <?php if (!isset($_SESSION['quiz_started']) || !$_SESSION['quiz_started']): ?>
-    <div class="start-overlay">
-        <div class="start-box">
-            <i class="fas fa-exclamation-triangle warning-icon"></i>
-            <h2>Ready to Start Quiz?</h2>
-            <p style="color: #94a3b8; margin: 1.5rem 0; line-height: 1.6;">
-                You are about to start: <strong><?php echo htmlspecialchars($quiz['title']); ?></strong>
-            </p>
-            
-            <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
-                <div class="info-item">
-                    <span class="info-label">Total Questions:</span>
-                    <span class="info-value"><?php echo count($questions); ?></span>
-                </div>
-                <?php if ($quiz['time_limit'] > 0): ?>
-                <div class="info-item">
-                    <span class="info-label">Time Limit:</span>
-                    <span class="info-value"><?php echo $quiz['time_limit']; ?> minutes</span>
-                </div>
-                <?php endif; ?>
-                <div class="info-item">
-                    <span class="info-label">Course:</span>
-                    <span class="info-value"><?php echo htmlspecialchars($quiz['course_title']); ?></span>
-                </div>
-                <?php if ($quiz['attempts_allowed'] > 0): ?>
-                <div class="info-item">
-                    <span class="info-label">Attempts:</span>
-                    <span class="info-value"><?php echo $quiz['previous_attempts'] + 1; ?> of <?php echo $quiz['attempts_allowed']; ?></span>
-                </div>
-                <?php endif; ?>
-            </div>
+        <div class="start-overlay">
+            <div class="start-box">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <h2>Ready to Start Quiz?</h2>
+                <p style="color: #94a3b8; margin: 1.5rem 0; line-height: 1.6;">
+                    You are about to start: <strong><?php echo htmlspecialchars($quiz['title']); ?></strong>
+                </p>
 
-            <div style="text-align: left; margin: 20px 0;">
-                <h4 style="color: #fbbf24; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Important Instructions:</h4>
-                <ul style="color: #94a3b8; padding-left: 20px;">
+                <div style="background: #334155; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                    <div class="info-item">
+                        <span class="info-label">Total Questions in Bank:</span>
+                        <span class="info-value"><?php echo $total_questions_count; ?></span>
+                    </div>
+                    <?php if ($questions_to_show < $total_questions_count): ?>
+                        <div class="info-item">
+                            <span class="info-label">Questions You'll See:</span>
+                            <span class="info-value"><?php echo $questions_to_show; ?></span>
+                        </div>
+                    <?php endif; ?>
                     <?php if ($quiz['time_limit'] > 0): ?>
-                    <li>The quiz is timed. Timer starts when you click "Start Quiz".</li>
+                        <div class="info-item">
+                            <span class="info-label">Time Limit:</span>
+                            <span class="info-value"><?php echo $quiz['time_limit']; ?> minutes</span>
+                        </div>
                     <?php endif; ?>
-                    <li>Answer all questions before submitting.</li>
-                    <li>You can flag questions to review later.</li>
-                    <li>Use the question navigation to move between questions.</li>
-                    <?php if ($quiz['shuffle_questions']): ?>
-                    <li>Questions are shuffled for each attempt.</li>
+                    <div class="info-item">
+                        <span class="info-label">Course:</span>
+                        <span class="info-value"><?php echo htmlspecialchars($quiz['course_title']); ?></span>
+                    </div>
+                    <?php if ($quiz['attempts_allowed'] > 0): ?>
+                        <div class="info-item">
+                            <span class="info-label">Attempts:</span>
+                            <span class="info-value"><?php echo $quiz['previous_attempts'] + 1; ?> of <?php echo $quiz['attempts_allowed']; ?></span>
+                        </div>
                     <?php endif; ?>
-                    <?php if ($quiz['shuffle_options']): ?>
-                    <li>Answer options are shuffled for each question.</li>
-                    <?php endif; ?>
-                </ul>
-            </div>
+                </div>
 
-            <button class="btn-start" onclick="startQuiz()">
-                Start Quiz <i class="fas fa-play-circle"></i>
-            </button>
+                <?php if ($questions_to_show < $total_questions_count): ?>
+                    <div class="selection-info">
+                        <p><i class="fas fa-random" style="color: #fbbf24;"></i> <strong>Random Selection Active:</strong></p>
+                        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">
+                            <?php if ($quiz['randomize_per_student']): ?>
+                                Each student gets a different random set of <?php echo $questions_to_show; ?> questions from the question bank.
+                            <?php else: ?>
+                                All students will see the same random set of <?php echo $questions_to_show; ?> questions.
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                <?php endif; ?>
+
+                <div style="text-align: left; margin: 20px 0;">
+                    <h4 style="color: #fbbf24; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Important Instructions:</h4>
+                    <ul style="color: #94a3b8; padding-left: 20px;">
+                        <?php if ($quiz['time_limit'] > 0): ?>
+                            <li>The quiz is timed. Timer starts when you click "Start Quiz".</li>
+                        <?php endif; ?>
+                        <li>Answer all questions before submitting.</li>
+                        <li>You can flag questions to review later.</li>
+                        <li>Use the question navigation to move between questions.</li>
+                        <?php if ($quiz['shuffle_questions'] && $questions_to_show < $total_questions_count): ?>
+                            <li>The <?php echo $questions_to_show; ?> questions shown are randomly selected from the question bank.</li>
+                        <?php elseif ($quiz['shuffle_questions']): ?>
+                            <li>Questions are shuffled for each attempt.</li>
+                        <?php endif; ?>
+                        <?php if ($quiz['shuffle_options']): ?>
+                            <li>Answer options are shuffled for each question.</li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+
+                <button class="btn-start" onclick="startQuiz()">
+                    Start Quiz <i class="fas fa-play-circle"></i>
+                </button>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <div id="quiz-content" style="<?php echo (!isset($_SESSION['quiz_started']) || !$_SESSION['quiz_started']) ? 'display: none;' : ''; ?>">
@@ -739,15 +892,20 @@ if (!isset($_SESSION['quiz_attempt'])) {
             <div class="quiz-title">
                 <?php echo htmlspecialchars($quiz['title']); ?>
                 <small><?php echo htmlspecialchars($quiz['course_title']); ?></small>
+                <?php if ($questions_to_show < $total_questions_count): ?>
+                    <span class="quiz-badge">
+                        <i class="fas fa-random"></i> <?php echo $questions_to_show; ?>/<?php echo $total_questions_count; ?> random questions
+                    </span>
+                <?php endif; ?>
             </div>
-            
+
             <div class="timer-container">
                 <?php if ($quiz['time_limit'] > 0): ?>
-                <div class="timer" id="timerDisplay">
-                    00:00
-                </div>
+                    <div class="timer" id="timerDisplay">
+                        00:00
+                    </div>
                 <?php endif; ?>
-                
+
                 <div class="progress-container">
                     <span style="font-size: 0.9rem; color: #666;">Progress:</span>
                     <div class="progress-bar">
@@ -757,31 +915,37 @@ if (!isset($_SESSION['quiz_attempt'])) {
                 </div>
             </div>
         </div>
-        
+
         <div class="container">
             <div class="sidebar">
                 <div class="question-nav">
                     <h3><i class="fas fa-list-ol"></i> Question Navigation</h3>
                     <div class="question-grid" id="questionGrid">
                         <?php foreach ($questions as $index => $question): ?>
-                        <button class="question-btn 
+                            <button class="question-btn 
                             <?php if ($index == 0) echo 'current'; ?>
                             <?php if (isset($_SESSION['quiz_attempt']['answers'][$question['id']])) echo 'answered'; ?>
                             <?php if (in_array($question['id'], $_SESSION['quiz_attempt']['flagged'])) echo 'flagged'; ?>"
-                            onclick="goToQuestion(<?php echo $index + 1; ?>)"
-                            data-question-id="<?php echo $question['id']; ?>">
-                            <?php echo $index + 1; ?>
-                        </button>
+                                onclick="goToQuestion(<?php echo $index + 1; ?>)"
+                                data-question-id="<?php echo $question['id']; ?>">
+                                <?php echo $index + 1; ?>
+                            </button>
                         <?php endforeach; ?>
                     </div>
                 </div>
-                
+
                 <div class="quiz-info">
                     <h4><i class="fas fa-info-circle"></i> Quiz Information</h4>
                     <div class="info-item">
-                        <span class="info-label">Total Questions:</span>
+                        <span class="info-label">Questions in Quiz:</span>
                         <span class="info-value"><?php echo count($questions); ?></span>
                     </div>
+                    <?php if ($total_questions_count > count($questions)): ?>
+                        <div class="info-item">
+                            <span class="info-label">Question Bank:</span>
+                            <span class="info-value"><?php echo $total_questions_count; ?></span>
+                        </div>
+                    <?php endif; ?>
                     <div class="info-item">
                         <span class="info-label">Answered:</span>
                         <span class="info-value" id="answeredCount">0</span>
@@ -791,13 +955,20 @@ if (!isset($_SESSION['quiz_attempt'])) {
                         <span class="info-value" id="flaggedCount">0</span>
                     </div>
                     <?php if ($quiz['time_limit'] > 0): ?>
-                    <div class="info-item">
-                        <span class="info-label">Time Left:</span>
-                        <span class="info-value" id="timeLeft"><?php echo $quiz['time_limit']; ?>:00</span>
-                    </div>
+                        <div class="info-item">
+                            <span class="info-label">Time Left:</span>
+                            <span class="info-value" id="timeLeft"><?php echo $quiz['time_limit']; ?>:00</span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($total_questions_count > count($questions)): ?>
+                        <div class="info-note">
+                            <i class="fas fa-random"></i>
+                            <strong>Random Selection:</strong> You're seeing <?php echo count($questions); ?> randomly selected questions.
+                        </div>
                     <?php endif; ?>
                 </div>
-                
+
                 <div class="instructions-sidebar">
                     <h4><i class="fas fa-lightbulb"></i> Quick Tips</h4>
                     <ul>
@@ -806,107 +977,114 @@ if (!isset($_SESSION['quiz_attempt'])) {
                         <li>Answers are saved automatically</li>
                         <li>Review all questions before submitting</li>
                         <?php if ($quiz['time_limit'] > 0): ?>
-                        <li>Keep an eye on the timer</li>
+                            <li>Keep an eye on the timer</li>
                         <?php endif; ?>
                     </ul>
                 </div>
             </div>
-            
+
             <div class="main-content">
                 <form id="quizForm" method="POST" action="submit_quiz.php" enctype="multipart/form-data">
                     <input type="hidden" name="attempt_id" value="<?php echo $attempt_id; ?>">
                     <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>">
                     <input type="hidden" name="time_taken" id="timeTaken" value="0">
-                    
+
                     <?php foreach ($questions as $index => $question): ?>
-                    <div class="question-container" id="question-<?php echo $index + 1; ?>" style="<?php echo $index > 0 ? 'display: none;' : ''; ?>">
-                        <div class="question-header">
-                            <div class="question-number">
-                                Question <?php echo $index + 1; ?> of <?php echo count($questions); ?>
-                                <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
-                                    Points: <?php echo $question['points']; ?>
+                        <div class="question-container" id="question-<?php echo $index + 1; ?>" style="<?php echo $index > 0 ? 'display: none;' : ''; ?>">
+                            <div class="question-header">
+                                <div class="question-number">
+                                    Question <?php echo $index + 1; ?> of <?php echo count($questions); ?>
+                                    <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                                        Points: <?php echo $question['points']; ?>
+                                    </div>
+                                </div>
+                                <div class="question-type">
+                                    <?php echo strtoupper(str_replace('_', ' ', $question['question_type'])); ?>
                                 </div>
                             </div>
-                            <div class="question-type">
-                                <?php echo strtoupper(str_replace('_', ' ', $question['question_type'])); ?>
+
+                            <div class="question-text">
+                                <?php echo nl2br(htmlspecialchars($question['question_text'])); ?>
+                            </div>
+
+                            <div class="options-container">
+                                <?php
+                                switch ($question['question_type']):
+                                    case 'multiple_choice':
+                                    case 'true_false':
+                                        $current_options = ($question['question_type'] == 'true_false')
+                                            ? [['id' => 'true', 'option_text' => 'True'], ['id' => 'false', 'option_text' => 'False']]
+                                            : ($options[$question['id']] ?? []);
+                                        foreach ($current_options as $opt):
+                                            $option_id = $opt['id'] ?? $opt;
+                                            $option_text = $opt['option_text'] ?? $opt;
+                                ?>
+                                            <label class="option <?php
+                                                                    if (
+                                                                        isset($_SESSION['quiz_attempt']['answers'][$question['id']]) &&
+                                                                        $_SESSION['quiz_attempt']['answers'][$question['id']] == $option_id
+                                                                    ) echo 'selected';
+                                                                    ?>" onclick="selectAnswer(this, <?php echo $question['id']; ?>, '<?php echo $option_id; ?>')">
+                                                <input type="radio"
+                                                    name="answers[<?php echo $question['id']; ?>]"
+                                                    value="<?php echo $option_id; ?>"
+                                                    style="display:none;"
+                                                    <?php
+                                                    if (
+                                                        isset($_SESSION['quiz_attempt']['answers'][$question['id']]) &&
+                                                        $_SESSION['quiz_attempt']['answers'][$question['id']] == $option_id
+                                                    ) echo 'checked';
+                                                    ?>>
+                                                <span class="option-label"><?php echo chr(65 + $index); ?></span>
+                                                <span class="option-text"><?php echo htmlspecialchars($option_text); ?></span>
+                                            </label>
+                                        <?php endforeach;
+                                        break;
+                                    case 'essay': ?>
+                                        <textarea name="answers[<?php echo $question['id']; ?>]"
+                                            class="essay-textarea"
+                                            oninput="saveEssayAnswer(<?php echo $question['id']; ?>, this.value)"
+                                            placeholder="Type your answer here..."><?php
+                                                                                    echo isset($_SESSION['quiz_attempt']['answers'][$question['id']])
+                                                                                        ? htmlspecialchars($_SESSION['quiz_attempt']['answers'][$question['id']])
+                                                                                        : '';
+                                                                                    ?></textarea>
+                                <?php break;
+                                endswitch; ?>
+                            </div>
+
+                            <div class="quiz-controls">
+                                <div>
+                                    <?php if ($index > 0): ?>
+                                        <button type="button" class="control-btn prev-btn" onclick="goToQuestion(<?php echo $index; ?>)">
+                                            <i class="fas fa-arrow-left"></i> Previous
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div style="display: flex; gap: 10px;">
+                                    <button type="button" class="control-btn flag-btn <?php
+                                                                                        if (in_array($question['id'], $_SESSION['quiz_attempt']['flagged'])) echo 'flagged';
+                                                                                        ?>" onclick="toggleFlag(<?php echo $question['id']; ?>)">
+                                        <i class="fas fa-flag"></i>
+                                        <?php echo in_array($question['id'], $_SESSION['quiz_attempt']['flagged']) ? 'Unflag' : 'Flag'; ?>
+                                    </button>
+
+                                    <?php if ($index < count($questions) - 1): ?>
+                                        <button type="button" class="control-btn next-btn" onclick="goToQuestion(<?php echo $index + 2; ?>)">
+                                            Next <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="button" class="control-btn submit-btn" onclick="submitQuiz()">
+                                            <i class="fas fa-paper-plane"></i> Submit Quiz
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="question-text">
-                            <?php echo nl2br(htmlspecialchars($question['question_text'])); ?>
-                        </div>
-                        
-                        <div class="options-container">
-                            <?php
-                            switch ($question['question_type']):
-                                case 'multiple_choice':
-                                case 'true_false':
-                                    $current_options = ($question['question_type'] == 'true_false')
-                                        ? [['id' => 'true', 'option_text' => 'True'], ['id' => 'false', 'option_text' => 'False']]
-                                        : ($options[$question['id']] ?? []);
-                                    foreach ($current_options as $opt): 
-                                        $option_id = $opt['id'] ?? $opt;
-                                        $option_text = $opt['option_text'] ?? $opt;
-                                        ?>
-                                        <label class="option" onclick="selectAnswer(this, <?php echo $question['id']; ?>, '<?php echo $option_id; ?>')">
-                                            <input type="radio" 
-                                                   name="answers[<?php echo $question['id']; ?>]" 
-                                                   value="<?php echo $option_id; ?>" 
-                                                   style="display:none;"
-                                                   <?php 
-                                                   if (isset($_SESSION['quiz_attempt']['answers'][$question['id']]) && 
-                                                       $_SESSION['quiz_attempt']['answers'][$question['id']] == $option_id) echo 'checked';
-                                                   ?>>
-                                            <span class="option-label"><?php echo chr(65 + array_search($opt, $current_options)); ?></span>
-                                            <span class="option-text"><?php echo htmlspecialchars($option_text); ?></span>
-                                        </label>
-                                    <?php endforeach;
-                                    break;
-                                case 'essay': ?>
-                                    <textarea name="answers[<?php echo $question['id']; ?>]" 
-                                              class="essay-textarea" 
-                                              oninput="saveEssayAnswer(<?php echo $question['id']; ?>, this.value)"
-                                              placeholder="Type your answer here..."><?php 
-                                              echo isset($_SESSION['quiz_attempt']['answers'][$question['id']]) 
-                                                   ? htmlspecialchars($_SESSION['quiz_attempt']['answers'][$question['id']]) 
-                                                   : ''; 
-                                              ?></textarea>
-                            <?php break;
-                            endswitch; ?>
-                        </div>
-                        
-                        <div class="quiz-controls">
-                            <div>
-                                <?php if ($index > 0): ?>
-                                <button type="button" class="control-btn prev-btn" onclick="goToQuestion(<?php echo $index; ?>)">
-                                    <i class="fas fa-arrow-left"></i> Previous
-                                </button>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <div style="display: flex; gap: 10px;">
-                                <button type="button" class="control-btn flag-btn <?php 
-                                    if (in_array($question['id'], $_SESSION['quiz_attempt']['flagged'])) echo 'flagged';
-                                ?>" onclick="toggleFlag(<?php echo $question['id']; ?>)">
-                                    <i class="fas fa-flag"></i>
-                                    <?php echo in_array($question['id'], $_SESSION['quiz_attempt']['flagged']) ? 'Unflag' : 'Flag'; ?>
-                                </button>
-                                
-                                <?php if ($index < count($questions) - 1): ?>
-                                <button type="button" class="control-btn next-btn" onclick="goToQuestion(<?php echo $index + 2; ?>)">
-                                    Next <i class="fas fa-arrow-right"></i>
-                                </button>
-                                <?php else: ?>
-                                <button type="button" class="control-btn submit-btn" onclick="submitQuiz()">
-                                    <i class="fas fa-paper-plane"></i> Submit Quiz
-                                </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
                     <?php endforeach; ?>
                 </form>
-                
+
                 <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.1);">
                     <h3 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                         <i class="fas fa-chart-bar"></i> Quiz Statistics
@@ -918,34 +1096,34 @@ if (!isset($_SESSION['quiz_attempt'])) {
                             </div>
                             <div style="font-size: 0.9rem; color: #666;">Answered</div>
                         </div>
-                        
+
                         <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                             <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="statFlagged">
                                 0
                             </div>
                             <div style="font-size: 0.9rem; color: #666;">Flagged</div>
                         </div>
-                        
+
                         <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                             <div style="font-size: 1.5rem; font-weight: bold; color: #6b7280;" id="statRemaining">
                                 <?php echo count($questions); ?>
                             </div>
                             <div style="font-size: 0.9rem; color: #666;">Remaining</div>
                         </div>
-                        
+
                         <?php if ($quiz['time_limit'] > 0): ?>
-                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="statTime">
-                                <?php echo sprintf('%02d', $quiz['time_limit']); ?>:00
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="statTime">
+                                    <?php echo sprintf('%02d', $quiz['time_limit']); ?>:00
+                                </div>
+                                <div style="font-size: 0.9rem; color: #666;">Time Left</div>
                             </div>
-                            <div style="font-size: 0.9rem; color: #666;">Time Left</div>
-                        </div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="quiz-footer">
             <button type="button" class="control-btn submit-btn" onclick="submitQuiz()" style="padding: 12px 30px;">
                 <i class="fas fa-stop-circle"></i> Submit Quiz Now
@@ -968,59 +1146,59 @@ if (!isset($_SESSION['quiz_attempt'])) {
         function startQuiz() {
             // Start the quiz session
             fetch('start_quiz_session.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'quiz_id=<?php echo $quiz_id; ?>&attempt_id=<?php echo $attempt_id; ?>'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Hide start overlay and show quiz
-                    document.querySelector('.start-overlay').style.display = 'none';
-                    document.getElementById('quiz-content').style.display = 'block';
-                    quizStarted = true;
-                    
-                    // Start timer if time limit exists
-                    if (timeLimit > 0) {
-                        startTimer();
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'quiz_id=<?php echo $quiz_id; ?>&attempt_id=<?php echo $attempt_id; ?>'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide start overlay and show quiz
+                        document.querySelector('.start-overlay').style.display = 'none';
+                        document.getElementById('quiz-content').style.display = 'block';
+                        quizStarted = true;
+
+                        // Start timer if time limit exists
+                        if (timeLimit > 0) {
+                            startTimer();
+                        }
+
+                        // Update statistics
+                        updateStatistics();
                     }
-                    
-                    // Update statistics
-                    updateStatistics();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to start quiz. Please try again.');
-            });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to start quiz. Please try again.');
+                });
         }
 
         function startTimer() {
             timeInterval = setInterval(() => {
                 timeSpent++;
                 document.getElementById('timeTaken').value = timeSpent;
-                
+
                 if (timeLimit > 0) {
                     let remaining = timeLimit - timeSpent;
-                    
+
                     if (remaining <= 0) {
                         clearInterval(timeInterval);
                         alert("Time is up!");
                         submitQuiz();
                         return;
                     }
-                    
+
                     let m = Math.floor(remaining / 60);
                     let s = remaining % 60;
-                    
+
                     // Update timer display
                     const timerDisplay = document.getElementById('timerDisplay');
                     timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                     document.getElementById('statTime').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                     document.getElementById('timeLeft').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                    
+
                     // Update timer styling
                     if (m < 10) {
                         timerDisplay.className = 'timer warning';
@@ -1036,18 +1214,18 @@ if (!isset($_SESSION['quiz_attempt'])) {
             if (questionNum >= 1 && questionNum <= totalQuestions) {
                 // Hide current question
                 document.querySelector(`#question-${currentQuestion}`).style.display = 'none';
-                
+
                 // Remove current class from previous question button
                 document.querySelector(`.question-btn.current`).classList.remove('current');
-                
+
                 // Show new question
                 document.querySelector(`#question-${questionNum}`).style.display = 'block';
-                
+
                 // Add current class to new question button
                 document.querySelector(`.question-btn[onclick="goToQuestion(${questionNum})"]`).classList.add('current');
-                
+
                 currentQuestion = questionNum;
-                
+
                 // Update control buttons
                 updateControlButtons();
             }
@@ -1056,14 +1234,18 @@ if (!isset($_SESSION['quiz_attempt'])) {
         function updateControlButtons() {
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
-            
+
             if (prevBtn) {
                 prevBtn.style.display = currentQuestion > 1 ? 'flex' : 'none';
             }
-            
+
             if (nextBtn) {
                 if (currentQuestion < totalQuestions) {
                     nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                    nextBtn.onclick = function() {
+                        goToQuestion(currentQuestion + 1);
+                    };
+                    nextBtn.className = 'control-btn next-btn';
                 } else {
                     nextBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Quiz';
                     nextBtn.onclick = submitQuiz;
@@ -1076,10 +1258,16 @@ if (!isset($_SESSION['quiz_attempt'])) {
             // Remove selected class from all options in this question
             const options = element.closest('.options-container').querySelectorAll('.option');
             options.forEach(opt => opt.classList.remove('selected'));
-            
+
             // Add selected class to clicked option
             element.classList.add('selected');
-            
+
+            // Check the radio button
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+            }
+
             // Save answer
             saveAnswer(questionId, answer);
         }
@@ -1087,82 +1275,89 @@ if (!isset($_SESSION['quiz_attempt'])) {
         function saveAnswer(questionId, answer) {
             // Save to session via AJAX
             fetch('save_answer.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}&answer=${encodeURIComponent(answer)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update question button
-                    const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
-                    if (questionBtn) {
-                        questionBtn.classList.add('answered');
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}&answer=${encodeURIComponent(answer)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update question button
+                        const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
+                        if (questionBtn) {
+                            questionBtn.classList.add('answered');
+                        }
+
+                        // Update session
+                        if (!<?php echo json_encode($_SESSION['quiz_attempt']['answers']); ?>) {
+                            <?php $_SESSION['quiz_attempt']['answers'][$question['id']] = $answer; ?>
+                        }
+
+                        // Update statistics
+                        updateStatistics();
                     }
-                    
-                    // Update statistics
-                    updateStatistics();
-                }
-            });
+                });
         }
 
         function saveEssayAnswer(questionId, answer) {
             // Save essay answer via AJAX
             fetch('save_answer.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}&answer=${encodeURIComponent(answer)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update question button
-                    const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
-                    if (questionBtn && answer.trim() !== '') {
-                        questionBtn.classList.add('answered');
-                    } else if (questionBtn) {
-                        questionBtn.classList.remove('answered');
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}&answer=${encodeURIComponent(answer)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update question button
+                        const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
+                        if (questionBtn) {
+                            if (answer.trim() !== '') {
+                                questionBtn.classList.add('answered');
+                            } else {
+                                questionBtn.classList.remove('answered');
+                            }
+                        }
+
+                        // Update statistics
+                        updateStatistics();
                     }
-                    
-                    // Update statistics
-                    updateStatistics();
-                }
-            });
+                });
         }
 
         function toggleFlag(questionId) {
             fetch('flag_question.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update button appearance
-                    const flagBtn = document.querySelector('.flag-btn');
-                    const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
-                    
-                    if (data.flagged) {
-                        flagBtn.innerHTML = '<i class="fas fa-flag"></i> Unflag';
-                        flagBtn.classList.add('flagged');
-                        questionBtn.classList.add('flagged');
-                    } else {
-                        flagBtn.innerHTML = '<i class="fas fa-flag"></i> Flag';
-                        flagBtn.classList.remove('flagged');
-                        questionBtn.classList.remove('flagged');
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `attempt_id=<?php echo $attempt_id; ?>&question_id=${questionId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button appearance
+                        const flagBtn = document.querySelector('.flag-btn');
+                        const questionBtn = document.querySelector(`.question-btn[data-question-id="${questionId}"]`);
+
+                        if (data.flagged) {
+                            flagBtn.innerHTML = '<i class="fas fa-flag"></i> Unflag';
+                            flagBtn.classList.add('flagged');
+                            questionBtn.classList.add('flagged');
+                        } else {
+                            flagBtn.innerHTML = '<i class="fas fa-flag"></i> Flag';
+                            flagBtn.classList.remove('flagged');
+                            questionBtn.classList.remove('flagged');
+                        }
+
+                        // Update statistics
+                        updateStatistics();
                     }
-                    
-                    // Update statistics
-                    updateStatistics();
-                }
-            });
+                });
         }
 
         function updateStatistics() {
@@ -1170,7 +1365,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
             const answeredCount = document.querySelectorAll('.question-btn.answered').length;
             const flaggedCount = document.querySelectorAll('.question-btn.flagged').length;
             const progress = Math.round((answeredCount / totalQuestions) * 100);
-            
+
             // Update display
             document.getElementById('answeredCount').textContent = answeredCount;
             document.getElementById('flaggedCount').textContent = flaggedCount;
@@ -1191,7 +1386,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (!quizStarted) return;
-            
+
             // Next question: Right arrow or Space
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 e.preventDefault();
@@ -1199,7 +1394,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
                     goToQuestion(currentQuestion + 1);
                 }
             }
-            
+
             // Previous question: Left arrow
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
@@ -1207,7 +1402,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
                     goToQuestion(currentQuestion - 1);
                 }
             }
-            
+
             // Select answer: 1-4 keys
             if (e.key >= '1' && e.key <= '4') {
                 e.preventDefault();
@@ -1218,7 +1413,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
                     options[index].click();
                 }
             }
-            
+
             // Select answer: A-D keys
             if (e.key >= 'a' && e.key <= 'd') {
                 e.preventDefault();
@@ -1229,15 +1424,24 @@ if (!isset($_SESSION['quiz_attempt'])) {
                     options[index].click();
                 }
             }
-            
+
             // Flag question: F key
             if (e.key === 'f' || e.key === 'F') {
                 e.preventDefault();
                 const currentContainer = document.querySelector(`#question-${currentQuestion}`);
-                const questionId = currentContainer.querySelector('textarea, input[type="radio"]').name.match(/\[(\d+)\]/)[1];
-                toggleFlag(questionId);
+                const radio = currentContainer.querySelector('input[type="radio"]');
+                if (radio) {
+                    const questionId = radio.name.match(/\[(\d+)\]/)[1];
+                    toggleFlag(questionId);
+                } else {
+                    const textarea = currentContainer.querySelector('textarea');
+                    if (textarea) {
+                        const questionId = textarea.name.match(/\[(\d+)\]/)[1];
+                        toggleFlag(questionId);
+                    }
+                }
             }
-            
+
             // Submit quiz: Ctrl+Enter
             if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault();
@@ -1248,7 +1452,7 @@ if (!isset($_SESSION['quiz_attempt'])) {
         // Initialize
         updateStatistics();
         updateControlButtons();
-        
+
         // Auto-save time every 30 seconds
         if (timeLimit > 0) {
             setInterval(() => {
@@ -1265,4 +1469,5 @@ if (!isset($_SESSION['quiz_attempt'])) {
         }
     </script>
 </body>
+
 </html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Block 6 · project · add‑to‑cart (React)</title>
+    <link rel="icon" href="../../../../public/images/favicon.ico">
+    <style>
+        /* same design system as block6 index – consistent, fresh */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #edecf2;
+            color: #1e293b;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .project-card {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -30px #2b2b4b;
+            overflow: hidden;
+            padding: 2rem 1.8rem;
+            transition: padding 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 3.4rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #3b3f8f, #c9516c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #4a4e9e;
+            color: white;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            padding: 0.2rem 1.8rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        .step {
+            background: #f8f6ff;
+            border-radius: 2rem;
+            padding: 1.8rem 1.8rem;
+            border: 1px solid #cdc3e8;
+            box-shadow: 0 12px 28px -18px #2a264f;
+            transition: 0.1s;
+            border-left: 12px solid #5b5fab;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            background: #dd768c;
+            color: white;
+            font-weight: 700;
+            font-size: 1.8rem;
+            width: 3rem;
+            height: 3rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            box-shadow: 0 4px 8px #dcaebd;
+        }
+
+        .step h3 {
+            font-size: clamp(1.6rem, 5vw, 2rem);
+            color: #383d88;
+            flex: 1;
+        }
+
+        .step-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 680px) {
+            .step-content {
+                grid-template-columns: 1.2fr 0.9fr;
+            }
+        }
+
+        .code-snippet {
+            background: #1e1e2f;
+            color: #f8f8f2;
+            border-radius: 1.8rem;
+            padding: 1.4rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: inset 0 0 10px #00000055;
+            border: 1px solid #7f79a8;
+        }
+
+        .code-snippet code {
+            background: transparent;
+            color: #c5c3e8;
+            padding: 0;
+        }
+
+        .tip-note {
+            background: #eae5fc;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            border-left: 8px solid #c9516c;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .tip-note strong {
+            color: #383d88;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-top: 0.8rem;
+        }
+
+        .checklist li {
+            margin: 0.7rem 0;
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+
+        .checklist li::before {
+            content: "✓";
+            background: #4a4e9e;
+            color: white;
+            font-weight: 900;
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .resource-highlight {
+            background: #efebfc;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            margin: 1.8rem 0;
+            border: 2px solid #bdb2de;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-grad {
+            background: #4a4e9e;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: default;
+            box-shadow: 0 8px 16px -6px #37376b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid white;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #ddd2f5, #fcfdff, #ddd2f5);
+            margin: 2rem 0;
+        }
+
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 2rem 0 1rem;
+        }
+
+        .footer-nav a {
+            background: #f1edff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #373b7c;
+            font-weight: 500;
+            border: 1px solid #bdb2de;
+        }
+
+        .glossary-mini {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.5rem 0;
+        }
+
+        .glossary-term {
+            background: white;
+            border: 1px solid #b1a9d0;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px #e4defa;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #43478f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="project-card">
+        <h1>🛒 product list · add to cart</h1>
+        <div class="badge">⚛️ block 6 · project based · step‑by‑step guide</div>
+
+        <!-- context / final project from index -->
+        <div class="resource-highlight" style="justify-content: space-between;">
+            <span style="font-weight: 650; font-size: 1.3rem; color: #383d88;">🧩 final project brief: product list with
+                add‑to‑cart</span>
+            <span class="btn-grad">📁 React + Vite · props · useState · .map</span>
+        </div>
+
+        <!-- STEP 1 – Setup -->
+        <div class="step-container">
+            <div class="step">
+                <div class="step-header"><span class="step-number">1</span>
+                    <h3>scaffold with Vite + clean up</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet">
+                        <code>npm create vite@latest my-cart -- --template react<br>cd my-cart<br>npm install<br>npm run dev</code>
+                    </div>
+                    <div class="tip-note"><strong>🗂️ structure</strong> — remove boilerplate: keep App.jsx, main.jsx,
+                        index.css. Delete logo, etc. Create <code>components/</code> folder.</div>
+                </div>
+                <ul class="checklist">
+                    <li>project runs on <code>http://localhost:5173</code></li>
+                    <li>clean <code>App.jsx</code>: return a simple <code>&lt;h1&gt;cart workshop&lt;/h1&gt;</code></li>
+                    <li>create <code>components/ProductList.jsx</code> , <code>ProductCard.jsx</code> ,
+                        <code>CartSummary.jsx</code></li>
+                </ul>
+            </div>
+
+            <!-- STEP 2 – product data & first component (props) -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">2</span>
+                    <h3>dummy data & ProductCard (props)</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>// products array (inside App.jsx or separate)
+const products = [
+  { id: 1, name: '📘 modern js guide', price: 19.99 },
+  { id: 2, name: '⚛️ react hooks hoodie', price: 29.99 },
+  { id: 3, name: '🎧 ES6+ podcast', price: 9.99 },
+];
+
+// &lt;ProductCard product={p} /&gt;  (pass props)
+</code></div>
+                    <div class="tip-note"><strong>💡 ProductCard</strong> receives <code>product</code> (object) via
+                        props. Render name, price and an "Add" button. Use <code>props.product.name</code> or
+                        destructure <code>{product}</code>.</div>
+                </div>
+                <ul class="checklist">
+                    <li>create <code>ProductCard</code> – functional component</li>
+                    <li>destructure <code>{ product }</code> from props</li>
+                    <li>display <code>{product.name}</code> – <code>${product.price}</code></li>
+                    <li>add <code>&lt;button&gt;Add to cart&lt;/button&gt;</code> (event later)</li>
+                </ul>
+            </div>
+
+            <!-- STEP 3 – render list with .map() & key -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">3</span>
+                    <h3>render multiple cards → .map() + key</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>// inside ProductList component
+{products.map(p => (
+  &lt;ProductCard key={p.id} product={p} /&gt;
+))}</code></div>
+                    <div class="tip-note"><strong>🔑 key prop</strong> must be unique – use product.id. Never use index
+                        unless array static.</div>
+                </div>
+                <ul class="checklist">
+                    <li><code>ProductList</code> receives <code>products</code> as prop from App</li>
+                    <li>wrap cards in a <code>div</code> with grid/flex</li>
+                    <li>verify no console warnings about key</li>
+                </ul>
+            </div>
+
+            <!-- STEP 4 – useState for cart -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">4</span>
+                    <h3>add state: cart items & total</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>// in App.jsx
+import { useState } from 'react';
+const [cart, setCart] = useState([]);        // array of added items
+const [total, setTotal] = useState(0);        // optional, can derive</code></div>
+                    <div class="tip-note"><strong>🧠 state design</strong> — cart array holds objects:
+                        <code>{ id, name, price }</code> (or just ids + quantity). For simplicity store full product
+                        copy.</div>
+                </div>
+                <ul class="checklist">
+                    <li>define <code>cart, setCart</code> in App (parent of list & summary)</li>
+                    <li>derive total: <code>const total = cart.reduce((sum,item)=>sum+item.price,0)</code></li>
+                    <li>pass <code>cart</code> down to <code>CartSummary</code> as prop</li>
+                </ul>
+            </div>
+
+            <!-- STEP 5 – event handling: add to cart -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">5</span>
+                    <h3>addToCart function · update state</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>// inside App
+const addToCart = (product) => {
+  setCart(prevCart => [...prevCart, product]);   // spread + new item
+};
+
+// pass addToCart down to ProductCard (via ProductList)
+&lt;ProductCard key={p.id} product={p} onAdd={addToCart} /&gt;</code></div>
+                    <div class="tip-note"><strong>🖱️ event binding</strong> — in ProductCard, button
+                        <code>onClick={() => onAdd(product)}</code> . Use arrow to avoid immediate call.</div>
+                </div>
+                <ul class="checklist">
+                    <li>define <code>addToCart</code> in App – uses functional update</li>
+                    <li>pass function through <code>ProductList</code> to <code>ProductCard</code></li>
+                    <li>button <code>onClick</code> triggers add</li>
+                    <li>test: click → cart state updates</li>
+                </ul>
+            </div>
+
+            <!-- STEP 6 – CartSummary (display items & total) -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">6</span>
+                    <h3>show cart items & total</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>const CartSummary = ({ cart }) => {
+  const total = cart.reduce((acc, item) => acc + item.price, 0);
+  return (
+    &lt;div&gt;
+      &lt;h4&gt;🛒 cart ({cart.length})&lt;/h4&gt;
+      {cart.map(item => &lt;div key={item.id}&gt;{item.name} ${item.price}&lt;/div&gt;)}
+      &lt;strong&gt;total: ${total.toFixed(2)}&lt;/strong&gt;
+    &lt;/div&gt;
+  );
+};</code></div>
+                    <div class="tip-note"><strong>⚠️ duplicate items</strong> — for now we allow same product multiple
+                        times. That’s fine for MVP. Optional: implement quantity later.</div>
+                </div>
+                <ul class="checklist">
+                    <li>receive <code>cart</code> prop, display count, list each item, total</li>
+                    <li>use <code>.map()</code> with <code>item.id</code> (if duplicates, combine later)</li>
+                    <li>style minimal but readable</li>
+                </ul>
+            </div>
+
+            <!-- STEP 7 – bonus: remove from cart (optional, but showcases state immutability) -->
+            <div class="step">
+                <div class="step-header"><span class="step-number">7</span>
+                    <h3>✨ remove item (optional stretch)</h3>
+                </div>
+                <div class="step-content">
+                    <div class="code-snippet"><code>const removeFromCart = (idToRemove) => {
+  setCart(prev => prev.filter(item => item.id !== idToRemove));
+};
+// pass to CartSummary, add remove button</code></div>
+                    <div class="tip-note"><strong>🔁 filter</strong> returns new array without removed item. Great
+                        practice for immutability.</div>
+                </div>
+                <ul class="checklist">
+                    <li>add remove button in CartSummary</li>
+                    <li>call <code>removeFromCart(item.id)</code></li>
+                    <li>⚠️ removes all copies of that product (since same id). for quantity version, you’d decrement
+                        count.</li>
+                </ul>
+            </div>
+        </div> <!-- end step container -->
+
+        <!-- checklist / MVP summary -->
+        <hr>
+        <div style="background: #edeaff; border-radius: 2rem; padding: 1.5rem;">
+            <h3 style="color:#383d88; display: flex; gap: 0.6rem;">✅ MVP core checklist (must have)</h3>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 1rem; margin-top: 1.2rem;">
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">⚛️ React + Vite app</div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">🧩 at least 3 components</div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">📬 props from parent to child</div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">🎣 useState (cart array)</div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">🖱️ onClick handler → update state
+                </div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">📋 .map() to render items + key
+                </div>
+                <div style="background: white; border-radius: 2rem; padding: 1rem;">🧾 display cart total (derived)
+                </div>
+            </div>
+        </div>
+
+        <!-- extra references / modern JS used in project -->
+        <div style="margin: 2rem 0;">
+            <div
+                style="display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: space-between; background: #f5f3ff; border-radius: 2rem; padding: 1.5rem;">
+                <div><span style="font-weight: 700;">🏹 arrow functions</span> — <code>const add = () => {}</code> used
+                    everywhere</div>
+                <div><span style="font-weight: 700;">📦 import/export</span> — each component
+                    <code>export default</code></div>
+                <div><span style="font-weight: 700;">🔁 spread</span> — <code>[...prev, newItem]</code></div>
+                <div><span style="font-weight: 700;">{} destructuring</span> — props <code>{product}</code></div>
+                <div><span style="font-weight: 700;">🧵 template literals</span> — `${product.name}`</div>
+            </div>
+        </div>
+
+        <!-- quiz / self assessment preview (matches index flavour) -->
+        <div class="glossary-mini">
+            <span class="glossary-term">export default vs named</span>
+            <span class="glossary-term">…spread operator</span>
+            <span class="glossary-term">useState initial</span>
+            <span class="glossary-term">onClick setter</span>
+            <span class="glossary-term">key prop</span>
+            <span class="glossary-term">props.children</span>
+            <span class="glossary-term">virtual dom re-render</span>
+        </div>
+
+        <!-- troubleshooting & tips -->
+        <div class="tip-note" style="margin: 2rem 0;">
+            <strong>🐛 common gotchas:</strong> forgetting to pass props down correctly, using index as key, mutating
+            state directly (<code>push</code>), calling event handler instead of passing function
+            (<code>onClick={addToCart(product)}</code> → should be arrow). Also ensure keys are on the outermost mapped
+            element.
+        </div>
+
+        <!-- final call to action (like index bottom) -->
+        <div
+            style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; background: #eae5fc; border-radius: 2rem; padding: 1.5rem 2rem;">
+            <div><span style="font-size: 1.8rem; font-weight: 700; color: #4a4e9e;">📬 done?</span><br>extend with
+                quantity, local storage, or styling</div>
+            <a href="#"
+                style="background: #4a4e9e; color: white; padding: 0.8rem 2rem; border-radius: 60px; text-decoration: none; font-weight: 700; box-shadow: 0 8px 12px #a49fc0;">check
+                project rubric →</a>
+        </div>
+
+        <!-- bottom nav (similar to index) -->
+        <div class="footer-nav">
+            <a href="#">ES6+</a><a href="#">modules</a><a href="#">components</a><a href="#">props</a><a
+                href="#">useState</a><a href="#">events</a><a href="#">lists</a>
+        </div>
+        <footer>
+            ⚛️ step‑by‑step · product cart · modern JS + react · block 6 project
+        </footer>
+    </div>
+</body>
+
+</html>
