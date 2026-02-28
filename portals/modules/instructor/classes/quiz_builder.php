@@ -139,9 +139,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             $stmt = $conn->prepare($sql);
 
-            // Fix: Count the parameters correctly - we have 23 parameters (21 values + 3 conditions)
+            // Count the parameters: 
+            // 20 SET fields + 3 WHERE conditions = 23 parameters
+            // Type string must have 23 characters
+
+            // Let's build the type string carefully:
+            // title: s
+            // description: s
+            // instructions: s
+            // quiz_type: s
+            // total_points: d
+            // time_limit: i
+            // attempts_allowed: i
+            // shuffle_questions: i
+            // shuffle_options: i
+            // show_correct_answers: i
+            // show_points: i
+            // available_from: s
+            // available_to: s
+            // due_date: s
+            // auto_submit: i
+            // is_published: i
+            // question_selection_method: s
+            // questions_to_show: i
+            // questions_percentage: d
+            // randomize_per_student: i
+            // quiz_id: i
+            // instructor_id: i
+            // class_id: i
+
+            // Type string: ssssd iiiii i sss i i s i d i i i i
+            // Combined: ssssdiiiiiiisssiisidiiii
+
             $stmt->bind_param(
-                "ssssdiiiisssssiiiisssiiii",
+                "ssssdiiiiiiisssiisidiiii",
                 $title,
                 $description,
                 $instructions,
