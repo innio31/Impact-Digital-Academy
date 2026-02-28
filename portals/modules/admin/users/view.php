@@ -235,7 +235,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?> - User Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -258,7 +258,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
@@ -267,60 +267,82 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             min-height: 100vh;
         }
 
+        /* Mobile-First Base Styles */
         .admin-container {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
+        /* Sidebar - Mobile First */
         .sidebar {
-            width: 250px;
+            width: 100%;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+            position: relative;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 1rem;
             border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
         }
 
         .sidebar-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: white;
+        }
+
+        .menu-toggle {
+            display: block;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .sidebar-nav {
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav.show {
+            display: block;
         }
 
         .sidebar-nav ul {
             list-style: none;
-            padding: 1rem 0;
+            padding: 0;
         }
 
         .sidebar-nav li {
-            margin-bottom: 0.25rem;
+            margin: 0;
         }
 
         .sidebar-nav a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1rem;
             color: #cbd5e1;
             text-decoration: none;
             transition: all 0.3s;
+            font-size: 0.95rem;
+            border-left: 4px solid transparent;
         }
 
         .sidebar-nav a:hover,
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 4px solid var(--primary);
+            border-left-color: var(--primary);
         }
 
         .sidebar-nav i {
@@ -329,26 +351,36 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             font-size: 1.1rem;
         }
 
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+            width: 100%;
+        }
+
+        /* Header Section */
         .header {
             background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
+            padding: 1.25rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 1.25rem;
         }
 
         .header h1 {
             color: var(--dark);
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .breadcrumb {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+            -webkit-overflow-scrolling: touch;
         }
 
         .breadcrumb a {
@@ -356,101 +388,114 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             text-decoration: none;
         }
 
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
+        /* User Header */
         .user-header {
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
+            padding: 1.5rem;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .user-header {
-                flex-direction: column;
-                text-align: center;
-            }
+            flex-direction: column;
+            gap: 1.25rem;
         }
 
         .user-avatar {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            flex-shrink: 0;
+            margin: 0 auto;
         }
 
         .user-info {
-            flex: 1;
+            text-align: center;
         }
 
         .user-name {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+        }
+
+        .role-badge,
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .user-email {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #64748b;
             margin-bottom: 1rem;
+            word-break: break-word;
         }
 
         .user-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .meta-item {
-            display: flex;
-            flex-direction: column;
+            min-width: 120px;
         }
 
         .meta-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: #64748b;
             margin-bottom: 0.25rem;
         }
 
         .meta-value {
             font-weight: 500;
+            font-size: 0.9rem;
             color: var(--dark);
         }
 
         .user-actions {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .user-actions form {
+            width: 100%;
         }
 
         .btn {
-            padding: 0.5rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
             border: none;
             font-weight: 500;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            width: 100%;
+            text-decoration: none;
         }
 
         .btn-primary {
@@ -458,17 +503,9 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             color: white;
         }
 
-        .btn-primary:hover {
-            background: var(--secondary);
-        }
-
         .btn-secondary {
             background: #e2e8f0;
             color: var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background: #cbd5e1;
         }
 
         .btn-success {
@@ -487,172 +524,130 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
         }
 
         .btn-sm {
-            padding: 0.25rem 0.75rem;
+            padding: 0.5rem 0.75rem;
             font-size: 0.85rem;
         }
 
-        .role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .role-admin {
-            background: #ede9fe;
-            color: #5b21b6;
-        }
-
-        .role-instructor {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .role-student {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .role-applicant {
-            background: #e2e8f0;
-            color: #475569;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-suspended {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .status-rejected {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            border-top: 4px solid var(--primary);
-        }
-
-        .stat-card.applications {
-            border-top-color: var(--accent);
-        }
-
-        .stat-card.enrollments {
-            border-top-color: var(--success);
-        }
-
-        .stat-card.assignments {
-            border-top-color: var(--primary);
-        }
-
-        .stat-card.activity {
-            border-top-color: var(--warning);
+            border-top: 3px solid var(--primary);
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .stat-label {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .section-card {
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             background: white;
             border-radius: 10px;
+            margin-bottom: 1.5rem;
+            white-space: nowrap;
+        }
+
+        .tab-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 1rem;
+            border: none;
+            background: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #64748b;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+            min-width: max-content;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn i {
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Content Sections */
+        .section-card {
+            background: white;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
 
         .section-header {
-            padding: 1.25rem 1.5rem;
+            padding: 1rem;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .section-header h3 {
             color: var(--dark);
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-header i {
-            color: var(--primary);
+            gap: 0.5rem;
         }
 
         .section-body {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
+        /* Info Grid */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
         .info-item {
-            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
         .info-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: #64748b;
             margin-bottom: 0.25rem;
             text-transform: uppercase;
@@ -662,219 +657,47 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
         .info-value {
             font-weight: 500;
             color: var(--dark);
-        }
-
-        .text-content {
-            line-height: 1.6;
-            color: var(--dark);
-            white-space: pre-wrap;
-        }
-
-        .text-content.empty {
-            color: #94a3b8;
-            font-style: italic;
-        }
-
-        .quick-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .action-form {
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .action-form h4 {
-            margin-bottom: 0.75rem;
-            color: var(--dark);
             font-size: 0.95rem;
+            word-break: break-word;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        textarea.form-control {
-            min-height: 80px;
-            resize: vertical;
-        }
-
+        /* Table Styles */
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -0.5rem;
+            padding: 0 0.5rem;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         th {
-            padding: 0.75rem;
+            padding: 0.75rem 0.5rem;
             text-align: left;
             font-weight: 600;
             color: var(--dark);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #e2e8f0;
         }
 
         td {
-            padding: 0.75rem;
+            padding: 0.75rem 0.5rem;
             border-bottom: 1px solid #e2e8f0;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .log-item {
-            padding: 0.75rem;
-            border-left: 3px solid #e2e8f0;
-            margin-bottom: 0.75rem;
-            background: #f8fafc;
-        }
-
-        .log-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .log-time {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
-
-        .log-action {
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .log-details {
             font-size: 0.85rem;
-            color: #64748b;
-            margin-top: 0.25rem;
         }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b;
-        }
-
-        .empty-state i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #cbd5e1;
-        }
-
-        .tab-nav {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            background: #f8fafc;
-        }
-
-        .tab-btn {
-            padding: 1rem 1.5rem;
-            border: none;
-            background: none;
-            font-weight: 500;
-            color: #64748b;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            background: white;
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
+        /* Badge Styles */
         .badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
         }
 
@@ -898,51 +721,275 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             color: #0369a1;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
+        /* Form Styles */
+        .action-form {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px;
+            padding-right: 2.5rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        /* Log Items */
+        .log-item {
+            padding: 0.75rem;
+            border-left: 3px solid #e2e8f0;
+            margin-bottom: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .log-time {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-action {
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-details {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
 
-            .main-content {
-                margin-left: 200px;
+            to {
+                opacity: 1;
             }
         }
 
-        @media (max-width: 768px) {
+        /* Quick Actions Grid */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Tablet Styles (min-width: 640px) */
+        @media (min-width: 640px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .user-header {
+                flex-direction: row;
+                text-align: left;
+            }
+
+            .user-avatar {
+                margin: 0;
+            }
+
+            .user-info {
+                text-align: left;
+            }
+
+            .user-name {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .user-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .user-actions .btn {
+                width: auto;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Desktop Styles (min-width: 1024px) */
+        @media (min-width: 1024px) {
             .admin-container {
-                flex-direction: column;
+                flex-direction: row;
             }
 
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
+                width: 250px;
+                height: 100vh;
+                position: sticky;
+                top: 0;
+            }
+
+            .sidebar-header {
+                padding: 1.5rem;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .sidebar-nav {
+                display: block !important;
+                max-height: none;
+                overflow-y: auto;
             }
 
             .main-content {
                 margin-left: 0;
+                padding: 2rem;
             }
 
-            .user-actions {
-                flex-direction: column;
+            .content-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Landscape Mode on Mobile */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .sidebar-nav {
+                max-height: 60vh;
             }
 
-            .user-actions .btn {
-                width: 100%;
-                justify-content: center;
+            .user-header {
+                padding: 1rem;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        button,
+        .btn,
+        .tab-btn,
+        select.form-control {
+            min-height: 44px;
+        }
+
+        a,
+        button {
+            touch-action: manipulation;
+        }
+
+        /* Print Styles */
+        @media print {
+
+            .sidebar,
+            .tab-nav,
+            .user-actions,
+            .btn,
+            .quick-actions {
+                display: none;
             }
 
-            .tab-nav {
-                flex-direction: column;
+            .main-content {
+                margin: 0;
+                padding: 0;
             }
 
-            .tab-btn {
-                padding: 0.75rem 1rem;
-                justify-content: center;
+            .user-header {
+                break-inside: avoid;
             }
         }
     </style>
@@ -952,11 +999,13 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header" onclick="toggleSidebar()">
                 <h2>Impact Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <nav class="sidebar-nav">
+            <nav class="sidebar-nav" id="sidebarNav">
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
                             <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
@@ -984,16 +1033,11 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             <div class="header">
                 <div>
                     <div class="breadcrumb">
-                        <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">Dashboard</a> &rsaquo;
-                        <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">Users</a> &rsaquo;
-                        User Profile
+                        <a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">Dashboard</a> ›
+                        <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">Users</a> ›
+                        Profile
                     </div>
                     <h1>User Profile</h1>
-                </div>
-                <div>
-                    <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to List
-                    </a>
                 </div>
             </div>
 
@@ -1038,7 +1082,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                     <div class="user-email">
                         <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($user['email']); ?>
                         <?php if ($user['phone']): ?>
-                            &nbsp; • &nbsp; <i class="fas fa-phone"></i> <?php echo htmlspecialchars($user['phone']); ?>
+                            <br class="mobile-only"><i class="fas fa-phone"></i> <?php echo htmlspecialchars($user['phone']); ?>
                         <?php endif; ?>
                     </div>
                     <div class="user-meta">
@@ -1053,15 +1097,9 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                         <div class="meta-item">
                             <div class="meta-label">Last Login</div>
                             <div class="meta-value">
-                                <?php echo $user['last_login'] ? date('M j, Y g:i A', strtotime($user['last_login'])) : 'Never'; ?>
+                                <?php echo $user['last_login'] ? date('M j, Y', strtotime($user['last_login'])) : 'Never'; ?>
                             </div>
                         </div>
-                        <?php if ($user['city'] && $user['state']): ?>
-                            <div class="meta-item">
-                                <div class="meta-label">Location</div>
-                                <div class="meta-value"><?php echo htmlspecialchars($user['city'] . ', ' . $user['state']); ?></div>
-                            </div>
-                        <?php endif; ?>
                     </div>
                     <div class="user-actions">
                         <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php?edit=<?php echo $user_id; ?>"
@@ -1073,7 +1111,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                                 <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                 <input type="hidden" name="action" value="impersonate">
                                 <button type="submit" class="btn btn-warning"
-                                    onclick="impersonateUser(event, <?php echo $user_id; ?>)">
+                                    onclick="return impersonateUser(event, <?php echo $user_id; ?>)">
                                     <i class="fas fa-user-secret"></i> Impersonate
                                 </button>
                             </form>
@@ -1104,286 +1142,116 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
 
             <!-- User Statistics -->
             <div class="stats-grid">
-                <div class="stat-card applications">
+                <div class="stat-card">
                     <div class="stat-number"><?php echo $user['total_applications']; ?></div>
                     <div class="stat-label">Applications</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo $user['approved_applications']; ?> approved
-                    </div>
                 </div>
-                <div class="stat-card enrollments">
+                <div class="stat-card">
                     <div class="stat-number"><?php echo $user['total_enrollments']; ?></div>
                     <div class="stat-label">Enrollments</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo $user['active_enrollments']; ?> active
-                    </div>
                 </div>
-                <div class="stat-card assignments">
+                <div class="stat-card">
                     <div class="stat-number"><?php echo $user['total_assignments']; ?></div>
                     <div class="stat-label">Assignments</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        <?php echo $user['graded_assignments']; ?> graded
-                    </div>
                 </div>
-                <div class="stat-card activity">
+                <div class="stat-card">
                     <div class="stat-number"><?php echo count($activity_logs); ?></div>
-                    <div class="stat-label">Recent Activities</div>
-                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">
-                        Last 20 actions
-                    </div>
+                    <div class="stat-label">Activities</div>
                 </div>
             </div>
 
             <!-- Tab Navigation -->
             <div class="tab-nav">
                 <button type="button" class="tab-btn active" onclick="showTab('profile')">
-                    <i class="fas fa-user"></i> Profile Details
+                    <i class="fas fa-user"></i> <span>Profile</span>
                 </button>
                 <button type="button" class="tab-btn" onclick="showTab('applications')">
-                    <i class="fas fa-file-alt"></i> Applications
+                    <i class="fas fa-file-alt"></i> <span>Applications</span>
                 </button>
                 <button type="button" class="tab-btn" onclick="showTab('enrollments')">
-                    <i class="fas fa-graduation-cap"></i> Enrollments
+                    <i class="fas fa-graduation-cap"></i> <span>Enrollments</span>
                 </button>
                 <button type="button" class="tab-btn" onclick="showTab('activity')">
-                    <i class="fas fa-history"></i> Activity
+                    <i class="fas fa-history"></i> <span>Activity</span>
                 </button>
                 <button type="button" class="tab-btn" onclick="showTab('actions')">
-                    <i class="fas fa-cogs"></i> Quick Actions
+                    <i class="fas fa-cogs"></i> <span>Actions</span>
                 </button>
             </div>
 
             <!-- Profile Details Tab -->
             <div id="profile-tab" class="tab-content active">
-                <div class="content-grid">
-                    <!-- Left Column: Personal Information -->
-                    <div>
-                        <!-- Personal Details -->
-                        <div class="section-card" style="margin-bottom: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-user"></i> Personal Information</h3>
-                            </div>
-                            <div class="section-body">
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <div class="info-label">Full Name</div>
-                                        <div class="info-value">
-                                            <?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Email</div>
-                                        <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Phone</div>
-                                        <div class="info-value"><?php echo $user['phone'] ? htmlspecialchars($user['phone']) : 'Not provided'; ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Date of Birth</div>
-                                        <div class="info-value">
-                                            <?php echo $user['date_of_birth'] ? date('M j, Y', strtotime($user['date_of_birth'])) : 'Not provided'; ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Gender</div>
-                                        <div class="info-value">
-                                            <?php echo $user['gender'] ? ucfirst($user['gender']) : 'Not specified'; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Address Information -->
-                        <?php if ($user['address'] || $user['city'] || $user['state']): ?>
-                            <div class="section-card" style="margin-bottom: 1.5rem;">
-                                <div class="section-header">
-                                    <h3><i class="fas fa-map-marker-alt"></i> Address Information</h3>
-                                </div>
-                                <div class="section-body">
-                                    <div class="info-grid">
-                                        <?php if ($user['address']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Address</div>
-                                                <div class="info-value"><?php echo nl2br(htmlspecialchars($user['address'])); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['city']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">City</div>
-                                                <div class="info-value"><?php echo htmlspecialchars($user['city']); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['state']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">State/Province</div>
-                                                <div class="info-value"><?php echo htmlspecialchars($user['state']); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['country']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Country</div>
-                                                <div class="info-value"><?php echo htmlspecialchars($user['country']); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- Professional Information -->
-                        <?php if ($user['qualifications'] || $user['experience_years'] || $user['current_job_title']): ?>
-                            <div class="section-card">
-                                <div class="section-header">
-                                    <h3><i class="fas fa-briefcase"></i> Professional Information</h3>
-                                </div>
-                                <div class="section-body">
-                                    <div class="info-grid">
-                                        <?php if ($user['experience_years']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Years of Experience</div>
-                                                <div class="info-value"><?php echo $user['experience_years']; ?> years</div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['current_job_title']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Current Job Title</div>
-                                                <div class="info-value"><?php echo htmlspecialchars($user['current_job_title']); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['current_company']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Current Company</div>
-                                                <div class="info-value"><?php echo htmlspecialchars($user['current_company']); ?></div>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <?php if ($user['qualifications']): ?>
-                                        <div style="margin-top: 1.5rem;">
-                                            <div class="info-label">Qualifications</div>
-                                            <div class="text-content" style="margin-top: 0.5rem;">
-                                                <?php echo nl2br(htmlspecialchars($user['qualifications'])); ?>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user"></i> Personal Information</h3>
                     </div>
-
-                    <!-- Right Column: Online Presence & Bio -->
-                    <div>
-                        <!-- Bio -->
-                        <?php if ($user['bio']): ?>
-                            <div class="section-card" style="margin-bottom: 1.5rem;">
-                                <div class="section-header">
-                                    <h3><i class="fas fa-globe"></i> Bio / About Me</h3>
-                                </div>
-                                <div class="section-body">
-                                    <div class="text-content">
-                                        <?php echo nl2br(htmlspecialchars($user['bio'])); ?>
-                                    </div>
+                    <div class="section-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value"><?php echo $user['phone'] ? htmlspecialchars($user['phone']) : 'Not provided'; ?></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Date of Birth</div>
+                                <div class="info-value">
+                                    <?php echo $user['date_of_birth'] ? date('M j, Y', strtotime($user['date_of_birth'])) : 'Not provided'; ?>
                                 </div>
                             </div>
-                        <?php endif; ?>
-
-                        <!-- Online Presence -->
-                        <?php if ($user['website'] || $user['linkedin_url'] || $user['github_url']): ?>
-                            <div class="section-card">
-                                <div class="section-header">
-                                    <h3><i class="fas fa-share-alt"></i> Online Presence</h3>
-                                </div>
-                                <div class="section-body">
-                                    <div class="info-grid">
-                                        <?php if ($user['website']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">Website</div>
-                                                <div class="info-value">
-                                                    <a href="<?php echo htmlspecialchars($user['website']); ?>" target="_blank"
-                                                        style="color: var(--primary); text-decoration: none;">
-                                                        <?php echo htmlspecialchars(parse_url($user['website'], PHP_URL_HOST) ?: $user['website']); ?>
-                                                        <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['linkedin_url']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">LinkedIn</div>
-                                                <div class="info-value">
-                                                    <a href="<?php echo htmlspecialchars($user['linkedin_url']); ?>" target="_blank"
-                                                        style="color: var(--primary); text-decoration: none;">
-                                                        LinkedIn Profile
-                                                        <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($user['github_url']): ?>
-                                            <div class="info-item">
-                                                <div class="info-label">GitHub</div>
-                                                <div class="info-value">
-                                                    <a href="<?php echo htmlspecialchars($user['github_url']); ?>" target="_blank"
-                                                        style="color: var(--primary); text-decoration: none;">
-                                                        GitHub Profile
-                                                        <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 0.25rem;"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
+                            <?php if ($user['address'] || $user['city'] || $user['state']): ?>
+                                <div class="info-item">
+                                    <div class="info-label">Address</div>
+                                    <div class="info-value">
+                                        <?php
+                                        $address_parts = [];
+                                        if ($user['address']) $address_parts[] = $user['address'];
+                                        if ($user['city']) $address_parts[] = $user['city'];
+                                        if ($user['state']) $address_parts[] = $user['state'];
+                                        if ($user['country']) $address_parts[] = $user['country'];
+                                        echo htmlspecialchars(implode(', ', $address_parts));
+                                        ?>
                                     </div>
                                 </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- Account Information -->
-                        <div class="section-card" style="margin-top: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-user-cog"></i> Account Information</h3>
-                            </div>
-                            <div class="section-body">
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <div class="info-label">Account Created</div>
-                                        <div class="info-value"><?php echo date('M j, Y g:i A', strtotime($user['created_at'])); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Last Updated</div>
-                                        <div class="info-value"><?php echo date('M j, Y g:i A', strtotime($user['updated_at'])); ?></div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Email Verified</div>
-                                        <div class="info-value">
-                                            <?php echo $user['email_verified_at'] ? date('M j, Y', strtotime($user['email_verified_at'])) : 'Not verified'; ?>
-                                        </div>
-                                    </div>
-                                    <div class="info-item">
-                                        <div class="info-label">Last Login</div>
-                                        <div class="info-value">
-                                            <?php echo $user['last_login'] ? date('M j, Y g:i A', strtotime($user['last_login'])) : 'Never logged in'; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
+
+                <?php if ($user['bio'] || $user['qualifications']): ?>
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+                        </div>
+                        <div class="section-body">
+                            <?php if ($user['bio']): ?>
+                                <div class="info-item">
+                                    <div class="info-label">Bio</div>
+                                    <div class="info-value"><?php echo nl2br(htmlspecialchars($user['bio'])); ?></div>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($user['qualifications']): ?>
+                                <div class="info-item">
+                                    <div class="info-label">Qualifications</div>
+                                    <div class="info-value"><?php echo nl2br(htmlspecialchars($user['qualifications'])); ?></div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Applications Tab -->
             <div id="applications-tab" class="tab-content">
                 <div class="section-card">
                     <div class="section-header">
-                        <h3><i class="fas fa-file-alt"></i> User Applications</h3>
+                        <h3><i class="fas fa-file-alt"></i> Applications</h3>
                     </div>
                     <div class="section-body">
                         <?php if (!empty($applications)): ?>
@@ -1391,60 +1259,35 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Applying As</th>
                                             <th>Program</th>
-                                            <th>Submitted</th>
+                                            <th>Date</th>
                                             <th>Status</th>
-                                            <th>Reviewed</th>
-                                            <th>Actions</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($applications as $app): ?>
                                             <tr>
-                                                <td>#<?php echo str_pad($app['id'], 4, '0', STR_PAD_LEFT); ?></td>
                                                 <td>
-                                                    <span class="badge badge-info">
-                                                        <?php echo ucfirst($app['applying_as']); ?>
-                                                    </span>
+                                                    <strong><?php echo htmlspecialchars($app['program_code']); ?></strong><br>
+                                                    <small><?php echo htmlspecialchars(substr($app['program_name'], 0, 30)) . '...'; ?></small>
                                                 </td>
-                                                <td>
-                                                    <?php if ($app['program_name']): ?>
-                                                        <strong><?php echo htmlspecialchars($app['program_code']); ?></strong><br>
-                                                        <small style="color: #64748b;"><?php echo htmlspecialchars($app['program_name']); ?></small>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">N/A</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo date('M j, Y', strtotime($app['created_at'])); ?><br>
-                                                    <small style="color: #64748b;"><?php echo date('g:i A', strtotime($app['created_at'])); ?></small>
-                                                </td>
+                                                <td><?php echo date('M j, Y', strtotime($app['created_at'])); ?></td>
                                                 <td>
                                                     <?php
                                                     $status_class = '';
                                                     if ($app['status'] === 'approved') $status_class = 'badge-success';
                                                     elseif ($app['status'] === 'rejected') $status_class = 'badge-danger';
                                                     elseif ($app['status'] === 'pending') $status_class = 'badge-warning';
-                                                    else $status_class = 'badge-info';
                                                     ?>
                                                     <span class="badge <?php echo $status_class; ?>">
-                                                        <?php echo ucfirst(str_replace('_', ' ', $app['status'])); ?>
+                                                        <?php echo ucfirst($app['status']); ?>
                                                     </span>
-                                                </td>
-                                                <td>
-                                                    <?php if ($app['reviewed_at']): ?>
-                                                        <?php echo date('M j, Y', strtotime($app['reviewed_at'])); ?><br>
-                                                        <small style="color: #64748b;"><?php echo date('g:i A', strtotime($app['reviewed_at'])); ?></small>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">Not reviewed</span>
-                                                    <?php endif; ?>
                                                 </td>
                                                 <td>
                                                     <a href="<?php echo BASE_URL; ?>modules/admin/applications/review.php?id=<?php echo $app['id']; ?>"
                                                         class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-eye"></i> View
+                                                        View
                                                     </a>
                                                 </td>
                                             </tr>
@@ -1455,8 +1298,8 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                         <?php else: ?>
                             <div class="empty-state">
                                 <i class="fas fa-file-alt"></i>
-                                <h3>No Applications Found</h3>
-                                <p>This user has not submitted any applications yet.</p>
+                                <h3>No Applications</h3>
+                                <p>This user has not submitted any applications.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -1467,7 +1310,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             <div id="enrollments-tab" class="tab-content">
                 <div class="section-card">
                     <div class="section-header">
-                        <h3><i class="fas fa-graduation-cap"></i> Course Enrollments</h3>
+                        <h3><i class="fas fa-graduation-cap"></i> Enrollments</h3>
                     </div>
                     <div class="section-body">
                         <?php if (!empty($enrollments)): ?>
@@ -1476,12 +1319,8 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                                     <thead>
                                         <tr>
                                             <th>Class</th>
-                                            <th>Program</th>
-                                            <th>Instructor</th>
-                                            <th>Enrollment Date</th>
                                             <th>Status</th>
-                                            <th>Completion</th>
-                                            <th>Final Grade</th>
+                                            <th>Grade</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1489,49 +1328,18 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                                             <tr>
                                                 <td>
                                                     <strong><?php echo htmlspecialchars($enroll['batch_code']); ?></strong><br>
-                                                    <small style="color: #64748b;"><?php echo htmlspecialchars($enroll['class_name']); ?></small>
-                                                </td>
-                                                <td>
-                                                    <strong><?php echo htmlspecialchars($enroll['program_code']); ?></strong><br>
-                                                    <small style="color: #64748b;"><?php echo htmlspecialchars($enroll['program_name']); ?></small>
-                                                </td>
-                                                <td>
-                                                    <?php if ($enroll['instructor_first_name']): ?>
-                                                        <?php echo htmlspecialchars($enroll['instructor_first_name'] . ' ' . $enroll['instructor_last_name']); ?>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">Not assigned</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo date('M j, Y', strtotime($enroll['enrollment_date'])); ?>
+                                                    <small><?php echo htmlspecialchars(substr($enroll['class_name'], 0, 25)); ?></small>
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $status_class = '';
-                                                    if ($enroll['status'] === 'active') $status_class = 'badge-success';
-                                                    elseif ($enroll['status'] === 'completed') $status_class = 'badge-info';
-                                                    elseif ($enroll['status'] === 'dropped') $status_class = 'badge-danger';
-                                                    else $status_class = 'badge-warning';
+                                                    $status_class = $enroll['status'] === 'active' ? 'badge-success' : 'badge-info';
                                                     ?>
                                                     <span class="badge <?php echo $status_class; ?>">
                                                         <?php echo ucfirst($enroll['status']); ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <?php if ($enroll['completion_date']): ?>
-                                                        <?php echo date('M j, Y', strtotime($enroll['completion_date'])); ?>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">In progress</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php if ($enroll['final_grade']): ?>
-                                                        <span style="font-weight: bold; color: var(--success);">
-                                                            <?php echo $enroll['final_grade']; ?>
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <span style="color: #64748b;">N/A</span>
-                                                    <?php endif; ?>
+                                                    <?php echo $enroll['final_grade'] ?? 'N/A'; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -1541,7 +1349,7 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                         <?php else: ?>
                             <div class="empty-state">
                                 <i class="fas fa-graduation-cap"></i>
-                                <h3>No Enrollments Found</h3>
+                                <h3>No Enrollments</h3>
                                 <p>This user is not enrolled in any courses.</p>
                             </div>
                         <?php endif; ?>
@@ -1557,70 +1365,27 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                     </div>
                     <div class="section-body">
                         <?php if (!empty($activity_logs)): ?>
-                            <div style="max-height: 400px; overflow-y: auto;">
-                                <?php foreach ($activity_logs as $log): ?>
-                                    <div class="log-item">
-                                        <div class="log-time">
-                                            <i class="far fa-clock"></i>
-                                            <?php echo date('M j, Y g:i A', strtotime($log['created_at'])); ?>
-                                        </div>
-                                        <div class="log-action">
-                                            <?php echo ucfirst(str_replace('_', ' ', $log['action'])); ?>
-                                        </div>
-                                        <?php if ($log['description']): ?>
-                                            <div class="log-details">
-                                                <?php echo htmlspecialchars($log['description']); ?>
-                                            </div>
-                                        <?php endif; ?>
-                                        <?php if ($log['user_ip']): ?>
-                                            <div class="log-details" style="font-size: 0.75rem;">
-                                                IP: <?php echo htmlspecialchars($log['user_ip']); ?>
-                                            </div>
-                                        <?php endif; ?>
+                            <?php foreach ($activity_logs as $log): ?>
+                                <div class="log-item">
+                                    <div class="log-time">
+                                        <i class="far fa-clock"></i>
+                                        <?php echo date('M j, g:i A', strtotime($log['created_at'])); ?>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
+                                    <div class="log-action">
+                                        <?php echo ucfirst(str_replace('_', ' ', $log['action'])); ?>
+                                    </div>
+                                    <?php if ($log['description']): ?>
+                                        <div class="log-details">
+                                            <?php echo htmlspecialchars(substr($log['description'], 0, 100)); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
                         <?php else: ?>
                             <div class="empty-state">
                                 <i class="fas fa-history"></i>
-                                <h3>No Activity Found</h3>
-                                <p>No recent activity recorded for this user.</p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <!-- Recent Notifications -->
-                <div class="section-card" style="margin-top: 1.5rem;">
-                    <div class="section-header">
-                        <h3><i class="fas fa-bell"></i> Recent Notifications</h3>
-                    </div>
-                    <div class="section-body">
-                        <?php if (!empty($notifications)): ?>
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                <?php foreach ($notifications as $notif): ?>
-                                    <div class="log-item" style="background: <?php echo $notif['is_read'] ? '#f8fafc' : '#e0f2fe'; ?>;">
-                                        <div class="log-time">
-                                            <i class="far fa-clock"></i>
-                                            <?php echo date('M j, Y g:i A', strtotime($notif['created_at'])); ?>
-                                            <?php if (!$notif['is_read']): ?>
-                                                <span class="badge badge-info" style="margin-left: 0.5rem;">New</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="log-action">
-                                            <?php echo htmlspecialchars($notif['title']); ?>
-                                        </div>
-                                        <div class="log-details">
-                                            <?php echo htmlspecialchars($notif['message']); ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="empty-state" style="padding: 1rem;">
-                                <i class="fas fa-bell-slash"></i>
-                                <h4>No Notifications</h4>
-                                <p>No notifications found for this user.</p>
+                                <h3>No Activity</h3>
+                                <p>No recent activity recorded.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -1629,116 +1394,61 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
 
             <!-- Quick Actions Tab -->
             <div id="actions-tab" class="tab-content">
-                <div class="content-grid">
-                    <!-- Left Column: Account Actions -->
-                    <div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3><i class="fas fa-cogs"></i> Quick Actions</h3>
+                    </div>
+                    <div class="section-body">
                         <!-- Change Status -->
-                        <div class="section-card" style="margin-bottom: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-user-cog"></i> Account Status</h3>
-                            </div>
-                            <div class="section-body">
-                                <form method="POST" class="action-form">
-                                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                    <input type="hidden" name="action" value="change_status">
+                        <form method="POST" class="action-form" style="margin-bottom: 1rem;">
+                            <h4 style="margin-bottom: 1rem;">Change Status</h4>
+                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                            <input type="hidden" name="action" value="change_status">
 
-                                    <div class="form-group">
-                                        <label for="status">Change Account Status</label>
-                                        <select id="status" name="status" class="form-control">
-                                            <option value="active" <?php echo $user['status'] === 'active' ? 'selected' : ''; ?>>Active</option>
-                                            <option value="pending" <?php echo $user['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                            <option value="suspended" <?php echo $user['status'] === 'suspended' ? 'selected' : ''; ?>>Suspended</option>
-                                            <option value="rejected" <?php echo $user['status'] === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Update Status
-                                    </button>
-                                </form>
+                            <div class="form-group">
+                                <select name="status" class="form-control">
+                                    <option value="active" <?php echo $user['status'] === 'active' ? 'selected' : ''; ?>>Active</option>
+                                    <option value="pending" <?php echo $user['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                    <option value="suspended" <?php echo $user['status'] === 'suspended' ? 'selected' : ''; ?>>Suspended</option>
+                                    <option value="rejected" <?php echo $user['status'] === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
+                                </select>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </form>
 
                         <!-- Change Role -->
-                        <div class="section-card">
-                            <div class="section-header">
-                                <h3><i class="fas fa-user-tag"></i> User Role</h3>
-                            </div>
-                            <div class="section-body">
-                                <form method="POST" class="action-form">
-                                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                    <input type="hidden" name="action" value="change_role">
+                        <form method="POST" class="action-form" style="margin-bottom: 1rem;">
+                            <h4 style="margin-bottom: 1rem;">Change Role</h4>
+                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                            <input type="hidden" name="action" value="change_role">
 
-                                    <div class="form-group">
-                                        <label for="role">Change User Role</label>
-                                        <select id="role" name="role" class="form-control">
-                                            <option value="admin" <?php echo $user['role'] === 'admin' ? 'selected' : ''; ?>>Administrator</option>
-                                            <option value="instructor" <?php echo $user['role'] === 'instructor' ? 'selected' : ''; ?>>Instructor</option>
-                                            <option value="student" <?php echo $user['role'] === 'student' ? 'selected' : ''; ?>>Student</option>
-                                            <option value="applicant" <?php echo $user['role'] === 'applicant' ? 'selected' : ''; ?>>Applicant</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Update Role
-                                    </button>
-                                </form>
+                            <div class="form-group">
+                                <select name="role" class="form-control">
+                                    <option value="admin" <?php echo $user['role'] === 'admin' ? 'selected' : ''; ?>>Administrator</option>
+                                    <option value="instructor" <?php echo $user['role'] === 'instructor' ? 'selected' : ''; ?>>Instructor</option>
+                                    <option value="student" <?php echo $user['role'] === 'student' ? 'selected' : ''; ?>>Student</option>
+                                    <option value="applicant" <?php echo $user['role'] === 'applicant' ? 'selected' : ''; ?>>Applicant</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
+                            <button type="submit" class="btn btn-primary">Update Role</button>
+                        </form>
 
-                    <!-- Right Column: Communication -->
-                    <div>
                         <!-- Send Message -->
-                        <div class="section-card">
-                            <div class="section-header">
-                                <h3><i class="fas fa-envelope"></i> Send Message</h3>
-                            </div>
-                            <div class="section-body">
-                                <form method="POST" class="action-form">
-                                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                    <input type="hidden" name="action" value="send_message">
+                        <form method="POST" class="action-form">
+                            <h4 style="margin-bottom: 1rem;">Send Message</h4>
+                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                            <input type="hidden" name="action" value="send_message">
 
-                                    <div class="form-group">
-                                        <label for="message_subject">Subject</label>
-                                        <input type="text" id="message_subject" name="message_subject" class="form-control"
-                                            placeholder="Message subject" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="message_content">Message</label>
-                                        <textarea id="message_content" name="message_content" class="form-control"
-                                            placeholder="Type your message here..." rows="4" required></textarea>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane"></i> Send Message
-                                    </button>
-                                </form>
+                            <div class="form-group">
+                                <input type="text" name="message_subject" class="form-control"
+                                    placeholder="Subject" required>
                             </div>
-                        </div>
-
-                        <!-- Quick Links -->
-                        <div class="section-card" style="margin-top: 1.5rem;">
-                            <div class="section-header">
-                                <h3><i class="fas fa-link"></i> Quick Links</h3>
+                            <div class="form-group">
+                                <textarea name="message_content" class="form-control"
+                                    placeholder="Message..." rows="3" required></textarea>
                             </div>
-                            <div class="section-body">
-                                <div class="quick-actions">
-                                    <a href="mailto:<?php echo urlencode($user['email']); ?>" class="btn btn-secondary" style="justify-content: center;">
-                                        <i class="fas fa-envelope"></i> Email User
-                                    </a>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php?edit=<?php echo $user_id; ?>"
-                                        class="btn btn-secondary" style="justify-content: center;">
-                                        <i class="fas fa-edit"></i> Edit Profile
-                                    </a>
-                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php" class="btn btn-secondary" style="justify-content: center;">
-                                        <i class="fas fa-arrow-left"></i> Back to Users List
-                                    </a>
-                                    <button type="button" onclick="window.print()" class="btn btn-secondary" style="justify-content: center;">
-                                        <i class="fas fa-print"></i> Print Profile
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1746,8 +1456,26 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
     </div>
 
     <script>
+        // Mobile menu toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarNav');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebarNav');
+            const menuToggle = document.querySelector('.menu-toggle');
+
+            if (window.innerWidth < 1024) {
+                if (!event.target.closest('.sidebar') && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        });
+
         // Tab functionality
-        function showTab(tabName) {
+        function showTab(tabName, event) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1762,10 +1490,26 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             document.getElementById(tabName + '-tab').classList.add('active');
 
             // Activate clicked tab button
-            event.target.classList.add('active');
+            if (event) {
+                event.target.closest('.tab-btn').classList.add('active');
+            } else {
+                // Find and activate the button for this tab
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    if (btn.textContent.includes(tabName.charAt(0).toUpperCase() + tabName.slice(1))) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
 
             // Store active tab in session storage
             sessionStorage.setItem('activeTab', tabName);
+
+            // Scroll to top of content on mobile
+            if (window.innerWidth < 768) {
+                document.querySelector('.main-content').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
         }
 
         // Restore active tab on page load
@@ -1773,61 +1517,40 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
             const activeTab = sessionStorage.getItem('activeTab') || 'profile';
             showTab(activeTab);
 
-            // Form validation for message sending
-            const messageForm = document.querySelector('form[action="send_message"]');
-            if (messageForm) {
-                messageForm.addEventListener('submit', function(e) {
-                    const subject = this.querySelector('#message_subject').value.trim();
-                    const content = this.querySelector('#message_content').value.trim();
+            // Add touch-friendly form validation
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = this.querySelectorAll('[required]');
+                    let isValid = true;
 
-                    if (!subject || !content) {
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = 'var(--danger)';
+                            isValid = false;
+                        } else {
+                            field.style.borderColor = '#e2e8f0';
+                        }
+                    });
+
+                    if (!isValid) {
                         e.preventDefault();
-                        alert('Please fill in both subject and message fields.');
-                        return false;
-                    }
-
-                    if (!confirm('Send this message to the user?')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-            }
-
-            // Form validation for status/role changes
-            const statusForm = document.querySelector('form[action="change_status"]');
-            const roleForm = document.querySelector('form[action="change_role"]');
-
-            if (statusForm) {
-                statusForm.addEventListener('submit', function(e) {
-                    if (!confirm('Are you sure you want to change the user status?')) {
-                        e.preventDefault();
-                        return false;
+                        alert('Please fill in all required fields.');
                     }
                 });
-            }
-
-            if (roleForm) {
-                roleForm.addEventListener('submit', function(e) {
-                    if (!confirm('Are you sure you want to change the user role?')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-            }
+            });
         });
 
-        // Print user profile
-        function printProfile() {
-            const printContent = document.querySelector('.user-header').outerHTML +
-                document.querySelector('#profile-tab').outerHTML;
-            const originalContent = document.body.innerHTML;
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                document.activeElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }, 100);
+        });
 
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-            location.reload();
-        }
-
+        // Impersonate user function
         function impersonateUser(event, userId) {
             event.preventDefault();
 
@@ -1835,11 +1558,8 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                 return false;
             }
 
-            // Submit the form via AJAX to generate the token
             const form = document.getElementById('impersonate-form-' + userId);
             const formData = new FormData(form);
-
-            // Add AJAX header
             const headers = new Headers();
             headers.append('X-Requested-With', 'XMLHttpRequest');
 
@@ -1848,21 +1568,11 @@ logActivity($_SESSION['user_id'], 'user_view', "Viewed user profile #$user_id", 
                     body: formData,
                     headers: headers
                 })
-                .then(response => {
-                    if (response.headers.get('content-type')?.includes('application/json')) {
-                        return response.json();
-                    }
-                    return response.text();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    if (typeof data === 'object' && data.url) {
-                        // If we got a JSON response with URL, open it immediately
+                    if (data.url) {
                         window.open(data.url, '_blank');
-                        // Show success message
-                        alert('Impersonation started in new tab. You can continue working here as admin.');
-                    } else {
-                        // Fallback: reload the page and check for session URL
-                        window.location.reload();
+                        alert('Impersonation started in new tab.');
                     }
                 })
                 .catch(error => {
