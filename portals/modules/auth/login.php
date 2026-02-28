@@ -71,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // If there's an error, store it in session and redirect back
+    // If there's an error, store it in session and redirect back to login page
     if ($error) {
         $_SESSION['login_error'] = $error;
         $_SESSION['login_email'] = $email;
-        redirect(BASE_URL . 'index.php#login');
+        redirect(BASE_URL . 'modules/auth/login.php'); // Redirect to login page directly
     }
 }
 

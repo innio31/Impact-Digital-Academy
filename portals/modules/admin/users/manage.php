@@ -173,25 +173,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
     } elseif (!empty($_POST['selected_users'])) {
         $selected_ids = $_POST['selected_users'];
         $placeholders = implode(',', array_fill(0, count($selected_ids), '?'));
-        
+
         $update_sql = "UPDATE users SET status = ?, updated_at = NOW() WHERE id IN ($placeholders)";
         $update_stmt = $conn->prepare($update_sql);
-        
+
         $status_param = $_POST['bulk_action'];
         $all_params = array_merge([$status_param], $selected_ids);
         $types = str_repeat('i', count($selected_ids) + 1);
-        
+
         $update_stmt->bind_param($types, ...$all_params);
-        
+
         if ($update_stmt->execute()) {
             $_SESSION['success'] = count($selected_ids) . ' users updated successfully.';
-            
+
             // Log each update
             foreach ($selected_ids as $user_id) {
-                logActivity($_SESSION['user_id'], 'user_update', 
-                    "User #$user_id bulk updated to $status_param", 'users', $user_id);
+                logActivity(
+                    $_SESSION['user_id'],
+                    'user_update',
+                    "User #$user_id bulk updated to $status_param",
+                    'users',
+                    $user_id
+                );
             }
-            
+
             // Refresh page
             header('Location: ' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']);
             exit();
@@ -205,9 +210,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>User Management - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -225,6 +231,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             --student: #10b981;
             --applicant: #64748b;
             --school: #8b5cf6;
+            --sidebar-width: 250px;
+            --sidebar-mobile-width: 85%;
+            --header-height: 70px;
         }
 
         * {
@@ -232,6 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -243,22 +253,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         .admin-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
         }
 
+        /* Sidebar - Mobile First */
         .sidebar {
-            width: 250px;
+            width: var(--sidebar-mobile-width);
+            max-width: 320px;
             background: var(--dark);
             color: white;
-            padding: 1.5rem 0;
             position: fixed;
+            left: -100%;
+            top: 0;
             height: 100vh;
             overflow-y: auto;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 0;
         }
 
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+        .sidebar.active {
+            left: 0;
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Desktop sidebar */
+        @media (min-width: 1024px) {
+            .sidebar {
+                width: var(--sidebar-width);
+                left: 0;
+                position: fixed;
+                box-shadow: none;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
         }
 
         .sidebar-header {
@@ -267,8 +315,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .sidebar-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: white;
+        }
+
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .sidebar-header p {
+                font-size: 0.9rem;
+            }
         }
 
         .sidebar-nav ul {
@@ -287,9 +350,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: #cbd5e1;
             text-decoration: none;
             transition: all 0.3s;
+            min-height: 48px;
         }
 
         .sidebar-nav a:hover,
+        .sidebar-nav a:active,
         .sidebar-nav a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -302,20 +367,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-size: 1.1rem;
         }
 
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                margin-left: var(--sidebar-width);
+                padding: 2rem;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Header */
         .header {
             background: white;
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem;
+            }
         }
 
         .header h1 {
             color: var(--dark);
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
         }
 
         .user-info {
@@ -334,23 +460,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             justify-content: center;
             color: white;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Stats Grid - Mobile Optimized */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .stats-grid {
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .stats-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-left: 3px solid var(--primary);
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-card::before {
@@ -358,62 +539,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             position: absolute;
             top: 0;
             right: 0;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
-            transform: rotate(45deg) translate(30px, -30px);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            transform: rotate(45deg) translate(20px, -20px);
         }
 
-        .stat-card.admin { border-left-color: var(--admin); }
-        .stat-card.instructor { border-left-color: var(--instructor); }
-        .stat-card.student { border-left-color: var(--student); }
-        .stat-card.applicant { border-left-color: var(--applicant); }
-        .stat-card.active { border-left-color: var(--success); }
-        .stat-card.pending { border-left-color: var(--warning); }
-        .stat-card.school { border-left-color: var(--school); }
+        .stat-card.admin {
+            border-left-color: var(--admin);
+        }
+
+        .stat-card.instructor {
+            border-left-color: var(--instructor);
+        }
+
+        .stat-card.student {
+            border-left-color: var(--student);
+        }
+
+        .stat-card.applicant {
+            border-left-color: var(--applicant);
+        }
+
+        .stat-card.active {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.pending {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.school {
+            border-left-color: var(--school);
+        }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .stat-number {
+                font-size: 2rem;
+            }
         }
 
         .stat-label {
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        @media (min-width: 768px) {
+            .stat-label {
+                font-size: 0.9rem;
+            }
+        }
+
         .stat-icon {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             opacity: 0.5;
         }
 
+        @media (min-width: 768px) {
+            .stat-icon {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* School Statistics */
         .school-stats {
             background: white;
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .school-stats {
+                padding: 1.5rem;
+            }
         }
 
         .school-stats h3 {
             margin-bottom: 1rem;
             color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        @media (min-width: 768px) {
+            .school-stats h3 {
+                font-size: 1.25rem;
+            }
         }
 
         .schools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .schools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .schools-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .school-stat-item {
-            padding: 1rem;
+            padding: 0.875rem;
             background: #f8fafc;
             border-radius: 8px;
             border-left: 4px solid var(--school);
@@ -423,41 +669,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--dark);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .school-details {
             display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .school-count {
             background: var(--school);
             color: white;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
+        /* Filters Card */
         .filters-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .filters-card h3 {
             margin-bottom: 1rem;
             color: var(--dark);
+            font-size: 1.1rem;
         }
 
         .filter-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .filter-form {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .filter-form {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .form-group {
@@ -466,29 +733,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.75rem;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             font-size: 0.9rem;
         }
 
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Buttons */
         .btn {
-            padding: 0.5rem 1.5rem;
+            padding: 0.6rem 1rem;
             border-radius: 6px;
             border: none;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 44px;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        @media (min-width: 640px) {
+            .btn {
+                width: auto;
+                min-width: 120px;
+            }
         }
 
         .btn-primary {
@@ -496,7 +786,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover,
+        .btn-primary:active {
             background: var(--secondary);
         }
 
@@ -505,7 +796,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: var(--dark);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover,
+        .btn-secondary:active {
             background: #cbd5e1;
         }
 
@@ -524,15 +816,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: white;
         }
 
-        .btn-school:hover {
+        .btn-school:hover,
+        .btn-school:active {
             background: #7c3aed;
         }
 
         .btn-sm {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            min-height: 36px;
         }
 
+        /* Users Table */
         .users-table {
             background: white;
             border-radius: 10px;
@@ -541,24 +836,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         .table-header {
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .table-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem;
+            }
         }
 
         .table-header h3 {
             color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         thead {
@@ -567,148 +880,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         th {
-            padding: 1rem;
+            padding: 0.875rem;
             text-align: left;
             font-weight: 600;
             color: var(--dark);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         td {
-            padding: 1rem;
+            padding: 0.875rem;
             border-bottom: 1px solid #e2e8f0;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .role-admin { background: #ede9fe; color: #5b21b6; }
-        .role-instructor { background: #fef3c7; color: #92400e; }
-        .role-student { background: #d1fae5; color: #065f46; }
-        .role-applicant { background: #e2e8f0; color: #475569; }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-active { background: #d1fae5; color: #065f46; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-suspended { background: #fee2e2; color: #991b1b; }
-        .status-rejected { background: #f1f5f9; color: #64748b; }
-
-        .school-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            background: #ede9fe;
-            color: #5b21b6;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .checkbox-cell {
-            width: 40px;
-            text-align: center;
-        }
-
-        .bulk-actions {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .pagination {
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .pagination-info {
-            color: #64748b;
             font-size: 0.9rem;
         }
 
-        .page-numbers {
-            display: flex;
-            gap: 0.5rem;
-        }
+        /* Mobile card view for table on very small screens */
+        @media (max-width: 640px) {
+            .table-container {
+                overflow-x: visible;
+            }
 
-        .page-link {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
+            table {
+                min-width: 0;
+                display: block;
+            }
 
-        .page-link:hover,
-        .page-link.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+            thead {
+                display: none;
+            }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+            tbody {
+                display: block;
+            }
 
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
+            tr {
+                display: block;
+                padding: 1rem;
+                background: #f8fafc;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                border: 1px solid #e2e8f0;
+            }
 
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
+            td {
+                display: flex;
+                align-items: flex-start;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #e2e8f0;
+                font-size: 0.85rem;
+                border-bottom: none;
+            }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #64748b;
-        }
+            td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                width: 90px;
+                min-width: 90px;
+                color: var(--dark);
+            }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #cbd5e1;
+            td:last-child {
+                border-bottom: none;
+            }
+
+            /* Special handling for specific columns */
+            td[data-label="User"]:before {
+                content: "User:";
+            }
+
+            td[data-label="Role"]:before {
+                content: "Role:";
+            }
+
+            td[data-label="Status"]:before {
+                content: "Status:";
+            }
+
+            td[data-label="School"]:before {
+                content: "School:";
+            }
+
+            td[data-label="Location"]:before {
+                content: "Location:";
+            }
+
+            td[data-label="Applications"]:before {
+                content: "Apps:";
+            }
+
+            td[data-label="Enrollments"]:before {
+                content: "Enroll:";
+            }
+
+            td[data-label="Registered"]:before {
+                content: "Registered:";
+            }
+
+            td[data-label="Last Login"]:before {
+                content: "Last Login:";
+            }
+
+            td[data-label="Actions"]:before {
+                content: "Actions:";
+            }
+
+            .user-name-cell {
+                width: 100%;
+            }
         }
 
         .user-avatar-small {
@@ -722,104 +1002,298 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             color: white;
             font-weight: bold;
             font-size: 0.875rem;
+            flex-shrink: 0;
         }
 
         .user-name-cell {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .user-details {
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .user-name {
             font-weight: 500;
             color: var(--dark);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-email {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .role-badge,
+        .status-badge,
+        .school-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .role-admin {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .role-instructor {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-student {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .role-applicant {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-suspended {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-rejected {
+            background: #f1f5f9;
             color: #64748b;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            .main-content {
-                margin-left: 200px;
+        .school-badge {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: #f8fafc;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .bulk-actions {
+                flex-direction: row;
+                align-items: center;
+                padding: 1rem 1.5rem;
             }
         }
 
-        @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
+        .bulk-actions .form-control {
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .bulk-actions .form-control {
+                width: 200px;
             }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
+        }
+
+        .selected-count {
+            color: #64748b;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        /* Pagination */
+        .pagination {
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (min-width: 640px) {
+            .pagination {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 1.5rem;
             }
-            .main-content {
-                margin-left: 0;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .schools-grid {
-                grid-template-columns: 1fr;
-            }
-            .filter-form {
-                grid-template-columns: 1fr;
-            }
-            .actions {
-                flex-direction: column;
-            }
-            .table-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
+        }
+
+        .pagination-info {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .page-link {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .page-link:hover,
+        .page-link:active,
+        .page-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .empty-state p {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .empty-state .btn {
+            width: auto;
+            margin: 0 0.25rem;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Touch-friendly improvements */
+        button,
+        .btn,
+        .nav-item,
+        .page-link,
+        input[type="checkbox"] {
+            touch-action: manipulation;
+        }
+
+        /* Prevent text overflow */
+        * {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Improve scrolling */
+        .sidebar,
+        .table-container,
+        .main-content {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>Impact Academy</h2>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Admin Dashboard</p>
+                <p>Admin Dashboard</p>
             </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">
-                        <i class="fas fa-file-alt"></i> Applications</a></li>
+                            <i class="fas fa-file-alt"></i> Applications</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php" class="active">
-                        <i class="fas fa-users"></i> Users</a></li>
+                            <i class="fas fa-users"></i> Users</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/schools/manage.php">
-                        <i class="fas fa-school"></i> Schools</a></li>
+                            <i class="fas fa-school"></i> Schools</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/academic/programs/">
-                        <i class="fas fa-graduation-cap"></i> Academic</a></li>
+                            <i class="fas fa-graduation-cap"></i> Academic</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>modules/admin/finance/dashboard.php">
+                            <i class="fas fa-money-bill-wave"></i> Finance</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/announcements.php">
-                        <i class="fas fa-bullhorn"></i> Announcements</a></li>
+                            <i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/logs.php">
-                        <i class="fas fa-history"></i> Activity Logs</a></li>
+                            <i class="fas fa-history"></i> Activity Logs</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/admin/system/settings.php">
-                        <i class="fas fa-cog"></i> Settings</a></li>
+                            <i class="fas fa-cog"></i> Settings</a></li>
                     <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
-                        <i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
 
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
             <!-- Header -->
             <div class="header">
                 <h1>User Management</h1>
@@ -829,7 +1303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     </div>
                     <div>
                         <div style="font-weight: 500;"><?php echo $_SESSION['user_name']; ?></div>
-                        <div style="font-size: 0.9rem; color: #64748b;">Administrator</div>
+                        <div style="font-size: 0.8rem; color: #64748b;">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -838,14 +1312,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
-                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                    <?php echo $_SESSION['success'];
+                    unset($_SESSION['success']); ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                    <?php echo $_SESSION['error'];
+                    unset($_SESSION['error']); ?>
                 </div>
             <?php endif; ?>
 
@@ -863,7 +1339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <?php echo $stats['admins']; ?>
                         <i class="fas fa-user-shield stat-icon"></i>
                     </div>
-                    <div class="stat-label">Administrators</div>
+                    <div class="stat-label">Admins</div>
                 </div>
                 <div class="stat-card instructor">
                     <div class="stat-number">
@@ -884,37 +1360,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <?php echo $stats['total_schools']; ?>
                         <i class="fas fa-school stat-icon"></i>
                     </div>
-                    <div class="stat-label">Partner Schools</div>
+                    <div class="stat-label">Schools</div>
                 </div>
                 <div class="stat-card active">
                     <div class="stat-number">
                         <?php echo $stats['active']; ?>
                         <i class="fas fa-check-circle stat-icon"></i>
                     </div>
-                    <div class="stat-label">Active Users</div>
+                    <div class="stat-label">Active</div>
                 </div>
             </div>
 
             <!-- School Statistics -->
-            <div class="school-stats">
-                <h3>School Statistics</h3>
-                <div class="schools-grid">
-                    <?php foreach ($school_stats as $school): ?>
-                        <div class="school-stat-item">
-                            <div class="school-name"><?php echo htmlspecialchars($school['name']); ?></div>
-                            <div class="school-details">
-                                <span>
-                                    <i class="fas fa-users" style="color: #64748b; margin-right: 0.25rem;"></i>
-                                    <?php echo $school['user_count']; ?> users
-                                </span>
-                                <span class="school-count">
-                                    <?php echo $school['students']; ?> students
-                                </span>
+            <?php if (!empty($school_stats)): ?>
+                <div class="school-stats">
+                    <h3>School Statistics</h3>
+                    <div class="schools-grid">
+                        <?php foreach ($school_stats as $school): ?>
+                            <div class="school-stat-item">
+                                <div class="school-name"><?php echo htmlspecialchars($school['name']); ?></div>
+                                <div class="school-details">
+                                    <span>
+                                        <i class="fas fa-users" style="color: #64748b; margin-right: 0.25rem;"></i>
+                                        <?php echo $school['user_count']; ?> users
+                                    </span>
+                                    <span class="school-count">
+                                        <?php echo $school['students']; ?> students
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
 
             <!-- Filters -->
             <div class="filters-card">
@@ -945,7 +1423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <select name="school_id" class="form-control">
                             <option value="all" <?php echo $school_id === 'all' ? 'selected' : ''; ?>>All Schools</option>
                             <?php foreach ($schools as $school): ?>
-                                <option value="<?php echo $school['id']; ?>" 
+                                <option value="<?php echo $school['id']; ?>"
                                     <?php echo $school_id == $school['id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($school['name']); ?>
                                 </option>
@@ -962,8 +1440,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                     </div>
                     <div class="form-group">
                         <label>Search</label>
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Name, email, phone, or school..." value="<?php echo htmlspecialchars($search); ?>">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Name, email, phone..." value="<?php echo htmlspecialchars($search); ?>">
                     </div>
                     <div class="form-group">
                         <label>From Date</label>
@@ -973,9 +1451,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <label>To Date</label>
                         <input type="date" name="date_to" class="form-control" value="<?php echo $date_to; ?>">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="display: flex; gap: 0.5rem; align-items: flex-end;">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Apply Filters
+                            <i class="fas fa-filter"></i> Filter
                         </button>
                         <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-secondary">
                             <i class="fas fa-redo"></i> Clear
@@ -987,20 +1465,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             <!-- Users Table -->
             <div class="users-table">
                 <div class="table-header">
-                    <h3>Users List</h3>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Create New User
+                    <h3>Users List (<?php echo count($users); ?>)</h3>
+                    <div class="header-actions">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> New User
                         </a>
-                        <a href="<?php echo BASE_URL; ?>modules/admin/schools/manage.php" class="btn btn-school">
-                            <i class="fas fa-school"></i> Manage Schools
+                        <a href="<?php echo BASE_URL; ?>modules/admin/schools/manage.php" class="btn btn-school btn-sm">
+                            <i class="fas fa-school"></i> Schools
                         </a>
                     </div>
                 </div>
 
                 <form method="POST" id="bulkForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                    
+
                     <?php if (!empty($users)): ?>
                         <div class="table-container">
                             <table>
@@ -1014,23 +1492,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                         <th>Status</th>
                                         <th>School</th>
                                         <th>Location</th>
-                                        <th>Applications</th>
-                                        <th>Enrollments</th>
+                                        <th>Apps</th>
+                                        <th>Enroll</th>
                                         <th>Registered</th>
                                         <th>Last Login</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($users as $user): 
+                                    <?php foreach ($users as $user):
                                         $initials = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
                                     ?>
                                         <tr>
-                                            <td class="checkbox-cell">
-                                                <input type="checkbox" name="selected_users[]" 
-                                                       value="<?php echo $user['id']; ?>" class="user-checkbox">
+                                            <td class="checkbox-cell" data-label="">
+                                                <input type="checkbox" name="selected_users[]"
+                                                    value="<?php echo $user['id']; ?>" class="user-checkbox">
                                             </td>
-                                            <td>
+                                            <td data-label="User">
                                                 <div class="user-name-cell">
                                                     <div class="user-avatar-small">
                                                         <?php echo $initials; ?>
@@ -1045,77 +1523,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Role">
                                                 <span class="role-badge role-<?php echo $user['role']; ?>">
                                                     <?php echo ucfirst($user['role']); ?>
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td data-label="Status">
                                                 <span class="status-badge status-<?php echo $user['status']; ?>">
                                                     <?php echo ucfirst($user['status']); ?>
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td data-label="School">
                                                 <?php if ($user['school_name']): ?>
                                                     <span class="school-badge">
                                                         <?php echo htmlspecialchars($user['school_name']); ?>
                                                     </span>
                                                 <?php else: ?>
-                                                    <span style="color: #64748b; font-size: 0.85rem;">Not assigned</span>
+                                                    <span style="color: #64748b; font-size: 0.8rem;">Not assigned</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td data-label="Location">
                                                 <?php if ($user['city'] && $user['state']): ?>
-                                                    <?php echo htmlspecialchars($user['city'] . ', ' . $user['state']); ?><br>
-                                                    <small style="color: #64748b; font-size: 0.85rem;">
-                                                        <?php echo htmlspecialchars($user['country']); ?>
-                                                    </small>
+                                                    <?php echo htmlspecialchars($user['city']); ?><br>
+                                                    <small style="color: #64748b;"><?php echo htmlspecialchars($user['state']); ?></small>
                                                 <?php else: ?>
-                                                    <span style="color: #64748b;">Not specified</span>
+                                                    <span style="color: #64748b;">-</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td data-label="Applications">
                                                 <span style="font-weight: 500;"><?php echo $user['application_count']; ?></span>
                                             </td>
-                                            <td>
+                                            <td data-label="Enrollments">
                                                 <span style="font-weight: 500;"><?php echo $user['enrollment_count']; ?></span>
                                             </td>
-                                            <td>
-                                                <?php echo date('M j, Y', strtotime($user['created_at'])); ?><br>
-                                                <small style="color: #64748b; font-size: 0.85rem;">
-                                                    <?php echo date('g:i A', strtotime($user['created_at'])); ?>
-                                                </small>
+                                            <td data-label="Registered">
+                                                <?php echo date('M j, Y', strtotime($user['created_at'])); ?>
                                             </td>
-                                            <td>
+                                            <td data-label="Last Login">
                                                 <?php if ($user['last_login']): ?>
-                                                    <?php echo date('M j, Y', strtotime($user['last_login'])); ?><br>
-                                                    <small style="color: #64748b; font-size: 0.85rem;">
-                                                        <?php echo date('g:i A', strtotime($user['last_login'])); ?>
-                                                    </small>
+                                                    <?php echo date('M j, Y', strtotime($user['last_login'])); ?>
                                                 <?php else: ?>
                                                     <span style="color: #64748b;">Never</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="actions">
-                                                <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $user['id']; ?>" 
-                                                   class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-eye"></i> View
-                                                </a>
-                                                <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php?edit=<?php echo $user['id']; ?>" 
-                                                   class="btn btn-secondary btn-sm">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <?php if ($user['status'] === 'active' && $user['role'] !== 'admin'): ?>
-                                                    <button type="button" onclick="suspendUser(<?php echo $user['id']; ?>)" 
+                                            <td data-label="Actions">
+                                                <div class="actions">
+                                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/view.php?id=<?php echo $user['id']; ?>"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php?edit=<?php echo $user['id']; ?>"
+                                                        class="btn btn-secondary btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <?php if ($user['status'] === 'active' && $user['role'] !== 'admin'): ?>
+                                                        <button type="button" onclick="suspendUser(<?php echo $user['id']; ?>)"
                                                             class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-pause"></i> Suspend
-                                                    </button>
-                                                <?php elseif ($user['status'] === 'suspended'): ?>
-                                                    <button type="button" onclick="activateUser(<?php echo $user['id']; ?>)" 
+                                                            <i class="fas fa-pause"></i>
+                                                        </button>
+                                                    <?php elseif ($user['status'] === 'suspended'): ?>
+                                                        <button type="button" onclick="activateUser(<?php echo $user['id']; ?>)"
                                                             class="btn btn-success btn-sm">
-                                                        <i class="fas fa-play"></i> Activate
-                                                    </button>
-                                                <?php endif; ?>
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -1125,31 +1597,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
 
                         <!-- Bulk Actions -->
                         <div class="bulk-actions">
-                            <select name="bulk_action" class="form-control" style="width: 200px;">
+                            <select name="bulk_action" class="form-control">
                                 <option value="">Bulk Actions</option>
-                                <option value="active">Activate Selected</option>
-                                <option value="suspended">Suspend Selected</option>
-                                <option value="pending">Mark as Pending</option>
-                                <option value="rejected">Reject Selected</option>
+                                <option value="active">Activate</option>
+                                <option value="suspended">Suspend</option>
+                                <option value="pending">Mark Pending</option>
+                                <option value="rejected">Reject</option>
                             </select>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-play"></i> Apply
+                                <i class="fas fa-check"></i> Apply
                             </button>
-                            <span style="color: #64748b; font-size: 0.9rem;">
-                                <span id="selectedCount">0</span> users selected
+                            <span class="selected-count">
+                                <span id="selectedCount">0</span> selected
                             </span>
                         </div>
                     <?php else: ?>
                         <div class="empty-state">
                             <i class="fas fa-users"></i>
                             <h3>No Users Found</h3>
-                            <p>There are no users matching your filters.</p>
-                            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+                            <p>Try adjusting your filters or create a new user.</p>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
                                 <a href="<?php echo BASE_URL; ?>modules/admin/users/create.php" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Create New User
+                                    <i class="fas fa-plus"></i> New User
                                 </a>
-                                <a href="<?php echo BASE_URL; ?>modules/admin/schools/manage.php" class="btn btn-school">
-                                    <i class="fas fa-school"></i> Manage Schools
+                                <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-secondary">
+                                    <i class="fas fa-redo"></i> Clear Filters
                                 </a>
                             </div>
                         </div>
@@ -1165,7 +1637,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
                         <a href="#" class="page-link active">1</a>
                         <a href="#" class="page-link">2</a>
                         <a href="#" class="page-link">3</a>
-                        <a href="#" class="page-link">Next</a>
+                        <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -1173,8 +1645,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
     </div>
 
     <script>
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
         // Select all checkbox functionality
-        document.getElementById('selectAll').addEventListener('change', function(e) {
+        document.getElementById('selectAll')?.addEventListener('change', function(e) {
             const checkboxes = document.querySelectorAll('.user-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = e.target.checked;
@@ -1194,27 +1683,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         });
 
         // Bulk form submission confirmation
-        document.getElementById('bulkForm').addEventListener('submit', function(e) {
+        document.getElementById('bulkForm')?.addEventListener('submit', function(e) {
             const action = this.bulk_action.value;
             const selectedCount = document.querySelectorAll('.user-checkbox:checked').length;
-            
+
             if (!action) {
                 e.preventDefault();
                 alert('Please select a bulk action.');
                 return false;
             }
-            
+
             if (selectedCount === 0) {
                 e.preventDefault();
                 alert('Please select at least one user.');
                 return false;
             }
-            
-            const actionText = action === 'active' ? 'activate' : 
-                              action === 'suspended' ? 'suspend' : 
-                              action === 'pending' ? 'mark as pending' : 
-                              'reject';
-            
+
+            const actionText = action === 'active' ? 'activate' :
+                action === 'suspended' ? 'suspend' :
+                action === 'pending' ? 'mark as pending' :
+                'reject';
+
             if (!confirm(`Are you sure you want to ${actionText} ${selectedCount} user(s)?`)) {
                 e.preventDefault();
                 return false;
@@ -1235,21 +1724,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
         }
 
         // Update selected count on page load
-        document.addEventListener('DOMContentLoaded', updateSelectedCount);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSelectedCount();
 
-        // Quick search functionality
-        const searchInput = document.querySelector('input[name="search"]');
-        let searchTimer;
-        
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(() => {
-                if (this.value.length >= 3 || this.value.length === 0) {
-                    this.form.submit();
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                const toggle = document.querySelector('.mobile-menu-toggle');
+
+                if (window.innerWidth < 1024 &&
+                    sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
+                    !toggle.contains(event.target)) {
+                    closeSidebar();
                 }
-            }, 500);
+            });
+
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth >= 1024) {
+                        closeSidebar();
+                    }
+                }, 250);
+            });
+        });
+
+        // Quick search with debounce
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let searchTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    if (this.value.length >= 3 || this.value.length === 0) {
+                        this.form.submit();
+                    }
+                }, 500);
+            });
+        }
+
+        // Escape key to close sidebar
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // Touch-friendly improvements
+        document.querySelectorAll('.btn, .page-link, .sidebar-nav a').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                // Just for touch feedback, no action needed
+            }, {
+                passive: true
+            });
         });
     </script>
 </body>
+
 </html>
 <?php $conn->close(); ?>
