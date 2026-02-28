@@ -79,29 +79,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $shuffle_options = isset($_POST['shuffle_options']) ? 1 : 0;
     $show_correct_answers = isset($_POST['show_correct_answers']) ? 1 : 0;
     $show_points = isset($_POST['show_points']) ? 1 : 0;
-    // Handle datetime fields properly
+    // Handle datetime fields properly with stronger validation
     $available_from = null;
     if (!empty($_POST['available_from'])) {
-        $datetime = $_POST['available_from'];
-        // Ensure it's a valid datetime format
-        if (strtotime($datetime) !== false) {
+        $datetime = trim($_POST['available_from']);
+        // Check if it's a valid datetime format
+        if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $datetime)) {
+            // Convert from datetime-local format to MySQL format
             $available_from = date('Y-m-d H:i:s', strtotime($datetime));
+        } elseif (strtotime($datetime) !== false) {
+            $available_from = date('Y-m-d H:i:s', strtotime($datetime));
+        } else {
+            // Log invalid format and set to null
+            error_log("Invalid available_from format: " . $datetime);
+            $available_from = null;
         }
     }
 
     $available_to = null;
     if (!empty($_POST['available_to'])) {
-        $datetime = $_POST['available_to'];
-        if (strtotime($datetime) !== false) {
+        $datetime = trim($_POST['available_to']);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $datetime)) {
             $available_to = date('Y-m-d H:i:s', strtotime($datetime));
+        } elseif (strtotime($datetime) !== false) {
+            $available_to = date('Y-m-d H:i:s', strtotime($datetime));
+        } else {
+            error_log("Invalid available_to format: " . $datetime);
+            $available_to = null;
         }
     }
 
     $due_date = null;
     if (!empty($_POST['due_date'])) {
-        $datetime = $_POST['due_date'];
-        if (strtotime($datetime) !== false) {
+        $datetime = trim($_POST['due_date']);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $datetime)) {
             $due_date = date('Y-m-d H:i:s', strtotime($datetime));
+        } elseif (strtotime($datetime) !== false) {
+            $due_date = date('Y-m-d H:i:s', strtotime($datetime));
+        } else {
+            error_log("Invalid due_date format: " . $datetime);
+            $due_date = null;
         }
     }
     $auto_submit = isset($_POST['auto_submit']) ? 1 : 0;
@@ -186,6 +203,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $instructor_id,
                 $class_id
             );
+
+            // Add this debugging code right before $stmt->execute()
+            error_log("DEBUG - Quiz Settings Update:");
+            error_log("Title: " . $title);
+            error_log("Available_from raw: " . ($_POST['available_from'] ?? 'null'));
+            error_log("Available_from processed: " . ($available_from ?? 'null'));
+            error_log("Available_to processed: " . ($available_to ?? 'null'));
+            error_log("Due_date processed: " . ($due_date ?? 'null'));
 
             if ($stmt->execute()) {
                 $quiz_update_success = true;
