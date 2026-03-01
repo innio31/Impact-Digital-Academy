@@ -3121,3 +3121,299 @@ function autoUpdateMissedGrades()
 
     return $updated_total;
 }
+
+function canRemoveCourseFromProgram($conn, $program_id, $course_id)
+{
+    $result = [
+        'can_remove' => true,
+        'message' => '',
+        'warnings' => []
+    ];
+
+    // Check if course exists and belongs to this program
+    $check_sql = "SELECT id FROM courses WHERE id = ? AND program_id = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("ii", $course_id, $program_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows === 0) {
+        $result['can_remove'] = false;
+        $result['message'] = 'Course does not belong to this program';
+        return $result;
+    }
+    $check_stmt->close();
+
+    // Check if there are active classes for this course
+    $class_check_sql = "SELECT 
+                            COUNT(*) as total_classes,
+                            SUM(CASE WHEN status IN ('scheduled', 'ongoing') THEN 1 ELSE 0 END) as active_classes
+                        FROM class_batches 
+                        WHERE course_id = ?";
+    $class_stmt = $conn->prepare($class_check_sql);
+    $class_stmt->bind_param("i", $course_id);
+    $class_stmt->execute();
+    $class_result = $class_stmt->get_result();
+    $class_data = $class_result->fetch_assoc();
+    $class_stmt->close();
+
+    if ($class_data['active_classes'] > 0) {
+        $result['can_remove'] = false;
+        $result['message'] = 'Course has active classes that cannot be removed';
+        $result['warnings'][] = "{$class_data['active_classes']} active class(es) exist";
+    } elseif ($class_data['total_classes'] > 0) {
+        $result['warnings'][] = "{$class_data['total_classes']} class(es) will be deleted or affected";
+    }
+
+    // Check if there are enrolled students in any classes of this course
+    $enrollment_sql = "SELECT COUNT(DISTINCT e.student_id) as enrolled_students
+                      FROM enrollments e
+                      JOIN class_batches cb ON e.class_id = cb.id
+                      WHERE cb.course_id = ? AND e.status = 'active'";
+    $enroll_stmt = $conn->prepare($enrollment_sql);
+    $enroll_stmt->bind_param("i", $course_id);
+    $enroll_stmt->execute();
+    $enroll_result = $enroll_stmt->get_result();
+    $enroll_data = $enroll_result->fetch_assoc();
+    $enroll_stmt->close();
+
+    if ($enroll_data['enrolled_students'] > 0) {
+        $result['can_remove'] = false;
+        $result['message'] = 'Course has enrolled students';
+        $result['warnings'][] = "{$enroll_data['enrolled_students']} student(s) enrolled";
+    }
+
+    // Check if this course is a prerequisite for other courses
+    $prereq_sql = "SELECT COUNT(*) as prereq_count 
+                  FROM courses 
+                  WHERE prerequisite_course_id = ? AND program_id = ?";
+    $prereq_stmt = $conn->prepare($prereq_sql);
+    $prereq_stmt->bind_param("ii", $course_id, $program_id);
+    $prereq_stmt->execute();
+    $prereq_result = $prereq_stmt->get_result();
+    $prereq_data = $prereq_result->fetch_assoc();
+    $prereq_stmt->close();
+
+    if ($prereq_data['prereq_count'] > 0) {
+        $result['warnings'][] = "Is a prerequisite for {$prereq_data['prereq_count']} other course(s)";
+    }
+
+    // Check program requirements
+    $req_sql = "SELECT COUNT(*) as req_count 
+                FROM program_requirements 
+                WHERE program_id = ? AND course_id = ? AND is_required = 1";
+    $req_stmt = $conn->prepare($req_sql);
+    $req_stmt->bind_param("ii", $program_id, $course_id);
+    $req_stmt->execute();
+    $req_result = $req_stmt->get_result();
+    $req_data = $req_result->fetch_assoc();
+    $req_stmt->close();
+
+    if ($req_data['req_count'] > 0) {
+        $result['warnings'][] = 'Marked as a required course in program requirements';
+    }
+
+    return $result;
+}
+
+/**
+ * Remove a course from a program (soft delete or mark as inactive)
+ * 
+ * @param mysqli $conn Database connection
+ * @param int $program_id Program ID
+ * @param int $course_id Course ID
+ * @param bool $hard_delete Whether to permanently delete or just mark as inactive
+ * @return array Result of operation
+ */
+function removeCourseFromProgram($conn, $program_id, $course_id, $hard_delete = false)
+{
+    $result = [
+        'success' => false,
+        'message' => '',
+        'affected_data' => []
+    ];
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        if ($hard_delete) {
+            // Hard delete - remove everything
+            // First, get all class IDs for this course
+            $class_ids_sql = "SELECT id FROM class_batches WHERE course_id = ?";
+            $class_stmt = $conn->prepare($class_ids_sql);
+            $class_stmt->bind_param("i", $course_id);
+            $class_stmt->execute();
+            $class_result = $class_stmt->get_result();
+
+            $class_ids = [];
+            while ($row = $class_result->fetch_assoc()) {
+                $class_ids[] = $row['id'];
+            }
+            $class_stmt->close();
+
+            if (!empty($class_ids)) {
+                $class_ids_str = implode(',', $class_ids);
+
+                // Get enrollment IDs for attendance records
+                $enroll_ids_sql = "SELECT id FROM enrollments WHERE class_id IN ($class_ids_str)";
+                $enroll_stmt = $conn->prepare($enroll_ids_sql);
+                $enroll_stmt->execute();
+                $enroll_result = $enroll_stmt->get_result();
+                $enroll_ids = [];
+                while ($row = $enroll_result->fetch_assoc()) {
+                    $enroll_ids[] = $row['id'];
+                }
+                $enroll_stmt->close();
+
+                // Delete in correct order due to foreign key constraints
+
+                // Delete submission files
+                $delete_submission_files = "DELETE sf FROM submission_files sf
+                                           JOIN assignment_submissions asub ON sf.submission_id = asub.id
+                                           WHERE asub.assignment_id IN (SELECT id FROM assignments WHERE class_id IN ($class_ids_str))";
+                $conn->query($delete_submission_files);
+
+                // Delete assignment submissions
+                $delete_submissions = "DELETE FROM assignment_submissions 
+                                      WHERE assignment_id IN (SELECT id FROM assignments WHERE class_id IN ($class_ids_str))";
+                $conn->query($delete_submissions);
+
+                // Delete assignments
+                $delete_assignments = "DELETE FROM assignments WHERE class_id IN ($class_ids_str)";
+                $conn->query($delete_assignments);
+
+                // Delete materials
+                $delete_materials = "DELETE FROM materials WHERE class_id IN ($class_ids_str)";
+                $conn->query($delete_materials);
+
+                // Delete discussions and replies
+                $delete_disc_replies = "DELETE dr FROM discussion_replies dr
+                                       JOIN discussions d ON dr.discussion_id = d.id
+                                       WHERE d.class_id IN ($class_ids_str)";
+                $conn->query($delete_disc_replies);
+
+                $delete_discussions = "DELETE FROM discussions WHERE class_id IN ($class_ids_str)";
+                $conn->query($delete_discussions);
+
+                // Delete quiz related data
+                $delete_quiz_answers = "DELETE qa FROM quiz_answers qa
+                                       JOIN quiz_attempts qat ON qa.attempt_id = qat.id
+                                       WHERE qat.quiz_id IN (SELECT id FROM quizzes WHERE class_id IN ($class_ids_str))";
+                $conn->query($delete_quiz_answers);
+
+                $delete_quiz_attempts = "DELETE FROM quiz_attempts 
+                                        WHERE quiz_id IN (SELECT id FROM quizzes WHERE class_id IN ($class_ids_str))";
+                $conn->query($delete_quiz_attempts);
+
+                $delete_quiz_questions = "DELETE FROM quiz_questions 
+                                         WHERE quiz_id IN (SELECT id FROM quizzes WHERE class_id IN ($class_ids_str))";
+                $conn->query($delete_quiz_questions);
+
+                $delete_quizzes = "DELETE FROM quizzes WHERE class_id IN ($class_ids_str)";
+                $conn->query($delete_quizzes);
+
+                // Delete attendance records
+                if (!empty($enroll_ids)) {
+                    $enroll_ids_str = implode(',', $enroll_ids);
+                    $conn->query("DELETE FROM attendance WHERE enrollment_id IN ($enroll_ids_str)");
+                }
+
+                // Delete gradebook entries
+                $conn->query("DELETE FROM gradebook WHERE class_id IN ($class_ids_str)");
+
+                // Delete course payments
+                $conn->query("DELETE FROM course_payments WHERE class_id IN ($class_ids_str)");
+
+                // Delete student financial status
+                $conn->query("DELETE FROM student_financial_status WHERE class_id IN ($class_ids_str)");
+
+                // Delete enrollments
+                $conn->query("DELETE FROM enrollments WHERE class_id IN ($class_ids_str)");
+
+                // Finally, delete class batches
+                $conn->query("DELETE FROM class_batches WHERE course_id = $course_id");
+            }
+
+            // Delete course fees
+            $conn->query("DELETE FROM course_fees WHERE course_id = $course_id");
+
+            // Delete program requirements
+            $conn->query("DELETE FROM program_requirements WHERE course_id = $course_id AND program_id = $program_id");
+
+            // Delete course content templates
+            $conn->query("DELETE FROM course_content_templates WHERE course_id = $course_id");
+
+            // Finally delete the course
+            $delete_sql = "DELETE FROM courses WHERE id = ? AND program_id = ?";
+            $delete_stmt = $conn->prepare($delete_sql);
+            $delete_stmt->bind_param("ii", $course_id, $program_id);
+            $delete_stmt->execute();
+            $affected_rows = $delete_stmt->affected_rows;
+            $delete_stmt->close();
+
+            $result['message'] = 'Course permanently deleted from program';
+            $result['affected_data'] = [
+                'classes_deleted' => count($class_ids)
+            ];
+        } else {
+            // Soft delete - just mark as inactive
+            $update_sql = "UPDATE courses SET status = 'inactive', updated_at = NOW() WHERE id = ? AND program_id = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("ii", $course_id, $program_id);
+            $update_stmt->execute();
+            $affected_rows = $update_stmt->affected_rows;
+            $update_stmt->close();
+
+            $result['message'] = 'Course deactivated (soft delete)';
+        }
+
+        if ($affected_rows > 0) {
+            $conn->commit();
+            $result['success'] = true;
+        } else {
+            $conn->rollback();
+            $result['message'] = 'No changes made or course not found';
+        }
+    } catch (Exception $e) {
+        $conn->rollback();
+        $result['message'] = 'Error: ' . $e->getMessage();
+    }
+
+    return $result;
+}
+
+/**
+ * Bulk remove multiple courses from a program
+ * 
+ * @param mysqli $conn Database connection
+ * @param int $program_id Program ID
+ * @param array $course_ids Array of course IDs to remove
+ * @param bool $hard_delete Whether to permanently delete
+ * @return array Results for each course
+ */
+function bulkRemoveCoursesFromProgram($conn, $program_id, $course_ids, $hard_delete = false)
+{
+    $results = [];
+
+    foreach ($course_ids as $course_id) {
+        $check = canRemoveCourseFromProgram($conn, $program_id, $course_id);
+
+        if ($check['can_remove']) {
+            $remove_result = removeCourseFromProgram($conn, $program_id, $course_id, $hard_delete);
+            $results[$course_id] = [
+                'success' => $remove_result['success'],
+                'message' => $remove_result['message'],
+                'warnings' => $check['warnings']
+            ];
+        } else {
+            $results[$course_id] = [
+                'success' => false,
+                'message' => $check['message'],
+                'warnings' => $check['warnings']
+            ];
+        }
+    }
+
+    return $results;
+}

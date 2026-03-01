@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Deployment Workshop · React + Vercel/Netlify</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #e7eaf0;
+            color: #1e293b;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .document-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 45px -30px #1f2a44;
+            overflow: hidden;
+            padding: 2rem 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            font-weight: 750;
+            background: linear-gradient(145deg, #1e3c5c, #b13e5c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: #1f3a5f;
+            border-left: 10px solid #d9687e;
+            padding-left: 1.2rem;
+            margin: 2.5rem 0 1.5rem;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #1f3a5f;
+            margin: 2rem 0 1rem;
+            border-bottom: 2px dashed #b0c7e0;
+            padding-bottom: 0.3rem;
+        }
+
+        h4 {
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            color: #1f4870;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .badge {
+            background: #2b4d6e;
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 1rem 0 0.2rem;
+        }
+
+        p,
+        li {
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            color: #1e2f45;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.8rem;
+            margin: 0.8rem 0;
+        }
+
+        li {
+            margin: 0.4rem 0;
+        }
+
+        code,
+        pre {
+            background: #ecf2fa;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            word-break: break-word;
+        }
+
+        pre {
+            padding: 1rem;
+            overflow-x: auto;
+            border: 1px solid #bac8dc;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+
+        code {
+            padding: 0.2rem 0.4rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(20, 40, 70, 0.15);
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
+        }
+
+        th {
+            background: #2b4d6e;
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 0.8rem;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #c9d8ec;
+            background: #fdfeff;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            display: block;
+            width: 100%;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, #d5e2f2, #fcfdff, #d5e2f2);
+            margin: 2rem 0;
+        }
+
+        .block-highlight {
+            background: #eef4fc;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 2px solid #b6cde5;
+            margin: 2rem 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card-soft {
+            background: #f5faff;
+            border-radius: 1.8rem;
+            padding: 1.3rem;
+            border: 1px solid #c1d2e8;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            color: #2b4d6e;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            border-top: 1px solid #cbd6e8;
+            padding-top: 1.8rem;
+        }
+
+        .btn-copy-note {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="document-wrapper">
+
+        <h1>Deployment Workshop: Deploying a React Frontend to Vercel or Netlify and Connecting to a Live Backend
+            Service</h1>
+
+        <h2>Workshop Overview</h2>
+        <p>This hands-on workshop guides students through the complete process of deploying a React application to
+            modern hosting platforms (Vercel or Netlify) and connecting it to a live backend service. By the end of this
+            session, students will have a publicly accessible full-stack application and understand the essential
+            concepts of modern web deployment.</p>
+        <p><strong>Duration:</strong> 3 hours<br>
+            <strong>Prerequisites:</strong>
+            - A React application (can be the capstone project or a practice app)<br>
+            - A backend API (either deployed separately or using a public API)<br>
+            - Git and GitHub account<br>
+            - Basic familiarity with the command line
+        </p>
+
+        <hr>
+
+        <h2>Part 1: Preparing Your React Application for Deployment (45 minutes)</h2>
+
+        <h3>1.1 Understanding Production Builds</h3>
+        <p>Before deployment, we must understand the difference between development and production modes :</p>
+
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Development Mode</th>
+                <th>Production Mode</th>
+            </tr>
+            <tr>
+                <td><strong>Purpose</strong></td>
+                <td>Debugging and development</td>
+                <td>End-user experience</td>
+            </tr>
+            <tr>
+                <td><strong>Code Size</strong></td>
+                <td>Larger, includes comments</td>
+                <td>Minified and compressed</td>
+            </tr>
+            <tr>
+                <td><strong>Error Messages</strong></td>
+                <td>Detailed debugging info</td>
+                <td>User-friendly messages</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>Slower, includes hot reload</td>
+                <td>Optimized for speed</td>
+            </tr>
+        </table>
+
+        <p><strong>Key Concept:</strong> React applications run differently in development versus production. The
+            development build includes debugging tools and comprehensive error messages that help during coding but
+            would slow down the user experience in production .</p>
+
+        <h3>1.2 Creating a Production Build</h3>
+        <p><strong>Hands-on Activity:</strong> Open your terminal in your React project directory and run:</p>
+        <pre># For Create React App projects
+npm run build
+
+# For Vite projects
+npm run build</pre>
+
+        <p><strong>What happens during build:</strong></p>
+        <ul>
+            <li>JavaScript files are <strong>minified</strong> (unnecessary characters like whitespace and comments are
+                removed)</li>
+            <li>Assets are <strong>hashed</strong> for caching (e.g., <code>main.abc123.css</code> instead of
+                <code>main.css</code>)</li>
+            <li>A new folder called <code>build</code> (CRA) or <code>dist</code> (Vite) is created containing all
+                optimized files</li>
+        </ul>
+        <p><strong>Instructor Note:</strong> Explain that this <code>build</code> folder contains everything needed to
+            run the application—it's a self-contained static site that can be served by any web server.</p>
+
+        <h3>1.3 Testing the Production Build Locally</h3>
+        <p>Before deploying, test the production build to catch any issues:</p>
+        <pre># For Create React App
+npx serve -s build
+
+# For Vite
+npx serve -s dist</pre>
+        <p>Visit <code>http://localhost:3000</code> (or the provided URL) to verify:</p>
+        <ul>
+            <li>All pages load correctly</li>
+            <li>API calls work as expected</li>
+            <li>No console errors appear</li>
+            <li>Client-side routing functions properly</li>
+        </ul>
+
+        <h3>1.4 Environment Variables for Different Environments</h3>
+        <p>One of the most critical steps is configuring environment variables :</p>
+        <p><strong>Why environment variables?</strong></p>
+        <ul>
+            <li>Keep sensitive data (API keys, secrets) out of source code</li>
+            <li>Different values for development, staging, and production</li>
+            <li>Easy to update without code changes</li>
+        </ul>
+        <p><strong>In React applications</strong>, environment variables must be prefixed with <code>REACT_APP_</code>
+            (for CRA) or <code>VITE_</code> (for Vite) to be accessible in the browser .</p>
+        <p><strong>Example <code>.env</code> files:</strong></p>
+        <pre># .env.development (local development)
+REACT_APP_API_URL=http://localhost:5000/api
+
+# .env.production (will be set in hosting platform)
+REACT_APP_API_URL=https://my-backend-api.com/api</pre>
+        <p><strong>Access in code:</strong></p>
+        <pre>const API_URL = process.env.REACT_APP_API_URL || 'https://default-api.com';</pre>
+
+        <h3>1.5 Handling Client-Side Routing</h3>
+        <p>Single-page applications (SPAs) using React Router need special handling :</p>
+        <p><strong>The Problem:</strong> When a user visits <code>https://yourapp.com/about</code> directly, the server
+            looks for an <code>about</code> folder/file, finds nothing, and returns a 404 error.</p>
+        <p><strong>The Solution:</strong> Configure the hosting platform to serve <code>index.html</code> for all
+            routes, letting React Router handle the routing client-side.</p>
+
+        <hr>
+
+        <h2>Part 2: Deploying to Vercel (45 minutes)</h2>
+
+        <h3>2.1 Introduction to Vercel</h3>
+        <p>Vercel is a cloud platform optimized for frontend frameworks like React. It offers :</p>
+        <ul>
+            <li><strong>Zero-configuration deployments</strong> - automatically detects React projects</li>
+            <li><strong>Global CDN</strong> - serves content from locations closest to users</li>
+            <li><strong>Automatic HTTPS and SSL certificates</strong></li>
+            <li><strong>Preview deployments</strong> for every pull request</li>
+            <li><strong>Serverless functions</strong> support (if needed)</li>
+        </ul>
+
+        <h3>2.2 Method 1: Deploy via Git Integration (Recommended)</h3>
+        <p>This method connects your GitHub repository to Vercel for continuous deployment .</p>
+        <p><strong>Step-by-Step Instructions:</strong></p>
+        <ol>
+            <li><strong>Push your code to GitHub</strong> (if not already done):
+                <pre>git init
+git add .
+git commit -m "Ready for deployment"
+git remote add origin https://github.com/yourusername/your-repo.git
+git push -u origin main</pre>
+            </li>
+            <li><strong>Sign up/Login to Vercel</strong> at https://vercel.com<br> - Click "Continue with GitHub" for
+                easiest integration</li>
+            <li><strong>Import your repository</strong> :<br> - Click "Add New Project" → "Import Git Repository"<br> -
+                Select your GitHub repository<br> - Vercel will automatically detect your framework (Create React App,
+                Vite, etc.)</li>
+            <li><strong>Configure build settings</strong> :<br> - Framework Preset: Should auto-detect (Create React
+                App, Vite, etc.)<br> - Build Command: <code>npm run build</code> or <code>yarn build</code>
+                (auto-filled)<br> - Output Directory: <code>build</code> (for CRA) or <code>dist</code> (for Vite)</li>
+            <li><strong>Add Environment Variables</strong> :<br> - Click "Environment Variables" section<br> - Add each
+                variable (e.g., <code>REACT_APP_API_URL</code>)<br> - Choose environments (Production, Preview,
+                Development)</li>
+            <li><strong>Click "Deploy"</strong> and wait for completion</li>
+        </ol>
+        <p><strong>Success!</strong> Your app is now live at <code>https://your-project.vercel.app</code></p>
+
+        <h3>2.3 Method 2: Deploy via Vercel CLI</h3>
+        <p>For developers who prefer the command line :</p>
+        <pre># Install Vercel CLI globally
+npm install -g vercel
+
+# Navigate to your project
+cd my-react-app
+
+# Deploy (follow interactive prompts)
+vercel
+
+# For production deployment
+vercel --prod</pre>
+
+        <h3>2.4 Configuring Environment Variables in Vercel</h3>
+        <p>After deployment, you can manage environment variables in the dashboard :</p>
+        <ol>
+            <li>Go to your project dashboard</li>
+            <li>Navigate to "Settings" → "Environment Variables"</li>
+            <li>Add key-value pairs (e.g., <code>REACT_APP_API_URL</code> = <code>https://api.example.com</code>)</li>
+            <li>Specify which environments they apply to (Production, Preview, Development)</li>
+        </ol>
+
+        <h3>2.5 Custom Domain Setup</h3>
+        <p>To use your own domain :</p>
+        <ol>
+            <li>In project dashboard, go to "Domains"</li>
+            <li>Enter your custom domain (e.g., <code>myapp.com</code>)</li>
+            <li>Follow Vercel's instructions to update DNS records</li>
+            <li>Wait for propagation (typically a few minutes to 24 hours)</li>
+        </ol>
+
+        <h3>2.6 Continuous Deployment with Git</h3>
+        <p>Once connected to GitHub, every push to the main branch automatically triggers a production deployment . Each
+            pull request generates a unique preview URL for testing .</p>
+
+        <hr>
+
+        <h2>Part 3: Deploying to Netlify (45 minutes)</h2>
+
+        <h3>3.1 Introduction to Netlify</h3>
+        <p>Netlify is another popular platform for deploying static sites and JAMstack applications :</p>
+        <ul>
+            <li><strong>Git-based workflow</strong> with automatic deployments</li>
+            <li><strong>Built-in CDN and HTTPS</strong></li>
+            <li><strong>Easy form handling and serverless functions</strong></li>
+            <li><strong>Branch deploys and deploy previews</strong></li>
+        </ul>
+
+        <h3>3.2 Method 1: Deploy via Git Integration</h3>
+        <p><strong>Step-by-Step Instructions</strong> :</p>
+        <ol>
+            <li><strong>Push your code to GitHub/GitLab/Bitbucket</strong></li>
+            <li><strong>Sign up/Login to Netlify</strong> at https://netlify.com</li>
+            <li><strong>Import your repository</strong>:<br> - Click "Add new site" → "Import an existing project"<br> -
+                Choose your Git provider and authorize access<br> - Select your repository</li>
+            <li><strong>Configure build settings</strong> :<br> - Build command: <code>npm run build</code>
+                (auto-detected)<br> - Publish directory: <code>build</code> (for CRA) or <code>dist</code> (for Vite)
+            </li>
+            <li><strong>Add Environment Variables</strong> :<br> - Click "Show advanced" before deploying, or<br> -
+                After deployment: Site settings → Build &amp; deploy → Environment<br> - Add variables like
+                <code>REACT_APP_API_URL</code></li>
+            <li><strong>Click "Deploy site"</strong></li>
+        </ol>
+
+        <h3>3.3 Method 2: Deploy via Netlify CLI</h3>
+        <pre># Install Netlify CLI
+npm install -g netlify-cli
+
+# Login to Netlify
+netlify login
+
+# Initialize and deploy
+netlify init
+
+# Or manual deploy
+npm run build
+netlify deploy --prod --dir=build</pre>
+
+        <h3>3.4 Handling Client-Side Routing in Netlify</h3>
+        <p>Create a <code>_redirects</code> file in the <code>public</code> folder (CRA) or <code>public</code>
+            directory (Vite) :</p>
+        <pre>/*    /index.html    200</pre>
+        <p>This tells Netlify to serve <code>index.html</code> for all routes, enabling React Router to work correctly .
+        </p>
+        <p><strong>Important:</strong> This file must be placed in the <code>public</code> folder so it gets copied to
+            the build output.</p>
+
+        <h3>3.5 Deploy Previews and Branch Deploys</h3>
+        <p>Netlify automatically creates unique URLs for every branch and pull request :<br> -
+            <code>branch-name--site-name.netlify.app</code> for branch deploys<br> - Preview URLs for pull requests to
+            test changes before merging</p>
+
+        <hr>
+
+        <h2>Part 4: Connecting to a Live Backend Service (45 minutes)</h2>
+
+        <h3>4.1 Understanding the Full-Stack Architecture</h3>
+        <p>A deployed full-stack application consists of :</p>
+        <pre>User's Browser → Your React App (on Vercel/Netlify) → Backend API (on Render/Heroku/AWS)</pre>
+        <p>The frontend and backend are <strong>separate applications</strong> communicating via HTTP requests.</p>
+
+        <h3>4.2 Backend Deployment Options</h3>
+        <table>
+            <tr>
+                <th>Platform</th>
+                <th>Best For</th>
+                <th>Key Features</th>
+            </tr>
+            <tr>
+                <td><strong>Render</strong></td>
+                <td>Express/Node.js APIs</td>
+                <td>Free tier, auto SSL, GitHub integration</td>
+            </tr>
+            <tr>
+                <td><strong>Railway</strong></td>
+                <td>Full-stack apps</td>
+                <td>Simple pricing, database hosting</td>
+            </tr>
+            <tr>
+                <td><strong>Heroku</strong></td>
+                <td>Traditional apps</td>
+                <td>Mature platform, many add-ons</td>
+            </tr>
+            <tr>
+                <td><strong>AWS Amplify</strong></td>
+                <td>AWS ecosystem</td>
+                <td>Integrated with Lambda, Cognito</td>
+            </tr>
+        </table>
+
+        <h3>4.3 Setting Environment Variables for Backend URL</h3>
+        <p>In your React code, you should have been using an environment variable for the API URL:</p>
+        <pre>// src/utils/api.js
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+export const api = axios.create({
+  baseURL: API_URL,
+});</pre>
+        <p><strong>For deployment, set the production API URL:</strong></p>
+        <p><strong>On Vercel:</strong><br> - Project Settings → Environment Variables → Add
+            <code>REACT_APP_API_URL</code> with value <code>https://your-backend.com/api</code></p>
+        <p><strong>On Netlify:</strong><br> - Site settings → Build &amp; deploy → Environment → Add variable</p>
+
+        <h3>4.4 Handling CORS (Cross-Origin Resource Sharing)</h3>
+        <p>When your frontend and backend are on different domains, the backend must allow requests from your frontend
+            domain .</p>
+        <p><strong>On the backend (Express example):</strong></p>
+        <pre>const cors = require('cors');
+
+// Allow specific origin
+app.use(cors({
+  origin: ['https://your-frontend.vercel.app', 'http://localhost:3000'],
+  credentials: true // if using cookies
+}));
+
+// Or allow all (not recommended for production)
+// app.use(cors());</pre>
+        <p><strong>Important:</strong> Never use <code>origin: '*'</code> with <code>credentials: true</code>. Always
+            specify allowed origins in production.</p>
+
+        <h3>4.5 Testing the Connected Application</h3>
+        <p>After deploying both frontend and backend:</p>
+        <ol>
+            <li><strong>Open browser console</strong> to check for errors</li>
+            <li><strong>Test all API-dependent features</strong> (login, data fetching, form submissions)</li>
+            <li><strong>Verify environment variables</strong> are correctly loaded:
+                <pre>// In browser console
+console.log(process.env.REACT_APP_API_URL)</pre>
+            </li>
+            <li><strong>Check Network tab</strong> to ensure API calls go to the correct URL</li>
+        </ol>
+
+        <h3>4.6 Complete Full-Stack Deployment Example</h3>
+        <p><strong>Scenario:</strong> A task manager app with React frontend and Express backend .</p>
+        <p><strong>Backend deployed on Render:</strong><br> - URL:
+            <code>https://task-manager-api.onrender.com</code><br> - Endpoints: <code>/api/tasks</code> (GET, POST),
+            <code>/api/tasks/:id</code> (PATCH, DELETE)</p>
+        <p><strong>Frontend deployed on Vercel with:</strong><br> - Environment variable:
+            <code>REACT_APP_API_URL=https://task-manager-api.onrender.com/api</code><br> - Code uses:
+            <code>axios.get(`${process.env.REACT_APP_API_URL}/tasks`)</code></p>
+        <p><strong>CORS configuration on backend:</strong></p>
+        <pre>app.use(cors({
+  origin: ['https://task-manager.vercel.app', 'http://localhost:3000']
+}));</pre>
+
+        <hr>
+
+        <h2>Part 5: Best Practices and Troubleshooting (30 minutes)</h2>
+
+        <h3>5.1 Deployment Best Practices</h3>
+        <table>
+            <tr>
+                <th>Practice</th>
+                <th>Why It Matters</th>
+                <th>How to Implement</th>
+            </tr>
+            <tr>
+                <td><strong>Always test production build locally</strong></td>
+                <td>Catches issues before deployment</td>
+                <td>Use <code>serve -s build</code> locally</td>
+            </tr>
+            <tr>
+                <td><strong>Use environment variables</strong></td>
+                <td>Keeps secrets secure, enables different configs</td>
+                <td>Set in hosting dashboard, not in code</td>
+            </tr>
+            <tr>
+                <td><strong>Enable HTTPS</strong></td>
+                <td>Security and SEO benefits</td>
+                <td>Both Vercel and Netlify provide auto HTTPS</td>
+            </tr>
+            <tr>
+                <td><strong>Optimize assets</strong></td>
+                <td>Faster loading, better user experience</td>
+                <td>Use WebP images, lazy loading, code splitting</td>
+            </tr>
+            <tr>
+                <td><strong>Monitor performance</strong></td>
+                <td>Track user experience</td>
+                <td>Use Vercel Analytics or Netlify Analytics</td>
+            </tr>
+        </table>
+
+        <h3>5.2 Common Deployment Issues and Solutions</h3>
+        <p><strong>Issue 1: Blank page after deployment</strong><br> - <strong>Check:</strong> Browser console for
+            errors<br> - <strong>Solution:</strong> Often caused by incorrect public URL or routing configuration</p>
+        <p><strong>Issue 2: API calls failing with 404</strong><br> - <strong>Check:</strong> Network tab to see actual
+            request URL<br> - <strong>Solution:</strong> Verify <code>REACT_APP_API_URL</code> is set correctly and
+            doesn't have trailing slashes issues</p>
+        <p><strong>Issue 3: "Invalid Host Header" error</strong><br> - <strong>Check:</strong> Backend CORS
+            configuration<br> - <strong>Solution:</strong> Add your frontend domain to CORS allowed origins</p>
+        <p><strong>Issue 4: Routes don't work on refresh</strong><br> - <strong>Check:</strong> 404 page appears<br> -
+            <strong>Solution:</strong> Configure redirects/routing rules</p>
+        <p><strong>Issue 5: Environment variables undefined</strong><br> - <strong>Check:</strong> Variable prefix
+            (<code>REACT_APP_</code> or <code>VITE_</code>)<br> - <strong>Solution:</strong> Ensure correct prefix and
+            that variables were added before build</p>
+
+        <h3>5.3 Security Considerations</h3>
+        <ul>
+            <li><strong>Never commit <code>.env</code> files</strong> with real secrets</li>
+            <li><strong>Use environment variables</strong> in hosting platforms for all sensitive data</li>
+            <li><strong>Implement rate limiting</strong> on backend to prevent abuse</li>
+            <li><strong>Enable HTTPS</strong> (automatic on Vercel/Netlify)</li>
+            <li><strong>Set secure CORS policies</strong> - don't allow all origins in production</li>
+        </ul>
+
+        <h3>5.4 Performance Optimization Tips</h3>
+        <ul>
+            <li><strong>Enable gzip compression</strong> on your backend</li>
+            <li><strong>Use CDN caching</strong> (automatic on both platforms)</li>
+            <li><strong>Implement lazy loading</strong> for routes and heavy components</li>
+            <li><strong>Optimize images</strong> before uploading</li>
+            <li><strong>Monitor Core Web Vitals</strong> using platform analytics</li>
+        </ul>
+
+        <hr>
+
+        <h2>Workshop Summary and Next Steps</h2>
+
+        <h3>What We Covered Today</h3>
+        <p>✅ Prepared React app for production with optimized builds<br> ✅ Deployed to Vercel using Git integration<br>
+            ✅ Deployed to Netlify as an alternative platform<br> ✅ Connected frontend to a live backend API<br> ✅
+            Configured CORS and environment variables<br> ✅ Learned troubleshooting and best practices</p>
+
+        <h3>Key Takeaways</h3>
+        <ul>
+            <li><strong>Deployment is not magic</strong> - it's moving optimized files to a server</li>
+            <li><strong>Environment variables</strong> are essential for security and flexibility</li>
+            <li><strong>CORS</strong> is a browser security feature, not a backend limitation</li>
+            <li><strong>Continuous deployment</strong> with Git makes updates effortless</li>
+            <li><strong>Always test</strong> your production build locally first</li>
+        </ul>
+
+        <h3>Hands-on Exercise for Students</h3>
+        <ol>
+            <li>Take your capstone project or a practice React app</li>
+            <li>Create a production build</li>
+            <li>Deploy to Vercel or Netlify</li>
+            <li>Connect to a backend API (can be a public API like JSONPlaceholder if your own backend isn't ready)</li>
+            <li>Configure environment variables properly</li>
+            <li>Test all functionality and share your live URL with the class</li>
+        </ol>
+
+        <h3>Resources for Further Learning</h3>
+        <ul>
+            <li><a href="#" style="color:#1f4870;">Vercel Documentation for React</a>
+                (https://vercel.com/docs/frameworks/react)</li>
+            <li><a href="#" style="color:#1f4870;">Netlify React Deployment Guide</a>
+                (https://docs.netlify.com/build/frameworks/react/)</li>
+            <li><a href="#" style="color:#1f4870;">Environment Variables in React</a>
+                (https://create-react-app.dev/docs/adding-custom-environment-variables/)</li>
+            <li><a href="#" style="color:#1f4870;">CORS Explained</a>
+                (https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)</li>
+        </ul>
+
+        <hr>
+
+        <p style="font-style:italic; background:#eaf1fa; padding:1rem; border-radius:2rem;">
+            <strong>Instructor Notes:</strong><br>
+            - Have students share their deployed URLs at the end of workshop<br>
+            - Prepare a simple backend API on Render beforehand for students without their own backend<br>
+            - Common pitfalls to watch for: students forgetting to rebuild after changing env vars, CORS issues, routing
+            problems<br>
+            - Encourage students to document their deployment process for their portfolio projects
+        </p>
+
+        <footer>
+            Deployment Workshop — React + Vercel/Netlify + Live Backend — full‑stack deployment notes
+        </footer>
+
+    </div> <!-- document-wrapper -->
+</body>
+
+</html>
