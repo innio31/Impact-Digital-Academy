@@ -1259,6 +1259,51 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Courses Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-book"></i> Courses in this Program</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="remove-courses.php?program_id=<?php echo $program['id']; ?>"
+                                class="btn btn-warning"
+                                style="background: #f59e0b; color: white;">
+                                <i class="fas fa-trash-alt"></i> Remove Courses
+                            </a>
+                            <a href="select-courses.php?target_program_id=<?php echo $program['id']; ?>"
+                                class="btn btn-primary" style="background: var(--info); color: white;">
+                                <i class="fas fa-copy"></i> Add from Other Programs
+                            </a>
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/create.php?program_id=<?php echo $program['id']; ?>"
+                                class="btn btn-primary" style="background: white; color: var(--primary);">
+                                <i class="fas fa-plus"></i> Create New Course
+                            </a>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <?php if (empty($courses)): ?>
+                            <div class="no-data">
+                                <i class="fas fa-book"></i>
+                                <h3>No courses yet</h3>
+                                <p>Add courses to this program</p>
+                            </div>
+                        <?php else: ?>
+                            <ul class="courses-list">
+                                <?php foreach ($courses as $course): ?>
+                                    <li class="course-item">
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/?program=<?php echo $program['id']; ?>"
+                                class="btn btn-secondary">
+                                <i class="fas fa-list"></i> View All Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Column: Applications & Actions -->
