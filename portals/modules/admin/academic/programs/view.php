@@ -1291,6 +1291,30 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                             <ul class="courses-list">
                                 <?php foreach ($courses as $course): ?>
                                     <li class="course-item">
+                                        <div class="course-header">
+                                            <div>
+                                                <div class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></div>
+                                                <div class="course-title"><?php echo htmlspecialchars($course['title']); ?></div>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div class="course-status status-<?php echo $course['status']; ?>">
+                                                    <?php echo ucfirst($course['status']); ?>
+                                                </div>
+                                                <a href="remove-courses.php?program_id=<?php echo $program['id']; ?>&remove=1&course_id=<?php echo $course['id']; ?>&hard_delete=0"
+                                                    class="btn btn-warning btn-sm"
+                                                    onclick="return confirm('Remove this course from the program?')"
+                                                    title="Remove Course">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="course-details">
+                                            <span><i class="fas fa-clock"></i> <?php echo $course['duration_hours']; ?> hours</span>
+                                            <span><i class="fas fa-signal"></i> <?php echo ucfirst($course['level']); ?></span>
+                                            <span><i class="fas fa-chalkboard"></i> <?php echo $course['class_count'] ?: '0'; ?> classes</span>
+                                            <span><i class="fas fa-users"></i> <?php echo $course['student_count'] ?: '0'; ?> students</span>
+                                        </div>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
