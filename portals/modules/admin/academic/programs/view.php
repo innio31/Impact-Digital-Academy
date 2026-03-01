@@ -1265,6 +1265,11 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                     <div class="section-header">
                         <h2><i class="fas fa-book"></i> Courses in this Program</h2>
                         <div style="display: flex; gap: 0.5rem;">
+                            <a href="remove-courses.php?program_id=<?php echo $program['id']; ?>"
+                                class="btn btn-warning"
+                                style="background: #f59e0b; color: white;">
+                                <i class="fas fa-trash-alt"></i> Remove Courses
+                            </a>
                             <a href="select-courses.php?target_program_id=<?php echo $program['id']; ?>"
                                 class="btn btn-primary" style="background: var(--info); color: white;">
                                 <i class="fas fa-copy"></i> Add from Other Programs
@@ -1286,13 +1291,69 @@ logActivity('program_view', "Viewed program: {$program['program_code']}", 'progr
                             <ul class="courses-list">
                                 <?php foreach ($courses as $course): ?>
                                     <li class="course-item">
-                                        <div class="course-header">
-                                            <div class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></div>
-                                            <div class="course-status status-<?php echo $course['status']; ?>">
-                                                <?php echo ucfirst($course['status']); ?>
+                                        <!-- Courses Section -->
+                                        <div class="section-card">
+                                            <div class="section-header">
+                                                <h2><i class="fas fa-book"></i> Courses in this Program</h2>
+                                                <div style="display: flex; gap: 0.5rem;">
+                                                    <a href="remove-courses.php?program_id=<?php echo $program['id']; ?>"
+                                                        class="btn btn-warning"
+                                                        style="background: #f59e0b; color: white;">
+                                                        <i class="fas fa-trash-alt"></i> Remove Courses
+                                                    </a>
+                                                    <a href="select-courses.php?target_program_id=<?php echo $program['id']; ?>"
+                                                        class="btn btn-primary" style="background: var(--info); color: white;">
+                                                        <i class="fas fa-copy"></i> Add from Other Programs
+                                                    </a>
+                                                    <a href="<?php echo BASE_URL; ?>modules/admin/academic/courses/create.php?program_id=<?php echo $program['id']; ?>"
+                                                        class="btn btn-primary" style="background: white; color: var(--primary);">
+                                                        <i class="fas fa-plus"></i> Create New Course
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="section-content">
+                                                <?php if (empty($courses)): ?>
+                                                    <div class="no-data">
+                                                        <i class="fas fa-book"></i>
+                                                        <h3>No courses yet</h3>
+                                                        <p>Add courses to this program</p>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <ul class="courses-list">
+                                                        <?php foreach ($courses as $course): ?>
+                                                            <li class="course-item">
+                                                                <!-- REPLACE THE EXISTING COURSE-HEADER DIV WITH THIS NEW CODE -->
+                                                                <div class="course-header">
+                                                                    <div>
+                                                                        <div class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></div>
+                                                                        <div class="course-title"><?php echo htmlspecialchars($course['title']); ?></div>
+                                                                    </div>
+                                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                                        <div class="course-status status-<?php echo $course['status']; ?>">
+                                                                            <?php echo ucfirst($course['status']); ?>
+                                                                        </div>
+                                                                        <a href="remove-courses.php?program_id=<?php echo $program['id']; ?>&remove=1&course_id=<?php echo $course['id']; ?>&hard_delete=0"
+                                                                            class="btn btn-warning btn-sm"
+                                                                            onclick="return confirm('Remove this course from the program?')"
+                                                                            title="Remove Course">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Keep the rest of the course item content -->
+                                                                <div class="course-details">
+                                                                    <span><i class="fas fa-clock"></i> <?php echo $course['duration_hours']; ?> hours</span>
+                                                                    <span><i class="fas fa-signal"></i> <?php echo ucfirst($course['level']); ?></span>
+                                                                    <span><i class="fas fa-chalkboard"></i> <?php echo $course['class_count'] ?: '0'; ?> classes</span>
+                                                                    <span><i class="fas fa-users"></i> <?php echo $course['student_count'] ?: '0'; ?> students</span>
+                                                                </div>
+                                                            </li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                        <div class="course-title"><?php echo htmlspecialchars($course['title']); ?></div>
                                         <div class="course-details">
                                             <span><i class="fas fa-clock"></i> <?php echo $course['duration_hours']; ?> hours</span>
                                             <span><i class="fas fa-signal"></i> <?php echo ucfirst($course['level']); ?></span>
