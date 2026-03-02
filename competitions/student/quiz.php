@@ -57,7 +57,7 @@ if ($max_points < 1000) $max_points = 1000;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             height: 100vh;
@@ -114,32 +114,6 @@ if ($max_points < 1000) $max_points = 1000;
             gap: 8px;
         }
 
-        .toggle-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(5px);
-        }
-
-        .toggle-btn.active {
-            background: #f1c40f;
-            color: #1e3c72;
-            border-color: white;
-            font-weight: bold;
-        }
-
-        .toggle-btn:active {
-            transform: scale(0.95);
-        }
-
         .logout-btn {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -155,7 +129,7 @@ if ($max_points < 1000) $max_points = 1000;
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Main Content - Swipeable tabs */
+        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -263,18 +237,6 @@ if ($max_points < 1000) $max_points = 1000;
             max-height: 25vh;
             overflow-y: auto;
             padding: 0 5px;
-        }
-
-        .question-text::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .question-text::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .question-text::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Options Grid */
@@ -538,7 +500,6 @@ if ($max_points < 1000) $max_points = 1000;
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Animations */
         @keyframes pulse {
 
             0%,
@@ -551,19 +512,6 @@ if ($max_points < 1000) $max_points = 1000;
             }
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Mobile optimizations */
         @media (max-width: 480px) {
             .container {
                 padding: 5px;
@@ -575,10 +523,6 @@ if ($max_points < 1000) $max_points = 1000;
 
             .option {
                 padding: 12px 15px;
-            }
-
-            .student-name {
-                font-size: 15px;
             }
         }
     </style>
@@ -657,8 +601,6 @@ if ($max_points < 1000) $max_points = 1000;
         const tabContainer = document.getElementById('tabContainer');
         const quizTabBtn = document.getElementById('quizTabBtn');
         const leaderboardTabBtn = document.getElementById('leaderboardTabBtn');
-        const quizTab = document.getElementById('quizTab');
-        const leaderboardTab = document.getElementById('leaderboardTab');
 
         quizTabBtn.addEventListener('click', () => {
             tabContainer.style.transform = 'translateX(0%)';
@@ -691,12 +633,10 @@ if ($max_points < 1000) $max_points = 1000;
 
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
-                    // Swipe left - show leaderboard
                     tabContainer.style.transform = 'translateX(-100%)';
                     leaderboardTabBtn.classList.add('active');
                     quizTabBtn.classList.remove('active');
                 } else {
-                    // Swipe right - show quiz
                     tabContainer.style.transform = 'translateX(0%)';
                     quizTabBtn.classList.add('active');
                     leaderboardTabBtn.classList.remove('active');
@@ -750,46 +690,57 @@ if ($max_points < 1000) $max_points = 1000;
                                     correctAnswer = data.question.correct_option;
                                 }
 
+                                // Build options HTML
+                                let optionsHtml = '';
+                                const options = ['A', 'B', 'C', 'D'];
+
+                                options.forEach(opt => {
+                                    const optionText = data.question['option_' + opt.toLowerCase()];
+                                    const isSelected = (selectedOption === opt && !answerSubmitted);
+                                    const isCorrect = (answerSubmitted && correctAnswer === opt);
+                                    const isIncorrect = (answerSubmitted && selectedOption === opt && selectedOption !== correctAnswer);
+
+                                    let optionClass = 'option';
+                                    if (isCorrect) optionClass += ' correct';
+                                    if (isIncorrect) optionClass += ' incorrect';
+                                    if (isSelected) optionClass += ' selected';
+                                    if (answerSubmitted) optionClass += ' disabled';
+
+                                    optionsHtml += `
+                                        <div class="${optionClass}" data-option="${opt}">
+                                            <span class="option-letter">${opt}</span>
+                                            <span class="option-text">${optionText}</span>
+                                        </div>
+                                    `;
+                                });
+
                                 quizContent.innerHTML = `
                                     <div class="question-card">
                                         <div class="question-timer">${Math.ceil(data.time_left)}s</div>
                                         <div class="question-text">${data.question.question_text}</div>
                                         <div class="options" id="options">
-                                            <div class="option ${answerSubmitted && data.question.correct_option === 'A' ? 'correct' : ''} ${answerSubmitted && selectedOption === 'A' && selectedOption !== data.question.correct_option ? 'incorrect' : ''} ${selectedOption === 'A' && !answerSubmitted ? 'selected' : ''} ${answerSubmitted ? 'disabled' : ''}" 
-                                                 data-option="A"
-                                                 onclick="${!answerSubmitted ? `selectOption('A')` : ''}">
-                                                <span class="option-letter">A</span>
-                                                <span class="option-text">${data.question.option_a}</span>
-                                            </div>
-                                            <div class="option ${answerSubmitted && data.question.correct_option === 'B' ? 'correct' : ''} ${answerSubmitted && selectedOption === 'B' && selectedOption !== data.question.correct_option ? 'incorrect' : ''} ${selectedOption === 'B' && !answerSubmitted ? 'selected' : ''} ${answerSubmitted ? 'disabled' : ''}" 
-                                                 data-option="B"
-                                                 onclick="${!answerSubmitted ? `selectOption('B')` : ''}">
-                                                <span class="option-letter">B</span>
-                                                <span class="option-text">${data.question.option_b}</span>
-                                            </div>
-                                            <div class="option ${answerSubmitted && data.question.correct_option === 'C' ? 'correct' : ''} ${answerSubmitted && selectedOption === 'C' && selectedOption !== data.question.correct_option ? 'incorrect' : ''} ${selectedOption === 'C' && !answerSubmitted ? 'selected' : ''} ${answerSubmitted ? 'disabled' : ''}" 
-                                                 data-option="C"
-                                                 onclick="${!answerSubmitted ? `selectOption('C')` : ''}">
-                                                <span class="option-letter">C</span>
-                                                <span class="option-text">${data.question.option_c}</span>
-                                            </div>
-                                            <div class="option ${answerSubmitted && data.question.correct_option === 'D' ? 'correct' : ''} ${answerSubmitted && selectedOption === 'D' && selectedOption !== data.question.correct_option ? 'incorrect' : ''} ${selectedOption === 'D' && !answerSubmitted ? 'selected' : ''} ${answerSubmitted ? 'disabled' : ''}" 
-                                                 data-option="D"
-                                                 onclick="${!answerSubmitted ? `selectOption('D')` : ''}">
-                                                <span class="option-letter">D</span>
-                                                <span class="option-text">${data.question.option_d}</span>
-                                            </div>
+                                            ${optionsHtml}
                                         </div>
                                         <div id="answerStatus" class="answer-status" style="display: none;"></div>
                                     </div>
                                 `;
+
+                                // Add click handlers to options
+                                if (!answerSubmitted) {
+                                    document.querySelectorAll('#options .option').forEach(option => {
+                                        option.addEventListener('click', function(e) {
+                                            const optionLetter = this.querySelector('.option-letter').textContent;
+                                            selectOption(optionLetter);
+                                        });
+                                    });
+                                }
+
                                 currentStatus = 'question';
                             }
                             break;
 
                         case 'results':
                             if (!answerSubmitted && currentStatus !== 'results') {
-                                // Show result status
                                 quizContent.innerHTML = `
                                     <div class="status-card">
                                         <div class="status-icon">🏆</div>
@@ -842,7 +793,7 @@ if ($max_points < 1000) $max_points = 1000;
             // Disable all options immediately
             document.querySelectorAll('#options .option').forEach(opt => {
                 opt.classList.add('disabled');
-                opt.onclick = null;
+                opt.style.pointerEvents = 'none';
             });
 
             fetch('ajax/submit_answer.php', {
@@ -877,6 +828,14 @@ if ($max_points < 1000) $max_points = 1000;
                     } else {
                         statusDiv.className = 'answer-status error';
                         statusDiv.textContent = data.error || 'Error submitting answer';
+
+                        // Re-enable options on error if not already answered
+                        if (!data.already_answered) {
+                            document.querySelectorAll('#options .option').forEach(opt => {
+                                opt.classList.remove('disabled');
+                                opt.style.pointerEvents = 'auto';
+                            });
+                        }
                     }
 
                     // Hide status after 3 seconds
@@ -891,6 +850,12 @@ if ($max_points < 1000) $max_points = 1000;
                     console.error('Error:', error);
                     statusDiv.className = 'answer-status error';
                     statusDiv.textContent = 'Network error';
+
+                    // Re-enable options on error
+                    document.querySelectorAll('#options .option').forEach(opt => {
+                        opt.classList.remove('disabled');
+                        opt.style.pointerEvents = 'auto';
+                    });
                 });
         }
 
@@ -931,12 +896,18 @@ if ($max_points < 1000) $max_points = 1000;
             listEl.innerHTML = html;
 
             // Update header stats
-            document.querySelector('.leaderboard-stats').textContent = `${sortedStudents.length} players`;
+            const statsEl = document.querySelector('.leaderboard-stats');
+            if (statsEl) {
+                statsEl.textContent = `${sortedStudents.length} players`;
+            }
 
             // Update student's rank badge in header
             const currentStudentRank = sortedStudents.findIndex(s => s.id == currentStudentId) + 1;
             if (currentStudentRank > 0) {
-                document.querySelector('.student-rank-badge').innerHTML = `🏆 Rank #${currentStudentRank}`;
+                const rankBadge = document.querySelector('.student-rank-badge');
+                if (rankBadge) {
+                    rankBadge.innerHTML = `🏆 Rank #${currentStudentRank}`;
+                }
             }
         }
 

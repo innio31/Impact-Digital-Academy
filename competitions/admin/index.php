@@ -31,7 +31,7 @@ $student_count = count($students);
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Quiz Arena - Live Leaderboard</title>
     <style>
         * {
@@ -94,7 +94,7 @@ $student_count = count($students);
             z-index: 1;
             width: 100vw;
             height: 100vh;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             background: rgba(0, 0, 0, 0.2);
@@ -106,42 +106,47 @@ $student_count = count($students);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px 30px;
+            border-radius: 12px;
+            padding: 10px 15px;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            height: 80px;
+            height: auto;
+            min-height: 60px;
         }
 
         .title {
-            font-size: 32px;
+            font-size: 18px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             background: linear-gradient(135deg, #fff, #f1c40f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60%;
         }
 
         .timer-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 10px 25px;
+            border-radius: 8px;
+            padding: 5px 12px;
             text-align: center;
             border: 2px solid #f1c40f;
         }
 
         .timer-label {
-            font-size: 14px;
+            font-size: 10px;
             opacity: 0.8;
         }
 
         .timer-value {
-            font-size: 36px;
+            font-size: 20px;
             font-weight: bold;
             font-family: monospace;
             color: #f1c40f;
-            line-height: 1;
+            line-height: 1.2;
         }
 
         /* Question Screen - Full Screen */
@@ -155,7 +160,7 @@ $student_count = count($students);
             z-index: 10;
             display: flex;
             flex-direction: column;
-            padding: 30px;
+            padding: 15px;
             transition: all 0.5s ease;
             opacity: 1;
             visibility: visible;
@@ -168,7 +173,7 @@ $student_count = count($students);
         }
 
         .question-screen .header {
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .question-display {
@@ -180,65 +185,70 @@ $student_count = count($students);
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
+            overflow-y: auto;
+            padding-bottom: 20px;
         }
 
         .question-text {
-            font-size: 48px;
+            font-size: 22px;
             font-weight: bold;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
             line-height: 1.4;
             background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            border-left: 8px solid #f1c40f;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #f1c40f;
             text-align: center;
             width: 100%;
+            word-break: break-word;
         }
 
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 12px;
             width: 100%;
         }
 
         .option-card {
             background: rgba(255, 255, 255, 0.1);
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px;
-            font-size: 28px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             transition: all 0.3s;
             backdrop-filter: blur(10px);
+            word-break: break-word;
         }
 
         .option-card.correct-highlight {
             background: linear-gradient(135deg, #27ae60, #2ecc71);
             border-color: white;
             animation: correctPulse 1s infinite;
-            transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.5);
         }
 
         .option-letter {
             display: inline-block;
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             text-align: center;
-            line-height: 60px;
-            margin-right: 20px;
+            line-height: 40px;
+            margin-right: 15px;
             font-weight: bold;
-            font-size: 32px;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
         .status-display {
-            margin-top: 50px;
+            margin-top: 30px;
             text-align: center;
-            font-size: 64px;
+            font-size: 32px;
             font-weight: bold;
             animation: statusPulse 1.5s infinite;
         }
@@ -253,12 +263,12 @@ $student_count = count($students);
 
             50% {
                 opacity: 0.7;
-                transform: scale(1.1);
+                transform: scale(1.05);
             }
         }
 
         .waiting-message {
-            font-size: 48px;
+            font-size: 32px;
             color: #f1c40f;
         }
 
@@ -273,7 +283,7 @@ $student_count = count($students);
             z-index: 20;
             display: flex;
             flex-direction: column;
-            padding: 30px;
+            padding: 15px;
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
             visibility: hidden;
@@ -294,25 +304,23 @@ $student_count = count($students);
             margin: 0 auto;
             width: 100%;
             height: 100%;
-            /* Ensure full height */
             min-height: 0;
-            /* Important for nested flexboxes */
         }
 
         .leaderboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px 20px 20px;
-            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 30px;
+            padding: 0 10px 10px 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
         }
 
         .leaderboard-title {
-            font-size: 48px;
+            font-size: 24px;
             text-transform: uppercase;
             color: #f1c40f;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             animation: titleGlow 2s infinite;
         }
 
@@ -320,38 +328,36 @@ $student_count = count($students);
 
             0%,
             100% {
-                text-shadow: 0 0 20px #f1c40f;
+                text-shadow: 0 0 10px #f1c40f;
             }
 
             50% {
-                text-shadow: 0 0 40px #f1c40f;
+                text-shadow: 0 0 20px #f1c40f;
             }
         }
 
         .leaderboard-stats {
-            font-size: 18px;
+            font-size: 12px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 10px 25px;
-            border-radius: 30px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
         }
 
         .leaderboard-list {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 5px;
             min-height: 0;
-            /* Important for flex children to respect overflow */
             height: 100%;
-            /* Ensure it takes full height */
         }
-
 
         /* Custom scrollbar */
         .leaderboard-list::-webkit-scrollbar {
-            width: 8px;
+            width: 4px;
         }
 
         .leaderboard-list::-webkit-scrollbar-track {
@@ -367,20 +373,19 @@ $student_count = count($students);
         /* Student Items */
         .student-item {
             background: rgba(255, 255, 255, 0.07);
-            border-radius: 15px;
-            padding: 15px 25px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
-            height: 80px;
-            /* Reduced from 100px to fit more items */
+            height: auto;
+            min-height: 60px;
             flex-shrink: 0;
-            font-size: 18px;
-            /* Slightly smaller font */
+            font-size: 14px;
         }
 
         .student-item::before {
@@ -403,18 +408,18 @@ $student_count = count($students);
             animation: dramaticMoveUp 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             background: linear-gradient(135deg, rgba(46, 204, 113, 0.5), rgba(46, 204, 113, 0.3));
             border-color: #27ae60;
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.8);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.8);
             z-index: 100;
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
         .student-item.moving-down {
             animation: dramaticMoveDown 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             background: linear-gradient(135deg, rgba(231, 76, 60, 0.5), rgba(231, 76, 60, 0.3));
             border-color: #e74c3c;
-            box-shadow: 0 0 50px rgba(231, 76, 60, 0.8);
+            box-shadow: 0 0 30px rgba(231, 76, 60, 0.8);
             z-index: 100;
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
         @keyframes dramaticMoveUp {
@@ -423,29 +428,25 @@ $student_count = count($students);
             }
 
             15% {
-                transform: translateY(-50px) scale(1.2);
+                transform: translateY(-30px) scale(1.1);
                 background: rgba(46, 204, 113, 0.8);
-                box-shadow: 0 40px 60px rgba(46, 204, 113, 0.9);
+                box-shadow: 0 30px 40px rgba(46, 204, 113, 0.9);
             }
 
             30% {
-                transform: translateY(20px) scale(0.95);
+                transform: translateY(15px) scale(0.97);
             }
 
             45% {
-                transform: translateY(-15px) scale(1.08);
+                transform: translateY(-10px) scale(1.05);
             }
 
             60% {
-                transform: translateY(8px) scale(0.98);
+                transform: translateY(5px) scale(0.99);
             }
 
             75% {
-                transform: translateY(-5px) scale(1.02);
-            }
-
-            90% {
-                transform: translateY(2px) scale(0.99);
+                transform: translateY(-3px) scale(1.01);
             }
 
             100% {
@@ -459,29 +460,25 @@ $student_count = count($students);
             }
 
             15% {
-                transform: translateY(50px) scale(0.8);
+                transform: translateY(30px) scale(0.9);
                 background: rgba(231, 76, 60, 0.8);
-                box-shadow: 0 -40px 60px rgba(231, 76, 60, 0.9);
+                box-shadow: 0 -30px 40px rgba(231, 76, 60, 0.9);
             }
 
             30% {
-                transform: translateY(-20px) scale(1.1);
+                transform: translateY(-15px) scale(1.05);
             }
 
             45% {
-                transform: translateY(15px) scale(0.95);
+                transform: translateY(10px) scale(0.97);
             }
 
             60% {
-                transform: translateY(-8px) scale(1.03);
+                transform: translateY(-5px) scale(1.02);
             }
 
             75% {
-                transform: translateY(5px) scale(0.98);
-            }
-
-            90% {
-                transform: translateY(-2px) scale(1.01);
+                transform: translateY(3px) scale(0.99);
             }
 
             100% {
@@ -492,58 +489,54 @@ $student_count = count($students);
         /* POSITION CHANGE INDICATORS - VERY VISIBLE */
         .position-change {
             position: absolute;
-            right: 140px;
-            font-size: 32px;
+            right: 80px;
+            font-size: 20px;
             font-weight: bold;
-            padding: 8px 15px;
-            border-radius: 50px;
+            padding: 4px 10px;
+            border-radius: 30px;
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
-            border: 2px solid;
+            border: 1px solid;
             z-index: 200;
             animation: indicatorPop 1.8s ease-out forwards;
-            box-shadow: 0 0 30px currentColor;
+            box-shadow: 0 0 20px currentColor;
         }
 
         .position-change.up {
             color: #27ae60;
             border-color: #27ae60;
-            text-shadow: 0 0 15px #27ae60;
+            text-shadow: 0 0 10px #27ae60;
         }
 
         .position-change.down {
             color: #e74c3c;
             border-color: #e74c3c;
-            text-shadow: 0 0 15px #e74c3c;
+            text-shadow: 0 0 10px #e74c3c;
         }
 
         @keyframes indicatorPop {
             0% {
                 opacity: 0;
-                transform: translateX(50px) scale(0.5);
+                transform: translateX(30px) scale(0.5);
             }
 
             20% {
                 opacity: 1;
-                transform: translateX(-20px) scale(1.4);
+                transform: translateX(-10px) scale(1.2);
             }
 
             40% {
-                transform: translateX(5px) scale(1.1);
+                transform: translateX(3px) scale(1.05);
             }
 
             60% {
-                transform: translateX(-2px) scale(1);
-                opacity: 1;
-            }
-
-            80% {
+                transform: translateX(-1px) scale(1);
                 opacity: 1;
             }
 
             100% {
                 opacity: 0;
-                transform: translateX(30px) scale(0.8);
+                transform: translateX(20px) scale(0.8);
             }
         }
 
@@ -551,21 +544,18 @@ $student_count = count($students);
         .student-item.points-counting {
             background: linear-gradient(135deg, rgba(241, 196, 15, 0.5), rgba(241, 196, 15, 0.3));
             border-color: #f1c40f;
-            box-shadow: 0 0 60px rgba(241, 196, 15, 0.8);
-            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(241, 196, 15, 0.8);
+            transform: scale(1.01);
             z-index: 50;
         }
 
         .student-points {
-            font-size: 28px;
-            /* Reduced from 36px */
+            font-size: 18px;
             font-weight: bold;
             color: #f1c40f;
-            margin-left: 15px;
-            /* Reduced from 20px */
+            margin-left: 5px;
             font-family: monospace;
-            min-width: 80px;
-            /* Reduced from 100px */
+            min-width: 50px;
             text-align: right;
             flex-shrink: 0;
             transition: all 0.1s;
@@ -576,7 +566,7 @@ $student_count = count($students);
         .student-points.counting {
             animation: coinCount 0.15s infinite;
             color: #fff;
-            text-shadow: 0 0 20px #f1c40f, 0 0 40px #f1c40f;
+            text-shadow: 0 0 15px #f1c40f, 0 0 30px #f1c40f;
             font-weight: bold;
             transform-origin: center;
         }
@@ -588,18 +578,18 @@ $student_count = count($students);
             }
 
             25% {
-                transform: scale(1.5) translateY(-8px);
+                transform: scale(1.3) translateY(-5px);
                 color: #fff;
             }
 
             50% {
-                transform: scale(1.8) translateY(-15px);
+                transform: scale(1.5) translateY(-10px);
                 color: #f1c40f;
-                text-shadow: 0 0 30px #f1c40f;
+                text-shadow: 0 0 20px #f1c40f;
             }
 
             75% {
-                transform: scale(1.3) translateY(-5px);
+                transform: scale(1.2) translateY(-3px);
                 color: #fff;
             }
 
@@ -615,18 +605,18 @@ $student_count = count($students);
 
         @keyframes pointsLand {
             0% {
-                transform: scale(2.5) translateY(-20px);
+                transform: scale(1.8) translateY(-15px);
                 color: #fff;
-                text-shadow: 0 0 40px #27ae60, 0 0 80px #27ae60;
+                text-shadow: 0 0 30px #27ae60, 0 0 60px #27ae60;
             }
 
             40% {
-                transform: scale(0.8) translateY(8px);
+                transform: scale(0.9) translateY(5px);
                 color: #f1c40f;
             }
 
             70% {
-                transform: scale(1.2) translateY(-5px);
+                transform: scale(1.1) translateY(-3px);
                 color: #f1c40f;
             }
 
@@ -638,21 +628,19 @@ $student_count = count($students);
 
         /* PROGRESS BAR ANIMATION */
         .student-progress {
-            height: 10px;
-            /* Reduced from 15px */
+            height: 6px;
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
+            border-radius: 5px;
             overflow: hidden;
             width: 100%;
             position: relative;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
         }
-
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #f1c40f, #f39c12, #f1c40f);
-            border-radius: 8px;
+            border-radius: 5px;
             width: 0%;
             transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
@@ -672,7 +660,7 @@ $student_count = count($students);
 
         .progress-fill.animating {
             animation: progressPulse 0.5s infinite, progressShimmer 1s infinite;
-            box-shadow: 0 0 20px #f1c40f;
+            box-shadow: 0 0 15px #f1c40f;
         }
 
         @keyframes progressPulse {
@@ -683,16 +671,16 @@ $student_count = count($students);
             }
 
             50% {
-                filter: brightness(1.8);
-                box-shadow: 0 0 30px #f1c40f;
+                filter: brightness(1.5);
+                box-shadow: 0 0 20px #f1c40f;
             }
         }
 
         .student-item.first-place {
             background: linear-gradient(135deg, rgba(241, 196, 15, 0.4), rgba(241, 196, 15, 0.2));
             border-color: #f1c40f;
-            border-width: 3px;
-            box-shadow: 0 0 40px rgba(241, 196, 15, 0.5);
+            border-width: 2px;
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.5);
         }
 
         .student-item.second-place {
@@ -706,27 +694,24 @@ $student_count = count($students);
         }
 
         .student-rank {
-            width: 50px;
-            /* Reduced from 60px */
-            height: 50px;
-            /* Reduced from 60px */
+            width: 36px;
+            height: 36px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 22px;
-            /* Reduced from 28px */
+            font-size: 16px;
             flex-shrink: 0;
             transition: all 0.3s;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .first-place .student-rank {
             background: #f1c40f;
             color: #000;
-            box-shadow: 0 0 50px #f1c40f;
+            box-shadow: 0 0 30px #f1c40f;
             animation: rankGlow 1.5s infinite;
             border-color: #fff;
         }
@@ -734,24 +719,24 @@ $student_count = count($students);
         .second-place .student-rank {
             background: #C0C0C0;
             color: #000;
-            box-shadow: 0 0 30px #C0C0C0;
+            box-shadow: 0 0 20px #C0C0C0;
         }
 
         .third-place .student-rank {
             background: #CD7F32;
             color: #000;
-            box-shadow: 0 0 30px #CD7F32;
+            box-shadow: 0 0 20px #CD7F32;
         }
 
         @keyframes rankGlow {
 
             0%,
             100% {
-                box-shadow: 0 0 30px #f1c40f, 0 0 60px #f1c40f;
+                box-shadow: 0 0 20px #f1c40f, 0 0 40px #f1c40f;
             }
 
             50% {
-                box-shadow: 0 0 60px #f1c40f, 0 0 90px #f1c40f;
+                box-shadow: 0 0 40px #f1c40f, 0 0 60px #f1c40f;
             }
         }
 
@@ -761,13 +746,12 @@ $student_count = count($students);
         }
 
         .student-name {
-            font-size: 22px;
-            /* Reduced from 26px */
+            font-size: 16px;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         /* Results Overlay */
@@ -783,6 +767,7 @@ $student_count = count($students);
             display: none;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .results-overlay.active {
@@ -791,13 +776,13 @@ $student_count = count($students);
 
         .results-content {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 50px;
-            padding: 60px;
+            border-radius: 30px;
+            padding: 30px 20px;
             text-align: center;
-            border: 5px solid #f1c40f;
+            border: 3px solid #f1c40f;
             animation: resultsPop 0.5s ease;
-            max-width: 700px;
-            width: 90%;
+            max-width: 500px;
+            width: 100%;
         }
 
         @keyframes resultsPop {
@@ -813,19 +798,19 @@ $student_count = count($students);
         }
 
         .results-title {
-            font-size: 56px;
+            font-size: 28px;
             color: #f1c40f;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .correct-answer-display {
-            font-size: 72px;
+            font-size: 48px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 40px 60px;
-            border-radius: 80px;
-            margin: 30px 0;
+            padding: 20px 30px;
+            border-radius: 50px;
+            margin: 20px 0;
             font-weight: bold;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             animation: correctAnswerPop 2s infinite;
         }
 
@@ -834,18 +819,18 @@ $student_count = count($students);
             0%,
             100% {
                 transform: scale(1);
-                box-shadow: 0 0 30px #f1c40f;
+                box-shadow: 0 0 20px #f1c40f;
             }
 
             50% {
-                transform: scale(1.1);
-                box-shadow: 0 0 70px #f1c40f;
+                transform: scale(1.05);
+                box-shadow: 0 0 50px #f1c40f;
             }
         }
 
         .results-message {
-            font-size: 28px;
-            margin-top: 40px;
+            font-size: 16px;
+            margin-top: 20px;
             opacity: 0.9;
         }
 
@@ -860,12 +845,12 @@ $student_count = count($students);
 
         .coin {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             background: radial-gradient(circle at 30% 30%, #f1c40f, #b8860b);
             border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 0 20px #f1c40f;
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px #f1c40f;
             animation: coinFall 2s linear forwards;
             z-index: 2000;
         }
@@ -873,11 +858,6 @@ $student_count = count($students);
         @keyframes coinFall {
             0% {
                 transform: translateY(-100px) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: translateY(50vh) rotate(360deg) scale(1.2);
                 opacity: 1;
             }
 
@@ -890,8 +870,8 @@ $student_count = count($students);
         /* Confetti */
         .confetti {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             background: #f1c40f;
             opacity: 0.8;
             animation: confettiFall 3s linear infinite;
@@ -911,15 +891,127 @@ $student_count = count($students);
             }
         }
 
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
+        /* Tablet Styles */
+        @media (min-width: 768px) {
+            .container {
+                padding: 20px;
             }
 
-            50% {
-                transform: scale(1.1);
+            .header {
+                padding: 15px 25px;
+                min-height: 70px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .timer-value {
+                font-size: 28px;
+            }
+
+            .question-text {
+                font-size: 32px;
+                padding: 30px;
+            }
+
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .option-card {
+                padding: 20px;
+                font-size: 20px;
+            }
+
+            .leaderboard-title {
+                font-size: 32px;
+            }
+
+            .student-item {
+                padding: 12px 20px;
+                font-size: 16px;
+                min-height: 70px;
+            }
+
+            .student-name {
+                font-size: 18px;
+            }
+
+            .student-points {
+                font-size: 22px;
+                min-width: 70px;
+            }
+
+            .student-rank {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .position-change {
+                right: 100px;
+                font-size: 24px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .title {
+                font-size: 14px;
+            }
+
+            .timer-box {
+                padding: 3px 8px;
+            }
+
+            .timer-value {
+                font-size: 16px;
+            }
+
+            .student-item {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+
+            .student-rank {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .student-name {
+                font-size: 14px;
+            }
+
+            .student-points {
+                font-size: 16px;
+                min-width: 40px;
+            }
+
+            .position-change {
+                right: 60px;
+                font-size: 16px;
+                padding: 2px 6px;
+            }
+
+            .question-text {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            .option-card {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .option-letter {
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 16px;
+                margin-right: 10px;
             }
         }
     </style>
@@ -1073,7 +1165,7 @@ $student_count = count($students);
                 progressEl.classList.add('animating');
 
                 let currentValue = currentScore;
-                const steps = 20;
+                const steps = 15; // Reduced for mobile
                 const increment = difference / steps;
                 let step = 0;
 
@@ -1088,10 +1180,10 @@ $student_count = count($students);
 
                     // Bounce effect
                     if (step % 4 === 0) {
-                        pointsEl.style.transform = 'scale(1.5)';
+                        pointsEl.style.transform = 'scale(1.3)';
                         setTimeout(() => {
                             pointsEl.style.transform = 'scale(1)';
-                        }, 100);
+                        }, 80);
                     }
 
                     if (step >= steps) {
@@ -1108,9 +1200,9 @@ $student_count = count($students);
                             pointsEl.classList.remove('final-value');
                             element.classList.remove('points-counting');
                             resolve();
-                        }, 500);
+                        }, 400);
                     }
-                }, 80);
+                }, 60);
             });
         }
 
@@ -1164,7 +1256,7 @@ $student_count = count($students);
                     setTimeout(() => {
                         element.classList.remove('moving-up', 'moving-down');
                         resolve();
-                    }, 1000);
+                    }, 800);
                 }, 50);
             });
         }
@@ -1186,26 +1278,26 @@ $student_count = count($students);
             // Auto remove after 2 seconds
             setTimeout(() => {
                 if (arrow.parentNode) arrow.remove();
-            }, 2000);
+            }, 1800);
         }
 
         // Create confetti
         function createConfetti() {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) { // Reduced for mobile
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
                     confetti.style.left = Math.random() * 100 + '%';
                     confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
                     confetti.style.animationDelay = '0s';
-                    confetti.style.width = (8 + Math.random() * 12) + 'px';
-                    confetti.style.height = (8 + Math.random() * 12) + 'px';
+                    confetti.style.width = (6 + Math.random() * 8) + 'px';
+                    confetti.style.height = (6 + Math.random() * 8) + 'px';
                     document.body.appendChild(confetti);
 
                     setTimeout(() => {
                         confetti.remove();
-                    }, 3000);
-                }, i * 30);
+                    }, 2500);
+                }, i * 20);
             }
         }
 
@@ -1247,7 +1339,7 @@ $student_count = count($students);
                     await moveStudent(element, i);
 
                     // Pause between students
-                    await new Promise(resolve => setTimeout(resolve, 400));
+                    await new Promise(resolve => setTimeout(resolve, 300));
                 }
             }
 
@@ -1372,7 +1464,7 @@ $student_count = count($students);
                                             });
                                         }
                                     }, 500);
-                                }, 3500);
+                                }, 3000);
                             }
                             currentStatus = 'results';
                             break;
