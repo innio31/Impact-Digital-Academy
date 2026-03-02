@@ -12,7 +12,7 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'] ?? '';
 
     // CHANGE THESE TO YOUR ADMIN CREDENTIALS
-    if ($username === 'admin' && $password === 'your-secure-password') {
+    if ($username === 'admin' && $password === 'innioluwa') {
         $_SESSION['admin_logged_in'] = true;
         $is_authenticated = true;
     } else {

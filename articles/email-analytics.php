@@ -213,7 +213,7 @@ $stats = $selected_campaign ? $notifier->getCampaignStats($selected_campaign) : 
         <div class="header">
             <h1><i class="fas fa-chart-line"></i> Email Campaign Analytics</h1>
             <div class="nav-links">
-                <a href="publish-article.php">← Back to Publisher</a>
+                <a href="publish_article.php">← Back to Publisher</a>
                 <a href="?export=csv" id="exportBtn">Export Data</a>
                 <a href="?logout">Logout</a>
             </div>
