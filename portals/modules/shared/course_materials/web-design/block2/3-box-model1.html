@@ -2,263 +2,263 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CSS BOX MODEL – PART 1 · complete notes</title>
-    <style>
-        /* ===== reset / base (same style as the intro file, to preserve look) ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE CSS BOX MODEL – PART 1 · complete notes</title>
+  <style>
+    /* ===== reset / base (same style as the intro file, to preserve look) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background: #f0f5fa;
-            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            color: #1a2b3c;
-            padding: 2rem 1rem;
-        }
+    body {
+      background: #f0f5fa;
+      font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #1a2b3c;
+      padding: 2rem 1rem;
+    }
 
-        .document-wrapper {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 2rem;
-            box-shadow: 0 20px 40px -20px #0a2e4b;
-            padding: 2.2rem 2rem;
-        }
+    .document-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px -20px #0a2e4b;
+      padding: 2.2rem 2rem;
+    }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            color: #0d3b4c;
-            font-weight: 650;
-            line-height: 1.3;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #0d3b4c;
+      font-weight: 650;
+      line-height: 1.3;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
 
-        h1 {
-            font-size: 2.8rem;
-            border-left: 12px solid #1f7a8c;
-            padding-left: 1.5rem;
-        }
+    h1 {
+      font-size: 2.8rem;
+      border-left: 12px solid #1f7a8c;
+      padding-left: 1.5rem;
+    }
 
-        h2 {
-            font-size: 2.2rem;
-            border-bottom: 3px solid #b5d8e8;
-            padding-bottom: 0.3rem;
-        }
+    h2 {
+      font-size: 2.2rem;
+      border-bottom: 3px solid #b5d8e8;
+      padding-bottom: 0.3rem;
+    }
 
-        h3 {
-            font-size: 1.8rem;
-            color: #155a6b;
-        }
+    h3 {
+      font-size: 1.8rem;
+      color: #155a6b;
+    }
 
-        h4 {
-            font-size: 1.4rem;
-            color: #1d6d7a;
-        }
+    h4 {
+      font-size: 1.4rem;
+      color: #1d6d7a;
+    }
 
-        hr {
-            margin: 2.5rem 0;
-            border: 2px dashed #9ec5d9;
-        }
+    hr {
+      margin: 2.5rem 0;
+      border: 2px dashed #9ec5d9;
+    }
 
-        p,
-        li,
-        blockquote {
-            margin-bottom: 1rem;
-            color: #1f3a47;
-        }
+    p,
+    li,
+    blockquote {
+      margin-bottom: 1rem;
+      color: #1f3a47;
+    }
 
-        code,
-        pre {
-            background: #e9f0f5;
-            border-radius: 10px;
-            padding: 0.2rem 0.6rem;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.95rem;
-            border: 1px solid #bdd3e3;
-        }
+    code,
+    pre {
+      background: #e9f0f5;
+      border-radius: 10px;
+      padding: 0.2rem 0.6rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.95rem;
+      border: 1px solid #bdd3e3;
+    }
 
-        pre {
-            padding: 1.2rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin: 1.5rem 0;
-            box-shadow: inset 0 2px 8px #d4e2ed;
-        }
+    pre {
+      padding: 1.2rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 1.5rem 0;
+      box-shadow: inset 0 2px 8px #d4e2ed;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            border-radius: 1.2rem;
-            overflow: hidden;
-            box-shadow: 0 4px 12px #c9dde9;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 4px 12px #c9dde9;
+    }
 
-        th {
-            background: #1f7a8c;
-            color: white;
-            font-weight: 600;
-            padding: 0.9rem 0.5rem;
-            font-size: 1.1rem;
-        }
+    th {
+      background: #1f7a8c;
+      color: white;
+      font-weight: 600;
+      padding: 0.9rem 0.5rem;
+      font-size: 1.1rem;
+    }
 
-        td {
-            background: #f3f9ff;
-            padding: 0.9rem 0.5rem;
-            border-bottom: 1px solid #c2dae8;
-        }
+    td {
+      background: #f3f9ff;
+      padding: 0.9rem 0.5rem;
+      border-bottom: 1px solid #c2dae8;
+    }
 
-        .note-block {
-            background: #e4f0f7;
-            border-radius: 1.6rem;
-            padding: 1.8rem;
-            margin: 2rem 0;
-            border-left: 8px solid #2b95b0;
-        }
+    .note-block {
+      background: #e4f0f7;
+      border-radius: 1.6rem;
+      padding: 1.8rem;
+      margin: 2rem 0;
+      border-left: 8px solid #2b95b0;
+    }
 
-        ul,
-        ol {
-            padding-left: 2rem;
-            margin: 1rem 0;
-        }
+    ul,
+    ol {
+      padding-left: 2rem;
+      margin: 1rem 0;
+    }
 
-        li {
-            margin: 0.4rem 0;
-        }
+    li {
+      margin: 0.4rem 0;
+    }
 
-        .glossary-term {
-            font-weight: 700;
-            color: #004d66;
-        }
+    .glossary-term {
+      font-weight: 700;
+      color: #004d66;
+    }
 
-        .source-line-preserve {
-            white-space: pre-wrap;
-            font-family: inherit;
-        }
-    </style>
+    .source-line-preserve {
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="document-wrapper">
-        <!-- CONTENT START: EXACT COPY OF THE CSS BOX MODEL STUDY NOTES, EVERY LINE PRESERVED -->
+  <div class="document-wrapper">
+    <!-- CONTENT START: EXACT COPY OF THE CSS BOX MODEL STUDY NOTES, EVERY LINE PRESERVED -->
 
-        <h1>THE CSS BOX MODEL - PART 1: A COMPREHENSIVE GUIDE</h1>
+    <h1>THE CSS BOX MODEL - PART 1</h1>
 
-        <h2>Table of Contents</h2>
-        <ol>
-            <li><a href="#introduction">Introduction to the Box Model</a></li>
-            <li><a href="#four-layers">The Four Layers of the Box Model</a>
-                <ul>
-                    <li><a href="#content-layer">Content Layer</a></li>
-                    <li><a href="#padding-layer">Padding Layer</a></li>
-                    <li><a href="#border-layer">Border Layer</a></li>
-                    <li><a href="#margin-layer">Margin Layer</a></li>
-                </ul>
-            </li>
-            <li><a href="#size-effects">How Each Layer Affects Element Size</a></li>
-            <li><a href="#spacing-effects">How Each Layer Affects Element Spacing</a></li>
-            <li><a href="#visual-representations">Visual Representations and Diagrams</a></li>
-            <li><a href="#practical-examples">Practical Examples and Code Demonstrations</a></li>
-            <li><a href="#dev-tools">Using Browser Developer Tools to Inspect the Box Model</a></li>
-            <li><a href="#common-problems">Common Box Model Problems and Solutions</a></li>
-            <li><a href="#interactive-exercises">Interactive Learning Exercises</a></li>
-            <li><a href="#summary">Summary and Key Takeaways</a></li>
-        </ol>
-
-        <hr>
-
-        <h1 id="introduction">1. INTRODUCTION TO THE BOX MODEL</h1>
-
-        <p>The CSS Box Model is <strong>the most fundamental concept</strong> in web layout design. Every single element
-            on a web page—whether it's a paragraph, image, div, heading, or button—is rendered by the browser as a
-            rectangular box. Understanding how these boxes work is essential for creating precise, predictable, and
-            professional layouts.</p>
-
-        <h3>Why Is It Called the "Box Model"?</h3>
-        <p>Imagine every HTML element as a physical box containing:</p>
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#introduction">Introduction to the Box Model</a></li>
+      <li><a href="#four-layers">The Four Layers of the Box Model</a>
         <ul>
-            <li>The <strong>content</strong> itself (like a gift inside a box)</li>
-            <li><strong>Padding</strong> (the soft material protecting the gift)</li>
-            <li><strong>Border</strong> (the actual cardboard box)</li>
-            <li><strong>Margin</strong> (the space between this box and other boxes on the shelf)</li>
+          <li><a href="#content-layer">Content Layer</a></li>
+          <li><a href="#padding-layer">Padding Layer</a></li>
+          <li><a href="#border-layer">Border Layer</a></li>
+          <li><a href="#margin-layer">Margin Layer</a></li>
         </ul>
-        <p>This metaphor helps explain why the Box Model is so intuitive once you grasp its components.</p>
+      </li>
+      <li><a href="#size-effects">How Each Layer Affects Element Size</a></li>
+      <li><a href="#spacing-effects">How Each Layer Affects Element Spacing</a></li>
+      <li><a href="#visual-representations">Visual Representations and Diagrams</a></li>
+      <li><a href="#practical-examples">Practical Examples and Code Demonstrations</a></li>
+      <li><a href="#dev-tools">Using Browser Developer Tools to Inspect the Box Model</a></li>
+      <li><a href="#common-problems">Common Box Model Problems and Solutions</a></li>
+      <li><a href="#interactive-exercises">Interactive Learning Exercises</a></li>
+      <li><a href="#summary">Summary and Key Takeaways</a></li>
+    </ol>
 
-        <h3>The Big Picture</h3>
-        <p>When a browser loads your webpage, it performs these steps:</p>
-        <ol>
-            <li><strong>Parses HTML</strong> - Creates a tree structure of all elements (DOM tree)</li>
-            <li><strong>Applies CSS</strong> - Calculates styles for each element</li>
-            <li><strong>Renders Boxes</strong> - Draws each element as a rectangular box according to the Box Model
-                rules</li>
-            <li><strong>Calculates Layout</strong> - Positions all boxes based on their dimensions and relationships
-            </li>
-        </ol>
-        <p>Without mastering the Box Model, you'll constantly fight against unexpected layouts, mysterious gaps, and
-            elements that refuse to align properly.</p>
+    <hr>
 
-        <h3>Historical Context</h3>
-        <p>The Box Model has been part of CSS since its inception in 1996. However, it caused significant confusion in
-            the early days of web design because different browsers interpreted it differently. This led to the infamous
-            "browser wars" and the need for CSS hacks. Today, thanks to standards and the <code>box-sizing</code>
-            property, we have much more predictable control.</p>
+    <h1 id="introduction">1. INTRODUCTION TO THE BOX MODEL</h1>
 
-        <hr>
+    <p>The CSS Box Model is <strong>the most fundamental concept</strong> in web layout design. Every single element
+      on a web page—whether it's a paragraph, image, div, heading, or button—is rendered by the browser as a
+      rectangular box. Understanding how these boxes work is essential for creating precise, predictable, and
+      professional layouts.</p>
 
-        <h1 id="four-layers">2. THE FOUR LAYERS OF THE BOX MODEL</h1>
-        <p>Let's explore each layer in depth, from the inside out.</p>
+    <h3>Why Is It Called the "Box Model"?</h3>
+    <p>Imagine every HTML element as a physical box containing:</p>
+    <ul>
+      <li>The <strong>content</strong> itself (like a gift inside a box)</li>
+      <li><strong>Padding</strong> (the soft material protecting the gift)</li>
+      <li><strong>Border</strong> (the actual cardboard box)</li>
+      <li><strong>Margin</strong> (the space between this box and other boxes on the shelf)</li>
+    </ul>
+    <p>This metaphor helps explain why the Box Model is so intuitive once you grasp its components.</p>
 
-        <h2 id="content-layer">CONTENT LAYER</h2>
-        <p>The content layer is the <strong>innermost</strong> part of the box where your actual content lives—text,
-            images, videos, or other nested elements.</p>
+    <h3>The Big Picture</h3>
+    <p>When a browser loads your webpage, it performs these steps:</p>
+    <ol>
+      <li><strong>Parses HTML</strong> - Creates a tree structure of all elements (DOM tree)</li>
+      <li><strong>Applies CSS</strong> - Calculates styles for each element</li>
+      <li><strong>Renders Boxes</strong> - Draws each element as a rectangular box according to the Box Model
+        rules</li>
+      <li><strong>Calculates Layout</strong> - Positions all boxes based on their dimensions and relationships
+      </li>
+    </ol>
+    <p>Without mastering the Box Model, you'll constantly fight against unexpected layouts, mysterious gaps, and
+      elements that refuse to align properly.</p>
 
-        <h4>Key Characteristics:</h4>
-        <table>
-            <tr>
-                <th>Property</th>
-                <th>Description</th>
-                <th>Default Value</th>
-            </tr>
-            <tr>
-                <td><code>width</code></td>
-                <td>Sets the width of the content area</td>
-                <td><code>auto</code> (browser calculates)</td>
-            </tr>
-            <tr>
-                <td><code>height</code></td>
-                <td>Sets the height of the content area</td>
-                <td><code>auto</code> (browser calculates)</td>
-            </tr>
-            <tr>
-                <td><code>min-width</code></td>
-                <td>Minimum width the content can shrink to</td>
-                <td><code>0</code></td>
-            </tr>
-            <tr>
-                <td><code>max-width</code></td>
-                <td>Maximum width the content can expand to</td>
-                <td><code>none</code></td>
-            </tr>
-            <tr>
-                <td><code>overflow</code></td>
-                <td>Controls what happens when content exceeds dimensions</td>
-                <td><code>visible</code></td>
-            </tr>
-        </table>
+    <h3>Historical Context</h3>
+    <p>The Box Model has been part of CSS since its inception in 1996. However, it caused significant confusion in
+      the early days of web design because different browsers interpreted it differently. This led to the infamous
+      "browser wars" and the need for CSS hacks. Today, thanks to standards and the <code>box-sizing</code>
+      property, we have much more predictable control.</p>
 
-        <h4>How Content Size is Determined:</h4>
-        <pre><code>/* Example 1: Explicitly sized content */
+    <hr>
+
+    <h1 id="four-layers">2. THE FOUR LAYERS OF THE BOX MODEL</h1>
+    <p>Let's explore each layer in depth, from the inside out.</p>
+
+    <h2 id="content-layer">CONTENT LAYER</h2>
+    <p>The content layer is the <strong>innermost</strong> part of the box where your actual content lives—text,
+      images, videos, or other nested elements.</p>
+
+    <h4>Key Characteristics:</h4>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Default Value</th>
+      </tr>
+      <tr>
+        <td><code>width</code></td>
+        <td>Sets the width of the content area</td>
+        <td><code>auto</code> (browser calculates)</td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td>Sets the height of the content area</td>
+        <td><code>auto</code> (browser calculates)</td>
+      </tr>
+      <tr>
+        <td><code>min-width</code></td>
+        <td>Minimum width the content can shrink to</td>
+        <td><code>0</code></td>
+      </tr>
+      <tr>
+        <td><code>max-width</code></td>
+        <td>Maximum width the content can expand to</td>
+        <td><code>none</code></td>
+      </tr>
+      <tr>
+        <td><code>overflow</code></td>
+        <td>Controls what happens when content exceeds dimensions</td>
+        <td><code>visible</code></td>
+      </tr>
+    </table>
+
+    <h4>How Content Size is Determined:</h4>
+    <pre><code>/* Example 1: Explicitly sized content */
 .explicit-box {
   width: 300px;
   height: 200px;
@@ -281,80 +281,80 @@
 }
 </code></pre>
 
-        <h4>Important Content Behaviors:</h4>
-        <ol>
-            <li><strong>Text content</strong> will wrap by default to fit within the available width</li>
-            <li><strong>Block-level elements</strong> (like &lt;div&gt;) naturally expand to fill their parent's width
-            </li>
-            <li><strong>Inline elements</strong> (like &lt;span&gt;) take only as much width as needed</li>
-            <li><strong>Replaced elements</strong> (like &lt;img&gt;) have intrinsic dimensions from their source</li>
-        </ol>
+    <h4>Important Content Behaviors:</h4>
+    <ol>
+      <li><strong>Text content</strong> will wrap by default to fit within the available width</li>
+      <li><strong>Block-level elements</strong> (like &lt;div&gt;) naturally expand to fill their parent's width
+      </li>
+      <li><strong>Inline elements</strong> (like &lt;span&gt;) take only as much width as needed</li>
+      <li><strong>Replaced elements</strong> (like &lt;img&gt;) have intrinsic dimensions from their source</li>
+    </ol>
 
-        <h4>Real-World Example:</h4>
-        <pre><code>&lt;div class="content-demo"&gt;
+    <h4>Real-World Example:</h4>
+    <pre><code>&lt;div class="content-demo"&gt;
   &lt;h2&gt;Understanding Content Area&lt;/h2&gt;
   &lt;p&gt;This paragraph shows how text flows within the content area. Notice how it wraps naturally when it reaches the edge of the content box.&lt;/p&gt;
   &lt;img src="example.jpg" alt="Sample image" width="200"&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.content-demo {
+    <pre><code>.content-demo {
   width: 400px;
   background-color: #f5f5f5;
   border: 1px dashed #999; /* Just for visualization */
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h2 id="padding-layer">PADDING LAYER</h2>
-        <p>Padding is the <strong>space between the content and its border</strong>. Think of it as the cushioning
-            around your content—it creates breathing room inside the element.</p>
+    <h2 id="padding-layer">PADDING LAYER</h2>
+    <p>Padding is the <strong>space between the content and its border</strong>. Think of it as the cushioning
+      around your content—it creates breathing room inside the element.</p>
 
-        <h4>Key Characteristics:</h4>
-        <ul>
-            <li>Padding is <strong>inside</strong> the border</li>
-            <li>Padding takes the <strong>background color</strong> of the element</li>
-            <li>Padding <strong>increases the total visible size</strong> of the element</li>
-            <li>Padding cannot be negative</li>
-            <li>Padding is transparent (shows the background)</li>
-        </ul>
+    <h4>Key Characteristics:</h4>
+    <ul>
+      <li>Padding is <strong>inside</strong> the border</li>
+      <li>Padding takes the <strong>background color</strong> of the element</li>
+      <li>Padding <strong>increases the total visible size</strong> of the element</li>
+      <li>Padding cannot be negative</li>
+      <li>Padding is transparent (shows the background)</li>
+    </ul>
 
-        <h4>Padding Properties:</h4>
-        <table>
-            <tr>
-                <th>Property</th>
-                <th>Description</th>
-                <th>Example</th>
-            </tr>
-            <tr>
-                <td><code>padding-top</code></td>
-                <td>Space above content</td>
-                <td><code>padding-top: 10px;</code></td>
-            </tr>
-            <tr>
-                <td><code>padding-right</code></td>
-                <td>Space to the right of content</td>
-                <td><code>padding-right: 15px;</code></td>
-            </tr>
-            <tr>
-                <td><code>padding-bottom</code></td>
-                <td>Space below content</td>
-                <td><code>padding-bottom: 10px;</code></td>
-            </tr>
-            <tr>
-                <td><code>padding-left</code></td>
-                <td>Space to the left of content</td>
-                <td><code>padding-left: 15px;</code></td>
-            </tr>
-            <tr>
-                <td><code>padding</code></td>
-                <td>Shorthand for all four sides</td>
-                <td><code>padding: 10px 15px;</code></td>
-            </tr>
-        </table>
+    <h4>Padding Properties:</h4>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Example</th>
+      </tr>
+      <tr>
+        <td><code>padding-top</code></td>
+        <td>Space above content</td>
+        <td><code>padding-top: 10px;</code></td>
+      </tr>
+      <tr>
+        <td><code>padding-right</code></td>
+        <td>Space to the right of content</td>
+        <td><code>padding-right: 15px;</code></td>
+      </tr>
+      <tr>
+        <td><code>padding-bottom</code></td>
+        <td>Space below content</td>
+        <td><code>padding-bottom: 10px;</code></td>
+      </tr>
+      <tr>
+        <td><code>padding-left</code></td>
+        <td>Space to the left of content</td>
+        <td><code>padding-left: 15px;</code></td>
+      </tr>
+      <tr>
+        <td><code>padding</code></td>
+        <td>Shorthand for all four sides</td>
+        <td><code>padding: 10px 15px;</code></td>
+      </tr>
+    </table>
 
-        <h4>Padding Shorthand Syntax:</h4>
-        <pre><code>/* All four sides equal */
+    <h4>Padding Shorthand Syntax:</h4>
+    <pre><code>/* All four sides equal */
 .element {
   padding: 20px; /* Top, Right, Bottom, Left all 20px */
 }
@@ -375,8 +375,8 @@
 }
 </code></pre>
 
-        <h4>Visualizing Padding:</h4>
-        <pre><code>.button {
+    <h4>Visualizing Padding:</h4>
+    <pre><code>.button {
   /* Without padding - text feels cramped */
   background-color: #007bff;
   color: white;
@@ -392,8 +392,8 @@
 }
 </code></pre>
 
-        <h4>Padding with Different Units:</h4>
-        <pre><code>.padding-examples {
+    <h4>Padding with Different Units:</h4>
+    <pre><code>.padding-examples {
   /* Fixed padding */
   .fixed { padding: 20px; }
   
@@ -408,68 +408,69 @@
 }
 </code></pre>
 
-        <h4>Common Use Cases for Padding:</h4>
-        <ol>
-            <li><strong>Buttons and interactive elements</strong> - Make them easier to click</li>
-            <li><strong>Cards and containers</strong> - Prevent content from touching edges</li>
-            <li><strong>Text blocks</strong> - Improve readability</li>
-            <li><strong>Form inputs</strong> - Better user experience</li>
-            <li><strong>Navigation menus</strong> - Larger click targets</li>
-        </ol>
+    <h4>Common Use Cases for Padding:</h4>
+    <ol>
+      <li><strong>Buttons and interactive elements</strong> - Make them easier to click</li>
+      <li><strong>Cards and containers</strong> - Prevent content from touching edges</li>
+      <li><strong>Text blocks</strong> - Improve readability</li>
+      <li><strong>Form inputs</strong> - Better user experience</li>
+      <li><strong>Navigation menus</strong> - Larger click targets</li>
+    </ol>
 
-        <hr>
+    <hr>
 
-        <h2 id="border-layer">BORDER LAYER</h2>
-        <p>The border is the <strong>visible or invisible edge</strong> surrounding the padding (or content if padding
-            is 0). It's the actual "box" part of the box model.</p>
+    <h2 id="border-layer">BORDER LAYER</h2>
+    <p>The border is the <strong>visible or invisible edge</strong> surrounding the padding (or content if padding
+      is 0). It's the actual "box" part of the box model.</p>
 
-        <h4>Key Characteristics:</h4>
-        <ul>
-            <li>Borders sit <strong>between padding and margin</strong></li>
-            <li>Borders can be <strong>styled, colored, and sized</strong></li>
-            <li>Borders <strong>add to the total width/height</strong> of the element</li>
-            <li>Borders are visible by default (if style is set)</li>
-            <li>Multiple border sides can be styled independently</li>
-        </ul>
+    <h4>Key Characteristics:</h4>
+    <ul>
+      <li>Borders sit <strong>between padding and margin</strong></li>
+      <li>Borders can be <strong>styled, colored, and sized</strong></li>
+      <li>Borders <strong>add to the total width/height</strong> of the element</li>
+      <li>Borders are visible by default (if style is set)</li>
+      <li>Multiple border sides can be styled independently</li>
+    </ul>
 
-        <h4>Border Properties:</h4>
-        <table>
-            <tr>
-                <th>Property</th>
-                <th>Description</th>
-                <th>Values</th>
-            </tr>
-            <tr>
-                <td><code>border-width</code></td>
-                <td>Thickness of the border</td>
-                <td><code>thin</code>, <code>medium</code>, <code>thick</code>, or specific units (px, em)</td>
-            </tr>
-            <tr>
-                <td><code>border-style</code></td>
-                <td>Pattern of the border</td>
-                <td><code>none</code>, <code>solid</code>, <code>dashed</code>, <code>dotted</code>,
-                    <code>double</code>, <code>groove</code>, <code>ridge</code>, <code>inset</code>,
-                    <code>outset</code></td>
-            </tr>
-            <tr>
-                <td><code>border-color</code></td>
-                <td>Color of the border</td>
-                <td>Any valid color value</td>
-            </tr>
-            <tr>
-                <td><code>border</code></td>
-                <td>Shorthand for all three</td>
-                <td><code>border: 2px solid black;</code></td>
-            </tr>
-            <tr>
-                <td><code>border-radius</code></td>
-                <td>Rounds the corners</td>
-                <td>Units or percentages</td>
-            </tr>
-        </table>
+    <h4>Border Properties:</h4>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Values</th>
+      </tr>
+      <tr>
+        <td><code>border-width</code></td>
+        <td>Thickness of the border</td>
+        <td><code>thin</code>, <code>medium</code>, <code>thick</code>, or specific units (px, em)</td>
+      </tr>
+      <tr>
+        <td><code>border-style</code></td>
+        <td>Pattern of the border</td>
+        <td><code>none</code>, <code>solid</code>, <code>dashed</code>, <code>dotted</code>,
+          <code>double</code>, <code>groove</code>, <code>ridge</code>, <code>inset</code>,
+          <code>outset</code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>border-color</code></td>
+        <td>Color of the border</td>
+        <td>Any valid color value</td>
+      </tr>
+      <tr>
+        <td><code>border</code></td>
+        <td>Shorthand for all three</td>
+        <td><code>border: 2px solid black;</code></td>
+      </tr>
+      <tr>
+        <td><code>border-radius</code></td>
+        <td>Rounds the corners</td>
+        <td>Units or percentages</td>
+      </tr>
+    </table>
 
-        <h4>Border Shorthand and Longhand:</h4>
-        <pre><code>/* Longhand - verbose but clear */
+    <h4>Border Shorthand and Longhand:</h4>
+    <pre><code>/* Longhand - verbose but clear */
 .longhand-border {
   border-width: 3px;
   border-style: dashed;
@@ -490,8 +491,8 @@
 }
 </code></pre>
 
-        <h4>Border Styles Demonstrated:</h4>
-        <pre><code>.border-style-demo {
+    <h4>Border Styles Demonstrated:</h4>
+    <pre><code>.border-style-demo {
   margin: 10px;
   padding: 10px;
   width: 200px;
@@ -507,8 +508,8 @@
 .outset { border: 5px outset #cccccc; }
 </code></pre>
 
-        <h4>Border Radius - Rounded Corners:</h4>
-        <pre><code>.rounded-corners {
+    <h4>Border Radius - Rounded Corners:</h4>
+    <pre><code>.rounded-corners {
   border: 2px solid #333;
   
   /* All corners same */
@@ -529,8 +530,8 @@
 }
 </code></pre>
 
-        <h4>Advanced Border Techniques:</h4>
-        <pre><code>/* Transparent border for spacing */
+    <h4>Advanced Border Techniques:</h4>
+    <pre><code>/* Transparent border for spacing */
 .transparent-border {
   border: 20px solid transparent;
 }
@@ -548,57 +549,57 @@
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h2 id="margin-layer">MARGIN LAYER</h2>
-        <p>Margin is the <strong>outermost layer</strong>—the invisible space that separates an element from its
-            neighbors. Think of it as personal space for your HTML elements.</p>
+    <h2 id="margin-layer">MARGIN LAYER</h2>
+    <p>Margin is the <strong>outermost layer</strong>—the invisible space that separates an element from its
+      neighbors. Think of it as personal space for your HTML elements.</p>
 
-        <h4>Key Characteristics:</h4>
-        <ul>
-            <li>Margin is <strong>outside the border</strong></li>
-            <li>Margin is <strong>transparent</strong> (shows parent background)</li>
-            <li>Margin <strong>adds space between elements</strong></li>
-            <li>Margins can be <strong>negative</strong> (pull elements closer)</li>
-            <li>Margins <strong>collapse</strong> (special behavior we'll explore)</li>
-        </ul>
+    <h4>Key Characteristics:</h4>
+    <ul>
+      <li>Margin is <strong>outside the border</strong></li>
+      <li>Margin is <strong>transparent</strong> (shows parent background)</li>
+      <li>Margin <strong>adds space between elements</strong></li>
+      <li>Margins can be <strong>negative</strong> (pull elements closer)</li>
+      <li>Margins <strong>collapse</strong> (special behavior we'll explore)</li>
+    </ul>
 
-        <h4>Margin Properties:</h4>
-        <table>
-            <tr>
-                <th>Property</th>
-                <th>Description</th>
-                <th>Example</th>
-            </tr>
-            <tr>
-                <td><code>margin-top</code></td>
-                <td>Space above element</td>
-                <td><code>margin-top: 20px;</code></td>
-            </tr>
-            <tr>
-                <td><code>margin-right</code></td>
-                <td>Space to the right</td>
-                <td><code>margin-right: 15px;</code></td>
-            </tr>
-            <tr>
-                <td><code>margin-bottom</code></td>
-                <td>Space below element</td>
-                <td><code>margin-bottom: 20px;</code></td>
-            </tr>
-            <tr>
-                <td><code>margin-left</code></td>
-                <td>Space to the left</td>
-                <td><code>margin-left: 15px;</code></td>
-            </tr>
-            <tr>
-                <td><code>margin</code></td>
-                <td>Shorthand for all sides</td>
-                <td><code>margin: 10px 20px;</code></td>
-            </tr>
-        </table>
+    <h4>Margin Properties:</h4>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Example</th>
+      </tr>
+      <tr>
+        <td><code>margin-top</code></td>
+        <td>Space above element</td>
+        <td><code>margin-top: 20px;</code></td>
+      </tr>
+      <tr>
+        <td><code>margin-right</code></td>
+        <td>Space to the right</td>
+        <td><code>margin-right: 15px;</code></td>
+      </tr>
+      <tr>
+        <td><code>margin-bottom</code></td>
+        <td>Space below element</td>
+        <td><code>margin-bottom: 20px;</code></td>
+      </tr>
+      <tr>
+        <td><code>margin-left</code></td>
+        <td>Space to the left</td>
+        <td><code>margin-left: 15px;</code></td>
+      </tr>
+      <tr>
+        <td><code>margin</code></td>
+        <td>Shorthand for all sides</td>
+        <td><code>margin: 10px 20px;</code></td>
+      </tr>
+    </table>
 
-        <h4>Margin Shorthand (Same Pattern as Padding):</h4>
-        <pre><code>/* All sides */
+    <h4>Margin Shorthand (Same Pattern as Padding):</h4>
+    <pre><code>/* All sides */
 .all-sides {
   margin: 20px;
 }
@@ -625,8 +626,8 @@
 }
 </code></pre>
 
-        <h4>Negative Margins:</h4>
-        <pre><code>/* Negative margins pull elements in opposite directions */
+    <h4>Negative Margins:</h4>
+    <pre><code>/* Negative margins pull elements in opposite directions */
 .negative-margin {
   margin-top: -20px; /* Pulls element upward */
   margin-left: -10px; /* Pulls element leftward */
@@ -648,10 +649,10 @@
 }
 </code></pre>
 
-        <h4>Margin Collapse - Critical Concept:</h4>
-        <p>Margin collapse is a unique behavior where vertical margins of adjacent elements combine into a single
-            margin.</p>
-        <pre><code>/* Example of margin collapse */
+    <h4>Margin Collapse - Critical Concept:</h4>
+    <p>Margin collapse is a unique behavior where vertical margins of adjacent elements combine into a single
+      margin.</p>
+    <pre><code>/* Example of margin collapse */
 .box-a {
   margin-bottom: 30px;
 }
@@ -663,13 +664,13 @@
 /* The space between box-a and box-b will be 30px (not 50px) */
 /* The larger margin wins - this is margin collapse */
 </code></pre>
-        <p><strong>Three Cases of Margin Collapse:</strong></p>
-        <ol>
-            <li><strong>Adjacent siblings</strong> - Margins collapse between them</li>
-            <li><strong>Parent and first/last child</strong> - Margins can collapse through the parent</li>
-            <li><strong>Empty blocks</strong> - Their own top and bottom margins collapse</li>
-        </ol>
-        <pre><code>/* Preventing margin collapse */
+    <p><strong>Three Cases of Margin Collapse:</strong></p>
+    <ol>
+      <li><strong>Adjacent siblings</strong> - Margins collapse between them</li>
+      <li><strong>Parent and first/last child</strong> - Margins can collapse through the parent</li>
+      <li><strong>Empty blocks</strong> - Their own top and bottom margins collapse</li>
+    </ol>
+    <pre><code>/* Preventing margin collapse */
 .prevent-collapse {
   /* Add any of these to the parent: */
   padding: 1px; /* Even 1px prevents collapse */
@@ -679,21 +680,21 @@
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="size-effects">3. HOW EACH LAYER AFFECTS ELEMENT SIZE</h1>
-        <p>Understanding how each layer contributes to the total size of an element is crucial for precise layouts.</p>
+    <h1 id="size-effects">3. HOW EACH LAYER AFFECTS ELEMENT SIZE</h1>
+    <p>Understanding how each layer contributes to the total size of an element is crucial for precise layouts.</p>
 
-        <h3>The Total Width Calculation</h3>
-        <p><strong>Standard Box Model (default):</strong></p>
-        <pre><code>Total width = width + padding-left + padding-right + border-left + border-right
+    <h3>The Total Width Calculation</h3>
+    <p><strong>Standard Box Model (default):</strong></p>
+    <pre><code>Total width = width + padding-left + padding-right + border-left + border-right
 Total height = height + padding-top + padding-bottom + border-top + border-bottom
 </code></pre>
-        <p><strong>Important:</strong> Margin is NOT included in the element's total dimensions—it affects spacing, not
-            the element's actual size.</p>
+    <p><strong>Important:</strong> Margin is NOT included in the element's total dimensions—it affects spacing, not
+      the element's actual size.</p>
 
-        <h3>Visual Formula:</h3>
-        <pre><code>┌─────────────────────────────────┐
+    <h3>Visual Formula:</h3>
+    <pre><code>┌─────────────────────────────────┐
 │ MARGIN (outer space)            │
 │  ┌───────────────────────────┐  │
 │  │ BORDER                    │  │
@@ -711,9 +712,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 └─────────────────────────────────┘
 </code></pre>
 
-        <h3>Step-by-Step Size Calculation Examples:</h3>
-        <h4>Example 1: Basic Calculation</h4>
-        <pre><code>.example-1 {
+    <h3>Step-by-Step Size Calculation Examples:</h3>
+    <h4>Example 1: Basic Calculation</h4>
+    <pre><code>.example-1 {
   width: 200px;
   padding: 20px;
   border: 5px solid black;
@@ -730,8 +731,8 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h4>Example 2: Different Padding Per Side</h4>
-        <pre><code>.example-2 {
+    <h4>Example 2: Different Padding Per Side</h4>
+    <pre><code>.example-2 {
   width: 300px;
   padding: 10px 20px 30px 40px; /* top, right, bottom, left */
   border: 3px solid blue;
@@ -747,8 +748,8 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h4>Example 3: Zero Width with Padding</h4>
-        <pre><code>.example-3 {
+    <h4>Example 3: Zero Width with Padding</h4>
+    <pre><code>.example-3 {
   width: 0;
   padding: 50px;
   border: 10px solid red;
@@ -764,8 +765,8 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h4>Example 4: Percentage-Based Sizing</h4>
-        <pre><code>.parent {
+    <h4>Example 4: Percentage-Based Sizing</h4>
+    <pre><code>.parent {
   width: 500px;
 }
 
@@ -783,9 +784,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>Impact on Height (Similar but Different)</h3>
-        <p>Height calculations follow the same principles but are often more unpredictable due to content flow.</p>
-        <pre><code>.height-example {
+    <h3>Impact on Height (Similar but Different)</h3>
+    <p>Height calculations follow the same principles but are often more unpredictable due to content flow.</p>
+    <pre><code>.height-example {
   width: 200px;
   height: 100px;
   padding: 20px;
@@ -810,9 +811,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>The <code>box-sizing</code> Property - Game Changer</h3>
-        <p>The <code>box-sizing</code> property fundamentally changes how sizes are calculated:</p>
-        <pre><code>/* Default - traditional box model */
+    <h3>The <code>box-sizing</code> Property - Game Changer</h3>
+    <p>The <code>box-sizing</code> property fundamentally changes how sizes are calculated:</p>
+    <pre><code>/* Default - traditional box model */
 .standard-box {
   box-sizing: content-box;
   width: 200px;
@@ -836,39 +837,39 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
   box-sizing: border-box;
 }
 </code></pre>
-        <p><strong>Comparison Table:</strong></p>
-        <table>
-            <tr>
-                <th>Property</th>
-                <th>Content Width</th>
-                <th>Padding</th>
-                <th>Border</th>
-                <th>Total Width</th>
-            </tr>
-            <tr>
-                <td><code>content-box</code></td>
-                <td>200px</td>
-                <td>+40px</td>
-                <td>+10px</td>
-                <td>250px</td>
-            </tr>
-            <tr>
-                <td><code>border-box</code></td>
-                <td>150px</td>
-                <td>40px</td>
-                <td>10px</td>
-                <td>200px</td>
-            </tr>
-        </table>
+    <p><strong>Comparison Table:</strong></p>
+    <table>
+      <tr>
+        <th>Property</th>
+        <th>Content Width</th>
+        <th>Padding</th>
+        <th>Border</th>
+        <th>Total Width</th>
+      </tr>
+      <tr>
+        <td><code>content-box</code></td>
+        <td>200px</td>
+        <td>+40px</td>
+        <td>+10px</td>
+        <td>250px</td>
+      </tr>
+      <tr>
+        <td><code>border-box</code></td>
+        <td>150px</td>
+        <td>40px</td>
+        <td>10px</td>
+        <td>200px</td>
+      </tr>
+    </table>
 
-        <hr>
+    <hr>
 
-        <h1 id="spacing-effects">4. HOW EACH LAYER AFFECTS ELEMENT SPACING</h1>
-        <p>Spacing is about the relationships between elements on your page. Each layer contributes differently to these
-            relationships.</p>
+    <h1 id="spacing-effects">4. HOW EACH LAYER AFFECTS ELEMENT SPACING</h1>
+    <p>Spacing is about the relationships between elements on your page. Each layer contributes differently to these
+      relationships.</p>
 
-        <h3>Internal vs. External Spacing</h3>
-        <pre><code>.spacing-concepts {
+    <h3>Internal vs. External Spacing</h3>
+    <pre><code>.spacing-concepts {
   /* Internal spacing (inside the element) */
   padding: 20px; /* Creates space INSIDE, pushes content inward */
   
@@ -880,9 +881,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>How Padding Affects Spacing</h3>
-        <p>Padding creates breathing room <strong>inside</strong> your element:</p>
-        <pre><code>.card {
+    <h3>How Padding Affects Spacing</h3>
+    <p>Padding creates breathing room <strong>inside</strong> your element:</p>
+    <pre><code>.card {
   width: 300px;
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -905,9 +906,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>How Border Affects Spacing</h3>
-        <p>Border creates a <strong>visual separator</strong> and adds to the physical space an element occupies:</p>
-        <pre><code>.separator-examples {
+    <h3>How Border Affects Spacing</h3>
+    <p>Border creates a <strong>visual separator</strong> and adds to the physical space an element occupies:</p>
+    <pre><code>.separator-examples {
   /* Border adds to space without affecting internal layout much */
   border: 2px solid #ccc;
 }
@@ -926,9 +927,9 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>How Margin Affects Spacing</h3>
-        <p>Margin controls the <strong>space between elements</strong>:</p>
-        <pre><code>.container {
+    <h3>How Margin Affects Spacing</h3>
+    <p>Margin controls the <strong>space between elements</strong>:</p>
+    <pre><code>.container {
   width: 600px;
   background: #f0f0f0;
   padding: 20px; /* Creates space INSIDE container */
@@ -958,8 +959,8 @@ Total height = height + padding-top + padding-bottom + border-top + border-botto
 }
 </code></pre>
 
-        <h3>Spacing Relationships Diagram</h3>
-        <pre><code>Without spacing:
+    <h3>Spacing Relationships Diagram</h3>
+    <pre><code>Without spacing:
 [Box1][Box2][Box3]
 
 With margin: 10px:
@@ -976,9 +977,9 @@ With padding inside containers:
 └─────────────┘
 </code></pre>
 
-        <h3>Complex Spacing Examples</h3>
-        <h4>Example: Navigation Menu</h4>
-        <pre><code>.nav-menu {
+    <h3>Complex Spacing Examples</h3>
+    <h4>Example: Navigation Menu</h4>
+    <pre><code>.nav-menu {
   background: #333;
   padding: 10px; /* Space inside nav bar */
 }
@@ -997,8 +998,8 @@ With padding inside containers:
 }
 </code></pre>
 
-        <h4>Example: Card Grid with Proper Spacing</h4>
-        <pre><code>.card-grid {
+    <h4>Example: Card Grid with Proper Spacing</h4>
+    <pre><code>.card-grid {
   display: flex;
   flex-wrap: wrap;
   margin: -10px; /* Compensates for card margins */
@@ -1013,8 +1014,8 @@ With padding inside containers:
 }
 </code></pre>
 
-        <h4>Example: Form Layout Spacing</h4>
-        <pre><code>.form-group {
+    <h4>Example: Form Layout Spacing</h4>
+    <pre><code>.form-group {
   margin-bottom: 20px; /* Space between form fields */
 }
 
@@ -1039,9 +1040,9 @@ input, textarea {
 }
 </code></pre>
 
-        <h3>Margin Collapse in Depth</h3>
-        <p>Margin collapse is one of the most misunderstood aspects of CSS spacing:</p>
-        <pre><code>/* DEMONSTRATING MARGIN COLLAPSE */
+    <h3>Margin Collapse in Depth</h3>
+    <p>Margin collapse is one of the most misunderstood aspects of CSS spacing:</p>
+    <pre><code>/* DEMONSTRATING MARGIN COLLAPSE */
 
 .parent {
   margin: 20px 0;
@@ -1086,8 +1087,8 @@ h2 {
 /* Top and bottom margins collapse into single 20px margin */
 </code></pre>
 
-        <h3>Preventing Unwanted Spacing Issues</h3>
-        <pre><code>/* Solution 1: Use padding instead of margin on containers */
+    <h3>Preventing Unwanted Spacing Issues</h3>
+    <pre><code>/* Solution 1: Use padding instead of margin on containers */
 .container {
   padding: 1px; /* Prevents margin collapse */
 }
@@ -1109,12 +1110,12 @@ h2 {
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="visual-representations">5. VISUAL REPRESENTATIONS AND DIAGRAMS</h1>
+    <h1 id="visual-representations">5. VISUAL REPRESENTATIONS AND DIAGRAMS</h1>
 
-        <h3>ASCII Art Box Model</h3>
-        <pre><code>HORIZONTAL DIMENSIONS:
+    <h3>ASCII Art Box Model</h3>
+    <pre><code>HORIZONTAL DIMENSIONS:
 ←────────────────── total width ──────────────────→
 ┌───────────┬───────────────────────────┬───────────┐
 │           │           BORDER          │           │
@@ -1131,8 +1132,8 @@ h2 {
 └───────────┴───────────────────────────┴───────────┘
 </code></pre>
 
-        <h3>Color-Coded Visual Guide</h3>
-        <pre><code>/* Use this CSS to visualize the box model */
+    <h3>Color-Coded Visual Guide</h3>
+    <pre><code>/* Use this CSS to visualize the box model */
 .visualize-box {
   width: 300px;
   padding: 30px;
@@ -1145,8 +1146,8 @@ h2 {
 }
 </code></pre>
 
-        <h3>Detailed Layer Breakdown</h3>
-        <pre><code>LAYER 4: MARGIN (Outer space)
+    <h3>Detailed Layer Breakdown</h3>
+    <pre><code>LAYER 4: MARGIN (Outer space)
 ├─ Color: Transparent (shows parent background)
 ├─ Function: Separates from other elements
 ├─ Can be negative
@@ -1171,8 +1172,8 @@ LAYER 1: CONTENT (Core)
 └─ Where text and images live
 </code></pre>
 
-        <h3>Box Model Visualization Cheat Sheet</h3>
-        <pre><code>/* QUICK REFERENCE - Copy this to inspect any element */
+    <h3>Box Model Visualization Cheat Sheet</h3>
+    <pre><code>/* QUICK REFERENCE - Copy this to inspect any element */
 .inspect-box {
   /* Content */
   width: 200px;
@@ -1193,12 +1194,12 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="practical-examples">6. PRACTICAL EXAMPLES AND CODE DEMONSTRATIONS</h1>
+    <h1 id="practical-examples">6. PRACTICAL EXAMPLES AND CODE DEMONSTRATIONS</h1>
 
-        <h3>Example 1: Building a Card Component</h3>
-        <pre><code>&lt;div class="card"&gt;
+    <h3>Example 1: Building a Card Component</h3>
+    <pre><code>&lt;div class="card"&gt;
   &lt;img src="product.jpg" alt="Product" class="card-image"&gt;
   &lt;div class="card-content"&gt;
     &lt;h3 class="card-title"&gt;Product Name&lt;/h3&gt;
@@ -1210,7 +1211,7 @@ LAYER 1: CONTENT (Core)
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>/* Base card styles */
+    <pre><code>/* Base card styles */
 .card {
   width: 300px;
   background: white;
@@ -1289,8 +1290,8 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h3>Example 2: Building a Comment Section</h3>
-        <pre><code>&lt;div class="comment-section"&gt;
+    <h3>Example 2: Building a Comment Section</h3>
+    <pre><code>&lt;div class="comment-section"&gt;
   &lt;h2 class="section-title"&gt;Comments (3)&lt;/h2&gt;
   
   &lt;div class="comment"&gt;
@@ -1310,7 +1311,7 @@ LAYER 1: CONTENT (Core)
   &lt;!-- More comments... --&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.comment-section {
+    <pre><code>.comment-section {
   max-width: 600px;
   margin: 0 auto;
   padding: 30px;
@@ -1403,8 +1404,8 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h3>Example 3: Newsletter Signup Form</h3>
-        <pre><code>&lt;div class="newsletter"&gt;
+    <h3>Example 3: Newsletter Signup Form</h3>
+    <pre><code>&lt;div class="newsletter"&gt;
   &lt;h3 class="newsletter-title"&gt;Subscribe to Our Newsletter&lt;/h3&gt;
   &lt;p class="newsletter-description"&gt;Get the latest updates directly in your inbox.&lt;/p&gt;
   
@@ -1425,7 +1426,7 @@ LAYER 1: CONTENT (Core)
   &lt;/form&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.newsletter {
+    <pre><code>.newsletter {
   max-width: 500px;
   margin: 40px auto;
   padding: 40px;
@@ -1524,8 +1525,8 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h3>Example 4: Pricing Table</h3>
-        <pre><code>&lt;div class="pricing-table"&gt;
+    <h3>Example 4: Pricing Table</h3>
+    <pre><code>&lt;div class="pricing-table"&gt;
   &lt;div class="pricing-card basic"&gt;
     &lt;h3 class="plan-name"&gt;Basic&lt;/h3&gt;
     &lt;div class="price"&gt;$9&lt;span class="price-period"&gt;/mo&lt;/span&gt;&lt;/div&gt;
@@ -1561,7 +1562,7 @@ LAYER 1: CONTENT (Core)
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.pricing-table {
+    <pre><code>.pricing-table {
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -1670,8 +1671,8 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h3>Example 5: Blog Post Layout</h3>
-        <pre><code>&lt;article class="blog-post"&gt;
+    <h3>Example 5: Blog Post Layout</h3>
+    <pre><code>&lt;article class="blog-post"&gt;
   &lt;header class="post-header"&gt;
     &lt;h1 class="post-title"&gt;Understanding the CSS Box Model&lt;/h1&gt;
     &lt;div class="post-meta"&gt;
@@ -1723,7 +1724,7 @@ LAYER 1: CONTENT (Core)
   &lt;/footer&gt;
 &lt;/article&gt;
 </code></pre>
-        <pre><code>.blog-post {
+    <pre><code>.blog-post {
   max-width: 800px;
   margin: 40px auto;
   padding: 40px;
@@ -1893,39 +1894,39 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="dev-tools">7. USING BROWSER DEVELOPER TOOLS TO INSPECT THE BOX MODEL</h1>
-        <p>Browser developer tools are <strong>essential</strong> for understanding and debugging the box model. Let's
-            explore how to use them effectively.</p>
+    <h1 id="dev-tools">7. USING BROWSER DEVELOPER TOOLS TO INSPECT THE BOX MODEL</h1>
+    <p>Browser developer tools are <strong>essential</strong> for understanding and debugging the box model. Let's
+      explore how to use them effectively.</p>
 
-        <h3>Google Chrome DevTools - Detailed Guide</h3>
-        <h4>Opening DevTools:</h4>
-        <ul>
-            <li><strong>Right-click</strong> any element → <strong>Inspect</strong></li>
-            <li><strong>F12</strong> or <strong>Ctrl+Shift+I</strong> (Windows/Linux)</li>
-            <li><strong>Cmd+Option+I</strong> (Mac)</li>
-            <li><strong>View</strong> → <strong>Developer</strong> → <strong>Developer Tools</strong></li>
-        </ul>
+    <h3>Google Chrome DevTools - Detailed Guide</h3>
+    <h4>Opening DevTools:</h4>
+    <ul>
+      <li><strong>Right-click</strong> any element → <strong>Inspect</strong></li>
+      <li><strong>F12</strong> or <strong>Ctrl+Shift+I</strong> (Windows/Linux)</li>
+      <li><strong>Cmd+Option+I</strong> (Mac)</li>
+      <li><strong>View</strong> → <strong>Developer</strong> → <strong>Developer Tools</strong></li>
+    </ul>
 
-        <h4>Accessing the Box Model Visualizer:</h4>
-        <p><strong>Method 1: Computed Styles Panel</strong></p>
-        <ol>
-            <li>Open DevTools</li>
-            <li>Click the <strong>Elements</strong> tab</li>
-            <li>Select an element</li>
-            <li>Click the <strong>Computed</strong> tab in the right panel</li>
-            <li>Scroll down to find the <strong>Box Model</strong> diagram</li>
-        </ol>
-        <p><strong>Method 2: Styles Panel</strong></p>
-        <ol>
-            <li>Select an element in the Elements panel</li>
-            <li>Look at the <strong>Styles</strong> tab</li>
-            <li>Scroll to the bottom where you'll see the box model visualization</li>
-        </ol>
+    <h4>Accessing the Box Model Visualizer:</h4>
+    <p><strong>Method 1: Computed Styles Panel</strong></p>
+    <ol>
+      <li>Open DevTools</li>
+      <li>Click the <strong>Elements</strong> tab</li>
+      <li>Select an element</li>
+      <li>Click the <strong>Computed</strong> tab in the right panel</li>
+      <li>Scroll down to find the <strong>Box Model</strong> diagram</li>
+    </ol>
+    <p><strong>Method 2: Styles Panel</strong></p>
+    <ol>
+      <li>Select an element in the Elements panel</li>
+      <li>Look at the <strong>Styles</strong> tab</li>
+      <li>Scroll to the bottom where you'll see the box model visualization</li>
+    </ol>
 
-        <h3>The Box Model Diagram in DevTools</h3>
-        <pre><code>Chrome DevTools Box Model Display:
+    <h3>The Box Model Diagram in DevTools</h3>
+    <pre><code>Chrome DevTools Box Model Display:
 ┌─────────────────────────────────┐
 │ margin: 30px                    │
 │  ┌───────────────────────────┐  │
@@ -1941,9 +1942,9 @@ LAYER 1: CONTENT (Core)
 └─────────────────────────────────┘
 </code></pre>
 
-        <h3>Step-by-Step Inspection Process</h3>
-        <h4>1. Basic Element Inspection</h4>
-        <pre><code>&lt;!-- Sample element to inspect --&gt;
+    <h3>Step-by-Step Inspection Process</h3>
+    <h4>1. Basic Element Inspection</h4>
+    <pre><code>&lt;!-- Sample element to inspect --&gt;
 &lt;div class="inspect-me" style="
   width: 200px;
   height: 100px;
@@ -1955,18 +1956,18 @@ LAYER 1: CONTENT (Core)
   Inspect Me!
 &lt;/div&gt;
 </code></pre>
-        <p><strong>What you'll see in DevTools:</strong></p>
-        <ul>
-            <li>The diagram will show:</li>
-            <li>Content: 200x100</li>
-            <li>Padding: +20px all sides</li>
-            <li>Border: +5px all sides</li>
-            <li>Total: 250x150 (excluding margin)</li>
-            <li>Margin: 30px all sides</li>
-        </ul>
+    <p><strong>What you'll see in DevTools:</strong></p>
+    <ul>
+      <li>The diagram will show:</li>
+      <li>Content: 200x100</li>
+      <li>Padding: +20px all sides</li>
+      <li>Border: +5px all sides</li>
+      <li>Total: 250x150 (excluding margin)</li>
+      <li>Margin: 30px all sides</li>
+    </ul>
 
-        <h4>2. Interactive Features of the Box Model Viewer</h4>
-        <pre><code>/* Try hovering over different parts of the diagram */
+    <h4>2. Interactive Features of the Box Model Viewer</h4>
+    <pre><code>/* Try hovering over different parts of the diagram */
 .hover-effects {
   /* Hover over margin in devtools → highlights margin area blue */
   margin: 40px;
@@ -1983,9 +1984,9 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h4>3. Real-Time Editing</h4>
-        <p>You can <strong>edit values directly</strong> in DevTools to see instant effects:</p>
-        <pre><code>/* In DevTools Styles panel, you can: */
+    <h4>3. Real-Time Editing</h4>
+    <p>You can <strong>edit values directly</strong> in DevTools to see instant effects:</p>
+    <pre><code>/* In DevTools Styles panel, you can: */
 .target-element {
   /* Click on any value to change it */
   padding: 20px;  /* Try changing to 40px instantly */
@@ -2001,13 +2002,13 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h3>Practical DevTools Exercises</h3>
-        <h4>Exercise 1: Identify Box Model Issues</h4>
-        <pre><code>&lt;div class="problematic-element"&gt;
+    <h3>Practical DevTools Exercises</h3>
+    <h4>Exercise 1: Identify Box Model Issues</h4>
+    <pre><code>&lt;div class="problematic-element"&gt;
   This element has box model problems!
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.problematic-element {
+    <pre><code>.problematic-element {
   width: 300px;
   padding: 20px;
   border: 5px solid black;
@@ -2015,21 +2016,21 @@ LAYER 1: CONTENT (Core)
   /* Use DevTools to see the actual calculation */
 }
 </code></pre>
-        <p><strong>Inspection Steps:</strong></p>
-        <ol>
-            <li>Right-click the element → Inspect</li>
-            <li>Go to Computed tab</li>
-            <li>Look at the actual rendered dimensions</li>
-            <li>See how padding and border added to the width</li>
-        </ol>
+    <p><strong>Inspection Steps:</strong></p>
+    <ol>
+      <li>Right-click the element → Inspect</li>
+      <li>Go to Computed tab</li>
+      <li>Look at the actual rendered dimensions</li>
+      <li>See how padding and border added to the width</li>
+    </ol>
 
-        <h4>Exercise 2: Debug Layout Shifts</h4>
-        <pre><code>&lt;div class="container"&gt;
+    <h4>Exercise 2: Debug Layout Shifts</h4>
+    <pre><code>&lt;div class="container"&gt;
   &lt;div class="box box1"&gt;Box 1&lt;/div&gt;
   &lt;div class="box box2"&gt;Box 2 with more content that wraps&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.container {
+    <pre><code>.container {
   display: flex;
   width: 500px;
   background: #f0f0f0;
@@ -2043,16 +2044,16 @@ LAYER 1: CONTENT (Core)
   margin: 10px;
 }
 </code></pre>
-        <p><strong>What to inspect:</strong></p>
-        <ul>
-            <li>Why don't boxes align properly?</li>
-            <li>Use DevTools to check each box's total width</li>
-            <li>See how padding affects available space</li>
-        </ul>
+    <p><strong>What to inspect:</strong></p>
+    <ul>
+      <li>Why don't boxes align properly?</li>
+      <li>Use DevTools to check each box's total width</li>
+      <li>See how padding affects available space</li>
+    </ul>
 
-        <h3>Advanced DevTools Features</h3>
-        <h4>1. Box Model Color Coding</h4>
-        <pre><code>/* In DevTools box model diagram: */
+    <h3>Advanced DevTools Features</h3>
+    <h4>1. Box Model Color Coding</h4>
+    <pre><code>/* In DevTools box model diagram: */
 .visual-cues {
   /* Orange: Margin area */
   margin: 30px;
@@ -2069,8 +2070,8 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h4>2. Layout Panel (Chrome)</h4>
-        <pre><code>/* Open Layout panel (newer Chrome versions) */
+    <h4>2. Layout Panel (Chrome)</h4>
+    <pre><code>/* Open Layout panel (newer Chrome versions) */
 .layout-panel-demo {
   /* Shows more detailed layout information */
   display: grid;
@@ -2082,15 +2083,15 @@ LAYER 1: CONTENT (Core)
 }
 </code></pre>
 
-        <h4>3. CSS Overview Panel</h4>
-        <pre><code>/* CSS Overview (three dots menu → More tools → CSS Overview) */
+    <h4>3. CSS Overview Panel</h4>
+    <pre><code>/* CSS Overview (three dots menu → More tools → CSS Overview) */
 /* Shows summary of all box model values used on the page */
 /* Great for auditing spacing consistency */
 </code></pre>
 
-        <h3>Firefox DevTools - Unique Features</h3>
-        <p>Firefox has excellent box model visualization:</p>
-        <pre><code>/* In Firefox, the box model is even more interactive */
+    <h3>Firefox DevTools - Unique Features</h3>
+    <p>Firefox has excellent box model visualization:</p>
+    <pre><code>/* In Firefox, the box model is even more interactive */
 .firefox-features {
   margin: 30px;
   border: 5px solid black;
@@ -2103,13 +2104,13 @@ LAYER 1: CONTENT (Core)
 /* 3. Better grid/flexbox integration */
 </code></pre>
 
-        <h3>Common Inspection Scenarios</h3>
-        <h4>Scenario 1: Unexpected Element Size</h4>
-        <pre><code>&lt;div class="parent"&gt;
+    <h3>Common Inspection Scenarios</h3>
+    <h4>Scenario 1: Unexpected Element Size</h4>
+    <pre><code>&lt;div class="parent"&gt;
   &lt;div class="child" style="width: 50%;"&gt;50% Child&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.parent {
+    <pre><code>.parent {
   width: 400px;
   padding: 20px;  /* Parent has padding */
 }
@@ -2120,22 +2121,22 @@ LAYER 1: CONTENT (Core)
   border: 1px solid black;
 }
 </code></pre>
-        <p><strong>Inspection steps:</strong></p>
-        <ol>
-            <li>Select the child element</li>
-            <li>Look at its computed width</li>
-            <li>See it's 50% of parent's content width (400px = 200px)</li>
-            <li>Add padding/border: actual width 222px</li>
-            <li>See it overflows parent!</li>
-        </ol>
+    <p><strong>Inspection steps:</strong></p>
+    <ol>
+      <li>Select the child element</li>
+      <li>Look at its computed width</li>
+      <li>See it's 50% of parent's content width (400px = 200px)</li>
+      <li>Add padding/border: actual width 222px</li>
+      <li>See it overflows parent!</li>
+    </ol>
 
-        <h4>Scenario 2: Margin Collapse Detection</h4>
-        <pre><code>&lt;div class="container"&gt;
+    <h4>Scenario 2: Margin Collapse Detection</h4>
+    <pre><code>&lt;div class="container"&gt;
   &lt;h1&gt;Title with margin-bottom: 30px&lt;/h1&gt;
   &lt;p&gt;Paragraph with margin-top: 20px&lt;/p&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>h1 {
+    <pre><code>h1 {
   margin-bottom: 30px;
 }
 
@@ -2143,19 +2144,19 @@ p {
   margin-top: 20px;
 }
 </code></pre>
-        <p><strong>What DevTools shows:</strong></p>
-        <ul>
-            <li>Space between elements is 30px, not 50px</li>
-            <li>Firefox shows margin collapse indicator</li>
-            <li>Chrome shows actual space in box model</li>
-        </ul>
+    <p><strong>What DevTools shows:</strong></p>
+    <ul>
+      <li>Space between elements is 30px, not 50px</li>
+      <li>Firefox shows margin collapse indicator</li>
+      <li>Chrome shows actual space in box model</li>
+    </ul>
 
-        <h4>Scenario 3: Inline vs Block Elements</h4>
-        <pre><code>&lt;span class="inline-element"&gt;This is inline&lt;/span&gt;
+    <h4>Scenario 3: Inline vs Block Elements</h4>
+    <pre><code>&lt;span class="inline-element"&gt;This is inline&lt;/span&gt;
 &lt;span class="inline-element"&gt;Another inline&lt;/span&gt;
 &lt;div class="block-element"&gt;This is block&lt;/div&gt;
 </code></pre>
-        <pre><code>.inline-element {
+    <pre><code>.inline-element {
   padding: 20px;  /* Padding works horizontally only */
   margin: 30px;   /* Margin works horizontally only */
   border: 2px solid black;  /* Border visible all around */
@@ -2166,14 +2167,14 @@ p {
   margin: 30px;   /* Margin works all sides */
 }
 </code></pre>
-        <p><strong>Inspection reveals:</strong></p>
-        <ul>
-            <li>Inline elements ignore top/bottom margin/padding for layout</li>
-            <li>DevTools shows this in the box model diagram</li>
-        </ul>
+    <p><strong>Inspection reveals:</strong></p>
+    <ul>
+      <li>Inline elements ignore top/bottom margin/padding for layout</li>
+      <li>DevTools shows this in the box model diagram</li>
+    </ul>
 
-        <h3>Keyboard Shortcuts for Box Model Inspection</h3>
-        <pre><code>// While in DevTools Elements panel:
+    <h3>Keyboard Shortcuts for Box Model Inspection</h3>
+    <pre><code>// While in DevTools Elements panel:
 
 // Arrow keys: Navigate between elements
 // H: Hide/show selected element
@@ -2182,8 +2183,8 @@ p {
 // Alt/Option + Click: Edit all sides of margin/padding at once
 </code></pre>
 
-        <h3>Creating Custom Box Model Visualizations</h3>
-        <pre><code>/* Add this CSS temporarily to visualize box model */
+    <h3>Creating Custom Box Model Visualizations</h3>
+    <pre><code>/* Add this CSS temporarily to visualize box model */
 .debug-box-model * {
   outline: 1px solid rgba(255, 0, 0, 0.3) !important;
   background: rgba(0, 255, 0, 0.05) !important;
@@ -2217,13 +2218,13 @@ p {
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="common-problems">8. COMMON BOX MODEL PROBLEMS AND SOLUTIONS</h1>
+    <h1 id="common-problems">8. COMMON BOX MODEL PROBLEMS AND SOLUTIONS</h1>
 
-        <h3>Problem 1: Unexpected Element Width</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>/* You expect a 300px wide element */
+    <h3>Problem 1: Unexpected Element Width</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>/* You expect a 300px wide element */
 .problem {
   width: 300px;
   padding: 20px;
@@ -2231,8 +2232,8 @@ p {
   /* Actual width: 350px - Surprise! */
 }
 </code></pre>
-        <p><strong>The Solution:</strong></p>
-        <pre><code>/* Solution 1: Use box-sizing: border-box */
+    <p><strong>The Solution:</strong></p>
+    <pre><code>/* Solution 1: Use box-sizing: border-box */
 .solution-1 {
   box-sizing: border-box;
   width: 300px;
@@ -2261,13 +2262,13 @@ p {
 }
 </code></pre>
 
-        <h3>Problem 2: Margin Collapse Confusion</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;div class="parent"&gt;
+    <h3>Problem 2: Margin Collapse Confusion</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;div class="parent"&gt;
   &lt;div class="child"&gt;Child element&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.parent {
+    <pre><code>.parent {
   margin: 30px 0;
   background: lightblue;
 }
@@ -2280,8 +2281,8 @@ p {
 /* Expected: Space above parent = 30px, between parent and child = 20px */
 /* Actual: Space above parent = 30px (collapsed with child's 20px) */
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Add padding to parent */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Add padding to parent */
 .parent-solution-1 {
   margin: 30px 0;
   padding: 1px; /* Even 1px prevents collapse */
@@ -2317,15 +2318,15 @@ p {
 }
 </code></pre>
 
-        <h3>Problem 3: Inline Element Spacing Issues</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;nav&gt;
+    <h3>Problem 3: Inline Element Spacing Issues</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;nav&gt;
   &lt;a href="#"&gt;Home&lt;/a&gt;
   &lt;a href="#"&gt;About&lt;/a&gt;
   &lt;a href="#"&gt;Contact&lt;/a&gt;
 &lt;/nav&gt;
 </code></pre>
-        <pre><code>nav a {
+    <pre><code>nav a {
   padding: 10px 20px;  /* Top/bottom padding doesn't affect layout */
   margin: 0 10px;      /* Only horizontal margin works */
   border: 1px solid black;  /* Border visible but doesn't affect line height */
@@ -2333,8 +2334,8 @@ p {
 }
 /* Results: Overlapping borders, inconsistent spacing */
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Change display to inline-block */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Change display to inline-block */
 nav a {
   display: inline-block;  /* All box model properties work */
   padding: 10px 20px;
@@ -2364,9 +2365,9 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 4: Percentage Padding Confusion</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>.parent {
+    <h3>Problem 4: Percentage Padding Confusion</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>.parent {
   width: 500px;
 }
 
@@ -2377,8 +2378,8 @@ nav {
   /* Child overflows parent! */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Use box-sizing */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Use box-sizing */
 .child {
   box-sizing: border-box;
   width: 100%;
@@ -2400,15 +2401,15 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 5: Nested Box Model Nightmares</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;div class="outer"&gt;
+    <h3>Problem 5: Nested Box Model Nightmares</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;div class="outer"&gt;
   &lt;div class="inner"&gt;
     &lt;div class="content"&gt;Deeply nested content&lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.outer {
+    <pre><code>.outer {
   width: 400px;
   padding: 20px;
   border: 2px solid black;
@@ -2428,8 +2429,8 @@ nav {
    400 - (40) - (4) - (30) - (2) - (20) - (2) = 302px
    Hard to track! */
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Universal box-sizing */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Universal box-sizing */
 * {
   box-sizing: border-box;
 }
@@ -2486,9 +2487,9 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 6: Responsive Design Breakage</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>.card {
+    <h3>Problem 6: Responsive Design Breakage</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>.card {
   width: 300px;
   padding: 20px;
   border: 1px solid #ddd;
@@ -2496,8 +2497,8 @@ nav {
   /* Total: 342px - won't fit in mobile screens */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Use max-width with percentage */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Use max-width with percentage */
 .responsive-card {
   max-width: 300px;
   width: 100%; /* Shrinks on small screens */
@@ -2545,15 +2546,15 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 7: Negative Margin Complications</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;div class="grid"&gt;
+    <h3>Problem 7: Negative Margin Complications</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;div class="grid"&gt;
   &lt;div class="item"&gt;Item 1&lt;/div&gt;
   &lt;div class="item"&gt;Item 2&lt;/div&gt;
   &lt;div class="item"&gt;Item 3&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.grid {
+    <pre><code>.grid {
   display: flex;
   flex-wrap: wrap;
   margin: -10px; /* Trying to create gutters */
@@ -2565,8 +2566,8 @@ nav {
   /* Complex calculation, often breaks */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Use gap instead of negative margins */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Use gap instead of negative margins */
 .modern-grid {
   display: flex;
   flex-wrap: wrap;
@@ -2612,9 +2613,9 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 8: Border Breaking Layout on Hover</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>.hover-button {
+    <h3>Problem 8: Border Breaking Layout on Hover</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>.hover-button {
   padding: 10px 20px;
   border: 2px solid transparent;
   transition: all 0.3s;
@@ -2625,8 +2626,8 @@ nav {
   /* Layout shifts when hovered */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Reserve space for border */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Reserve space for border */
 .hover-button {
   padding: 10px 20px;
   border: 2px solid transparent; /* Always there, just invisible */
@@ -2674,15 +2675,15 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 9: Percentage-based Height Issues</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;div class="height-parent"&gt;
+    <h3>Problem 9: Percentage-based Height Issues</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;div class="height-parent"&gt;
   &lt;div class="height-child"&gt;
     This child's percentage height doesn't work!
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.height-parent {
+    <pre><code>.height-parent {
   width: 300px;
   /* No height specified */
 }
@@ -2694,8 +2695,8 @@ nav {
   /* Height doesn't work as expected */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Give parent a height */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Give parent a height */
 .height-parent-solution-1 {
   width: 300px;
   height: 400px; /* Explicit height */
@@ -2745,16 +2746,16 @@ nav {
 }
 </code></pre>
 
-        <h3>Problem 10: Margin on Last Child Creating Extra Space</h3>
-        <p><strong>The Situation:</strong></p>
-        <pre><code>&lt;div class="card"&gt;
+    <h3>Problem 10: Margin on Last Child Creating Extra Space</h3>
+    <p><strong>The Situation:</strong></p>
+    <pre><code>&lt;div class="card"&gt;
   &lt;h2&gt;Title&lt;/h2&gt;
   &lt;p&gt;Paragraph 1&lt;/p&gt;
   &lt;p&gt;Paragraph 2&lt;/p&gt;
   &lt;p&gt;Last paragraph with margin-bottom&lt;/p&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.card p {
+    <pre><code>.card p {
   margin-bottom: 20px; /* Adds space after each paragraph */
 }
 
@@ -2764,8 +2765,8 @@ nav {
   /* Extra space at bottom from last p's margin */
 }
 </code></pre>
-        <p><strong>Solutions:</strong></p>
-        <pre><code>/* Solution 1: Use :last-child to remove margin */
+    <p><strong>Solutions:</strong></p>
+    <pre><code>/* Solution 1: Use :last-child to remove margin */
 .card p {
   margin-bottom: 20px;
 }
@@ -2806,13 +2807,13 @@ nav {
 }
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="interactive-exercises">9. INTERACTIVE LEARNING EXERCISES</h1>
+    <h1 id="interactive-exercises">9. INTERACTIVE LEARNING EXERCISES</h1>
 
-        <h3>Exercise 1: Box Model Calculator</h3>
-        <p>Create a tool to calculate total element dimensions:</p>
-        <pre><code>&lt;div class="calculator"&gt;
+    <h3>Exercise 1: Box Model Calculator</h3>
+    <p>Create a tool to calculate total element dimensions:</p>
+    <pre><code>&lt;div class="calculator"&gt;
   &lt;h3&gt;Box Model Calculator&lt;/h3&gt;
   
   &lt;div class="input-group"&gt;
@@ -2853,7 +2854,7 @@ nav {
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.calculator {
+    <pre><code>.calculator {
   max-width: 400px;
   margin: 20px auto;
   padding: 30px;
@@ -2893,7 +2894,7 @@ nav {
   transition: all 0.3s;
 }
 </code></pre>
-        <pre><code>// Interactive calculator JavaScript
+    <pre><code>// Interactive calculator JavaScript
 function updateBox() {
   const width = document.getElementById('width').value;
   const padding = document.getElementById('padding').value;
@@ -2934,9 +2935,9 @@ document.querySelectorAll('.calculator input').forEach(input =&gt; {
 updateBox(); // Initial calculation
 </code></pre>
 
-        <h3>Exercise 2: Box Model Debugging Challenge</h3>
-        <p>Find and fix the box model issues in this code:</p>
-        <pre><code>&lt;!-- Debug this layout --&gt;
+    <h3>Exercise 2: Box Model Debugging Challenge</h3>
+    <p>Find and fix the box model issues in this code:</p>
+    <pre><code>&lt;!-- Debug this layout --&gt;
 &lt;div class="debug-challenge"&gt;
   &lt;header class="debug-header"&gt;
     &lt;h1&gt;My Website&lt;/h1&gt;
@@ -2971,7 +2972,7 @@ updateBox(); // Initial calculation
   &lt;/footer&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>/* This CSS has intentional box model bugs */
+    <pre><code>/* This CSS has intentional box model bugs */
 .debug-challenge {
   max-width: 1200px;
   margin: 0 auto;
@@ -3031,16 +3032,16 @@ updateBox(); // Initial calculation
   /* Bug 8: Footer has unexpected space above */
 }
 </code></pre>
-        <p><strong>Debugging Tasks:</strong></p>
-        <ol>
-            <li>Find and list all box model bugs</li>
-            <li>Fix each bug using proper box model techniques</li>
-            <li>Document your solutions</li>
-            <li>Test on different screen sizes</li>
-        </ol>
+    <p><strong>Debugging Tasks:</strong></p>
+    <ol>
+      <li>Find and list all box model bugs</li>
+      <li>Fix each bug using proper box model techniques</li>
+      <li>Document your solutions</li>
+      <li>Test on different screen sizes</li>
+    </ol>
 
-        <h3>Exercise 3: Build a Box Model Visualization Tool</h3>
-        <pre><code>&lt;div class="visualizer"&gt;
+    <h3>Exercise 3: Build a Box Model Visualization Tool</h3>
+    <pre><code>&lt;div class="visualizer"&gt;
   &lt;div class="controls"&gt;
     &lt;h3&gt;Box Model Visualizer&lt;/h3&gt;
     
@@ -3101,7 +3102,7 @@ updateBox(); // Initial calculation
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.visualizer {
+    <pre><code>.visualizer {
   max-width: 800px;
   margin: 20px auto;
   padding: 30px;
@@ -3217,7 +3218,7 @@ updateBox(); // Initial calculation
   border-radius: 6px;
 }
 </code></pre>
-        <pre><code>// JavaScript for interactive visualizer
+    <pre><code>// JavaScript for interactive visualizer
 const contentWidth = document.getElementById('contentWidth');
 const paddingCtrl = document.getElementById('paddingCtrl');
 const borderCtrl = document.getElementById('borderCtrl');
@@ -3278,9 +3279,9 @@ function updateVisualizer() {
 updateVisualizer(); // Initial update
 </code></pre>
 
-        <h3>Exercise 4: Box Model Quiz Game</h3>
-        <p>Create an interactive quiz to test box model knowledge:</p>
-        <pre><code>&lt;div class="box-quiz"&gt;
+    <h3>Exercise 4: Box Model Quiz Game</h3>
+    <p>Create an interactive quiz to test box model knowledge:</p>
+    <pre><code>&lt;div class="box-quiz"&gt;
   &lt;h3&gt;Box Model Mastery Quiz&lt;/h3&gt;
   
   &lt;div class="question" id="question1"&gt;
@@ -3321,7 +3322,7 @@ updateVisualizer(); // Initial update
   &lt;div class="quiz-score"&gt;&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-        <pre><code>.box-quiz {
+    <pre><code>.box-quiz {
   max-width: 600px;
   margin: 20px auto;
   padding: 30px;
@@ -3414,7 +3415,7 @@ updateVisualizer(); // Initial update
   border-radius: 8px;
 }
 </code></pre>
-        <pre><code>// Quiz functionality
+    <pre><code>// Quiz functionality
 document.querySelector('.check-answers').addEventListener('click', function() {
   const answers = {
     q1: '250',
@@ -3463,56 +3464,56 @@ document.querySelector('.check-answers').addEventListener('click', function() {
 });
 </code></pre>
 
-        <hr>
+    <hr>
 
-        <h1 id="summary">10. SUMMARY AND KEY TAKEAWAYS</h1>
+    <h1 id="summary">10. SUMMARY AND KEY TAKEAWAYS</h1>
 
-        <h3>The Four Layers - Quick Reference</h3>
-        <table>
-            <tr>
-                <th>Layer</th>
-                <th>Location</th>
-                <th>Background</th>
-                <th>Affects Size?</th>
-                <th>Can Be Negative?</th>
-                <th>Shorthand</th>
-            </tr>
-            <tr>
-                <td><strong>Content</strong></td>
-                <td>Innermost</td>
-                <td>Element's background</td>
-                <td>Yes (base)</td>
-                <td>No</td>
-                <td><code>width</code>/<code>height</code></td>
-            </tr>
-            <tr>
-                <td><strong>Padding</strong></td>
-                <td>Between content and border</td>
-                <td>Element's background</td>
-                <td>Yes</td>
-                <td>No</td>
-                <td><code>padding</code></td>
-            </tr>
-            <tr>
-                <td><strong>Border</strong></td>
-                <td>Between padding and margin</td>
-                <td>Border color</td>
-                <td>Yes</td>
-                <td>No</td>
-                <td><code>border</code></td>
-            </tr>
-            <tr>
-                <td><strong>Margin</strong></td>
-                <td>Outermost</td>
-                <td>Transparent</td>
-                <td>No (spacing only)</td>
-                <td>Yes</td>
-                <td><code>margin</code></td>
-            </tr>
-        </table>
+    <h3>The Four Layers - Quick Reference</h3>
+    <table>
+      <tr>
+        <th>Layer</th>
+        <th>Location</th>
+        <th>Background</th>
+        <th>Affects Size?</th>
+        <th>Can Be Negative?</th>
+        <th>Shorthand</th>
+      </tr>
+      <tr>
+        <td><strong>Content</strong></td>
+        <td>Innermost</td>
+        <td>Element's background</td>
+        <td>Yes (base)</td>
+        <td>No</td>
+        <td><code>width</code>/<code>height</code></td>
+      </tr>
+      <tr>
+        <td><strong>Padding</strong></td>
+        <td>Between content and border</td>
+        <td>Element's background</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td><code>padding</code></td>
+      </tr>
+      <tr>
+        <td><strong>Border</strong></td>
+        <td>Between padding and margin</td>
+        <td>Border color</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td><code>border</code></td>
+      </tr>
+      <tr>
+        <td><strong>Margin</strong></td>
+        <td>Outermost</td>
+        <td>Transparent</td>
+        <td>No (spacing only)</td>
+        <td>Yes</td>
+        <td><code>margin</code></td>
+      </tr>
+    </table>
 
-        <h3>Critical Formulas</h3>
-        <pre><code>STANDARD BOX MODEL (content-box):
+    <h3>Critical Formulas</h3>
+    <pre><code>STANDARD BOX MODEL (content-box):
 Total Width = width + padding-left + padding-right + border-left + border-right
 Total Height = height + padding-top + padding-bottom + border-top + border-bottom
 
@@ -3528,22 +3529,22 @@ PERCENTAGE VALUES:
 Padding/Margin % = percentage of parent's WIDTH (even for top/bottom)
 </code></pre>
 
-        <h3>Key Rules to Remember</h3>
-        <ol>
-            <li><strong>The Golden Rule</strong>: Every element is a box</li>
-            <li><strong>The Inside-Out Principle</strong>: Content → Padding → Border → Margin</li>
-            <li><strong>The Box-Sizing Revolution</strong>: Always use <code>box-sizing: border-box</code> for
-                predictable layouts</li>
-            <li><strong>The Collapse Rule</strong>: Vertical margins collapse; horizontal margins don't</li>
-            <li><strong>The Inline Limitation</strong>: Inline elements ignore top/bottom margin and padding for layout
-            </li>
-            <li><strong>The Percentage Trap</strong>: Percentage padding/margin is based on parent's WIDTH, not height
-            </li>
-            <li><strong>The Debugger's Friend</strong>: Browser DevTools are essential for box model inspection</li>
-        </ol>
+    <h3>Key Rules to Remember</h3>
+    <ol>
+      <li><strong>The Golden Rule</strong>: Every element is a box</li>
+      <li><strong>The Inside-Out Principle</strong>: Content → Padding → Border → Margin</li>
+      <li><strong>The Box-Sizing Revolution</strong>: Always use <code>box-sizing: border-box</code> for
+        predictable layouts</li>
+      <li><strong>The Collapse Rule</strong>: Vertical margins collapse; horizontal margins don't</li>
+      <li><strong>The Inline Limitation</strong>: Inline elements ignore top/bottom margin and padding for layout
+      </li>
+      <li><strong>The Percentage Trap</strong>: Percentage padding/margin is based on parent's WIDTH, not height
+      </li>
+      <li><strong>The Debugger's Friend</strong>: Browser DevTools are essential for box model inspection</li>
+    </ol>
 
-        <h3>Best Practices Checklist</h3>
-        <pre><code>/* 1. Universal box-sizing reset */
+    <h3>Best Practices Checklist</h3>
+    <pre><code>/* 1. Universal box-sizing reset */
 * {
   box-sizing: border-box;
 }
@@ -3575,8 +3576,8 @@ Padding/Margin % = percentage of parent's WIDTH (even for top/bottom)
 }
 </code></pre>
 
-        <h3>Common Patterns Cheat Sheet</h3>
-        <pre><code>/* Centering a block */
+    <h3>Common Patterns Cheat Sheet</h3>
+    <pre><code>/* Centering a block */
 .center-block {
   width: fit-content;
   margin-left: auto;
@@ -3624,8 +3625,8 @@ footer {
 }
 </code></pre>
 
-        <h3>Troubleshooting Flowchart</h3>
-        <pre><code>PROBLEM: Unexpected element size or spacing
+    <h3>Troubleshooting Flowchart</h3>
+    <pre><code>PROBLEM: Unexpected element size or spacing
 │
 ├─→ Check if box-sizing is border-box
 │   ├─→ Yes → Width includes padding/border
@@ -3648,36 +3649,36 @@ footer {
     └─→ Consider margin collapse
 </code></pre>
 
-        <h3>Final Wisdom</h3>
-        <blockquote>
-            <p>"The CSS Box Model is not just a concept—it's the very fabric of web layout. Master it, and you master
-                web design."</p>
-        </blockquote>
-        <p><strong>Remember:</strong></p>
-        <ul>
-            <li><strong>Padding</strong> is personal space <strong>inside</strong> the element</li>
-            <li><strong>Border</strong> is the property line <strong>around</strong> the element</li>
-            <li><strong>Margin</strong> is the buffer zone <strong>between</strong> elements</li>
-            <li><strong>Content</strong> is what actually matters</li>
-        </ul>
-        <p><strong>The Three Steps to Box Model Mastery:</strong></p>
-        <ol>
-            <li><strong>Visualize</strong> every element as a nested set of boxes</li>
-            <li><strong>Calculate</strong> dimensions before writing CSS</li>
-            <li><strong>Verify</strong> with browser DevTools</li>
-        </ol>
-        <p><strong>When in doubt:</strong></p>
-        <ul>
-            <li>Use <code>outline: 1px solid red</code> to see element boundaries</li>
-            <li>Add <code>background-color</code> with opacity to see padding areas</li>
-            <li>Use browser DevTools constantly</li>
-            <li>Think inside-out: Content → Padding → Border → Margin</li>
-        </ul>
-        <p>The box model is your foundation for everything in CSS. Build it strong, and your layouts will stand tall.
-            🏗️</p>
+    <h3>Final Wisdom</h3>
+    <blockquote>
+      <p>"The CSS Box Model is not just a concept—it's the very fabric of web layout. Master it, and you master
+        web design."</p>
+    </blockquote>
+    <p><strong>Remember:</strong></p>
+    <ul>
+      <li><strong>Padding</strong> is personal space <strong>inside</strong> the element</li>
+      <li><strong>Border</strong> is the property line <strong>around</strong> the element</li>
+      <li><strong>Margin</strong> is the buffer zone <strong>between</strong> elements</li>
+      <li><strong>Content</strong> is what actually matters</li>
+    </ul>
+    <p><strong>The Three Steps to Box Model Mastery:</strong></p>
+    <ol>
+      <li><strong>Visualize</strong> every element as a nested set of boxes</li>
+      <li><strong>Calculate</strong> dimensions before writing CSS</li>
+      <li><strong>Verify</strong> with browser DevTools</li>
+    </ol>
+    <p><strong>When in doubt:</strong></p>
+    <ul>
+      <li>Use <code>outline: 1px solid red</code> to see element boundaries</li>
+      <li>Add <code>background-color</code> with opacity to see padding areas</li>
+      <li>Use browser DevTools constantly</li>
+      <li>Think inside-out: Content → Padding → Border → Margin</li>
+    </ul>
+    <p>The box model is your foundation for everything in CSS. Build it strong, and your layouts will stand tall.
+      🏗️</p>
 
-        <!-- CONTENT END: exact copy from provided box model notes -->
-    </div>
+    <!-- CONTENT END: exact copy from provided box model notes -->
+  </div>
 </body>
 
 </html>

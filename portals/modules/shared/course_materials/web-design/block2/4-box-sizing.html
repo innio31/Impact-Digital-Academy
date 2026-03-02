@@ -150,7 +150,7 @@
     <div class="document-wrapper">
         <!-- CONTENT START: EXACT COPY OF PROVIDED STUDY NOTES (BOX MODEL PART 2), EVERY LINE PRESERVED -->
 
-        <h1>THE CSS BOX MODEL - PART 2: A COMPREHENSIVE GUIDE</h1>
+        <h1>THE CSS BOX MODEL - PART 2</h1>
 
         <h2>TABLE OF CONTENTS</h2>
         <ol>
@@ -196,7 +196,8 @@
 
         <h3>Default Box Model Calculation:</h3>
         <p>By default, the <code>width</code> and <code>height</code> properties only set the dimensions of the
-            <strong>content area</strong>. The actual space an element occupies on the page is:</p>
+            <strong>content area</strong>. The actual space an element occupies on the page is:
+        </p>
 
         <p><strong>Total Width = width + padding-left + padding-right + border-left + border-right + margin-left +
                 margin-right</strong></p>
@@ -328,7 +329,8 @@
 
         <h3>3.3 <code>border-box</code> (The Modern Standard)</h3>
         <p>With <code>border-box</code>, the <code>width</code> and <code>height</code> properties include
-            <strong>content, padding, and border</strong>:</p>
+            <strong>content, padding, and border</strong>:
+        </p>
         <pre><code>.border-box-example {
     box-sizing: border-box;
     width: 300px;
@@ -1150,7 +1152,8 @@ div, p, h1, section {
 
         <h3>Exercise 1: Build a Pricing Card</h3>
         <p><strong>Task:</strong> Create a pricing card that demonstrates <code>box-sizing</code>,
-            <code>overflow</code>, and <code>margin: auto</code>.</p>
+            <code>overflow</code>, and <code>margin: auto</code>.
+        </p>
         <pre><code>&lt;!-- Starter HTML --&gt;
 &lt;div class="pricing-card"&gt;
     &lt;h3&gt;Basic Plan&lt;/h3&gt;
@@ -1232,7 +1235,8 @@ div, p, h1, section {
             <code>height</code> only apply to the content area. Padding and border are added outside.
             <code>border-box</code> includes padding and border in the specified width/height, making layout much more
             predictable. For example, with <code>width: 100px</code> and <code>padding: 10px</code>,
-            <code>content-box</code> total width is 120px, while <code>border-box</code> stays at 100px.</p>
+            <code>content-box</code> total width is 120px, while <code>border-box</code> stays at 100px.
+        </p>
 
         <p><strong>Q2: How do you center a block element horizontally?</strong></p>
         <p><strong>A:</strong> To center a block element horizontally, you need to:<br>
@@ -1250,7 +1254,8 @@ div, p, h1, section {
         <p><strong>A:</strong> In normal document flow, the browser cannot calculate available vertical space because
             the containing block's height is typically determined by its content. Without a defined height context,
             <code>auto</code> margins evaluate to 0. For vertical centering, you need either Flexbox
-            (<code>align-items: center</code>), Grid, or absolute positioning with all offsets set to 0.</p>
+            (<code>align-items: center</code>), Grid, or absolute positioning with all offsets set to 0.
+        </p>
 
         <p><strong>Q5: What's the difference between <code>overflow: auto</code> and
                 <code>overflow: scroll</code>?</strong></p>
@@ -1290,7 +1295,8 @@ div, p, h1, section {
             the flex container. For example, <code>margin-left: auto</code> on a flex item pushes it to the right, while
             <code>margin: auto</code> on all sides centers the item both horizontally and vertically within the flex
             container (if there's extra space). This is different from block layout where <code>margin: auto</code> only
-            affects horizontal centering.</p>
+            affects horizontal centering.
+        </p>
 
         <p><strong>Q10: How would you create a horizontally scrollable card carousel with centered first/last
                 items?</strong></p>
@@ -1342,7 +1348,8 @@ div, p, h1, section {
         <p><strong>A:</strong> <code>overflow: clip</code> is a newer value that also clips content but unlike
             <code>hidden</code>, it prevents programmatic scrolling. The content is truly clipped and cannot be scrolled
             to, even with JavaScript. It's useful for situations where you want to ensure content stays completely
-            hidden.</p>
+            hidden.
+        </p>
 
         <p><strong>Q14: How would you debug an element that's wider than expected despite using
                 <code>border-box</code>?</strong></p>

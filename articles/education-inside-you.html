@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Is What Happens Inside You, Not Around You | Impact Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008080">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="A deep series for Nigerian educators: why real learning happens inside, not around. Questions, relevance, and practical tools for teachers who know the struggle is real.">
+    <meta name="keywords"
+        content="Nigerian educators, teaching in Nigeria, classroom questions, learner engagement, educational series, teacher development, Impact Digital, Africa education">
+    <meta name="author" content="Impact Digital Academy">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:title" content="Education Is What Happens Inside You, Not Around You – Full Series">
+    <meta property="og:description"
+        content="Part 1: Learning How to Ask Good Questions. For Nigerian teachers who know the struggle is real. Includes Habiba's story, practical tips, and deep reflection.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://yourdomain.com/education-inside-you.html">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1588072432836-10031f1e9acb?w=1200">
+    <meta property="og:site_name" content="Impact Digital Academy">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Education Is What Happens Inside You, Not Around You">
+    <meta name="twitter:description"
+        content="Insightful series for Nigerian classrooms. Stop decorating, start questioning.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1588072432836-10031f1e9acb?w=1200">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://yourdomain.com/education-inside-you.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23008080'><text x='10' y='80' font-size='80'>📘</text></svg>">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #efeae1;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            color: #1d2b32;
+            line-height: 1.7;
+        }
+
+        .paper {
+            max-width: 960px;
+            margin: 1.8rem auto;
+            background: #fffcf8;
+            border-radius: 36px 36px 24px 24px;
+            box-shadow: 0 30px 50px -20px rgba(40, 20, 5, 0.25);
+            overflow: hidden;
+        }
+
+        .series-header {
+            background: linear-gradient(130deg, #0b4b49, #1d6d5e);
+            color: white;
+            padding: 2.2rem 2.2rem 1.8rem;
+            border-bottom: 8px solid #f6b83e;
+        }
+
+        .series-header h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            font-weight: 700;
+            max-width: 850px;
+        }
+
+        .series-header .sub {
+            font-size: 1.4rem;
+            font-style: italic;
+            border-left: 6px solid #f6b83e;
+            padding-left: 1.2rem;
+            margin-top: 0.8rem;
+            opacity: 0.95;
+        }
+
+        .badge-top {
+            background: #e6a82b;
+            color: #1d482f;
+            display: inline-block;
+            padding: 0.3rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .content {
+            padding: 2.4rem 2.2rem;
+        }
+
+        @media (max-width: 600px) {
+            .series-header h1 {
+                font-size: 1.9rem;
+            }
+
+            .series-header .sub {
+                font-size: 1.2rem;
+            }
+
+            .content {
+                padding: 1.5rem 1.2rem;
+            }
+        }
+
+        .dropcap::first-letter {
+            font-size: 3.8rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.6rem;
+            color: #0b5e4f;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            margin: 2.5rem 0 1rem;
+            color: #0b4b49;
+            border-bottom: 4px solid #f6b83e;
+            display: inline-block;
+            padding-bottom: 0.2rem;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            margin: 2rem 0 0.8rem;
+            color: #b85b1a;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.6rem 0 0.3rem;
+            color: #1b5d4f;
+            font-weight: 600;
+        }
+
+        .inline-ref {
+            background: #e0dad0;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            margin-left: 0.3rem;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .teacher-card,
+        .student-card {
+            background: #fefcf5;
+            border-radius: 24px;
+            padding: 1.8rem;
+            box-shadow: 0 10px 20px -8px rgba(70, 40, 10, 0.1);
+        }
+
+        .teacher-card {
+            border-top: 8px solid #19635a;
+        }
+
+        .student-card {
+            border-top: 8px solid #d97706;
+        }
+
+        .card-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .card-list li {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .card-list i {
+            color: #0a6655;
+            margin-top: 0.2rem;
+        }
+
+        .gold-box {
+            background: #fef4e2;
+            padding: 2rem;
+            border-radius: 32px;
+            margin: 2.2rem 0;
+        }
+
+        .tip-num {
+            background: #0b4b49;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-block {
+            background: #edf1ea;
+            padding: 1.6rem 2rem;
+            border-radius: 30px 10px 30px 10px;
+            margin: 2rem 0;
+            border-left: 8px solid #b96f2b;
+        }
+
+        .foot-note {
+            background: #1b3730;
+            color: #f0eee3;
+            padding: 2rem 2.2rem;
+            border-radius: 40px 8px 40px 8px;
+            margin-top: 2.5rem;
+        }
+
+        /* Subscribe and Comments Styles */
+        .subscribe-section,
+        .comment-section {
+            background: #f3efe8;
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 3rem 0 1.5rem;
+            border: 1px solid #dacfbc;
+        }
+
+        .subscribe-title,
+        .comment-title {
+            font-size: 1.6rem;
+            color: #1a4d40;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .sub-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sub-input input {
+            flex: 1 1 250px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #c5b8a5;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .sub-input button {
+            background: #0b4b49;
+            border: none;
+            color: white;
+            padding: 1rem 2.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sub-input button:hover {
+            background: #136b64;
+        }
+
+        .sub-message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .sub-message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .sub-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .comment-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.8rem 0;
+        }
+
+        .comment-box input,
+        .comment-box textarea {
+            padding: 1rem;
+            border-radius: 24px;
+            border: 1px solid #cbbc9e;
+            font-family: inherit;
+            background: white;
+        }
+
+        .comment-box button {
+            background: #d97706;
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+
+        .comment-box button:hover {
+            background: #b85b1a;
+        }
+
+        .comment-list {
+            margin-top: 2rem;
+        }
+
+        .single-comment {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #c1a987;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .comment-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #6f5843;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-meta img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .reply-link {
+            color: #0b5e4b;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+
+        .replies {
+            margin-left: 2.5rem;
+            margin-top: 1rem;
+            border-left: 3px solid #e9d9c5;
+            padding-left: 1.2rem;
+        }
+
+        .reply-form {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .reply-form input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #bda98c;
+        }
+
+        .reply-form button {
+            background: #9c7e5c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+
+        .share-flex {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0 1rem;
+        }
+
+        .share-btn {
+            background: #ded3c3;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .share-btn:hover {
+            background: #cdbea9;
+        }
+
+        hr.divider {
+            border: 1px dashed #d2bb9c;
+            margin: 2rem 0;
+        }
+
+        .loading {
+            text-align: center;
+            color: #8b7a66;
+            padding: 2rem;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="paper">
+        <div class="series-header">
+            <span class="badge-top"><i class="fas fa-apple-alt"></i> Nigerian Educators Series · 2026</span>
+            <h1>Education Is What Happens Inside You,<br> Not Around You</h1>
+            <div class="sub">A Series for Nigerian Educators Who Know the Struggle Is Real</div>
+        </div>
+
+        <div class="content">
+            <!-- Introduction -->
+            <p class="dropcap">Let me tell you something that might step on a few toes.</p>
+            <p>We have turned teaching into a decorating competition.</p>
+            <p>Walk into any staff room across Nigeria—from Lagos to Maiduguri, from Port Harcourt to Sokoto—and what do
+                we talk about? Lesson notes. Scheme of work. The new government policy. The fact that our salary is late
+                (again). The parents who won't buy textbooks. The classrooms that are too crowded. The government that
+                doesn't care.</p>
+            <p>And yes, all these things matter. I'm not saying they don't.</p>
+            <p>But here's the question that keeps me awake at night: if we fixed all of that tomorrow—if salaries came
+                on time, if classes had thirty students instead of 129 (looking at you, Northwest Nigeria), if every
+                school had computers like that UNICEF project in Borno—would our students automatically become
+                brilliant?</p>
+            <p>You know the answer.</p>
+            <p>Because education is not what happens <em>around</em> a child. It's what happens <em>inside</em> them.
+            </p>
+
+            <h4>The Download Myth</h4>
+            <p>See, we've been sold this idea that teaching is like transferring files. You know how when you buy a new
+                phone, you just click "transfer data" and everything moves from the old phone to the new one?
+                <em>Pshhhhhh</em>—done.</p>
+            <p>Many of us walk into class thinking that's our job. I talk, they listen. I pour knowledge into their
+                heads like garri into a bag. At the end of the term, they pour it back onto an exam paper. If what comes
+                out matches what went in, we call it success.</p>
+            <p>But my brother, that is not education. That is memorization at best, and noise at worst.</p>
+
+            <h4>The Real Story</h4>
+            <p>I remember visiting a secondary school in Lagos where they tried something different with mathematics.
+                Instead of drilling formulas, they created market-day simulations. Students had to calculate prices,
+                give discounts, determine profit margins—real things their mothers do every day at the market.</p>
+            <p>You know what happened? Kids who used to dread maths started staying back after class. Not because the
+                environment changed—the classroom was still the same broken-down building. But because something clicked
+                <em>inside</em> them. They saw relevance. They saw themselves in the learning.</p>
+            <p>That's what I mean by education happening inside you.</p>
+
+            <h4>The Nigerian Context We Cannot Ignore</h4>
+            <p>Now, let's be real with ourselves. We are not teaching in Switzerland. We are teaching in Nigeria, where:
+            </p>
+            <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                <li>Some classrooms hold 280 pupils (Plateau State, I'm looking at you) <span class="inline-ref">(UBEC
+                        2022)</span></li>
+                <li>Over 50% of teachers in Zamfara and Sokoto have never seen professional development <span
+                        class="inline-ref">(NUT 2023)</span></li>
+                <li>Only 10% of Nigerian teachers are considered highly trained <span class="inline-ref">(World Bank,
+                        2024)</span></li>
+                <li>Schools in Taraba, Sokoto, Imo, and Abia have no access to water at all <span
+                        class="inline-ref">(WASH 2023)</span></li>
+                <li>Millions of qualified students are locked out of university every year because there's simply no
+                    space <span class="inline-ref">(JAMB 2025)</span></li>
+            </ul>
+            <p>These are the facts. They are depressing. They are real.</p>
+            <p>But here's the thing: while we're waiting for government to fix these problems (abeg, don't hold your
+                breath), students are still sitting in our classrooms. Right now. Today. And they need something to
+                happen <em>inside</em> them.</p>
+            <p>So what do we do? How do we reach the inside when everything around is chaos?</p>
+            <p>That's what this series is about.</p>
+
+            <h4>A Quick Disclaimer Before We Go Deep</h4>
+            <p>I'm not going to stand here and tell you I have all the answers. Wetin I know? I'm just an educator like
+                you, tired of seeing students sleep through classes, tired of the "copy and submit" syndrome, tired of
+                teaching to exams instead of teaching to minds.</p>
+            <p>But I've noticed something. Over years of teaching, observing, failing, and trying again, I've seen a
+                pattern. The moments when real learning happens—the moments that change students—they all have one thing
+                in common.</p>
+            <p>They start with a question.</p>
+            <p>Not any question. A good question. A careful question. A question that refuses to let the student remain
+                the same.</p>
+            <p>And that, my dear colleague, is where we will spend our time today.</p>
+            <p>Because if education is what happens inside you, then our job is not to fill heads. Our job is to open
+                doors. And the key that opens those doors?</p>
+            <p>It's a question.</p>
+
+            <hr class="divider">
+
+            <h2>Part 1: Learning How to Ask Good Question</h2>
+
+            <h4>Oya, Let's Talk About Questions</h4>
+            <p>Imagine this scene.</p>
+            <p>You're in class. You've just finished explaining something—let's say it's civic education, and you're
+                teaching about responsible citizenship. You've given your examples, you've referenced the constitution,
+                you've even told a story about your own experience.</p>
+            <p>Then you ask the class: "Any questions?"</p>
+            <p>Silence.</p>
+            <p>Not just silence. The kind of silence where students suddenly become very interested in their
+                fingernails. The kind where they avoid eye contact like you're about to collect offering.</p>
+            <p>You wait. Nothing.</p>
+            <p>So you say, "Okay, since nobody has questions, turn to page 45 and answer questions 1-10."</p>
+            <p>Class dismissed. Sort of.</p>
+            <p>Now tell me: did anyone learn anything? Did anything happen <em>inside</em> those students?</p>
+
+            <h4>The Problem with "Any Questions?"</h4>
+            <p>That question—"Any questions?"—is what I call a dead question. It's not really a question at all. It's a
+                closing statement disguised as a question. What we're really saying is: "I'm done. Let's move on."</p>
+            <p>And students know this. They've learned that asking a question means:</p>
+            <ul style="margin-left:2rem;">
+                <li>Extending the class</li>
+                <li>Looking foolish in front of their mates</li>
+                <li>Getting the teacher annoyed because now we're behind schedule</li>
+                <li>Being labeled "the one who asks too many questions"</li>
+            </ul>
+            <p>So they stay quiet. They nod along. They copy notes. And nothing happens inside.</p>
+            <p>But here's the truth we need to accept: <strong>if there are no questions, there is no learning.</strong>
+            </p>
+            <p>Think about it. When was the last time you learned something meaningful without asking questions? Even
+                when you read alone, your mind is asking: "What does this mean? How does this apply to me? Do I agree
+                with this?"</p>
+            <p>Questions are the engine of learning. Remove the questions, and the engine stops.</p>
+
+            <h4>What Makes a Question Good?</h4>
+            <p>Now, I'm not saying every question is powerful. Some questions are like using a cutlass to kill a
+                mosquito—too heavy, too clumsy, missing the point.</p>
+            <p>Good questions have character. They have ingredients. Let me break it down for you.</p>
+
+            <p><strong>1. Clear Purpose (Wetin You Want Achieve)</strong><br>Before you open your mouth to ask a
+                question, you need to know: why am I asking this?</p>
+            <p>Are you checking if they remember what you just said? That's a recall question. "What is the capital of
+                Niger State?" That has its place, but it's not transformative.</p>
+            <p>Are you trying to make them think deeper? That's different. "Why do you think Minna became the capital
+                and not another town?" Now we're cooking.</p>
+            <p>Are you trying to connect the lesson to their lives? Even better. "If you were the governor of Niger
+                State, where would you put the capital and why?"</p>
+            <p>Same topic. Three different purposes. Three different kinds of thinking. When you know your purpose, your
+                question becomes sharp. Like a needle instead of a blunt object.</p>
+
+            <p><strong>2. A Question to Be Solved (E Get Answer Wey We Need Find)</strong><br>Good questions create a
+                sense of mission. They make students feel like detectives on a case.</p>
+            <p>Instead of: "What are the causes of the Nigerian Civil War?"<br>Try: "Could the Nigerian Civil War have
+                been avoided? If you were the leader in 1967, what would you have done differently?"</p>
+            <p>You see the difference? The first question asks for a list. The second asks for judgment, empathy,
+                historical thinking. It creates a problem to be solved, not just information to be regurgitated.</p>
+            <p>This is what those researchers studying flipped classrooms in Niger State discovered—when students have
+                to actively solve problems instead of passively receive information, their performance and retention
+                improve significantly.</p>
+
+            <p><strong>3. Important (No Be Anyhow Question)</strong><br>Here's the thing: students have a built-in
+                nonsense detector. It's highly sophisticated. The moment you ask a question they consider irrelevant,
+                they mentally check out.</p>
+            <p>I learned this the hard way. Early in my teaching career, I asked a class of rural students in Ogun
+                State: "If you have ₦500,000 to invest in the stock market, which stocks would you choose?"</p>
+            <p>Blank faces. Stock market? These children whose parents struggle to buy beans? The question meant nothing
+                to them.</p>
+            <p>A colleague pulled me aside and said, "Ask them something that matters to <em>them</em>."</p>
+            <p>So I changed it: "If your mother gives you ₦500 to buy tomatoes at the market, but the price has gone up,
+                how do you decide what to do? Do you buy fewer tomatoes? Do you ask for more money? Do you bargain?"</p>
+            <p>The class exploded. Every hand went up. Because now the question mattered.</p>
+            <p>Important questions connect to the student's world. They respect where the student is coming from. They
+                say, "Your life, your experience—that counts here."</p>
+
+            <p><strong>4. Relevant (E Concern Them)</strong><br>This is similar to importance, but slightly different.
+                Relevance means the question connects to something beyond the classroom.</p>
+            <p>"Why do we need to learn this?" is the question students are always asking, even when they don't say it
+                out loud. Your questions need to answer that before they ask it.</p>
+            <p>If you're teaching about elections, ask: "In your compound, how do people decide who becomes the landlord
+                association chairman? Is it fair? How is it different from government elections?"</p>
+            <p>If you're teaching about fractions, ask: "When you share meat in your family pot, how do you make sure
+                it's fair? What happens when someone gets a bigger piece?"</p>
+            <p>Relevance is the bridge between school and life. Without that bridge, learning stays in the classroom and
+                dies at the end of term.</p>
+
+            <h4>The Questions We Ask Ourselves (This One Deep)</h4>
+            <p>Now, let me shift gears. Because it's not just about the questions we ask our students.</p>
+            <p>The most important questions in education—the ones that determine whether we grow or stagnate—are the
+                questions we ask ourselves.</p>
+
+            <div class="question-grid">
+                <div class="teacher-card">
+                    <h4 style="margin-top:0;">Questions for Teachers</h4>
+                    <ul class="card-list">
+                        <li><i class="fas fa-chevron-circle-right"></i> "Why am I really teaching this topic?"</li>
+                        <li><i class="fas fa-chevron-circle-right"></i> "Which student did I ignore today, and why?"
+                        </li>
+                        <li><i class="fas fa-chevron-circle-right"></i> "What would my students say about my class if I
+                            wasn't in the room?"</li>
+                        <li><i class="fas fa-chevron-circle-right"></i> "Am I teaching children, or am I teaching
+                            subject?"</li>
+                        <li><i class="fas fa-chevron-circle-right"></i> "If I were a student in my own class, would I
+                            look forward to learning?"</li>
+                    </ul>
+                    <p>These questions are uncomfortable. They step on toes—our own toes. But they are essential.</p>
+                </div>
+                <div class="student-card">
+                    <h4 style="margin-top:0;">Questions for Students to Ask Themselves</h4>
+                    <ul class="card-list">
+                        <li><i class="fas fa-lightbulb"></i> "What do I already know about this?"</li>
+                        <li><i class="fas fa-lightbulb"></i> "What don't I understand yet?"</li>
+                        <li><i class="fas fa-lightbulb"></i> "How does this connect to what I learned before?"</li>
+                        <li><i class="fas fa-lightbulb"></i> "Why does this matter?"</li>
+                        <li><i class="fas fa-lightbulb"></i> "Do I agree with this, and why?"</li>
+                    </ul>
+                    <p>That student doesn't need a teacher to be present to learn. That student has become their own
+                        teacher. That's education happening inside.</p>
+                </div>
+            </div>
+
+            <h4>Why This Matters Now More Than Ever</h4>
+            <p>Nigeria is changing. Fast.</p>
+            <p>We have digital learning platforms reaching over 81,000 children in Borno State. We have Nigerian
+                students studying tuition-free at American universities online. We have words like "japa," "nyash," and
+                "amala" entering the Oxford English Dictionary.</p>
+            <p>The world our students will inherit is not the world we grew up in. It's not even the world of five years
+                ago.</p>
+            <p>In that world, knowing facts is useless—Google knows more facts than any human. But asking the right
+                questions? That skill never gets old. That skill becomes more valuable every day.</p>
+            <p>Because in a world of information, the scarce resource is not answers. It's the ability to ask questions
+                that matter.</p>
+
+            <h4>Practical Things You Can Do Tomorrow</h4>
+            <p>Okay, enough theory. Let's talk about what you can actually do.</p>
+
+            <div class="gold-box">
+                <div class="tip-item">
+                    <span class="tip-num">1</span>
+                    <div><strong>Kill "Any Questions?" Forever</strong><br>Replace it with specific questions. Instead
+                        of "Any questions?" try: "What's one thing from today that still confuses you?" "If you had to
+                        explain today's lesson to your mother, what would you say?" "What question are you afraid to
+                        ask?"</div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-num">2</span>
+                    <div><strong>Give Thinking Time</strong><br>We Nigerians are impatient. We ask a question, and if
+                        nobody answers in two seconds, we answer it ourselves or move on. Stop that. Count to ten.
+                        Slowly. Silence is not your enemy—it's thinking time. Let them sit with the question. Let it
+                        work on them.</div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-num">3</span>
+                    <div><strong>Reward Questions, Not Just Answers</strong><br>Create a culture where asking a good
+                        question is celebrated as much as giving a good answer. Have a "Question of the Day" wall. Give
+                        a stamp or a star for thoughtful questions. When a student asks something deep, stop the class
+                        and acknowledge it.</div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-num">4</span>
+                    <div><strong>Ask One Question Per Lesson That Even You Don't Know the Answer To</strong><br>This is
+                        scary. But it's powerful. When students see that you're still learning, still wondering, still
+                        comfortable with not knowing—it gives them permission to do the same.</div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-num">5</span>
+                    <div><strong>End Every Lesson with a Question</strong><br>Instead of "Any questions?" try: "Here's
+                        what I want you to think about before tomorrow..." and leave them with something to chew on.
+                    </div>
+                </div>
+            </div>
+
+            <h4>A Story to End With</h4>
+            <div class="story-block">
+                <i class="fas fa-star" style="color:#b45309;"></i>
+                <strong>A Story to End With</strong>
+                <p>There's a story from Borno State that has stayed with me. A 14-year-old girl named Habiba. Her school
+                    introduced digital learning through something called the Nigeria Learning Passport. Before this,
+                    Habiba struggled. She felt lost in class. No support at home. Limited materials.</p>
+                <p>But with this new tool, something shifted. She started using her mother's phone to learn. She
+                    practiced. She kept going.</p>
+                <p>Now, when they asked her what she wants to be, she said: "A medical doctor."</p>
+                <p>And then she said something remarkable. She said: "Now, I don't give up."</p>
+                <p>You see that? The environment didn't change everything. The computer didn't change everything. What
+                    changed was <em>inside</em> her. The questions she started asking herself. The belief that grew. The
+                    refusal to quit.</p>
+                <p>That's education.</p>
+            </div>
+
+            <h4>The Challenge I'm Leaving With You</h4>
+            <p>This week, I want you to try something. Pick one class. One lesson. And before you teach it, write down
+                three questions you plan to ask.</p>
+            <p>Not just any questions. Questions with purpose. Questions that matter. Questions that connect to their
+                lives.</p>
+            <p>Ask them. And then listen. Really listen.</p>
+            <p>Watch what happens inside your students.</p>
+            <p>Watch what happens inside you.</p>
+            <p>Because when we learn to ask good questions—careful questions, thoughtful questions, questions that
+                respect the person on the other end—we stop being just teachers. We become something rarer.</p>
+            <p>We become people who help other people become more than they were.</p>
+            <p>And isn't that why we got into this in the first place?</p>
+
+            <hr class="divider">
+
+            <!-- REAL SUBSCRIBE SECTION -->
+            <div class="subscribe-section" id="subscribe">
+                <div class="subscribe-title"><i class="fas fa-envelope-open-text"></i> Never miss an article</div>
+                <p style="margin-bottom:0.5rem;">Join our Nigerian Educators Series. Get fresh insights directly in your
+                    inbox.</p>
+                <div class="sub-input">
+                    <input type="email" placeholder="Your email address" id="subEmail" required>
+                    <button id="subscribeBtn"><i class="fas fa-paper-plane"></i> Subscribe</button>
+                </div>
+                <div id="subMessage" class="sub-message"></div>
+            </div>
+
+            <!-- REAL COMMENTS SECTION -->
+            <div class="comment-section">
+                <div class="comment-title"><i class="fas fa-comments"></i> What are your thoughts?</div>
+
+                <div class="comment-box">
+                    <input type="text" id="commentName" placeholder="Your name *" required>
+                    <input type="email" id="commentEmail" placeholder="Your email (for avatar, optional)">
+                    <textarea id="commentText" rows="3" placeholder="Share your experience or reflection... *"
+                        required></textarea>
+                    <button id="postCommentBtn"><i class="fas fa-feather-alt"></i> Post Comment</button>
+                </div>
+
+                <div id="commentList" class="comment-list">
+                    <div class="loading">Loading comments...</div>
+                </div>
+            </div>
+
+            <!-- SHARE BUTTONS -->
+            <div class="share-flex">
+                <button class="share-btn" id="share-fb"><i class="fab fa-facebook-f"></i> Facebook</button>
+                <button class="share-btn" id="share-tw"><i class="fab fa-twitter"></i> Twitter</button>
+                <button class="share-btn" id="share-wa"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button class="share-btn" id="share-li"><i class="fab fa-linkedin-in"></i> LinkedIn</button>
+            </div>
+
+            <!-- Next in series -->
+            <div class="foot-note">
+                <p style="font-size:1.4rem; font-weight:600;"><i class="fas fa-arrow-circle-right"></i> Next time in
+                    this series:</p>
+                <p>"The Classroom Is Not a Prison: Why Students Check Out and How to Invite Them Back In." We'll talk
+                    about attention, relevance, and why your students are scrolling through life while you're still on
+                    page one.</p>
+                <p style="margin-top:1rem;"><em>Questions? Comments? Stories you want to share? I want to hear them.
+                        After all, I'm still learning too.</em></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const currentArticle = window.location.pathname;
+
+        // ========== SUBSCRIPTION HANDLER ==========
+        document.getElementById('subscribeBtn').addEventListener('click', async function () {
+            const email = document.getElementById('subEmail').value.trim();
+            const messageDiv = document.getElementById('subMessage');
+
+            if (!email || !email.includes('@')) {
+                messageDiv.className = 'sub-message error';
+                messageDiv.textContent = 'Please enter a valid email address.';
+                return;
+            }
+
+            messageDiv.className = 'sub-message';
+            messageDiv.textContent = 'Subscribing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('email', email);
+
+                const response = await fetch('subscribe.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                messageDiv.className = data.success ? 'sub-message success' : 'sub-message error';
+                messageDiv.textContent = data.message;
+
+                if (data.success) {
+                    document.getElementById('subEmail').value = '';
+                }
+            } catch (error) {
+                messageDiv.className = 'sub-message error';
+                messageDiv.textContent = 'Connection error. Please try again.';
+            }
+        });
+
+        // ========== COMMENTS HANDLER ==========
+        let replyToId = 0;
+
+        // Load comments
+        async function loadComments() {
+            const commentList = document.getElementById('commentList');
+
+            try {
+                const response = await fetch(`comments.php?action=get_comments&article_url=${encodeURIComponent(currentArticle)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    commentList.innerHTML = data.html || '<p style="text-align:center; color:#8b7a66;">Be the first to comment!</p>';
+                } else {
+                    commentList.innerHTML = '<div class="error-message">Failed to load comments.</div>';
+                }
+            } catch (error) {
+                commentList.innerHTML = '<div class="error-message">Error loading comments. Please refresh.</div>';
+            }
+        }
+
+        // Post new comment
+        document.getElementById('postCommentBtn').addEventListener('click', async function () {
+            const name = document.getElementById('commentName').value.trim();
+            const email = document.getElementById('commentEmail').value.trim();
+            const text = document.getElementById('commentText').value.trim();
+
+            if (!name || !text) {
+                alert('Please enter your name and comment.');
+                return;
+            }
+
+            const commentData = {
+                article_url: currentArticle,
+                author_name: name,
+                author_email: email || null,
+                comment_text: text,
+                parent_id: replyToId
+            };
+
+            try {
+                const response = await fetch('comments.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(commentData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('commentName').value = '';
+                    document.getElementById('commentEmail').value = '';
+                    document.getElementById('commentText').value = '';
+                    replyToId = 0;
+                    document.getElementById('postCommentBtn').textContent = 'Post Comment';
+
+                    // Reload comments
+                    await loadComments();
+                } else {
+                    alert(data.message || 'Failed to post comment.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        });
+
+        // Show reply form
+        window.showReplyForm = function (commentId) {
+            // Hide all other reply forms first
+            document.querySelectorAll('[id^="reply-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+
+            const form = document.getElementById('reply-form-' + commentId);
+            if (form) {
+                form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+                if (form.style.display === 'flex') {
+                    document.getElementById('replyInput' + commentId)?.focus();
+                }
+            }
+        }
+
+        // Post reply
+        window.postReply = async function (commentId) {
+            const replyInput = document.getElementById('replyInput' + commentId);
+            const replyName = document.getElementById('replyName' + commentId);
+            const replyText = replyInput?.value.trim();
+            const replyAuthor = replyName?.value.trim() || 'Anonymous';
+
+            if (!replyText) {
+                alert('Please enter a reply.');
+                return;
+            }
+
+            const replyData = {
+                article_url: currentArticle,
+                author_name: replyAuthor,
+                comment_text: replyText,
+                parent_id: commentId
+            };
+
+            try {
+                const response = await fetch('comments.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(replyData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    replyInput.value = '';
+                    if (replyName) replyName.value = '';
+                    document.getElementById('reply-form-' + commentId).style.display = 'none';
+                    await loadComments(); // Reload to show reply
+                } else {
+                    alert(data.message || 'Failed to post reply.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        };
+
+        // ========== SHARE BUTTONS ==========
+        const pageTitle = encodeURIComponent("Education Is What Happens Inside You, Not Around You | Impact Digital");
+        const pageUrl = encodeURIComponent(window.location.href);
+        const pageDesc = encodeURIComponent("A Nigerian educators series: real talk about questions, relevance, and learning that happens inside.");
+
+        document.getElementById('share-fb').addEventListener('click', function () {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`, '_blank');
+        });
+
+        document.getElementById('share-tw').addEventListener('click', function () {
+            window.open(`https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageDesc}`, '_blank');
+        });
+
+        document.getElementById('share-wa').addEventListener('click', function () {
+            window.open(`https://wa.me/?text=${pageDesc}%20${pageUrl}`, '_blank');
+        });
+
+        document.getElementById('share-li').addEventListener('click', function () {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`, '_blank');
+        });
+
+        // Load comments on page load
+        document.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+
+    <!-- Include PHP backend files note -->
+    <!-- 
+    IMPORTANT: 
+    You need to create these PHP files in the same directory:
+    1. config.php - Database configuration
+    2. subscribe.php - Email subscription handler  
+    3. comments.php - Comments API handler
+    4. PHPMailer/ - Email library folder
+    
+    See accompanying PHP files for implementation.
+-->
+</body>
+
+</html>
