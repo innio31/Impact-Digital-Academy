@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 require_once '../includes/functions.php';
 
 // Simple admin authentication
@@ -337,16 +335,17 @@ if (isset($_SESSION['admin'])) {
 }
 
 if (!isset($_SESSION['admin'])) {
-    // Show login form (mobile friendly)
+    // Show login form (same as before)
 ?>
     <!DOCTYPE html>
     <html lang="en">
 
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Login - Quiz System</title>
         <style>
+            /* Same login styles as before */
             * {
                 margin: 0;
                 padding: 0;
@@ -354,20 +353,19 @@ if (!isset($_SESSION['admin'])) {
             }
 
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
+                height: 100vh;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                padding: 15px;
             }
 
             .login-container {
                 background: white;
-                padding: 30px 20px;
-                border-radius: 20px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 width: 100%;
                 max-width: 400px;
             }
@@ -385,20 +383,18 @@ if (!isset($_SESSION['admin'])) {
 
             label {
                 display: block;
-                margin-bottom: 8px;
+                margin-bottom: 5px;
                 color: #555;
                 font-weight: 500;
-                font-size: 16px;
             }
 
             input[type="password"] {
                 width: 100%;
-                padding: 15px;
+                padding: 12px;
                 border: 2px solid #e0e0e0;
-                border-radius: 12px;
+                border-radius: 5px;
                 font-size: 16px;
                 transition: border-color 0.3s;
-                -webkit-appearance: none;
             }
 
             input[type="password"]:focus {
@@ -408,21 +404,19 @@ if (!isset($_SESSION['admin'])) {
 
             button {
                 width: 100%;
-                padding: 16px;
+                padding: 12px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
                 border: none;
-                border-radius: 12px;
-                font-size: 18px;
+                border-radius: 5px;
+                font-size: 16px;
                 font-weight: 600;
                 cursor: pointer;
-                transition: transform 0.2s, opacity 0.2s;
-                -webkit-tap-highlight-color: transparent;
+                transition: transform 0.2s;
             }
 
-            button:active {
-                transform: scale(0.98);
-                opacity: 0.9;
+            button:hover {
+                transform: translateY(-2px);
             }
         </style>
     </head>
@@ -495,11 +489,10 @@ if (isset($_GET['edit_question'])) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <meta name="theme-color" content="#667eea">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Control Panel</title>
     <style>
-        /* Mobile-First Reset */
+        /* Previous styles remain exactly the same until we add new ones */
         * {
             margin: 0;
             padding: 0;
@@ -507,82 +500,48 @@ if (isset($_GET['edit_question'])) {
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
-            min-height: 100vh;
-            padding-bottom: 70px;
-            /* Space for bottom nav */
         }
 
-        /* Mobile Header */
-        .mobile-header {
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 15px 15px 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px 20px;
+            overflow-y: auto;
+            height: 100vh;
+            position: fixed;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        .sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .header-top h1 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .header-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-            text-decoration: none;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .header-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0.95);
-        }
-
-        /* Status Bar */
-        .status-bar {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(5px);
-            margin-top: 5px;
-        }
-
-        .status-info {
-            display: flex;
-            flex-direction: column;
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
         }
 
         .status-label {
-            font-size: 12px;
+            font-size: 14px;
             opacity: 0.8;
+            margin-bottom: 5px;
         }
 
         .status-value {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -603,30 +562,125 @@ if (isset($_GET['edit_question'])) {
             color: #3498db;
         }
 
-        .timer-mini {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 20px;
-            font-weight: bold;
-            font-family: monospace;
-            display: none;
+        .question-list {
+            margin-top: 30px;
         }
 
-        .timer-mini.active {
-            display: block;
+        .question-list h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .question-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .question-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .question-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-left: 4px solid #fff;
+        }
+
+        .question-number {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .question-text {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .question-status {
+            font-size: 10px;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .question-status.active {
+            background: #27ae60;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .reset-btn {
+            background: #f39c12;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .reset-btn:hover {
+            background: #e67e22;
         }
 
         /* Alert Messages */
         .alert {
             padding: 15px 20px;
-            margin: 15px;
-            border-radius: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .alert.success {
@@ -653,220 +707,157 @@ if (isset($_GET['edit_question'])) {
             font-size: 20px;
             cursor: pointer;
             color: inherit;
-            padding: 0 5px;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 30px;
             background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 5px;
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 5px;
-            background: none;
             border: none;
-            border-radius: 10px;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            color: #667eea;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .nav-item:active {
-            background: #f0f0f0;
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
-        .nav-icon {
-            font-size: 22px;
-            margin-bottom: 2px;
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Content Sections */
-        .content-section {
+        /* Panels */
+        .panel {
             display: none;
-            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .content-section.active {
+        .panel.active {
             display: block;
         }
 
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
+        /* Control Panel */
+        .button-group {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
-        /* Questions List for Mobile */
-        .questions-mobile-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .question-mobile-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            border-left: 4px solid #667eea;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .question-mobile-item.active {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            border-left-width: 8px;
-        }
-
-        .question-mobile-item:active {
-            transform: scale(0.98);
-        }
-
-        .question-mobile-number {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 5px;
-        }
-
-        .question-mobile-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .question-mobile-status {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 20px;
-            background: #e9ecef;
-            display: inline-block;
-        }
-
-        .question-mobile-status.active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        /* Button Grid for Controls */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .control-btn {
-            padding: 16px 10px;
+        .btn {
+            padding: 12px 30px;
             border: none;
-            border-radius: 14px;
-            font-size: 15px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
-            color: white;
             cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .control-btn:active {
-            transform: scale(0.95);
-        }
-
-        .control-btn:disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .control-btn .btn-icon {
-            font-size: 24px;
+            transition: all 0.3s;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
         .btn-success {
             background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
         }
 
         .btn-warning {
             background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
         }
 
         .btn-danger {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
         }
 
         .btn-info {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
         }
 
-        /* Students Ready Section */
-        .ready-count-large {
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Timer Display */
+        .timer-display {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .timer-value {
             font-size: 48px;
             font-weight: bold;
-            color: #27ae60;
-            text-align: center;
-            margin: 10px 0;
+            font-family: monospace;
         }
 
-        .students-grid {
+        /* Students Ready */
+        .students-ready {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .ready-count {
+            font-size: 36px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .student-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 10px;
-            max-height: 200px;
+            margin-top: 20px;
+            max-height: 300px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .student-badge {
             background: #e9ecef;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 5px;
             text-align: center;
-            font-size: 13px;
             color: #495057;
+            font-size: 14px;
         }
 
         .student-badge.online {
@@ -875,254 +866,180 @@ if (isset($_GET['edit_question'])) {
             border: 1px solid #c3e6cb;
         }
 
-        /* Management Tabs */
-        .mgmt-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-            padding: 5px 0;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .mgmt-tab {
-            padding: 12px 20px;
-            background: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .mgmt-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .mgmt-tab:active {
-            transform: scale(0.95);
-        }
-
-        /* Student List Items */
-        .student-list-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .student-list-item.selected {
-            background: #e3f2fd;
-            border: 2px solid #667eea;
-        }
-
-        .student-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .student-details {
-            flex: 1;
-        }
-
-        .student-name {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .student-meta {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .student-score {
-            font-weight: bold;
-            color: #f39c12;
-            font-size: 18px;
-        }
-
-        .student-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .student-action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .student-action-btn.edit {
-            background: #3498db;
-            color: white;
-        }
-
-        .student-action-btn.delete {
-            background: #e74c3c;
-            color: white;
-        }
-
-        /* Question Items */
-        .question-list-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        .question-header {
+        /* Question Management */
+        .question-mgmt-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
 
-        .question-number {
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
+        .question-mgmt-header h3 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .questions-table-container {
+            overflow-x: auto;
+        }
+
+        .questions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .questions-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .questions-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .questions-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .question-preview {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .options-preview {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .correct-badge {
+            display: inline-block;
+            padding: 5px 10px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-        }
-
-        .question-status {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .question-status.active {
             background: #d4edda;
             color: #155724;
         }
 
-        .question-status.inactive {
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
             background: #f8d7da;
             color: #721c24;
         }
 
-        .question-text-preview {
-            font-weight: 500;
-            margin-bottom: 10px;
-            font-size: 15px;
-        }
-
-        .options-preview {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .option-preview {
-            background: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
-
-        .correct-badge {
-            background: #27ae60;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        .question-actions {
+        .action-buttons {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 12px;
         }
 
-        .question-action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 5px;
             font-size: 12px;
-            cursor: pointer;
+            text-decoration: none;
             color: white;
-            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.3s;
         }
 
-        .question-action-btn:active {
-            transform: scale(0.95);
+        .action-btn:hover {
+            opacity: 0.8;
         }
 
-        .question-action-btn.edit {
+        .action-btn.edit {
             background: #3498db;
         }
 
-        .question-action-btn.delete {
+        .action-btn.delete {
             background: #e74c3c;
         }
 
-        .question-action-btn.toggle {
+        .action-btn.toggle {
             background: #f39c12;
         }
 
-        .question-action-btn.move {
+        .action-btn.move {
             background: #95a5a6;
         }
 
-        /* Search Box */
-        .search-box {
-            margin: 15px 0;
+        /* Student Management - New styles for bulk delete */
+        .student-mgmt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 30px;
-            font-size: 16px;
-            -webkit-appearance: none;
+        .student-mgmt-header h3 {
+            font-size: 24px;
+            color: #333;
         }
 
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        /* Modal Styles */
+        .checkbox-col {
+            width: 40px;
+            text-align: center;
+        }
+
+        .select-all {
+            cursor: pointer;
+        }
+
+        .selected-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            align-items: flex-end;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
         .modal.active {
@@ -1131,45 +1048,31 @@ if (isset($_GET['edit_question'])) {
 
         .modal-content {
             background: white;
+            padding: 40px;
+            border-radius: 15px;
             width: 100%;
-            max-width: 500px;
-            border-radius: 25px 25px 0 0;
-            padding: 25px 20px;
-            animation: slideUp 0.3s ease;
-            max-height: 85vh;
+            max-width: 600px;
+            position: relative;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h3 {
-            font-size: 20px;
+        .modal-content h3 {
             color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
         }
 
-        .modal-close {
-            font-size: 28px;
+        .modal-content .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
             cursor: pointer;
             color: #999;
-            padding: 5px;
         }
 
-        .modal-close:active {
+        .modal-content .close:hover {
             color: #333;
         }
 
@@ -1182,18 +1085,17 @@ if (isset($_GET['edit_question'])) {
             margin-bottom: 8px;
             color: #555;
             font-weight: 500;
-            font-size: 14px;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 16px;
-            -webkit-appearance: none;
+            transition: border-color 0.3s;
         }
 
         .form-group textarea {
@@ -1208,78 +1110,163 @@ if (isset($_GET['edit_question'])) {
             border-color: #667eea;
         }
 
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #999;
+            font-size: 12px;
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
+        }
+
+        /* Students Table */
+        .students-table-container {
+            overflow-x: auto;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        .students-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .students-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .students-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .students-table tr.selected {
+            background: #e3f2fd;
+        }
+
+        .status-badge.online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.offline {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .action-link {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .action-link.delete {
+            color: #e74c3c;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        /* CSV Import */
+        .csv-import {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .csv-import h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .csv-format {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .file-input {
+            margin-bottom: 15px;
+        }
+
+        /* Search Box */
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Reset Modal Specific */
+        .warning-text {
+            color: #e74c3c;
+            margin: 20px 0;
+            font-size: 16px;
         }
 
         .modal-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 25px;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
         }
 
-        .modal-actions button {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-
-        /* Warning Box */
-        .warning-box {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 15px 0;
-        }
-
-        .warning-box ul {
-            margin-top: 10px;
-            margin-left: 20px;
-        }
-
-        /* Selected Students List */
+        /* Bulk Delete Modal Specific */
         .selected-students-list {
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
-            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            background: #f8f9fa;
         }
 
         .selected-student-item {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .selected-student-item:last-child {
+            border-bottom: none;
         }
 
         .selected-student-icon {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             background: #667eea;
             color: white;
             border-radius: 50%;
@@ -1287,330 +1274,272 @@ if (isset($_GET['edit_question'])) {
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 18px;
-        }
-
-        /* Bulk Actions */
-        .bulk-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 10px 0;
-            flex-wrap: wrap;
-        }
-
-        .selected-count {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-        }
-
-        .select-all-btn {
-            background: #f8f9fa;
-            padding: 8px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* Loading States */
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #999;
-        }
-
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            background: #f8f9fa;
-            border-radius: 16px;
-        }
-
-        /* Responsive adjustments */
-        @media (min-width: 768px) {
-            body {
-                padding-bottom: 0;
-            }
-
-            .bottom-nav {
-                display: none;
-            }
-
-            .mobile-header {
-                padding: 15px 20px;
-            }
-
-            .content-section {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
-            .student-list-item {
-                max-width: 600px;
-                margin-left: auto;
-                margin-right: auto;
-            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <div class="header-top">
-            <h1>🎮 Quiz Control</h1>
-            <div class="header-actions">
-                <button class="header-btn" onclick="showResetModal()">Reset</button>
-                <a href="?logout=1" class="header-btn">Exit</a>
-            </div>
-        </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Quiz Control Panel</h2>
 
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-info">
-                <span class="status-label">Status</span>
-                <span class="status-value <?php echo $state['status']; ?>" id="sidebar-status">
+            <div class="status-indicator">
+                <div class="status-label">Current Status</div>
+                <div class="status-value <?php echo $state['status']; ?>" id="sidebar-status">
                     <?php echo strtoupper($state['status']); ?>
-                </span>
-            </div>
-            <div class="timer-mini" id="timerMini">
-                <span id="timerValue">0</span>s
-            </div>
-        </div>
-    </div>
-
-    <!-- Alert Messages -->
-    <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert <?php echo $_SESSION['msg_type']; ?>">
-            <?php
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-            unset($_SESSION['msg_type']);
-            ?>
-            <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
-        </div>
-    <?php endif; ?>
-
-    <!-- Content Sections -->
-    <div id="quizSection" class="content-section active">
-        <!-- Quiz Control Card -->
-        <div class="card">
-            <div class="card-title">
-                <span>🎯 Quiz Controls</span>
-            </div>
-
-            <!-- Selected Question Display -->
-            <div style="background: #e8f4fd; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Selected Question:</div>
-                <div id="selectedQuestionDisplay" style="font-weight: 500; word-break: break-word;">
-                    <?php echo $state['current_question'] ? 'Question ' . array_search($state['current_question'], array_column($questions, 'id')) + 1 : 'None selected'; ?>
                 </div>
             </div>
 
-            <!-- Button Grid -->
-            <div class="button-grid">
-                <button class="control-btn btn-primary" onclick="checkReadiness()" id="checkReadinessBtn">
-                    <span class="btn-icon">👥</span>
-                    <span>Check Ready</span>
-                </button>
-                <button class="control-btn btn-success" onclick="startCountdown()" id="startCountdownBtn">
-                    <span class="btn-icon">⏱️</span>
-                    <span>Start Countdown</span>
-                </button>
-                <button class="control-btn btn-warning" onclick="forceShowQuestion()" id="showQuestionBtn">
-                    <span class="btn-icon">📢</span>
-                    <span>Show Question</span>
-                </button>
-                <button class="control-btn btn-danger" onclick="showResults()" id="showResultsBtn">
-                    <span class="btn-icon">📊</span>
-                    <span>Show Results</span>
-                </button>
-                <button class="control-btn btn-info" onclick="nextQuestion()" id="nextQuestionBtn" style="grid-column: span 2;">
-                    <span class="btn-icon">⏭️</span>
-                    <span>Next Question</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Questions List Card -->
-        <div class="card">
-            <div class="card-title">
-                <span>📋 Questions</span>
-                <span style="font-size: 14px; color: #666;"><?php echo count($questions); ?> total</span>
-            </div>
-
-            <div class="questions-mobile-list">
+            <div class="question-list">
+                <h3>Questions</h3>
                 <?php foreach ($questions as $index => $q): ?>
-                    <div class="question-mobile-item <?php echo ($state['current_question'] == $q['id']) ? 'active' : ''; ?>"
+                    <div class="question-item <?php echo ($state['current_question'] == $q['id']) ? 'active' : ''; ?>"
                         onclick="selectQuestion(<?php echo $q['id']; ?>, this)">
-                        <div class="question-mobile-number">Question <?php echo $index + 1; ?></div>
-                        <div class="question-mobile-text"><?php echo htmlspecialchars($q['question_text']); ?></div>
-                        <div>
-                            <span class="question-mobile-status <?php echo $q['is_active'] ? 'active' : ''; ?>">
-                                <?php echo $q['is_active'] ? 'Active' : 'Inactive'; ?>
-                            </span>
-                        </div>
+                        <div class="question-number">Question <?php echo $index + 1; ?></div>
+                        <div class="question-text"><?php echo htmlspecialchars($q['question_text']); ?></div>
+                        <span class="question-status <?php echo $q['is_active'] ? 'active' : ''; ?>">
+                            <?php echo $q['is_active'] ? 'Active' : 'Inactive'; ?>
+                        </span>
                     </div>
                 <?php endforeach; ?>
-                <?php if (empty($questions)): ?>
-                    <div class="empty-state">No questions yet. Add some in Management tab.</div>
-                <?php endif; ?>
             </div>
         </div>
 
-        <!-- Students Ready Card -->
-        <div class="card">
-            <div class="card-title">
-                <span>👥 Students Ready</span>
-                <span class="ready-count" id="readyCount">0</span>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Quiz Control</h1>
+                <div class="header-actions">
+                    <button class="reset-btn" onclick="showResetModal()">Reset All Data</button>
+                    <a href="?logout=1" class="logout-btn">Logout</a>
+                </div>
             </div>
 
-            <div class="students-grid" id="studentList">
-                <div class="loading">Loading...</div>
+            <!-- Alert Messages -->
+            <?php if (isset($_SESSION['message'])): ?>
+                <div class="alert <?php echo $_SESSION['msg_type']; ?>">
+                    <?php
+                    echo $_SESSION['message'];
+                    unset($_SESSION['message']);
+                    unset($_SESSION['msg_type']);
+                    ?>
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+            <?php endif; ?>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('quiz')">Quiz Control</button>
+                <button class="tab" onclick="showTab('questions')">Question Management</button>
+                <button class="tab" onclick="showTab('students')">Student Management</button>
             </div>
-        </div>
-    </div>
 
-    <div id="managementSection" class="content-section">
-        <!-- Management Tabs -->
-        <div class="mgmt-tabs">
-            <button class="mgmt-tab active" onclick="showMgmtTab('students')">👥 Students</button>
-            <button class="mgmt-tab" onclick="showMgmtTab('questions')">❓ Questions</button>
-        </div>
+            <!-- Quiz Control Panel -->
+            <div id="quiz-panel" class="panel active">
+                <!-- Timer Display -->
+                <div class="timer-display" id="timerDisplay" style="display: none;">
+                    <div class="timer-label" id="timerLabel">Countdown</div>
+                    <div class="timer-value" id="timerValue">10</div>
+                </div>
 
-        <!-- Students Management -->
-        <div id="studentsMgmt" class="mgmt-panel active">
-            <!-- Search and Bulk Actions -->
-            <div class="card">
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="checkReadiness()" id="checkReadinessBtn">
+                        Check Readiness
+                    </button>
+
+                    <button class="btn btn-success" onclick="startCountdown()" id="startCountdownBtn">
+                        Start Countdown
+                    </button>
+
+                    <button class="btn btn-warning" onclick="forceShowQuestion()" id="showQuestionBtn">
+                        Force Show Question
+                    </button>
+
+                    <button class="btn btn-danger" onclick="showResults()" id="showResultsBtn">
+                        Show Results
+                    </button>
+
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="nextQuestionBtn">
+                        Next Question
+                    </button>
+                </div>
+
+                <!-- Selected Question Display -->
+                <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>Selected Question:</strong>
+                    <span id="selectedQuestionDisplay">None selected</span>
+                </div>
+
+                <!-- Students Ready Display -->
+                <div class="students-ready">
+                    <h3>Students Ready</h3>
+                    <div class="ready-count" id="readyCount">0</div>
+                    <div class="student-list" id="studentList">
+                        <div style="text-align: center; color: #999; padding: 20px;">No students online</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Management Panel -->
+            <div id="questions-panel" class="panel">
+                <div class="question-mgmt-header">
+                    <h3>Manage Questions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="showAddQuestionModal()">+ Add Question</button>
+                    </div>
+                </div>
+
+                <!-- Questions Table -->
+                <div class="questions-table-container">
+                    <table class="questions-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Question</th>
+                                <th>Options</th>
+                                <th>Correct</th>
+                                <th>Points</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($questions as $index => $q): ?>
+                                <tr>
+                                    <td>#<?php echo $index + 1; ?></td>
+                                    <td>
+                                        <div class="question-preview"><?php echo htmlspecialchars($q['question_text']); ?></div>
+                                    </td>
+                                    <td>
+                                        <div class="options-preview">
+                                            A: <?php echo htmlspecialchars($q['option_a']); ?><br>
+                                            B: <?php echo htmlspecialchars($q['option_b']); ?><br>
+                                            C: <?php echo htmlspecialchars($q['option_c']); ?><br>
+                                            D: <?php echo htmlspecialchars($q['option_d']); ?>
+                                        </div>
+                                    </td>
+                                    <td><span class="correct-badge"><?php echo $q['correct_option']; ?></span></td>
+                                    <td><?php echo $q['points']; ?></td>
+                                    <td><?php echo $q['time_limit']; ?>s</td>
+                                    <td>
+                                        <span class="status-badge <?php echo $q['is_active'] ? 'active' : 'inactive'; ?>">
+                                            <?php echo $q['is_active'] ? 'Active' : 'Inactive'; ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <?php if ($index > 0): ?>
+                                                <a href="?move_up=<?php echo $q['id']; ?>" class="action-btn move">↑</a>
+                                            <?php endif; ?>
+                                            <?php if ($index < count($questions) - 1): ?>
+                                                <a href="?move_down=<?php echo $q['id']; ?>" class="action-btn move">↓</a>
+                                            <?php endif; ?>
+                                            <a href="?toggle_question=<?php echo $q['id']; ?>" class="action-btn toggle">
+                                                <?php echo $q['is_active'] ? 'Deactivate' : 'Activate'; ?>
+                                            </a>
+                                            <a href="?edit_question=<?php echo $q['id']; ?>" class="action-btn edit" onclick="showEditQuestionModal(<?php echo htmlspecialchars(json_encode($q)); ?>); return false;">Edit</a>
+                                            <a href="?delete_question=<?php echo $q['id']; ?>" class="action-btn delete" onclick="return confirm('Delete this question? This action cannot be undone if no answers have been submitted.')">Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($questions)): ?>
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                                        No questions yet. Click "Add Question" to create your first question.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Student Management Panel -->
+            <div id="students-panel" class="panel">
+                <div class="student-mgmt-header">
+                    <h3>Manage Students</h3>
+                    <div class="bulk-actions">
+                        <span class="selected-count" id="selectedCount">0 selected</span>
+                        <button class="btn btn-danger" onclick="showBulkDeleteModal()" id="bulkDeleteBtn" disabled>Delete Selected</button>
+                        <button class="btn btn-success" onclick="showAddModal()">+ Add Student</button>
+                        <button class="btn btn-info" onclick="showImportModal()">📁 Import CSV</button>
+                    </div>
+                </div>
+
+                <!-- Search -->
                 <div class="search-box">
-                    <input type="text" id="studentSearch" placeholder="🔍 Search students..." onkeyup="searchStudents()">
+                    <input type="text" id="studentSearch" placeholder="Search students by name or username..." onkeyup="searchStudents()">
                 </div>
 
-                <div class="bulk-actions">
-                    <span class="selected-count" id="selectedCount">0 selected</span>
-                    <button class="select-all-btn" onclick="toggleSelectAll()">Select All</button>
-                    <button class="control-btn btn-danger" style="flex: 1;" onclick="showBulkDeleteModal()" id="bulkDeleteBtn" disabled>Delete Selected</button>
+                <!-- Students Table -->
+                <div class="students-table-container">
+                    <form id="bulkDeleteForm" method="POST">
+                        <input type="hidden" name="bulk_delete_students" value="1">
+                        <table class="students-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-col">
+                                        <input type="checkbox" id="selectAll" onclick="toggleSelectAll()" class="select-all">
+                                    </th>
+                                    <th>Status</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Score</th>
+                                    <th>Answers</th>
+                                    <th>Last Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <?php foreach ($students as $student): ?>
+                                    <?php
+                                    $last_active = strtotime($student['last_activity'] ?? '');
+                                    $is_online = $last_active > (time() - 30);
+                                    ?>
+                                    <tr id="student-row-<?php echo $student['id']; ?>">
+                                        <td class="checkbox-col">
+                                            <input type="checkbox" name="student_ids[]" value="<?php echo $student['id']; ?>" class="student-checkbox" onchange="updateSelectedCount()">
+                                        </td>
+                                        <td>
+                                            <span class="status-badge <?php echo $is_online ? 'online' : 'offline'; ?>">
+                                                <?php echo $is_online ? 'Online' : 'Offline'; ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($student['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($student['username']); ?></td>
+                                        <td><?php echo $student['total_points']; ?></td>
+                                        <td><?php echo $student['answers_count']; ?></td>
+                                        <td>
+                                            <?php
+                                            if ($student['last_activity']) {
+                                                echo date('h:i:s A', strtotime($student['last_activity']));
+                                            } else {
+                                                echo 'Never';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <a class="action-link" onclick='showEditModal(<?php echo json_encode($student); ?>)'>Edit</a>
+                                            <a href="?delete=<?php echo $student['id']; ?>" class="action-link delete" onclick="return confirm('Delete this student? This will also delete all their answers and scores.')">Delete</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
-
-                <button class="control-btn btn-success" style="width: 100%; margin-top: 10px;" onclick="showAddModal()">
-                    <span class="btn-icon">➕</span> Add Student
-                </button>
-
-                <button class="control-btn btn-info" style="width: 100%; margin-top: 10px;" onclick="showImportModal()">
-                    <span class="btn-icon">📁</span> Import CSV
-                </button>
-            </div>
-
-            <!-- Students List -->
-            <div id="studentsList">
-                <?php foreach ($students as $student):
-                    $last_active = strtotime($student['last_activity'] ?? '');
-                    $is_online = $last_active > (time() - 30);
-                ?>
-                    <div class="student-list-item" id="student-row-<?php echo $student['id']; ?>">
-                        <input type="checkbox" class="student-checkbox" value="<?php echo $student['id']; ?>" style="width: 20px; height: 20px;" onchange="updateSelectedCount()">
-                        <div class="student-avatar"><?php echo strtoupper(substr($student['name'], 0, 1)); ?></div>
-                        <div class="student-details">
-                            <div class="student-name"><?php echo htmlspecialchars($student['name']); ?></div>
-                            <div class="student-meta">
-                                @<?php echo htmlspecialchars($student['username']); ?> •
-                                <span class="<?php echo $is_online ? '' : ''; ?>">
-                                    <?php echo $is_online ? '🟢 Online' : '⚪ Offline'; ?>
-                                </span>
-                            </div>
-                            <div class="student-meta">Answers: <?php echo $student['answers_count']; ?></div>
-                        </div>
-                        <div class="student-score"><?php echo $student['total_points']; ?> pts</div>
-                        <div class="student-actions">
-                            <button class="student-action-btn edit" onclick='showEditModal(<?php echo json_encode($student); ?>)'>Edit</button>
-                            <button class="student-action-btn delete" onclick="deleteStudent(<?php echo $student['id']; ?>, '<?php echo htmlspecialchars($student['name']); ?>')">Del</button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                <?php if (empty($students)): ?>
-                    <div class="empty-state">No students yet. Add some using the button above.</div>
-                <?php endif; ?>
             </div>
         </div>
-
-        <!-- Questions Management -->
-        <div id="questionsMgmt" class="mgmt-panel">
-            <div class="card">
-                <button class="control-btn btn-success" style="width: 100%;" onclick="showAddQuestionModal()">
-                    <span class="btn-icon">➕</span> Add Question
-                </button>
-            </div>
-
-            <!-- Questions List -->
-            <div id="questionsList">
-                <?php foreach ($questions as $index => $q): ?>
-                    <div class="question-list-item">
-                        <div class="question-header">
-                            <span class="question-number">Q<?php echo $index + 1; ?></span>
-                            <span class="question-status <?php echo $q['is_active'] ? 'active' : 'inactive'; ?>">
-                                <?php echo $q['is_active'] ? 'Active' : 'Inactive'; ?>
-                            </span>
-                        </div>
-                        <div class="question-text-preview">
-                            <?php echo htmlspecialchars($q['question_text']); ?>
-                        </div>
-                        <div class="options-preview">
-                            <div class="option-preview">A: <?php echo htmlspecialchars($q['option_a']); ?></div>
-                            <div class="option-preview">B: <?php echo htmlspecialchars($q['option_b']); ?></div>
-                            <div class="option-preview">C: <?php echo htmlspecialchars($q['option_c']); ?></div>
-                            <div class="option-preview">D: <?php echo htmlspecialchars($q['option_d']); ?></div>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <span class="correct-badge">Correct: <?php echo $q['correct_option']; ?></span>
-                            <span style="margin-left: 10px; color: #666;">⚡ <?php echo $q['time_limit']; ?>s • 🏆 <?php echo $q['points']; ?> pts</span>
-                        </div>
-                        <div class="question-actions">
-                            <?php if ($index > 0): ?>
-                                <a href="?move_up=<?php echo $q['id']; ?>" class="question-action-btn move">⬆️ Up</a>
-                            <?php endif; ?>
-                            <?php if ($index < count($questions) - 1): ?>
-                                <a href="?move_down=<?php echo $q['id']; ?>" class="question-action-btn move">⬇️ Down</a>
-                            <?php endif; ?>
-                            <button class="question-action-btn toggle" onclick="toggleQuestion(<?php echo $q['id']; ?>)">
-                                <?php echo $q['is_active'] ? '🔴 Deactivate' : '🟢 Activate'; ?>
-                            </button>
-                            <button class="question-action-btn edit" onclick='showEditQuestionModal(<?php echo htmlspecialchars(json_encode($q)); ?>)'>✏️ Edit</button>
-                            <button class="question-action-btn delete" onclick="deleteQuestion(<?php echo $q['id']; ?>, '<?php echo htmlspecialchars($q['question_text']); ?>')">🗑️ Delete</button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                <?php if (empty($questions)): ?>
-                    <div class="empty-state">No questions yet. Click "Add Question" to create your first question.</div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <button class="nav-item active" onclick="showSection('quiz')">
-            <span class="nav-icon">🎯</span>
-            <span>Quiz</span>
-        </button>
-        <button class="nav-item" onclick="showSection('management')">
-            <span class="nav-icon">⚙️</span>
-            <span>Manage</span>
-        </button>
     </div>
 
     <!-- Add Student Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Student</h3>
-                <span class="modal-close" onclick="hideModal('addModal')">&times;</span>
-            </div>
+            <span class="close" onclick="hideModal('addModal')">&times;</span>
+            <h3>Add New Student</h3>
             <form method="POST">
                 <div class="form-group">
                     <label>Full Name</label>
@@ -1623,11 +1552,9 @@ if (isset($_GET['edit_question'])) {
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" name="password" required placeholder="Enter password">
+                    <small>Student will use this password to login</small>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('addModal')">Cancel</button>
-                    <button type="submit" name="add_student" class="btn-success">Add Student</button>
-                </div>
+                <button type="submit" name="add_student" class="btn btn-success">Add Student</button>
             </form>
         </div>
     </div>
@@ -1635,10 +1562,8 @@ if (isset($_GET['edit_question'])) {
     <!-- Edit Student Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Student</h3>
-                <span class="modal-close" onclick="hideModal('editModal')">&times;</span>
-            </div>
+            <span class="close" onclick="hideModal('editModal')">&times;</span>
+            <h3>Edit Student</h3>
             <form method="POST" id="editForm">
                 <input type="hidden" name="student_id" id="edit_id">
                 <div class="form-group">
@@ -1653,10 +1578,7 @@ if (isset($_GET['edit_question'])) {
                     <label>New Password (leave blank to keep current)</label>
                     <input type="password" name="password" placeholder="Enter new password">
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('editModal')">Cancel</button>
-                    <button type="submit" name="edit_student" class="btn-success">Update</button>
-                </div>
+                <button type="submit" name="edit_student" class="btn btn-primary">Update Student</button>
             </form>
         </div>
     </div>
@@ -1664,35 +1586,30 @@ if (isset($_GET['edit_question'])) {
     <!-- Import CSV Modal -->
     <div id="importModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Import Students from CSV</h3>
-                <span class="modal-close" onclick="hideModal('importModal')">&times;</span>
-            </div>
-            <div class="warning-box" style="background: #e3f2fd; color: #0c5460;">
-                <strong>CSV Format:</strong><br>
-                username,name,password<br>
-                john_doe,John Doe,pass123<br>
-                jane_smith,Jane Smith,pass123
-            </div>
-            <form method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <input type="file" name="csv_file" accept=".csv" required>
+            <span class="close" onclick="hideModal('importModal')">&times;</span>
+            <h3>Import Students from CSV</h3>
+            <div class="csv-import">
+                <h4>CSV Format:</h4>
+                <div class="csv-format">
+                    username,name,password<br>
+                    john_doe,John Doe,pass123<br>
+                    jane_smith,Jane Smith,pass123
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('importModal')">Cancel</button>
-                    <button type="submit" name="import_csv" class="btn-success">Import</button>
-                </div>
-            </form>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="file-input">
+                        <input type="file" name="csv_file" accept=".csv" required>
+                    </div>
+                    <button type="submit" name="import_csv" class="btn btn-info">Import CSV</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Add Question Modal -->
     <div id="addQuestionModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Question</h3>
-                <span class="modal-close" onclick="hideModal('addQuestionModal')">&times;</span>
-            </div>
+            <span class="close" onclick="hideModal('addQuestionModal')">&times;</span>
+            <h3>Add New Question</h3>
             <form method="POST">
                 <div class="form-group">
                     <label>Question Text</label>
@@ -1739,12 +1656,10 @@ if (isset($_GET['edit_question'])) {
                 <div class="form-group">
                     <label>Time Limit (seconds)</label>
                     <input type="number" name="time_limit" value="10" min="5" max="60" required>
+                    <small>How many seconds students have to answer</small>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('addQuestionModal')">Cancel</button>
-                    <button type="submit" name="add_question" class="btn-success">Add Question</button>
-                </div>
+                <button type="submit" name="add_question" class="btn btn-success">Add Question</button>
             </form>
         </div>
     </div>
@@ -1752,10 +1667,8 @@ if (isset($_GET['edit_question'])) {
     <!-- Edit Question Modal -->
     <div id="editQuestionModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Question</h3>
-                <span class="modal-close" onclick="hideModal('editQuestionModal')">&times;</span>
-            </div>
+            <span class="close" onclick="hideModal('editQuestionModal')">&times;</span>
+            <h3>Edit Question</h3>
             <form method="POST" id="editQuestionForm">
                 <input type="hidden" name="question_id" id="edit_question_id">
 
@@ -1806,10 +1719,7 @@ if (isset($_GET['edit_question'])) {
                     <input type="number" name="time_limit" id="edit_time_limit" min="5" max="60" required>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('editQuestionModal')">Cancel</button>
-                    <button type="submit" name="edit_question" class="btn-success">Update</button>
-                </div>
+                <button type="submit" name="edit_question" class="btn btn-primary">Update Question</button>
             </form>
         </div>
     </div>
@@ -1817,13 +1727,11 @@ if (isset($_GET['edit_question'])) {
     <!-- Reset Confirmation Modal -->
     <div id="resetModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>⚠️ Reset All Data</h3>
-                <span class="modal-close" onclick="hideModal('resetModal')">&times;</span>
-            </div>
-            <div class="warning-box">
-                <strong>This action will:</strong>
-                <ul style="margin-top: 10px;">
+            <span class="close" onclick="hideModal('resetModal')">&times;</span>
+            <h3>⚠️ Reset All Data</h3>
+            <div class="warning-text">
+                This action will:
+                <ul style="margin-top: 10px; margin-left: 20px;">
                     <li>Delete all student answers</li>
                     <li>Reset all scores to zero</li>
                     <li>Clear student online status</li>
@@ -1833,8 +1741,8 @@ if (isset($_GET['edit_question'])) {
             </div>
             <form method="POST" id="resetForm">
                 <div class="modal-actions">
-                    <button type="button" class="btn-primary" onclick="hideModal('resetModal')">Cancel</button>
-                    <button type="submit" name="reset_all_data" class="btn-danger">Yes, Reset Everything</button>
+                    <button type="button" class="btn btn-primary" onclick="hideModal('resetModal')">Cancel</button>
+                    <button type="submit" name="reset_all_data" class="btn btn-danger">Yes, Reset Everything</button>
                 </div>
             </form>
         </div>
@@ -1843,12 +1751,15 @@ if (isset($_GET['edit_question'])) {
     <!-- Bulk Delete Confirmation Modal -->
     <div id="bulkDeleteModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>⚠️ Delete Selected Students</h3>
-                <span class="modal-close" onclick="hideModal('bulkDeleteModal')">&times;</span>
-            </div>
-            <div class="warning-box">
-                You are about to delete <strong id="deleteCount">0</strong> student(s). This will also delete all their answers and scores.
+            <span class="close" onclick="hideModal('bulkDeleteModal')">&times;</span>
+            <h3>⚠️ Delete Selected Students</h3>
+            <div class="warning-text">
+                You are about to delete <span id="deleteCount"></span> student(s). This will also delete:
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>All their answers</li>
+                    <li>All their scores</li>
+                </ul>
+                <p style="margin-top: 15px; font-weight: bold;">This action cannot be undone!</p>
             </div>
 
             <div class="selected-students-list" id="selectedStudentsList">
@@ -1856,8 +1767,8 @@ if (isset($_GET['edit_question'])) {
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn-primary" onclick="hideModal('bulkDeleteModal')">Cancel</button>
-                <button type="button" class="btn-danger" onclick="submitBulkDelete()">Yes, Delete</button>
+                <button type="button" class="btn btn-primary" onclick="hideModal('bulkDeleteModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="submitBulkDelete()">Yes, Delete Selected</button>
             </div>
         </div>
     </div>
@@ -1869,38 +1780,35 @@ if (isset($_GET['edit_question'])) {
         let timerInterval;
         let stateCheckInterval;
 
-        // Initialize
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Highlight selected question if any
+            if (currentQuestionId > 0) {
+                const activeItem = document.querySelector('.question-item.active');
+                if (activeItem) {
+                    updateSelectedQuestionDisplay(activeItem.querySelector('.question-text').textContent);
+                }
+            }
+
+            // Start state checking
             startStateChecking();
             checkReadiness();
-            highlightSelectedQuestion();
         });
 
-        // Section switching
-        function showSection(section) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        // Tab switching
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-            if (section === 'quiz') {
-                document.getElementById('quizSection').classList.add('active');
-                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if (tab === 'quiz') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('quiz-panel').classList.add('active');
+            } else if (tab === 'questions') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('questions-panel').classList.add('active');
             } else {
-                document.getElementById('managementSection').classList.add('active');
-                document.querySelectorAll('.nav-item')[1].classList.add('active');
-            }
-        }
-
-        // Management tab switching
-        function showMgmtTab(tab) {
-            document.querySelectorAll('.mgmt-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.mgmt-panel').forEach(p => p.classList.remove('active'));
-
-            if (tab === 'students') {
-                document.querySelectorAll('.mgmt-tab')[0].classList.add('active');
-                document.getElementById('studentsMgmt').classList.add('active');
-            } else {
-                document.querySelectorAll('.mgmt-tab')[1].classList.add('active');
-                document.getElementById('questionsMgmt').classList.add('active');
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.getElementById('students-panel').classList.add('active');
             }
         }
 
@@ -1924,6 +1832,7 @@ if (isset($_GET['edit_question'])) {
             document.getElementById('resetModal').classList.add('active');
         }
 
+        // Question modal functions
         function showAddQuestionModal() {
             document.getElementById('addQuestionModal').classList.add('active');
         }
@@ -1945,47 +1854,127 @@ if (isset($_GET['edit_question'])) {
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // Delete functions
-        function deleteStudent(id, name) {
-            if (confirm(`Delete student "${name}"? This will also delete all their answers.`)) {
-                window.location.href = `?delete=${id}`;
-            }
-        }
+        // Bulk delete functions
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
 
-        function deleteQuestion(id, text) {
-            if (confirm(`Delete question "${text.substring(0, 50)}..."?`)) {
-                window.location.href = `?delete_question=${id}`;
-            }
-        }
-
-        function toggleQuestion(id) {
-            window.location.href = `?toggle_question=${id}`;
-        }
-
-        // Question selection
-        function selectQuestion(id, element) {
-            currentQuestionId = id;
-
-            document.querySelectorAll('.question-mobile-item').forEach(item => {
-                item.classList.remove('active');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
             });
-            element.classList.add('active');
 
-            const questionText = element.querySelector('.question-mobile-text').textContent;
-            document.getElementById('selectedQuestionDisplay').textContent = questionText;
+            updateSelectedCount();
+            highlightSelectedRows();
         }
 
-        function highlightSelectedQuestion() {
-            if (currentQuestionId > 0) {
-                const activeItem = document.querySelector('.question-mobile-item.active');
-                if (activeItem) {
-                    const questionText = activeItem.querySelector('.question-mobile-text').textContent;
-                    document.getElementById('selectedQuestionDisplay').textContent = questionText;
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+            const count = checkboxes.length;
+            const selectedCountEl = document.getElementById('selectedCount');
+            const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+
+            selectedCountEl.textContent = count + ' selected';
+            bulkDeleteBtn.disabled = count === 0;
+
+            highlightSelectedRows();
+        }
+
+        function highlightSelectedRows() {
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                if (checkbox.checked) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
+            });
+        }
+
+        function showBulkDeleteModal() {
+            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+            if (checkboxes.length === 0) return;
+
+            // Update delete count
+            document.getElementById('deleteCount').textContent = checkboxes.length;
+
+            // Populate selected students list
+            const listEl = document.getElementById('selectedStudentsList');
+            let html = '';
+
+            checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                const name = row.cells[2].textContent; // Name is in 3rd column (index 2)
+                const username = row.cells[3].textContent; // Username is in 4th column (index 3)
+
+                html += `
+                    <div class="selected-student-item">
+                        <div class="selected-student-icon">${name.charAt(0)}</div>
+                        <div>
+                            <strong>${name}</strong><br>
+                            <small>${username}</small>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+
+            // Show modal
+            document.getElementById('bulkDeleteModal').classList.add('active');
+        }
+
+        function submitBulkDelete() {
+            const form = document.getElementById('bulkDeleteForm');
+            form.submit();
+        }
+
+        // Search students
+        function searchStudents() {
+            let input = document.getElementById('studentSearch');
+            let filter = input.value.toUpperCase();
+            let table = document.getElementById('studentsTableBody');
+            let rows = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                let name = rows[i].getElementsByTagName('td')[2]; // Name is now at index 2 (after checkbox and status)
+                let username = rows[i].getElementsByTagName('td')[3]; // Username is now at index 3
+
+                if (name && username) {
+                    let nameValue = name.textContent || name.innerText;
+                    let usernameValue = username.textContent || username.innerText;
+
+                    if (nameValue.toUpperCase().indexOf(filter) > -1 || usernameValue.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
                 }
             }
         }
 
         // Quiz control functions
+        function selectQuestion(id, element) {
+            currentQuestionId = id;
+
+            // Remove active class from all questions
+            document.querySelectorAll('.question-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add active class to selected question
+            element.classList.add('active');
+
+            // Update display
+            const questionText = element.querySelector('.question-text').textContent;
+            updateSelectedQuestionDisplay(questionText);
+        }
+
+        function updateSelectedQuestionDisplay(text) {
+            document.getElementById('selectedQuestionDisplay').textContent = text;
+        }
+
         function checkReadiness() {
             fetch('../api/get_quiz_data.php?action=ready_students')
                 .then(response => response.json())
@@ -2003,7 +1992,7 @@ if (isset($_GET['edit_question'])) {
                             studentList.appendChild(div);
                         });
                     } else {
-                        studentList.innerHTML = '<div class="empty-state">No students online</div>';
+                        studentList.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No students online</div>';
                     }
                 });
         }
@@ -2014,13 +2003,15 @@ if (isset($_GET['edit_question'])) {
                 return;
             }
 
-            const selectedQuestion = document.querySelector('.question-mobile-item.active .question-mobile-text').textContent;
+            const selectedQuestion = document.querySelector('.question-item.active .question-text').textContent;
 
             if (!confirm('Start 10-second countdown for:\n\n"' + selectedQuestion + '"')) {
                 return;
             }
 
-            document.getElementById('timerMini').classList.add('active');
+            // Show immediate feedback
+            document.getElementById('timerDisplay').style.display = 'block';
+            document.getElementById('timerLabel').textContent = 'Countdown';
             document.getElementById('timerValue').textContent = '10';
 
             fetch('ajax/quiz_controls.php', {
@@ -2033,18 +2024,48 @@ if (isset($_GET['edit_question'])) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Disable buttons during countdown
                         updateButtonStates('countdown');
+
+                        // Start local countdown timer
+                        let timeLeft = 10;
+                        const timerInterval = setInterval(() => {
+                            timeLeft--;
+                            document.getElementById('timerValue').textContent = timeLeft;
+
+                            if (timeLeft <= 0) {
+                                clearInterval(timerInterval);
+                            }
+                        }, 1000);
+
+                        // Show success message
                         showNotification('Countdown started!', 'success');
                     } else {
                         alert('Error starting countdown: ' + (data.error || 'Unknown error'));
-                        document.getElementById('timerMini').classList.remove('active');
+                        document.getElementById('timerDisplay').style.display = 'none';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('Network error starting countdown');
-                    document.getElementById('timerMini').classList.remove('active');
+                    document.getElementById('timerDisplay').style.display = 'none';
                 });
+        }
+
+        // Add notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'alert ' + type;
+            notification.innerHTML = message + '<button class="close-btn" onclick="this.parentElement.remove()">&times;</button>';
+
+            const header = document.querySelector('.header');
+            header.parentNode.insertBefore(notification, header.nextSibling);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
         }
 
         function forceShowQuestion() {
@@ -2052,6 +2073,7 @@ if (isset($_GET['edit_question'])) {
                 alert('Please select a question first');
                 return;
             }
+
             if (!confirm('Force show question now?')) return;
 
             fetch('ajax/quiz_controls.php', {
@@ -2101,7 +2123,7 @@ if (isset($_GET['edit_question'])) {
                 .then(data => {
                     if (data.success) {
                         currentQuestionId = 0;
-                        document.querySelectorAll('.question-mobile-item').forEach(item => {
+                        document.querySelectorAll('.question-item').forEach(item => {
                             item.classList.remove('active');
                         });
                         document.getElementById('selectedQuestionDisplay').textContent = 'None selected';
@@ -2110,46 +2132,43 @@ if (isset($_GET['edit_question'])) {
                 });
         }
 
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = 'alert ' + type;
-            notification.innerHTML = message + '<button class="close-btn" onclick="this.remove()">&times;</button>';
-
-            const header = document.querySelector('.mobile-header');
-            header.parentNode.insertBefore(notification, header.nextSibling);
-
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 3000);
-        }
-
-        // State checking
+        // Start checking quiz state
         function startStateChecking() {
+            // Check immediately
             checkQuizState();
+
+            // Then check every second
             stateCheckInterval = setInterval(checkQuizState, 1000);
-            setInterval(checkReadiness, 2000);
         }
 
         function checkQuizState() {
             fetch('../api/get_quiz_data.php?action=state')
                 .then(response => response.json())
                 .then(data => {
+                    // Update sidebar status
                     document.getElementById('sidebar-status').textContent = data.status.toUpperCase();
                     document.getElementById('sidebar-status').className = 'status-value ' + data.status;
 
-                    const timerMini = document.getElementById('timerMini');
+                    // Update timer display
+                    const timerDisplay = document.getElementById('timerDisplay');
+                    const timerLabel = document.getElementById('timerLabel');
                     const timerValue = document.getElementById('timerValue');
 
                     if (data.status === 'countdown' || data.status === 'question') {
-                        timerMini.classList.add('active');
+                        timerDisplay.style.display = 'block';
+                        timerLabel.textContent = data.status === 'countdown' ? 'Countdown' : 'Question Time';
                         timerValue.textContent = Math.ceil(data.time_left);
                     } else {
-                        timerMini.classList.remove('active');
+                        timerDisplay.style.display = 'none';
                     }
 
+                    // Update button states
                     updateButtonStates(data.status);
+
+                    // Auto-refresh page when state changes to results
+                    if (data.status === 'results' && timerDisplay.style.display === 'block') {
+                        setTimeout(() => location.reload(), 1000);
+                    }
                 });
         }
 
@@ -2160,28 +2179,37 @@ if (isset($_GET['edit_question'])) {
             const resultsBtn = document.getElementById('showResultsBtn');
             const nextBtn = document.getElementById('nextQuestionBtn');
 
+            // Reset all buttons to enabled first
             [checkBtn, startBtn, showBtn, resultsBtn, nextBtn].forEach(btn => {
                 btn.disabled = false;
             });
 
+            // Disable based on status
             switch (status) {
                 case 'waiting':
+                    // All buttons enabled except show results and next
                     resultsBtn.disabled = true;
                     nextBtn.disabled = true;
                     break;
+
                 case 'countdown':
+                    // Disable all except maybe force show
                     checkBtn.disabled = true;
                     startBtn.disabled = true;
                     resultsBtn.disabled = true;
                     nextBtn.disabled = true;
                     break;
+
                 case 'question':
+                    // Only show results enabled
                     checkBtn.disabled = true;
                     startBtn.disabled = true;
                     showBtn.disabled = true;
                     nextBtn.disabled = true;
                     break;
+
                 case 'results':
+                    // Only next question enabled
                     checkBtn.disabled = true;
                     startBtn.disabled = true;
                     showBtn.disabled = true;
@@ -2189,97 +2217,11 @@ if (isset($_GET['edit_question'])) {
                     break;
             }
 
+            // Also disable start if no question selected
             if (!currentQuestionId) {
                 startBtn.disabled = true;
                 showBtn.disabled = true;
             }
-        }
-
-        // Bulk delete functions
-        function toggleSelectAll() {
-            const checkboxes = document.querySelectorAll('.student-checkbox');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = !allChecked;
-            });
-
-            updateSelectedCount();
-        }
-
-        function updateSelectedCount() {
-            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            const count = checkboxes.length;
-            document.getElementById('selectedCount').textContent = count + ' selected';
-            document.getElementById('bulkDeleteBtn').disabled = count === 0;
-        }
-
-        function showBulkDeleteModal() {
-            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            if (checkboxes.length === 0) return;
-
-            document.getElementById('deleteCount').textContent = checkboxes.length;
-
-            const listEl = document.getElementById('selectedStudentsList');
-            let html = '';
-
-            checkboxes.forEach(checkbox => {
-                const studentItem = checkbox.closest('.student-list-item');
-                const name = studentItem.querySelector('.student-name').textContent;
-                const initial = name.charAt(0);
-
-                html += `
-                    <div class="selected-student-item">
-                        <div class="selected-student-icon">${initial}</div>
-                        <div>${name}</div>
-                    </div>
-                `;
-            });
-
-            listEl.innerHTML = html;
-            document.getElementById('bulkDeleteModal').classList.add('active');
-        }
-
-        function submitBulkDelete() {
-            const checkboxes = document.querySelectorAll('.student-checkbox:checked');
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.style.display = 'none';
-
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'bulk_delete_students';
-            actionInput.value = '1';
-            form.appendChild(actionInput);
-
-            checkboxes.forEach(checkbox => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'student_ids[]';
-                input.value = checkbox.value;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        // Search students
-        function searchStudents() {
-            let input = document.getElementById('studentSearch');
-            let filter = input.value.toUpperCase();
-            let items = document.querySelectorAll('.student-list-item');
-
-            items.forEach(item => {
-                let name = item.querySelector('.student-name').textContent;
-                let username = item.querySelector('.student-meta').textContent;
-
-                if (name.toUpperCase().indexOf(filter) > -1 || username.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
         }
 
         // Close modals when clicking outside
@@ -2289,11 +2231,18 @@ if (isset($_GET['edit_question'])) {
             }
         }
 
-        // Clean up intervals
+        // Clean up on page unload
         window.onbeforeunload = function() {
-            if (stateCheckInterval) clearInterval(stateCheckInterval);
-            if (timerInterval) clearInterval(timerInterval);
+            if (stateCheckInterval) {
+                clearInterval(stateCheckInterval);
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
         }
+
+        // Check readiness every 2 seconds
+        setInterval(checkReadiness, 2000);
     </script>
 </body>
 
