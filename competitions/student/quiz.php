@@ -810,7 +810,7 @@ if ($max_points < 1000) $max_points = 1000;
             formData.append('time_taken', timeTaken);
 
             // Send to server
-            fetch('ajax/submit_answer.php', {
+            fetch('/competitions/ajax/submit_answer.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
