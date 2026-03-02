@@ -807,10 +807,10 @@ if ($max_points < 1000) $max_points = 1000;
             const formData = new URLSearchParams();
             formData.append('question_id', currentQuestionId);
             formData.append('answer', option);
-            formData.append('time_taken', timeTaken);
+            formData.append('time_taksen', timeTaken);
 
             // Send to server
-            fetch('/competitions/ajax/submit_answer.php', {
+            fetch('ajax/submit_answer.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
