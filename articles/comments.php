@@ -1,8 +1,11 @@
 <?php
-// comments.php - Fixed version
+// comments.php - With detailed error logging
 require_once 'config.php';
 
 header('Content-Type: application/json');
+
+// Enable error logging
+error_log("Comments.php accessed - " . date('Y-m-d H:i:s'));
 
 // Handle GET request - fetch comments
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_comments') {
@@ -17,8 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         $db = $database->getConnection();
 
         if (!$db) {
+            error_log("Database connection failed in get_comments");
             sendJSON(false, 'Database connection failed');
         }
+
+        // Get just the path part of the URL
+        $article_path = parse_url($article_url, PHP_URL_PATH);
+        if (empty($article_path)) {
+            $article_path = $article_url;
+        }
+
+        error_log("Fetching comments for: " . $article_path);
 
         // Fetch top-level comments
         $stmt = $db->prepare("
@@ -26,8 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             WHERE article_url = ? AND parent_id = 0 AND status = 'approved'
             ORDER BY created_at DESC
         ");
-        $stmt->execute([$article_url]);
+        $stmt->execute([$article_path]);
         $comments = $stmt->fetchAll();
+
+        error_log("Found " . count($comments) . " top-level comments");
 
         $html = '';
 
@@ -59,7 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         sendJSON(true, 'Comments loaded', ['html' => $html]);
     } catch (Exception $e) {
         error_log("Error loading comments: " . $e->getMessage());
-        sendJSON(false, 'Failed to load comments');
+        error_log("Stack trace: " . $e->getTraceAsString());
+        sendJSON(false, 'Failed to load comments: ' . $e->getMessage());
     }
 }
 
@@ -71,14 +86,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $input = $_POST;
     }
 
+    error_log("Received comment data: " . print_r($input, true));
+
     $article_url = filter_var($input['article_url'] ?? '', FILTER_SANITIZE_URL);
     $author_name = trim(strip_tags($input['author_name'] ?? ''));
     $author_email = filter_var($input['author_email'] ?? '', FILTER_SANITIZE_EMAIL);
     $comment_text = trim(strip_tags($input['comment_text'] ?? ''));
     $parent_id = intval($input['parent_id'] ?? 0);
 
+    // Get just the path part of the URL
+    $parsed_url = parse_url($article_url);
+    $article_path = $parsed_url['path'] ?? $article_url;
+
+    error_log("Processed - Article path: $article_path, Author: $author_name, Parent: $parent_id");
+
     // Validation
-    if (empty($article_url)) {
+    if (empty($article_path)) {
         sendJSON(false, 'Invalid article reference');
     }
 
@@ -103,6 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db = $database->getConnection();
 
         if (!$db) {
+            error_log("Database connection failed in post_comment");
             sendJSON(false, 'Database connection failed');
         }
 
@@ -111,28 +135,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkStmt = $db->prepare("SELECT id FROM comments WHERE id = ?");
             $checkStmt->execute([$parent_id]);
             if (!$checkStmt->fetch()) {
+                error_log("Parent comment $parent_id not found");
                 sendJSON(false, 'Parent comment not found');
             }
         }
 
         $ip = getClientIP();
 
+        error_log("Inserting comment with: article=$article_path, author=$author_name, parent=$parent_id");
+
         $stmt = $db->prepare("
             INSERT INTO comments (parent_id, article_url, author_name, author_email, comment_text, ip_address) 
             VALUES (?, ?, ?, ?, ?, ?)
         ");
 
-        if ($stmt->execute([$parent_id, $article_url, $author_name, $author_email ?: null, $comment_text, $ip])) {
+        $result = $stmt->execute([
+            $parent_id,
+            $article_path,
+            $author_name,
+            $author_email ?: null,
+            $comment_text,
+            $ip
+        ]);
+
+        if ($result) {
+            $comment_id = $db->lastInsertId();
+            error_log("Comment inserted successfully with ID: $comment_id");
             sendJSON(true, 'Comment posted successfully!');
         } else {
+            error_log("Failed to insert comment: " . print_r($stmt->errorInfo(), true));
             sendJSON(false, 'Failed to post comment');
         }
     } catch (PDOException $e) {
-        error_log("Comment insert error: " . $e->getMessage());
-        sendJSON(false, 'Database error occurred');
+        error_log("PDO Exception in comment insert: " . $e->getMessage());
+        error_log("SQL State: " . $e->getCode());
+        sendJSON(false, 'Database error: ' . $e->getMessage());
     } catch (Exception $e) {
-        error_log("Comment error: " . $e->getMessage());
-        sendJSON(false, 'Failed to post comment');
+        error_log("General exception in comment insert: " . $e->getMessage());
+        sendJSON(false, 'Failed to post comment: ' . $e->getMessage());
     }
 }
 
@@ -146,9 +186,9 @@ function renderComment($comment, $db, $isReply = false)
     $html .= '<div class="comment-meta">';
 
     if ($gravatar) {
-        $html .= '<img src="' . $gravatar . '" alt="avatar" loading="lazy">';
+        $html .= '<img src="' . $gravatar . '" alt="avatar" loading="lazy" style="width:30px; height:30px; border-radius:50%; margin-right:10px;">';
     } else {
-        $html .= '<div style="width:30px; height:30px; background:#c1a987; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:white; font-weight:bold;">' . strtoupper(substr($comment['author_name'], 0, 1)) . '</div>';
+        $html .= '<div style="width:30px; height:30px; background:#c1a987; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:white; font-weight:bold; margin-right:10px;">' . strtoupper(substr($comment['author_name'], 0, 1)) . '</div>';
     }
 
     $html .= '<strong>' . htmlspecialchars($comment['author_name']) . '</strong>';

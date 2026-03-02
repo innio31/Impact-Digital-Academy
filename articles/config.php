@@ -16,9 +16,9 @@ define('DB_PASS', 'yCuhEpaX3rRVxRrWMWGJ');
 // UPDATE WITH YOUR HOSTAFRICA EMAIL SETTINGS
 define('SMTP_HOST', 'mail.impactdigitalacademy.com.ng');
 define('SMTP_PORT', 587);
-define('SMTP_USER', 'noreply@impactdigitalacademy.com.ng');   // Your email address
+define('SMTP_USER', 'admin@impactdigitalacademy.com.ng');   // Your email address
 define('SMTP_PASS', 'Innioluwa@1995');      // Your email password
-define('SMTP_FROM', 'noreply@impactdigitalacademy.com.ng');   // From address
+define('SMTP_FROM', 'admin@impactdigitalacademy.com.ng');   // From address
 define('SMTP_FROM_NAME', 'Impact Digital Academy');
 
 // ========== SITE CONFIGURATION ==========
@@ -81,6 +81,7 @@ class Database
     }
 }
 
+
 class MailSender
 {
     private $mail;
@@ -97,19 +98,29 @@ class MailSender
         try {
             $this->mail = new PHPMailer(true);
 
-            // Server settings
+            // Server settings - Updated for better compatibility
+            $this->mail->SMTPDebug = 0; // Set to 2 for debugging, 0 for production
             $this->mail->isSMTP();
             $this->mail->Host       = SMTP_HOST;
             $this->mail->SMTPAuth   = true;
             $this->mail->Username   = SMTP_USER;
             $this->mail->Password   = SMTP_PASS;
-            $this->mail->SMTPSecure = SMTP_PORT == 587 ? PHPMailer::ENCRYPTION_STARTTLS : PHPMailer::ENCRYPTION_SMTPS;
+
+            // Try both encryption methods
+            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Try TLS first (port 587)
             $this->mail->Port       = SMTP_PORT;
+
+            // Additional settings for better compatibility
+            $this->mail->SMTPAutoTLS = true;
+            $this->mail->Timeout = 30;
+            $this->mail->AuthType = 'LOGIN';
 
             // Default sender
             $this->mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
             $this->mail->isHTML(true);
             $this->mail->CharSet = 'UTF-8';
+
+            error_log("Mailer initialized with host: " . SMTP_HOST . ":" . SMTP_PORT);
         } catch (Exception $e) {
             $this->error = $e->getMessage();
             error_log("Mailer setup failed: " . $this->error);
@@ -132,11 +143,15 @@ class MailSender
 
             // HTML email body
             $this->mail->Body = $this->getWelcomeHTML($to);
-            $this->mail->AltBody = strip_tags(str_replace(['<br>', '</p>'], ["\n", "\n\n"], $this->getWelcomeHTML($to)));
+            $this->mail->AltBody = strip_tags(str_replace(['<br>', '</p>', '<li>'], ["\n", "\n\n", "• "], $this->getWelcomeHTML($to)));
 
-            return $this->mail->send();
+            error_log("Attempting to send email to: $to");
+            $result = $this->mail->send();
+            error_log("Email sent successfully to: $to");
+            return $result;
         } catch (Exception $e) {
             error_log("Welcome email failed to $to: " . $e->getMessage());
+            error_log("Mailer Error Details: " . $this->mail->ErrorInfo);
             return false;
         }
     }
