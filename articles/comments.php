@@ -1,5 +1,5 @@
 <?php
-// comments.php - With detailed error logging
+// comments.php - Fixed version with NULL parent_id
 require_once 'config.php';
 
 header('Content-Type: application/json');
@@ -32,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
         error_log("Fetching comments for: " . $article_path);
 
-        // Fetch top-level comments
+        // Fetch top-level comments (parent_id IS NULL)
         $stmt = $db->prepare("
             SELECT * FROM comments 
-            WHERE article_url = ? AND parent_id = 0 AND status = 'approved'
+            WHERE article_url = ? AND parent_id IS NULL AND status = 'approved'
             ORDER BY created_at DESC
         ");
         $stmt->execute([$article_path]);
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         foreach ($comments as $comment) {
             $html .= renderComment($comment, $db);
 
-            // Fetch replies for this comment
+            // Fetch replies for this comment (parent_id = comment_id)
             $replyStmt = $db->prepare("
                 SELECT * FROM comments 
                 WHERE parent_id = ? AND status = 'approved'
@@ -92,13 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $author_name = trim(strip_tags($input['author_name'] ?? ''));
     $author_email = filter_var($input['author_email'] ?? '', FILTER_SANITIZE_EMAIL);
     $comment_text = trim(strip_tags($input['comment_text'] ?? ''));
-    $parent_id = intval($input['parent_id'] ?? 0);
+    $parent_id = isset($input['parent_id']) ? intval($input['parent_id']) : null;
 
     // Get just the path part of the URL
     $parsed_url = parse_url($article_url);
     $article_path = $parsed_url['path'] ?? $article_url;
 
-    error_log("Processed - Article path: $article_path, Author: $author_name, Parent: $parent_id");
+    error_log("Processed - Article path: $article_path, Author: $author_name, Parent: " . ($parent_id ?? 'NULL'));
 
     // Validation
     if (empty($article_path)) {
@@ -131,32 +131,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // If replying, verify parent exists
-        if ($parent_id > 0) {
+        if ($parent_id !== null && $parent_id > 0) {
             $checkStmt = $db->prepare("SELECT id FROM comments WHERE id = ?");
             $checkStmt->execute([$parent_id]);
             if (!$checkStmt->fetch()) {
                 error_log("Parent comment $parent_id not found");
                 sendJSON(false, 'Parent comment not found');
             }
+        } else {
+            // For top-level comments, set parent_id to NULL
+            $parent_id = null;
         }
 
         $ip = getClientIP();
 
-        error_log("Inserting comment with: article=$article_path, author=$author_name, parent=$parent_id");
+        error_log("Inserting comment with: article=$article_path, author=$author_name, parent=" . ($parent_id ?? 'NULL'));
 
-        $stmt = $db->prepare("
-            INSERT INTO comments (parent_id, article_url, author_name, author_email, comment_text, ip_address) 
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
-        $result = $stmt->execute([
-            $parent_id,
-            $article_path,
-            $author_name,
-            $author_email ?: null,
-            $comment_text,
-            $ip
-        ]);
+        // Prepare the SQL statement based on whether parent_id is NULL or not
+        if ($parent_id === null) {
+            $stmt = $db->prepare("
+                INSERT INTO comments (parent_id, article_url, author_name, author_email, comment_text, ip_address) 
+                VALUES (NULL, ?, ?, ?, ?, ?)
+            ");
+            $result = $stmt->execute([
+                $article_path,
+                $author_name,
+                $author_email ?: null,
+                $comment_text,
+                $ip
+            ]);
+        } else {
+            $stmt = $db->prepare("
+                INSERT INTO comments (parent_id, article_url, author_name, author_email, comment_text, ip_address) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $result = $stmt->execute([
+                $parent_id,
+                $article_path,
+                $author_name,
+                $author_email ?: null,
+                $comment_text,
+                $ip
+            ]);
+        }
 
         if ($result) {
             $comment_id = $db->lastInsertId();

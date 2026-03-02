@@ -37,8 +37,7 @@
     <link rel="canonical" href="https://yourdomain.com/education-inside-you.html">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23008080'><text x='10' y='80' font-size='80'>📘</text></svg>">
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
 
     <style>
         * {
@@ -921,10 +920,10 @@
             }
 
             const replyData = {
-                article_url: currentArticle,
+                article_url: window.location.pathname, // Use pathname instead of full URL
                 author_name: replyAuthor,
                 comment_text: replyText,
-                parent_id: commentId
+                parent_id: commentId  // This will be the parent comment ID
             };
 
             try {
@@ -948,6 +947,52 @@
                 alert('Connection error. Please try again.');
             }
         };
+
+        // Update the post comment function too
+        document.getElementById('postCommentBtn').addEventListener('click', async function () {
+            const name = document.getElementById('commentName').value.trim();
+            const email = document.getElementById('commentEmail').value.trim();
+            const text = document.getElementById('commentText').value.trim();
+
+            if (!name || !text) {
+                alert('Please enter your name and comment.');
+                return;
+            }
+
+            const commentData = {
+                article_url: window.location.pathname, // Use pathname
+                author_name: name,
+                author_email: email || null,
+                comment_text: text,
+                parent_id: null  // null for top-level comments
+            };
+
+            try {
+                const response = await fetch('comments.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(commentData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('commentName').value = '';
+                    document.getElementById('commentEmail').value = '';
+                    document.getElementById('commentText').value = '';
+                    replyToId = 0;
+                    document.getElementById('postCommentBtn').textContent = 'Post Comment';
+
+                    // Reload comments
+                    await loadComments();
+                } else {
+                    alert(data.message || 'Failed to post comment.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        });
 
         // ========== SHARE BUTTONS ==========
         const pageTitle = encodeURIComponent("Education Is What Happens Inside You, Not Around You | Impact Digital");
