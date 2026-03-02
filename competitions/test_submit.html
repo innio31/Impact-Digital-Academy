@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Answer Submission</title>
+</head>
+
+<body>
+    <h2>Test Answer Submission</h2>
+
+    <button onclick="testSubmit()">Test Submit Answer</button>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        function testSubmit() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+
+            // Simulate an answer submission
+            const formData = new URLSearchParams();
+            formData.append('question_id', '1'); // Assuming question ID 1 exists
+            formData.append('answer', 'A');
+            formData.append('time_taken', '2.5');
+
+            fetch('ajax/submit_answer.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    resultDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = 'Error: ' + error;
+                });
+        }
+    </script>
+</body>
+
+</html>

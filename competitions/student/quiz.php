@@ -760,29 +760,36 @@ if ($max_points < 1000) $max_points = 1000;
         }
 
         function selectOption(option) {
-            if (answerSubmitted) return;
+            if (answerSubmitted) {
+                alert('Already submitted!');
+                return;
+            }
 
+            console.log('Option selected:', option);
             selectedOption = option;
 
-            // Remove selected class from all options
+            // Visual feedback
             document.querySelectorAll('#options .option').forEach(opt => {
                 opt.classList.remove('selected');
             });
 
-            // Add selected class to clicked option
             const selectedElement = document.querySelector(`#options .option[data-option="${option}"]`);
             if (selectedElement) {
                 selectedElement.classList.add('selected');
             }
 
-            // Automatically submit the answer when selected
+            // Submit immediately
             submitAnswer(option);
         }
 
         function submitAnswer(option) {
-            if (answerSubmitted) return;
+            if (answerSubmitted) {
+                console.log('Answer already submitted');
+                return;
+            }
 
             const timeTaken = (new Date() - questionStartTime) / 1000;
+            console.log('Submitting answer:', option, 'Time taken:', timeTaken);
 
             // Show submitting status
             const statusDiv = document.getElementById('answerStatus');
@@ -790,24 +797,32 @@ if ($max_points < 1000) $max_points = 1000;
             statusDiv.className = 'answer-status';
             statusDiv.textContent = 'Submitting answer...';
 
-            // Disable all options immediately
+            // Disable options
             document.querySelectorAll('#options .option').forEach(opt => {
                 opt.classList.add('disabled');
                 opt.style.pointerEvents = 'none';
             });
 
+            // Prepare data
+            const formData = new URLSearchParams();
+            formData.append('question_id', currentQuestionId);
+            formData.append('answer', option);
+            formData.append('time_taken', timeTaken);
+
+            // Send to server
             fetch('ajax/submit_answer.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `question_id=${currentQuestionId}&answer=${option}&time_taken=${timeTaken}`
+                    body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
-                    answerSubmitted = true;
+                    console.log('Server response:', data);
 
                     if (data.success) {
+                        answerSubmitted = true;
                         statusDiv.className = 'answer-status ' + (data.correct ? 'success' : 'error');
 
                         if (data.correct) {
@@ -816,7 +831,7 @@ if ($max_points < 1000) $max_points = 1000;
                             statusDiv.innerHTML = `❌ Incorrect. Answer was ${data.correct_answer}`;
                         }
 
-                        // Highlight correct/incorrect answers
+                        // Show correct answer
                         document.querySelectorAll('#options .option').forEach(opt => {
                             const optLetter = opt.querySelector('.option-letter').textContent;
                             if (optLetter === data.correct_answer) {
@@ -828,8 +843,9 @@ if ($max_points < 1000) $max_points = 1000;
                     } else {
                         statusDiv.className = 'answer-status error';
                         statusDiv.textContent = data.error || 'Error submitting answer';
+                        console.error('Submission failed:', data);
 
-                        // Re-enable options on error if not already answered
+                        // Re-enable options if not already answered
                         if (!data.already_answered) {
                             document.querySelectorAll('#options .option').forEach(opt => {
                                 opt.classList.remove('disabled');
@@ -838,20 +854,17 @@ if ($max_points < 1000) $max_points = 1000;
                         }
                     }
 
-                    // Hide status after 3 seconds
+                    // Hide status after 5 seconds
                     setTimeout(() => {
                         statusDiv.style.display = 'none';
-                    }, 3000);
-
-                    // Refresh leaderboard after answer
-                    updateLeaderboard();
+                    }, 5000);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Network error:', error);
                     statusDiv.className = 'answer-status error';
-                    statusDiv.textContent = 'Network error';
+                    statusDiv.textContent = 'Network error - check console';
 
-                    // Re-enable options on error
+                    // Re-enable options
                     document.querySelectorAll('#options .option').forEach(opt => {
                         opt.classList.remove('disabled');
                         opt.style.pointerEvents = 'auto';
