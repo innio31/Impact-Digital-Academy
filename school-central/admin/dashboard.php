@@ -3,48 +3,94 @@ $page_title = 'Dashboard';
 require_once 'auth_check.php';
 require_once 'header.php';
 
-// Get statistics
-$stats = [];
+// Initialize stats array with defaults
+$stats = [
+    'total_objective' => 0,
+    'total_theory' => 0,
+    'total_schools' => 0,
+    'active_schools' => 0,
+    'downloads_today' => 0
+];
 
-// Total questions
-$stmt = $pdo->query("SELECT COUNT(*) FROM central_objective_questions");
-$stats['total_objective'] = $stmt->fetchColumn();
+// Get statistics with error handling
+try {
+    // Total objective questions
+    $result = $pdo->query("SELECT COUNT(*) FROM central_objective_questions");
+    $stats['total_objective'] = $result ? $result->fetchColumn() : 0;
+} catch (PDOException $e) {
+    error_log("Error counting objective questions: " . $e->getMessage());
+}
 
-$stmt = $pdo->query("SELECT COUNT(*) FROM central_theory_questions");
-$stats['total_theory'] = $stmt->fetchColumn();
+try {
+    // Total theory questions
+    $result = $pdo->query("SELECT COUNT(*) FROM central_theory_questions");
+    $stats['total_theory'] = $result ? $result->fetchColumn() : 0;
+} catch (PDOException $e) {
+    error_log("Error counting theory questions: " . $e->getMessage());
+}
 
-// Total schools
-$stmt = $pdo->query("SELECT COUNT(*) FROM schools");
-$stats['total_schools'] = $stmt->fetchColumn();
+try {
+    // Total schools
+    $result = $pdo->query("SELECT COUNT(*) FROM schools");
+    $stats['total_schools'] = $result ? $result->fetchColumn() : 0;
+} catch (PDOException $e) {
+    error_log("Error counting schools: " . $e->getMessage());
+}
 
-$stmt = $pdo->query("SELECT COUNT(*) FROM schools WHERE subscription_status = 'active'");
-$stats['active_schools'] = $stmt->fetchColumn();
+try {
+    // Active schools
+    $result = $pdo->query("SELECT COUNT(*) FROM schools WHERE subscription_status = 'active'");
+    $stats['active_schools'] = $result ? $result->fetchColumn() : 0;
+} catch (PDOException $e) {
+    error_log("Error counting active schools: " . $e->getMessage());
+}
 
-// Downloads today
-$stmt = $pdo->query("SELECT COUNT(*) FROM question_downloads WHERE DATE(downloaded_at) = CURDATE()");
-$stats['downloads_today'] = $stmt->fetchColumn();
+try {
+    // Downloads today
+    $result = $pdo->query("SELECT COUNT(*) FROM question_downloads WHERE DATE(downloaded_at) = CURDATE()");
+    $stats['downloads_today'] = $result ? $result->fetchColumn() : 0;
+} catch (PDOException $e) {
+    error_log("Error counting downloads: " . $e->getMessage());
+    $stats['downloads_today'] = 0;
+}
 
-// Popular subjects
-$stmt = $pdo->query("
-    SELECT s.subject_name, COUNT(q.id) as question_count
-    FROM master_subjects s
-    LEFT JOIN central_objective_questions q ON s.id = q.subject_id
-    GROUP BY s.id
-    ORDER BY question_count DESC
-    LIMIT 5
-");
-$popular_subjects = $stmt->fetchAll();
+// Popular subjects with error handling
+$popular_subjects = [];
+try {
+    $stmt = $pdo->query("
+        SELECT s.subject_name, COUNT(q.id) as question_count
+        FROM master_subjects s
+        LEFT JOIN central_objective_questions q ON s.id = q.subject_id
+        GROUP BY s.id
+        ORDER BY question_count DESC
+        LIMIT 5
+    ");
+    $popular_subjects = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Error fetching popular subjects: " . $e->getMessage());
+}
 
-// Recent downloads
-$stmt = $pdo->query("
-    SELECT d.*, s.school_name, sq.question_text
-    FROM question_downloads d
-    JOIN schools s ON d.school_id = s.id
-    JOIN central_objective_questions sq ON d.question_id = sq.id
-    ORDER BY d.downloaded_at DESC
-    LIMIT 10
-");
-$recent_downloads = $stmt->fetchAll();
+// Recent downloads with error handling
+$recent_downloads = [];
+try {
+    $stmt = $pdo->query("
+        SELECT d.*, s.school_name, 
+               COALESCE(q.question_text, 'Question deleted') as question_text
+        FROM question_downloads d
+        JOIN schools s ON d.school_id = s.id
+        LEFT JOIN central_objective_questions q ON d.question_id = q.id
+        WHERE d.question_type = 'objective'
+        ORDER BY d.downloaded_at DESC
+        LIMIT 10
+    ");
+    $recent_downloads = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Error fetching recent downloads: " . $e->getMessage());
+}
+
+// Get current time for display
+$current_time = date('h:i A');
+$current_date = date('M d, Y');
 ?>
 
 <div class="dashboard">
@@ -88,9 +134,9 @@ $recent_downloads = $stmt->fetchAll();
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-details">
-                <h3><?php echo date('h:i A'); ?></h3>
+                <h3><?php echo $current_time; ?></h3>
                 <p>Server Time</p>
-                <small><?php echo date('M d, Y'); ?></small>
+                <small><?php echo $current_date; ?></small>
             </div>
         </div>
     </div>
@@ -103,14 +149,18 @@ $recent_downloads = $stmt->fetchAll();
                 <a href="subjects.php" class="btn-small">Manage</a>
             </div>
             <div class="card-body">
-                <table class="mini-table">
-                    <?php foreach ($popular_subjects as $subject): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($subject['subject_name']); ?></td>
-                            <td class="text-right"><?php echo number_format($subject['question_count']); ?> questions</td>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
+                <?php if (empty($popular_subjects)): ?>
+                    <p class="no-data">No subjects found. <a href="subjects.php">Add your first subject</a></p>
+                <?php else: ?>
+                    <table class="mini-table">
+                        <?php foreach ($popular_subjects as $subject): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($subject['subject_name']); ?></td>
+                                <td class="text-right"><?php echo number_format($subject['question_count']); ?> questions</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -148,27 +198,50 @@ $recent_downloads = $stmt->fetchAll();
                 <a href="view_stats.php" class="btn-small">View All</a>
             </div>
             <div class="card-body">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>School</th>
-                            <th>Question</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recent_downloads as $download): ?>
+                <?php if (empty($recent_downloads)): ?>
+                    <p class="no-data">No downloads yet. Once schools start downloading questions, they'll appear here.</p>
+                <?php else: ?>
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><?php echo htmlspecialchars($download['school_name']); ?></td>
-                                <td><?php echo substr(htmlspecialchars($download['question_text']), 0, 50); ?>...</td>
-                                <td><?php echo date('H:i', strtotime($download['downloaded_at'])); ?></td>
+                                <th>School</th>
+                                <th>Question</th>
+                                <th>Time</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recent_downloads as $download): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($download['school_name']); ?></td>
+                                    <td><?php echo htmlspecialchars(substr($download['question_text'], 0, 50)); ?>...</td>
+                                    <td><?php echo date('H:i', strtotime($download['downloaded_at'])); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .no-data {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .no-data a {
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .no-data a:hover {
+        text-decoration: underline;
+    }
+</style>
 
 <?php require_once 'footer.php'; ?>
