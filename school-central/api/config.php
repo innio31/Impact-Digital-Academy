@@ -1,7 +1,7 @@
 <?php
 // Database configuration
 define('DB_HOST', 'localhost');  // or your HostAfrica host
-define('DB_NAME', 'central_cbt');
+define('DB_NAME', 'impactdi_central_cbt');
 define('DB_USER', 'impactdi_central_cbt');
 define('DB_PASS', 'ZaZQ6cRqXwVkWaUyZ5KT');
 
