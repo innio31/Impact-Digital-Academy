@@ -1,5 +1,5 @@
 <?php
-$page_title = 'Manage Subjects';
+$page_title = 'Manage Topics';
 require_once 'auth_check.php';
 require_once '../api/config.php';
 
@@ -7,94 +7,125 @@ require_once '../api/config.php';
 $message = '';
 $message_type = '';
 
-// Add new subject
-if (isset($_POST['action']) && $_POST['action'] === 'add') {
-    $subject_name = trim($_POST['subject_name']);
-    $subject_code = trim($_POST['subject_code']);
-    $description = trim($_POST['description']);
+// Get subjects for dropdown
+$stmt = $pdo->query("SELECT id, subject_name, subject_code FROM master_subjects WHERE is_active = 1 ORDER BY subject_name");
+$subjects = $stmt->fetchAll();
 
-    if (!empty($subject_name) && !empty($subject_code)) {
+// Get filter parameters
+$filter_subject = isset($_GET['subject_id']) ? intval($_GET['subject_id']) : 0;
+$filter_difficulty = isset($_GET['difficulty']) ? $_GET['difficulty'] : '';
+
+// Add new topic
+if (isset($_POST['action']) && $_POST['action'] === 'add') {
+    $topic_name = trim($_POST['topic_name']);
+    $subject_id = intval($_POST['subject_id']);
+    $description = trim($_POST['description']);
+    $difficulty_level = $_POST['difficulty_level'] ?? 'medium';
+    $class_range = trim($_POST['class_range']);
+
+    if (!empty($topic_name) && $subject_id > 0) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO master_subjects (subject_name, subject_code, description) VALUES (?, ?, ?)");
-            $stmt->execute([$subject_name, strtoupper($subject_code), $description]);
-            $message = "Subject added successfully!";
+            $stmt = $pdo->prepare("INSERT INTO master_topics (topic_name, subject_id, description, difficulty_level, class_range) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$topic_name, $subject_id, $description, $difficulty_level, $class_range]);
+            $message = "Topic added successfully!";
             $message_type = "success";
         } catch (PDOException $e) {
-            if ($e->errorInfo[1] == 1062) {
-                $message = "Subject code already exists!";
-            } else {
-                $message = "Error adding subject: " . $e->getMessage();
-            }
+            $message = "Error adding topic: " . $e->getMessage();
             $message_type = "error";
         }
     } else {
-        $message = "Subject name and code are required!";
+        $message = "Topic name and subject are required!";
         $message_type = "error";
     }
 }
 
-// Edit subject
+// Edit topic
 if (isset($_POST['action']) && $_POST['action'] === 'edit') {
     $id = intval($_POST['id']);
-    $subject_name = trim($_POST['subject_name']);
-    $subject_code = trim($_POST['subject_code']);
+    $topic_name = trim($_POST['topic_name']);
+    $subject_id = intval($_POST['subject_id']);
     $description = trim($_POST['description']);
-    $is_active = isset($_POST['is_active']) ? 1 : 0;
+    $difficulty_level = $_POST['difficulty_level'] ?? 'medium';
+    $class_range = trim($_POST['class_range']);
 
-    if ($id > 0 && !empty($subject_name) && !empty($subject_code)) {
+    if ($id > 0 && !empty($topic_name) && $subject_id > 0) {
         try {
-            $stmt = $pdo->prepare("UPDATE master_subjects SET subject_name = ?, subject_code = ?, description = ?, is_active = ? WHERE id = ?");
-            $stmt->execute([$subject_name, strtoupper($subject_code), $description, $is_active, $id]);
-            $message = "Subject updated successfully!";
+            $stmt = $pdo->prepare("UPDATE master_topics SET topic_name = ?, subject_id = ?, description = ?, difficulty_level = ?, class_range = ? WHERE id = ?");
+            $stmt->execute([$topic_name, $subject_id, $description, $difficulty_level, $class_range, $id]);
+            $message = "Topic updated successfully!";
             $message_type = "success";
         } catch (PDOException $e) {
-            $message = "Error updating subject: " . $e->getMessage();
+            $message = "Error updating topic: " . $e->getMessage();
             $message_type = "error";
         }
     }
 }
 
-// Delete subject
+// Delete topic
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
 
-    // Check if subject has topics or questions
-    $check = $pdo->prepare("SELECT COUNT(*) FROM master_topics WHERE subject_id = ?");
+    // Check if topic has questions
+    $check = $pdo->prepare("SELECT COUNT(*) FROM central_objective_questions WHERE topic_id = ?");
     $check->execute([$id]);
-    $topic_count = $check->fetchColumn();
+    $obj_count = $check->fetchColumn();
 
-    $check = $pdo->prepare("SELECT COUNT(*) FROM central_objective_questions WHERE subject_id = ?");
+    $check = $pdo->prepare("SELECT COUNT(*) FROM central_theory_questions WHERE topic_id = ?");
     $check->execute([$id]);
-    $question_count = $check->fetchColumn();
+    $theory_count = $check->fetchColumn();
 
-    if ($topic_count > 0 || $question_count > 0) {
-        $message = "Cannot delete subject with existing topics or questions. Deactivate it instead.";
+    if ($obj_count > 0 || $theory_count > 0) {
+        $message = "Cannot delete topic with existing questions. Total questions: " . ($obj_count + $theory_count);
         $message_type = "error";
     } else {
         try {
-            $stmt = $pdo->prepare("DELETE FROM master_subjects WHERE id = ?");
+            $stmt = $pdo->prepare("DELETE FROM master_topics WHERE id = ?");
             $stmt->execute([$id]);
-            $message = "Subject deleted successfully!";
+            $message = "Topic deleted successfully!";
             $message_type = "success";
         } catch (PDOException $e) {
-            $message = "Error deleting subject: " . $e->getMessage();
+            $message = "Error deleting topic: " . $e->getMessage();
             $message_type = "error";
         }
     }
 }
 
-// Get all subjects
-$stmt = $pdo->query("SELECT * FROM master_subjects ORDER BY subject_name");
-$subjects = $stmt->fetchAll();
-
-// Get subject for editing
-$edit_subject = null;
+// Get topic for editing
+$edit_topic = null;
 if (isset($_GET['edit'])) {
     $id = intval($_GET['edit']);
-    $stmt = $pdo->prepare("SELECT * FROM master_subjects WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM master_topics WHERE id = ?");
     $stmt->execute([$id]);
-    $edit_subject = $stmt->fetch();
+    $edit_topic = $stmt->fetch();
 }
+
+// Build topics query with filters
+$sql = "SELECT t.*, s.subject_name, s.subject_code,
+        (SELECT COUNT(*) FROM central_objective_questions WHERE topic_id = t.id) as obj_count,
+        (SELECT COUNT(*) FROM central_theory_questions WHERE topic_id = t.id) as theory_count
+        FROM master_topics t
+        JOIN master_subjects s ON t.subject_id = s.id";
+$params = [];
+
+$where = [];
+if ($filter_subject > 0) {
+    $where[] = "t.subject_id = ?";
+    $params[] = $filter_subject;
+}
+if (!empty($filter_difficulty)) {
+    $where[] = "t.difficulty_level = ?";
+    $params[] = $filter_difficulty;
+}
+
+if (!empty($where)) {
+    $sql .= " WHERE " . implode(" AND ", $where);
+}
+
+$sql .= " ORDER BY s.subject_name, t.topic_name";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$topics = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +137,6 @@ if (isset($_GET['edit'])) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="../../portals/public/images/favicon.ico">
-
     <style>
         * {
             margin: 0;
@@ -121,6 +151,7 @@ if (isset($_GET['edit'])) {
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
             --warning-color: #f39c12;
+            --info-color: #3498db;
             --light-bg: #f8f9fa;
             --dark-text: #2c3e50;
             --border-color: #dee2e6;
@@ -245,6 +276,13 @@ if (isset($_GET['edit'])) {
         .page-title {
             font-size: 1.25rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-title i {
+            color: var(--primary-color);
         }
 
         .date {
@@ -389,6 +427,45 @@ if (isset($_GET['edit'])) {
             font-size: 0.8rem;
         }
 
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
         /* Forms */
         .form-container {
             max-width: 600px;
@@ -433,14 +510,10 @@ if (isset($_GET['edit'])) {
             border-color: var(--danger-color);
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
         .form-actions {
@@ -448,6 +521,31 @@ if (isset($_GET['edit'])) {
             gap: 10px;
             flex-wrap: wrap;
             margin-top: 20px;
+        }
+
+        /* Difficulty badges */
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .difficulty-easy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-hard {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         /* Table */
@@ -459,7 +557,7 @@ if (isset($_GET['edit'])) {
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 800px;
         }
 
         th {
@@ -482,22 +580,30 @@ if (isset($_GET['edit'])) {
             background: var(--light-bg);
         }
 
-        .status-badge {
-            display: inline-block;
+        .subject-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subject-name {
+            font-weight: 500;
+        }
+
+        .subject-code {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+        }
+
+        .question-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             padding: 4px 8px;
+            background: #f3e5f5;
+            color: #7b1fa2;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 600;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
         }
 
         .action-buttons {
@@ -517,28 +623,39 @@ if (isset($_GET['edit'])) {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
         }
 
         .action-btn.edit {
             color: var(--primary-color);
+            background: #e3f2fd;
         }
 
         .action-btn.edit:hover {
-            color: var(--primary-dark);
-            transform: scale(1.1);
+            background: var(--primary-color);
+            color: white;
         }
 
         .action-btn.delete {
             color: var(--danger-color);
+            background: #ffebee;
         }
 
         .action-btn.delete:hover {
-            color: #c0392b;
-            transform: scale(1.1);
+            background: var(--danger-color);
+            color: white;
         }
 
-        .action-btn.view {
+        .action-btn.questions {
             color: var(--success-color);
+            background: #e8f5e9;
+        }
+
+        .action-btn.questions:hover {
+            background: var(--success-color);
+            color: white;
         }
 
         /* Stats Cards */
@@ -650,8 +767,30 @@ if (isset($_GET['edit'])) {
                 justify-content: center;
             }
 
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .filter-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
             }
 
             .form-actions {
@@ -661,10 +800,6 @@ if (isset($_GET['edit'])) {
             .form-actions .btn {
                 width: 100%;
                 justify-content: center;
-            }
-
-            .action-buttons {
-                justify-content: flex-start;
             }
         }
 
@@ -707,12 +842,12 @@ if (isset($_GET['edit'])) {
                     </a>
                 </li>
                 <li>
-                    <a href="subjects.php" class="active">
+                    <a href="subjects.php">
                         <i class="fas fa-book"></i> Subjects
                     </a>
                 </li>
                 <li>
-                    <a href="topics.php">
+                    <a href="topics.php" class="active">
                         <i class="fas fa-tags"></i> Topics
                     </a>
                 </li>
@@ -756,7 +891,7 @@ if (isset($_GET['edit'])) {
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="page-title">
-                    <i class="fas fa-book"></i> <?php echo $page_title; ?>
+                    <i class="fas fa-tags"></i> <?php echo $page_title; ?>
                 </div>
                 <div class="date">
                     <i class="far fa-calendar-alt"></i> <?php echo date('l, F j, Y'); ?>
@@ -778,55 +913,96 @@ if (isset($_GET['edit'])) {
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <?php
-                    $total = count($subjects);
-                    $active = count(array_filter($subjects, function ($s) {
-                        return $s['is_active'];
-                    }));
-                    $inactive = $total - $active;
+                    $total_topics = count($topics);
 
-                    // Get question counts per subject
-                    $stmt = $pdo->query("
-                        SELECT subject_id, COUNT(*) as count 
-                        FROM central_objective_questions 
-                        GROUP BY subject_id
-                    ");
-                    $question_counts = [];
-                    while ($row = $stmt->fetch()) {
-                        $question_counts[$row['subject_id']] = $row['count'];
-                    }
-                    $total_questions = array_sum($question_counts);
+                    // Count by difficulty
+                    $easy = count(array_filter($topics, function ($t) {
+                        return $t['difficulty_level'] === 'easy';
+                    }));
+                    $medium = count(array_filter($topics, function ($t) {
+                        return $t['difficulty_level'] === 'medium';
+                    }));
+                    $hard = count(array_filter($topics, function ($t) {
+                        return $t['difficulty_level'] === 'hard';
+                    }));
+
+                    // Total questions across all topics
+                    $total_questions = array_sum(array_column($topics, 'obj_count')) + array_sum(array_column($topics, 'theory_count'));
                     ?>
 
                     <div class="stat-card">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-tags"></i>
                         <div>
-                            <div class="stat-value"><?php echo $total; ?></div>
-                            <div class="stat-label">Total Subjects</div>
+                            <div class="stat-value"><?php echo $total_topics; ?></div>
+                            <div class="stat-label">Total Topics</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
                         <div>
-                            <div class="stat-value"><?php echo $active; ?></div>
-                            <div class="stat-label">Active</div>
+                            <div class="stat-value"><?php echo $easy; ?></div>
+                            <div class="stat-label">Easy</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
-                        <i class="fas fa-times-circle" style="color: var(--danger-color);"></i>
+                        <i class="fas fa-adjust" style="color: var(--warning-color);"></i>
                         <div>
-                            <div class="stat-value"><?php echo $inactive; ?></div>
-                            <div class="stat-label">Inactive</div>
+                            <div class="stat-value"><?php echo $medium; ?></div>
+                            <div class="stat-label">Medium</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
-                        <i class="fas fa-question-circle"></i>
+                        <i class="fas fa-exclamation-triangle" style="color: var(--danger-color);"></i>
                         <div>
-                            <div class="stat-value"><?php echo $total_questions; ?></div>
-                            <div class="stat-label">Questions</div>
+                            <div class="stat-value"><?php echo $hard; ?></div>
+                            <div class="stat-label">Hard</div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-filter"></i> Filter Topics
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" action="" class="filter-bar">
+                            <div class="filter-group">
+                                <label><i class="fas fa-book"></i> Subject</label>
+                                <select name="subject_id">
+                                    <option value="0">All Subjects</option>
+                                    <?php foreach ($subjects as $subject): ?>
+                                        <option value="<?php echo $subject['id']; ?>" <?php echo $filter_subject == $subject['id'] ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($subject['subject_name']); ?> (<?php echo $subject['subject_code']; ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label><i class="fas fa-chart-line"></i> Difficulty</label>
+                                <select name="difficulty">
+                                    <option value="">All Difficulties</option>
+                                    <option value="easy" <?php echo $filter_difficulty === 'easy' ? 'selected' : ''; ?>>Easy</option>
+                                    <option value="medium" <?php echo $filter_difficulty === 'medium' ? 'selected' : ''; ?>>Medium</option>
+                                    <option value="hard" <?php echo $filter_difficulty === 'hard' ? 'selected' : ''; ?>>Hard</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Apply Filters
+                                </button>
+                                <a href="topics.php" class="btn btn-secondary">
+                                    <i class="fas fa-redo"></i> Reset
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -834,43 +1010,69 @@ if (isset($_GET['edit'])) {
                 <div class="card">
                     <div class="card-header">
                         <h2>
-                            <i class="fas fa-<?php echo $edit_subject ? 'edit' : 'plus-circle'; ?>"></i>
-                            <?php echo $edit_subject ? 'Edit Subject' : 'Add New Subject'; ?>
+                            <i class="fas fa-<?php echo $edit_topic ? 'edit' : 'plus-circle'; ?>"></i>
+                            <?php echo $edit_topic ? 'Edit Topic' : 'Add New Topic'; ?>
                         </h2>
                     </div>
                     <div class="card-body">
                         <div class="form-container">
                             <form method="POST" action="" onsubmit="return validateForm()">
-                                <input type="hidden" name="action" value="<?php echo $edit_subject ? 'edit' : 'add'; ?>">
-                                <?php if ($edit_subject): ?>
-                                    <input type="hidden" name="id" value="<?php echo $edit_subject['id']; ?>">
+                                <input type="hidden" name="action" value="<?php echo $edit_topic ? 'edit' : 'add'; ?>">
+                                <?php if ($edit_topic): ?>
+                                    <input type="hidden" name="id" value="<?php echo $edit_topic['id']; ?>">
                                 <?php endif; ?>
 
                                 <div class="form-group">
-                                    <label for="subject_name">
-                                        <i class="fas fa-heading"></i> Subject Name *
+                                    <label for="topic_name">
+                                        <i class="fas fa-heading"></i> Topic Name *
                                     </label>
                                     <input type="text"
-                                        id="subject_name"
-                                        name="subject_name"
-                                        value="<?php echo $edit_subject ? htmlspecialchars($edit_subject['subject_name']) : ''; ?>"
+                                        id="topic_name"
+                                        name="topic_name"
+                                        value="<?php echo $edit_topic ? htmlspecialchars($edit_topic['topic_name']) : ''; ?>"
                                         required
-                                        placeholder="e.g., Mathematics"
-                                        maxlength="100">
+                                        placeholder="e.g., Algebra, Grammar, Photosynthesis"
+                                        maxlength="255">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="subject_code">
-                                        <i class="fas fa-code"></i> Subject Code *
+                                    <label for="subject_id">
+                                        <i class="fas fa-book"></i> Subject *
                                     </label>
-                                    <input type="text"
-                                        id="subject_code"
-                                        name="subject_code"
-                                        value="<?php echo $edit_subject ? htmlspecialchars($edit_subject['subject_code']) : ''; ?>"
-                                        required
-                                        placeholder="e.g., MATH"
-                                        maxlength="20"
-                                        style="text-transform:uppercase">
+                                    <select id="subject_id" name="subject_id" required>
+                                        <option value="">-- Select Subject --</option>
+                                        <?php foreach ($subjects as $subject): ?>
+                                            <option value="<?php echo $subject['id']; ?>"
+                                                <?php echo ($edit_topic && $edit_topic['subject_id'] == $subject['id']) ? 'selected' : ''; ?>
+                                                <?php echo (!$edit_topic && $filter_subject == $subject['id']) ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($subject['subject_name']); ?> (<?php echo $subject['subject_code']; ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="difficulty_level">
+                                            <i class="fas fa-chart-line"></i> Difficulty Level
+                                        </label>
+                                        <select id="difficulty_level" name="difficulty_level">
+                                            <option value="easy" <?php echo ($edit_topic && $edit_topic['difficulty_level'] === 'easy') ? 'selected' : ''; ?>>Easy</option>
+                                            <option value="medium" <?php echo ($edit_topic && $edit_topic['difficulty_level'] === 'medium') ? 'selected' : ''; ?>>Medium</option>
+                                            <option value="hard" <?php echo ($edit_topic && $edit_topic['difficulty_level'] === 'hard') ? 'selected' : ''; ?>>Hard</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="class_range">
+                                            <i class="fas fa-graduation-cap"></i> Class Range
+                                        </label>
+                                        <input type="text"
+                                            id="class_range"
+                                            name="class_range"
+                                            value="<?php echo $edit_topic ? htmlspecialchars($edit_topic['class_range']) : ''; ?>"
+                                            placeholder="e.g., JSS1-SSS3">
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -880,29 +1082,17 @@ if (isset($_GET['edit'])) {
                                     <textarea id="description"
                                         name="description"
                                         rows="3"
-                                        placeholder="Brief description of the subject"><?php echo $edit_subject ? htmlspecialchars($edit_subject['description']) : ''; ?></textarea>
+                                        placeholder="Brief description of the topic"><?php echo $edit_topic ? htmlspecialchars($edit_topic['description']) : ''; ?></textarea>
                                 </div>
-
-                                <?php if ($edit_subject): ?>
-                                    <div class="form-group">
-                                        <div class="checkbox-group">
-                                            <input type="checkbox"
-                                                id="is_active"
-                                                name="is_active"
-                                                <?php echo $edit_subject['is_active'] ? 'checked' : ''; ?>>
-                                            <label for="is_active">Active (visible to schools)</label>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
 
                                 <div class="form-actions">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i>
-                                        <?php echo $edit_subject ? 'Update Subject' : 'Add Subject'; ?>
+                                        <?php echo $edit_topic ? 'Update Topic' : 'Add Topic'; ?>
                                     </button>
 
-                                    <?php if ($edit_subject): ?>
-                                        <a href="subjects.php" class="btn btn-secondary">
+                                    <?php if ($edit_topic): ?>
+                                        <a href="topics.php<?php echo $filter_subject ? '?subject_id=' . $filter_subject : ''; ?>" class="btn btn-secondary">
                                             <i class="fas fa-times"></i> Cancel
                                         </a>
                                     <?php endif; ?>
@@ -912,19 +1102,35 @@ if (isset($_GET['edit'])) {
                     </div>
                 </div>
 
-                <!-- Subjects List -->
+                <!-- Topics List -->
                 <div class="card">
                     <div class="card-header">
                         <h2>
-                            <i class="fas fa-list"></i> All Subjects
+                            <i class="fas fa-list"></i> All Topics
+                            <?php if ($filter_subject > 0):
+                                $subject = array_filter($subjects, function ($s) use ($filter_subject) {
+                                    return $s['id'] == $filter_subject;
+                                });
+                                $subject = reset($subject);
+                                if ($subject): ?>
+                                    <small style="font-size: 0.9rem; color: var(--secondary-color); margin-left: 10px;">
+                                        (<?php echo htmlspecialchars($subject['subject_name']); ?>)
+                                    </small>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </h2>
-                        <span class="badge"><?php echo count($subjects); ?> total</span>
+                        <span class="badge"><?php echo count($topics); ?> topics</span>
                     </div>
                     <div class="card-body">
-                        <?php if (empty($subjects)): ?>
+                        <?php if (empty($topics)): ?>
                             <div style="text-align: center; padding: 40px; color: var(--secondary-color);">
-                                <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                                <p>No subjects added yet. Add your first subject above.</p>
+                                <i class="fas fa-tags" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p>No topics found. <?php echo $filter_subject ? 'Try a different filter or ' : ''; ?>add your first topic above.</p>
+                                <?php if ($filter_subject > 0): ?>
+                                    <a href="topics.php" class="btn btn-secondary btn-sm" style="margin-top: 15px;">
+                                        <i class="fas fa-redo"></i> Clear Filters
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
@@ -932,77 +1138,76 @@ if (isset($_GET['edit'])) {
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Subject Name</th>
-                                            <th>Code</th>
-                                            <th>Topics</th>
+                                            <th>Topic Name</th>
+                                            <th>Subject</th>
+                                            <th>Difficulty</th>
+                                            <th>Class Range</th>
                                             <th>Questions</th>
-                                            <th>Status</th>
                                             <th>Created</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($subjects as $subject):
-                                            // Get topic count
-                                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM master_topics WHERE subject_id = ?");
-                                            $stmt->execute([$subject['id']]);
-                                            $topic_count = $stmt->fetchColumn();
-
-                                            // Get question count
-                                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM central_objective_questions WHERE subject_id = ?");
-                                            $stmt->execute([$subject['id']]);
-                                            $obj_count = $stmt->fetchColumn();
-
-                                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM central_theory_questions WHERE subject_id = ?");
-                                            $stmt->execute([$subject['id']]);
-                                            $theory_count = $stmt->fetchColumn();
-                                            $total_questions = $obj_count + $theory_count;
+                                        <?php foreach ($topics as $topic):
+                                            $total_q = $topic['obj_count'] + $topic['theory_count'];
                                         ?>
                                             <tr>
-                                                <td>#<?php echo $subject['id']; ?></td>
+                                                <td>#<?php echo $topic['id']; ?></td>
                                                 <td>
-                                                    <strong><?php echo htmlspecialchars($subject['subject_name']); ?></strong>
-                                                    <?php if ($subject['description']): ?>
-                                                        <br><small style="color: #666;"><?php echo substr(htmlspecialchars($subject['description']), 0, 50); ?><?php echo strlen($subject['description']) > 50 ? '...' : ''; ?></small>
+                                                    <strong><?php echo htmlspecialchars($topic['topic_name']); ?></strong>
+                                                    <?php if ($topic['description']): ?>
+                                                        <br><small style="color: #666;"><?php echo substr(htmlspecialchars($topic['description']), 0, 60); ?><?php echo strlen($topic['description']) > 60 ? '...' : ''; ?></small>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td><code><?php echo htmlspecialchars($subject['subject_code']); ?></code></td>
                                                 <td>
-                                                    <span class="status-badge" style="background: #e3f2fd; color: #1976d2;">
-                                                        <i class="fas fa-tags"></i> <?php echo $topic_count; ?>
+                                                    <div class="subject-info">
+                                                        <span class="subject-name"><?php echo htmlspecialchars($topic['subject_name']); ?></span>
+                                                        <span class="subject-code"><?php echo $topic['subject_code']; ?></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="difficulty-badge difficulty-<?php echo $topic['difficulty_level']; ?>">
+                                                        <i class="fas fa-<?php
+                                                                            echo $topic['difficulty_level'] === 'easy' ? 'smile' : ($topic['difficulty_level'] === 'medium' ? 'meh' : 'frown');
+                                                                            ?>"></i>
+                                                        <?php echo ucfirst($topic['difficulty_level']); ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="status-badge" style="background: #f3e5f5; color: #7b1fa2;">
-                                                        <i class="fas fa-question-circle"></i> <?php echo $total_questions; ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <?php if ($subject['is_active']): ?>
-                                                        <span class="status-badge status-active">
-                                                            <i class="fas fa-check-circle"></i> Active
-                                                        </span>
+                                                    <?php if ($topic['class_range']): ?>
+                                                        <code><?php echo htmlspecialchars($topic['class_range']); ?></code>
                                                     <?php else: ?>
-                                                        <span class="status-badge status-inactive">
-                                                            <i class="fas fa-times-circle"></i> Inactive
-                                                        </span>
+                                                        <span style="color: #999;">—</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <small><?php echo date('M d, Y', strtotime($subject['created_at'])); ?></small>
+                                                    <span class="question-count">
+                                                        <i class="fas fa-question-circle"></i>
+                                                        <?php echo $total_q; ?>
+                                                        <small style="font-size: 0.7rem; margin-left: 4px;">
+                                                            (<?php echo $topic['obj_count']; ?> obj | <?php echo $topic['theory_count']; ?> theory)
+                                                        </small>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <small><?php echo date('M d, Y', strtotime($topic['created_at'])); ?></small>
                                                 </td>
                                                 <td>
                                                     <div class="action-buttons">
-                                                        <a href="?edit=<?php echo $subject['id']; ?>" class="action-btn edit" title="Edit">
+                                                        <a href="?edit=<?php echo $topic['id']; ?><?php echo $filter_subject ? '&subject_id=' . $filter_subject : ''; ?>"
+                                                            class="action-btn edit"
+                                                            title="Edit Topic">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <a href="topics.php?subject_id=<?php echo $subject['id']; ?>" class="action-btn view" title="View Topics">
-                                                            <i class="fas fa-tags"></i>
+                                                        <a href="manage_questions.php?topic_id=<?php echo $topic['id']; ?>"
+                                                            class="action-btn questions"
+                                                            title="View Questions">
+                                                            <i class="fas fa-question-circle"></i>
                                                         </a>
-                                                        <a href="?delete=<?php echo $subject['id']; ?>"
+                                                        <a href="?delete=<?php echo $topic['id']; ?><?php echo $filter_subject ? '&subject_id=' . $filter_subject : ''; ?>"
                                                             class="action-btn delete"
-                                                            title="Delete"
-                                                            onclick="return confirmDelete('<?php echo htmlspecialchars($subject['subject_name']); ?>', <?php echo $topic_count; ?>, <?php echo $total_questions; ?>)">
+                                                            title="Delete Topic"
+                                                            onclick="return confirmDelete('<?php echo htmlspecialchars($topic['topic_name']); ?>', <?php echo $total_q; ?>)">
                                                             <i class="fas fa-trash"></i>
                                                         </a>
                                                     </div>
@@ -1052,23 +1257,23 @@ if (isset($_GET['edit'])) {
 
         // Form validation
         function validateForm() {
-            const name = document.getElementById('subject_name');
-            const code = document.getElementById('subject_code');
+            const name = document.getElementById('topic_name');
+            const subject = document.getElementById('subject_id');
             let isValid = true;
 
             // Reset errors
             name.classList.remove('error');
-            code.classList.remove('error');
+            subject.classList.remove('error');
 
             // Validate name
             if (name.value.trim().length < 2) {
-                showError(name, 'Subject name must be at least 2 characters');
+                showError(name, 'Topic name must be at least 2 characters');
                 isValid = false;
             }
 
-            // Validate code
-            if (code.value.trim().length < 2) {
-                showError(code, 'Subject code must be at least 2 characters');
+            // Validate subject
+            if (subject.value === '') {
+                showError(subject, 'Please select a subject');
                 isValid = false;
             }
 
@@ -1106,12 +1311,12 @@ if (isset($_GET['edit'])) {
         }
 
         // Confirm delete
-        function confirmDelete(subjectName, topicCount, questionCount) {
-            if (topicCount > 0 || questionCount > 0) {
-                alert(`Cannot delete "${subjectName}" because it has:\n- ${topicCount} topics\n- ${questionCount} questions\n\nDeactivate it instead.`);
+        function confirmDelete(topicName, questionCount) {
+            if (questionCount > 0) {
+                alert(`Cannot delete "${topicName}" because it has ${questionCount} questions attached.`);
                 return false;
             }
-            return confirm(`Are you sure you want to delete "${subjectName}"?`);
+            return confirm(`Are you sure you want to delete "${topicName}"?`);
         }
 
         // Show loading spinner
@@ -1131,18 +1336,15 @@ if (isset($_GET['edit'])) {
             }
         };
 
-        // Auto-uppercase subject code
-        document.getElementById('subject_code')?.addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase();
-        });
-
-        // Handle responsive table scroll
-        const tables = document.querySelectorAll('.table-responsive');
-        tables.forEach(table => {
-            table.addEventListener('touchstart', function(e) {
-                this.style.overflowX = 'auto';
+        // Auto-submit filters when selection changes (optional)
+        // Uncomment if you want auto-filter on select change
+        /*
+        document.querySelectorAll('.filter-group select').forEach(select => {
+            select.addEventListener('change', function() {
+                this.closest('form').submit();
             });
         });
+        */
     </script>
 </body>
 
