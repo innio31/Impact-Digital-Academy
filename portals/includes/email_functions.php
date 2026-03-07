@@ -2921,3 +2921,774 @@ function sendInstructorAssignmentNotification($conn, $assignment, $student_count
 
     return sendEmail($instructor['email'], $subject, $body);
 }
+
+/**
+ * Send program enrollment confirmation email to student
+ */
+function sendProgramEnrollmentEmail($student_id, $program_id, $enrollment_date = null)
+{
+    $conn = getDBConnection();
+
+    // Get student details
+    $student = getUserById($student_id);
+    if (!$student || empty($student['email'])) {
+        error_log("Program enrollment email failed: Student not found or no email for ID: $student_id");
+        return false;
+    }
+
+    // Get program details
+    $sql = "SELECT p.*, 
+                   COUNT(DISTINCT c.id) as course_count,
+                   COUNT(DISTINCT cb.id) as class_count
+            FROM programs p
+            LEFT JOIN courses c ON p.id = c.program_id
+            LEFT JOIN class_batches cb ON c.id = cb.course_id
+            WHERE p.id = ?
+            GROUP BY p.id";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $program_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $program = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$program) {
+        error_log("Program enrollment email failed: Program not found for ID: $program_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "🎉 Welcome to " . $program['name'] . " - Enrollment Confirmed!";
+
+    $enrollment_date_formatted = $enrollment_date ? date('F j, Y', strtotime($enrollment_date)) : date('F j, Y');
+    $dashboard_url = BASE_URL . 'modules/student/dashboard.php';
+    $program_url = BASE_URL . 'modules/student/programs/view.php?id=' . $program_id;
+
+    // Format program fee
+    $program_fee = isset($program['fee']) ? '₦' . number_format($program['fee'], 2) : 'N/A';
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .welcome-box { background: #d1fae5; border: 2px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+            .program-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .button { display: inline-block; background: #10b981; color: white; padding: 14px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; margin: 10px 5px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); }
+            .button-secondary { background: #2563eb; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3); }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+            .info-item { background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: center; }
+            .info-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+            .info-value { font-size: 20px; font-weight: bold; color: #0f172a; }
+            .steps { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0; }
+            .step-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+            .step-item:last-child { border-bottom: none; }
+            .step-number { background: #10b981; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; flex-shrink: 0; }
+            .badge { background: #10b981; color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; display: inline-block; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0; font-size: 32px;'>🎉 Welcome Aboard!</h1>
+                <p style='margin: 10px 0 0; opacity: 0.9; font-size: 18px;'>Your learning journey begins now</p>
+            </div>
+            
+            <div class='content'>
+                <div class='welcome-box'>
+                    <h2 style='color: #065f46; margin: 0;'>Congratulations " . htmlspecialchars($student['first_name']) . "!</h2>
+                    <p style='color: #065f46; margin: 10px 0 0;'>You have been successfully enrolled in:</p>
+                </div>
+                
+                <div class='program-card'>
+                    <h3 style='margin: 0 0 10px 0; color: #1e293b; font-size: 24px;'>" . htmlspecialchars($program['name']) . "</h3>
+                    <p style='color: #4b5563; margin: 10px 0;'>" . nl2br(htmlspecialchars(substr($program['description'] ?? 'No description available', 0, 200))) . (strlen($program['description'] ?? '') > 200 ? '...' : '') . "</p>
+                    
+                    <div style='margin-top: 15px;'>
+                        <span class='badge'>Program Code: " . htmlspecialchars($program['program_code']) . "</span>
+                    </div>
+                </div>
+                
+                <div class='info-grid'>
+                    <div class='info-item'>
+                        <div class='info-label'>Duration</div>
+                        <div class='info-value'>" . ($program['duration_weeks'] ?? 'N/A') . " weeks</div>
+                    </div>
+                    <div class='info-item'>
+                        <div class='info-label'>Program Fee</div>
+                        <div class='info-value'>" . $program_fee . "</div>
+                    </div>
+                    <div class='info-item'>
+                        <div class='info-label'>Courses</div>
+                        <div class='info-value'>" . ($program['course_count'] ?? '0') . "</div>
+                    </div>
+                    <div class='info-item'>
+                        <div class='info-label'>Classes</div>
+                        <div class='info-value'>" . ($program['class_count'] ?? '0') . "</div>
+                    </div>
+                </div>
+                
+                <div class='steps'>
+                    <h4 style='margin: 0 0 15px 0; color: #1e293b;'>📋 Your Next Steps:</h4>
+                    
+                    <div class='step-item'>
+                        <div class='step-number'>1</div>
+                        <div><strong>Access Your Dashboard</strong> - Log in to view your enrolled program and courses</div>
+                    </div>
+                    
+                    <div class='step-item'>
+                        <div class='step-number'>2</div>
+                        <div><strong>Explore Your Courses</strong> - Check out the courses included in this program</div>
+                    </div>
+                    
+                    <div class='step-item'>
+                        <div class='step-number'>3</div>
+                        <div><strong>Join Your Classes</strong> - Access class materials, assignments, and discussions</div>
+                    </div>
+                    
+                    <div class='step-item'>
+                        <div class='step-number'>4</div>
+                        <div><strong>Track Your Progress</strong> - Monitor your learning journey and achievements</div>
+                    </div>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$dashboard_url}' class='button'>Go to Dashboard</a>
+                    <a href='{$program_url}' class='button button-secondary'>View Program Details</a>
+                </p>
+                
+                <p style='color: #475569; margin-top: 20px;'>
+                    <strong>📅 Enrollment Date:</strong> " . $enrollment_date_formatted . "<br>
+                    <strong>📧 Support:</strong> If you have any questions, contact our support team at <a href='mailto:support@impactdigitalacademy.com.ng' style='color: #10b981;'>support@impactdigitalacademy.com.ng</a>
+                </p>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                
+                <p style='color: #64748b; font-size: 13px; text-align: center;'>
+                    <i class='fas fa-lightbulb'></i> We're excited to have you in the " . htmlspecialchars($program['name']) . " program. Get ready for an amazing learning experience!
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px; margin-top: 5px;'>This email confirms your enrollment in " . htmlspecialchars($program['name']) . ".</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($student['email'], $subject, $body);
+}
+
+/**
+ * Send program unenrollment notification email to student
+ */
+function sendProgramUnenrollmentEmail($student_id, $program_id, $reason = '')
+{
+    $conn = getDBConnection();
+
+    // Get student details
+    $student = getUserById($student_id);
+    if (!$student || empty($student['email'])) {
+        error_log("Program unenrollment email failed: Student not found or no email for ID: $student_id");
+        return false;
+    }
+
+    // Get program details
+    $sql = "SELECT name, program_code FROM programs WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $program_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $program = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$program) {
+        error_log("Program unenrollment email failed: Program not found for ID: $program_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Program Unenrollment Notification - " . $program['name'];
+    $support_email = getSetting('support_email', 'support@impactdigitalacademy.com.ng');
+    $contact_url = BASE_URL . 'modules/contact.php';
+
+    $reason_text = !empty($reason) ? "<p><strong>Reason:</strong> " . htmlspecialchars($reason) . "</p>" : "<p>If you believe this was done in error or have questions, please contact our support team.</p>";
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #64748b; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #64748b; }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .program-name { font-size: 20px; font-weight: bold; color: #0f172a; }
+            .support-box { background: #fee2e2; border: 1px solid #ef4444; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>📧 Program Update</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                
+                <p>This email is to inform you that you have been unenrolled from the following program:</p>
+                
+                <div class='info-box'>
+                    <div class='program-name'>" . htmlspecialchars($program['name']) . "</div>
+                    <p style='color: #4b5563; margin: 10px 0 0;'>Program Code: " . htmlspecialchars($program['program_code']) . "</p>
+                </div>
+                
+                <div class='support-box'>
+                    <h4 style='margin: 0 0 10px 0; color: #991b1b;'>⚠️ Important Information</h4>
+                    $reason_text
+                </div>
+                
+                <p><strong>What does this mean?</strong></p>
+                <ul style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px; margin: 15px 0;'>
+                    <li>You no longer have access to program materials and classes</li>
+                    <li>Any pending assignments or quizzes will be affected</li>
+                    <li>Your progress in this program has been removed</li>
+                </ul>
+                
+                <p><strong>Need assistance?</strong></p>
+                <p>If you have questions about this action or would like to discuss your options, please contact our support team:</p>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='mailto:{$support_email}' class='button'>Contact Support</a>
+                </p>
+                
+                <p>You can also visit our <a href='{$contact_url}' style='color: #2563eb;'>contact page</a> for more ways to get in touch.</p>
+                
+                <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'>
+                
+                <p style='color: #64748b; font-size: 13px; text-align: center;'>
+                    We're sorry to see you go from this program. If you'd like to re-enroll in the future, please contact our admissions team.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px; margin-top: 5px;'>This email confirms your unenrollment from " . htmlspecialchars($program['name']) . ".</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($student['email'], $subject, $body);
+}
+
+/**
+ * Send class enrollment confirmation email to student
+ */
+function sendClassEnrollmentEmail($student_id, $class_id, $enrollment_date = null)
+{
+    $conn = getDBConnection();
+
+    // Get student details
+    $student = getUserById($student_id);
+    if (!$student || empty($student['email'])) {
+        error_log("Class enrollment email failed: Student not found or no email for ID: $student_id");
+        return false;
+    }
+
+    // Get class details with course and program info
+    $sql = "SELECT 
+                cb.*,
+                c.title as course_title,
+                c.course_code,
+                p.name as program_name
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            JOIN programs p ON c.program_id = p.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class) {
+        error_log("Class enrollment email failed: Class not found for ID: $class_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "📚 Class Enrollment Confirmation - " . $class['course_title'];
+
+    $enrollment_date_formatted = $enrollment_date ? date('F j, Y', strtotime($enrollment_date)) : date('F j, Y');
+    $class_url = BASE_URL . 'modules/student/classes/view.php?id=' . $class_id;
+    $dashboard_url = BASE_URL . 'modules/student/dashboard.php';
+
+    // Format schedule
+    $schedule = !empty($class['schedule']) ? nl2br(htmlspecialchars($class['schedule'])) : 'To be announced';
+
+    // Format meeting link
+    $meeting_link_html = '';
+    if (!empty($class['meeting_link'])) {
+        $meeting_link_html = '<p><strong>Meeting Link:</strong> <a href="' . htmlspecialchars($class['meeting_link']) . '" style="color: #2563eb;">' . htmlspecialchars($class['meeting_link']) . '</a></p>';
+    }
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .class-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #2563eb; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 5px; }
+            .info-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+            .info-label { font-weight: 600; color: #475569; width: 120px; display: inline-block; }
+            .badge { background: #e2e8f0; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>✅ Class Enrollment Confirmed</h1>
+                <p style='margin: 10px 0 0; opacity: 0.9;'>You're all set to start learning!</p>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                
+                <p>You have been successfully enrolled in the following class:</p>
+                
+                <div class='class-card'>
+                    <h3 style='margin: 0 0 15px 0; color: #1e293b;'>" . htmlspecialchars($class['course_title']) . "</h3>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Class Code:</span>
+                        <span><strong>" . htmlspecialchars($class['batch_code']) . "</strong></span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Program:</span>
+                        <span>" . htmlspecialchars($class['program_name']) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Course Code:</span>
+                        <span>" . htmlspecialchars($class['course_code']) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Start Date:</span>
+                        <span>" . date('F j, Y', strtotime($class['start_date'])) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>End Date:</span>
+                        <span>" . date('F j, Y', strtotime($class['end_date'])) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Schedule:</span>
+                        <span>" . $schedule . "</span>
+                    </div>
+                    
+                    $meeting_link_html
+                </div>
+                
+                <div style='background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;'>
+                    <h4 style='margin: 0 0 10px 0; color: #1e3a8a;'>📋 What's Next?</h4>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Access your class dashboard to view materials</li>
+                        <li>Check for any pending assignments</li>
+                        <li>Introduce yourself in the class discussions</li>
+                        <li>Review the class schedule and mark your calendar</li>
+                    </ul>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$class_url}' class='button'>Go to Class Dashboard</a>
+                    <a href='{$dashboard_url}' class='button' style='background: #64748b;'>Student Dashboard</a>
+                </p>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    <i class='fas fa-lightbulb'></i> If you have any questions about this class, please contact your instructor or the academic office.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px;'>Enrollment Date: " . $enrollment_date_formatted . "</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($student['email'], $subject, $body);
+}
+
+/**
+ * Send class unenrollment notification email to student
+ */
+function sendClassUnenrollmentEmail($student_id, $class_id, $reason = '')
+{
+    $conn = getDBConnection();
+
+    // Get student details
+    $student = getUserById($student_id);
+    if (!$student || empty($student['email'])) {
+        error_log("Class unenrollment email failed: Student not found or no email for ID: $student_id");
+        return false;
+    }
+
+    // Get class details
+    $sql = "SELECT 
+                cb.batch_code,
+                c.title as course_title
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class) {
+        error_log("Class unenrollment email failed: Class not found for ID: $class_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Class Unenrollment Notification - " . $class['course_title'];
+    $support_email = getSetting('support_email', 'support@impactdigitalacademy.com.ng');
+
+    $reason_text = !empty($reason) ? "<p><strong>Reason:</strong> " . htmlspecialchars($reason) . "</p>" : "<p>If you believe this was done in error or have questions, please contact our support team.</p>";
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #64748b; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #64748b; }
+            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .support-box { background: #fee2e2; border: 1px solid #ef4444; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>📧 Class Update</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($student['first_name']) . ",</p>
+                
+                <p>This email is to inform you that you have been unenrolled from the following class:</p>
+                
+                <div class='info-box'>
+                    <h3 style='margin: 0 0 10px 0; color: #1e293b;'>" . htmlspecialchars($class['course_title']) . "</h3>
+                    <p><strong>Class Code:</strong> " . htmlspecialchars($class['batch_code']) . "</p>
+                </div>
+                
+                <div class='support-box'>
+                    <h4 style='margin: 0 0 10px 0; color: #991b1b;'>⚠️ Important Information</h4>
+                    $reason_text
+                </div>
+                
+                <p><strong>What does this mean?</strong></p>
+                <ul style='background: white; padding: 20px 20px 20px 40px; border-radius: 8px; margin: 15px 0;'>
+                    <li>You no longer have access to class materials and assignments</li>
+                    <li>Your progress in this class has been removed</li>
+                    <li>A seat has been freed up in the class</li>
+                </ul>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='mailto:{$support_email}' class='button'>Contact Support</a>
+                </p>
+                
+                <p>If you have questions about this action, please contact our academic office.</p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($student['email'], $subject, $body);
+}
+
+/**
+ * Send notification to instructor when a student is enrolled
+ */
+function sendInstructorEnrollmentNotification($student_id, $class_id)
+{
+    $conn = getDBConnection();
+
+    // Get class details with instructor info
+    $sql = "SELECT 
+                cb.*,
+                c.title as course_title,
+                p.name as program_name,
+                u.id as instructor_id,
+                u.email as instructor_email,
+                u.first_name as instructor_first_name,
+                u.last_name as instructor_last_name
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            JOIN programs p ON c.program_id = p.id
+            LEFT JOIN users u ON cb.instructor_id = u.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class || !$class['instructor_id'] || empty($class['instructor_email'])) {
+        error_log("Instructor enrollment notification failed: Instructor not found for class #$class_id");
+        return false;
+    }
+
+    // Get student details
+    $student = getUserById($student_id);
+    if (!$student) {
+        error_log("Instructor enrollment notification failed: Student not found for ID: $student_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "👤 New Student Enrollment - " . $class['course_title'];
+
+    $class_url = BASE_URL . "modules/instructor/classes/view.php?id=" . $class_id;
+    $student_profile_url = BASE_URL . "modules/admin/users/view.php?id=" . $student_id;
+
+    // Get current enrollment count
+    $count_sql = "SELECT COUNT(*) as total FROM enrollments WHERE class_id = ? AND status = 'active'";
+    $count_stmt = $conn->prepare($count_sql);
+    $count_stmt->bind_param("i", $class_id);
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
+    $count_data = $count_result->fetch_assoc();
+    $total_enrolled = $count_data['total'];
+    $spots_left = $class['max_students'] - $total_enrolled;
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #10b981; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .student-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #10b981; }
+            .button { display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .stats { display: flex; justify-content: space-between; background: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .stat-item { text-align: center; }
+            .stat-number { font-size: 24px; font-weight: bold; color: #0f172a; }
+            .stat-label { font-size: 12px; color: #475569; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>👤 New Student Enrollment</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($class['instructor_first_name']) . ",</p>
+                
+                <p>A new student has been enrolled in your class: <strong>" . htmlspecialchars($class['course_title']) . " (" . htmlspecialchars($class['batch_code']) . ")</strong></p>
+                
+                <div class='student-card'>
+                    <h3 style='margin: 0 0 15px 0; color: #1e293b;'>Student Details:</h3>
+                    
+                    <p><strong>Name:</strong> " . htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) . "</p>
+                    <p><strong>Email:</strong> <a href='mailto:" . htmlspecialchars($student['email']) . "'>" . htmlspecialchars($student['email']) . "</a></p>
+                    <p><strong>Phone:</strong> " . (!empty($student['phone']) ? htmlspecialchars($student['phone']) : 'Not provided') . "</p>
+                </div>
+                
+                <div class='stats'>
+                    <div class='stat-item'>
+                        <div class='stat-number'>$total_enrolled</div>
+                        <div class='stat-label'>Total Enrolled</div>
+                    </div>
+                    <div class='stat-item'>
+                        <div class='stat-number'>" . $class['max_students'] . "</div>
+                        <div class='stat-label'>Class Capacity</div>
+                    </div>
+                    <div class='stat-item'>
+                        <div class='stat-number'>$spots_left</div>
+                        <div class='stat-label'>Spots Left</div>
+                    </div>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$class_url}' class='button'>View Class Roster</a>
+                    <a href='{$student_profile_url}' class='button' style='background: #2563eb;'>View Student Profile</a>
+                </p>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    <i class='fas fa-users'></i> You now have $total_enrolled students in this class.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($class['instructor_email'], $subject, $body);
+}
+
+/**
+ * Send notification to instructor when a student is unenrolled
+ */
+function sendInstructorUnenrollmentNotification($student_id, $class_id, $student_name)
+{
+    $conn = getDBConnection();
+
+    // Get class details with instructor info
+    $sql = "SELECT 
+                cb.*,
+                c.title as course_title,
+                u.id as instructor_id,
+                u.email as instructor_email,
+                u.first_name as instructor_first_name,
+                u.last_name as instructor_last_name
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            LEFT JOIN users u ON cb.instructor_id = u.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class || !$class['instructor_id'] || empty($class['instructor_email'])) {
+        error_log("Instructor unenrollment notification failed: Instructor not found for class #$class_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "👤 Student Unenrollment - " . $class['course_title'];
+
+    $class_url = BASE_URL . "modules/instructor/classes/view.php?id=" . $class_id;
+
+    // Get current enrollment count
+    $count_sql = "SELECT COUNT(*) as total FROM enrollments WHERE class_id = ? AND status = 'active'";
+    $count_stmt = $conn->prepare($count_sql);
+    $count_stmt->bind_param("i", $class_id);
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
+    $count_data = $count_result->fetch_assoc();
+    $total_enrolled = $count_data['total'];
+    $spots_left = $class['max_students'] - $total_enrolled;
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #f59e0b; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .student-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #f59e0b; }
+            .button { display: inline-block; background: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+            .stats { display: flex; justify-content: space-between; background: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .stat-item { text-align: center; }
+            .stat-number { font-size: 24px; font-weight: bold; color: #0f172a; }
+            .stat-label { font-size: 12px; color: #475569; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>👤 Student Unenrollment</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($class['instructor_first_name']) . ",</p>
+                
+                <p>A student has been unenrolled from your class: <strong>" . htmlspecialchars($class['course_title']) . " (" . htmlspecialchars($class['batch_code']) . ")</strong></p>
+                
+                <div class='student-card'>
+                    <h3 style='margin: 0 0 15px 0; color: #1e293b;'>Student Details:</h3>
+                    
+                    <p><strong>Name:</strong> " . htmlspecialchars($student_name) . "</p>
+                    <p><strong>Reason:</strong> Unenrolled by administrator</p>
+                </div>
+                
+                <div class='stats'>
+                    <div class='stat-item'>
+                        <div class='stat-number'>$total_enrolled</div>
+                        <div class='stat-label'>Current Enrolled</div>
+                    </div>
+                    <div class='stat-item'>
+                        <div class='stat-number'>" . $class['max_students'] . "</div>
+                        <div class='stat-label'>Class Capacity</div>
+                    </div>
+                    <div class='stat-item'>
+                        <div class='stat-number'>$spots_left</div>
+                        <div class='stat-label'>Spots Available</div>
+                    </div>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$class_url}' class='button'>View Updated Class Roster</a>
+                </p>
+                
+                <p style='color: #64748b; font-size: 13px;'>
+                    <i class='fas fa-chair'></i> A seat has been freed up in this class.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($class['instructor_email'], $subject, $body);
+}

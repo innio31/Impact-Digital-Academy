@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Include configuration and functions
 require_once __DIR__ . '/../../../../includes/config.php';
 require_once __DIR__ . '/../../../../includes/functions.php';
+require_once __DIR__ . '/../../../../includes/email_functions.php';
 
 // Check if user is logged in and is admin
 requireRole('admin');
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll_student'])) {
     } else {
         try {
             // Check if student exists
-            $check_student_sql = "SELECT id, first_name, last_name FROM users WHERE id = ? AND role = 'student'";
+            $check_student_sql = "SELECT id, first_name, last_name, email FROM users WHERE id = ? AND role = 'student'";
             $check_stmt = $conn->prepare($check_student_sql);
             $check_stmt->bind_param("i", $student_id);
             $check_stmt->execute();
@@ -77,6 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll_student'])) {
 
                         if ($update_stmt->execute()) {
                             $_SESSION['success'] = "Student {$student['first_name']} {$student['last_name']} has been enrolled in the program";
+
+                            // Send enrollment confirmation email
+                            $email_sent = sendProgramEnrollmentEmail($student_id, $program_id, $enrollment_date);
+
+                            // Log email status
+                            if ($email_sent) {
+                                logActivity('program_enrollment_email', "Enrollment confirmation email sent to student #{$student_id} for program #{$program_id}");
+                            } else {
+                                error_log("Failed to send enrollment confirmation email to student #{$student_id} for program #{$program_id}");
+                                // Set warning message
+                                $_SESSION['warning'] = "Student enrolled but email notification could not be sent.";
+                            }
                         } else {
                             $_SESSION['error'] = 'Failed to update application: ' . $update_stmt->error;
                         }
@@ -84,6 +97,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll_student'])) {
                     }
                 } else {
                     // Create new approved application
+                    // First get program type
+                    $program_type_sql = "SELECT program_type FROM programs WHERE id = ?";
+                    $type_stmt = $conn->prepare($program_type_sql);
+                    $type_stmt->bind_param("i", $program_id);
+                    $type_stmt->execute();
+                    $type_result = $type_stmt->get_result();
+                    $program_data = $type_result->fetch_assoc();
+                    $program_type = $program_data['program_type'] ?? 'online';
+                    $type_stmt->close();
+
                     $insert_sql = "INSERT INTO applications 
                                   (user_id, applying_as, program_id, program_type, 
                                    status, registration_fee_paid, registration_paid_date,
@@ -93,11 +116,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enroll_student'])) {
                                           ?, NOW(), 'Manually enrolled by admin', NOW())";
                     $insert_stmt = $conn->prepare($insert_sql);
                     $admin_id = $_SESSION['user_id'];
-                    $program_type = $program['program_type'] ?? 'online';
                     $insert_stmt->bind_param("iisi", $student_id, $program_id, $program_type, $admin_id);
 
                     if ($insert_stmt->execute()) {
                         $_SESSION['success'] = "Student {$student['first_name']} {$student['last_name']} has been enrolled in the program";
+
+                        // Send enrollment confirmation email
+                        $email_sent = sendProgramEnrollmentEmail($student_id, $program_id, $enrollment_date);
+
+                        // Log email status
+                        if ($email_sent) {
+                            logActivity('program_enrollment_email', "Enrollment confirmation email sent to student #{$student_id} for program #{$program_id}");
+                        } else {
+                            error_log("Failed to send enrollment confirmation email to student #{$student_id} for program #{$program_id}");
+                            // Set warning message
+                            $_SESSION['warning'] = "Student enrolled but email notification could not be sent.";
+                        }
                     } else {
                         $_SESSION['error'] = 'Failed to enroll student: ' . $insert_stmt->error;
                     }
@@ -129,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $student_id = intval($_POST['student_id']);
 
     // Verify student is enrolled in this program
-    $check_sql = "SELECT a.id as application_id, a.user_id, u.first_name, u.last_name, a.status
+    $check_sql = "SELECT a.id as application_id, a.user_id, u.first_name, u.last_name, u.email, a.status
                   FROM applications a
                   JOIN users u ON a.user_id = u.id
                   WHERE a.user_id = ? AND a.program_id = ? AND a.applying_as = 'student' AND a.status = 'approved'";
@@ -271,9 +305,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $conn->commit();
 
         // Log activity
-        logActivity($_SESSION['user_id'], 'unenroll_student', "Unenrolled student #$student_id from program #$program_id", 'programs', $program_id);
+        logActivity('unenroll_student', "Unenrolled student #$student_id from program #$program_id", 'programs', $program_id);
 
         $_SESSION['success'] = "Student {$enrollment['first_name']} {$enrollment['last_name']} has been successfully unenrolled from the program.";
+
+        // Send unenrollment notification email
+        $email_sent = sendProgramUnenrollmentEmail($student_id, $program_id, 'Unenrolled by administrator');
+
+        if ($email_sent) {
+            logActivity('program_unenrollment_email', "Unenrollment notification email sent to student #{$student_id} for program #{$program_id}");
+        } else {
+            error_log("Failed to send unenrollment notification email to student #{$student_id} for program #{$program_id}");
+            // Set warning message
+            $_SESSION['warning'] = "Student unenrolled but email notification could not be sent.";
+        }
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
@@ -384,7 +429,7 @@ $enrolled_students_sql = "SELECT u.id, u.first_name, u.last_name, u.email, u.pho
                           AND a.applying_as = 'student'
                           AND a.status = 'approved'
                           ORDER BY a.created_at DESC
-                          LIMIT 50"; // Increased limit to show more students
+                          LIMIT 50";
 
 $enrolled_stmt = $conn->prepare($enrolled_students_sql);
 $enrolled_stmt->bind_param("i", $program_id);

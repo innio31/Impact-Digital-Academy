@@ -10,6 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../../../includes/config.php';
 require_once __DIR__ . '/../../../../includes/functions.php';
+require_once __DIR__ . '/../../../../includes/email_functions.php';
 
 // Check if user is admin
 if (!isLoggedIn() || $_SESSION['user_role'] !== 'admin') {
@@ -40,6 +41,7 @@ $sql = "SELECT
     p.program_code,
     p.program_type,
     p.fee as program_fee,
+    u.id as instructor_id,
     u.first_name as instructor_first_name,
     u.last_name as instructor_last_name,
     u.email as instructor_email,
@@ -74,84 +76,6 @@ if (!$class) {
     exit();
 }
 
-// Fetch enrolled students
-$students_sql = "SELECT 
-    e.*,
-    u.id as user_id,
-    u.first_name,
-    u.last_name,
-    u.email,
-    u.phone,
-    up.date_of_birth,
-    up.gender,
-    up.city,
-    up.state
-FROM enrollments e
-JOIN users u ON e.student_id = u.id
-LEFT JOIN user_profiles up ON u.id = up.user_id
-WHERE e.class_id = ?
-ORDER BY e.enrollment_date DESC";
-$students_stmt = $conn->prepare($students_sql);
-$students_stmt->bind_param('i', $class_id);
-$students_stmt->execute();
-$students = $students_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Fetch class materials
-$materials_sql = "SELECT * FROM materials 
-                  WHERE class_id = ? 
-                  ORDER BY week_number, created_at DESC";
-$materials_stmt = $conn->prepare($materials_sql);
-$materials_stmt->bind_param('i', $class_id);
-$materials_stmt->execute();
-$materials = $materials_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Fetch class assignments
-$assignments_sql = "SELECT a.*, COUNT(asub.id) as submission_count 
-                    FROM assignments a
-                    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id
-                    WHERE a.class_id = ?
-                    GROUP BY a.id
-                    ORDER BY a.due_date";
-$assignments_stmt = $conn->prepare($assignments_sql);
-$assignments_stmt->bind_param('i', $class_id);
-$assignments_stmt->execute();
-$assignments = $assignments_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Fetch class announcements
-$announcements_sql = "SELECT * FROM announcements 
-                      WHERE class_id = ? 
-                      ORDER BY publish_date DESC 
-                      LIMIT 10";
-$announcements_stmt = $conn->prepare($announcements_sql);
-$announcements_stmt->bind_param('i', $class_id);
-$announcements_stmt->execute();
-$announcements = $announcements_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Calculate class progress
-$class_start = strtotime($class['start_date']);
-$class_end = strtotime($class['end_date']);
-$today = time();
-$class_duration = $class_end - $class_start;
-$elapsed = $today - $class_start;
-$progress_percentage = $class_duration > 0 ? min(100, max(0, ($elapsed / $class_duration) * 100)) : 0;
-
-// Determine class timeline status
-$timeline_status = '';
-if ($class['status'] === 'completed') {
-    $timeline_status = 'completed';
-} elseif ($class['status'] === 'cancelled') {
-    $timeline_status = 'cancelled';
-} elseif ($progress_percentage >= 100) {
-    $timeline_status = 'completed';
-} elseif ($progress_percentage > 0) {
-    $timeline_status = 'ongoing';
-} else {
-    $timeline_status = 'scheduled';
-}
-
-// Log activity
-logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'class_batches', $class_id);
-
 // Handle unenrollment action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unenroll_student') {
     // Verify CSRF token - use validateCSRFToken instead
@@ -163,9 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $student_id = intval($_POST['student_id']);
 
-
     // Verify student is enrolled in this class
-    $check_sql = "SELECT e.*, u.first_name, u.last_name 
+    $check_sql = "SELECT e.*, u.first_name, u.last_name, u.email
                   FROM enrollments e 
                   JOIN users u ON e.student_id = u.id 
                   WHERE e.student_id = ? AND e.class_id = ?";
@@ -258,6 +181,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         logActivity($_SESSION['user_id'], 'unenroll_student', "Unenrolled student #$student_id from class #$class_id", 'enrollments', $enrollment['id']);
 
         $_SESSION['success'] = 'Student successfully unenrolled from the class.';
+
+        // Send unenrollment notification email to student
+        $student_email_sent = sendClassUnenrollmentEmail($student_id, $class_id, 'Unenrolled by administrator');
+
+        if ($student_email_sent) {
+            logActivity('class_unenrollment_email', "Unenrollment notification email sent to student #{$student_id} for class #{$class_id}");
+        } else {
+            error_log("Failed to send unenrollment notification email to student #{$student_id} for class #{$class_id}");
+        }
+
+        // Send notification to instructor about unenrollment
+        if ($class['instructor_id']) {
+            $instructor_email_sent = sendInstructorUnenrollmentNotification($student_id, $class_id, $enrollment['first_name'] . ' ' . $enrollment['last_name']);
+
+            if ($instructor_email_sent) {
+                logActivity('instructor_unenrollment_notification', "Unenrollment notification email sent to instructor #{$class['instructor_id']} for class #{$class_id}");
+            } else {
+                error_log("Failed to send unenrollment notification email to instructor #{$class['instructor_id']} for class #{$class_id}");
+            }
+        }
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
@@ -267,6 +210,188 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     header('Location: view.php?id=' . $class_id);
     exit();
 }
+
+// Handle enrollment action (if you have an enrollment form in this page)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'enroll_student') {
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        $_SESSION['error'] = 'Invalid security token. Please try again.';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    $student_id = intval($_POST['student_id']);
+    $enrollment_date = $_POST['enrollment_date'] ?? date('Y-m-d');
+
+    // Validate inputs
+    if (!$student_id) {
+        $_SESSION['error'] = 'Please select a student';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    // Check if student exists and is active
+    $check_student_sql = "SELECT id, first_name, last_name, email FROM users WHERE id = ? AND role = 'student' AND status = 'active'";
+    $check_stmt = $conn->prepare($check_student_sql);
+    $check_stmt->bind_param("i", $student_id);
+    $check_stmt->execute();
+    $student_result = $check_stmt->get_result();
+    $student = $student_result->fetch_assoc();
+
+    if (!$student) {
+        $_SESSION['error'] = 'Selected student does not exist or is not active';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    // Check if student is already enrolled
+    $check_enrollment_sql = "SELECT id FROM enrollments WHERE student_id = ? AND class_id = ?";
+    $check_enroll_stmt = $conn->prepare($check_enrollment_sql);
+    $check_enroll_stmt->bind_param("ii", $student_id, $class_id);
+    $check_enroll_stmt->execute();
+    $enrollment_result = $check_enroll_stmt->get_result();
+
+    if ($enrollment_result->num_rows > 0) {
+        $_SESSION['error'] = 'Student is already enrolled in this class';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    // Check if class has capacity
+    $capacity_sql = "SELECT COUNT(*) as enrolled FROM enrollments WHERE class_id = ?";
+    $capacity_stmt = $conn->prepare($capacity_sql);
+    $capacity_stmt->bind_param("i", $class_id);
+    $capacity_stmt->execute();
+    $capacity_result = $capacity_stmt->get_result();
+    $capacity_data = $capacity_result->fetch_assoc();
+    $enrolled_count = $capacity_data['enrolled'];
+
+    if ($enrolled_count >= $class['max_students']) {
+        $_SESSION['error'] = 'Class has reached maximum capacity';
+        header('Location: view.php?id=' . $class_id);
+        exit();
+    }
+
+    // Insert enrollment
+    $insert_sql = "INSERT INTO enrollments (student_id, class_id, enrollment_date, status, created_at) 
+                   VALUES (?, ?, ?, 'active', NOW())";
+    $insert_stmt = $conn->prepare($insert_sql);
+    $insert_stmt->bind_param("iis", $student_id, $class_id, $enrollment_date);
+
+    if ($insert_stmt->execute()) {
+        $_SESSION['success'] = "Student {$student['first_name']} {$student['last_name']} has been enrolled in the class";
+
+        // Send enrollment confirmation email to student
+        $student_email_sent = sendClassEnrollmentEmail($student_id, $class_id, $enrollment_date);
+
+        if ($student_email_sent) {
+            logActivity('class_enrollment_email', "Enrollment confirmation email sent to student #{$student_id} for class #{$class_id}");
+        } else {
+            error_log("Failed to send enrollment confirmation email to student #{$student_id} for class #{$class_id}");
+            $_SESSION['warning'] = "Student enrolled but email notification could not be sent.";
+        }
+
+        // Send notification to instructor about new enrollment
+        if ($class['instructor_id']) {
+            $instructor_email_sent = sendInstructorEnrollmentNotification($student_id, $class_id);
+
+            if ($instructor_email_sent) {
+                logActivity('instructor_enrollment_notification', "Enrollment notification email sent to instructor #{$class['instructor_id']} for class #{$class_id}");
+            } else {
+                error_log("Failed to send enrollment notification email to instructor #{$class['instructor_id']} for class #{$class_id}");
+            }
+        }
+    } else {
+        $_SESSION['error'] = 'Failed to enroll student: ' . $insert_stmt->error;
+    }
+
+    $insert_stmt->close();
+    $check_stmt->close();
+    $check_enroll_stmt->close();
+    $capacity_stmt->close();
+
+    header('Location: view.php?id=' . $class_id);
+    exit();
+}
+
+// Fetch enrolled students
+$students_sql = "SELECT 
+    e.*,
+    u.id as user_id,
+    u.first_name,
+    u.last_name,
+    u.email,
+    u.phone,
+    up.date_of_birth,
+    up.gender,
+    up.city,
+    up.state
+FROM enrollments e
+JOIN users u ON e.student_id = u.id
+LEFT JOIN user_profiles up ON u.id = up.user_id
+WHERE e.class_id = ?
+ORDER BY e.enrollment_date DESC";
+$students_stmt = $conn->prepare($students_sql);
+$students_stmt->bind_param('i', $class_id);
+$students_stmt->execute();
+$students = $students_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Fetch class materials
+$materials_sql = "SELECT * FROM materials 
+                  WHERE class_id = ? 
+                  ORDER BY week_number, created_at DESC";
+$materials_stmt = $conn->prepare($materials_sql);
+$materials_stmt->bind_param('i', $class_id);
+$materials_stmt->execute();
+$materials = $materials_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Fetch class assignments
+$assignments_sql = "SELECT a.*, COUNT(asub.id) as submission_count 
+                    FROM assignments a
+                    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id
+                    WHERE a.class_id = ?
+                    GROUP BY a.id
+                    ORDER BY a.due_date";
+$assignments_stmt = $conn->prepare($assignments_sql);
+$assignments_stmt->bind_param('i', $class_id);
+$assignments_stmt->execute();
+$assignments = $assignments_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Fetch class announcements
+$announcements_sql = "SELECT * FROM announcements 
+                      WHERE class_id = ? 
+                      ORDER BY publish_date DESC 
+                      LIMIT 10";
+$announcements_stmt = $conn->prepare($announcements_sql);
+$announcements_stmt->bind_param('i', $class_id);
+$announcements_stmt->execute();
+$announcements = $announcements_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Calculate class progress
+$class_start = strtotime($class['start_date']);
+$class_end = strtotime($class['end_date']);
+$today = time();
+$class_duration = $class_end - $class_start;
+$elapsed = $today - $class_start;
+$progress_percentage = $class_duration > 0 ? min(100, max(0, ($elapsed / $class_duration) * 100)) : 0;
+
+// Determine class timeline status
+$timeline_status = '';
+if ($class['status'] === 'completed') {
+    $timeline_status = 'completed';
+} elseif ($class['status'] === 'cancelled') {
+    $timeline_status = 'cancelled';
+} elseif ($progress_percentage >= 100) {
+    $timeline_status = 'completed';
+} elseif ($progress_percentage > 0) {
+    $timeline_status = 'ongoing';
+} else {
+    $timeline_status = 'scheduled';
+}
+
+// Log activity
+logActivity($_SESSION['user_id'], 'class_view', "Viewed class #$class_id", 'class_batches', $class_id);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
