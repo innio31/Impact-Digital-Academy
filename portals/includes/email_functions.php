@@ -1177,7 +1177,7 @@ function getWeekDates()
  */
 function sendWeeklyReminderEmail($student, $materials, $assignments, $quizzes, $week_dates)
 {
-    $subject = "📚 Week " . date('W') . " Learning Materials - " . htmlspecialchars($student['course_title']);
+    $subject = "Week " . date('W') . " Learning Materials - " . htmlspecialchars($student['course_title']);
 
     // Build materials list HTML
     $materials_html = '';
@@ -1417,8 +1417,8 @@ function sendDeadlineReminderEmail($item, $type)
     $hours_left = round((strtotime($item['due_date'] ?? $item['available_to']) - time()) / 3600, 1);
 
     $subject = $is_assignment
-        ? "⏰ Reminder: Assignment Due in {$hours_left} hours"
-        : "⏰ Reminder: Quiz Closes in {$hours_left} hours";
+        ? "Reminder: Assignment Due in {$hours_left} hours"
+        : "Reminder: Quiz Closes in {$hours_left} hours";
 
     $item_type = $is_assignment ? 'Assignment' : 'Quiz';
     $item_title = $item['title'];
@@ -1537,7 +1537,7 @@ function sendGradeNotificationEmail($student_id, $assignment_id, $grade, $conn)
     elseif ($percentage >= 60) $grade_color = '#f97316';
     else $grade_color = '#ef4444';
 
-    $subject = "📊 Grade Posted: " . $assignment['title'] . " - " . $assignment['course_title'];
+    $subject = "Grade Posted: " . $assignment['title'] . " - " . $assignment['course_title'];
     $course_link = BASE_URL . "modules/student/classes/assignments.php?class_id=" . $assignment['class_id'];
 
     $body = "
@@ -1641,7 +1641,7 @@ function sendDiscussionReplyNotification($reply_id, $conn = null)
 
     // 1. Notify the discussion author (if they're not the one replying)
     if ($reply['discussion_author_id'] != $reply['user_id']) {
-        $subject = "💬 New Reply to Your Discussion: " . $reply['discussion_title'];
+        $subject = "New Reply to Your Discussion: " . $reply['discussion_title'];
 
         $body = "
         <!DOCTYPE html>
@@ -1726,7 +1726,7 @@ function sendDiscussionReplyNotification($reply_id, $conn = null)
     $stmt_participants->close();
 
     foreach ($participants as $participant) {
-        $subject = "💬 New Activity in Discussion: " . $reply['discussion_title'];
+        $subject = "New Activity in Discussion: " . $reply['discussion_title'];
 
         $body = "
         <!DOCTYPE html>
@@ -1857,7 +1857,7 @@ function sendNewDiscussionNotification($discussion_id, $conn = null)
             continue;
         }
 
-        $subject = "💬 New Discussion: " . $discussion['title'] . " - " . $discussion['course_title'];
+        $subject = "New Discussion: " . $discussion['title'] . " - " . $discussion['course_title'];
 
         $body = "
         <!DOCTYPE html>
@@ -1967,7 +1967,7 @@ function sendAssignmentSubmissionNotification($submission_id, $conn = null)
     $submission = $result->fetch_assoc();
     $stmt->close();
 
-    $subject = "📝 New Assignment Submission: " . $submission['assignment_title'] . " - " . $submission['student_name'];
+    $subject = "New Assignment Submission: " . $submission['assignment_title'] . " - " . $submission['student_name'];
 
     $submission_time = date('F j, Y g:i A', strtotime($submission['submitted_at']));
     $due_time = date('F j, Y g:i A', strtotime($submission['due_date']));
@@ -2560,7 +2560,7 @@ function sendNewMaterialNotifications($conn, $material_id, $schedule)
     foreach ($students as $student) {
         if (empty($student['email'])) continue;
 
-        $subject = "📚 New Material: " . $material['title'] . " - " . $material['course_title'];
+        $subject = "New Material: " . $material['title'] . " - " . $material['course_title'];
 
         $body = "
         <!DOCTYPE html>
@@ -2745,7 +2745,7 @@ function sendNewAssignmentNotifications($conn, $assignment_id, $schedule)
     foreach ($students as $student) {
         if (empty($student['email'])) continue;
 
-        $subject = "📝 New Assignment: " . $assignment['title'] . " - " . $assignment['course_title'];
+        $subject = "New Assignment: " . $assignment['title'] . " - " . $assignment['course_title'];
 
         $body = "
         <!DOCTYPE html>
@@ -2862,7 +2862,7 @@ function sendInstructorAssignmentNotification($conn, $assignment, $student_count
         return false;
     }
 
-    $subject = "✅ Assignment Published: " . $assignment['title'];
+    $subject = "Assignment Published: " . $assignment['title'];
     $class_link = BASE_URL . "modules/instructor/classes/assignments.php?class_id=" . $assignment['class_id'];
 
     $body = "
@@ -2959,7 +2959,7 @@ function sendProgramEnrollmentEmail($student_id, $program_id, $enrollment_date =
     }
 
     $school_name = getSetting('school_name', 'Impact Digital Academy');
-    $subject = "🎉 Welcome to " . $program['name'] . " - Enrollment Confirmed!";
+    $subject = "Welcome to " . $program['name'] . " - Enrollment Confirmed!";
 
     $enrollment_date_formatted = $enrollment_date ? date('F j, Y', strtotime($enrollment_date)) : date('F j, Y');
     $dashboard_url = BASE_URL . 'modules/student/dashboard.php';
@@ -2997,7 +2997,7 @@ function sendProgramEnrollmentEmail($student_id, $program_id, $enrollment_date =
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0; font-size: 32px;'>🎉 Welcome Aboard!</h1>
+                <h1 style='margin: 0; font-size: 32px;'>Welcome Aboard!</h1>
                 <p style='margin: 10px 0 0; opacity: 0.9; font-size: 18px;'>Your learning journey begins now</p>
             </div>
             
@@ -3142,7 +3142,7 @@ function sendProgramUnenrollmentEmail($student_id, $program_id, $reason = '')
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0;'>📧 Program Update</h1>
+                <h1 style='margin: 0;'>Program Update</h1>
             </div>
             
             <div class='content'>
@@ -3232,7 +3232,7 @@ function sendClassEnrollmentEmail($student_id, $class_id, $enrollment_date = nul
     }
 
     $school_name = getSetting('school_name', 'Impact Digital Academy');
-    $subject = "📚 Class Enrollment Confirmation - " . $class['course_title'];
+    $subject = "Class Enrollment Confirmation - " . $class['course_title'];
 
     $enrollment_date_formatted = $enrollment_date ? date('F j, Y', strtotime($enrollment_date)) : date('F j, Y');
     $class_url = BASE_URL . 'modules/student/classes/view.php?id=' . $class_id;
@@ -3268,7 +3268,7 @@ function sendClassEnrollmentEmail($student_id, $class_id, $enrollment_date = nul
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0;'>✅ Class Enrollment Confirmed</h1>
+                <h1 style='margin: 0;'>Class Enrollment Confirmed</h1>
                 <p style='margin: 10px 0 0; opacity: 0.9;'>You're all set to start learning!</p>
             </div>
             
@@ -3403,7 +3403,7 @@ function sendClassUnenrollmentEmail($student_id, $class_id, $reason = '')
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0;'>📧 Class Update</h1>
+                <h1 style='margin: 0;'>Class Update</h1>
             </div>
             
             <div class='content'>
@@ -3487,7 +3487,7 @@ function sendInstructorEnrollmentNotification($student_id, $class_id)
     }
 
     $school_name = getSetting('school_name', 'Impact Digital Academy');
-    $subject = "👤 New Student Enrollment - " . $class['course_title'];
+    $subject = "New Student Enrollment - " . $class['course_title'];
 
     $class_url = BASE_URL . "modules/instructor/classes/view.php?id=" . $class_id;
     $student_profile_url = BASE_URL . "modules/admin/users/view.php?id=" . $student_id;
@@ -3524,7 +3524,7 @@ function sendInstructorEnrollmentNotification($student_id, $class_id)
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0;'>👤 New Student Enrollment</h1>
+                <h1 style='margin: 0;'>New Student Enrollment</h1>
             </div>
             
             <div class='content'>
@@ -3608,7 +3608,7 @@ function sendInstructorUnenrollmentNotification($student_id, $class_id, $student
     }
 
     $school_name = getSetting('school_name', 'Impact Digital Academy');
-    $subject = "👤 Student Unenrollment - " . $class['course_title'];
+    $subject = "Student Unenrollment - " . $class['course_title'];
 
     $class_url = BASE_URL . "modules/instructor/classes/view.php?id=" . $class_id;
 
@@ -3644,7 +3644,7 @@ function sendInstructorUnenrollmentNotification($student_id, $class_id, $student
     <body>
         <div class='container'>
             <div class='header'>
-                <h1 style='margin: 0;'>👤 Student Unenrollment</h1>
+                <h1 style='margin: 0;'>Student Unenrollment</h1>
             </div>
             
             <div class='content'>
