@@ -114,7 +114,12 @@ if (!empty($search)) {
     $obj_params[] = $search_term;
 }
 
-$obj_sql .= " ORDER BY q.created_at DESC LIMIT 1000";
+$obj_sql .= " ORDER BY q.created_at DESC";
+
+// Add debug info (remove in production)
+// echo "<!-- Objective SQL: $obj_sql -->";
+// echo "<!-- Params: " . print_r($obj_params, true) . " -->";
+
 $stmt = $pdo->prepare($obj_sql);
 $stmt->execute($obj_params);
 $objective_questions = $stmt->fetchAll();
@@ -156,7 +161,12 @@ if (!empty($search)) {
     $theory_params[] = $search_term;
 }
 
-$theory_sql .= " ORDER BY q.created_at DESC LIMIT 1000";
+$theory_sql .= " ORDER BY q.created_at DESC";
+
+// Add debug info (remove in production)
+// echo "<!-- Theory SQL: $theory_sql -->";
+// echo "<!-- Params: " . print_r($theory_params, true) . " -->";
+
 $stmt = $pdo->prepare($theory_sql);
 $stmt->execute($theory_params);
 $theory_questions = $stmt->fetchAll();
@@ -1423,13 +1433,18 @@ $theory_questions = $stmt->fetchAll();
             const subjectId = this.value;
             const topicSelect = document.getElementById('filter_topic');
 
-            if (subjectId > 0) {
-                // Clear current options
-                topicSelect.innerHTML = '<option value="0">Loading...</option>';
+            // Clear current options
+            topicSelect.innerHTML = '<option value="0">Loading...</option>';
 
+            if (subjectId > 0) {
                 // Fetch topics via AJAX
                 fetch(`../api/get_topics.php?subject_id=${subjectId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         topicSelect.innerHTML = '<option value="0">All Topics</option>';
                         if (data.topics && data.topics.length > 0) {
@@ -1437,8 +1452,14 @@ $theory_questions = $stmt->fetchAll();
                                 const option = document.createElement('option');
                                 option.value = topic.id;
                                 option.textContent = topic.topic_name;
+                                // Preserve selected topic if it matches
+                                if (topic.id == <?php echo $filter_topic; ?>) {
+                                    option.selected = true;
+                                }
                                 topicSelect.appendChild(option);
                             });
+                        } else {
+                            topicSelect.innerHTML = '<option value="0">No topics available</option>';
                         }
                     })
                     .catch(error => {
@@ -1447,6 +1468,16 @@ $theory_questions = $stmt->fetchAll();
                     });
             } else {
                 topicSelect.innerHTML = '<option value="0">All Topics</option>';
+            }
+        });
+
+        // Trigger change event on page load to load topics if subject is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const subjectSelect = document.getElementById('filter_subject');
+            if (subjectSelect && subjectSelect.value > 0) {
+                // Create and dispatch change event
+                const event = new Event('change');
+                subjectSelect.dispatchEvent(event);
             }
         });
 
