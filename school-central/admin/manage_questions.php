@@ -920,6 +920,87 @@ $theory_questions = $stmt->fetchAll();
                 display: none;
             }
         }
+
+        /* Loading state styles */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Better modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #fff;
+            margin: 30px auto;
+            max-width: 900px;
+            width: 95%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s ease;
+        }
+
+        /* Badge styles for modal */
+        .badge-difficulty-easy {
+            background: #d4edda;
+            color: #155724;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-difficulty-medium {
+            background: #fff3cd;
+            color: #856404;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-difficulty-hard {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-status-approved {
+            background: #d4edda;
+            color: #155724;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .badge-status-pending {
+            background: #fff3cd;
+            color: #856404;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -1402,10 +1483,12 @@ $theory_questions = $stmt->fetchAll();
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
 
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            sidebar.classList.toggle('active');
-        });
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+        }
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
@@ -1423,61 +1506,122 @@ $theory_questions = $stmt->fetchAll();
                 alertMessage.style.transition = 'opacity 0.5s';
                 alertMessage.style.opacity = '0';
                 setTimeout(function() {
-                    alertMessage.remove();
+                    if (alertMessage.parentNode) {
+                        alertMessage.remove();
+                    }
                 }, 500);
             }, 5000);
         }
 
         // Dynamic topic loading based on subject selection
-        document.getElementById('filter_subject')?.addEventListener('change', function() {
-            const subjectId = this.value;
-            const topicSelect = document.getElementById('filter_topic');
-
-            // Clear current options
-            topicSelect.innerHTML = '<option value="0">Loading...</option>';
-
-            if (subjectId > 0) {
-                // Fetch topics via AJAX
-                fetch(`../api/get_topics.php?subject_id=${subjectId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        topicSelect.innerHTML = '<option value="0">All Topics</option>';
-                        if (data.topics && data.topics.length > 0) {
-                            data.topics.forEach(topic => {
-                                const option = document.createElement('option');
-                                option.value = topic.id;
-                                option.textContent = topic.topic_name;
-                                // Preserve selected topic if it matches
-                                if (topic.id == <?php echo $filter_topic; ?>) {
-                                    option.selected = true;
-                                }
-                                topicSelect.appendChild(option);
-                            });
-                        } else {
-                            topicSelect.innerHTML = '<option value="0">No topics available</option>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error loading topics:', error);
-                        topicSelect.innerHTML = '<option value="0">Error loading topics</option>';
-                    });
-            } else {
-                topicSelect.innerHTML = '<option value="0">All Topics</option>';
-            }
-        });
-
-        // Trigger change event on page load to load topics if subject is selected
         document.addEventListener('DOMContentLoaded', function() {
             const subjectSelect = document.getElementById('filter_subject');
-            if (subjectSelect && subjectSelect.value > 0) {
-                // Create and dispatch change event
-                const event = new Event('change');
-                subjectSelect.dispatchEvent(event);
+            const topicSelect = document.getElementById('filter_topic');
+
+            if (!subjectSelect || !topicSelect) {
+                console.error('Filter elements not found');
+                return;
+            }
+
+            // Function to load topics
+            function loadTopics(subjectId) {
+                // Show loading state
+                topicSelect.innerHTML = '<option value="0">Loading...</option>';
+                topicSelect.disabled = true;
+
+                if (subjectId && subjectId !== '0') {
+                    console.log('Loading topics for subject:', subjectId);
+
+                    // Use absolute path or correct relative path
+                    fetch('../api/get_topics.php?subject_id=' + subjectId, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error('HTTP error ' + response.status + ': ' + text);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Topics data received:', data);
+
+                            // Clear loading state
+                            topicSelect.innerHTML = '';
+                            topicSelect.disabled = false;
+
+                            // Add default option
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '0';
+                            defaultOption.textContent = 'All Topics';
+                            topicSelect.appendChild(defaultOption);
+
+                            // Check if we have topics
+                            if (data.topics && data.topics.length > 0) {
+                                data.topics.forEach(topic => {
+                                    const option = document.createElement('option');
+                                    option.value = topic.id;
+                                    option.textContent = topic.topic_name;
+
+                                    // Preserve selected topic if it matches
+                                    <?php if ($filter_topic > 0): ?>
+                                        if (topic.id == <?php echo $filter_topic; ?>) {
+                                            option.selected = true;
+                                        }
+                                    <?php endif; ?>
+
+                                    topicSelect.appendChild(option);
+                                });
+                                console.log('Added', data.topics.length, 'topics');
+                            } else {
+                                console.log('No topics found for this subject');
+                                const noTopicsOption = document.createElement('option');
+                                noTopicsOption.value = '0';
+                                noTopicsOption.textContent = 'No topics available';
+                                noTopicsOption.disabled = true;
+                                topicSelect.appendChild(noTopicsOption);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading topics:', error);
+                            topicSelect.innerHTML = '<option value="0">Error loading topics</option>';
+                            topicSelect.disabled = false;
+
+                            // Show error message to user (optional)
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'alert alert-error';
+                            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to load topics. Please refresh the page.';
+                            errorDiv.style.marginTop = '10px';
+                            topicSelect.parentNode.appendChild(errorDiv);
+
+                            // Remove error after 3 seconds
+                            setTimeout(() => {
+                                if (errorDiv.parentNode) {
+                                    errorDiv.remove();
+                                }
+                            }, 3000);
+                        });
+                } else {
+                    // No subject selected, show default
+                    topicSelect.innerHTML = '<option value="0">All Topics</option>';
+                    topicSelect.disabled = false;
+                }
+            }
+
+            // Add change event listener
+            subjectSelect.addEventListener('change', function() {
+                loadTopics(this.value);
+            });
+
+            // Load topics on page load if a subject is selected
+            if (subjectSelect.value && subjectSelect.value !== '0') {
+                loadTopics(subjectSelect.value);
             }
         });
 
@@ -1487,14 +1631,27 @@ $theory_questions = $stmt->fetchAll();
             const modalBody = document.getElementById('modalBody');
             const modalTitle = document.getElementById('modalTitle');
 
+            if (!modal || !modalBody || !modalTitle) {
+                console.error('Modal elements not found');
+                return;
+            }
+
             modalTitle.textContent = type === 'objective' ? 'Objective Question Details' : 'Theory Question Details';
-            modalBody.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i><br>Loading...</div>';
+            modalBody.innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary-color);"></i><br><br>Loading question...</div>';
 
             modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
 
             // Fetch question details via AJAX
-            fetch(`../api/get_question_details.php?type=${type}&id=${id}`)
-                .then(response => response.json())
+            fetch('../api/get_question_details.php?type=' + type + '&id=' + id)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error('HTTP error ' + response.status);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.error) {
                         modalBody.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
@@ -1503,100 +1660,108 @@ $theory_questions = $stmt->fetchAll();
 
                         if (type === 'objective') {
                             html = `
-                                <div style="margin-bottom: 20px;">
-                                    <h4>Question:</h4>
-                                    <div style="background: var(--light-bg); padding: 15px; border-radius: 6px;">
-                                        ${data.question_text}
-                                    </div>
-                                </div>
-                                
-                                <h4>Options:</h4>
-                                <div style="display: grid; gap: 10px; margin-bottom: 20px;">
-                                    <div class="option-item ${data.correct_answer === 'A' ? 'correct' : ''}">
-                                        <span class="option-label">A:</span> ${data.option_a}
-                                    </div>
-                                    <div class="option-item ${data.correct_answer === 'B' ? 'correct' : ''}">
-                                        <span class="option-label">B:</span> ${data.option_b}
-                                    </div>
-                                    <div class="option-item ${data.correct_answer === 'C' ? 'correct' : ''}">
-                                        <span class="option-label">C:</span> ${data.option_c}
-                                    </div>
-                                    <div class="option-item ${data.correct_answer === 'D' ? 'correct' : ''}">
-                                        <span class="option-label">D:</span> ${data.option_d}
-                                    </div>
-                                </div>
-                                
-                                <div class="answer-section">
-                                    <strong>Correct Answer:</strong> ${data.correct_answer}
-                                </div>
-                            `;
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 10px;">Question:</h4>
+                            <div style="background: var(--light-bg); padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary-color);">
+                                ${data.question_text || 'No question text'}
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin-bottom: 10px;">Options:</h4>
+                        <div style="display: grid; gap: 10px; margin-bottom: 20px;">
+                            <div class="option-item ${data.correct_answer === 'A' ? 'correct' : ''}" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; ${data.correct_answer === 'A' ? 'background: #d4edda; border-color: #28a745;' : ''}">
+                                <span class="option-label" style="font-weight: 600; color: var(--primary-color);">A:</span> ${data.option_a || ''}
+                            </div>
+                            <div class="option-item ${data.correct_answer === 'B' ? 'correct' : ''}" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; ${data.correct_answer === 'B' ? 'background: #d4edda; border-color: #28a745;' : ''}">
+                                <span class="option-label" style="font-weight: 600; color: var(--primary-color);">B:</span> ${data.option_b || ''}
+                            </div>
+                            <div class="option-item ${data.correct_answer === 'C' ? 'correct' : ''}" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; ${data.correct_answer === 'C' ? 'background: #d4edda; border-color: #28a745;' : ''}">
+                                <span class="option-label" style="font-weight: 600; color: var(--primary-color);">C:</span> ${data.option_c || ''}
+                            </div>
+                            <div class="option-item ${data.correct_answer === 'D' ? 'correct' : ''}" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; ${data.correct_answer === 'D' ? 'background: #d4edda; border-color: #28a745;' : ''}">
+                                <span class="option-label" style="font-weight: 600; color: var(--primary-color);">D:</span> ${data.option_d || ''}
+                            </div>
+                        </div>
+                        
+                        <div class="answer-section" style="background: #e8f4fd; padding: 15px; border-radius: 6px; border-left: 4px solid var(--info-color);">
+                            <strong><i class="fas fa-check-circle" style="color: var(--info-color);"></i> Correct Answer:</strong> ${data.correct_answer || ''}
+                        </div>
+                    `;
                         } else {
                             html = `
-                                <div style="margin-bottom: 20px;">
-                                    <h4>Question:</h4>
-                                    <div style="background: var(--light-bg); padding: 15px; border-radius: 6px;">
-                                        ${data.question_text || 'No question text provided'}
-                                    </div>
-                                </div>
-                                
-                                ${data.question_file ? `
-                                <div style="margin-bottom: 20px;">
-                                    <h4>Attachment:</h4>
-                                    <a href="../${data.question_file}" target="_blank" class="btn btn-sm btn-info">
-                                        <i class="fas fa-file"></i> View Attachment
-                                    </a>
-                                </div>
-                                ` : ''}
-                                
-                                <div class="answer-section">
-                                    <h4>Model Answer:</h4>
-                                    <div style="margin-top: 10px;">
-                                        ${data.model_answer || 'No model answer provided'}
-                                    </div>
-                                </div>
-                            `;
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 10px;">Question:</h4>
+                            <div style="background: var(--light-bg); padding: 15px; border-radius: 6px; border-left: 4px solid var(--success-color);">
+                                ${data.question_text || 'No question text provided'}
+                            </div>
+                        </div>
+                        
+                        ${data.question_file ? `
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 10px;">Attachment:</h4>
+                            <a href="../${data.question_file}" target="_blank" class="btn btn-sm btn-info" style="display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fas fa-file"></i> View Attachment
+                            </a>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="answer-section" style="background: #fff3cd; padding: 15px; border-radius: 6px; border-left: 4px solid var(--warning-color);">
+                            <h4 style="margin-bottom: 10px;"><i class="fas fa-star"></i> Model Answer:</h4>
+                            <div style="margin-top: 10px;">
+                                ${data.model_answer || 'No model answer provided'}
+                            </div>
+                        </div>
+                    `;
                         }
 
                         html += `
-                            <hr style="margin: 20px 0;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                                <div><strong>Subject:</strong> ${data.subject_name}</div>
-                                <div><strong>Topic:</strong> ${data.topic_name}</div>
-                                <div><strong>Difficulty:</strong> ${data.difficulty_level}</div>
-                                <div><strong>Marks:</strong> ${data.marks}</div>
-                                <div><strong>Class:</strong> ${data.class_level || 'Not specified'}</div>
-                                <div><strong>Status:</strong> ${data.is_approved ? 'Approved' : 'Pending'}</div>
-                                <div><strong>Downloads:</strong> ${data.download_count}</div>
-                                <div><strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}</div>
-                            </div>
-                            ${data.explanation ? `
-                            <div style="margin-top: 20px;">
-                                <strong>Explanation:</strong>
-                                <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 5px;">
-                                    ${data.explanation}
-                                </div>
-                            </div>
-                            ` : ''}
-                        `;
+                    <hr style="margin: 20px 0; border-color: var(--border-color);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div><strong>Subject:</strong> ${data.subject_name || 'N/A'}</div>
+                        <div><strong>Topic:</strong> ${data.topic_name || 'N/A'}</div>
+                        <div><strong>Difficulty:</strong> <span class="badge-difficulty-${data.difficulty_level || 'medium'}">${data.difficulty_level || 'N/A'}</span></div>
+                        <div><strong>Marks:</strong> ${data.marks || 'N/A'}</div>
+                        <div><strong>Class:</strong> ${data.class_level || 'Not specified'}</div>
+                        <div><strong>Status:</strong> <span class="badge-status-${data.is_approved ? 'approved' : 'pending'}">${data.is_approved ? 'Approved' : 'Pending'}</span></div>
+                        <div><strong>Downloads:</strong> <i class="fas fa-download"></i> ${data.download_count || 0}</div>
+                        <div><strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}</div>
+                    </div>
+                    ${data.explanation ? `
+                    <div style="margin-top: 20px;">
+                        <strong>Explanation:</strong>
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 5px;">
+                            ${data.explanation}
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
 
                         modalBody.innerHTML = html;
                     }
                 })
                 .catch(error => {
-                    modalBody.innerHTML = `<div class="alert alert-error">Error loading question: ${error.message}</div>`;
+                    console.error('Error loading question:', error);
+                    modalBody.innerHTML = `<div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> 
+                Error loading question: ${error.message}
+            </div>`;
                 });
         }
 
         // Close modal
         function closeModal() {
-            document.getElementById('viewModal').style.display = 'none';
+            const modal = document.getElementById('viewModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
         }
 
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('viewModal');
             if (event.target === modal) {
-                modal.style.display = 'none';
+                closeModal();
             }
         }
 
@@ -1606,6 +1771,9 @@ $theory_questions = $stmt->fetchAll();
                 closeModal();
             }
         });
+
+        // Debug: Log when page loads
+        console.log('Manage questions page loaded');
     </script>
 </body>
 
