@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../../api/config.php';
+require_once 'config.php';
 
 if (!isset($_GET['subject_id']) || !is_numeric($_GET['subject_id'])) {
     echo json_encode(['error' => 'Invalid subject ID']);

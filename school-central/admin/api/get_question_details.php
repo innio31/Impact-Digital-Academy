@@ -1,6 +1,6 @@
 <?php
-require_once '../../api/config.php';
-require_once '../../api/auth.php';
+require_once 'config.php';
+require_once 'auth.php';
 
 // Authenticate (but allow admin access from session as well)
 session_start();
