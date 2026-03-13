@@ -25,6 +25,7 @@ $stats = $selected_campaign ? $notifier->getCampaignStats($selected_campaign) : 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Analytics - Impact Digital</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
     <style>
         * {
             margin: 0;
