@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Working with Text & Links in HTML - Complete Study Notes</title>
     <style>
+        /* ========== BASE STYLES (screen) ========== */
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: #f5f5f5;
@@ -123,11 +124,221 @@
             border-radius: 2rem;
             margin: 2rem 0;
         }
+
+        /* Toolbar for download/print */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #1b727d;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+            transition: 0.1s ease;
+            border: 1px solid #0e4e56;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0b5f68;
+            box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+        }
+
+        .btn-pdf {
+            background: #a13f3f;
+            border-color: #6b2b2b;
+        }
+
+        .btn-pdf:hover {
+            background: #832f2f;
+        }
+
+        @media print {
+            .toolbar {
+                display: none;
+            }
+        }
+
+        /* ========== OPTIMIZED PRINT STYLES - COMPACT ========== */
+        @media print {
+            body {
+                background: white;
+                padding: 0.1in;
+                color: black;
+                line-height: 1.2;
+                font-size: 10pt;
+            }
+
+            .document-wrapper {
+                background: white;
+                border-radius: 0;
+                padding: 0.1in;
+                box-shadow: none;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 18pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                padding-bottom: 0.05in;
+                margin: 0.1in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h2 {
+                font-size: 16pt;
+                color: black;
+                border-left: 4px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-left: 0.1in;
+                line-height: 1.2;
+            }
+
+            h3 {
+                font-size: 14pt;
+                color: black;
+                margin: 0.12in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h4 {
+                font-size: 12pt;
+                color: black;
+                margin: 0.1in 0 0.03in 0;
+                line-height: 1.2;
+            }
+
+            p {
+                margin: 0.05in 0;
+                line-height: 1.2;
+            }
+
+            ul,
+            ol {
+                margin: 0.05in 0 0.05in 0.15in;
+            }
+
+            li {
+                margin: 0.02in 0;
+                line-height: 1.2;
+            }
+
+            pre {
+                background: #f6f6f6;
+                color: black;
+                border: 1px solid #ccc;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+                font-size: 9pt;
+                line-height: 1.1;
+                page-break-inside: avoid;
+            }
+
+            code {
+                background: #eee;
+                color: black;
+                padding: 0.02in 0.05in;
+                font-size: 9pt;
+            }
+
+            table {
+                margin: 0.1in 0;
+                box-shadow: none;
+                border: 1px solid #333;
+                font-size: 9pt;
+                line-height: 1.1;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            hr {
+                margin: 0.15in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            .toc {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+            }
+
+            .note-box {
+                padding: 0.1in;
+                margin: 0.1in 0;
+                border-left-width: 4px;
+                background: #f9f9f9;
+            }
+
+            footer {
+                margin-top: 0.2in;
+                border-top: 1px solid #ccc;
+                padding-top: 0.1in;
+                font-size: 9pt;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            h1+p,
+            h2+p,
+            h3+p {
+                page-break-before: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+
+            a,
+            a:link,
+            a:visited {
+                color: black;
+                text-decoration: underline;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="document-wrapper">
+
+        <!-- Toolbar: print and download (PDF link assumes same folder) -->
+        <div class="toolbar">
+            <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <a href="text-links-notes.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+            <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+        </div>
+
         <h1>Working with Text & Links in HTML</h1>
 
         <div class="toc">

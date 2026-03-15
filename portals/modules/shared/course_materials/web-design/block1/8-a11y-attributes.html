@@ -2,328 +2,585 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMPLETE STUDY NOTES: FORM ATTRIBUTES & ACCESSIBILITY (INTERACTIVE)</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMPLETE STUDY NOTES: FORM ATTRIBUTES & ACCESSIBILITY (PRINTABLE VERSION)</title>
+  <style>
+    /* === ORIGINAL STYLES (preserved from 8-a11y-attributes.html) === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #e1eef2;
-            color: #1a2c35;
-            line-height: 1.6;
-            padding: 1.8rem;
-        }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #e1eef2;
+      color: #1a2c35;
+      line-height: 1.6;
+      padding: 1.8rem;
+    }
 
-        .master-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 3rem;
-            box-shadow: 0 30px 50px -20px #0d3a47;
-            padding: 2.8rem 3.2rem;
-        }
+    .master-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 3rem;
+      box-shadow: 0 30px 50px -20px #0d3a47;
+      padding: 2.8rem 3.2rem;
+    }
 
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 750;
-            background: linear-gradient(145deg, #005066, #0b5f5a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            border-left: 18px solid #25968c;
-            padding-left: 2rem;
-            margin-bottom: 1.8rem;
-            letter-spacing: -0.01em;
-        }
+    h1 {
+      font-size: 3.2rem;
+      font-weight: 750;
+      background: linear-gradient(145deg, #005066, #0b5f5a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      border-left: 18px solid #25968c;
+      padding-left: 2rem;
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.01em;
+    }
 
-        h2 {
-            font-size: 2.4rem;
-            color: #0a5563;
-            border-bottom: 5px solid #6bc3b8;
-            padding-bottom: 0.6rem;
-            margin: 2.8rem 0 1.5rem;
-            font-weight: 650;
-        }
+    h2 {
+      font-size: 2.4rem;
+      color: #0a5563;
+      border-bottom: 5px solid #6bc3b8;
+      padding-bottom: 0.6rem;
+      margin: 2.8rem 0 1.5rem;
+      font-weight: 650;
+    }
 
-        h3 {
-            font-size: 1.9rem;
-            color: #116c74;
-            margin: 2rem 0 1rem;
-            padding-left: 1.2rem;
-            border-left: 8px solid #7acfc2;
-        }
+    h3 {
+      font-size: 1.9rem;
+      color: #116c74;
+      margin: 2rem 0 1rem;
+      padding-left: 1.2rem;
+      border-left: 8px solid #7acfc2;
+    }
 
-        h4 {
-            font-size: 1.5rem;
-            color: #1a7075;
-            margin: 1.6rem 0 0.8rem;
-        }
+    h4 {
+      font-size: 1.5rem;
+      color: #1a7075;
+      margin: 1.6rem 0 0.8rem;
+    }
 
-        p,
-        li {
-            font-size: 1.1rem;
-            margin: 1rem 0;
-        }
+    p,
+    li {
+      font-size: 1.1rem;
+      margin: 1rem 0;
+    }
 
-        .toc-grid {
-            background: #dff2f0;
-            border-radius: 2.2rem;
-            padding: 2.2rem;
-            margin: 2.5rem 0;
-            border: 2px solid #389e9b;
-        }
+    .toc-grid {
+      background: #dff2f0;
+      border-radius: 2.2rem;
+      padding: 2.2rem;
+      margin: 2.5rem 0;
+      border: 2px solid #389e9b;
+    }
 
-        .toc-grid ul {
-            columns: 3;
-            list-style: none;
-        }
+    .toc-grid ul {
+      columns: 3;
+      list-style: none;
+    }
 
-        .toc-grid li {
-            margin: 0.7rem 0;
-        }
+    .toc-grid li {
+      margin: 0.7rem 0;
+    }
 
-        .toc-grid a {
-            text-decoration: none;
-            color: #0a5c63;
-            font-weight: 600;
-            border-bottom: 2px solid #8ed0c5;
-        }
+    .toc-grid a {
+      text-decoration: none;
+      color: #0a5c63;
+      font-weight: 600;
+      border-bottom: 2px solid #8ed0c5;
+    }
 
-        pre,
-        .code-block {
-            background: #1c2d33;
-            color: #e5f0f3;
-            padding: 1.6rem 2rem;
-            border-radius: 2rem;
-            overflow-x: auto;
-            font-size: 1rem;
-            font-family: 'Fira Code', 'JetBrains Mono', monospace;
-            margin: 1.8rem 0;
-            border: 3px solid #53a7a1;
-            box-shadow: inset 0 0 10px #173e44;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
+    pre,
+    .code-block {
+      background: #1c2d33;
+      color: #e5f0f3;
+      padding: 1.6rem 2rem;
+      border-radius: 2rem;
+      overflow-x: auto;
+      font-size: 1rem;
+      font-family: 'Fira Code', 'JetBrains Mono', monospace;
+      margin: 1.8rem 0;
+      border: 3px solid #53a7a1;
+      box-shadow: inset 0 0 10px #173e44;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
 
-        code {
-            background: #d6f0f0;
-            padding: 0.2rem 0.7rem;
-            border-radius: 12px;
-            color: #0e4853;
-            font-size: 1rem;
-        }
+    code {
+      background: #d6f0f0;
+      padding: 0.2rem 0.7rem;
+      border-radius: 12px;
+      color: #0e4853;
+      font-size: 1rem;
+    }
 
-        pre code {
-            background: transparent;
-            color: inherit;
-            padding: 0;
-        }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
 
-        /* INTERACTIVE EXERCISE CARDS - CLICK TO REVEAL */
-        .exercise-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 2.8rem 0;
-        }
+    /* INTERACTIVE EXERCISE CARDS - CLICK TO REVEAL */
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2.8rem 0;
+    }
 
-        .exercise-card {
-            background: #f3fafc;
-            border-radius: 2.2rem;
-            border: 2px solid #308a89;
-            overflow: hidden;
-            transition: 0.2s;
-            box-shadow: 0 12px 25px #cae1e5;
-        }
+    .exercise-card {
+      background: #f3fafc;
+      border-radius: 2.2rem;
+      border: 2px solid #308a89;
+      overflow: hidden;
+      transition: 0.2s;
+      box-shadow: 0 12px 25px #cae1e5;
+    }
 
-        .exercise-header {
-            background: #166874;
-            color: white;
-            padding: 1.4rem 1.8rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            text-align: left;
-        }
+    .exercise-header {
+      background: #166874;
+      color: white;
+      padding: 1.4rem 1.8rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
 
-        .exercise-header:hover {
-            background: #1f8391;
-        }
+    .exercise-header:hover {
+      background: #1f8391;
+    }
 
-        .exercise-header .indicator {
-            font-size: 2rem;
-            transition: transform 0.3s;
-        }
+    .exercise-header .indicator {
+      font-size: 2rem;
+      transition: transform 0.3s;
+    }
 
-        .exercise-content {
-            padding: 0 2rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out, padding 0.3s;
-            background: #ffffff;
-            border-top: 0 solid #6bb7b0;
-        }
+    .exercise-content {
+      padding: 0 2rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.3s;
+      background: #ffffff;
+      border-top: 0 solid #6bb7b0;
+    }
 
-        .exercise-card.expanded .exercise-content {
-            padding: 2rem 2rem 2.5rem;
-            max-height: 1200px;
-            /* plenty for content */
-            border-top-width: 4px;
-        }
+    .exercise-card.expanded .exercise-content {
+      padding: 2rem 2rem 2.5rem;
+      max-height: 1200px;
+      /* plenty for content */
+      border-top-width: 4px;
+    }
 
-        .exercise-card.expanded .indicator {
-            transform: rotate(90deg);
-        }
+    .exercise-card.expanded .indicator {
+      transform: rotate(90deg);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: #f4fcfd;
-            border-radius: 1.8rem;
-            overflow: hidden;
-            box-shadow: 0 10px 20px #b1d7de;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: #f4fcfd;
+      border-radius: 1.8rem;
+      overflow: hidden;
+      box-shadow: 0 10px 20px #b1d7de;
+    }
 
-        th {
-            background: #1b6f7c;
-            color: white;
-            font-weight: 600;
-            padding: 1rem 1.5rem;
-            font-size: 1.1rem;
-            text-align: left;
-        }
+    th {
+      background: #1b6f7c;
+      color: white;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      text-align: left;
+    }
 
-        td {
-            padding: 0.9rem 1.5rem;
-            border-bottom: 1px solid #b9dfe5;
-            background: #f9ffff;
-        }
+    td {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid #b9dfe5;
+      background: #f9ffff;
+    }
 
-        .badge {
-            background: #0f6b72;
-            color: white;
-            padding: 0.3rem 1.6rem;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin: 0.5rem 0;
-        }
+    .badge {
+      background: #0f6b72;
+      color: white;
+      padding: 0.3rem 1.6rem;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin: 0.5rem 0;
+    }
 
-        .warning-block {
-            background: #fff3d9;
-            border-left: 18px solid #c76217;
-            padding: 1.6rem 2rem;
-            border-radius: 2rem;
-            margin: 2rem 0;
-        }
+    .warning-block {
+      background: #fff3d9;
+      border-left: 18px solid #c76217;
+      padding: 1.6rem 2rem;
+      border-radius: 2rem;
+      margin: 2rem 0;
+    }
 
-        hr {
-            border: none;
-            height: 4px;
-            background: linear-gradient(90deg, #bfe2e3, #f0fcf8, #bfe2e3);
-            margin: 3rem 0;
-        }
+    hr {
+      border: none;
+      height: 4px;
+      background: linear-gradient(90deg, #bfe2e3, #f0fcf8, #bfe2e3);
+      margin: 3rem 0;
+    }
 
-        .footnote-links {
-            background: #dcf1ef;
-            border-radius: 2.5rem;
-            padding: 2rem 2.5rem;
-            margin-top: 3rem;
-        }
-    </style>
+    .footnote-links {
+      background: #dcf1ef;
+      border-radius: 2.5rem;
+      padding: 2rem 2.5rem;
+      margin-top: 3rem;
+    }
+
+    /* === TOOLBAR (same as intro page) === */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #1f737d;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+      transition: 0.1s ease;
+      border: 1px solid #0e4e56;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #0b5f68;
+      box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+    }
+
+    .btn-pdf {
+      background: #a13f3f;
+      border-color: #6b2b2b;
+    }
+
+    .btn-pdf:hover {
+      background: #832f2f;
+    }
+
+    @media print {
+      .toolbar {
+        display: none;
+      }
+    }
+
+    /* === COMPACT PRINT STYLES (exactly like intro page) === */
+    @media print {
+      body {
+        background: white;
+        padding: 0.1in;
+        color: black;
+        line-height: 1.2;
+        font-size: 10pt;
+      }
+
+      .master-container {
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0.1in;
+        background: white;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 18pt;
+        background: none;
+        -webkit-text-fill-color: black;
+        color: black;
+        border-left: 6px solid #333;
+        padding-left: 0.2in;
+        margin: 0.1in 0 0.05in 0;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 16pt;
+        color: black;
+        border-bottom: 2px solid #333;
+        margin: 0.15in 0 0.08in 0;
+        padding-bottom: 0.05in;
+        line-height: 1.2;
+      }
+
+      h3 {
+        font-size: 14pt;
+        color: black;
+        border-left: 4px solid #666;
+        padding-left: 0.1in;
+        margin: 0.12in 0 0.05in 0;
+        line-height: 1.2;
+      }
+
+      h4 {
+        font-size: 12pt;
+        color: black;
+        margin: 0.1in 0 0.03in 0;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0.05in 0;
+        line-height: 1.2;
+      }
+
+      ul,
+      ol {
+        margin: 0.05in 0 0.05in 0.15in;
+      }
+
+      li {
+        margin: 0.02in 0;
+        line-height: 1.2;
+      }
+
+      pre {
+        background: #f6f6f6;
+        color: black;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        padding: 0.1in;
+        margin: 0.1in 0;
+        font-size: 9pt;
+        line-height: 1.1;
+        page-break-inside: avoid;
+      }
+
+      code {
+        background: #eee;
+        color: black;
+        padding: 0.02in 0.05in;
+        font-size: 9pt;
+        border: 1px solid #ccc;
+      }
+
+      pre code {
+        background: transparent;
+        color: black;
+        border: none;
+      }
+
+      table {
+        margin: 0.1in 0;
+        box-shadow: none;
+        border: 1px solid #333;
+        font-size: 9pt;
+        line-height: 1.1;
+      }
+
+      td {
+        background: white;
+        padding: 0.05in 0.1in;
+        border: 1px solid #999;
+      }
+
+      th {
+        background: #333;
+        color: white;
+        padding: 0.05in 0.1in;
+        border: 1px solid #666;
+      }
+
+      hr {
+        margin: 0.15in 0;
+        background: #ccc;
+        height: 1px;
+      }
+
+      .toc-grid {
+        background: #f9f9f9;
+        border: 1px solid #888;
+        padding: 0.15in;
+        margin: 0.15in 0;
+      }
+
+      .toc-grid ul {
+        columns: 2;
+      }
+
+      .warning-block {
+        background: #f9f9f9;
+        border-left: 4px solid #333;
+        padding: 0.1in;
+        margin: 0.1in 0;
+      }
+
+      .footnote-links {
+        background: #f9f9f9;
+        border: 1px solid #888;
+        padding: 0.1in;
+      }
+
+      footer {
+        margin-top: 0.2in;
+        border-top: 1px solid #ccc;
+        padding-top: 0.1in;
+        font-size: 9pt;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+
+      * {
+        background-image: none !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+
+      /* Ensure exercises are expanded in print */
+      .exercise-card {
+        page-break-inside: avoid;
+        border: 1px solid #333;
+        cursor: default;
+      }
+
+      .exercise-content {
+        max-height: none !important;
+        display: block !important;
+        padding: 0.1in !important;
+        margin-top: 0.1in !important;
+        background: #f9f9f9;
+        border: 1px solid #999;
+        overflow: visible !important;
+      }
+
+      .indicator {
+        display: none;
+      }
+
+      .exercise-header {
+        background: #333;
+        color: black;
+        padding: 0.1in;
+        cursor: default;
+      }
+
+      .exercise-grid {
+        display: block;
+      }
+
+      .exercise-card {
+        margin-bottom: 0.2in;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="master-container">
+  <div class="master-container">
 
-        <h1>FORM ATTRIBUTES & ACCESSIBILITY IN HTML</h1>
+    <!-- Toolbar: print and download -->
+    <div class="toolbar">
+      <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <a href="8-a11y-attributes.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+      <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+    </div>
 
-        <!-- TABLE OF CONTENTS (preserved) -->
-        <div class="toc-grid">
-            <h3 style="margin-top:0; border-left: none; padding-left:0;">📋 Table of Contents</h3>
-            <ul>
-                <li><a href="#introduction">1. Introduction to Web Forms</a></li>
-                <li><a href="#accessibility-importance">2. The Importance of Form Accessibility</a></li>
-                <li><a href="#label-element">3. The &lt;label&gt; Element: The Foundation of Form Accessibility</a></li>
-                <li><a href="#essential-attributes">4. Essential Form Attributes</a>
-                    <ul style="columns:1; margin-left:1rem;">
-                        <li><a href="#placeholder">4.1 The <code>placeholder</code> Attribute</a></li>
-                        <li><a href="#required">4.2 The <code>required</code> Attribute</a></li>
-                        <li><a href="#autofocus">4.3 The <code>autofocus</code> Attribute</a></li>
-                        <li><a href="#disabled">4.4 The <code>disabled</code> Attribute</a></li>
-                        <li><a href="#readonly">4.5 The <code>readonly</code> Attribute</a></li>
-                    </ul>
-                </li>
-                <li><a href="#additional-attributes">5. Additional Accessibility Attributes</a></li>
-                <li><a href="#combining-attributes">6. Combining Attributes for Optimal UX</a></li>
-                <li><a href="#real-world-examples">7. Real-World Examples and Patterns</a></li>
-                <li><a href="#testing">8. Testing Form Accessibility</a></li>
-                <li><a href="#common-mistakes">9. Common Mistakes and How to Avoid Them</a></li>
-                <li><a href="#best-practices">10. Best Practices Checklist</a></li>
-            </ul>
-        </div>
+    <h1>FORM ATTRIBUTES & ACCESSIBILITY IN HTML</h1>
 
-        <!-- 1. INTRODUCTION (exact) -->
-        <h2 id="introduction">1. Introduction to Web Forms</h2>
-        <p>Web forms are the primary means of user interaction on the internet—they enable users to log in, register,
-            make purchases, submit feedback, and perform countless other tasks. However, poorly designed forms create
-            barriers for many users, particularly those with disabilities or those using assistive technologies.</p>
-        <h3>Why Form Attributes Matter</h3>
-        <p>HTML form attributes do more than just add functionality—they communicate essential information to:</p>
-        <ul>
-            <li><strong>Visual users</strong>: Through visible cues and instructions</li>
-            <li><strong>Assistive technology users</strong>: Through semantic information that screen readers can
-                interpret</li>
-            <li><strong>Browser auto-fill features</strong>: Through proper naming and attributes</li>
-            <li><strong>Validation systems</strong>: Through built-in browser validation</li>
-        </ul>
+    <!-- TABLE OF CONTENTS (preserved) -->
+    <div class="toc-grid">
+      <h3 style="margin-top:0; border-left: none; padding-left:0;">📋 Table of Contents</h3>
+      <ul>
+        <li><a href="#introduction">1. Introduction to Web Forms</a></li>
+        <li><a href="#accessibility-importance">2. The Importance of Form Accessibility</a></li>
+        <li><a href="#label-element">3. The &lt;label&gt; Element: The Foundation of Form Accessibility</a></li>
+        <li><a href="#essential-attributes">4. Essential Form Attributes</a>
+          <ul style="columns:1; margin-left:1rem;">
+            <li><a href="#placeholder">4.1 The <code>placeholder</code> Attribute</a></li>
+            <li><a href="#required">4.2 The <code>required</code> Attribute</a></li>
+            <li><a href="#autofocus">4.3 The <code>autofocus</code> Attribute</a></li>
+            <li><a href="#disabled">4.4 The <code>disabled</code> Attribute</a></li>
+            <li><a href="#readonly">4.5 The <code>readonly</code> Attribute</a></li>
+          </ul>
+        </li>
+        <li><a href="#additional-attributes">5. Additional Accessibility Attributes</a></li>
+        <li><a href="#combining-attributes">6. Combining Attributes for Optimal UX</a></li>
+        <li><a href="#real-world-examples">7. Real-World Examples and Patterns</a></li>
+        <li><a href="#testing">8. Testing Form Accessibility</a></li>
+        <li><a href="#common-mistakes">9. Common Mistakes and How to Avoid Them</a></li>
+        <li><a href="#best-practices">10. Best Practices Checklist</a></li>
+      </ul>
+    </div>
 
-        <!-- 2. IMPORTANCE -->
-        <h2 id="accessibility-importance">2. The Importance of Form Accessibility</h2>
-        <h3>The Scope of Web Accessibility</h3>
-        <p>According to the World Health Organization, over 1 billion people worldwide live with some form of
-            disability. Web accessibility ensures that these individuals can perceive, understand, navigate, and
-            interact with the web.</p>
-        <h3>Legal and Ethical Considerations</h3>
-        <ul>
-            <li><strong>WCAG (Web Content Accessibility Guidelines)</strong>: The international standard for web
-                accessibility</li>
-            <li><strong>Section 508</strong>: U.S. federal requirement for government websites</li>
-            <li><strong>ADA (Americans with Disabilities Act)</strong>: Has been interpreted to apply to websites</li>
-            <li><strong>EAA (European Accessibility Act)</strong>: EU requirements for accessibility</li>
-        </ul>
-        <h3>Benefits of Accessible Forms</h3>
-        <ol>
-            <li>Broader audience reach</li>
-            <li>Improved SEO (search engines favor accessible content)</li>
-            <li>Better user experience for everyone</li>
-            <li>Reduced legal risk</li>
-            <li>Future-proofing (as accessibility standards evolve)</li>
-        </ol>
+    <!-- 1. INTRODUCTION (exact) -->
+    <h2 id="introduction">1. Introduction to Web Forms</h2>
+    <p>Web forms are the primary means of user interaction on the internet—they enable users to log in, register,
+      make purchases, submit feedback, and perform countless other tasks. However, poorly designed forms create
+      barriers for many users, particularly those with disabilities or those using assistive technologies.</p>
+    <h3>Why Form Attributes Matter</h3>
+    <p>HTML form attributes do more than just add functionality—they communicate essential information to:</p>
+    <ul>
+      <li><strong>Visual users</strong>: Through visible cues and instructions</li>
+      <li><strong>Assistive technology users</strong>: Through semantic information that screen readers can
+        interpret</li>
+      <li><strong>Browser auto-fill features</strong>: Through proper naming and attributes</li>
+      <li><strong>Validation systems</strong>: Through built-in browser validation</li>
+    </ul>
 
-        <!-- 3. LABEL ELEMENT (full) -->
-        <h2 id="label-element">3. The &lt;label&gt; Element: The Foundation of Form Accessibility</h2>
-        <p>The <code>&lt;label&gt;</code> element is the single most important element for form accessibility. It
-            programmatically associates descriptive text with a form control.</p>
-        <h3>Why Labels Are Critical</h3>
-        <p>Screen readers announce the label when users focus on a form control. Without proper labeling, users might
-            hear "Edit text" or "Checkbox" without any context about what information is expected.</p>
+    <!-- 2. IMPORTANCE -->
+    <h2 id="accessibility-importance">2. The Importance of Form Accessibility</h2>
+    <h3>The Scope of Web Accessibility</h3>
+    <p>According to the World Health Organization, over 1 billion people worldwide live with some form of
+      disability. Web accessibility ensures that these individuals can perceive, understand, navigate, and
+      interact with the web.</p>
+    <h3>Legal and Ethical Considerations</h3>
+    <ul>
+      <li><strong>WCAG (Web Content Accessibility Guidelines)</strong>: The international standard for web
+        accessibility</li>
+      <li><strong>Section 508</strong>: U.S. federal requirement for government websites</li>
+      <li><strong>ADA (Americans with Disabilities Act)</strong>: Has been interpreted to apply to websites</li>
+      <li><strong>EAA (European Accessibility Act)</strong>: EU requirements for accessibility</li>
+    </ul>
+    <h3>Benefits of Accessible Forms</h3>
+    <ol>
+      <li>Broader audience reach</li>
+      <li>Improved SEO (search engines favor accessible content)</li>
+      <li>Better user experience for everyone</li>
+      <li>Reduced legal risk</li>
+      <li>Future-proofing (as accessibility standards evolve)</li>
+    </ol>
 
-        <h3>Two Methods of Label Association</h3>
-        <h4>Method 1: Explicit Association (Recommended)</h4>
-        <pre><code>&lt;!-- Using 'for' and 'id' attributes --&gt;
+    <!-- 3. LABEL ELEMENT (full) -->
+    <h2 id="label-element">3. The &lt;label&gt; Element: The Foundation of Form Accessibility</h2>
+    <p>The <code>&lt;label&gt;</code> element is the single most important element for form accessibility. It
+      programmatically associates descriptive text with a form control.</p>
+    <h3>Why Labels Are Critical</h3>
+    <p>Screen readers announce the label when users focus on a form control. Without proper labeling, users might
+      hear "Edit text" or "Checkbox" without any context about what information is expected.</p>
+
+    <h3>Two Methods of Label Association</h3>
+    <h4>Method 1: Explicit Association (Recommended)</h4>
+    <pre><code>&lt;!-- Using 'for' and 'id' attributes --&gt;
 &lt;label for="username"&gt;Username:&lt;/label&gt;
 &lt;input type="text" id="username" name="username"&gt;
 
@@ -331,20 +588,20 @@
   &lt;input type="checkbox" id="terms" name="terms"&gt;
   I agree to the terms and conditions
 &lt;/label&gt;</code></pre>
-        <p><strong>How it works</strong>: The <code>for</code> attribute of the <code>&lt;label&gt;</code> must match
-            the <code>id</code> attribute of the form control. This creates a programmatic link.</p>
+    <p><strong>How it works</strong>: The <code>for</code> attribute of the <code>&lt;label&gt;</code> must match
+      the <code>id</code> attribute of the form control. This creates a programmatic link.</p>
 
-        <h4>Method 2: Implicit Association</h4>
-        <pre><code>&lt;!-- Wrapping the input inside the label --&gt;
+    <h4>Method 2: Implicit Association</h4>
+    <pre><code>&lt;!-- Wrapping the input inside the label --&gt;
 &lt;label&gt;
   Email address:
   &lt;input type="email" name="email"&gt;
 &lt;/label&gt;</code></pre>
-        <p><strong>Note</strong>: While implicit association works, explicit association is generally preferred as it's
-            more reliable across older browsers and assistive technologies.</p>
+    <p><strong>Note</strong>: While implicit association works, explicit association is generally preferred as it's
+      more reliable across older browsers and assistive technologies.</p>
 
-        <h3>Multiple Labels</h3>
-        <pre><code>&lt;!-- AVOID: Multiple labels --&gt;
+    <h3>Multiple Labels</h3>
+    <pre><code>&lt;!-- AVOID: Multiple labels --&gt;
 &lt;label for="age"&gt;Age:&lt;/label&gt;
 &lt;label for="age"&gt;Your age in years:&lt;/label&gt;
 &lt;input type="number" id="age" name="age"&gt;
@@ -353,8 +610,8 @@
 &lt;label for="age"&gt;Age (in years):&lt;/label&gt;
 &lt;input type="number" id="age" name="age"&gt;</code></pre>
 
-        <h3>Visually Hidden Labels</h3>
-        <pre><code>&lt;label for="search" class="visually-hidden"&gt;Search the site&lt;/label&gt;
+    <h3>Visually Hidden Labels</h3>
+    <pre><code>&lt;label for="search" class="visually-hidden"&gt;Search the site&lt;/label&gt;
 &lt;input type="search" id="search" name="search" placeholder="Search..."&gt;
 
 .visually-hidden {
@@ -367,12 +624,12 @@
   clip: rect(0, 0, 0, 0);
   border: 0;
 }</code></pre>
-        <p><strong>Important</strong>: This is better than using <code>display: none</code> or
-            <code>visibility: hidden</code>, which removes the label from the accessibility tree entirely.
-        </p>
+    <p><strong>Important</strong>: This is better than using <code>display: none</code> or
+      <code>visibility: hidden</code>, which removes the label from the accessibility tree entirely.
+    </p>
 
-        <h3>Label Styling for Usability</h3>
-        <pre><code>label {
+    <h3>Label Styling for Usability</h3>
+    <pre><code>label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -388,38 +645,38 @@ label.radio-label {
   font-weight: normal;
 }</code></pre>
 
-        <!-- 4. ESSENTIAL ATTRIBUTES -->
-        <h2 id="essential-attributes">4. Essential Form Attributes</h2>
+    <!-- 4. ESSENTIAL ATTRIBUTES -->
+    <h2 id="essential-attributes">4. Essential Form Attributes</h2>
 
-        <!-- 4.1 placeholder -->
-        <h3 id="placeholder">4.1 The <code>placeholder</code> Attribute</h3>
-        <p>The <code>placeholder</code> attribute provides a brief hint to the user about what kind of information is
-            expected in an input field.</p>
-        <h4>Basic Syntax</h4>
-        <pre><code>&lt;input type="text" placeholder="Enter your full name"&gt;
+    <!-- 4.1 placeholder -->
+    <h3 id="placeholder">4.1 The <code>placeholder</code> Attribute</h3>
+    <p>The <code>placeholder</code> attribute provides a brief hint to the user about what kind of information is
+      expected in an input field.</p>
+    <h4>Basic Syntax</h4>
+    <pre><code>&lt;input type="text" placeholder="Enter your full name"&gt;
 &lt;input type="email" placeholder="youremail@example.com"&gt;
 &lt;textarea placeholder="Write your message here..."&gt;&lt;/textarea&gt;</code></pre>
 
-        <h4>Important Accessibility Considerations</h4>
-        <p><strong>⚠️ CRITICAL: Placeholder is NOT a substitute for a label!</strong></p>
-        <pre><code>&lt;!-- WRONG: No label, only placeholder --&gt;
+    <h4>Important Accessibility Considerations</h4>
+    <p><strong>⚠️ CRITICAL: Placeholder is NOT a substitute for a label!</strong></p>
+    <pre><code>&lt;!-- WRONG: No label, only placeholder --&gt;
 &lt;input type="text" placeholder="Full Name"&gt;
 
 &lt;!-- RIGHT: Label + placeholder --&gt;
 &lt;label for="fullname"&gt;Full Name:&lt;/label&gt;
 &lt;input type="text" id="fullname" name="fullname" placeholder="e.g., John Smith"&gt;</code></pre>
 
-        <h4>Problems with Placeholders</h4>
-        <ol>
-            <li>Disappearing text: Once users start typing, the hint disappears</li>
-            <li>Low contrast: Often light gray, difficult to read</li>
-            <li>Memory burden: Users must remember the hint after it disappears</li>
-            <li>Screen reader limitations: Not all screen readers announce placeholders consistently</li>
-            <li>Mobile issues: On mobile, placeholders may be truncated</li>
-        </ol>
+    <h4>Problems with Placeholders</h4>
+    <ol>
+      <li>Disappearing text: Once users start typing, the hint disappears</li>
+      <li>Low contrast: Often light gray, difficult to read</li>
+      <li>Memory burden: Users must remember the hint after it disappears</li>
+      <li>Screen reader limitations: Not all screen readers announce placeholders consistently</li>
+      <li>Mobile issues: On mobile, placeholders may be truncated</li>
+    </ol>
 
-        <h4>Placeholder Best Practices</h4>
-        <pre><code>&lt;!-- GOOD: Placeholder provides example, not the only instruction --&gt;
+    <h4>Placeholder Best Practices</h4>
+    <pre><code>&lt;!-- GOOD: Placeholder provides example, not the only instruction --&gt;
 &lt;label for="phone"&gt;Phone number:&lt;/label&gt;
 &lt;input type="tel" id="phone" name="phone" 
        placeholder="(555) 123-4567"
@@ -433,8 +690,8 @@ label.radio-label {
        maxlength="19"&gt;
 &lt;p class="helper-text"&gt;Enter the 16-digit number without spaces or dashes&lt;/p&gt;</code></pre>
 
-        <h4>Placeholder Pseudo-class for Styling</h4>
-        <pre><code>/* Style placeholder text */
+    <h4>Placeholder Pseudo-class for Styling</h4>
+    <pre><code>/* Style placeholder text */
 input::placeholder {
   color: #767676;
   opacity: 1; /* Override Firefox default */
@@ -451,22 +708,22 @@ input:focus::placeholder {
   color: #adb5bd;
 }</code></pre>
 
-        <!-- 4.2 required -->
-        <h3 id="required">4.2 The <code>required</code> Attribute</h3>
-        <p>The <code>required</code> attribute indicates that a form control must have a value before the form can be
-            submitted.</p>
-        <h4>Basic Syntax</h4>
-        <pre><code>&lt;input type="text" id="username" name="username" required&gt;
+    <!-- 4.2 required -->
+    <h3 id="required">4.2 The <code>required</code> Attribute</h3>
+    <p>The <code>required</code> attribute indicates that a form control must have a value before the form can be
+      submitted.</p>
+    <h4>Basic Syntax</h4>
+    <pre><code>&lt;input type="text" id="username" name="username" required&gt;
 &lt;select id="country" name="country" required&gt;
   &lt;option value=""&gt;Select your country&lt;/option&gt;
   &lt;option value="us"&gt;United States&lt;/option&gt;
 &lt;/select&gt;
 &lt;textarea id="message" name="message" required&gt;&lt;/textarea&gt;</code></pre>
 
-        <h4>Visual Indication of Required Fields</h4>
-        <p>There are two common patterns:</p>
-        <p><strong>Pattern 1: Asterisk (*) method</strong></p>
-        <pre><code>&lt;label for="email"&gt;
+    <h4>Visual Indication of Required Fields</h4>
+    <p>There are two common patterns:</p>
+    <p><strong>Pattern 1: Asterisk (*) method</strong></p>
+    <pre><code>&lt;label for="email"&gt;
   Email address:
   &lt;span class="required-indicator" aria-hidden="true"&gt;*&lt;/span&gt;
   &lt;span class="visually-hidden"&gt;(required)&lt;/span&gt;
@@ -484,8 +741,8 @@ label.required::after {
   color: #c00;
 }</code></pre>
 
-        <p><strong>Pattern 2: Explicit text method (more accessible)</strong></p>
-        <pre><code>&lt;label for="email"&gt;
+    <p><strong>Pattern 2: Explicit text method (more accessible)</strong></p>
+    <pre><code>&lt;label for="email"&gt;
   Email address:
   &lt;span class="required-badge"&gt;required&lt;/span&gt;
 &lt;/label&gt;
@@ -500,18 +757,18 @@ label.required::after {
   margin-left: 0.5em;
 }</code></pre>
 
-        <h4>Browser Validation and the <code>required</code> Attribute</h4>
-        <p>Modern browsers provide built-in validation for required fields:</p>
-        <pre><code>&lt;form&gt;
+    <h4>Browser Validation and the <code>required</code> Attribute</h4>
+    <p>Modern browsers provide built-in validation for required fields:</p>
+    <pre><code>&lt;form&gt;
   &lt;label for="name"&gt;Name (required):&lt;/label&gt;
   &lt;input type="text" id="name" name="name" required&gt;
   &lt;button type="submit"&gt;Submit&lt;/button&gt;
 &lt;/form&gt;</code></pre>
-        <p><strong>Browser behavior</strong>: The browser will prevent form submission and show an error message if a
-            required field is empty.</p>
+    <p><strong>Browser behavior</strong>: The browser will prevent form submission and show an error message if a
+      required field is empty.</p>
 
-        <h4>Customizing Required Field Validation</h4>
-        <pre><code>&lt;!-- Custom validation message --&gt;
+    <h4>Customizing Required Field Validation</h4>
+    <pre><code>&lt;!-- Custom validation message --&gt;
 &lt;input type="text" id="username" name="username" required
        oninvalid="this.setCustomValidity('Please enter your username')"
        oninput="this.setCustomValidity('')"&gt;
@@ -526,16 +783,16 @@ document.getElementById('username').addEventListener('input', function(e) {
 });
 &lt;/script&gt;</code></pre>
 
-        <h4>Required Fields and Screen Readers</h4>
-        <p>Screen readers announce that a field is required when the <code>required</code> attribute is present:</p>
-        <ul>
-            <li>NVDA: "Username, edit, required"</li>
-            <li>JAWS: "Username, edit, required, invalid entry" (when empty)</li>
-            <li>VoiceOver: "Username, required, text field"</li>
-        </ul>
+    <h4>Required Fields and Screen Readers</h4>
+    <p>Screen readers announce that a field is required when the <code>required</code> attribute is present:</p>
+    <ul>
+      <li>NVDA: "Username, edit, required"</li>
+      <li>JAWS: "Username, edit, required, invalid entry" (when empty)</li>
+      <li>VoiceOver: "Username, required, text field"</li>
+    </ul>
 
-        <h4>Grouping Required Fields with Fieldset</h4>
-        <pre><code>&lt;fieldset&gt;
+    <h4>Grouping Required Fields with Fieldset</h4>
+    <pre><code>&lt;fieldset&gt;
   &lt;legend&gt;Contact Information (all fields required)&lt;/legend&gt;
   
   &lt;label for="name"&gt;Full name:&lt;/label&gt;
@@ -545,41 +802,41 @@ document.getElementById('username').addEventListener('input', function(e) {
   &lt;input type="email" id="email" name="email" required&gt;
 &lt;/fieldset&gt;</code></pre>
 
-        <!-- 4.3 autofocus -->
-        <h3 id="autofocus">4.3 The <code>autofocus</code> Attribute</h3>
-        <p>The <code>autofocus</code> attribute specifies that an element should automatically receive focus when the
-            page loads.</p>
-        <h4>Basic Syntax</h4>
-        <pre><code>&lt;input type="text" name="search" autofocus&gt;
+    <!-- 4.3 autofocus -->
+    <h3 id="autofocus">4.3 The <code>autofocus</code> Attribute</h3>
+    <p>The <code>autofocus</code> attribute specifies that an element should automatically receive focus when the
+      page loads.</p>
+    <h4>Basic Syntax</h4>
+    <pre><code>&lt;input type="text" name="search" autofocus&gt;
 &lt;textarea name="message" autofocus&gt;&lt;/textarea&gt;
 &lt;button type="submit" autofocus&gt;Submit&lt;/button&gt;</code></pre>
 
-        <div class="warning-block">
-            <h4>⚠️ Important Accessibility Considerations</h4>
-            <p><strong>USE WITH CAUTION!</strong> The <code>autofocus</code> attribute can create significant
-                accessibility problems:</p>
-            <ol>
-                <li>Screen reader users: Focus moves immediately, potentially skipping navigation and page introduction
-                </li>
-                <li>Keyboard users: Cannot use keyboard shortcuts to navigate away before focusing</li>
-                <li>Motor impairment users: May accidentally trigger actions</li>
-                <li>Cognitive disability users: May be disoriented by unexpected focus movement</li>
-            </ol>
-        </div>
+    <div class="warning-block">
+      <h4>⚠️ Important Accessibility Considerations</h4>
+      <p><strong>USE WITH CAUTION!</strong> The <code>autofocus</code> attribute can create significant
+        accessibility problems:</p>
+      <ol>
+        <li>Screen reader users: Focus moves immediately, potentially skipping navigation and page introduction
+        </li>
+        <li>Keyboard users: Cannot use keyboard shortcuts to navigate away before focusing</li>
+        <li>Motor impairment users: May accidentally trigger actions</li>
+        <li>Cognitive disability users: May be disoriented by unexpected focus movement</li>
+      </ol>
+    </div>
 
-        <h4>When to Use <code>autofocus</code></h4>
-        <p><strong>Appropriate uses:</strong><br>
-            - Search pages (like Google's homepage)<br>
-            - Login forms on dedicated login pages<br>
-            - Single-purpose pages (e.g., "contact us" page with one form)</p>
-        <p><strong>Inappropriate uses:</strong><br>
-            - Multi-purpose pages with forms below the fold<br>
-            - Pages with navigation users might need first<br>
-            - Modal dialogs (focus should be managed within the dialog instead)</p>
+    <h4>When to Use <code>autofocus</code></h4>
+    <p><strong>Appropriate uses:</strong><br>
+      - Search pages (like Google's homepage)<br>
+      - Login forms on dedicated login pages<br>
+      - Single-purpose pages (e.g., "contact us" page with one form)</p>
+    <p><strong>Inappropriate uses:</strong><br>
+      - Multi-purpose pages with forms below the fold<br>
+      - Pages with navigation users might need first<br>
+      - Modal dialogs (focus should be managed within the dialog instead)</p>
 
-        <h4>Better Alternatives to <code>autofocus</code></h4>
-        <p><strong>Option 1: Focus management with JavaScript (more controlled)</strong></p>
-        <pre><code>// Focus only after user has seen the page for a moment
+    <h4>Better Alternatives to <code>autofocus</code></h4>
+    <p><strong>Option 1: Focus management with JavaScript (more controlled)</strong></p>
+    <pre><code>// Focus only after user has seen the page for a moment
 window.addEventListener('load', function() {
   setTimeout(function() {
     document.getElementById('search').focus();
@@ -598,8 +855,8 @@ const observer = new IntersectionObserver((entries) => {
 
 observer.observe(document.getElementById('search-section'));</code></pre>
 
-        <p><strong>Option 2: Provide a "skip to form" link</strong></p>
-        <pre><code>&lt;a href="#main-form" class="skip-link"&gt;Skip to the contact form&lt;/a&gt;
+    <p><strong>Option 2: Provide a "skip to form" link</strong></p>
+    <pre><code>&lt;a href="#main-form" class="skip-link"&gt;Skip to the contact form&lt;/a&gt;
 
 &lt;!-- Later in the page --&gt;
 &lt;form id="main-form"&gt;
@@ -620,26 +877,26 @@ observer.observe(document.getElementById('search-section'));</code></pre>
   z-index: 1000;
 }</code></pre>
 
-        <h4>Multiple <code>autofocus</code> Elements</h4>
-        <p>If multiple elements have the <code>autofocus</code> attribute, the first one in the DOM receives focus:</p>
-        <pre><code>&lt;!-- First name will receive focus, NOT email --&gt;
+    <h4>Multiple <code>autofocus</code> Elements</h4>
+    <p>If multiple elements have the <code>autofocus</code> attribute, the first one in the DOM receives focus:</p>
+    <pre><code>&lt;!-- First name will receive focus, NOT email --&gt;
 &lt;input type="text" name="firstname" autofocus&gt;
 &lt;input type="email" name="email" autofocus&gt;</code></pre>
 
-        <!-- 4.4 disabled -->
-        <h3 id="disabled">4.4 The <code>disabled</code> Attribute</h3>
-        <p>The <code>disabled</code> attribute makes a form control unusable and unclickable. Disabled controls cannot
-            receive focus, and their values are not submitted with the form.</p>
-        <h4>Basic Syntax</h4>
-        <pre><code>&lt;input type="text" name="username" disabled&gt;
+    <!-- 4.4 disabled -->
+    <h3 id="disabled">4.4 The <code>disabled</code> Attribute</h3>
+    <p>The <code>disabled</code> attribute makes a form control unusable and unclickable. Disabled controls cannot
+      receive focus, and their values are not submitted with the form.</p>
+    <h4>Basic Syntax</h4>
+    <pre><code>&lt;input type="text" name="username" disabled&gt;
 &lt;select name="country" disabled&gt;
   &lt;option value="us"&gt;United States&lt;/option&gt;
 &lt;/select&gt;
 &lt;button type="submit" disabled&gt;Submit&lt;/button&gt;</code></pre>
 
-        <h4>Visual Appearance of Disabled Elements</h4>
-        <p>Browsers typically apply default styling to disabled elements:</p>
-        <pre><code>/* Default browser styling is often light gray */
+    <h4>Visual Appearance of Disabled Elements</h4>
+    <p>Browsers typically apply default styling to disabled elements:</p>
+    <pre><code>/* Default browser styling is often light gray */
 input:disabled,
 select:disabled,
 textarea:disabled,
@@ -657,20 +914,20 @@ input:disabled {
   pointer-events: none;
 }</code></pre>
 
-        <h4>When to Use Disabled Fields</h4>
-        <p><strong>Appropriate uses:</strong><br>
-            - Fields that become available only after certain conditions are met<br>
-            - Showing calculated fields that users shouldn't edit<br>
-            - Temporarily unavailable options<br>
-            - Confirmation pages where data is read-only</p>
-        <p><strong>Inappropriate uses:</strong><br>
-            - Hiding fields from users (use <code>hidden</code> or <code>display: none</code> instead)<br>
-            - Permanently unavailable options (don't show them at all)</p>
+    <h4>When to Use Disabled Fields</h4>
+    <p><strong>Appropriate uses:</strong><br>
+      - Fields that become available only after certain conditions are met<br>
+      - Showing calculated fields that users shouldn't edit<br>
+      - Temporarily unavailable options<br>
+      - Confirmation pages where data is read-only</p>
+    <p><strong>Inappropriate uses:</strong><br>
+      - Hiding fields from users (use <code>hidden</code> or <code>display: none</code> instead)<br>
+      - Permanently unavailable options (don't show them at all)</p>
 
-        <h4>Accessibility Concerns with Disabled Fields</h4>
-        <p><strong>⚠️ Important</strong>: Disabled fields are not focusable and are often ignored by screen readers.
-            Users may never know they exist.</p>
-        <pre><code>&lt;!-- BETTER: Use readonly for information users should see but not edit --&gt;
+    <h4>Accessibility Concerns with Disabled Fields</h4>
+    <p><strong>⚠️ Important</strong>: Disabled fields are not focusable and are often ignored by screen readers.
+      Users may never know they exist.</p>
+    <pre><code>&lt;!-- BETTER: Use readonly for information users should see but not edit --&gt;
 &lt;label for="calculated-total"&gt;Total amount:&lt;/label&gt;
 &lt;input type="text" id="calculated-total" value="$150.00" readonly&gt;
 
@@ -682,8 +939,8 @@ input:disabled {
   (Complete billing information first to enable this field)
 &lt;/p&gt;</code></pre>
 
-        <h4>Dynamic Disabling with JavaScript</h4>
-        <pre><code>&lt;label&gt;
+    <h4>Dynamic Disabling with JavaScript</h4>
+    <pre><code>&lt;label&gt;
   &lt;input type="checkbox" id="same-address"&gt; Billing address same as shipping
 &lt;/label&gt;
 
@@ -702,55 +959,55 @@ document.getElementById('same-address').addEventListener('change', function(e) {
 });
 &lt;/script&gt;</code></pre>
 
-        <h4>Disabled vs. Readonly Comparison</h4>
-        <table>
-            <tr>
-                <th>Feature</th>
-                <th><code>disabled</code></th>
-                <th><code>readonly</code></th>
-            </tr>
-            <tr>
-                <td>Can receive focus</td>
-                <td>No</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <td>Value submitted with form</td>
-                <td>No</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <td>Can be modified by user</td>
-                <td>No</td>
-                <td>No</td>
-            </tr>
-            <tr>
-                <td>Appears in tab order</td>
-                <td>No</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <td>Screen reader announces</td>
-                <td>May be skipped</td>
-                <td>Announced as read-only</td>
-            </tr>
-            <tr>
-                <td>Can have placeholder</td>
-                <td>No</td>
-                <td>Yes</td>
-            </tr>
-        </table>
+    <h4>Disabled vs. Readonly Comparison</h4>
+    <table>
+      <tr>
+        <th>Feature</th>
+        <th><code>disabled</code></th>
+        <th><code>readonly</code></th>
+      </tr>
+      <tr>
+        <td>Can receive focus</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Value submitted with form</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Can be modified by user</td>
+        <td>No</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>Appears in tab order</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Screen reader announces</td>
+        <td>May be skipped</td>
+        <td>Announced as read-only</td>
+      </tr>
+      <tr>
+        <td>Can have placeholder</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+    </table>
 
-        <!-- 4.5 readonly -->
-        <h3 id="readonly">4.5 The <code>readonly</code> Attribute</h3>
-        <p>The <code>readonly</code> attribute specifies that an input field is read-only, meaning the user cannot
-            modify its value but can still focus on it and copy its content.</p>
-        <h4>Basic Syntax</h4>
-        <pre><code>&lt;input type="text" name="username" value="johndoe" readonly&gt;
+    <!-- 4.5 readonly -->
+    <h3 id="readonly">4.5 The <code>readonly</code> Attribute</h3>
+    <p>The <code>readonly</code> attribute specifies that an input field is read-only, meaning the user cannot
+      modify its value but can still focus on it and copy its content.</p>
+    <h4>Basic Syntax</h4>
+    <pre><code>&lt;input type="text" name="username" value="johndoe" readonly&gt;
 &lt;textarea name="terms" readonly&gt;Terms and conditions text...&lt;/textarea&gt;</code></pre>
 
-        <h4>Visual Indication for Readonly Fields</h4>
-        <pre><code>input:read-only,
+    <h4>Visual Indication for Readonly Fields</h4>
+    <pre><code>input:read-only,
 textarea:read-only {
   background-color: #f8f9fa;
   border-color: #dee2e6;
@@ -763,16 +1020,16 @@ input:-moz-read-only { /* Firefox */
   background-color: #f8f9fa;
 }</code></pre>
 
-        <h4>When to Use Readonly Fields</h4>
-        <p><strong>Common use cases:</strong><br>
-            - Displaying calculated values (e.g., shopping cart total)<br>
-            - Showing user information in profile review pages<br>
-            - Fields that are auto-populated (e.g., username after registration)<br>
-            - Terms and conditions text areas<br>
-            - System-generated codes or IDs</p>
+    <h4>When to Use Readonly Fields</h4>
+    <p><strong>Common use cases:</strong><br>
+      - Displaying calculated values (e.g., shopping cart total)<br>
+      - Showing user information in profile review pages<br>
+      - Fields that are auto-populated (e.g., username after registration)<br>
+      - Terms and conditions text areas<br>
+      - System-generated codes or IDs</p>
 
-        <h4>Real-World Example: Order Review</h4>
-        <pre><code>&lt;div class="order-review"&gt;
+    <h4>Real-World Example: Order Review</h4>
+    <pre><code>&lt;div class="order-review"&gt;
   &lt;h3&gt;Review Your Order&lt;/h3&gt;
   
   &lt;fieldset&gt;
@@ -805,9 +1062,9 @@ input:-moz-read-only { /* Firefox */
   &lt;button type="button" onclick="history.back()"&gt;Edit Order&lt;/button&gt;
 &lt;/div&gt;</code></pre>
 
-        <h4>Readonly and Form Submission</h4>
-        <p>Unlike <code>disabled</code> fields, <code>readonly</code> field values ARE submitted with the form:</p>
-        <pre><code>&lt;form action="/submit-order" method="post"&gt;
+    <h4>Readonly and Form Submission</h4>
+    <p>Unlike <code>disabled</code> fields, <code>readonly</code> field values ARE submitted with the form:</p>
+    <pre><code>&lt;form action="/submit-order" method="post"&gt;
   &lt;input type="hidden" name="product-id" value="12345"&gt;
   
   &lt;label for="product-name"&gt;Product:&lt;/label&gt;
@@ -821,8 +1078,8 @@ input:-moz-read-only { /* Firefox */
   &lt;!-- The hidden field also submits, but is invisible to users --&gt;
 &lt;/form&gt;</code></pre>
 
-        <h4>Combining Readonly with JavaScript</h4>
-        <pre><code>&lt;label for="coupon"&gt;Coupon code:&lt;/label&gt;
+    <h4>Combining Readonly with JavaScript</h4>
+    <pre><code>&lt;label for="coupon"&gt;Coupon code:&lt;/label&gt;
 &lt;input type="text" id="coupon" name="coupon" 
        placeholder="Enter code" 
        onchange="applyCoupon(this)"&gt;
@@ -845,21 +1102,21 @@ function applyCoupon(input) {
 }
 &lt;/script&gt;</code></pre>
 
-        <!-- 5. ADDITIONAL ATTRIBUTES -->
-        <h2 id="additional-attributes">5. Additional Accessibility Attributes</h2>
+    <!-- 5. ADDITIONAL ATTRIBUTES -->
+    <h2 id="additional-attributes">5. Additional Accessibility Attributes</h2>
 
-        <h3>5.1 <code>aria-required</code> Attribute</h3>
-        <p>For custom form controls or when you can't use the HTML5 <code>required</code> attribute:</p>
-        <pre><code>&lt;div class="custom-select" 
+    <h3>5.1 <code>aria-required</code> Attribute</h3>
+    <p>For custom form controls or when you can't use the HTML5 <code>required</code> attribute:</p>
+    <pre><code>&lt;div class="custom-select" 
      role="listbox" 
      aria-required="true"
      aria-labelledby="country-label"&gt;
   &lt;!-- custom select implementation --&gt;
 &lt;/div&gt;</code></pre>
 
-        <h3>5.2 <code>aria-describedby</code> for Helper Text</h3>
-        <p>Connect form controls with additional descriptive text:</p>
-        <pre><code>&lt;label for="password"&gt;Password:&lt;/label&gt;
+    <h3>5.2 <code>aria-describedby</code> for Helper Text</h3>
+    <p>Connect form controls with additional descriptive text:</p>
+    <pre><code>&lt;label for="password"&gt;Password:&lt;/label&gt;
 &lt;input type="password" id="password" name="password" 
        aria-describedby="password-hint password-requirements"&gt;
 &lt;p id="password-hint"&gt;Choose a strong password&lt;/p&gt;
@@ -869,9 +1126,9 @@ function applyCoupon(input) {
   &lt;li&gt;Include a special character&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
 
-        <h3>5.3 <code>aria-invalid</code> for Validation Errors</h3>
-        <p>Indicate when a field has invalid input:</p>
-        <pre><code>&lt;label for="email"&gt;Email:&lt;/label&gt;
+    <h3>5.3 <code>aria-invalid</code> for Validation Errors</h3>
+    <p>Indicate when a field has invalid input:</p>
+    <pre><code>&lt;label for="email"&gt;Email:&lt;/label&gt;
 &lt;input type="email" id="email" name="email" 
        aria-invalid="true"
        aria-describedby="email-error"&gt;
@@ -879,9 +1136,9 @@ function applyCoupon(input) {
   Please enter a valid email address
 &lt;/span&gt;</code></pre>
 
-        <h3>5.4 <code>autocomplete</code> Attribute</h3>
-        <p>Help users fill forms faster and more accurately:</p>
-        <pre><code>&lt;form&gt;
+    <h3>5.4 <code>autocomplete</code> Attribute</h3>
+    <p>Help users fill forms faster and more accurately:</p>
+    <pre><code>&lt;form&gt;
   &lt;label for="full-name"&gt;Full name:&lt;/label&gt;
   &lt;input type="text" id="full-name" name="full-name" 
          autocomplete="name"&gt;
@@ -898,19 +1155,19 @@ function applyCoupon(input) {
   &lt;input type="text" id="address-line1" name="address-line1" 
          autocomplete="address-line1"&gt;
 &lt;/form&gt;</code></pre>
-        <p><strong>Common autocomplete values:</strong><br>
-            - <code>name</code>, <code>given-name</code>, <code>family-name</code><br>
-            - <code>email</code><br>
-            - <code>tel</code>, <code>tel-country-code</code>, <code>tel-national</code><br>
-            - <code>address-line1</code>, <code>address-line2</code>, <code>address-level1</code> (state/province),
-            <code>postal-code</code><br>
-            - <code>cc-number</code>, <code>cc-exp</code>, <code>cc-csc</code> (credit cards)<br>
-            - <code>username</code>, <code>current-password</code>, <code>new-password</code>
-        </p>
+    <p><strong>Common autocomplete values:</strong><br>
+      - <code>name</code>, <code>given-name</code>, <code>family-name</code><br>
+      - <code>email</code><br>
+      - <code>tel</code>, <code>tel-country-code</code>, <code>tel-national</code><br>
+      - <code>address-line1</code>, <code>address-line2</code>, <code>address-level1</code> (state/province),
+      <code>postal-code</code><br>
+      - <code>cc-number</code>, <code>cc-exp</code>, <code>cc-csc</code> (credit cards)<br>
+      - <code>username</code>, <code>current-password</code>, <code>new-password</code>
+    </p>
 
-        <h3>5.5 <code>inputmode</code> Attribute</h3>
-        <p>Specify the type of keyboard to show on mobile devices:</p>
-        <pre><code>&lt;!-- Numeric keyboard on mobile --&gt;
+    <h3>5.5 <code>inputmode</code> Attribute</h3>
+    <p>Specify the type of keyboard to show on mobile devices:</p>
+    <pre><code>&lt;!-- Numeric keyboard on mobile --&gt;
 &lt;label for="zip"&gt;ZIP code:&lt;/label&gt;
 &lt;input type="text" id="zip" name="zip" 
        inputmode="numeric" pattern="[0-9]*"&gt;
@@ -925,17 +1182,17 @@ function applyCoupon(input) {
 &lt;input type="tel" id="phone" name="phone" 
        inputmode="tel"&gt;</code></pre>
 
-        <!-- 6. COMBINING ATTRIBUTES -->
-        <h2 id="combining-attributes">6. Combining Attributes for Optimal UX</h2>
+    <!-- 6. COMBINING ATTRIBUTES -->
+    <h2 id="combining-attributes">6. Combining Attributes for Optimal UX</h2>
 
-        <!-- interactive card for example 1 -->
-        <div class="exercise-grid">
-            <div class="exercise-card" id="ex1">
-                <div class="exercise-header" onclick="toggleCard('ex1')">
-                    <span class="indicator">▶</span> Example 1: Login Form (click to expand)
-                </div>
-                <div class="exercise-content">
-                    <pre><code>&lt;form action="/login" method="post" novalidate&gt;
+    <!-- interactive card for example 1 -->
+    <div class="exercise-grid">
+      <div class="exercise-card" id="ex1">
+        <div class="exercise-header" onclick="toggleCard('ex1')">
+          <span class="indicator">▶</span> Example 1: Login Form (click to expand)
+        </div>
+        <div class="exercise-content">
+          <pre><code>&lt;form action="/login" method="post" novalidate&gt;
   &lt;h2&gt;Sign In&lt;/h2&gt;
   
   &lt;div class="form-group"&gt;
@@ -983,15 +1240,15 @@ function applyCoupon(input) {
   
   &lt;button type="submit" class="btn-primary"&gt;Sign In&lt;/button&gt;
 &lt;/form&gt;</code></pre>
-                </div>
-            </div>
+        </div>
+      </div>
 
-            <div class="exercise-card" id="ex2">
-                <div class="exercise-header" onclick="toggleCard('ex2')">
-                    <span class="indicator">▶</span> Example 2: Registration with Validation
-                </div>
-                <div class="exercise-content">
-                    <pre><code>&lt;form action="/register" method="post" id="registration-form"&gt;
+      <div class="exercise-card" id="ex2">
+        <div class="exercise-header" onclick="toggleCard('ex2')">
+          <span class="indicator">▶</span> Example 2: Registration with Validation
+        </div>
+        <div class="exercise-content">
+          <pre><code>&lt;form action="/register" method="post" id="registration-form"&gt;
   &lt;h2&gt;Create Account&lt;/h2&gt;
   
   &lt;!-- Name field with autofocus (appropriate for dedicated registration page) --&gt;
@@ -1112,20 +1369,20 @@ document.getElementById('reg-terms').addEventListener('change', function(e) {
   document.getElementById('register-btn').disabled = !e.target.checked;
 });
 &lt;/script&gt;</code></pre>
-                </div>
-            </div>
         </div>
+      </div>
+    </div>
 
-        <!-- 7. REAL-WORLD EXAMPLES (remaining patterns as interactive cards) -->
-        <h2 id="real-world-examples">7. Real-World Examples and Patterns</h2>
+    <!-- 7. REAL-WORLD EXAMPLES (remaining patterns as interactive cards) -->
+    <h2 id="real-world-examples">7. Real-World Examples and Patterns</h2>
 
-        <div class="exercise-grid">
-            <div class="exercise-card" id="ex3">
-                <div class="exercise-header" onclick="toggleCard('ex3')">
-                    <span class="indicator">▶</span> Pattern 1: Address Form (progressive enhancement)
-                </div>
-                <div class="exercise-content">
-                    <pre><code>&lt;fieldset&gt;
+    <div class="exercise-grid">
+      <div class="exercise-card" id="ex3">
+        <div class="exercise-header" onclick="toggleCard('ex3')">
+          <span class="indicator">▶</span> Pattern 1: Address Form (progressive enhancement)
+        </div>
+        <div class="exercise-content">
+          <pre><code>&lt;fieldset&gt;
   &lt;legend&gt;Shipping Address&lt;/legend&gt;
   
   &lt;!-- Country selection affects other fields --&gt;
@@ -1235,15 +1492,15 @@ document.getElementById('country').addEventListener('change', function(e) {
   }
 });
 &lt;/script&gt;</code></pre>
-                </div>
-            </div>
+        </div>
+      </div>
 
-            <div class="exercise-card" id="ex4">
-                <div class="exercise-header" onclick="toggleCard('ex4')">
-                    <span class="indicator">▶</span> Pattern 2: Payment Form (security)
-                </div>
-                <div class="exercise-content">
-                    <pre><code>&lt;form action="/process-payment" method="post" id="payment-form"&gt;
+      <div class="exercise-card" id="ex4">
+        <div class="exercise-header" onclick="toggleCard('ex4')">
+          <span class="indicator">▶</span> Pattern 2: Payment Form (security)
+        </div>
+        <div class="exercise-content">
+          <pre><code>&lt;form action="/process-payment" method="post" id="payment-form"&gt;
   &lt;h3&gt;Payment Information&lt;/h3&gt;
   
   &lt;!-- Card type (visual only) --&gt;
@@ -1335,15 +1592,15 @@ document.getElementById('country').addEventListener('change', function(e) {
     &lt;span class="loading-spinner" hidden&gt;Processing...&lt;/span&gt;
   &lt;/button&gt;
 &lt;/form&gt;</code></pre>
-                </div>
-            </div>
+        </div>
+      </div>
 
-            <div class="exercise-card" id="ex5">
-                <div class="exercise-header" onclick="toggleCard('ex5')">
-                    <span class="indicator">▶</span> Pattern 3: Multi-Step Form
-                </div>
-                <div class="exercise-content">
-                    <pre><code>&lt;div class="multi-step-form"&gt;
+      <div class="exercise-card" id="ex5">
+        <div class="exercise-header" onclick="toggleCard('ex5')">
+          <span class="indicator">▶</span> Pattern 3: Multi-Step Form
+        </div>
+        <div class="exercise-content">
+          <pre><code>&lt;div class="multi-step-form"&gt;
   &lt;!-- Progress indicator --&gt;
   &lt;div class="step-indicator" role="group" aria-label="Form steps"&gt;
     &lt;div class="step active" aria-current="step"&gt;
@@ -1483,25 +1740,25 @@ function goToStep(stepNumber) {
   document.getElementById(`step-${stepNumber}-heading`).focus();
 }
 &lt;/script&gt;</code></pre>
-                </div>
-            </div>
         </div>
+      </div>
+    </div>
 
-        <!-- 8. TESTING -->
-        <h2 id="testing">8. Testing Form Accessibility</h2>
-        <h3>Automated Testing Tools</h3>
-        <ol>
-            <li><strong>WAVE (Web Accessibility Evaluation Tool)</strong> - Browser extension that highlights
-                accessibility issues, checks for missing labels, ARIA usage, and contrast</li>
-            <li><strong>axe DevTools</strong> - Comprehensive accessibility testing, integrates with browser developer
-                tools</li>
-            <li><strong>Lighthouse</strong> - Built into Chrome DevTools, provides accessibility audits with
-                recommendations</li>
-        </ol>
+    <!-- 8. TESTING -->
+    <h2 id="testing">8. Testing Form Accessibility</h2>
+    <h3>Automated Testing Tools</h3>
+    <ol>
+      <li><strong>WAVE (Web Accessibility Evaluation Tool)</strong> - Browser extension that highlights
+        accessibility issues, checks for missing labels, ARIA usage, and contrast</li>
+      <li><strong>axe DevTools</strong> - Comprehensive accessibility testing, integrates with browser developer
+        tools</li>
+      <li><strong>Lighthouse</strong> - Built into Chrome DevTools, provides accessibility audits with
+        recommendations</li>
+    </ol>
 
-        <h3>Manual Testing Checklist</h3>
-        <h4>Keyboard Testing</h4>
-        <pre><code>[ ] Can I navigate to all form controls using Tab key?
+    <h3>Manual Testing Checklist</h3>
+    <h4>Keyboard Testing</h4>
+    <pre><code>[ ] Can I navigate to all form controls using Tab key?
 [ ] Is the focus order logical and follows visual layout?
 [ ] Is there a visible focus indicator on all elements?
 [ ] Can I select radio buttons and checkboxes with arrow keys?
@@ -1509,24 +1766,24 @@ function goToStep(stepNumber) {
 [ ] Can I submit forms with Enter key?
 [ ] Can I navigate out of form fields without getting stuck?</code></pre>
 
-        <h4>Screen Reader Testing</h4>
-        <p><strong>With NVDA (Windows) or VoiceOver (Mac):</strong></p>
-        <pre><code>[ ] Are all form controls properly labeled?
+    <h4>Screen Reader Testing</h4>
+    <p><strong>With NVDA (Windows) or VoiceOver (Mac):</strong></p>
+    <pre><code>[ ] Are all form controls properly labeled?
 [ ] Does the screen reader announce required fields?
 [ ] Are error messages announced when they appear?
 [ ] Is the purpose of each field clear from the announcement?
 [ ] Are fieldset/legend used correctly for groups?
 [ ] Is ARIA-describedby content being read?</code></pre>
 
-        <h4>Color and Visual Testing</h4>
-        <pre><code>[ ] Is there sufficient color contrast (4.5:1 minimum)?
+    <h4>Color and Visual Testing</h4>
+    <pre><code>[ ] Is there sufficient color contrast (4.5:1 minimum)?
 [ ] Is information conveyed by color also available in text?
 [ ] Are error states visually distinct?
 [ ] Are disabled fields still readable?
 [ ] Is focus indicator clearly visible (not just color change)?</code></pre>
 
-        <h3>Browser Developer Tools Testing</h3>
-        <pre><code>// Quick accessibility check in console
+    <h3>Browser Developer Tools Testing</h3>
+    <pre><code>// Quick accessibility check in console
 function checkFormAccessibility(formId) {
   const form = document.getElementById(formId);
   const inputs = form.querySelectorAll('input, select, textarea');
@@ -1548,24 +1805,24 @@ function checkFormAccessibility(formId) {
 // Run the check
 checkFormAccessibility('my-form');</code></pre>
 
-        <!-- 9. COMMON MISTAKES -->
-        <h2 id="common-mistakes">9. Common Mistakes and How to Avoid Them</h2>
+    <!-- 9. COMMON MISTAKES -->
+    <h2 id="common-mistakes">9. Common Mistakes and How to Avoid Them</h2>
 
-        <div class="exercise-card" id="ex6" style="margin-bottom:2rem;">
-            <div class="exercise-header" onclick="toggleCard('ex6')">
-                <span class="indicator">▶</span> Click to see all 7 common mistakes (with wrong/right examples)
-            </div>
-            <div class="exercise-content">
-                <h3>Mistake 1: Placeholder as Label</h3>
-                <pre><code>&lt;!-- WRONG --&gt;
+    <div class="exercise-card" id="ex6" style="margin-bottom:2rem;">
+      <div class="exercise-header" onclick="toggleCard('ex6')">
+        <span class="indicator">▶</span> Click to see all 7 common mistakes (with wrong/right examples)
+      </div>
+      <div class="exercise-content">
+        <h3>Mistake 1: Placeholder as Label</h3>
+        <pre><code>&lt;!-- WRONG --&gt;
 &lt;input type="text" placeholder="Full Name"&gt;
 
 &lt;!-- RIGHT --&gt;
 &lt;label for="name"&gt;Full Name:&lt;/label&gt;
 &lt;input type="text" id="name" placeholder="e.g., John Doe"&gt;</code></pre>
 
-                <h3>Mistake 2: Missing ID on Inputs</h3>
-                <pre><code>&lt;!-- WRONG - label can't associate --&gt;
+        <h3>Mistake 2: Missing ID on Inputs</h3>
+        <pre><code>&lt;!-- WRONG - label can't associate --&gt;
 &lt;label for="email"&gt;Email:&lt;/label&gt;
 &lt;input type="email" name="email"&gt;
 
@@ -1573,8 +1830,8 @@ checkFormAccessibility('my-form');</code></pre>
 &lt;label for="email"&gt;Email:&lt;/label&gt;
 &lt;input type="email" id="email" name="email"&gt;</code></pre>
 
-                <h3>Mistake 3: Improper Required Field Indication</h3>
-                <pre><code>&lt;!-- WRONG - color alone --&gt;
+        <h3>Mistake 3: Improper Required Field Indication</h3>
+        <pre><code>&lt;!-- WRONG - color alone --&gt;
 &lt;label style="color: red;"&gt;Email:&lt;/label&gt;
 
 &lt;!-- RIGHT - explicit indication --&gt;
@@ -1583,8 +1840,8 @@ checkFormAccessibility('my-form');</code></pre>
   &lt;span class="required-badge"&gt;required&lt;/span&gt;
 &lt;/label&gt;</code></pre>
 
-                <h3>Mistake 4: Forgetting to Group Radio Buttons</h3>
-                <pre><code>&lt;!-- WRONG - separate fieldsets? no --&gt;
+        <h3>Mistake 4: Forgetting to Group Radio Buttons</h3>
+        <pre><code>&lt;!-- WRONG - separate fieldsets? no --&gt;
 &lt;label&gt;Male &lt;input type="radio" name="gender" value="male"&gt;&lt;/label&gt;
 &lt;label&gt;Female &lt;input type="radio" name="gender" value="female"&gt;&lt;/label&gt;
 
@@ -1595,8 +1852,8 @@ checkFormAccessibility('my-form');</code></pre>
   &lt;label&gt;Female &lt;input type="radio" name="gender" value="female"&gt;&lt;/label&gt;
 &lt;/fieldset&gt;</code></pre>
 
-                <h3>Mistake 5: Disabling Without Explanation</h3>
-                <pre><code>&lt;!-- WRONG - no explanation --&gt;
+        <h3>Mistake 5: Disabling Without Explanation</h3>
+        <pre><code>&lt;!-- WRONG - no explanation --&gt;
 &lt;input type="text" id="discount" disabled&gt;
 
 &lt;!-- RIGHT - explanation provided --&gt;
@@ -1604,8 +1861,8 @@ checkFormAccessibility('my-form');</code></pre>
 &lt;input type="text" id="discount" readonly value="SAVE10"&gt;
 &lt;p class="helper-text"&gt;Discount applied automatically&lt;/p&gt;</code></pre>
 
-                <h3>Mistake 6: Multiple Elements with Same ID</h3>
-                <pre><code>&lt;!-- WRONG - duplicate IDs --&gt;
+        <h3>Mistake 6: Multiple Elements with Same ID</h3>
+        <pre><code>&lt;!-- WRONG - duplicate IDs --&gt;
 &lt;input type="text" id="address" name="shipping_address"&gt;
 &lt;input type="text" id="address" name="billing_address"&gt;
 
@@ -1613,8 +1870,8 @@ checkFormAccessibility('my-form');</code></pre>
 &lt;input type="text" id="shipping-address" name="shipping_address"&gt;
 &lt;input type="text" id="billing-address" name="billing_address"&gt;</code></pre>
 
-                <h3>Mistake 7: Not Handling Focus Management</h3>
-                <pre><code>&lt;!-- WRONG - focus lost on validation error --&gt;
+        <h3>Mistake 7: Not Handling Focus Management</h3>
+        <pre><code>&lt;!-- WRONG - focus lost on validation error --&gt;
 &lt;form onsubmit="return validate()"&gt;
   &lt;!-- form fields --&gt;
 &lt;/form&gt;
@@ -1632,150 +1889,155 @@ function validate() {
   return true;
 }
 &lt;/script&gt;</code></pre>
-            </div>
-        </div>
+      </div>
+    </div>
 
-        <!-- 10. BEST PRACTICES CHECKLIST -->
-        <h2 id="best-practices">10. Best Practices Checklist</h2>
+    <!-- 10. BEST PRACTICES CHECKLIST -->
+    <h2 id="best-practices">10. Best Practices Checklist</h2>
 
-        <div class="exercise-card" id="ex7">
-            <div class="exercise-header" onclick="toggleCard('ex7')">
-                <span class="indicator">▶</span> Click to expand full best practices checklist
-            </div>
-            <div class="exercise-content">
-                <h3>For Every Form</h3>
-                <h4>Label Association</h4>
-                <ul>
-                    <li>[ ] Every form control has an associated <code>&lt;label&gt;</code></li>
-                    <li>[ ] The <code>for</code> attribute matches the input's <code>id</code></li>
-                    <li>[ ] Labels are positioned near their controls (typically above or left)</li>
-                    <li>[ ] Clicking on the label focuses the associated control</li>
-                </ul>
+    <div class="exercise-card" id="ex7">
+      <div class="exercise-header" onclick="toggleCard('ex7')">
+        <span class="indicator">▶</span> Click to expand full best practices checklist
+      </div>
+      <div class="exercise-content">
+        <h3>For Every Form</h3>
+        <h4>Label Association</h4>
+        <ul>
+          <li>[ ] Every form control has an associated <code>&lt;label&gt;</code></li>
+          <li>[ ] The <code>for</code> attribute matches the input's <code>id</code></li>
+          <li>[ ] Labels are positioned near their controls (typically above or left)</li>
+          <li>[ ] Clicking on the label focuses the associated control</li>
+        </ul>
 
-                <h4>Required Fields</h4>
-                <ul>
-                    <li>[ ] Use the <code>required</code> attribute for mandatory fields</li>
-                    <li>[ ] Indicate required fields visually (asterisk or badge)</li>
-                    <li>[ ] Include "(required)" in the label text for screen readers</li>
-                    <li>[ ] Consider marking optional fields instead if most are required</li>
-                </ul>
+        <h4>Required Fields</h4>
+        <ul>
+          <li>[ ] Use the <code>required</code> attribute for mandatory fields</li>
+          <li>[ ] Indicate required fields visually (asterisk or badge)</li>
+          <li>[ ] Include "(required)" in the label text for screen readers</li>
+          <li>[ ] Consider marking optional fields instead if most are required</li>
+        </ul>
 
-                <h4>Placeholder Usage</h4>
-                <ul>
-                    <li>[ ] Placeholders provide examples, not labels</li>
-                    <li>[ ] Sufficient color contrast for placeholder text</li>
-                    <li>[ ] Helper text provided outside the input for important instructions</li>
-                    <li>[ ] Never use placeholder alone without a label</li>
-                </ul>
+        <h4>Placeholder Usage</h4>
+        <ul>
+          <li>[ ] Placeholders provide examples, not labels</li>
+          <li>[ ] Sufficient color contrast for placeholder text</li>
+          <li>[ ] Helper text provided outside the input for important instructions</li>
+          <li>[ ] Never use placeholder alone without a label</li>
+        </ul>
 
-                <h4>Focus Management</h4>
-                <ul>
-                    <li>[ ] Visible focus indicator on all focusable elements</li>
-                    <li>[ ] Logical tab order following visual layout</li>
-                    <li>[ ] <code>autofocus</code> used sparingly and appropriately</li>
-                    <li>[ ] Focus moves to error messages when validation fails</li>
-                </ul>
+        <h4>Focus Management</h4>
+        <ul>
+          <li>[ ] Visible focus indicator on all focusable elements</li>
+          <li>[ ] Logical tab order following visual layout</li>
+          <li>[ ] <code>autofocus</code> used sparingly and appropriately</li>
+          <li>[ ] Focus moves to error messages when validation fails</li>
+        </ul>
 
-                <h4>Error Handling</h4>
-                <ul>
-                    <li>[ ] Error messages clearly associated with fields (<code>aria-describedby</code>)</li>
-                    <li>[ ] Error messages announced to screen readers (<code>role="alert"</code>)</li>
-                    <li>[ ] Fields with errors marked with <code>aria-invalid="true"</code></li>
-                    <li>[ ] Multiple errors listed clearly at top of form</li>
-                </ul>
+        <h4>Error Handling</h4>
+        <ul>
+          <li>[ ] Error messages clearly associated with fields (<code>aria-describedby</code>)</li>
+          <li>[ ] Error messages announced to screen readers (<code>role="alert"</code>)</li>
+          <li>[ ] Fields with errors marked with <code>aria-invalid="true"</code></li>
+          <li>[ ] Multiple errors listed clearly at top of form</li>
+        </ul>
 
-                <h4>Disabled and Readonly</h4>
-                <ul>
-                    <li>[ ] <code>disabled</code> only used when fields shouldn't be submitted</li>
-                    <li>[ ] <code>readonly</code> used for information users should see but not edit</li>
-                    <li>[ ] Visual distinction between normal, disabled, and readonly states</li>
-                    <li>[ ] Explanation provided for disabled fields when appropriate</li>
-                </ul>
+        <h4>Disabled and Readonly</h4>
+        <ul>
+          <li>[ ] <code>disabled</code> only used when fields shouldn't be submitted</li>
+          <li>[ ] <code>readonly</code> used for information users should see but not edit</li>
+          <li>[ ] Visual distinction between normal, disabled, and readonly states</li>
+          <li>[ ] Explanation provided for disabled fields when appropriate</li>
+        </ul>
 
-                <h3>Advanced Accessibility</h3>
-                <h4>ARIA Attributes When Needed</h4>
-                <ul>
-                    <li>[ ] <code>aria-required="true"</code> for custom controls</li>
-                    <li>[ ] <code>aria-describedby</code> connecting to helper text</li>
-                    <li>[ ] <code>aria-invalid</code> for error states</li>
-                    <li>[ ] <code>aria-live</code> regions for dynamic updates</li>
-                </ul>
+        <h3>Advanced Accessibility</h3>
+        <h4>ARIA Attributes When Needed</h4>
+        <ul>
+          <li>[ ] <code>aria-required="true"</code> for custom controls</li>
+          <li>[ ] <code>aria-describedby</code> connecting to helper text</li>
+          <li>[ ] <code>aria-invalid</code> for error states</li>
+          <li>[ ] <code>aria-live</code> regions for dynamic updates</li>
+        </ul>
 
-                <h4>Semantic HTML</h4>
-                <ul>
-                    <li>[ ] <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> for related controls</li>
-                    <li>[ ] <code>&lt;optgroup&gt;</code> for grouped select options</li>
-                    <li>[ ] Proper heading structure within forms</li>
-                    <li>[ ] Native HTML elements preferred over custom controls</li>
-                </ul>
+        <h4>Semantic HTML</h4>
+        <ul>
+          <li>[ ] <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> for related controls</li>
+          <li>[ ] <code>&lt;optgroup&gt;</code> for grouped select options</li>
+          <li>[ ] Proper heading structure within forms</li>
+          <li>[ ] Native HTML elements preferred over custom controls</li>
+        </ul>
 
-                <h4>Mobile Considerations</h4>
-                <ul>
-                    <li>[ ] Appropriate <code>inputmode</code> for different input types</li>
-                    <li>[ ] Touch targets at least 44x44px</li>
-                    <li>[ ] No horizontal scrolling on mobile</li>
-                    <li>[ ] Zoom enabled (no <code>user-scalable=no</code>)</li>
-                </ul>
+        <h4>Mobile Considerations</h4>
+        <ul>
+          <li>[ ] Appropriate <code>inputmode</code> for different input types</li>
+          <li>[ ] Touch targets at least 44x44px</li>
+          <li>[ ] No horizontal scrolling on mobile</li>
+          <li>[ ] Zoom enabled (no <code>user-scalable=no</code>)</li>
+        </ul>
 
-                <h4>Testing Checklist</h4>
-                <ul>
-                    <li>[ ] Tested with keyboard only</li>
-                    <li>[ ] Tested with screen reader (NVDA/VoiceOver)</li>
-                    <li>[ ] Tested at 200% zoom</li>
-                    <li>[ ] Tested with high contrast modes</li>
-                    <li>[ ] Tested on multiple browsers and devices</li>
-                    <li>[ ] Automated accessibility tools run (WAVE, axe)</li>
-                </ul>
-            </div>
-        </div>
+        <h4>Testing Checklist</h4>
+        <ul>
+          <li>[ ] Tested with keyboard only</li>
+          <li>[ ] Tested with screen reader (NVDA/VoiceOver)</li>
+          <li>[ ] Tested at 200% zoom</li>
+          <li>[ ] Tested with high contrast modes</li>
+          <li>[ ] Tested on multiple browsers and devices</li>
+          <li>[ ] Automated accessibility tools run (WAVE, axe)</li>
+        </ul>
+      </div>
+    </div>
 
-        <!-- CONCLUSION AND RESOURCES -->
-        <h2>Conclusion</h2>
-        <p>Form accessibility is not just about compliance—it's about creating inclusive experiences that work for
-            everyone. The attributes covered in this guide (<code>placeholder</code>, <code>required</code>,
-            <code>autofocus</code>, <code>disabled</code>, <code>readonly</code>) and the proper use of the
-            <code>&lt;label&gt;</code> element form the foundation of accessible form design.
-        </p>
-        <p>Remember these key principles:</p>
-        <ol>
-            <li>Always use labels - They are non-negotiable for accessibility</li>
-            <li>Provide context - Don't rely on placeholders alone</li>
-            <li>Indicate requirements clearly - Both visually and programmatically</li>
-            <li>Test with real users - Automated tools can't catch everything</li>
-            <li>Think progressively - Start with a solid HTML foundation, then enhance</li>
-        </ol>
+    <!-- CONCLUSION AND RESOURCES -->
+    <h2>Conclusion</h2>
+    <p>Form accessibility is not just about compliance—it's about creating inclusive experiences that work for
+      everyone. The attributes covered in this guide (<code>placeholder</code>, <code>required</code>,
+      <code>autofocus</code>, <code>disabled</code>, <code>readonly</code>) and the proper use of the
+      <code>&lt;label&gt;</code> element form the foundation of accessible form design.
+    </p>
+    <p>Remember these key principles:</p>
+    <ol>
+      <li>Always use labels - They are non-negotiable for accessibility</li>
+      <li>Provide context - Don't rely on placeholders alone</li>
+      <li>Indicate requirements clearly - Both visually and programmatically</li>
+      <li>Test with real users - Automated tools can't catch everything</li>
+      <li>Think progressively - Start with a solid HTML foundation, then enhance</li>
+    </ol>
 
-        <div class="footnote-links">
-            <h3>Additional Resources</h3>
-            <ul>
-                <li><a href="#" target="_blank">W3C Web Accessibility Initiative (WAI)</a></li>
-                <li><a href="#" target="_blank">MDN Web Docs: Form accessibility</a></li>
-                <li><a href="#" target="_blank">WebAIM: Creating Accessible Forms</a></li>
-                <li><a href="#" target="_blank">WCAG 2.1 Quick Reference</a></li>
-                <li><a href="#" target="_blank">A11Y Project</a></li>
-            </ul>
-        </div>
+    <div class="footnote-links">
+      <h3>Additional Resources</h3>
+      <ul>
+        <li><a href="#" target="_blank">W3C Web Accessibility Initiative (WAI)</a></li>
+        <li><a href="#" target="_blank">MDN Web Docs: Form accessibility</a></li>
+        <li><a href="#" target="_blank">WebAIM: Creating Accessible Forms</a></li>
+        <li><a href="#" target="_blank">WCAG 2.1 Quick Reference</a></li>
+        <li><a href="#" target="_blank">A11Y Project</a></li>
+      </ul>
+    </div>
 
-        <script>
-            function toggleCard(cardId) {
-                const card = document.getElementById(cardId);
-                card.classList.toggle('expanded');
-            }
-        </script>
+    <hr>
+    <footer style="text-align: center; margin-top: 2rem; color: #316e63;">
+      <p>📘 HTML Form Attributes & Accessibility – complete study notes · every line preserved</p>
+    </footer>
 
-        <style>
-            /* ensure all content visible */
-            .exercise-card .exercise-content pre {
-                white-space: pre-wrap;
-                word-wrap: break-word;
-            }
+    <script>
+      function toggleCard(cardId) {
+        const card = document.getElementById(cardId);
+        card.classList.toggle('expanded');
+      }
+    </script>
 
-            .exercise-card.expanded .exercise-content {
-                overflow: visible;
-            }
-        </style>
+    <style>
+      /* ensure all content visible */
+      .exercise-card .exercise-content pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
 
-    </div> <!-- master-container -->
+      .exercise-card.expanded .exercise-content {
+        overflow: visible;
+      }
+    </style>
+
+  </div> <!-- master-container -->
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Touch typing · foundation guide (interactive notes)</title>
+    <title>Touch typing · foundation guide (printable edition)</title>
     <style>
         * {
             margin: 0;
@@ -293,6 +293,242 @@
             border-left: 4px solid #2677b3;
             margin: 0.8rem 0;
         }
+
+        /* ========== OPTIMIZED PRINT STYLES - COMPACT ========== */
+        @media print {
+
+            /* global print reset – compact, clean, black/white */
+            body {
+                background: white;
+                padding: 0.1in;
+                font-size: 9.5pt;
+                line-height: 1.2;
+                color: black;
+            }
+
+            .wrapper {
+                max-width: 100%;
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 16pt;
+                background: none;
+                -webkit-text-fill-color: black;
+                color: black;
+                letter-spacing: normal;
+                border-left: 4px solid #333;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0 0;
+            }
+
+            .subhead {
+                font-size: 11pt;
+                color: black;
+                border-left: 3px solid #555;
+                padding-left: 0.1in;
+                margin-bottom: 0.1in;
+            }
+
+            h2 {
+                font-size: 14pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-bottom: 0.03in;
+            }
+
+            h3 {
+                font-size: 12.5pt;
+                color: black;
+                border-left: 4px solid #aaa;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0.05in 0;
+            }
+
+            h4 {
+                font-size: 11pt;
+                color: black;
+                margin: 0.08in 0 0.02in 0;
+            }
+
+            p {
+                margin: 0.04in 0;
+                line-height: 1.2;
+            }
+
+            ul,
+            ol {
+                margin: 0.04in 0 0.04in 0.15in;
+            }
+
+            li {
+                margin: 0.01in 0;
+                line-height: 1.2;
+            }
+
+            table {
+                box-shadow: none;
+                border: 1px solid #333;
+                margin: 0.1in 0;
+                font-size: 8.5pt;
+                line-height: 1.1;
+                display: table;
+                white-space: normal;
+                overflow-x: visible;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .badge {
+                background: #444;
+                color: white;
+                padding: 0.02in 0.1in;
+                font-size: 7.5pt;
+            }
+
+            .toc-card {
+                background: #f9f9f9;
+                border: 1px solid #999;
+                padding: 0.1in;
+                margin: 0.1in 0;
+                box-shadow: none;
+            }
+
+            .toc-grid a {
+                background: transparent;
+                padding: 0.02in 0.1in;
+                border: 1px solid #ccc;
+                color: black;
+                box-shadow: none;
+                font-weight: normal;
+                font-size: 8.5pt;
+            }
+
+            .toc-grid a:hover {
+                background: #eee;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .keyboard-diagram {
+                background: #f2f2f2;
+                border: 1px solid #333;
+                font-size: 9pt;
+                padding: 0.1in;
+            }
+
+            .finger-card {
+                background: #f5f5f5;
+                border: 1px solid #aaa;
+                padding: 0.1in;
+            }
+
+            .finger-tag {
+                background: white;
+                border: 1px solid #888;
+                padding: 0.02in 0.1in;
+                box-shadow: none;
+            }
+
+            .def-grid {
+                margin: 0.05in 0;
+                gap: 0.05in;
+            }
+
+            .def-item {
+                background: #f6f6f6;
+                border-bottom: 2px solid #777;
+                padding: 0.07in;
+                font-size: 8.5pt;
+            }
+
+            .drill {
+                background: #f8f8f8;
+                border-left: 4px solid #444;
+                padding: 0.08in 0.15in;
+                margin: 0.05in 0;
+                font-size: 8pt;
+            }
+
+            .highlight-block,
+            .accent-box,
+            .mini-card {
+                background: #fafafa;
+                border: 1px solid #aaa;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            hr {
+                margin: 0.1in 0;
+                background: #aaa;
+                height: 1px;
+            }
+
+            footer {
+                margin-top: 0.15in;
+                border-top: 1px solid #aaa;
+                padding-top: 0.1in;
+                font-size: 8pt;
+                color: black;
+            }
+
+            /* hide interactive hover, keep only content */
+            .toc-grid a,
+            .btn,
+            .toolbar {
+                text-decoration: none;
+            }
+
+            /* ensure no page break inside important blocks */
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            section,
+            .toc-card,
+            .mini-card,
+            table {
+                page-break-inside: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+
+            /* optional toolbar hide – we don't have toolbar here */
+        }
+
+        /* small screen / print note */
+        .print-hint {
+            display: none;
+        }
+
+        @media print {
+            .print-hint {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -301,7 +537,7 @@
 
         <h1>⌨️ Comprehensive Guide to Touch Typing Foundation</h1>
 
-        <!-- table of contents -->
+        <!-- table of contents (identical to original) -->
         <div class="toc-card" id="table-of-contents">
             <div class="toc-title">📋 Table of contents</div>
             <div class="toc-grid">
@@ -362,7 +598,7 @@
         <section id="home-row">
             <h2>🏠 2. The Home Row Position</h2>
             <h3>Understanding the Home Row</h3>
-            <div class="keyboard-diagram">A S D F     J K L ;</div>
+            <div class="keyboard-diagram">A S D F &nbsp;&nbsp;&nbsp; J K L ;</div>
             <p><strong>Left hand:</strong> A(pinky) S(ring) D(middle) F(index) — <strong>Right hand:</strong> J(index)
                 K(middle) L(ring) ;(pinky)</p>
             <p><span class="badge">bumps</span> F and J have raised indicators to find home row without looking.</p>
@@ -410,9 +646,7 @@
             <p>Reach with correct finger, then immediately return to home row.</p>
             <h4>Visual finger territories</h4>
             <div class="keyboard-diagram" style="font-size:1.0rem; line-height:1.8">
-                Q W E R T Y U I O P<br>
-                A S D F G H J K L ;<br>
-                Z X C V B N M , . /
+                Q W E R T Y U I O P<br> A S D F G H J K L ;<br> Z X C V B N M , . /
             </div>
         </section>
 
@@ -586,9 +820,7 @@
             </ul>
             <h3>20-20-20 rule + stretches</h3>
             <p>Every 20 min look 20 feet away for 20 sec. Stretch wrists, fingers, shoulders.</p>
-            <div class="accent-box">
-                ⚠️ Warning signs: numbness, pain, weakness – stop and consult.
-            </div>
+            <div class="accent-box">⚠️ Warning signs: numbness, pain, weakness – stop and consult.</div>
         </section>
 
         <!-- 11. PRACTICE ROUTINES -->

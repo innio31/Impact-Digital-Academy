@@ -2,309 +2,542 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Forms – Part 2 · Complete Guide (interactive exercises)</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Forms – Part 2 · Complete Guide (interactive exercises)</title>
+  <style>
+    /* ========== BASE STYLES (screen) ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #d9e9f0;
-            color: #153e4a;
-            line-height: 1.5;
-            padding: 2rem 1.2rem;
-        }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #d9e9f0;
+      color: #153e4a;
+      line-height: 1.5;
+      padding: 2rem 1.2rem;
+    }
 
-        .document-wrapper {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 3rem 3rem 2rem 2rem;
-            box-shadow: 0 25px 45px -20px #0f4655;
-            padding: 3rem 3rem 2.5rem;
-        }
+    .document-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 3rem 3rem 2rem 2rem;
+      box-shadow: 0 25px 45px -20px #0f4655;
+      padding: 3rem 3rem 2.5rem;
+    }
 
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 750;
-            background: linear-gradient(145deg, #005f73, #0a5b4c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            border-left: 12px solid #239989;
-            padding-left: 1.8rem;
-            margin-bottom: 1rem;
-        }
+    h1 {
+      font-size: 3.2rem;
+      font-weight: 750;
+      background: linear-gradient(145deg, #005f73, #0a5b4c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      border-left: 12px solid #239989;
+      padding-left: 1.8rem;
+      margin-bottom: 1rem;
+    }
 
-        .toc {
-            background: #e2f0f2;
-            padding: 1.8rem 2.2rem;
-            border-radius: 3rem;
-            margin: 2rem 0 2.8rem;
-            border: 2px solid #9ecfdb;
-        }
+    .toc {
+      background: #e2f0f2;
+      padding: 1.8rem 2.2rem;
+      border-radius: 3rem;
+      margin: 2rem 0 2.8rem;
+      border: 2px solid #9ecfdb;
+    }
 
-        .toc h2 {
-            margin-bottom: 1rem;
-            color: #115e6b;
-        }
+    .toc h2 {
+      margin-bottom: 1rem;
+      color: #115e6b;
+    }
 
-        .toc ul {
-            columns: 3 220px;
-            list-style: none;
-        }
+    .toc ul {
+      columns: 3 220px;
+      list-style: none;
+    }
 
-        .toc li {
-            margin: 0.4rem 0;
-        }
+    .toc li {
+      margin: 0.4rem 0;
+    }
 
-        .toc a {
-            text-decoration: none;
-            color: #0f6475;
-            font-weight: 500;
-        }
+    .toc a {
+      text-decoration: none;
+      color: #0f6475;
+      font-weight: 500;
+    }
 
-        .toc a:hover {
-            text-decoration: underline;
-            color: #083d47;
-        }
+    .toc a:hover {
+      text-decoration: underline;
+      color: #083d47;
+    }
 
-        h2 {
-            font-size: 2.4rem;
-            color: #166f7c;
-            margin: 2.5rem 0 1.2rem;
-            border-bottom: 5px solid #52b9a7;
-            padding-bottom: 0.4rem;
-        }
+    h2 {
+      font-size: 2.4rem;
+      color: #166f7c;
+      margin: 2.5rem 0 1.2rem;
+      border-bottom: 5px solid #52b9a7;
+      padding-bottom: 0.4rem;
+    }
 
-        h3 {
-            font-size: 1.9rem;
-            color: #1a717d;
-            margin: 2rem 0 0.8rem;
-            background: #effcf9;
-            padding: 0.5rem 1.8rem;
-            border-radius: 40px;
-            display: inline-block;
-        }
+    h3 {
+      font-size: 1.9rem;
+      color: #1a717d;
+      margin: 2rem 0 0.8rem;
+      background: #effcf9;
+      padding: 0.5rem 1.8rem;
+      border-radius: 40px;
+      display: inline-block;
+    }
 
-        h4 {
-            font-size: 1.5rem;
-            color: #0c6872;
-            margin: 1.6rem 0 0.6rem;
-        }
+    h4 {
+      font-size: 1.5rem;
+      color: #0c6872;
+      margin: 1.6rem 0 0.6rem;
+    }
 
-        p {
-            margin: 1.2rem 0;
-            font-size: 1.05rem;
-        }
+    p {
+      margin: 1.2rem 0;
+      font-size: 1.05rem;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2.2rem 0;
-            border-radius: 1.4rem;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(16, 79, 86, 0.1);
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2.2rem 0;
+      border-radius: 1.4rem;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(16, 79, 86, 0.1);
+    }
 
-        th {
-            background: #1c7f8c;
-            color: white;
-            padding: 1rem 1.2rem;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
+    th {
+      background: #1c7f8c;
+      color: white;
+      padding: 1rem 1.2rem;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
 
-        td {
-            background: #f6fcfd;
-            padding: 0.9rem 1.2rem;
-            border-bottom: 1px solid #bfe2eb;
-        }
+    td {
+      background: #f6fcfd;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid #bfe2eb;
+    }
 
-        pre,
-        code,
-        kbd {
-            background: #eef4f7;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            border-radius: 10px;
-        }
+    pre,
+    code,
+    kbd {
+      background: #eef4f7;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      border-radius: 10px;
+    }
 
-        pre {
-            padding: 1.4rem 1.8rem;
-            border-left: 8px solid #48b5a8;
-            margin: 1.8rem 0;
-            white-space: pre-wrap;
-            word-break: break-word;
-            background: #f1f9fc;
-            border-radius: 20px;
-            box-shadow: inset 0 2px 12px #cde3ec;
-            font-size: 0.95rem;
-        }
+    pre {
+      padding: 1.4rem 1.8rem;
+      border-left: 8px solid #48b5a8;
+      margin: 1.8rem 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #f1f9fc;
+      border-radius: 20px;
+      box-shadow: inset 0 2px 12px #cde3ec;
+      font-size: 0.95rem;
+    }
 
-        code {
-            background: #dff0f3;
-            padding: 0.2rem 0.7rem;
-            border-radius: 8px;
-            color: #095461;
-        }
+    code {
+      background: #dff0f3;
+      padding: 0.2rem 0.7rem;
+      border-radius: 8px;
+      color: #095461;
+    }
 
-        hr {
-            border: none;
-            height: 4px;
-            background: linear-gradient(90deg, #b3dfe5, white, #b3dfe5);
-            margin: 3rem 0;
-        }
+    hr {
+      border: none;
+      height: 4px;
+      background: linear-gradient(90deg, #b3dfe5, white, #b3dfe5);
+      margin: 3rem 0;
+    }
 
-        /* interactive exercises */
-        .exercise-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2.5rem 0;
-        }
+    /* interactive exercises */
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
 
-        .exercise-card {
-            background: #f6fbfe;
-            border-radius: 2rem;
-            border: 2px solid #aad4df;
-            overflow: hidden;
-            transition: 0.2s;
-        }
+    .exercise-card {
+      background: #f6fbfe;
+      border-radius: 2rem;
+      border: 2px solid #aad4df;
+      overflow: hidden;
+      transition: 0.2s;
+    }
 
-        .exercise-header {
-            background: #239989;
-            color: white;
-            padding: 1rem 1.5rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .exercise-header {
+      background: #239989;
+      color: white;
+      padding: 1rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .exercise-header:hover {
-            background: #1b7e8b;
-        }
+    .exercise-header:hover {
+      background: #1b7e8b;
+    }
 
-        .exercise-content {
-            padding: 1.8rem;
-            display: none;
-            background: white;
-        }
+    .exercise-content {
+      padding: 1.8rem;
+      display: none;
+      background: white;
+    }
 
-        .exercise-content.show {
-            display: block;
-        }
+    .exercise-content.show {
+      display: block;
+    }
 
-        .btn-run {
-            background: #0d6272;
-            color: white;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
+    .btn-run {
+      background: #0d6272;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
 
-        .btn-run:hover {
-            background: #124f5c;
-        }
+    .btn-run:hover {
+      background: #124f5c;
+    }
 
-        footer {
-            margin-top: 4rem;
-            text-align: center;
-            color: #3e6d73;
-            border-top: 2px dashed #9bc8d3;
-            padding-top: 2rem;
-        }
-    </style>
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      color: #3e6d73;
+      border-top: 2px dashed #9bc8d3;
+      padding-top: 2rem;
+    }
+
+    /* Toolbar for download/print */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #1c7f8c;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+      transition: 0.1s ease;
+      border: 1px solid #0e4e56;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #0b5f68;
+      box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+    }
+
+    .btn-pdf {
+      background: #a13f3f;
+      border-color: #6b2b2b;
+    }
+
+    .btn-pdf:hover {
+      background: #832f2f;
+    }
+
+    @media print {
+      .toolbar {
+        display: none;
+      }
+    }
+
+    /* ========== OPTIMIZED PRINT STYLES - COMPACT ========== */
+    @media print {
+      body {
+        background: white;
+        padding: 0.1in;
+        color: black;
+        line-height: 1.2;
+        font-size: 10pt;
+        margin: 0;
+      }
+
+      .document-wrapper {
+        background: white;
+        border-radius: 0;
+        padding: 0.1in;
+        box-shadow: none;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 18pt;
+        color: black;
+        background: none;
+        -webkit-text-fill-color: black;
+        border-left: 6px solid #333;
+        margin: 0.1in 0 0.05in 0;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 16pt;
+        color: black;
+        border-bottom: 2px solid #333;
+        margin: 0.15in 0 0.08in 0;
+        line-height: 1.2;
+      }
+
+      h3 {
+        font-size: 14pt;
+        color: black;
+        background: none;
+        padding: 0;
+        margin: 0.12in 0 0.05in 0;
+        line-height: 1.2;
+        display: block;
+      }
+
+      h4 {
+        font-size: 12pt;
+        color: black;
+        margin: 0.1in 0 0.03in 0;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0.05in 0;
+        line-height: 1.2;
+      }
+
+      ul,
+      ol {
+        margin: 0.05in 0 0.05in 0.15in;
+      }
+
+      li {
+        margin: 0.02in 0;
+        line-height: 1.2;
+      }
+
+      pre {
+        background: #f6f6f6;
+        color: black;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        padding: 0.1in;
+        margin: 0.1in 0;
+        font-size: 9pt;
+        line-height: 1.1;
+        page-break-inside: avoid;
+        border-left: 3px solid #666;
+      }
+
+      code {
+        background: #eee;
+        color: black;
+        padding: 0.02in 0.05in;
+        font-size: 9pt;
+      }
+
+      table {
+        margin: 0.1in 0;
+        box-shadow: none;
+        border: 1px solid #333;
+        font-size: 9pt;
+        line-height: 1.1;
+      }
+
+      td {
+        background: white;
+        padding: 0.05in 0.1in;
+      }
+
+      th {
+        background: #333;
+        color: white;
+        padding: 0.05in 0.1in;
+      }
+
+      hr {
+        margin: 0.15in 0;
+        background: #ccc;
+        height: 1px;
+      }
+
+      .toc {
+        background: #f9f9f9;
+        border: 1px solid #888;
+        padding: 0.15in;
+        margin: 0.15in 0;
+      }
+
+      .exercise-card {
+        border: 1px solid #666;
+        page-break-inside: avoid;
+      }
+
+      .exercise-header {
+        background: #333;
+        color: white;
+        padding: 0.1in;
+      }
+
+      .exercise-content {
+        padding: 0.1in;
+      }
+
+      .btn-run {
+        background: #333;
+        color: white;
+        border: 1px solid black;
+      }
+
+      footer {
+        margin-top: 0.2in;
+        border-top: 1px solid #ccc;
+        padding-top: 0.1in;
+        font-size: 9pt;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+
+      * {
+        background-image: none !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+
+      a,
+      a:link,
+      a:visited {
+        color: black;
+        text-decoration: underline;
+      }
+
+      /* Ensure interactive elements don't break */
+      .exercise-content.show {
+        display: block !important;
+      }
+
+      .toc ul {
+        columns: 2;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="document-wrapper">
-        <h1>📝 HTML Forms – Part 2: A Comprehensive Guide</h1>
+  <div class="document-wrapper">
 
-        <!-- TABLE OF CONTENTS (exact from source) -->
-        <div class="toc">
-            <h2>📑 Table of Contents</h2>
-            <ul>
-                <li><a href="#introduction">1. Introduction to Advanced Form Elements</a></li>
-                <li><a href="#radio-buttons">2. Radio Buttons</a></li>
-                <li><a href="#checkboxes">3. Checkboxes</a></li>
-                <li><a href="#number-inputs">4. Number Inputs</a></li>
-                <li><a href="#select-menus">5. Select Menus (Dropdowns)</a></li>
-                <li><a href="#grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</a></li>
-                <li><a href="#complete-form-examples">7. Complete Form Examples</a></li>
-                <li><a href="#best-practices">8. Best Practices and Accessibility</a></li>
-                <li><a href="#common-patterns">9. Common Patterns and Use Cases</a></li>
-                <li><a href="#styling-form-elements">10. Styling Form Elements</a></li>
-                <li><a href="#troubleshooting">11. Troubleshooting and Common Issues</a></li>
-                <li><a href="#practice-exercises">12. Practice Exercises</a></li>
-            </ul>
-        </div>
+    <!-- Toolbar: print and download (PDF link assumes same folder) -->
+    <div class="toolbar">
+      <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <a href="forms-part2-notes.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+      <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+    </div>
 
-        <!-- 1. INTRODUCTION -->
-        <h2 id="introduction">1. Introduction to Advanced Form Elements</h2>
-        <p>Forms are the primary way users interact with websites—whether they're signing up for a newsletter, placing
-            an order, filling out a job application, or configuring product options. While basic text inputs handle
-            simple data entry, advanced form elements provide more intuitive and efficient ways to collect specific
-            types of information.</p>
+    <h1>📝 HTML Forms – Part 2</h1>
 
-        <h3>Why Advanced Form Elements Matter</h3>
-        <table>
-            <tr>
-                <th>Element Type</th>
-                <th>Best For</th>
-                <th>User Benefit</th>
-                <th>Developer Benefit</th>
-            </tr>
-            <tr>
-                <td>Radio Buttons</td>
-                <td>Single choice from few options</td>
-                <td>Clear visibility of all options</td>
-                <td>Easy data validation</td>
-            </tr>
-            <tr>
-                <td>Checkboxes</td>
-                <td>Multiple selections, agreements</td>
-                <td>Flexibility in choices</td>
-                <td>Simple boolean/array data</td>
-            </tr>
-            <tr>
-                <td>Select Menus</td>
-                <td>Single choice from many options</td>
-                <td>Saves screen space</td>
-                <td>Organized data structure</td>
-            </tr>
-            <tr>
-                <td>Number Inputs</td>
-                <td>Numeric data with constraints</td>
-                <td>Prevents invalid entries</td>
-                <td>Built-in validation</td>
-            </tr>
-        </table>
+    <!-- TABLE OF CONTENTS (exact from source) -->
+    <div class="toc">
+      <h2>📑 Table of Contents</h2>
+      <ul>
+        <li><a href="#introduction">1. Introduction to Advanced Form Elements</a></li>
+        <li><a href="#radio-buttons">2. Radio Buttons</a></li>
+        <li><a href="#checkboxes">3. Checkboxes</a></li>
+        <li><a href="#number-inputs">4. Number Inputs</a></li>
+        <li><a href="#select-menus">5. Select Menus (Dropdowns)</a></li>
+        <li><a href="#grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</a></li>
+        <li><a href="#complete-form-examples">7. Complete Form Examples</a></li>
+        <li><a href="#best-practices">8. Best Practices and Accessibility</a></li>
+        <li><a href="#common-patterns">9. Common Patterns and Use Cases</a></li>
+        <li><a href="#styling-form-elements">10. Styling Form Elements</a></li>
+        <li><a href="#troubleshooting">11. Troubleshooting and Common Issues</a></li>
+        <li><a href="#practice-exercises">12. Practice Exercises</a></li>
+      </ul>
+    </div>
 
-        <h3>The User Experience Perspective</h3>
-        <p>When designing forms, consider these principles:<br>
-            • <strong>Fitts's Law</strong>: Larger and closer targets are easier to click<br>
-            • <strong>Hick's Law</strong>: More choices increase decision time<br>
-            • <strong>Scanning Patterns</strong>: Users scan forms in F-patterns (desktop) or Z-patterns (mobile)</p>
-        <hr>
+    <!-- 1. INTRODUCTION -->
+    <h2 id="introduction">1. Introduction to Advanced Form Elements</h2>
+    <p>Forms are the primary way users interact with websites—whether they're signing up for a newsletter, placing
+      an order, filling out a job application, or configuring product options. While basic text inputs handle
+      simple data entry, advanced form elements provide more intuitive and efficient ways to collect specific
+      types of information.</p>
 
-        <!-- 2. RADIO BUTTONS (complete) -->
-        <h2 id="radio-buttons">2. Radio Buttons</h2>
-        <p>Radio buttons allow users to select exactly <strong>one option</strong> from a set. They're named after the
-            physical buttons on old car radios—pressing one button would pop out any previously pressed button.</p>
+    <h3>Why Advanced Form Elements Matter</h3>
+    <table>
+      <tr>
+        <th>Element Type</th>
+        <th>Best For</th>
+        <th>User Benefit</th>
+        <th>Developer Benefit</th>
+      </tr>
+      <tr>
+        <td>Radio Buttons</td>
+        <td>Single choice from few options</td>
+        <td>Clear visibility of all options</td>
+        <td>Easy data validation</td>
+      </tr>
+      <tr>
+        <td>Checkboxes</td>
+        <td>Multiple selections, agreements</td>
+        <td>Flexibility in choices</td>
+        <td>Simple boolean/array data</td>
+      </tr>
+      <tr>
+        <td>Select Menus</td>
+        <td>Single choice from many options</td>
+        <td>Saves screen space</td>
+        <td>Organized data structure</td>
+      </tr>
+      <tr>
+        <td>Number Inputs</td>
+        <td>Numeric data with constraints</td>
+        <td>Prevents invalid entries</td>
+        <td>Built-in validation</td>
+      </tr>
+    </table>
 
-        <h3>Basic Syntax and Structure</h3>
-        <pre><code>&lt;form&gt;
+    <h3>The User Experience Perspective</h3>
+    <p>When designing forms, consider these principles:<br>
+      • <strong>Fitts's Law</strong>: Larger and closer targets are easier to click<br>
+      • <strong>Hick's Law</strong>: More choices increase decision time<br>
+      • <strong>Scanning Patterns</strong>: Users scan forms in F-patterns (desktop) or Z-patterns (mobile)</p>
+    <hr>
+
+    <!-- 2. RADIO BUTTONS (complete) -->
+    <h2 id="radio-buttons">2. Radio Buttons</h2>
+    <p>Radio buttons allow users to select exactly <strong>one option</strong> from a set. They're named after the
+      physical buttons on old car radios—pressing one button would pop out any previously pressed button.</p>
+
+    <h3>Basic Syntax and Structure</h3>
+    <pre><code>&lt;form&gt;
   &lt;p&gt;Select your preferred contact method:&lt;/p&gt;
   
   &lt;input type="radio" id="contactEmail" name="contact" value="email"&gt;
@@ -317,60 +550,60 @@
   &lt;label for="contactMail"&gt;Postal Mail&lt;/label&gt;
 &lt;/form&gt;</code></pre>
 
-        <h3>Critical Attributes Explained</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Purpose</th>
-                <th>Example</th>
-                <th>Notes</th>
-            </tr>
-            <tr>
-                <td><code>type="radio"</code></td>
-                <td>Defines the input as a radio button</td>
-                <td><code>type="radio"</code></td>
-                <td>Required</td>
-            </tr>
-            <tr>
-                <td><code>name</code></td>
-                <td>Groups related radio buttons</td>
-                <td><code>name="shipping"</code></td>
-                <td>All options in group must share the same name</td>
-            </tr>
-            <tr>
-                <td><code>value</code></td>
-                <td>The data sent to the server</td>
-                <td><code>value="express"</code></td>
-                <td>Required for meaningful data</td>
-            </tr>
-            <tr>
-                <td><code>id</code></td>
-                <td>Connects to label's <code>for</code> attribute</td>
-                <td><code>id="shipExpress"</code></td>
-                <td>Must be unique per element</td>
-            </tr>
-            <tr>
-                <td><code>checked</code></td>
-                <td>Pre-selects an option</td>
-                <td><code>checked</code> or <code>checked="checked"</code></td>
-                <td>Use sparingly</td>
-            </tr>
-            <tr>
-                <td><code>disabled</code></td>
-                <td>Disables an option</td>
-                <td><code>disabled</code></td>
-                <td>User cannot select/interact</td>
-            </tr>
-            <tr>
-                <td><code>required</code></td>
-                <td>Requires selection</td>
-                <td><code>required</code></td>
-                <td>At least one option must be chosen</td>
-            </tr>
-        </table>
+    <h3>Critical Attributes Explained</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+        <th>Example</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><code>type="radio"</code></td>
+        <td>Defines the input as a radio button</td>
+        <td><code>type="radio"</code></td>
+        <td>Required</td>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td>Groups related radio buttons</td>
+        <td><code>name="shipping"</code></td>
+        <td>All options in group must share the same name</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>The data sent to the server</td>
+        <td><code>value="express"</code></td>
+        <td>Required for meaningful data</td>
+      </tr>
+      <tr>
+        <td><code>id</code></td>
+        <td>Connects to label's <code>for</code> attribute</td>
+        <td><code>id="shipExpress"</code></td>
+        <td>Must be unique per element</td>
+      </tr>
+      <tr>
+        <td><code>checked</code></td>
+        <td>Pre-selects an option</td>
+        <td><code>checked</code> or <code>checked="checked"</code></td>
+        <td>Use sparingly</td>
+      </tr>
+      <tr>
+        <td><code>disabled</code></td>
+        <td>Disables an option</td>
+        <td><code>disabled</code></td>
+        <td>User cannot select/interact</td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>Requires selection</td>
+        <td><code>required</code></td>
+        <td>At least one option must be chosen</td>
+      </tr>
+    </table>
 
-        <h3>The Importance of the <code>name</code> Attribute</h3>
-        <pre><code>&lt;!-- These are correctly grouped --&gt;
+    <h3>The Importance of the <code>name</code> Attribute</h3>
+    <pre><code>&lt;!-- These are correctly grouped --&gt;
 &lt;input type="radio" name="delivery" value="standard" id="std"&gt;
 &lt;label for="std"&gt;Standard (3-5 days)&lt;/label&gt;
 
@@ -379,8 +612,8 @@
 
 &lt;!-- When user selects Express, server receives: delivery=express --&gt;</code></pre>
 
-        <h3>Pre-selecting Options</h3>
-        <pre><code>&lt;fieldset&gt;
+    <h3>Pre-selecting Options</h3>
+    <pre><code>&lt;fieldset&gt;
   &lt;legend&gt;Newsletter Frequency:&lt;/legend&gt;
   
   &lt;input type="radio" id="daily" name="frequency" value="daily"&gt;
@@ -393,8 +626,8 @@
   &lt;label for="monthly"&gt;Monthly&lt;/label&gt;
 &lt;/fieldset&gt;</code></pre>
 
-        <h3>Disabling Options</h3>
-        <pre><code>&lt;fieldset&gt;
+    <h3>Disabling Options</h3>
+    <pre><code>&lt;fieldset&gt;
   &lt;legend&gt;Select Your Meal Plan:&lt;/legend&gt;
   
   &lt;input type="radio" id="basic" name="mealPlan" value="basic"&gt;
@@ -407,8 +640,8 @@
   &lt;label for="vip" style="color: #999;"&gt;VIP Plan - Sold Out&lt;/label&gt;
 &lt;/fieldset&gt;</code></pre>
 
-        <h3>Real-World Example: Pizza Ordering</h3>
-        <pre><code>&lt;h3&gt;Step 1: Choose Your Crust&lt;/h3&gt;
+    <h3>Real-World Example: Pizza Ordering</h3>
+    <pre><code>&lt;h3&gt;Step 1: Choose Your Crust&lt;/h3&gt;
 &lt;fieldset&gt;
   &lt;legend&gt;Crust Type *Required&lt;/legend&gt;
   
@@ -425,8 +658,8 @@
   &lt;label for="crustGluten"&gt;Gluten-Free (+$1.50)&lt;/label&gt;
 &lt;/fieldset&gt;</code></pre>
 
-        <h3>Common Mistakes with Radio Buttons</h3>
-        <pre><code>&lt;!-- WRONG - Different `name` attributes (User can select multiple) --&gt;
+    <h3>Common Mistakes with Radio Buttons</h3>
+    <pre><code>&lt;!-- WRONG - Different `name` attributes (User can select multiple) --&gt;
 &lt;input type="radio" name="size1" value="small"&gt; Small
 &lt;input type="radio" name="size2" value="medium"&gt; Medium
 &lt;input type="radio" name="size3" value="large"&gt; Large
@@ -449,15 +682,15 @@
 &lt;!-- CORRECT --&gt;
 &lt;input type="radio" id="colorRed" name="color" value="red"&gt;
 &lt;label for="colorRed"&gt;Red&lt;/label&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 3. CHECKBOXES (complete) -->
-        <h2 id="checkboxes">3. Checkboxes</h2>
-        <p>Checkboxes allow users to select <strong>zero, one, or multiple</strong> options from a set. They're ideal
-            for "yes/no" choices, feature selection, and agreements.</p>
+    <!-- 3. CHECKBOXES (complete) -->
+    <h2 id="checkboxes">3. Checkboxes</h2>
+    <p>Checkboxes allow users to select <strong>zero, one, or multiple</strong> options from a set. They're ideal
+      for "yes/no" choices, feature selection, and agreements.</p>
 
-        <h3>Basic Syntax and Structure</h3>
-        <pre><code>&lt;h3&gt;Select your interests (check all that apply):&lt;/h3&gt;
+    <h3>Basic Syntax and Structure</h3>
+    <pre><code>&lt;h3&gt;Select your interests (check all that apply):&lt;/h3&gt;
 
 &lt;input type="checkbox" id="interestTech" name="interests" value="technology"&gt;
 &lt;label for="interestTech"&gt;Technology&lt;/label&gt;&lt;br&gt;
@@ -468,54 +701,54 @@
 &lt;input type="checkbox" id="interestBusiness" name="interests" value="business"&gt;
 &lt;label for="interestBusiness"&gt;Business&lt;/label&gt;</code></pre>
 
-        <h3>Checkbox Attributes Deep Dive</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Purpose</th>
-                <th>Example</th>
-                <th>Behavior</th>
-            </tr>
-            <tr>
-                <td><code>type="checkbox"</code></td>
-                <td>Defines checkbox input</td>
-                <td><code>type="checkbox"</code></td>
-                <td>Required</td>
-            </tr>
-            <tr>
-                <td><code>name</code></td>
-                <td>Identifies the field</td>
-                <td><code>name="newsletter"</code></td>
-                <td>Can be same or different per checkbox</td>
-            </tr>
-            <tr>
-                <td><code>value</code></td>
-                <td>Data sent when checked</td>
-                <td><code>value="weekly"</code></td>
-                <td>If omitted, default is "on"</td>
-            </tr>
-            <tr>
-                <td><code>checked</code></td>
-                <td>Pre-checks the box</td>
-                <td><code>checked</code></td>
-                <td>Use for opt-out options</td>
-            </tr>
-            <tr>
-                <td><code>indeterminate</code></td>
-                <td>Visual "maybe" state</td>
-                <td><code>indeterminate</code></td>
-                <td>JavaScript-only, can't be set in HTML</td>
-            </tr>
-            <tr>
-                <td><code>required</code></td>
-                <td>Must be checked</td>
-                <td><code>required</code></td>
-                <td>Rarely used with checkboxes</td>
-            </tr>
-        </table>
+    <h3>Checkbox Attributes Deep Dive</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+        <th>Example</th>
+        <th>Behavior</th>
+      </tr>
+      <tr>
+        <td><code>type="checkbox"</code></td>
+        <td>Defines checkbox input</td>
+        <td><code>type="checkbox"</code></td>
+        <td>Required</td>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td>Identifies the field</td>
+        <td><code>name="newsletter"</code></td>
+        <td>Can be same or different per checkbox</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>Data sent when checked</td>
+        <td><code>value="weekly"</code></td>
+        <td>If omitted, default is "on"</td>
+      </tr>
+      <tr>
+        <td><code>checked</code></td>
+        <td>Pre-checks the box</td>
+        <td><code>checked</code></td>
+        <td>Use for opt-out options</td>
+      </tr>
+      <tr>
+        <td><code>indeterminate</code></td>
+        <td>Visual "maybe" state</td>
+        <td><code>indeterminate</code></td>
+        <td>JavaScript-only, can't be set in HTML</td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>Must be checked</td>
+        <td><code>required</code></td>
+        <td>Rarely used with checkboxes</td>
+      </tr>
+    </table>
 
-        <h3>Single Checkbox (Yes/No) Pattern</h3>
-        <pre><code>&lt;!-- Newsletter signup with explicit opt-in --&gt;
+    <h3>Single Checkbox (Yes/No) Pattern</h3>
+    <pre><code>&lt;!-- Newsletter signup with explicit opt-in --&gt;
 &lt;div class="checkbox-group"&gt;
   &lt;input type="checkbox" id="newsletter" name="newsletter" value="yes" checked&gt;
   &lt;label for="newsletter"&gt;
@@ -534,8 +767,8 @@
   &lt;/label&gt;
 &lt;/div&gt;</code></pre>
 
-        <h3>Multiple Checkboxes (Same Name Pattern)</h3>
-        <pre><code>&lt;h3&gt;Which toppings would you like? ($0.50 each)&lt;/h3&gt;
+    <h3>Multiple Checkboxes (Same Name Pattern)</h3>
+    <pre><code>&lt;h3&gt;Which toppings would you like? ($0.50 each)&lt;/h3&gt;
 
 &lt;input type="checkbox" id="toppingPepperoni" name="toppings" value="pepperoni"&gt;
 &lt;label for="toppingPepperoni"&gt;Pepperoni&lt;/label&gt;&lt;br&gt;
@@ -549,8 +782,8 @@
 &lt;!-- If user selects Pepperoni and Olives, server receives:
      toppings=pepperoni&toppings=olives --&gt;</code></pre>
 
-        <h3>Checkbox States: Visual Reference</h3>
-        <pre><code>&lt;style&gt;
+    <h3>Checkbox States: Visual Reference</h3>
+    <pre><code>&lt;style&gt;
   .checkbox-demo div { margin:10px; padding:10px; border-left:4px solid; }
   .checked-state { border-left-color: green; background:#f0fff0; }
   .unchecked-state { border-left-color: gray; background:#f5f5f5; }
@@ -586,8 +819,8 @@
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
-        <h3>Advanced Pattern: Checkbox with Indeterminate State</h3>
-        <pre><code>&lt;div class="category-group"&gt;
+    <h3>Advanced Pattern: Checkbox with Indeterminate State</h3>
+    <pre><code>&lt;div class="category-group"&gt;
   &lt;div&gt;
     &lt;input type="checkbox" id="allItems" onclick="toggleAll(this)"&gt;
     &lt;label for="allItems"&gt;&lt;strong&gt;Select All Items&lt;/strong&gt;&lt;/label&gt;
@@ -635,8 +868,8 @@
   }
 &lt;/script&gt;</code></pre>
 
-        <h3>Real-World Example: Product Customization</h3>
-        <pre><code>&lt;form class="product-customizer"&gt;
+    <h3>Real-World Example: Product Customization</h3>
+    <pre><code>&lt;form class="product-customizer"&gt;
   &lt;h2&gt;Customize Your Laptop&lt;/h2&gt;
   
   &lt;!-- Required options --&gt;
@@ -692,10 +925,10 @@
   &lt;/div&gt;
 &lt;/form&gt;</code></pre>
 
-        <h3>Checkbox Design Patterns</h3>
+    <h3>Checkbox Design Patterns</h3>
 
-        <h4>Pattern 1: Toggle Switches (Styled Checkboxes)</h4>
-        <pre><code>&lt;style&gt;
+    <h4>Pattern 1: Toggle Switches (Styled Checkboxes)</h4>
+    <pre><code>&lt;style&gt;
   .toggle-switch {
     position: relative;
     display: inline-block;
@@ -748,8 +981,8 @@
 &lt;/label&gt;
 &lt;label for="darkMode"&gt;Dark Mode&lt;/label&gt;</code></pre>
 
-        <h4>Pattern 2: Card-Based Selection</h4>
-        <pre><code>&lt;style&gt;
+    <h4>Pattern 2: Card-Based Selection</h4>
+    <pre><code>&lt;style&gt;
   .card-checkbox {
     border: 2px solid #ddd;
     border-radius: 8px;
@@ -790,61 +1023,61 @@
     &lt;/ul&gt;
   &lt;/label&gt;
 &lt;/div&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 4. NUMBER INPUTS (complete) -->
-        <h2 id="number-inputs">4. Number Inputs</h2>
-        <p>Number inputs provide a specialized field for numeric data with built-in validation and controls (spinner
-            arrows).</p>
+    <!-- 4. NUMBER INPUTS (complete) -->
+    <h2 id="number-inputs">4. Number Inputs</h2>
+    <p>Number inputs provide a specialized field for numeric data with built-in validation and controls (spinner
+      arrows).</p>
 
-        <h3>Basic Syntax</h3>
-        <pre><code>&lt;label for="quantity"&gt;Quantity:&lt;/label&gt;
+    <h3>Basic Syntax</h3>
+    <pre><code>&lt;label for="quantity"&gt;Quantity:&lt;/label&gt;
 &lt;input type="number" id="quantity" name="quantity"&gt;</code></pre>
 
-        <h3>Number Input Attributes</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Purpose</th>
-                <th>Example</th>
-                <th>Behavior</th>
-            </tr>
-            <tr>
-                <td><code>min</code></td>
-                <td>Minimum allowed value</td>
-                <td><code>min="0"</code></td>
-                <td>Prevents values below this</td>
-            </tr>
-            <tr>
-                <td><code>max</code></td>
-                <td>Maximum allowed value</td>
-                <td><code>max="100"</code></td>
-                <td>Prevents values above this</td>
-            </tr>
-            <tr>
-                <td><code>step</code></td>
-                <td>Increment/decrement amount</td>
-                <td><code>step="1"</code></td>
-                <td>Default is "1", use "any" for decimals</td>
-            </tr>
-            <tr>
-                <td><code>value</code></td>
-                <td>Initial/default value</td>
-                <td><code>value="5"</code></td>
-                <td>Sets starting number</td>
-            </tr>
-            <tr>
-                <td><code>placeholder</code></td>
-                <td>Hint text</td>
-                <td><code>placeholder="Enter age"</code></td>
-                <td>Only shown when empty</td>
-            </tr>
-        </table>
+    <h3>Number Input Attributes</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+        <th>Example</th>
+        <th>Behavior</th>
+      </tr>
+      <tr>
+        <td><code>min</code></td>
+        <td>Minimum allowed value</td>
+        <td><code>min="0"</code></td>
+        <td>Prevents values below this</td>
+      </tr>
+      <tr>
+        <td><code>max</code></td>
+        <td>Maximum allowed value</td>
+        <td><code>max="100"</code></td>
+        <td>Prevents values above this</td>
+      </tr>
+      <tr>
+        <td><code>step</code></td>
+        <td>Increment/decrement amount</td>
+        <td><code>step="1"</code></td>
+        <td>Default is "1", use "any" for decimals</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>Initial/default value</td>
+        <td><code>value="5"</code></td>
+        <td>Sets starting number</td>
+      </tr>
+      <tr>
+        <td><code>placeholder</code></td>
+        <td>Hint text</td>
+        <td><code>placeholder="Enter age"</code></td>
+        <td>Only shown when empty</td>
+      </tr>
+    </table>
 
-        <h3>Practical Examples</h3>
+    <h3>Practical Examples</h3>
 
-        <h4>Example 1: Age Input with Limits</h4>
-        <pre><code>&lt;label for="age"&gt;Age (18-120):&lt;/label&gt;
+    <h4>Example 1: Age Input with Limits</h4>
+    <pre><code>&lt;label for="age"&gt;Age (18-120):&lt;/label&gt;
 &lt;input type="number" 
        id="age" 
        name="age"
@@ -855,8 +1088,8 @@
        required&gt;
 &lt;small&gt;Must be 18 or older to register&lt;/small&gt;</code></pre>
 
-        <h4>Example 2: Decimal Numbers with Custom Step</h4>
-        <pre><code>&lt;label for="price"&gt;Price ($):&lt;/label&gt;
+    <h4>Example 2: Decimal Numbers with Custom Step</h4>
+    <pre><code>&lt;label for="price"&gt;Price ($):&lt;/label&gt;
 &lt;input type="number" 
        id="price" 
        name="price"
@@ -874,8 +1107,8 @@
        step="0.5"
        value="3.5"&gt;</code></pre>
 
-        <h4>Example 3: Quantity Selector with Validation</h4>
-        <pre><code>&lt;div class="quantity-selector"&gt;
+    <h4>Example 3: Quantity Selector with Validation</h4>
+    <pre><code>&lt;div class="quantity-selector"&gt;
   &lt;label for="tickets"&gt;Number of Tickets (Max 10 per person):&lt;/label&gt;
   &lt;div class="number-control"&gt;
     &lt;button type="button" onclick="decrement()"&gt;-&lt;/button&gt;
@@ -907,8 +1140,8 @@
   &lt;/script&gt;
 &lt;/div&gt;</code></pre>
 
-        <h3>Number Input Validation</h3>
-        <pre><code>&lt;form onsubmit="return validateNumbers()"&gt;
+    <h3>Number Input Validation</h3>
+    <pre><code>&lt;form onsubmit="return validateNumbers()"&gt;
   &lt;label for="childAge"&gt;Child's Age (2-12 years):&lt;/label&gt;
   &lt;input type="number" 
          id="childAge" 
@@ -948,8 +1181,8 @@
   }
 &lt;/script&gt;</code></pre>
 
-        <h3>Browser Support and Fallbacks</h3>
-        <pre><code>&lt;!-- Modern browsers show number controls, older browsers show text input --&gt;
+    <h3>Browser Support and Fallbacks</h3>
+    <pre><code>&lt;!-- Modern browsers show number controls, older browsers show text input --&gt;
 &lt;label for="years"&gt;Years of Experience:&lt;/label&gt;
 &lt;input type="number" 
        id="years" 
@@ -986,15 +1219,15 @@
     }
   &lt;/style&gt;
 &lt;/noscript&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 5. SELECT MENUS (complete) -->
-        <h2 id="select-menus">5. Select Menus (Dropdowns)</h2>
-        <p>Select menus (dropdowns) are space-efficient ways to present multiple options, especially when there are many
-            choices or limited screen space.</p>
+    <!-- 5. SELECT MENUS (complete) -->
+    <h2 id="select-menus">5. Select Menus (Dropdowns)</h2>
+    <p>Select menus (dropdowns) are space-efficient ways to present multiple options, especially when there are many
+      choices or limited screen space.</p>
 
-        <h3>Basic Select Menu</h3>
-        <pre><code>&lt;label for="country"&gt;Choose your country:&lt;/label&gt;
+    <h3>Basic Select Menu</h3>
+    <pre><code>&lt;label for="country"&gt;Choose your country:&lt;/label&gt;
 &lt;select id="country" name="country"&gt;
   &lt;option value=""&gt;--Please choose an option--&lt;/option&gt;
   &lt;option value="us"&gt;United States&lt;/option&gt;
@@ -1003,90 +1236,90 @@
   &lt;option value="au"&gt;Australia&lt;/option&gt;
 &lt;/select&gt;</code></pre>
 
-        <h3>Select Element Attributes</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Purpose</th>
-                <th>Example</th>
-                <th>Description</th>
-            </tr>
-            <tr>
-                <td><code>name</code></td>
-                <td>Field identifier</td>
-                <td><code>name="country"</code></td>
-                <td>Sent to server</td>
-            </tr>
-            <tr>
-                <td><code>id</code></td>
-                <td>Label association</td>
-                <td><code>id="country"</code></td>
-                <td>Links with <code>&lt;label for="country"&gt;</code></td>
-            </tr>
-            <tr>
-                <td><code>multiple</code></td>
-                <td>Allow multiple selections</td>
-                <td><code>multiple</code></td>
-                <td>Creates list box</td>
-            </tr>
-            <tr>
-                <td><code>size</code></td>
-                <td>Number of visible options</td>
-                <td><code>size="4"</code></td>
-                <td>Works with/without <code>multiple</code></td>
-            </tr>
-            <tr>
-                <td><code>required</code></td>
-                <td>Must select an option</td>
-                <td><code>required</code></td>
-                <td>Prevents form submission</td>
-            </tr>
-            <tr>
-                <td><code>disabled</code></td>
-                <td>Disable entire menu</td>
-                <td><code>disabled</code></td>
-                <td>Grayed out, cannot interact</td>
-            </tr>
-        </table>
+    <h3>Select Element Attributes</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+        <th>Example</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td>Field identifier</td>
+        <td><code>name="country"</code></td>
+        <td>Sent to server</td>
+      </tr>
+      <tr>
+        <td><code>id</code></td>
+        <td>Label association</td>
+        <td><code>id="country"</code></td>
+        <td>Links with <code>&lt;label for="country"&gt;</code></td>
+      </tr>
+      <tr>
+        <td><code>multiple</code></td>
+        <td>Allow multiple selections</td>
+        <td><code>multiple</code></td>
+        <td>Creates list box</td>
+      </tr>
+      <tr>
+        <td><code>size</code></td>
+        <td>Number of visible options</td>
+        <td><code>size="4"</code></td>
+        <td>Works with/without <code>multiple</code></td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>Must select an option</td>
+        <td><code>required</code></td>
+        <td>Prevents form submission</td>
+      </tr>
+      <tr>
+        <td><code>disabled</code></td>
+        <td>Disable entire menu</td>
+        <td><code>disabled</code></td>
+        <td>Grayed out, cannot interact</td>
+      </tr>
+    </table>
 
-        <h3>Option Element Attributes</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Purpose</th>
-                <th>Example</th>
-                <th>Notes</th>
-            </tr>
-            <tr>
-                <td><code>value</code></td>
-                <td>Data sent to server</td>
-                <td><code>value="us"</code></td>
-                <td>If omitted, option text is sent</td>
-            </tr>
-            <tr>
-                <td><code>selected</code></td>
-                <td>Pre-selects option</td>
-                <td><code>selected</code></td>
-                <td>Default choice</td>
-            </tr>
-            <tr>
-                <td><code>disabled</code></td>
-                <td>Disable specific option</td>
-                <td><code>disabled</code></td>
-                <td>Option visible but not selectable</td>
-            </tr>
-            <tr>
-                <td><code>label</code></td>
-                <td>Shorter label for option</td>
-                <td><code>label="US"</code></td>
-                <td>Alternative to option text</td>
-            </tr>
-        </table>
+    <h3>Option Element Attributes</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+        <th>Example</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>Data sent to server</td>
+        <td><code>value="us"</code></td>
+        <td>If omitted, option text is sent</td>
+      </tr>
+      <tr>
+        <td><code>selected</code></td>
+        <td>Pre-selects option</td>
+        <td><code>selected</code></td>
+        <td>Default choice</td>
+      </tr>
+      <tr>
+        <td><code>disabled</code></td>
+        <td>Disable specific option</td>
+        <td><code>disabled</code></td>
+        <td>Option visible but not selectable</td>
+      </tr>
+      <tr>
+        <td><code>label</code></td>
+        <td>Shorter label for option</td>
+        <td><code>label="US"</code></td>
+        <td>Alternative to option text</td>
+      </tr>
+    </table>
 
-        <h3>Advanced Select Examples</h3>
+    <h3>Advanced Select Examples</h3>
 
-        <h4>Example 1: Grouped Options with &lt;optgroup&gt;</h4>
-        <pre><code>&lt;label for="car"&gt;Select your vehicle:&lt;/label&gt;
+    <h4>Example 1: Grouped Options with &lt;optgroup&gt;</h4>
+    <pre><code>&lt;label for="car"&gt;Select your vehicle:&lt;/label&gt;
 &lt;select id="car" name="car"&gt;
   &lt;optgroup label="American Cars"&gt;
     &lt;option value="ford"&gt;Ford Mustang&lt;/option&gt;
@@ -1105,8 +1338,8 @@
   &lt;/optgroup&gt;
 &lt;/select&gt;</code></pre>
 
-        <h4>Example 2: Multi-Select List Box</h4>
-        <pre><code>&lt;label for="skills"&gt;Select your skills (hold Ctrl/Cmd to select multiple):&lt;/label&gt;
+    <h4>Example 2: Multi-Select List Box</h4>
+    <pre><code>&lt;label for="skills"&gt;Select your skills (hold Ctrl/Cmd to select multiple):&lt;/label&gt;
 &lt;select id="skills" name="skills" multiple size="6"&gt;
   &lt;option value="html"&gt;HTML5&lt;/option&gt;
   &lt;option value="css"&gt;CSS3&lt;/option&gt;
@@ -1129,8 +1362,8 @@
   });
 &lt;/script&gt;</code></pre>
 
-        <h4>Example 3: Dependent/Chained Selects</h4>
-        <pre><code>&lt;label for="category"&gt;Category:&lt;/label&gt;
+    <h4>Example 3: Dependent/Chained Selects</h4>
+    <pre><code>&lt;label for="category"&gt;Category:&lt;/label&gt;
 &lt;select id="category" onchange="updateProducts()"&gt;
   &lt;option value=""&gt;Select a category&lt;/option&gt;
   &lt;option value="electronics"&gt;Electronics&lt;/option&gt;
@@ -1180,8 +1413,8 @@
   }
 &lt;/script&gt;</code></pre>
 
-        <h4>Example 4: Select with Search/Filter (Enhanced)</h4>
-        <pre><code>&lt;div class="searchable-select"&gt;
+    <h4>Example 4: Select with Search/Filter (Enhanced)</h4>
+    <pre><code>&lt;div class="searchable-select"&gt;
   &lt;label for="city"&gt;Select your city:&lt;/label&gt;
   &lt;input type="text" 
          id="citySearch" 
@@ -1230,10 +1463,10 @@
   }
 &lt;/style&gt;</code></pre>
 
-        <h3>Styling Select Menus</h3>
+    <h3>Styling Select Menus</h3>
 
-        <h4>Basic Cross-Browser Styling</h4>
-        <pre><code>&lt;style&gt;
+    <h4>Basic Cross-Browser Styling</h4>
+    <pre><code>&lt;style&gt;
   .custom-select {
     position: relative;
     display: inline-block;
@@ -1287,8 +1520,8 @@
   &lt;/select&gt;
 &lt;/div&gt;</code></pre>
 
-        <h4>Custom Dropdown with JavaScript (Full Control)</h4>
-        <pre><code>&lt;div class="dropdown"&gt;
+    <h4>Custom Dropdown with JavaScript (Full Control)</h4>
+    <pre><code>&lt;div class="dropdown"&gt;
   &lt;div class="dropdown-selected" onclick="toggleDropdown()"&gt;
     Select an option
     &lt;span class="arrow"&gt;▼&lt;/span&gt;
@@ -1384,16 +1617,16 @@
     }
   }
 &lt;/script&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 6. FIELDSET AND LEGEND -->
-        <h2 id="grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</h2>
-        <p>The <code>&lt;fieldset&gt;</code> element groups related form controls, and the <code>&lt;legend&gt;</code>
-            element provides a caption for the group. This is crucial for form organization, accessibility, and visual
-            structure.</p>
+    <!-- 6. FIELDSET AND LEGEND -->
+    <h2 id="grouping-form-elements">6. Grouping Form Elements with Fieldset and Legend</h2>
+    <p>The <code>&lt;fieldset&gt;</code> element groups related form controls, and the <code>&lt;legend&gt;</code>
+      element provides a caption for the group. This is crucial for form organization, accessibility, and visual
+      structure.</p>
 
-        <h3>Basic Fieldset Structure</h3>
-        <pre><code>&lt;form&gt;
+    <h3>Basic Fieldset Structure</h3>
+    <pre><code>&lt;form&gt;
   &lt;fieldset&gt;
     &lt;legend&gt;Personal Information&lt;/legend&gt;
     
@@ -1421,8 +1654,8 @@
   &lt;/fieldset&gt;
 &lt;/form&gt;</code></pre>
 
-        <h3>Fieldset Attributes and Styling</h3>
-        <pre><code>&lt;style&gt;
+    <h3>Fieldset Attributes and Styling</h3>
+    <pre><code>&lt;style&gt;
   /* Base fieldset styling */
   fieldset {
     border: 2px solid #3498db;
@@ -1499,8 +1732,8 @@
   &lt;/fieldset&gt;
 &lt;/form&gt;</code></pre>
 
-        <h3>Accessibility Benefits of Fieldset</h3>
-        <pre><code>&lt;!-- Without fieldset, screen readers just hear:
+    <h3>Accessibility Benefits of Fieldset</h3>
+    <pre><code>&lt;!-- Without fieldset, screen readers just hear:
      "Credit card number, edit text"
      "Expiration, edit text" 
      "CVV, edit text" --&gt;
@@ -1536,8 +1769,8 @@
          maxlength="4"&gt;
 &lt;/fieldset&gt;</code></pre>
 
-        <h3>Complex Form with Multiple Fieldsets</h3>
-        <pre><code>&lt;form class="job-application"&gt;
+    <h3>Complex Form with Multiple Fieldsets</h3>
+    <pre><code>&lt;form class="job-application"&gt;
   &lt;h2&gt;Job Application Form&lt;/h2&gt;
   
   &lt;!-- Section 1: Personal Details --&gt;
@@ -1754,13 +1987,13 @@
     opacity: 0.9;
   }
 &lt;/style&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 7. COMPLETE FORM EXAMPLES (fully preserved) -->
-        <h2 id="complete-form-examples">7. Complete Form Examples</h2>
+    <!-- 7. COMPLETE FORM EXAMPLES (fully preserved) -->
+    <h2 id="complete-form-examples">7. Complete Form Examples</h2>
 
-        <h3>Example 1: E-commerce Checkout Form</h3>
-        <pre><code>&lt;!DOCTYPE html&gt;
+    <h3>Example 1: E-commerce Checkout Form</h3>
+    <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2308,8 +2541,8 @@
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-        <h3>Example 2: Event Registration Form</h3>
-        <pre><code>&lt;!DOCTYPE html&gt;
+    <h3>Example 2: Event Registration Form</h3>
+    <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
   &lt;meta charset="UTF-8"&gt;
@@ -2695,15 +2928,15 @@
   &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 8. BEST PRACTICES -->
-        <h2 id="best-practices">8. Best Practices and Accessibility</h2>
+    <!-- 8. BEST PRACTICES -->
+    <h2 id="best-practices">8. Best Practices and Accessibility</h2>
 
-        <h3>Accessibility (a11y) Guidelines</h3>
+    <h3>Accessibility (a11y) Guidelines</h3>
 
-        <h4>1. Always Use Labels</h4>
-        <pre><code>&lt;!-- GOOD: Properly associated labels --&gt;
+    <h4>1. Always Use Labels</h4>
+    <pre><code>&lt;!-- GOOD: Properly associated labels --&gt;
 &lt;label for="email"&gt;Email Address:&lt;/label&gt;
 &lt;input type="email" id="email" name="email"&gt;
 
@@ -2716,8 +2949,8 @@
 &lt;!-- BAD: No label association --&gt;
 Email: &lt;input type="email" name="email"&gt;</code></pre>
 
-        <h4>2. Use Fieldset and Legend for Groups</h4>
-        <pre><code>&lt;!-- GOOD: Screen readers announce context --&gt;
+    <h4>2. Use Fieldset and Legend for Groups</h4>
+    <pre><code>&lt;!-- GOOD: Screen readers announce context --&gt;
 &lt;fieldset&gt;
   &lt;legend&gt;Shipping Method&lt;/legend&gt;
   &lt;!-- radio buttons here --&gt;
@@ -2727,8 +2960,8 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
 &lt;div&gt;Shipping Method&lt;/div&gt;
 &lt;!-- radio buttons here --&gt;</code></pre>
 
-        <h4>3. Provide Clear Instructions</h4>
-        <pre><code>&lt;!-- GOOD: Clear, associated instructions --&gt;
+    <h4>3. Provide Clear Instructions</h4>
+    <pre><code>&lt;!-- GOOD: Clear, associated instructions --&gt;
 &lt;label for="phone"&gt;Phone Number:&lt;/label&gt;
 &lt;input type="tel" id="phone" name="phone"
        aria-describedby="phoneHelp"&gt;
@@ -2741,8 +2974,8 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
 &lt;/label&gt;
 &lt;input type="text" id="username" name="username" required&gt;</code></pre>
 
-        <h4>4. Error Handling and Validation</h4>
-        <pre><code>&lt;div class="form-group"&gt;
+    <h4>4. Error Handling and Validation</h4>
+    <pre><code>&lt;div class="form-group"&gt;
   &lt;label for="email"&gt;Email:&lt;/label&gt;
   &lt;input type="email" id="email" name="email" 
          required
@@ -2761,47 +2994,47 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
   });
 &lt;/script&gt;</code></pre>
 
-        <h3>HTML Validation Attributes Reference</h3>
-        <table>
-            <tr>
-                <th>Attribute</th>
-                <th>Elements</th>
-                <th>Purpose</th>
-            </tr>
-            <tr>
-                <td><code>required</code></td>
-                <td>input, select, textarea</td>
-                <td>Field must have a value</td>
-            </tr>
-            <tr>
-                <td><code>pattern</code></td>
-                <td>input (text, email, etc.)</td>
-                <td>Value must match regex pattern</td>
-            </tr>
-            <tr>
-                <td><code>min</code> / <code>max</code></td>
-                <td>input (number, date, etc.)</td>
-                <td>Numeric/date range validation</td>
-            </tr>
-            <tr>
-                <td><code>minlength</code> / <code>maxlength</code></td>
-                <td>input, textarea</td>
-                <td>Text length validation</td>
-            </tr>
-            <tr>
-                <td><code>step</code></td>
-                <td>input (number)</td>
-                <td>Increment steps</td>
-            </tr>
-            <tr>
-                <td><code>multiple</code></td>
-                <td>input (email), select</td>
-                <td>Allow multiple values</td>
-            </tr>
-        </table>
+    <h3>HTML Validation Attributes Reference</h3>
+    <table>
+      <tr>
+        <th>Attribute</th>
+        <th>Elements</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>input, select, textarea</td>
+        <td>Field must have a value</td>
+      </tr>
+      <tr>
+        <td><code>pattern</code></td>
+        <td>input (text, email, etc.)</td>
+        <td>Value must match regex pattern</td>
+      </tr>
+      <tr>
+        <td><code>min</code> / <code>max</code></td>
+        <td>input (number, date, etc.)</td>
+        <td>Numeric/date range validation</td>
+      </tr>
+      <tr>
+        <td><code>minlength</code> / <code>maxlength</code></td>
+        <td>input, textarea</td>
+        <td>Text length validation</td>
+      </tr>
+      <tr>
+        <td><code>step</code></td>
+        <td>input (number)</td>
+        <td>Increment steps</td>
+      </tr>
+      <tr>
+        <td><code>multiple</code></td>
+        <td>input (email), select</td>
+        <td>Allow multiple values</td>
+      </tr>
+    </table>
 
-        <h3>Progressive Enhancement Strategy</h3>
-        <pre><code>&lt;!-- Start with basic HTML --&gt;
+    <h3>Progressive Enhancement Strategy</h3>
+    <pre><code>&lt;!-- Start with basic HTML --&gt;
 &lt;input type="text" id="phone" name="phone" 
        placeholder="555-555-5555"
        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"&gt;
@@ -2826,13 +3059,13 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
     e.target.value = value.slice(0,12);
   });
 &lt;/script&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 9. COMMON PATTERNS -->
-        <h2 id="common-patterns">9. Common Patterns and Use Cases</h2>
+    <!-- 9. COMMON PATTERNS -->
+    <h2 id="common-patterns">9. Common Patterns and Use Cases</h2>
 
-        <h3>Pattern 1: Multi-Step Form (Wizard)</h3>
-        <pre><code>&lt;div class="wizard"&gt;
+    <h3>Pattern 1: Multi-Step Form (Wizard)</h3>
+    <pre><code>&lt;div class="wizard"&gt;
   &lt;div class="wizard-steps"&gt;
     &lt;div class="step active"&gt;1. Account&lt;/div&gt;
     &lt;div class="step"&gt;2. Profile&lt;/div&gt;
@@ -2859,8 +3092,8 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
   &lt;!-- More steps... --&gt;
 &lt;/div&gt;</code></pre>
 
-        <h3>Pattern 2: Dynamic Form Fields</h3>
-        <pre><code>&lt;div id="educationFields"&gt;
+    <h3>Pattern 2: Dynamic Form Fields</h3>
+    <pre><code>&lt;div id="educationFields"&gt;
   &lt;div class="education-entry"&gt;
     &lt;select name="degree[]"&gt;
       &lt;option value="hs"&gt;High School&lt;/option&gt;
@@ -2888,8 +3121,8 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
   }
 &lt;/script&gt;</code></pre>
 
-        <h3>Pattern 3: Conditional Fields</h3>
-        <pre><code>&lt;div class="form-row"&gt;
+    <h3>Pattern 3: Conditional Fields</h3>
+    <pre><code>&lt;div class="form-row"&gt;
   &lt;label for="hasOtherAddress"&gt;Ship to different address?&lt;/label&gt;
   &lt;input type="checkbox" id="hasOtherAddress" onchange="toggleOtherAddress()"&gt;
 &lt;/div&gt;
@@ -2914,13 +3147,13 @@ Email: &lt;input type="email" name="email"&gt;</code></pre>
     });
   }
 &lt;/script&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 10. STYLING -->
-        <h2 id="styling-form-elements">10. Styling Form Elements</h2>
+    <!-- 10. STYLING -->
+    <h2 id="styling-form-elements">10. Styling Form Elements</h2>
 
-        <h3>Cross-Browser Consistent Styling</h3>
-        <pre><code>/* Reset and base styles */
+    <h3>Cross-Browser Consistent Styling</h3>
+    <pre><code>/* Reset and base styles */
 input, select, textarea, button {
   font-family: inherit;
   font-size: 100%;
@@ -3051,16 +3284,16 @@ legend {
   font-size: 0.875em;
   margin-top: 0.25em;
 }</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 11. TROUBLESHOOTING -->
-        <h2 id="troubleshooting">11. Troubleshooting and Common Issues</h2>
+    <!-- 11. TROUBLESHOOTING -->
+    <h2 id="troubleshooting">11. Troubleshooting and Common Issues</h2>
 
-        <h3>Issue 1: Radio Button Not Allowing Deselection</h3>
-        <p><strong>Problem</strong>: Once a radio button is selected, it can't be deselected.<br>
-            <strong>Solution</strong>: Provide a "None" or "Clear" option:
-        </p>
-        <pre><code>&lt;fieldset&gt;
+    <h3>Issue 1: Radio Button Not Allowing Deselection</h3>
+    <p><strong>Problem</strong>: Once a radio button is selected, it can't be deselected.<br>
+      <strong>Solution</strong>: Provide a "None" or "Clear" option:
+    </p>
+    <pre><code>&lt;fieldset&gt;
   &lt;legend&gt;Choose one:&lt;/legend&gt;
   
   &lt;input type="radio" id="option1" name="options" value="1"&gt;
@@ -3084,11 +3317,11 @@ legend {
   }
 &lt;/script&gt;</code></pre>
 
-        <h3>Issue 2: Select Menu Default Value Not Submitting</h3>
-        <p><strong>Problem</strong>: The first option is selected but no value is submitted.<br>
-            <strong>Solution</strong>: Always provide a value or use a placeholder option:
-        </p>
-        <pre><code>&lt;!-- PROBLEM: No value for first option --&gt;
+    <h3>Issue 2: Select Menu Default Value Not Submitting</h3>
+    <p><strong>Problem</strong>: The first option is selected but no value is submitted.<br>
+      <strong>Solution</strong>: Always provide a value or use a placeholder option:
+    </p>
+    <pre><code>&lt;!-- PROBLEM: No value for first option --&gt;
 &lt;select name="country"&gt;
   &lt;option&gt;Select a country&lt;/option&gt;
   &lt;option value="us"&gt;United States&lt;/option&gt;
@@ -3107,11 +3340,11 @@ legend {
   &lt;option value="us"&gt;United States&lt;/option&gt;
 &lt;/select&gt;</code></pre>
 
-        <h3>Issue 3: Checkbox Values Not Appearing When Unchecked</h3>
-        <p><strong>Problem</strong>: Unchecked checkboxes don't submit any value.<br>
-            <strong>Solution</strong>: Use hidden fields for default "off" values:
-        </p>
-        <pre><code>&lt;!-- PROBLEM: If unchecked, nothing is sent --&gt;
+    <h3>Issue 3: Checkbox Values Not Appearing When Unchecked</h3>
+    <p><strong>Problem</strong>: Unchecked checkboxes don't submit any value.<br>
+      <strong>Solution</strong>: Use hidden fields for default "off" values:
+    </p>
+    <pre><code>&lt;!-- PROBLEM: If unchecked, nothing is sent --&gt;
 &lt;input type="checkbox" name="newsletter" value="yes"&gt;
 
 &lt;!-- SOLUTION: Hidden field with default value --&gt;
@@ -3120,11 +3353,11 @@ legend {
        onchange="this.previousElementSibling.disabled = this.checked"&gt;
 &lt;!-- Server receives: newsletter=no (unchecked) or newsletter=yes (checked) --&gt;</code></pre>
 
-        <h3>Issue 4: Number Input Spinners Not Appearing</h3>
-        <p><strong>Problem</strong>: Number input doesn't show spinner controls.<br>
-            <strong>Solution</strong>: Check CSS that might hide them:
-        </p>
-        <pre><code>/* Problematic CSS */
+    <h3>Issue 4: Number Input Spinners Not Appearing</h3>
+    <p><strong>Problem</strong>: Number input doesn't show spinner controls.<br>
+      <strong>Solution</strong>: Check CSS that might hide them:
+    </p>
+    <pre><code>/* Problematic CSS */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -3144,11 +3377,11 @@ input[type=number] {
   -moz-appearance: spinner;
 }</code></pre>
 
-        <h3>Issue 5: Mobile Keyboard Types</h3>
-        <p><strong>Problem</strong>: Wrong keyboard appears on mobile devices.<br>
-            <strong>Solution</strong>: Use appropriate input types:
-        </p>
-        <pre><code>&lt;!-- Numbers keyboard --&gt;
+    <h3>Issue 5: Mobile Keyboard Types</h3>
+    <p><strong>Problem</strong>: Wrong keyboard appears on mobile devices.<br>
+      <strong>Solution</strong>: Use appropriate input types:
+    </p>
+    <pre><code>&lt;!-- Numbers keyboard --&gt;
 &lt;input type="tel" name="phone"&gt;  &lt;!-- Shows numeric keypad --&gt;
 &lt;input type="number" name="age"&gt;  &lt;!-- Shows numeric keypad --&gt;
 &lt;input type="text" inputmode="numeric" name="zip"&gt;  &lt;!-- Modern approach --&gt;
@@ -3158,225 +3391,225 @@ input[type=number] {
 
 &lt;!-- URL keyboard --&gt;
 &lt;input type="url" name="website"&gt;  &lt;!-- Shows .com and / keys --&gt;</code></pre>
-        <hr>
+    <hr>
 
-        <!-- 12. PRACTICE EXERCISES (INTERACTIVE) -->
-        <h2 id="practice-exercises">12. Practice Exercises</h2>
+    <!-- 12. PRACTICE EXERCISES (INTERACTIVE) -->
+    <h2 id="practice-exercises">12. Practice Exercises</h2>
 
-        <div class="exercise-grid">
-            <!-- Exercise 1 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>🍕 Exercise 1: Pizza Order Form</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Create a pizza ordering form that includes:</p>
-                    <ul>
-                        <li>Radio buttons for crust type (thin, thick, stuffed)</li>
-                        <li>Checkboxes for toppings (pepperoni, mushrooms, olives, peppers)</li>
-                        <li>Number input for quantity (1-10)</li>
-                        <li>Select menu for size (small, medium, large, extra-large)</li>
-                        <li>Fieldset grouping for each section</li>
-                        <li>Total price calculation display</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Open your editor and build this interactive form!')">Start
-                        Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 2 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>💼 Exercise 2: Job Application Form</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Build a job application with:</p>
-                    <ul>
-                        <li>Personal information section (name, email, phone)</li>
-                        <li>Position selection (radio buttons for full-time/part-time/contract)</li>
-                        <li>Skills checklist (multiple checkboxes)</li>
-                        <li>Years of experience (number input with min/max)</li>
-                        <li>Availability date (select menus for month/day/year)</li>
-                        <li>Resume upload (file input)</li>
-                        <li>Cover letter (textarea)</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Create this comprehensive job application form!')">Start
-                        Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 3 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>🎟️ Exercise 3: Event Registration System</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Create an event registration form with:</p>
-                    <ul>
-                        <li>Ticket type selection (radio buttons with different prices)</li>
-                        <li>Workshop selection (checkboxes that enable/disable based on ticket type)</li>
-                        <li>Dietary restrictions (checkboxes + textarea for other)</li>
-                        <li>T-shirt size (select menu)</li>
-                        <li>Emergency contact information (conditional fields)</li>
-                        <li>Terms agreement checkbox</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Build this event registration system!')">Start
-                        Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 4 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>💻 Exercise 4: Product Customizer</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Build a product customization form for a laptop:</p>
-                    <ul>
-                        <li>Model selection (select menu with optgroups)</li>
-                        <li>RAM options (radio buttons)</li>
-                        <li>Storage options (radio buttons with capacity)</li>
-                        <li>Software bundle (checkboxes)</li>
-                        <li>Warranty options (radio buttons)</li>
-                        <li>Accessories (checkboxes)</li>
-                        <li>Total price updates in real-time</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Create this dynamic product customizer!')">Start
-                        Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 5 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>📊 Exercise 5: Survey with Conditional Logic</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Create a survey that shows/hides questions based on previous answers:</p>
-                    <ul>
-                        <li>Radio button: "Have you used our product before?" (Yes/No)</li>
-                        <li>If Yes: Show rating questions (radio buttons 1-5)</li>
-                        <li>If No: Show "What brought you here?" (checkboxes)</li>
-                        <li>Feedback textarea</li>
-                        <li>Newsletter signup checkbox</li>
-                        <li>Age verification number input</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Build this conditional survey!')">Start Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 6 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>🛒 Exercise 6: Multi-Step Checkout</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Build a 3-step checkout process:</p>
-                    <ul>
-                        <li>Step 1: Shipping address (text inputs, select for country)</li>
-                        <li>Step 2: Payment method (radio buttons for card types)</li>
-                        <li>Step 3: Order review (read-only fields + confirmation checkbox)</li>
-                        <li>Navigation between steps</li>
-                        <li>Data persistence between steps</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Create this multi-step checkout!')">Start Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 7 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>✅ Exercise 7: Advanced Form with JavaScript Validation</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Create a registration form with real-time validation:</p>
-                    <ul>
-                        <li>Username: minimum 3 characters, no special characters</li>
-                        <li>Email: valid format</li>
-                        <li>Password: minimum 8 characters, at least one number</li>
-                        <li>Confirm password: must match</li>
-                        <li>Age: 18-120</li>
-                        <li>Terms: must be checked</li>
-                        <li>Real-time validation messages</li>
-                        <li>Submit button enables only when all valid</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Build this form with real-time validation!')">Start
-                        Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 8 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>♿ Exercise 8: Accessible Form Challenge</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Take an inaccessible form and make it accessible:</p>
-                    <ul>
-                        <li>Add proper labels to all fields</li>
-                        <li>Group related fields with fieldset/legend</li>
-                        <li>Add ARIA attributes where necessary</li>
-                        <li>Implement proper error messaging</li>
-                        <li>Ensure keyboard navigation works</li>
-                        <li>Test with screen reader</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Practice accessibility fixes!')">Start Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 9 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>👨‍👩‍👧 Exercise 9: Data Entry Form with Dynamic Fields</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Create a form for entering family members:</p>
-                    <ul>
-                        <li>Start with one set of fields</li>
-                        <li>Button to "Add Family Member" duplicates the fields</li>
-                        <li>Each set includes: name, relationship, age (number)</li>
-                        <li>Remove button for each set (except first)</li>
-                        <li>Ensure all fields have unique names/ids</li>
-                        <li>Maximum 5 family members</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Build this dynamic form!')">Start Coding</button>
-                </div>
-            </div>
-
-            <!-- Exercise 10 -->
-            <div class="exercise-card">
-                <div class="exercise-header" onclick="toggleExercise(this)">
-                    <span>🏨 Exercise 10: Room Booking System</span>
-                    <span>▼</span>
-                </div>
-                <div class="exercise-content">
-                    <p>Build a room booking form with:</p>
-                    <ul>
-                        <li>Room type (select with optgroups)</li>
-                        <li>Check-in date (date input)</li>
-                        <li>Check-out date (date input)</li>
-                        <li>Number of guests (number input)</li>
-                        <li>Special requests (textarea)</li>
-                        <li>Add-ons (checkboxes: breakfast, parking, wifi)</li>
-                        <li>Total nights and price calculation</li>
-                        <li>Availability checking (simulated)</li>
-                    </ul>
-                    <button class="btn-run" onclick="alert('Create this room booking system!')">Start Coding</button>
-                </div>
-            </div>
+    <div class="exercise-grid">
+      <!-- Exercise 1 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>🍕 Exercise 1: Pizza Order Form</span>
+          <span>▼</span>
         </div>
+        <div class="exercise-content">
+          <p>Create a pizza ordering form that includes:</p>
+          <ul>
+            <li>Radio buttons for crust type (thin, thick, stuffed)</li>
+            <li>Checkboxes for toppings (pepperoni, mushrooms, olives, peppers)</li>
+            <li>Number input for quantity (1-10)</li>
+            <li>Select menu for size (small, medium, large, extra-large)</li>
+            <li>Fieldset grouping for each section</li>
+            <li>Total price calculation display</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Open your editor and build this interactive form!')">Start
+            Coding</button>
+        </div>
+      </div>
 
-        <h3>Sample Exercise Solution Structure (Exercise 1 – Pizza Order Form)</h3>
-        <pre><code>&lt;!DOCTYPE html&gt;
+      <!-- Exercise 2 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>💼 Exercise 2: Job Application Form</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Build a job application with:</p>
+          <ul>
+            <li>Personal information section (name, email, phone)</li>
+            <li>Position selection (radio buttons for full-time/part-time/contract)</li>
+            <li>Skills checklist (multiple checkboxes)</li>
+            <li>Years of experience (number input with min/max)</li>
+            <li>Availability date (select menus for month/day/year)</li>
+            <li>Resume upload (file input)</li>
+            <li>Cover letter (textarea)</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Create this comprehensive job application form!')">Start
+            Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 3 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>🎟️ Exercise 3: Event Registration System</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Create an event registration form with:</p>
+          <ul>
+            <li>Ticket type selection (radio buttons with different prices)</li>
+            <li>Workshop selection (checkboxes that enable/disable based on ticket type)</li>
+            <li>Dietary restrictions (checkboxes + textarea for other)</li>
+            <li>T-shirt size (select menu)</li>
+            <li>Emergency contact information (conditional fields)</li>
+            <li>Terms agreement checkbox</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Build this event registration system!')">Start
+            Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 4 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>💻 Exercise 4: Product Customizer</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Build a product customization form for a laptop:</p>
+          <ul>
+            <li>Model selection (select menu with optgroups)</li>
+            <li>RAM options (radio buttons)</li>
+            <li>Storage options (radio buttons with capacity)</li>
+            <li>Software bundle (checkboxes)</li>
+            <li>Warranty options (radio buttons)</li>
+            <li>Accessories (checkboxes)</li>
+            <li>Total price updates in real-time</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Create this dynamic product customizer!')">Start
+            Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 5 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>📊 Exercise 5: Survey with Conditional Logic</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Create a survey that shows/hides questions based on previous answers:</p>
+          <ul>
+            <li>Radio button: "Have you used our product before?" (Yes/No)</li>
+            <li>If Yes: Show rating questions (radio buttons 1-5)</li>
+            <li>If No: Show "What brought you here?" (checkboxes)</li>
+            <li>Feedback textarea</li>
+            <li>Newsletter signup checkbox</li>
+            <li>Age verification number input</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Build this conditional survey!')">Start Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 6 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>🛒 Exercise 6: Multi-Step Checkout</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Build a 3-step checkout process:</p>
+          <ul>
+            <li>Step 1: Shipping address (text inputs, select for country)</li>
+            <li>Step 2: Payment method (radio buttons for card types)</li>
+            <li>Step 3: Order review (read-only fields + confirmation checkbox)</li>
+            <li>Navigation between steps</li>
+            <li>Data persistence between steps</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Create this multi-step checkout!')">Start Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 7 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>✅ Exercise 7: Advanced Form with JavaScript Validation</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Create a registration form with real-time validation:</p>
+          <ul>
+            <li>Username: minimum 3 characters, no special characters</li>
+            <li>Email: valid format</li>
+            <li>Password: minimum 8 characters, at least one number</li>
+            <li>Confirm password: must match</li>
+            <li>Age: 18-120</li>
+            <li>Terms: must be checked</li>
+            <li>Real-time validation messages</li>
+            <li>Submit button enables only when all valid</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Build this form with real-time validation!')">Start
+            Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 8 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>♿ Exercise 8: Accessible Form Challenge</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Take an inaccessible form and make it accessible:</p>
+          <ul>
+            <li>Add proper labels to all fields</li>
+            <li>Group related fields with fieldset/legend</li>
+            <li>Add ARIA attributes where necessary</li>
+            <li>Implement proper error messaging</li>
+            <li>Ensure keyboard navigation works</li>
+            <li>Test with screen reader</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Practice accessibility fixes!')">Start Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 9 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>👨‍👩‍👧 Exercise 9: Data Entry Form with Dynamic Fields</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Create a form for entering family members:</p>
+          <ul>
+            <li>Start with one set of fields</li>
+            <li>Button to "Add Family Member" duplicates the fields</li>
+            <li>Each set includes: name, relationship, age (number)</li>
+            <li>Remove button for each set (except first)</li>
+            <li>Ensure all fields have unique names/ids</li>
+            <li>Maximum 5 family members</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Build this dynamic form!')">Start Coding</button>
+        </div>
+      </div>
+
+      <!-- Exercise 10 -->
+      <div class="exercise-card">
+        <div class="exercise-header" onclick="toggleExercise(this)">
+          <span>🏨 Exercise 10: Room Booking System</span>
+          <span>▼</span>
+        </div>
+        <div class="exercise-content">
+          <p>Build a room booking form with:</p>
+          <ul>
+            <li>Room type (select with optgroups)</li>
+            <li>Check-in date (date input)</li>
+            <li>Check-out date (date input)</li>
+            <li>Number of guests (number input)</li>
+            <li>Special requests (textarea)</li>
+            <li>Add-ons (checkboxes: breakfast, parking, wifi)</li>
+            <li>Total nights and price calculation</li>
+            <li>Availability checking (simulated)</li>
+          </ul>
+          <button class="btn-run" onclick="alert('Create this room booking system!')">Start Coding</button>
+        </div>
+      </div>
+    </div>
+
+    <h3>Sample Exercise Solution Structure (Exercise 1 – Pizza Order Form)</h3>
+    <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
   &lt;title&gt;Pizza Order Form - Practice Exercise&lt;/title&gt;
@@ -3512,39 +3745,40 @@ input[type=number] {
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-        <hr>
-        <h2>📌 Summary: Key Takeaways</h2>
-        <ul style="margin:2rem 0 3rem; font-size:1.2rem; columns:2 300px;">
-            <li><strong>Radio Buttons</strong>: single selection, same <code>name</code>, always provide
-                <code>value</code>.</li>
-            <li><strong>Checkboxes</strong>: multiple selections, use <code>checked</code> for opt‑out patterns.</li>
-            <li><strong>Number Inputs</strong>: use <code>min</code>, <code>max</code>, <code>step</code>.</li>
-            <li><strong>Select Menus</strong>: space‑efficient, <code>&lt;optgroup&gt;</code> for categories.</li>
-            <li><strong>Fieldset+Legend</strong>: essential for accessibility and grouping.</li>
-            <li><strong>Accessibility</strong>: labels, fieldsets, error descriptions, ARIA.</li>
-            <li><strong>Validation</strong>: combine HTML5 attributes with JavaScript.</li>
-            <li><strong>Progressive enhancement</strong>: start with HTML, then enhance.</li>
-            <li><strong>Mobile</strong>: use correct input types for touch keyboards.</li>
-            <li><strong>Form design</strong>: intuitive, accessible, user‑friendly.</li>
-        </ul>
-        <p style="font-size:1.3rem; font-weight:600; color:#166f7c; text-align:center; margin:3rem 0;">Remember:
-            Well-designed forms are the bridge between users and your application. Invest time in making them intuitive,
-            accessible, and user‑friendly!</p>
+    <hr>
+    <h2>📌 Summary: Key Takeaways</h2>
+    <ul style="margin:2rem 0 3rem; font-size:1.2rem; columns:2 300px;">
+      <li><strong>Radio Buttons</strong>: single selection, same <code>name</code>, always provide
+        <code>value</code>.
+      </li>
+      <li><strong>Checkboxes</strong>: multiple selections, use <code>checked</code> for opt‑out patterns.</li>
+      <li><strong>Number Inputs</strong>: use <code>min</code>, <code>max</code>, <code>step</code>.</li>
+      <li><strong>Select Menus</strong>: space‑efficient, <code>&lt;optgroup&gt;</code> for categories.</li>
+      <li><strong>Fieldset+Legend</strong>: essential for accessibility and grouping.</li>
+      <li><strong>Accessibility</strong>: labels, fieldsets, error descriptions, ARIA.</li>
+      <li><strong>Validation</strong>: combine HTML5 attributes with JavaScript.</li>
+      <li><strong>Progressive enhancement</strong>: start with HTML, then enhance.</li>
+      <li><strong>Mobile</strong>: use correct input types for touch keyboards.</li>
+      <li><strong>Form design</strong>: intuitive, accessible, user‑friendly.</li>
+    </ul>
+    <p style="font-size:1.3rem; font-weight:600; color:#166f7c; text-align:center; margin:3rem 0;">Remember:
+      Well-designed forms are the bridge between users and your application. Invest time in making them intuitive,
+      accessible, and user‑friendly!</p>
 
-        <footer>
-            📘 HTML Forms – Part 2 · Advanced elements & accessibility · every single line preserved · interactive
-            exercises
-        </footer>
-    </div>
+    <footer>
+      📘 HTML Forms – Part 2 · Advanced elements & accessibility · every single line preserved · interactive
+      exercises
+    </footer>
+  </div>
 
-    <script>
-        function toggleExercise(header) {
-            const content = header.nextElementSibling;
-            const arrow = header.querySelector('span:last-child');
-            content.classList.toggle('show');
-            arrow.textContent = content.classList.contains('show') ? '▲' : '▼';
-        }
-    </script>
+  <script>
+    function toggleExercise(header) {
+      const content = header.nextElementSibling;
+      const arrow = header.querySelector('span:last-child');
+      content.classList.toggle('show');
+      arrow.textContent = content.classList.contains('show') ? '▲' : '▼';
+    }
+  </script>
 </body>
 
 </html>

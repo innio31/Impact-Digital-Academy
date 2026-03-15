@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Business Correspondence Formats · complete notes</title>
+    <title>Business Correspondence Formats · complete notes (printable)</title>
     <style>
         * {
             margin: 0;
@@ -271,13 +271,216 @@
             font-size: 0.95rem;
             line-height: 1.5;
         }
+
+        /* ========== OPTIMIZED PRINT STYLES – COMPACT ========== */
+        @media print {
+
+            /* global reset – compact, monochrome, clean */
+            body {
+                background: white;
+                padding: 0.1in;
+                font-size: 9pt;
+                line-height: 1.2;
+                color: black;
+            }
+
+            .wrapper {
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                background: white;
+            }
+
+            h1 {
+                font-size: 16pt;
+                background: none;
+                -webkit-text-fill-color: black;
+                color: black;
+                letter-spacing: normal;
+                border-left: 4px solid #333;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0 0;
+            }
+
+            .subhead {
+                font-size: 11pt;
+                color: #222;
+                border-left: 3px solid #555;
+                padding-left: 0.1in;
+                margin-bottom: 0.1in;
+            }
+
+            h2 {
+                font-size: 14pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-bottom: 0.03in;
+            }
+
+            h3 {
+                font-size: 12.5pt;
+                color: black;
+                border-left: 4px solid #999;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0.05in 0;
+            }
+
+            h4 {
+                font-size: 11pt;
+                color: black;
+                margin: 0.08in 0 0.02in 0;
+            }
+
+            p {
+                margin: 0.04in 0;
+            }
+
+            ul,
+            ol {
+                margin: 0.04in 0 0.04in 0.15in;
+            }
+
+            li {
+                margin: 0.01in 0;
+            }
+
+            table {
+                box-shadow: none;
+                border: 1px solid #333;
+                margin: 0.1in 0;
+                font-size: 8pt;
+                line-height: 1.1;
+                display: table;
+                white-space: normal;
+                overflow-x: visible;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .badge {
+                background: #444;
+                color: white;
+                font-size: 7pt;
+                padding: 0.02in 0.1in;
+            }
+
+            .toc-card {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+                box-shadow: none;
+            }
+
+            .toc-grid a {
+                background: white;
+                padding: 0.02in 0.12in;
+                border: 1px solid #aaa;
+                color: black;
+                box-shadow: none;
+                font-weight: normal;
+                font-size: 8pt;
+            }
+
+            .toc-grid a:hover {
+                background: #eee;
+                transform: none;
+            }
+
+            .def-grid {
+                margin: 0.05in 0;
+                gap: 0.05in;
+            }
+
+            .def-item {
+                background: #f6f6f6;
+                border-bottom: 2px solid #666;
+                padding: 0.07in;
+            }
+
+            .accent-box,
+            .highlight-block,
+            .mini-card {
+                background: #fafafa;
+                border: 1px solid #aaa;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            .drill {
+                background: #f8f8f8;
+                border-left: 4px solid #444;
+                font-size: 8pt;
+                padding: 0.05in 0.1in;
+            }
+
+            .letter-sample,
+            .memo-sample,
+            .email-sample {
+                background: #f9f9f9;
+                border: 1px solid #aaa;
+                font-size: 8pt;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            hr {
+                margin: 0.1in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            footer {
+                margin-top: 0.15in;
+                border-top: 1px solid #aaa;
+                padding-top: 0.1in;
+                font-size: 8pt;
+                color: black;
+            }
+
+            /* avoid breaking inside important blocks */
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            section,
+            .toc-card,
+            .mini-card,
+            table,
+            .letter-sample,
+            .memo-sample,
+            .email-sample {
+                page-break-inside: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="wrapper">
 
-        <h1>📋 Comprehensive Notes on Business Correspondence Formats</h1>
+        <h1>📋 Business Correspondence Formats</h1>
         <div class="subhead">Full block letters · memos · professional emails</div>
 
         <!-- table of contents (exact from source) -->
@@ -306,7 +509,6 @@
                 <li>A tool for building and maintaining business relationships</li>
                 <li>Legal documentation when required</li>
             </ul>
-
             <h3>1.2 Key Principles of Effective Business Writing</h3>
             <p>The "7 C's" of Business Communication:</p>
             <ol>
@@ -327,7 +529,6 @@
             <p>The Full Block Format is the most commonly used business letter format internationally. All elements are
                 aligned to the <strong>left margin</strong> with <strong>open punctuation</strong> (no punctuation after
                 salutation or complimentary close unless using mixed punctuation).</p>
-
             <h3>2.2 Complete Structure of a Full Block Business Letter</h3>
             <div class="letter-sample">
                 [LETTERHEAD - Optional]
@@ -390,33 +591,27 @@
                 [Copy Notation - if applicable]
                 cc: Mr. Robert Johnson, Hiring Committee Chair
             </div>
-
             <h3>2.3 Detailed Breakdown of Each Component</h3>
             <h4>Letterhead</h4>
             <p><strong>Purpose:</strong> Identifies the sender professionally<br><strong>Contents:</strong> Company
                 name, logo, address, contact information<br><strong>Placement:</strong> Top of page, often pre-printed
                 or formatted in a header</p>
-
             <h4>Date</h4>
             <p><strong>Format:</strong> Month Day, Year (e.g., March 15, 2024)<br><strong>Placement:</strong> 2-6 lines
                 below letterhead<br><strong>International Variations:</strong><br> US: Month Day, Year (March 15,
                 2024)<br> Many other countries: Day Month Year (15 March 2024)</p>
-
             <h4>Recipient's Address</h4>
             <p><strong>Order:</strong><br> 1. Recipient's name with title (Mr., Ms., Dr., etc.)<br> 2. Job title (if
                 known)<br> 3. Company name<br> 4. Street address<br> 5. City, State/Province, Postal Code<br> 6. Country
                 (if international)</p>
-
             <h4>Subject Line</h4>
             <p><strong>Purpose:</strong> Immediately informs reader of letter's purpose<br><strong>Format:</strong>
                 Often preceded by "RE:", "SUBJECT:", or in bold<br><strong>Placement:</strong> Between recipient's
                 address and salutation</p>
-
             <h4>Salutation</h4>
             <p><strong>Standard:</strong> "Dear [Title] [Last Name]:"<br><strong>If name unknown:</strong> "Dear
                 Sir/Madam:" or "To Whom It May Concern:"<br><strong>Punctuation:</strong> Colon (:) in Full Block format
                 with open punctuation</p>
-
             <h4>Body Paragraphs</h4>
             <p><strong>First Paragraph (Introduction)</strong><br> - State purpose immediately<br> - Reference how you
                 learned about the opportunity<br> - Grab reader's attention</p>
@@ -424,22 +619,18 @@
                 - Use bullet points for lists (if appropriate)<br> - Maintain logical flow</p>
             <p><strong>Final Paragraph (Conclusion)</strong><br> - Summarize key points<br> - Include call to action<br>
                 - Express appreciation<br> - Mention availability for follow-up</p>
-
             <h4>Complimentary Close</h4>
             <p><strong>Formal:</strong> "Sincerely," "Yours sincerely," "Respectfully,"<br><strong>Less Formal:</strong>
                 "Best regards," "Kind regards," "Cordially,"<br><strong>Capitalization:</strong> Only first word
                 capitalized<br><strong>Punctuation:</strong> Comma at end (with open punctuation, often omitted but
                 traditionally included)</p>
-
             <h4>Signature Block</h4>
             <p><strong>Space:</strong> 4 blank lines for handwritten signature<br><strong>Typed Name:</strong> First and
                 Last name<br><strong>Job Title:</strong> Optional, on same or next line</p>
-
             <h4>Reference Notations</h4>
             <p><strong>Enclosure:</strong> Indicates additional documents are included<br><strong>Copy (cc):</strong>
                 Shows who else received copies<br><strong>Blind Copy (bcc):</strong> Not shown on original but recorded
                 for files</p>
-
             <h3>2.4 Sample Business Letters</h3>
             <h4>Sample 1: Inquiry Letter</h4>
             <div class="letter-sample">
@@ -485,7 +676,6 @@
                 Office Manager
                 Tech Solutions Inc.
             </div>
-
             <h4>Sample 2: Complaint Letter</h4>
             <div class="letter-sample">
                 January 20, 2024
@@ -535,7 +725,6 @@
             <h3>3.1 Understanding Memos</h3>
             <p>A memorandum (memo) is a document used for internal communication within an organization. It is typically
                 less formal than a business letter but maintains professional standards.</p>
-
             <h3>3.2 Standard Memo Format</h3>
             <div class="memo-sample">
                 MEMORANDUM
@@ -573,7 +762,6 @@
 
                 [No signature needed]
             </div>
-
             <h3>3.3 Components of a Memo</h3>
             <h4>Header Section</h4>
             <table>
@@ -610,7 +798,6 @@
                 for clarity; organizes information logically.</p>
             <p><strong>Closing Segment</strong> – States required actions, provides deadlines, offers assistance or
                 further information.</p>
-
             <h3>3.4 Types of Memos</h3>
             <h4>Directive Memo</h4>
             <div class="memo-sample">
@@ -652,7 +839,6 @@
 
                 This memo summarizes my client visits to Chicago, Detroit, and Cleveland from February 12-18, 2024...
             </div>
-
             <h3>3.5 Memo Formatting Guidelines</h3>
             <table>
                 <tr>
@@ -692,7 +878,6 @@
                     <td>Note at bottom if documents are included</td>
                 </tr>
             </table>
-
             <h3>3.6 Sample Memos for Various Situations</h3>
             <h4>Sample 1: Meeting Announcement</h4>
             <div class="memo-sample">
@@ -773,7 +958,6 @@
             <p>Email remains the primary mode of business communication. Professional emails:<br> - Create lasting
                 impressions of you and your organization<br> - Serve as legal records of communications<br> - Can be
                 forwarded and shared widely<br> - Require the same care as formal letters</p>
-
             <h3>4.2 Complete Email Structure</h3>
             <div class="email-sample">
                 [TO:] primary.recipient@company.com
@@ -820,7 +1004,6 @@
                 [ATTACHMENTS - if applicable]
                 Draft Proposal - Community Outreach Project.pdf
             </div>
-
             <h3>4.3 Detailed Breakdown of Email Components</h3>
             <h4>Subject Line</h4>
             <p><strong>Characteristics of Effective Subject Lines:</strong><br> - Specific: "Q2 Sales Report Attached"
@@ -867,7 +1050,6 @@
             </table>
             <p><strong>Subject Lines to Avoid:</strong> "Hi" or "Hello"; No subject; ALL CAPS; Vague terms like
                 "Important"; Overly long subjects.</p>
-
             <h4>Salutation</h4>
             <p><strong>Formal (External/First Contact):</strong> "Dear Mr. Johnson:" (with colon); "Dear Dr. Martinez:";
                 "Dear Ms. Chen:"<br>
@@ -878,7 +1060,6 @@
                 <strong>When Name is Unknown:</strong> "Dear Hiring Manager:"; "Dear Customer Service Team:"; "To Whom
                 It May Concern:" (use sparingly)
             </p>
-
             <h4>Body Structure</h4>
             <p><strong>Opening Paragraph (The Hook)</strong> – State purpose within first two sentences; reference
                 previous communication if applicable; be direct but polite.</p>
@@ -886,12 +1067,10 @@
                 multiple items; keep paragraphs short (3-5 sentences max); use bold for emphasis sparingly.</p>
             <p><strong>Closing Paragraph (The Call to Action)</strong> – State clearly what you want the recipient to
                 do; provide deadlines when applicable; offer additional information if needed; express appreciation.</p>
-
             <h4>Signature Block</h4>
-            <p><strong>Minimum Elements:</strong> Name, Job Title, Company, Phone Number, Email<br>
-                <strong>Enhanced Elements:</strong> Company Logo (in corporate emails), Physical Address, Website,
-                Social Media Links, Legal Disclaimer (required for some industries)
-            </p>
+            <p><strong>Minimum Elements:</strong> Name, Job Title, Company, Phone Number, Email<br><strong>Enhanced
+                    Elements:</strong> Company Logo (in corporate emails), Physical Address, Website, Social Media
+                Links, Legal Disclaimer (required for some industries)</p>
             <p><strong>Signature Block Examples:</strong></p>
             <div class="email-sample">
                 Standard Professional:
@@ -920,7 +1099,6 @@
                 IT Support Specialist
                 Ext. 456
             </div>
-
             <h3>4.4 Email Etiquette Guidelines</h3>
             <h4>TO, CC, and BCC Usage</h4>
             <table>
@@ -958,7 +1136,6 @@
             <h4>Email Length Guidelines</h4>
             <p>Keep emails concise—ideally, no longer than what fits on one screen. If longer than 3-4 paragraphs,
                 consider a memo attachment. Use headings for longer emails.</p>
-
             <h3>4.5 Types of Professional Emails</h3>
             <h4>Inquiry Email</h4>
             <div class="email-sample">
@@ -1121,7 +1298,6 @@
 
                 Attachments: OrderConfirmation.pdf, ReceivedItem.jpg
             </div>
-
             <h3>4.6 Email Templates for Common Situations</h3>
             <h4>Out of Office Auto-Reply</h4>
             <div class="email-sample">

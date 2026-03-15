@@ -209,11 +209,249 @@
             border-left: 8px solid #f4b836;
             margin: 1.5rem 0;
         }
+
+        /* Toolbar for download/print */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #1f737d;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+            transition: 0.1s ease;
+            border: 1px solid #0e4e56;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0b5f68;
+            box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+        }
+
+        .btn-pdf {
+            background: #a13f3f;
+            border-color: #6b2b2b;
+        }
+
+        .btn-pdf:hover {
+            background: #832f2f;
+        }
+
+        @media print {
+            .toolbar {
+                display: none;
+            }
+        }
+
+        /* ========== OPTIMIZED PRINT STYLES - COMPACT ========== */
+        @media print {
+
+            /* Reset everything for print - compact mode */
+            body {
+                background: white;
+                padding: 0.1in;
+                color: black;
+                line-height: 1.2;
+                /* Tighter line spacing */
+                font-size: 10pt;
+                /* Smaller base font */
+            }
+
+            .notes-container {
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                background: white;
+                margin: 0;
+            }
+
+            /* Reduce heading sizes and spacing */
+            h1 {
+                font-size: 18pt;
+                background: none;
+                -webkit-text-fill-color: black;
+                color: black;
+                border-left: 6px solid #333;
+                padding-left: 0.2in;
+                margin: 0.1in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h1 small {
+                font-size: 12pt;
+                -webkit-text-fill-color: #333;
+                color: #333;
+            }
+
+            h2 {
+                font-size: 16pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-bottom: 0.05in;
+                line-height: 1.2;
+            }
+
+            h3 {
+                font-size: 14pt;
+                color: black;
+                margin: 0.12in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h4 {
+                font-size: 12pt;
+                color: black;
+                margin: 0.1in 0 0.03in 0;
+                line-height: 1.2;
+            }
+
+            /* Compact paragraphs */
+            p {
+                margin: 0.05in 0;
+                line-height: 1.2;
+            }
+
+            /* Tighter lists */
+            ul,
+            ol {
+                margin: 0.05in 0 0.05in 0.15in;
+            }
+
+            li {
+                margin: 0.02in 0;
+                line-height: 1.2;
+            }
+
+            /* Compact code blocks */
+            pre {
+                background: #f6f6f6;
+                color: black;
+                border: 1px solid #ccc;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+                font-size: 9pt;
+                line-height: 1.1;
+                page-break-inside: avoid;
+            }
+
+            code {
+                background: #eee;
+                color: black;
+                padding: 0.02in 0.05in;
+                font-size: 9pt;
+            }
+
+            /* Compact tables */
+            table {
+                margin: 0.1in 0;
+                box-shadow: none;
+                border: 1px solid #333;
+                font-size: 9pt;
+                line-height: 1.1;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            /* Reduce hr spacing */
+            hr {
+                margin: 0.15in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            /* Compact misc elements */
+            .table-of-contents {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+            }
+
+            .note,
+            .example-box {
+                padding: 0.1in;
+                margin: 0.1in 0;
+                border-left-width: 4px;
+            }
+
+            .badge {
+                background: #333;
+                color: white;
+                padding: 0.02in 0.1in;
+                font-size: 8pt;
+            }
+
+            footer {
+                margin-top: 0.2in;
+                border-top: 1px solid #ccc;
+                padding-top: 0.1in;
+                font-size: 9pt;
+            }
+
+            /* Ensure page breaks don't leave orphans */
+            h1,
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            h1+p,
+            h2+p,
+            h3+p {
+                page-break-before: avoid;
+            }
+
+            /* Allow breaks inside long pre sections if needed */
+            pre {
+                page-break-inside: auto;
+                max-height: none;
+                overflow: visible;
+            }
+
+            /* Remove decorative backgrounds */
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="notes-container">
+
+        <!-- Toolbar: print and download (PDF link assumes same folder) -->
+        <div class="toolbar">
+            <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <a href="html-intro-notes.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+            <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+        </div>
 
         <h1>Introduction to HTML & Document Structure</h1>
 

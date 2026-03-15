@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Tables: COMPLETE study notes · every line preserved</title>
+    <title>HTML TABLES: complete study notes · printable version</title>
     <style>
+        /* === ORIGINAL STYLES (preserved from 5-tables.html) === */
         * {
             margin: 0;
             padding: 0;
@@ -254,12 +255,236 @@
             margin-top: 1.5rem;
             border-left: 8px solid #308a7c;
         }
+
+        /* === TOOLBAR (same as intro page) === */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #1f737d;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+            transition: 0.1s ease;
+            border: 1px solid #0e4e56;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0b5f68;
+            box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+        }
+
+        .btn-pdf {
+            background: #a13f3f;
+            border-color: #6b2b2b;
+        }
+
+        .btn-pdf:hover {
+            background: #832f2f;
+        }
+
+        @media print {
+            .toolbar {
+                display: none;
+            }
+        }
+
+        /* === COMPACT PRINT STYLES (exactly like intro page) === */
+        @media print {
+            body {
+                background: white;
+                padding: 0.1in;
+                color: black;
+                line-height: 1.2;
+                font-size: 10pt;
+            }
+
+            .document-wrapper {
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                background: white;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 18pt;
+                background: none;
+                -webkit-text-fill-color: black;
+                color: black;
+                border-left: 6px solid #333;
+                padding-left: 0.2in;
+                margin: 0.1in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h2 {
+                font-size: 16pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-bottom: 0.05in;
+                line-height: 1.2;
+                border-left: none;
+            }
+
+            h3 {
+                font-size: 14pt;
+                color: black;
+                margin: 0.12in 0 0.05in 0;
+                line-height: 1.2;
+                border-left: 4px solid #666;
+                padding-left: 0.1in;
+            }
+
+            h4 {
+                font-size: 12pt;
+                color: black;
+                margin: 0.1in 0 0.03in 0;
+                line-height: 1.2;
+            }
+
+            p {
+                margin: 0.05in 0;
+                line-height: 1.2;
+            }
+
+            ul,
+            ol {
+                margin: 0.05in 0 0.05in 0.15in;
+            }
+
+            li {
+                margin: 0.02in 0;
+                line-height: 1.2;
+            }
+
+            pre {
+                background: #f6f6f6;
+                color: black;
+                border: 1px solid #ccc;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+                font-size: 9pt;
+                line-height: 1.1;
+                page-break-inside: avoid;
+            }
+
+            code {
+                background: #eee;
+                color: black;
+                padding: 0.02in 0.05in;
+                font-size: 9pt;
+            }
+
+            table {
+                margin: 0.1in 0;
+                box-shadow: none;
+                border: 1px solid #333;
+                font-size: 9pt;
+                line-height: 1.1;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+                border: 1px solid #999;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+                border: 1px solid #666;
+            }
+
+            hr {
+                margin: 0.15in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            .toc {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+            }
+
+            .note,
+            .example-box {
+                background: #f9f9f9;
+                border-left: 4px solid #333;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            footer {
+                margin-top: 0.2in;
+                border-top: 1px solid #ccc;
+                padding-top: 0.1in;
+                font-size: 9pt;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+
+            /* Ensure exercises are expanded in print */
+            .exercise-content {
+                display: block !important;
+                background: white;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+
+            .exercise-toggle .arrow {
+                display: none;
+            }
+
+            .exercise-toggle {
+                background: #eaeaea;
+                color: black;
+                border-bottom: 1px solid #333;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="document-wrapper">
 
+        <!-- Toolbar: print and download -->
+        <div class="toolbar">
+            <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <a href="5-tables.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+            <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+        </div>
+
+        <!-- MAIN TITLE -->
         <h1>HTML TABLES: A COMPREHENSIVE GUIDE</h1>
 
         <!-- TABLE OF CONTENTS -->
@@ -458,7 +683,8 @@
         <p><strong>Attributes:</strong></p>
         <ul>
             <li><code>scope</code>: Specifies if it's a header for a <code>col</code>, <code>row</code>,
-                <code>colgroup</code>, or <code>rowgroup</code></li>
+                <code>colgroup</code>, or <code>rowgroup</code>
+            </li>
             <li><code>abbr</code>: Provides an abbreviated version of the content</li>
             <li><code>colspan</code>, <code>rowspan</code>: Same as &lt;td&gt;</li>
         </ul>
@@ -1198,7 +1424,8 @@ tr:last-child td:last-child {
         <p><strong>DO:</strong></p>
         <ul>
             <li>Use semantic elements (<code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>,
-                <code>&lt;tfoot&gt;</code>)</li>
+                <code>&lt;tfoot&gt;</code>)
+            </li>
             <li>Include a <code>&lt;caption&gt;</code></li>
             <li>Use <code>scope</code> attributes</li>
             <li>Keep tables simple when possible</li>
@@ -1996,7 +2223,8 @@ document.getElementById('filterInput').addEventListener('keyup', function() {
 
         <ol>
             <li><strong>Use semantic structure</strong> (<code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>,
-                <code>&lt;tfoot&gt;</code>) for better organization and accessibility</li>
+                <code>&lt;tfoot&gt;</code>) for better organization and accessibility
+            </li>
             <li><strong>Apply <code>scope</code> attributes</strong> to improve screen reader navigation</li>
             <li><strong>Use <code>colspan</code> and <code>rowspan</code></strong> to create complex layouts with merged
                 cells</li>

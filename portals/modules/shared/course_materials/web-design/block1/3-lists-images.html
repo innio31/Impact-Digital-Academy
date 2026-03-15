@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Lists & Images: Complete Study Notes</title>
+    <title>HTML LISTS & IMAGES · complete study notes (printable)</title>
     <style>
+        /* === ORIGINAL STYLES (preserved exactly from 3-lists-images.html) === */
         * {
             margin: 0;
             padding: 0;
@@ -156,14 +157,215 @@
             text-align: center;
             margin-top: 0.5rem;
         }
+
+        /* === TOOLBAR (same as intro page) === */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #1f737d;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 80, 90, 0.3);
+            transition: 0.1s ease;
+            border: 1px solid #0e4e56;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0b5f68;
+            box-shadow: 0 6px 12px rgba(7, 90, 100, 0.4);
+        }
+
+        .btn-pdf {
+            background: #a13f3f;
+            border-color: #6b2b2b;
+        }
+
+        .btn-pdf:hover {
+            background: #832f2f;
+        }
+
+        @media print {
+            .toolbar {
+                display: none;
+            }
+        }
+
+        /* === COMPACT PRINT STYLES (exactly like intro page) === */
+        @media print {
+            body {
+                background: white;
+                padding: 0.1in;
+                color: black;
+                line-height: 1.2;
+                font-size: 10pt;
+            }
+
+            .document-wrapper {
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                background: white;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 18pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                background: none;
+                -webkit-text-fill-color: black;
+                margin: 0.1in 0 0.05in 0;
+                padding-bottom: 0.05in;
+                line-height: 1.2;
+            }
+
+            h2 {
+                font-size: 16pt;
+                color: black;
+                border-left: 6px solid #333;
+                padding-left: 0.1in;
+                margin: 0.15in 0 0.08in 0;
+                line-height: 1.2;
+            }
+
+            h3 {
+                font-size: 14pt;
+                color: black;
+                margin: 0.12in 0 0.05in 0;
+                line-height: 1.2;
+            }
+
+            h4 {
+                font-size: 12pt;
+                color: black;
+                margin: 0.1in 0 0.03in 0;
+                line-height: 1.2;
+            }
+
+            p {
+                margin: 0.05in 0;
+                line-height: 1.2;
+            }
+
+            ul,
+            ol {
+                margin: 0.05in 0 0.05in 0.15in;
+            }
+
+            li {
+                margin: 0.02in 0;
+                line-height: 1.2;
+            }
+
+            pre {
+                background: #f6f6f6;
+                color: black;
+                border: 1px solid #ccc;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+                font-size: 9pt;
+                line-height: 1.1;
+                page-break-inside: avoid;
+            }
+
+            code {
+                background: #eee;
+                color: black;
+                padding: 0.02in 0.05in;
+                font-size: 9pt;
+            }
+
+            table {
+                margin: 0.1in 0;
+                box-shadow: none;
+                border: 1px solid #333;
+                font-size: 9pt;
+                line-height: 1.1;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            hr {
+                margin: 0.15in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            .toc {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+            }
+
+            .note {
+                background: #f9f9f9;
+                border-left: 4px solid #333;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            footer {
+                margin-top: 0.2in;
+                border-top: 1px solid #ccc;
+                padding-top: 0.1in;
+                font-size: 9pt;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="document-wrapper">
+
+        <!-- Toolbar: print and download -->
+        <div class="toolbar">
+            <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <a href="3-lists-images.pdf" class="btn btn-pdf" download>📥 Download PDF</a>
+            <span style="flex:1; text-align:right; color:#386e7a;">⬇️ click to download/print – full content</span>
+        </div>
+
+        <!-- MAIN TITLE -->
         <h1>HTML Lists & Images: A Comprehensive Guide</h1>
 
-        <!-- Table of Contents -->
+        <!-- TABLE OF CONTENTS (exactly as original) -->
         <div class="toc">
             <h2>Table of Contents</h2>
             <ol>
@@ -187,7 +389,7 @@
 
         <hr>
 
-        <!-- 1. Introduction to HTML Lists -->
+        <!-- 1. INTRODUCTION TO HTML LISTS -->
         <h2 id="introduction-to-html-lists">1. Introduction to HTML Lists</h2>
         <p>Lists are fundamental building blocks in web development, used to organize and present information in a
             structured, readable format. HTML provides three main types of lists, each serving a specific purpose in
@@ -232,7 +434,7 @@
 
         <hr>
 
-        <!-- 2. Unordered Lists -->
+        <!-- 2. UNORDERED LISTS -->
         <h2 id="unordered-lists-ul">2. Unordered Lists (<code>&lt;ul&gt;</code>)</h2>
         <p>Unordered lists are used when the sequence of items doesn't matter. They are typically displayed with bullet
             points by default.</p>
@@ -300,7 +502,7 @@
 
         <hr>
 
-        <!-- 3. Ordered Lists -->
+        <!-- 3. ORDERED LISTS -->
         <h2 id="ordered-lists-ol">3. Ordered Lists (<code>&lt;ol&gt;</code>)</h2>
         <p>Ordered lists are used when the sequence of items is important. They are displayed with numbers, letters, or
             Roman numerals by default.</p>
@@ -412,7 +614,7 @@
 
         <hr>
 
-        <!-- 4. Description Lists -->
+        <!-- 4. DESCRIPTION LISTS -->
         <h2 id="description-lists-dl">4. Description Lists (<code>&lt;dl&gt;</code>)</h2>
         <p>Description lists (formerly called definition lists) are used for name-value groups, such as terms and
             definitions, metadata, or Q&amp;A pairs.</p>
@@ -505,7 +707,7 @@
 
         <hr>
 
-        <!-- 5. Nested Lists -->
+        <!-- 5. NESTED LISTS -->
         <h2 id="nested-lists">5. Nested Lists</h2>
         <p>Lists can be nested inside other lists to create hierarchical structures.</p>
 
@@ -586,7 +788,7 @@
 
         <hr>
 
-        <!-- 6. Styling Lists with CSS -->
+        <!-- 6. STYLING LISTS WITH CSS -->
         <h2 id="styling-lists-with-css">6. Styling Lists with CSS</h2>
 
         <h3>Basic List Styling Properties</h3>
@@ -702,7 +904,7 @@ ol {
 
         <hr>
 
-        <!-- 7. Introduction to Images in HTML -->
+        <!-- 7. INTRODUCTION TO IMAGES IN HTML -->
         <h2 id="introduction-to-images-in-html">7. Introduction to Images in HTML</h2>
         <p>Images are essential for creating engaging and visually appealing web pages. HTML provides robust support for
             embedding images with various attributes for control and optimization.</p>
@@ -719,7 +921,7 @@ ol {
 
         <hr>
 
-        <!-- 8. The Image Element -->
+        <!-- 8. THE IMAGE ELEMENT -->
         <h2 id="the-image-element-img">8. The Image Element (<code>&lt;img&gt;</code>)</h2>
         <p>The <code>&lt;img&gt;</code> element is an empty (void) element, meaning it has no closing tag and contains
             no content. It embeds an image into the document.</p>
@@ -791,7 +993,7 @@ ol {
 
         <hr>
 
-        <!-- 9. Image Attributes in Depth -->
+        <!-- 9. IMAGE ATTRIBUTES IN DEPTH -->
         <h2 id="image-attributes-in-depth">9. Image Attributes in Depth</h2>
 
         <h3>1. <code>src</code> Attribute (Source)</h3>
@@ -945,7 +1147,7 @@ ol {
 
         <hr>
 
-        <!-- 10. Image Formats and Optimization -->
+        <!-- 10. IMAGE FORMATS AND OPTIMIZATION -->
         <h2 id="image-formats-and-optimization">10. Image Formats and Optimization</h2>
 
         <h3>Choosing the Right Format</h3>
@@ -999,7 +1201,7 @@ ol {
 
         <hr>
 
-        <!-- 11. Accessibility and Best Practices -->
+        <!-- 11. ACCESSIBILITY AND BEST PRACTICES -->
         <h2 id="accessibility-and-best-practices">11. Accessibility and Best Practices</h2>
 
         <h3>Accessibility Guidelines</h3>
@@ -1060,7 +1262,7 @@ ol {
 
         <hr>
 
-        <!-- 12. Practical Examples and Use Cases -->
+        <!-- 12. PRACTICAL EXAMPLES AND USE CASES -->
         <h2 id="practical-examples-and-use-cases">12. Practical Examples and Use Cases</h2>
 
         <h3>Example 1: Product Gallery with Thumbnails</h3>
@@ -1169,7 +1371,7 @@ ol {
 
         <hr>
 
-        <!-- 13. Common Mistakes and Troubleshooting -->
+        <!-- 13. COMMON MISTAKES AND TROUBLESHOOTING -->
         <h2 id="common-mistakes-and-troubleshooting">13. Common Mistakes and Troubleshooting</h2>
 
         <h3>List-Related Mistakes</h3>
@@ -1254,7 +1456,7 @@ ol {
 
         <hr>
 
-        <!-- 14. Advanced Techniques -->
+        <!-- 14. ADVANCED TECHNIQUES -->
         <h2 id="advanced-techniques">14. Advanced Techniques</h2>
 
         <h3>1. Image Sprites</h3>
@@ -1326,7 +1528,7 @@ images.forEach(img => imageObserver.observe(img));</pre>
 
         <hr>
 
-        <!-- 15. Practice Exercises -->
+        <!-- 15. PRACTICE EXERCISES -->
         <h2 id="practice-exercises">15. Practice Exercises</h2>
 
         <h3>Exercise 1: Build a Navigation Menu</h3>
@@ -1471,7 +1673,15 @@ images.forEach(img => imageObserver.observe(img));</pre>
 
         <hr>
         <p style="text-align: right; color: #3a6b71;"><em>End of Guide</em></p>
-    </div>
+
+        <hr>
+        <footer
+            style="text-align: center; color: #386e7a; border-top: 2px solid #cbe7ec; padding-top: 2rem; margin-top: 4rem;">
+            📘 HTML Lists & Images – complete study notes · every bit of content preserved<br>
+            © 2025 – comprehensive study notes · word for word from original content
+        </footer>
+
+    </div> <!-- document-wrapper -->
 </body>
 
 </html>

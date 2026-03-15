@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Professional Business Communication · interactive notes</title>
+    <title>Professional Business Communication · printable notes</title>
     <style>
         * {
             margin: 0;
@@ -278,6 +278,204 @@
             border-top: 1px dashed #b4cbe5;
             padding-top: 2rem;
         }
+
+        /* ========== OPTIMIZED PRINT STYLES – COMPACT ========== */
+        @media print {
+
+            /* global reset – compact, monochrome, clean */
+            body {
+                background: white;
+                padding: 0.1in;
+                font-size: 9.5pt;
+                line-height: 1.2;
+                color: black;
+            }
+
+            .wrapper {
+                max-width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0.1in;
+                background: white;
+            }
+
+            h1 {
+                font-size: 16pt;
+                background: none;
+                -webkit-text-fill-color: black;
+                color: black;
+                letter-spacing: normal;
+                border-left: 4px solid #333;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0 0;
+            }
+
+            .subhead {
+                font-size: 11pt;
+                color: #222;
+                border-left: 3px solid #555;
+                padding-left: 0.1in;
+                margin-bottom: 0.1in;
+            }
+
+            h2 {
+                font-size: 14pt;
+                color: black;
+                border-bottom: 2px solid #333;
+                margin: 0.15in 0 0.08in 0;
+                padding-bottom: 0.03in;
+            }
+
+            h3 {
+                font-size: 12.5pt;
+                color: black;
+                border-left: 4px solid #999;
+                padding-left: 0.1in;
+                margin: 0.1in 0 0.05in 0;
+            }
+
+            h4 {
+                font-size: 11pt;
+                color: black;
+                margin: 0.08in 0 0.02in 0;
+            }
+
+            p {
+                margin: 0.04in 0;
+            }
+
+            ul,
+            ol {
+                margin: 0.04in 0 0.04in 0.15in;
+            }
+
+            li {
+                margin: 0.01in 0;
+            }
+
+            table {
+                box-shadow: none;
+                border: 1px solid #333;
+                margin: 0.1in 0;
+                font-size: 8.5pt;
+                line-height: 1.1;
+                display: table;
+                white-space: normal;
+                overflow-x: visible;
+            }
+
+            th {
+                background: #333;
+                color: white;
+                padding: 0.05in 0.1in;
+            }
+
+            td {
+                background: white;
+                padding: 0.05in 0.1in;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .badge {
+                background: #444;
+                color: white;
+                font-size: 7.5pt;
+                padding: 0.02in 0.1in;
+            }
+
+            .toc-card {
+                background: #f9f9f9;
+                border: 1px solid #888;
+                padding: 0.15in;
+                margin: 0.15in 0;
+                box-shadow: none;
+            }
+
+            .toc-grid a {
+                background: white;
+                padding: 0.02in 0.12in;
+                border: 1px solid #aaa;
+                color: black;
+                box-shadow: none;
+                font-weight: normal;
+                font-size: 8.5pt;
+            }
+
+            .toc-grid a:hover {
+                background: #eee;
+                transform: none;
+            }
+
+            .def-grid {
+                margin: 0.05in 0;
+                gap: 0.05in;
+            }
+
+            .def-item {
+                background: #f6f6f6;
+                border-bottom: 2px solid #666;
+                padding: 0.07in;
+            }
+
+            .accent-box,
+            .highlight-block,
+            .mini-card {
+                background: #fafafa;
+                border: 1px solid #aaa;
+                box-shadow: none;
+                padding: 0.1in;
+                margin: 0.1in 0;
+            }
+
+            .pill {
+                background: #f2f2f2;
+                border: 1px solid #888;
+                color: black;
+                box-shadow: none;
+                padding: 0.02in 0.12in;
+            }
+
+            .drill {
+                background: #f8f8f8;
+                border-left: 4px solid #444;
+                font-size: 8pt;
+                padding: 0.05in 0.1in;
+            }
+
+            hr {
+                margin: 0.1in 0;
+                background: #ccc;
+                height: 1px;
+            }
+
+            footer {
+                margin-top: 0.15in;
+                border-top: 1px solid #aaa;
+                padding-top: 0.1in;
+                font-size: 8pt;
+                color: black;
+            }
+
+            /* avoid breaking inside important blocks */
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            section,
+            .toc-card,
+            .mini-card,
+            table {
+                page-break-inside: avoid;
+            }
+
+            * {
+                background-image: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -310,7 +508,8 @@
             <h2>📌 Part 1: Principles of clear, concise & professional writing</h2>
             <p>Effective business writing demonstrates clear thinking and builds credibility. It is purpose‑driven:
                 inform, persuade, instruct. All communication should rest on the <strong>3 Cs</strong> and ideally the
-                <strong>7 Cs</strong>.</p>
+                <strong>7 Cs</strong>.
+            </p>
         </section>
 
         <!-- Clarity -->
