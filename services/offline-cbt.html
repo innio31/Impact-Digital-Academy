@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Offline CBT Setup & Management | Impact Digital Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary: #008080;
+            --primary-dark: #006666;
+            --secondary: #2c3e50;
+            --accent: #f59e0b;
+            --gray-light: #f1f5f9;
+            --gray: #64748b;
+            --dark: #1e293b;
+            --success: #10b981;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --radius-xl: 1.5rem;
+            --radius-lg: 1rem;
+        }
+
+        /* header / navigation */
+        header {
+            background: white;
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: auto;
+        }
+
+        .logo-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.3rem;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                padding: 1rem 0;
+                gap: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
+
+        /* hero section */
+        .cbt-hero {
+            background: linear-gradient(135deg, #e6f7f5 0%, #ffffff 100%);
+            padding: 4rem 5% 3rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hero-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .hero-badge {
+            background: var(--accent);
+            color: #1e293b;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-text h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-text h1 span {
+            color: var(--primary);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 550px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            width: 380px;
+            border-radius: 32px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section {
+            padding: 4rem 5%;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* feature cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            background: #e0f2f1;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: #475569;
+        }
+
+        /* video section */
+        .video-showcase {
+            background: var(--gray-light);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: 0.2s;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .video-thumb {
+            position: relative;
+            background: #0f172a;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .video-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .play-icon {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            backdrop-filter: blur(4px);
+            transition: 0.2s;
+        }
+
+        .video-thumb:hover .play-icon {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .video-info {
+            padding: 1.5rem;
+        }
+
+        .video-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .btn-outline {
+            border: 1px solid #cbd5e1;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary-solid {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* modal video player */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: #000;
+            max-width: 90%;
+            width: 1000px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.6);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        /* dashboard preview cards */
+        .preview-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            flex: 1;
+            min-width: 260px;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: auto;
+            background: #eef2ff;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .preview-card h4 {
+            padding: 1rem 1rem 0.5rem;
+            font-weight: 700;
+        }
+
+        .preview-card p {
+            padding: 0 1rem 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .cta-section {
+            background: linear-gradient(110deg, var(--primary), #006060);
+            color: white;
+            text-align: center;
+            border-radius: 40px;
+            margin: 2rem 5% 4rem;
+            padding: 3rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 1.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            transition: 0.2s;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background: var(--dark);
+            color: #cbd5e1;
+            padding: 2rem 5%;
+            text-align: center;
+        }
+
+        .video-note {
+            background: #eef2ff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        @media (max-width: 640px) {
+            .hero-text h1 {
+                font-size: 1.9rem;
+            }
+
+            .section-title {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header">
+        <nav>
+            <a href="../index.html" class="logo">
+                <img src="../images/logo.png" alt="Impact Digital Logo" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-main">Impact Digital</span>
+                    <span class="logo-tagline">Solutions & Academy</span>
+                </div>
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../services.html" class="active">Services</a></li>
+                <li><a href="../academy.html">Academy</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+                <li><a href="https://impactdigitalacademy.com.ng/portals" class="cta-button" target="_blank"><i
+                            class="fas fa-graduation-cap"></i> Student Portal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <div class="cbt-hero">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <span class="hero-badge"><i class="fas fa-server"></i> Offline-first CBT</span>
+                    <h1>Offline CBT Setup & <span>Management</span></h1>
+                    <p>Fully featured computer-based testing system that runs without internet. Perfect for schools,
+                        universities, and examination bodies. Secure, fast, and fully offline.</p>
+                    <div>
+                        <a href="#video-tutorials" class="cta-button"
+                            style="background: var(--accent); color: #1e293b;"><i class="fas fa-play-circle"></i> Watch
+                            tutorials</a>
+                        <a href="#contact" class="cta-button"
+                            style="background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-left: 1rem;"><i
+                                class="fas fa-headset"></i> Request Demo</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="images/cbt-dashboard-preview.png" alt="CBT Dashboard Preview"
+                        onerror="this.src='https://placehold.co/500x400/e6f7f5/008080?text=CBT+System'">
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="section">
+            <h2 class="section-title">Why Choose Our Offline CBT System?</h2>
+            <p class="section-subtitle">Built for reliability, security, and seamless exam administration — zero
+                internet dependency.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-wifi-slash"></i></div>
+                    <h3>100% Offline Capable</h3>
+                    <p>Install on local network or standalone PCs. No internet disruptions during exams.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Secure & Anti-Cheat</h3>
+                    <p>Lockdown browser, randomized questions, session tracking, and advanced proctoring.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chalkboard-user"></i></div>
+                    <h3>Admin / Staff / Student Portals</h3>
+                    <p>Three role-based dashboards for seamless management, exam creation, and student access.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Instant Results & Analytics</h3>
+                    <p>Automated grading, performance reports, and detailed subject-wise analysis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard preview -->
+        <div class="section" style="background: #f8fafc;">
+            <h2 class="section-title">Role-Based Dashboards</h2>
+            <p class="section-subtitle">Designed for efficiency — Administrators, Teachers, and Students have tailored
+                interfaces.</p>
+            <div class="preview-grid">
+                <div class="preview-card">
+                    <img src="images/admin-dashboard-preview.png" alt="Admin dashboard"
+                        onerror="this.src='images/admin-dashboard.png'">
+                    <h4><i class="fas fa-user-shield"></i> Admin Portal</h4>
+                    <p>Manage students, staff, subjects, exams, view logs, and generate school-wide reports.</p>
+                </div>
+                <div class="preview-card">
+                    <img src="images/staff-dashboard.png" alt="Staff dashboard"
+                        onerror="this.src='images/staff-dashboard.png'">
+                    <h4><i class="fas fa-chalkboard-teacher"></i> Staff Dashboard</h4>
+                    <p>Create exams, manage questions, grade assignments, track student performance.</p>
+                </div>
+                <div class="preview-card">
+                    <img src="images/student-dashboard-preview.png" alt="Student dashboard"
+                        onerror="this.src='images/student-dashboard.png'">
+                    <h4><i class="fas fa-user-graduate"></i> Student Area</h4>
+                    <p>Take exams, view results, access library, submit assignments, track progress.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEO TUTORIALS SECTION - POINTS TO REAL UPLOADED VIDEO FILES -->
+        <div class="video-showcase section" id="video-tutorials">
+            <h2 class="section-title">📹 Video Tutorials & Setup Guides</h2>
+            <p class="section-subtitle">Step-by-step walkthroughs for administrators, teachers, and students.</p>
+
+            <div class="video-grid" id="videoGrid">
+                <!-- VIDEO 1: Admin Setup Guide -->
+                <div class="video-card" data-video-path="videos/loggin_in.mp4">
+                    <div class="video-thumb">
+                        <img src="images/login_page.png" alt="Admin setup thumbnail" onerror="this.src=''">
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3>🔧 Logging In & System Access</h3>
+                        <p>Learn how to install the offline CBT system, add classes, subjects, staff accounts, and
+                            configure exam settings.</p>
+                        <div class="download-buttons">
+                            <a href="videos/loggin_in.mp4" class="btn-outline" download><i class="fas fa-download"></i>
+                                Download Video</a>
+                            <button class="btn-outline watch-now-btn"><i class="fas fa-play-circle"></i> Watch
+                                now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO 2:Managing & Creating Student -->
+                <div class="video-card" data-video-path="videos/manage_students.mp4">
+                    <div class="video-thumb">
+                        <img src="images/manage_students_thumb.png" alt="Manage students tutorial">
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3>📝 How To Create & Manage Students Accounts</h3>
+                        <p>Learn how to add, edit, and delete student accounts.</p>
+                        <div class="download-buttons">
+                            <a href="videos/manage_students.mp4" class="btn-outline" download><i
+                                    class="fas fa-download"></i> Download Video</a>
+                            <button class="btn-outline watch-now-btn"><i class="fas fa-play-circle"></i> Watch
+                                now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO 3: Managing & Creating Staff -->
+                <div class="video-card" data-video-path="videos/manage_staff.mp4">
+                    <div class="video-thumb">
+                        <img src="images/manage-staff-thumb.png" alt="Manage staff tutorial">
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3>👩‍🎓 How To Create & Manage Staff Accounts</h3>
+                        <p>Learn how to add, edit, and delete staff accounts, assign roles, and manage their
+                            permissions.</p>
+                        <div class="download-buttons">
+                            <a href="videos/manage_staff.mp4" class="btn-outline" download><i
+                                    class="fas fa-download"></i> Download Video</a>
+                            <button class="btn-outline watch-now-btn"><i class="fas fa-play-circle"></i> Watch
+                                now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO 4: Manage Subjects/Topics -->
+                <div class="video-card" data-video-path="videos/manage_subjects_topics.mp4">
+                    <div class="video-thumb">
+                        <img src="images/manage-subjects.png" alt="Offline sync setup">
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3>🔄 Manage Subjects/Topics</h3>
+                        <p>Learn how to manage subjects and topics .</p>
+                        <div class="download-buttons">
+                            <a href="videos/manage_subjects_topics.mp4" class="btn-outline" download><i
+                                    class="fas fa-download"></i>
+                                Download Video</a>
+                            <button class="btn-outline watch-now-btn"><i class="fas fa-play-circle"></i> Watch
+                                now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO 5: Questions Upload -->
+                <div class="video-card" data-video-path="videos/question_upload.mp4">
+                    <div class="video-thumb">
+                        <img src="images/manage-questions.png" alt="Offline sync setup">
+                        <div class="play-icon"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h3>🔄 Manage Questions</h3>
+                        <p>Learn how to manage subjects and topics.</p>
+                        <div class="download-buttons">
+                            <a href="videos/question_upload.mp4" class="btn-outline" download><i
+                                    class="fas fa-download"></i>
+                                Download Video</a>
+                            <button class="btn-outline watch-now-btn"><i class="fas fa-play-circle"></i> Watch
+                                now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INSTRUCTION NOTE FOR ADMIN -->
+
+        </div>
+
+        <!-- CTA Contact -->
+        <div class="cta-section" id="contact">
+            <h2>Ready to deploy Offline CBT in your school?</h2>
+            <p>We provide full installation, training, and technical support. Our team will guide you from setup to
+                first exam day.</p>
+            <a href="contact.html" class="btn-white"><i class="fas fa-calendar-check"></i> Request a consultation</a>
+            <div style="margin-top: 1.5rem;">
+                <a href="tel:+2349035448295" style="color: white; margin: 0 0.8rem;"><i class="fas fa-phone-alt"></i>
+                    +234 903 544 8295</a>
+                <a href="https://wa.me/+2349051586024" style="color: white; margin: 0 0.8rem;"><i
+                        class="fab fa-whatsapp"></i> WhatsApp Support</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> Impact Digital Services — Offline CBT Experts. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">CAC Registered | Trusted by 50+ institutions</p>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <video id="modalVideo" controls preload="metadata">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const nav = document.getElementById('navLinks');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', () => {
+                nav.classList.toggle('active');
+                mobileBtn.innerHTML = nav.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+        }
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) nav.classList.remove('active');
+            });
+        });
+
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        // ----- VIDEO MODAL LOGIC (plays actual uploaded files) -----
+        const modal = document.getElementById('videoModal');
+        const modalVideo = document.getElementById('modalVideo');
+        const closeModalBtn = document.querySelector('.close-modal');
+
+        // Attach event to all "Watch now" buttons
+        document.querySelectorAll('.watch-now-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const videoCard = btn.closest('.video-card');
+                const videoPath = videoCard.getAttribute('data-video-path');
+                if (videoPath) {
+                    modalVideo.src = videoPath;
+                    modal.style.display = 'flex';
+                    modalVideo.load();
+                    modalVideo.play().catch(err => {
+                        console.warn("Autoplay prevented:", err);
+                        // still show modal with video loaded, user can click play
+                    });
+                } else {
+                    alert("Video file not found. Please make sure the video is uploaded to the correct path.");
+                }
+            });
+        });
+
+        // Also allow clicking on video thumbnail to play
+        document.querySelectorAll('.video-thumb').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const card = thumb.closest('.video-card');
+                const videoPath = card.getAttribute('data-video-path');
+                if (videoPath) {
+                    modalVideo.src = videoPath;
+                    modal.style.display = 'flex';
+                    modalVideo.load();
+                    modalVideo.play().catch(e => console.log("playback可能需要用户交互"));
+                } else {
+                    alert("Video file missing. Please check the /videos/ folder.");
+                }
+            });
+        });
+
+        function closeModalFunc() {
+            modal.style.display = 'none';
+            modalVideo.pause();
+            modalVideo.src = ''; // reset to avoid memory issues
+        }
+        closeModalBtn.addEventListener('click', closeModalFunc);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModalFunc();
+        });
+
+        // smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // header scroll shadow
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+            else header.style.boxShadow = 'none';
+        });
+
+        // Small check to notify if videos missing (optional)
+        function checkVideoFiles() {
+            const videoPaths = document.querySelectorAll('.video-card');
+            videoPaths.forEach(card => {
+                const path = card.getAttribute('data-video-path');
+                if (path) {
+                    // just a placeholder – actual file existence is runtime, but we don't block.
+                    console.log(`Video expected at: ${path}`);
+                }
+            });
+        }
+        checkVideoFiles();
+    </script>
+</body>
+
+</html>
