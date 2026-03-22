@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $enrollments_stmt->bind_param('i', $class_id);
         $enrollments_stmt->execute();
         $enrollments = $enrollments_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $enrollments_stmt->close();
 
         // 2. Delete assignment submissions for this class
         $del_submissions_sql = "DELETE assignment_submissions 
@@ -92,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $submissions_stmt = $conn->prepare($del_submissions_sql);
         $submissions_stmt->bind_param('i', $class_id);
         $submissions_stmt->execute();
+        $submissions_stmt->close();
 
         // 3. Delete gradebook entries
         $del_gradebook_sql = "DELETE gradebook 
@@ -101,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $gradebook_stmt = $conn->prepare($del_gradebook_sql);
         $gradebook_stmt->bind_param('i', $class_id);
         $gradebook_stmt->execute();
+        $gradebook_stmt->close();
 
         // 4. Delete quiz attempts
         $del_quiz_attempts_sql = "DELETE quiz_attempts 
@@ -110,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $quiz_stmt = $conn->prepare($del_quiz_attempts_sql);
         $quiz_stmt->bind_param('i', $class_id);
         $quiz_stmt->execute();
+        $quiz_stmt->close();
 
         // 5. Delete attendance records
         $del_attendance_sql = "DELETE attendance 
@@ -119,18 +123,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $attendance_stmt = $conn->prepare($del_attendance_sql);
         $attendance_stmt->bind_param('i', $class_id);
         $attendance_stmt->execute();
+        $attendance_stmt->close();
 
         // 6. Delete financial status entries
         $del_financial_sql = "DELETE FROM student_financial_status WHERE class_id = ?";
         $financial_stmt = $conn->prepare($del_financial_sql);
         $financial_stmt->bind_param('i', $class_id);
         $financial_stmt->execute();
+        $financial_stmt->close();
 
         // 7. Delete course payments
         $del_payments_sql = "DELETE FROM course_payments WHERE class_id = ?";
         $payments_stmt = $conn->prepare($del_payments_sql);
         $payments_stmt->bind_param('i', $class_id);
         $payments_stmt->execute();
+        $payments_stmt->close();
 
         // 8. Delete discussion replies
         $del_replies_sql = "DELETE discussion_replies 
@@ -140,18 +147,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $replies_stmt = $conn->prepare($del_replies_sql);
         $replies_stmt->bind_param('i', $class_id);
         $replies_stmt->execute();
+        $replies_stmt->close();
 
         // 9. Delete discussions
         $del_discussions_sql = "DELETE FROM discussions WHERE class_id = ?";
         $discussions_stmt = $conn->prepare($del_discussions_sql);
         $discussions_stmt->bind_param('i', $class_id);
         $discussions_stmt->execute();
+        $discussions_stmt->close();
 
         // 10. Delete assignments (after submissions and gradebook are removed)
         $del_assignments_sql = "DELETE FROM assignments WHERE class_id = ?";
         $assignments_stmt = $conn->prepare($del_assignments_sql);
         $assignments_stmt->bind_param('i', $class_id);
         $assignments_stmt->execute();
+        $assignments_stmt->close();
 
         // 11. Delete materials
         // Get material file paths to delete from server
@@ -160,7 +170,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         $materials_stmt->bind_param('i', $class_id);
         $materials_stmt->execute();
         $materials = $materials_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        
+        $materials_stmt->close();
+
         // Delete material files from server
         foreach ($materials as $material) {
             if (!empty($material['file_url'])) {
@@ -170,28 +181,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
                 }
             }
         }
-        
+
         // Delete material records
         $del_materials_sql = "DELETE FROM materials WHERE class_id = ?";
         $del_materials_stmt = $conn->prepare($del_materials_sql);
         $del_materials_stmt->bind_param('i', $class_id);
         $del_materials_stmt->execute();
+        $del_materials_stmt->close();
 
         // 12. Delete enrollments (after all related data is removed)
         $del_enrollments_sql = "DELETE FROM enrollments WHERE class_id = ?";
         $del_enrollments_stmt = $conn->prepare($del_enrollments_sql);
         $del_enrollments_stmt->bind_param('i', $class_id);
         $del_enrollments_stmt->execute();
+        $del_enrollments_stmt->close();
 
         // 13. Update class status to cancelled
         $update_sql = "UPDATE class_batches 
                        SET status = 'cancelled', 
-                           cancelled_at = NOW(),
                            updated_at = NOW()
                        WHERE id = ?";
         $update_stmt = $conn->prepare($update_sql);
         $update_stmt->bind_param('i', $class_id);
         $update_stmt->execute();
+        $update_stmt->close();
 
         // Commit transaction
         $conn->commit();
@@ -205,37 +218,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
             $class_id
         );
 
-        // Send cancellation emails to enrolled students
+        // Send cancellation emails to enrolled students (don't stop if emails fail)
         $email_success_count = 0;
         $email_failure_count = 0;
 
         foreach ($enrollments as $enrollment) {
             $student_id = $enrollment['student_id'];
             $student_name = $enrollment['first_name'] . ' ' . $enrollment['last_name'];
-            
-            $email_sent = sendClassCancellationEmail($student_id, $class_id, $student_name);
-            
-            if ($email_sent) {
-                $email_success_count++;
-                logActivity('class_cancellation_email', "Cancellation email sent to student #{$student_id} for class #{$class_id}");
+
+            // Check if sendClassCancellationEmail function exists
+            if (function_exists('sendClassCancellationEmail')) {
+                $email_sent = sendClassCancellationEmail($student_id, $class_id, $student_name);
+
+                if ($email_sent) {
+                    $email_success_count++;
+                    logActivity('class_cancellation_email', "Cancellation email sent to student #{$student_id} for class #{$class_id}");
+                } else {
+                    $email_failure_count++;
+                    error_log("Failed to send cancellation email to student #{$student_id} for class #{$class_id}");
+                }
             } else {
-                $email_failure_count++;
-                error_log("Failed to send cancellation email to student #{$student_id} for class #{$class_id}");
+                error_log("sendClassCancellationEmail function does not exist");
             }
         }
 
         // Send notification to instructor
         if ($class['instructor_id']) {
-            $instructor_email_sent = sendInstructorClassCancellationNotification(
-                $class['instructor_id'],
-                $class_id,
-                $class['batch_code'] . ' - ' . $class['name']
-            );
-            
-            if ($instructor_email_sent) {
-                logActivity('instructor_cancellation_notification', "Cancellation notification email sent to instructor #{$class['instructor_id']} for class #{$class_id}");
+            if (function_exists('sendInstructorClassCancellationNotification')) {
+                $instructor_email_sent = sendInstructorClassCancellationNotification(
+                    $class['instructor_id'],
+                    $class_id,
+                    $class['batch_code'] . ' - ' . $class['name']
+                );
+
+                if ($instructor_email_sent) {
+                    logActivity('instructor_cancellation_notification', "Cancellation notification email sent to instructor #{$class['instructor_id']} for class #{$class_id}");
+                } else {
+                    error_log("Failed to send cancellation notification email to instructor #{$class['instructor_id']} for class #{$class_id}");
+                }
             } else {
-                error_log("Failed to send cancellation notification email to instructor #{$class['instructor_id']} for class #{$class_id}");
+                error_log("sendInstructorClassCancellationNotification function does not exist");
             }
         }
 
@@ -247,20 +269,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_cancel'])) {
         if ($email_failure_count > 0) {
             $success_message .= " Failed to send emails to {$email_failure_count} student(s).";
         }
-        
+
         $_SESSION['success'] = $success_message;
 
         // Redirect to class list
         header('Location: list.php');
         exit();
-
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
-        
+
         $_SESSION['error'] = 'Error cancelling class: ' . $e->getMessage();
         error_log("Class cancellation error for class #$class_id: " . $e->getMessage());
-        
+
         header('Location: view.php?id=' . $class_id);
         exit();
     }
@@ -281,6 +302,7 @@ $stats_stmt->bind_param('i', $class_id);
 $stats_stmt->execute();
 $stats_result = $stats_stmt->get_result();
 $stats = $stats_result->fetch_assoc();
+$stats_stmt->close();
 
 $enrolled_students = $stats['enrolled_students'] ?? 0;
 $total_materials = $stats['total_materials'] ?? 0;
@@ -289,6 +311,7 @@ $total_assignments = $stats['total_assignments'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -334,7 +357,7 @@ $total_assignments = $stats['total_assignments'] ?? 0;
             min-height: 100vh;
         }
 
-        /* Sidebar Styles (consistent with other pages) */
+        /* Sidebar Styles */
         .sidebar {
             background: var(--dark);
             color: white;
@@ -625,9 +648,9 @@ $total_assignments = $stats['total_assignments'] ?? 0;
             background: #dc2626;
         }
 
-        .btn-sm {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.8rem;
+        .btn-danger:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
 
         /* Alerts */
@@ -651,12 +674,6 @@ $total_assignments = $stats['total_assignments'] ?? 0;
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fecaca;
-        }
-
-        .alert-warning {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
         }
 
         /* Tablet and Desktop Breakpoints */
@@ -714,6 +731,7 @@ $total_assignments = $stats['total_assignments'] ?? 0;
         }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
@@ -775,7 +793,8 @@ $total_assignments = $stats['total_assignments'] ?? 0;
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i>
-                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                    <?php echo $_SESSION['error'];
+                    unset($_SESSION['error']); ?>
                 </div>
             <?php endif; ?>
 
@@ -815,10 +834,10 @@ $total_assignments = $stats['total_assignments'] ?? 0;
                             <span class="summary-value"><?php echo date('M j, Y', strtotime($class['end_date'])); ?></span>
                         </div>
                         <?php if ($class['instructor_first_name']): ?>
-                        <div class="summary-item">
-                            <span class="summary-label">Instructor</span>
-                            <span class="summary-value"><?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?></span>
-                        </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Instructor</span>
+                                <span class="summary-value"><?php echo htmlspecialchars($class['instructor_first_name'] . ' ' . $class['instructor_last_name']); ?></span>
+                            </div>
                         <?php endif; ?>
                         <div class="summary-item">
                             <span class="summary-label">Current Status</span>
@@ -857,10 +876,10 @@ $total_assignments = $stats['total_assignments'] ?? 0;
                     </div>
                 </div>
 
-                <form method="POST" id="cancelForm">
+                <form method="POST" id="cancelForm" onsubmit="return confirmCancellation(event)">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                     <input type="hidden" name="confirm_cancel" value="1">
-                    
+
                     <div class="form-actions">
                         <a href="view.php?id=<?php echo $class_id; ?>" class="btn btn-secondary">
                             <i class="fas fa-times"></i> No, Go Back
@@ -883,18 +902,22 @@ $total_assignments = $stats['total_assignments'] ?? 0;
             font-weight: 600;
             text-transform: uppercase;
         }
+
         .status-scheduled {
             background: #ede9fe;
             color: #5b21b6;
         }
+
         .status-ongoing {
             background: #d1fae5;
             color: #065f46;
         }
+
         .status-completed {
             background: #dbeafe;
             color: #1e40af;
         }
+
         .status-cancelled {
             background: #fee2e2;
             color: #991b1b;
@@ -910,16 +933,17 @@ $total_assignments = $stats['total_assignments'] ?? 0;
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.sidebar');
-            const menuToggle = document.getElementById('menuToggle');
             const sidebarNav = document.getElementById('sidebarNav');
 
-            if (!sidebar.contains(event.target) && sidebarNav.classList.contains('show')) {
+            if (sidebar && !sidebar.contains(event.target) && sidebarNav && sidebarNav.classList.contains('show')) {
                 sidebarNav.classList.remove('show');
             }
         });
 
-        // Confirmation before submission
-        document.getElementById('cancelForm').addEventListener('submit', function(e) {
+        // Confirmation function
+        function confirmCancellation(event) {
+            event.preventDefault();
+
             const confirmMessage = '⚠️ CLASS CANCELLATION CONFIRMATION ⚠️\n\n' +
                 'You are about to CANCEL this class. This action is IRREVERSIBLE and will:\n\n' +
                 '• Unenroll all <?php echo $enrolled_students; ?> student(s)\n' +
@@ -930,32 +954,30 @@ $total_assignments = $stats['total_assignments'] ?? 0;
                 'Type "CANCEL CLASS" below to confirm this action.';
 
             const userInput = prompt(confirmMessage);
-            
+
             if (userInput !== 'CANCEL CLASS') {
-                e.preventDefault();
                 alert('Class cancellation cancelled. You did not type "CANCEL CLASS" correctly.');
                 return false;
             }
-            
-            const finalConfirm = confirm('Are you ABSOLUTELY sure you want to cancel this class?\n\nThis action cannot be undone!');
-            if (!finalConfirm) {
-                e.preventDefault();
-                return false;
-            }
-        });
 
-        // Disable button after click to prevent double submission
-        const confirmBtn = document.getElementById('confirmCancelBtn');
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', function(e) {
-                if (this.form) {
-                    this.disabled = true;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                }
-            });
+            const finalConfirm = confirm('Are you ABSOLUTELY sure you want to cancel this class?\n\nThis action cannot be undone!');
+
+            if (finalConfirm) {
+                // Disable button and submit form
+                const btn = document.getElementById('confirmCancelBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                // Submit the form
+                document.getElementById('cancelForm').submit();
+                return true;
+            }
+
+            return false;
         }
     </script>
 </body>
+
 </html>
 <?php
 $conn->close();
