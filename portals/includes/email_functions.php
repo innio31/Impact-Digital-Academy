@@ -3692,3 +3692,359 @@ function sendInstructorUnenrollmentNotification($student_id, $class_id, $student
 
     return sendEmail($class['instructor_email'], $subject, $body);
 }
+
+/**
+ * Send notification to instructor when class is cancelled
+ */
+function sendInstructorClassCancellationNotification($instructor_id, $class_id, $class_name)
+{
+    $conn = getDBConnection();
+
+    // Get instructor details
+    $sql = "SELECT id, email, first_name, last_name FROM users WHERE id = ? AND status = 'active'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $instructor_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $instructor = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$instructor || empty($instructor['email'])) {
+        error_log("Instructor class cancellation notification failed: Instructor not found for ID: $instructor_id");
+        return false;
+    }
+
+    // Get class details for additional context
+    $sql = "SELECT 
+                cb.*,
+                c.title as course_title,
+                p.name as program_name
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            JOIN programs p ON c.program_id = p.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class) {
+        error_log("Instructor class cancellation notification failed: Class not found for ID: $class_id");
+        return false;
+    }
+
+    // Get enrolled student count
+    $count_sql = "SELECT COUNT(*) as total FROM enrollments WHERE class_id = ?";
+    $count_stmt = $conn->prepare($count_sql);
+    $count_stmt->bind_param("i", $class_id);
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
+    $count_data = $count_result->fetch_assoc();
+    $enrolled_count = $count_data['total'] ?? 0;
+    $count_stmt->close();
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Class Cancellation Notification - " . $class_name;
+
+    $dashboard_url = BASE_URL . "modules/instructor/dashboard.php";
+    $classes_url = BASE_URL . "modules/instructor/classes/list.php";
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #ef4444; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .warning-box { background: #fee2e2; border: 1px solid #ef4444; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .class-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #ef4444; }
+            .button { display: inline-block; background: #ef4444; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 5px; }
+            .button-secondary { background: #2563eb; }
+            .info-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+            .info-label { font-weight: 600; color: #475569; width: 120px; display: inline-block; }
+            .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+            .badge-cancelled { background: #ef4444; color: white; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>⚠️ Class Cancellation Notice</h1>
+            </div>
+            
+            <div class='content'>
+                <p>Hello " . htmlspecialchars($instructor['first_name']) . ",</p>
+                
+                <div class='warning-box'>
+                    <p style='margin: 0; color: #991b1b;'><strong>Important:</strong> The following class has been cancelled by an administrator.</p>
+                </div>
+                
+                <div class='class-card'>
+                    <h3 style='margin: 0 0 15px 0; color: #1e293b;'>Class Details:</h3>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Class Name:</span>
+                        <span><strong>" . htmlspecialchars($class_name) . "</strong></span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Course:</span>
+                        <span>" . htmlspecialchars($class['course_title']) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Program:</span>
+                        <span>" . htmlspecialchars($class['program_name']) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Original Schedule:</span>
+                        <span>" . date('M j, Y', strtotime($class['start_date'])) . " - " . date('M j, Y', strtotime($class['end_date'])) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Enrolled Students:</span>
+                        <span><strong>" . $enrolled_count . "</strong> students</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>New Status:</span>
+                        <span><span class='badge badge-cancelled'>CANCELLED</span></span>
+                    </div>
+                </div>
+                
+                <div style='background: #fef9c3; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #eab308;'>
+                    <h4 style='margin: 0 0 10px 0; color: #854d0e;'>📋 Impact of this cancellation:</h4>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>All $enrolled_count student(s) have been unenrolled</li>
+                        <li>All course materials and assignments have been removed</li>
+                        <li>Student submissions and grades have been deleted</li>
+                        <li>Affected students have been notified via email</li>
+                        <li>This class is no longer visible to students</li>
+                    </ul>
+                </div>
+                
+                <p><strong>What you need to do:</strong></p>
+                <ul style='background: white; padding: 15px 15px 15px 35px; border-radius: 8px; margin: 15px 0;'>
+                    <li>Review your upcoming teaching schedule</li>
+                    <li>If you had prepared materials for this class, you may reuse them for future classes</li>
+                    <li>Contact the academic office if you have questions about this cancellation</li>
+                </ul>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$dashboard_url}' class='button button-secondary'>Go to Dashboard</a>
+                    <a href='{$classes_url}' class='button'>View My Classes</a>
+                </p>
+                
+                <p style='color: #64748b; font-size: 13px; margin-top: 20px;'>
+                    <i class='fas fa-question-circle'></i> If you have any questions about this cancellation, please contact the academic office at <a href='mailto:academic@impactdigitalacademy.com.ng'>academic@impactdigitalacademy.com.ng</a>
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px;'>This is an automated notification. Please do not reply to this email.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($instructor['email'], $subject, $body);
+}
+
+/**
+ * Send class cancellation email to student
+ */
+function sendClassCancellationEmail($student_id, $class_id, $student_name = null)
+{
+    $conn = getDBConnection();
+
+    // Get student details if not provided
+    if (!$student_name) {
+        $student = getUserById($student_id);
+        if (!$student || empty($student['email'])) {
+            error_log("Class cancellation email failed: Student not found or no email for ID: $student_id");
+            return false;
+        }
+        $student_email = $student['email'];
+        $student_first_name = $student['first_name'];
+        $student_last_name = $student['last_name'];
+    } else {
+        $student_first_name = $student_name;
+        $student_last_name = '';
+        $student = getUserById($student_id);
+        $student_email = $student['email'] ?? '';
+        if (empty($student_email)) {
+            error_log("Class cancellation email failed: No email for student ID: $student_id");
+            return false;
+        }
+    }
+
+    // Get class details
+    $sql = "SELECT 
+                cb.*,
+                c.title as course_title,
+                c.course_code,
+                p.name as program_name,
+                p.program_type,
+                CONCAT(u.first_name, ' ', u.last_name) as instructor_name
+            FROM class_batches cb
+            JOIN courses c ON cb.course_id = c.id
+            JOIN programs p ON c.program_id = p.id
+            LEFT JOIN users u ON cb.instructor_id = u.id
+            WHERE cb.id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $class_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $class = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$class) {
+        error_log("Class cancellation email failed: Class not found for ID: $class_id");
+        return false;
+    }
+
+    $school_name = getSetting('school_name', 'Impact Digital Academy');
+    $subject = "Class Cancellation Notice - " . $class['course_title'];
+
+    $dashboard_url = BASE_URL . "modules/student/dashboard.php";
+    $courses_url = BASE_URL . "modules/student/courses.php";
+    $support_email = getSetting('support_email', 'support@impactdigitalacademy.com.ng');
+
+    // Format program type badge
+    $program_type_badge = $class['program_type'] === 'online' ? 'Online Program' : 'Onsite Program';
+    $program_type_color = $class['program_type'] === 'online' ? '#10b981' : '#3b82f6';
+
+    $body = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #ef4444; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-radius: 0 0 10px 10px; }
+            .warning-box { background: #fee2e2; border: 1px solid #ef4444; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .class-card { background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #ef4444; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .button { display: inline-block; background: #ef4444; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 5px; }
+            .button-secondary { background: #2563eb; }
+            .info-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+            .info-label { font-weight: 600; color: #475569; width: 120px; display: inline-block; }
+            .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: normal; }
+            .badge-cancelled { background: #ef4444; color: white; }
+            .program-badge { background: {$program_type_color}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; }
+            .next-steps { background: #fef9c3; border-left: 4px solid #eab308; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .support-box { background: #e2e8f0; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1 style='margin: 0;'>⚠️ Class Cancellation Notice</h1>
+                <p style='margin: 10px 0 0; opacity: 0.9;'>Important Update Regarding Your Course</p>
+            </div>
+            
+            <div class='content'>
+                <p>Dear " . htmlspecialchars($student_first_name) . ",</p>
+                
+                <div class='warning-box'>
+                    <p style='margin: 0; color: #991b1b;'><strong>Important:</strong> The class you were enrolled in has been cancelled.</p>
+                </div>
+                
+                <div class='class-card'>
+                    <h3 style='margin: 0 0 15px 0; color: #1e293b;'>Cancelled Class Details:</h3>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Course:</span>
+                        <span><strong>" . htmlspecialchars($class['course_title']) . "</strong> (" . htmlspecialchars($class['course_code']) . ")</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Class Code:</span>
+                        <span>" . htmlspecialchars($class['batch_code']) . "</span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Program:</span>
+                        <span>" . htmlspecialchars($class['program_name']) . " <span class='program-badge'>" . $program_type_badge . "</span></span>
+                    </div>
+                    
+                    <div class='info-row'>
+                        <span class='info-label'>Original Schedule:</span>
+                        <span>" . date('F j, Y', strtotime($class['start_date'])) . " - " . date('F j, Y', strtotime($class['end_date'])) . "</span>
+                    </div>";
+
+    if ($class['instructor_name']) {
+        $body .= "
+                    <div class='info-row'>
+                        <span class='info-label'>Instructor:</span>
+                        <span>" . htmlspecialchars($class['instructor_name']) . "</span>
+                    </div>";
+    }
+
+    $body .= "
+                    <div class='info-row'>
+                        <span class='info-label'>Status:</span>
+                        <span><span class='badge badge-cancelled'>CANCELLED</span></span>
+                    </div>
+                </div>
+                
+                <div class='next-steps'>
+                    <h4 style='margin: 0 0 10px 0; color: #854d0e;'>📋 What This Means For You:</h4>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>You have been automatically unenrolled from this class</li>
+                        <li>Any assignments, quizzes, or submissions for this class have been removed</li>
+                        <li>No charges will be applied for this cancelled class (if applicable)</li>
+                        <li>Your enrollment in other classes or programs remains unaffected</li>
+                    </ul>
+                </div>
+                
+                <div class='next-steps' style='background: #dbeafe; border-left-color: #2563eb;'>
+                    <h4 style='margin: 0 0 10px 0; color: #1e3a8a;'>🎯 Next Steps:</h4>
+                    <ul style='margin: 0; padding-left: 20px;'>
+                        <li>Explore other available courses and programs</li>
+                        <li>Check your dashboard for alternative class options</li>
+                        <li>Contact our academic advisors if you need assistance finding a replacement class</li>
+                        <li>If you have paid fees for this class, contact the finance office for refund options</li>
+                    </ul>
+                </div>
+                
+                <div class='support-box'>
+                    <p style='margin: 0;'><strong>Need Assistance?</strong></p>
+                    <p style='margin: 10px 0 0;'>Our support team is here to help you find an alternative class or answer any questions.</p>
+                    <p style='margin: 15px 0 0;'>
+                        <a href='mailto:{$support_email}' style='color: #2563eb; text-decoration: none;'><strong>📧 {$support_email}</strong></a>
+                    </p>
+                </div>
+                
+                <p style='text-align: center; margin: 30px 0;'>
+                    <a href='{$dashboard_url}' class='button button-secondary'>Go to Dashboard</a>
+                    <a href='{$courses_url}' class='button'>Browse Other Courses</a>
+                </p>
+                
+                <p style='color: #64748b; font-size: 13px; margin-top: 20px;'>
+                    <i class='fas fa-calendar-alt'></i> We apologize for any inconvenience this cancellation may cause. We're committed to helping you continue your learning journey with us.
+                </p>
+            </div>
+            
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " $school_name. All rights reserved.</p>
+                <p style='font-size: 11px;'>This is an automated notification. Please do not reply to this email.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
+
+    return sendEmail($student_email, $subject, $body);
+}
