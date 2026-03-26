@@ -132,9 +132,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
                 $registration_id = $stmt->insert_id;
                 $success = true;
 
-                // Send welcome email
+                // Send welcome email to user
                 require_once __DIR__ . '/../../includes/email_functions.php';
                 sendCrashProgramRegistrationEmail($form_data, $registration_id);
+
+                // Send admin notification
+                sendCrashProgramAdminNotification($form_data, $registration_id);
 
                 // Store registration ID in session for payment page
                 $_SESSION['crash_registration_id'] = $registration_id;
@@ -156,6 +159,11 @@ $spots_sql = "SELECT COUNT(*) as confirmed FROM crash_program_registrations WHER
 $spots_result = $conn->query($spots_sql);
 $confirmed_spots = $spots_result->fetch_assoc()['confirmed'] ?? 0;
 $spots_available = $total_spots - $confirmed_spots;
+
+// Get institution settings
+$inst_name = "Impact Digital Academy";
+$inst_tagline = "Empowering Digital Futures";
+$inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -163,13 +171,14 @@ $spots_available = $total_spots - $confirmed_spots;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Crash Program Registration - Impact Digital Academy</title>
+    <title>Crash Program Registration - <?php echo $inst_name; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
-            --secondary: #1e40af;
+            --primary-dark: #1e40af;
+            --secondary: #7c3aed;
             --accent: #f59e0b;
             --success: #10b981;
             --danger: #ef4444;
@@ -179,6 +188,9 @@ $spots_available = $total_spots - $confirmed_spots;
             --gray-200: #e2e8f0;
             --gray-600: #475569;
             --gray-700: #334155;
+            --orange-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --blue-gradient: linear-gradient(135deg, #3b82f6, #1e40af);
+            --purple-gradient: linear-gradient(135deg, #8b5cf6, #6d28d9);
         }
 
         * {
@@ -195,26 +207,135 @@ $spots_available = $total_spots - $confirmed_spots;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .header {
+        /* Header with Institution Branding */
+        .institution-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
         }
 
-        .header h1 {
+        .institution-logo {
+            margin-bottom: 1rem;
+        }
+
+        .institution-logo img {
+            max-height: 80px;
+            width: auto;
+        }
+
+        .institution-name {
+            font-size: 2rem;
+            font-weight: 700;
             color: white;
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
-            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: -0.5px;
         }
 
-        .header p {
+        .institution-tagline {
             color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
+            font-size: 1rem;
+            margin-top: 0.25rem;
         }
 
+        /* Program Hero Image */
+        .program-hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 200px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-content {
+                flex-direction: row;
+                min-height: 280px;
+            }
+        }
+
+        .hero-text {
+            flex: 1;
+            padding: 2rem;
+            color: white;
+            z-index: 2;
+        }
+
+        .hero-text .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-text h2 {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero-text p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .hero-features span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+        }
+
+        .hero-image {
+            flex: 0.8;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+        }
+
+        @media (max-width: 768px) {
+            .hero-image {
+                padding: 1rem;
+            }
+
+            .hero-image img {
+                max-width: 150px;
+            }
+        }
+
+        /* Spots Counter */
         .spots-counter {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -223,6 +344,7 @@ $spots_available = $total_spots - $confirmed_spots;
             text-align: center;
             margin-bottom: 1.5rem;
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .spots-counter .spots-number {
@@ -237,13 +359,14 @@ $spots_available = $total_spots - $confirmed_spots;
         }
 
         .spots-counter.warning {
-            background: rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.4);
         }
 
         .spots-counter.critical {
-            background: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.4);
         }
 
+        /* Registration Card */
         .card {
             background: white;
             border-radius: 24px;
@@ -252,7 +375,7 @@ $spots_available = $total_spots - $confirmed_spots;
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             padding: 1.5rem;
             text-align: center;
@@ -272,6 +395,7 @@ $spots_available = $total_spots - $confirmed_spots;
             padding: 2rem;
         }
 
+        /* Program Options */
         .program-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -286,6 +410,7 @@ $spots_available = $total_spots - $confirmed_spots;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            position: relative;
         }
 
         .program-card:hover {
@@ -314,6 +439,24 @@ $spots_available = $total_spots - $confirmed_spots;
             color: var(--gray-600);
         }
 
+        .program-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .program-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Styles */
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -357,8 +500,8 @@ $spots_available = $total_spots - $confirmed_spots;
                 grid-template-columns: 1fr;
             }
 
-            .program-options {
-                grid-template-columns: 1fr;
+            .card-content {
+                padding: 1.5rem;
             }
         }
 
@@ -367,6 +510,7 @@ $spots_available = $total_spots - $confirmed_spots;
             align-items: center;
             gap: 0.75rem;
             margin-top: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .checkbox-group input {
@@ -374,6 +518,7 @@ $spots_available = $total_spots - $confirmed_spots;
             height: 20px;
         }
 
+        /* Buttons */
         .btn {
             width: 100%;
             padding: 1rem;
@@ -395,7 +540,7 @@ $spots_available = $total_spots - $confirmed_spots;
         }
 
         .btn-primary:hover {
-            background: var(--secondary);
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
 
@@ -404,6 +549,7 @@ $spots_available = $total_spots - $confirmed_spots;
             cursor: not-allowed;
         }
 
+        /* Alerts */
         .alert {
             padding: 1rem;
             border-radius: 12px;
@@ -433,7 +579,7 @@ $spots_available = $total_spots - $confirmed_spots;
 
         .closed-message {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
         }
 
         .closed-message i {
@@ -445,11 +591,15 @@ $spots_available = $total_spots - $confirmed_spots;
         .login-link {
             text-align: center;
             margin-top: 1.5rem;
-            color: white;
+            color: var(--gray-600);
         }
 
         .login-link a {
-            color: white;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
             text-decoration: underline;
         }
 
@@ -467,23 +617,46 @@ $spots_available = $total_spots - $confirmed_spots;
             color: var(--primary);
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 1rem;
-            }
-
-            .card-content {
-                padding: 1.5rem;
-            }
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="header">
-            <h1>2-Week Intensive Crash Program</h1>
-            <p>Master in-demand skills in just 2 weeks</p>
+        <!-- Institution Header -->
+        <div class="institution-header">
+            <div class="institution-logo">
+                <img src="<?php echo $inst_logo; ?>" alt="<?php echo $inst_name; ?>" onerror="this.style.display='none'">
+            </div>
+            <div class="institution-name"><?php echo $inst_name; ?></div>
+            <div class="institution-tagline"><?php echo $inst_tagline; ?></div>
+        </div>
+
+        <!-- Program Hero Image -->
+        <div class="program-hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="badge">🔥 Limited Spots Available</div>
+                    <h2>2-Week Intensive Crash Program</h2>
+                    <p>Master in-demand digital skills in just 14 days with hands-on training and expert mentorship.</p>
+                    <div class="hero-features">
+                        <span><i class="fas fa-certificate"></i> Certificate of Completion</span>
+                        <span><i class="fas fa-laptop-code"></i> Hands-on Projects</span>
+                        <span><i class="fas fa-users"></i> Expert Mentorship</span>
+                        <span><i class="fas fa-clock"></i> Flexible Schedule</span>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 180'%3E%3Crect width='200' height='180' fill='%233b82f6'/%3E%3Ctext x='100' y='90' text-anchor='middle' fill='white' font-size='14' font-family='Arial'%3ECrash Program%3C/text%3E%3C/svg%3E" alt="Crash Program">
+                </div>
+            </div>
         </div>
 
         <div class="spots-counter <?php echo $spots_available <= 10 ? ($spots_available <= 5 ? 'critical' : 'warning') : ''; ?>">
@@ -493,7 +666,7 @@ $spots_available = $total_spots - $confirmed_spots;
 
         <div class="card">
             <div class="card-header">
-                <h2>Register for the Crash Program</h2>
+                <h2>🚀 Register for the Crash Program</h2>
                 <div class="program-dates">
                     <i class="fas fa-calendar-alt"></i> <?php echo $start_date; ?> - <?php echo $end_date; ?>
                 </div>
@@ -503,7 +676,7 @@ $spots_available = $total_spots - $confirmed_spots;
                     <div class="closed-message">
                         <i class="fas fa-ban"></i>
                         <h3>Registration Closed</h3>
-                        <p>All 50 spots have been filled. Thank you for your interest!</p>
+                        <p>All <?php echo $total_spots; ?> spots have been filled. Thank you for your interest!</p>
                     </div>
                 <?php else: ?>
                     <?php if ($success): ?>
@@ -545,6 +718,7 @@ $spots_available = $total_spots - $confirmed_spots;
                                 <div class="program-icon"><i class="fas fa-code"></i></div>
                                 <h3>Web Development</h3>
                                 <p>HTML, CSS, JavaScript, React basics</p>
+                                <div class="program-badge">Popular</div>
                             </div>
                             <div class="program-card" data-program="ai_faceless_video" onclick="selectProgram('ai_faceless_video')">
                                 <div class="program-icon"><i class="fas fa-video"></i></div>
@@ -590,15 +764,16 @@ $spots_available = $total_spots - $confirmed_spots;
                         <div id="student-fields" style="display: <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 0) ? 'none' : 'block'; ?>;">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="school_name">School Name</label>
+                                    <label for="school_name">School/Institution Name</label>
                                     <input type="text" id="school_name" name="school_name" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>">
+                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
+                                        placeholder="e.g., University of Lagos">
                                 </div>
                                 <div class="form-group">
                                     <label for="school_class">Class/Level</label>
                                     <input type="text" id="school_class" name="school_class" class="form-control"
                                         value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
-                                        placeholder="e.g., SS3, 100 Level, etc.">
+                                        placeholder="e.g., 200 Level, SS3, etc.">
                                 </div>
                             </div>
                         </div>
@@ -629,7 +804,8 @@ $spots_available = $total_spots - $confirmed_spots;
                                     <option value="social_media" <?php echo ($_POST['how_heard'] ?? '') == 'social_media' ? 'selected' : ''; ?>>Social Media</option>
                                     <option value="friend" <?php echo ($_POST['how_heard'] ?? '') == 'friend' ? 'selected' : ''; ?>>Friend/Referral</option>
                                     <option value="school" <?php echo ($_POST['how_heard'] ?? '') == 'school' ? 'selected' : ''; ?>>School Announcement</option>
-                                    <option value="email" <?php echo ($_POST['how_heard'] ?? '') == 'email' ? 'selected' : ''; ?>>Email</option>
+                                    <option value="email" <?php echo ($_POST['how_heard'] ?? '') == 'email' ? 'selected' : ''; ?>>Email Newsletter</option>
+                                    <option value="whatsapp" <?php echo ($_POST['how_heard'] ?? '') == 'whatsapp' ? 'selected' : ''; ?>>WhatsApp</option>
                                     <option value="other" <?php echo ($_POST['how_heard'] ?? '') == 'other' ? 'selected' : ''; ?>>Other</option>
                                 </select>
                             </div>
@@ -646,6 +822,11 @@ $spots_available = $total_spots - $confirmed_spots;
                 <?php endif; ?>
             </div>
         </div>
+
+        <div class="footer">
+            <p>&copy; <?php echo date('Y'); ?> <?php echo $inst_name; ?>. All rights reserved.</p>
+            <p>📍 Nigeria | 📞 +234 905 158 6024 | ✉️ info@impactdigitalacademy.com.ng</p>
+        </div>
     </div>
 
     <script>
@@ -658,14 +839,17 @@ $spots_available = $total_spots - $confirmed_spots;
         }
 
         // Handle student checkbox
-        document.getElementById('is_student').addEventListener('change', function() {
-            const studentFields = document.getElementById('student-fields');
-            if (this.checked) {
-                studentFields.style.display = 'block';
-            } else {
-                studentFields.style.display = 'none';
-            }
-        });
+        const studentCheckbox = document.getElementById('is_student');
+        if (studentCheckbox) {
+            studentCheckbox.addEventListener('change', function() {
+                const studentFields = document.getElementById('student-fields');
+                if (this.checked) {
+                    studentFields.style.display = 'block';
+                } else {
+                    studentFields.style.display = 'none';
+                }
+            });
+        }
 
         // Form validation before submit
         document.getElementById('registrationForm').addEventListener('submit', function(e) {

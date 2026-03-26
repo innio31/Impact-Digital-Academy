@@ -4478,3 +4478,89 @@ function sendCrashProgramLoginEmail($registration, $password)
 
     return mail($registration['email'], $subject, $message, $headers);
 }
+
+/**
+ * Send admin notification for new crash program registration
+ */
+function sendCrashProgramAdminNotification($data, $registration_id)
+{
+    $admin_email = "admin@impactdigitalacademy.com.ng";
+
+    $program_name = $data['program_choice'] === 'web_development' ? 'Web Development' : 'AI Faceless Video Creation';
+
+    $subject = "NEW Crash Program Registration - #" . $registration_id;
+
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 20px; background: #f9fafb; }
+            .info-box { background: white; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #2563eb; }
+            .btn { display: inline-block; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>🎓 New Crash Program Registration</h2>
+                <p>Registration ID: #" . $registration_id . "</p>
+            </div>
+            <div class='content'>
+                <p><strong>A new student has registered for the crash program!</strong></p>
+                
+                <div class='info-box'>
+                    <h3>Student Details:</h3>
+                    <p><strong>Name:</strong> " . htmlspecialchars($data['first_name'] . ' ' . $data['last_name']) . "</p>
+                    <p><strong>Email:</strong> " . htmlspecialchars($data['email']) . "</p>
+                    <p><strong>Phone:</strong> " . htmlspecialchars($data['phone']) . "</p>
+                    <p><strong>Program:</strong> " . $program_name . "</p>
+                    <p><strong>Student Status:</strong> " . ($data['is_student'] ? 'Currently a student' : 'Not a student') . "</p>
+                    " . ($data['is_student'] ? "<p><strong>School:</strong> " . htmlspecialchars($data['school_name'] ?: 'Not provided') . "</p>
+                    <p><strong>Class/Level:</strong> " . htmlspecialchars($data['school_class'] ?: 'Not provided') . "</p>" : "") . "
+                    <p><strong>Location:</strong> " . htmlspecialchars($data['city'] ?: 'Not provided') . ", " . htmlspecialchars($data['state'] ?: 'Not provided') . "</p>
+                    <p><strong>How Heard:</strong> " . htmlspecialchars($data['how_heard'] ?: 'Not provided') . "</p>
+                    <p><strong>Registration Time:</strong> " . date('F j, Y g:i A') . "</p>
+                </div>
+                
+                <div class='info-box' style='border-left-color: #f59e0b;'>
+                    <h3>Payment Status:</h3>
+                    <p><strong>Status:</strong> ⏳ Pending Payment</p>
+                    <p><strong>Amount:</strong> ₦10,000</p>
+                    <p><strong>Action Required:</strong> Student will confirm payment via WhatsApp</p>
+                </div>
+                
+                <p style='text-align: center; margin-top: 20px;'>
+                    <a href='" . BASE_URL . "modules/admin/crash_program/admin_crash.php' class='btn'>
+                        View All Registrations
+                    </a>
+                </p>
+                
+                <p><strong>Next Steps:</strong></p>
+                <ol>
+                    <li>Wait for student to send payment confirmation via WhatsApp</li>
+                    <li>Verify payment in the bank account</li>
+                    <li>Confirm payment in admin panel to grant access</li>
+                    <li>Send program details to student</li>
+                </ol>
+                
+                <p>Regards,<br>
+                <strong>Impact Digital Academy System</strong></p>
+            </div>
+            <div class='footer'>
+                <p>This is an automated notification. Please do not reply to this email.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: Impact Digital Academy <noreply@impactdigitalacademy.com.ng>" . "\r\n";
+
+    return mail($admin_email, $subject, $message, $headers);
+}

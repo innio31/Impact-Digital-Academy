@@ -1474,6 +1474,21 @@ logActivity($_SESSION['user_id'], 'admin_dashboard_access', 'Admin accessed dash
                     </div>
                 </div>
 
+                <!-- Crash Program -->
+                <div class="nav-dropdown">
+                    <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">
+                        <i class="fas fa-school"></i>
+                        <span class="nav-label">Crash Program</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="<?php echo BASE_URL; ?>modules/admin/crash_program/admin_crash.php" class="nav-item">
+                            <i class="fas fa-list"></i>
+                            <span class="nav-label">Manage Crash Program</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- School Management -->
                 <div class="nav-dropdown">
                     <div class="nav-item dropdown-toggle" onclick="toggleDropdown(this)">

@@ -776,6 +776,19 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
                 <p>2-Week Intensive Program: Web Development & AI Faceless Video Creation (April 13-24, 2026)</p>
             </div>
 
+            <!-- Add after the page-header div -->
+            <div class="institution-info" style="background: linear-gradient(135deg, #2563eb, #1e40af); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; color: white;">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div>
+                        <i class="fas fa-university" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.3rem;">Impact Digital Academy</h2>
+                        <p style="margin: 0; opacity: 0.9;">2-Week Intensive Crash Program • April 13-24, 2026</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Alerts -->
             <?php if ($message): ?>
                 <div class="alert alert-success">
