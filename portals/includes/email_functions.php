@@ -4048,3 +4048,446 @@ function sendClassCancellationEmail($student_id, $class_id, $student_name = null
 
     return sendEmail($student_email, $subject, $body);
 }
+
+
+// includes/email_functions_crash.php
+// Add these functions to your existing email_functions.php or create a new file
+
+/**
+ * Send crash program registration confirmation email
+ */
+function sendCrashProgramRegistrationEmail($data, $registration_id)
+{
+    global $conn;
+
+    // Get program settings
+    $settings_sql = "SELECT setting_key, setting_value FROM crash_program_settings 
+                    WHERE setting_key IN ('program_start_date', 'program_end_date', 'program_fee', 'bank_name', 'account_name', 'account_number')";
+    $settings_result = $conn->query($settings_sql);
+    $settings = [];
+    while ($row = $settings_result->fetch_assoc()) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+
+    $program_name = $data['program_choice'] === 'web_development' ? 'Web Development' : 'AI Faceless Video Creation';
+    $start_date = date('F j, Y', strtotime($settings['program_start_date'] ?? '2026-04-13'));
+    $end_date = date('F j, Y', strtotime($settings['program_end_date'] ?? '2026-04-24'));
+    $program_fee = number_format($settings['program_fee'] ?? 10000, 2);
+    $bank_name = $settings['bank_name'] ?? 'MoniePoint Microfinance Bank';
+    $account_name = $settings['account_name'] ?? 'Impact Digital Academy';
+    $account_number = $settings['account_number'] ?? '6658393500';
+
+    $subject = "Welcome to Impact Digital Academy - Crash Program Registration";
+
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 20px; background: #f9fafb; }
+            .program-details { background: white; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #2563eb; }
+            .payment-details { background: #fef3c7; padding: 15px; border-radius: 10px; margin: 15px 0; }
+            .btn { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; margin-top: 15px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>Welcome to Impact Digital Academy!</h2>
+                <p>Your Crash Program Registration is Successful</p>
+            </div>
+            <div class='content'>
+                <p>Dear <strong>" . htmlspecialchars($data['first_name'] . ' ' . $data['last_name']) . "</strong>,</p>
+                
+                <p>Thank you for registering for our 2-Week Intensive Crash Program. We're excited to have you on board!</p>
+                
+                <div class='program-details'>
+                    <h3>Program Details:</h3>
+                    <p><strong>Program:</strong> " . $program_name . "</p>
+                    <p><strong>Duration:</strong> " . $start_date . " - " . $end_date . "</p>
+                    <p><strong>Registration ID:</strong> #" . $registration_id . "</p>
+                </div>
+                
+                <div class='payment-details'>
+                    <h3>Payment Instructions:</h3>
+                    <p><strong>Amount:</strong> ₦" . $program_fee . "</p>
+                    <p><strong>Bank:</strong> " . $bank_name . "</p>
+                    <p><strong>Account Name:</strong> " . $account_name . "</p>
+                    <p><strong>Account Number:</strong> " . $account_number . "</p>
+                    <p><strong>Payment Deadline:</strong> Within 3 days of registration</p>
+                    <p><strong>Important:</strong> After payment, please confirm your payment via the link below to secure your spot.</p>
+                </div>
+                
+                <p style='text-align: center;'>
+                    <a href='" . BASE_URL . "modules/crash_program/confirm_payment.php?id=" . $registration_id . "' class='btn'>
+                        Confirm Payment
+                    </a>
+                </p>
+                
+                <p><strong>Note:</strong> Your spot is reserved for 3 days. After this period, if payment is not confirmed, your spot may be released to other applicants.</p>
+                
+                <p>If you have any questions, please contact us at support@impactdigitalacademy.com or call +2349051586024.</p>
+                
+                <p>Best regards,<br>
+                <strong>Impact Digital Academy Team</strong></p>
+            </div>
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+                <p>This email was sent to " . htmlspecialchars($data['email']) . "</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    // Send email
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: Impact Digital Academy <noreply@impactdigitalacademy.com>" . "\r\n";
+
+    return mail($data['email'], $subject, $message, $headers);
+}
+
+/**
+ * Send payment confirmation email
+ */
+function sendCrashProgramPaymentConfirmationEmail($registration)
+{
+    $program_name = $registration['program_choice'] === 'web_development' ? 'Web Development' : 'AI Faceless Video Creation';
+
+    $subject = "Payment Confirmed - Crash Program - Impact Digital Academy";
+
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 20px; background: #f9fafb; }
+            .btn { display: inline-block; padding: 12px 24px; background: #10b981; color: white; text-decoration: none; border-radius: 8px; margin-top: 15px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>Payment Confirmed!</h2>
+                <p>Your spot in the Crash Program is secured</p>
+            </div>
+            <div class='content'>
+                <p>Dear <strong>" . htmlspecialchars($registration['first_name'] . ' ' . $registration['last_name']) . "</strong>,</p>
+                
+                <p>Great news! Your payment has been confirmed and your spot in the <strong>" . $program_name . "</strong> crash program is now secured.</p>
+                
+                <h3>What's Next?</h3>
+                <ul>
+                    <li>You will receive access to the program portal within 24 hours</li>
+                    <li>Program starts on " . date('F j, Y', strtotime($registration['registered_at'])) . "</li>
+                    <li>Check your email for login credentials to access the learning materials</li>
+                </ul>
+                
+                <p style='text-align: center;'>
+                    <a href='" . BASE_URL . "modules/auth/login.php' class='btn'>
+                        Access Your Dashboard
+                    </a>
+                </p>
+                
+                <p>We're excited to have you join us for this transformative learning experience!</p>
+                
+                <p>Best regards,<br>
+                <strong>Impact Digital Academy Team</strong></p>
+            </div>
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: Impact Digital Academy <noreply@impactdigitalacademy.com>" . "\r\n";
+
+    return mail($registration['email'], $subject, $message, $headers);
+}
+
+/**
+ * Send program details email
+ */
+function sendCrashProgramDetailsEmail($registration)
+{
+    global $conn;
+
+    $program_name = $registration['program_choice'] === 'web_development' ? 'Web Development' : 'AI Faceless Video Creation';
+
+    // Get program start date from settings
+    $settings_sql = "SELECT setting_value FROM crash_program_settings WHERE setting_key = 'program_start_date'";
+    $settings_result = $conn->query($settings_sql);
+    $start_date_row = $settings_result->fetch_assoc();
+    $start_date = date('F j, Y', strtotime($start_date_row['setting_value'] ?? '2026-04-13'));
+
+    $subject = "Program Details - " . $program_name . " Crash Program";
+
+    $web_dev_content = "
+    <h3>Web Development Program Outline:</h3>
+    <ul>
+        <li><strong>Week 1 (April 13-17):</strong> HTML & CSS Fundamentals</li>
+        <li><strong>Week 2 (April 20-24):</strong> JavaScript & React Basics</li>
+        <li><strong>Daily Schedule:</strong> 6:00 PM - 8:00 PM (Monday - Friday)</li>
+        <li><strong>Format:</strong> Live virtual classes + recorded sessions</li>
+        <li><strong>Project:</strong> Build a personal portfolio website</li>
+    </ul>
+    ";
+
+    $ai_video_content = "
+    <h3>AI Faceless Video Creation Program Outline:</h3>
+    <ul>
+        <li><strong>Week 1 (April 13-17):</strong> Introduction to AI Video Tools & Script Generation</li>
+        <li><strong>Week 2 (April 20-24):</strong> Voiceover Creation & Video Editing</li>
+        <li><strong>Daily Schedule:</strong> 6:00 PM - 8:00 PM (Monday - Friday)</li>
+        <li><strong>Format:</strong> Live virtual classes + hands-on practice</li>
+        <li><strong>Tools Covered:</strong> ChatGPT, ElevenLabs, Canva, CapCut</li>
+        <li><strong>Project:</strong> Create and publish a faceless YouTube video</li>
+    </ul>
+    ";
+
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 20px; background: #f9fafb; }
+            .program-content { background: white; padding: 15px; border-radius: 10px; margin: 15px 0; }
+            .btn { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; margin-top: 15px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>Program Details: " . $program_name . "</h2>
+                <p>2-Week Intensive Crash Program</p>
+            </div>
+            <div class='content'>
+                <p>Dear <strong>" . htmlspecialchars($registration['first_name'] . ' ' . $registration['last_name']) . "</strong>,</p>
+                
+                <p>We're excited to provide you with the detailed program outline for the upcoming crash program starting on <strong>" . $start_date . "</strong>.</p>
+                
+                <div class='program-content'>
+                    " . ($registration['program_choice'] === 'web_development' ? $web_dev_content : $ai_video_content) . "
+                </div>
+                
+                <h3>How to Access the Program:</h3>
+                <ol>
+                    <li>Visit our portal: <a href='" . BASE_URL . "'>" . BASE_URL . "</a></li>
+                    <li>Login with your email: " . htmlspecialchars($registration['email']) . "</li>
+                    <li>Click on 'My Courses' to access the program materials</li>
+                </ol>
+                
+                <h3>What You'll Need:</h3>
+                <ul>
+                    <li>Laptop/Computer with stable internet connection</li>
+                    <li>Headset with microphone (for interactive sessions)</li>
+                    <li>Notepad for taking notes</li>
+                </ul>
+                
+                <h3>Important Links:</h3>
+                <ul>
+                    <li>Class Link: <a href='#'>Will be shared via email before start date</a></li>
+                    <li>Support WhatsApp: <a href='https://wa.me/2349051586024'>+2349051586024</a></li>
+                </ul>
+                
+                <p>If you have any questions before the program starts, please reach out to our support team.</p>
+                
+                <p style='text-align: center;'>
+                    <a href='" . BASE_URL . "modules/auth/login.php' class='btn'>
+                        Go to Dashboard
+                    </a>
+                </p>
+                
+                <p>Best regards,<br>
+                <strong>Impact Digital Academy Team</strong></p>
+            </div>
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: Impact Digital Academy <noreply@impactdigitalacademy.com>" . "\r\n";
+
+    return mail($registration['email'], $subject, $message, $headers);
+}
+
+/**
+ * Create user in main portal after payment confirmation
+ */
+function createCrashProgramPortalUser($registration, $conn)
+{
+    require_once __DIR__ . '/auth.php'; // For password hashing
+
+    // Check if user already exists
+    $check_sql = "SELECT id FROM users WHERE email = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param('s', $registration['email']);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows > 0) {
+        // User exists, just update role if needed
+        $user = $check_result->fetch_assoc();
+        $user_id = $user['id'];
+
+        // Update role to student if not already
+        $update_sql = "UPDATE users SET role = 'student', status = 'active' WHERE id = ? AND role = 'applicant'";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param('i', $user_id);
+        $update_stmt->execute();
+        $update_stmt->close();
+
+        // Update crash program registration with user_id
+        $update_reg_sql = "UPDATE crash_program_registrations SET user_id = ?, portal_user_created = 1 WHERE id = ?";
+        $update_reg_stmt = $conn->prepare($update_reg_sql);
+        $update_reg_stmt->bind_param('ii', $user_id, $registration['id']);
+        $update_reg_stmt->execute();
+        $update_reg_stmt->close();
+
+        return $user_id;
+    }
+
+    // Create new user
+    $password = generateRandomPassword(); // Generate random password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    $insert_sql = "INSERT INTO users (email, password, first_name, last_name, phone, role, status) 
+                   VALUES (?, ?, ?, ?, ?, 'student', 'active')";
+    $insert_stmt = $conn->prepare($insert_sql);
+    $insert_stmt->bind_param(
+        'sssss',
+        $registration['email'],
+        $hashed_password,
+        $registration['first_name'],
+        $registration['last_name'],
+        $registration['phone']
+    );
+
+    if ($insert_stmt->execute()) {
+        $user_id = $insert_stmt->insert_id;
+
+        // Create user profile
+        $profile_sql = "INSERT INTO user_profiles (user_id, address, city, state) 
+                        VALUES (?, ?, ?, ?)";
+        $profile_stmt = $conn->prepare($profile_sql);
+        $profile_stmt->bind_param(
+            'isss',
+            $user_id,
+            $registration['address'],
+            $registration['city'],
+            $registration['state']
+        );
+        $profile_stmt->execute();
+        $profile_stmt->close();
+
+        // Update crash program registration
+        $update_reg_sql = "UPDATE crash_program_registrations SET user_id = ?, portal_user_created = 1 WHERE id = ?";
+        $update_reg_stmt = $conn->prepare($update_reg_sql);
+        $update_reg_stmt->bind_param('ii', $user_id, $registration['id']);
+        $update_reg_stmt->execute();
+        $update_reg_stmt->close();
+
+        // Send login credentials email
+        sendCrashProgramLoginEmail($registration, $password);
+
+        return $user_id;
+    }
+
+    $insert_stmt->close();
+    return false;
+}
+
+/**
+ * Send login credentials email
+ */
+function sendCrashProgramLoginEmail($registration, $password)
+{
+    $subject = "Your Login Credentials - Impact Digital Academy";
+
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 20px; background: #f9fafb; }
+            .credentials { background: #fef3c7; padding: 15px; border-radius: 10px; margin: 15px 0; font-family: monospace; }
+            .btn { display: inline-block; padding: 12px 24px; background: #10b981; color: white; text-decoration: none; border-radius: 8px; margin-top: 15px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>Welcome to Impact Digital Academy Portal!</h2>
+                <p>Your login credentials are ready</p>
+            </div>
+            <div class='content'>
+                <p>Dear <strong>" . htmlspecialchars($registration['first_name'] . ' ' . $registration['last_name']) . "</strong>,</p>
+                
+                <p>Your account has been created successfully. You can now access the main portal using the credentials below:</p>
+                
+                <div class='credentials'>
+                    <p><strong>Portal URL:</strong> <a href='" . BASE_URL . "'>" . BASE_URL . "</a></p>
+                    <p><strong>Email:</strong> " . htmlspecialchars($registration['email']) . "</p>
+                    <p><strong>Password:</strong> " . $password . "</p>
+                </div>
+                
+                <p><strong>Important:</strong> Please change your password after your first login for security purposes.</p>
+                
+                <p style='text-align: center;'>
+                    <a href='" . BASE_URL . "modules/auth/login.php' class='btn'>
+                        Login Now
+                    </a>
+                </p>
+                
+                <p>Best regards,<br>
+                <strong>Impact Digital Academy Team</strong></p>
+            </div>
+            <div class='footer'>
+                <p>&copy; " . date('Y') . " Impact Digital Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: Impact Digital Academy <noreply@impactdigitalacademy.com>" . "\r\n";
+
+    return mail($registration['email'], $subject, $message, $headers);
+}
+
+/**
+ * Generate random password
+ */
+function generateRandomPassword($length = 10)
+{
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    return $password;
+}

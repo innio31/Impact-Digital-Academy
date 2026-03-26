@@ -27,3 +27,15 @@ RewriteRule ^api/(.*)$ api/v1/$1 [L,QSA]
 ErrorDocument 404 /errors/404.php
 ErrorDocument 403 /errors/403.php
 ErrorDocument 500 /errors/500.php
+
+# Redirect /crash to crash program registration
+RewriteRule ^crash$ modules/crash_program/register_crash.php [L,NC]
+RewriteRule ^crash/$ modules/crash_program/register_crash.php [L,NC]
+
+# Alternative: /register-crash
+RewriteRule ^register-crash$ modules/crash_program/register_crash.php [L,NC]
+RewriteRule ^register-crash/$ modules/crash_program/register_crash.php [L,NC]
+
+# Even shorter: /apply
+RewriteRule ^apply$ modules/crash_program/register_crash.php [L,NC]
+RewriteRule ^apply/$ modules/crash_program/register_crash.php [L,NC]
