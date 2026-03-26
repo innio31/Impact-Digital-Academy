@@ -645,7 +645,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 <div class="hero-text">
                     <div class="badge">🔥 Limited Spots Available</div>
                     <h2>2-Week Intensive Crash Program</h2>
-                    <p>Master in-demand digital skills in just 14 days with hands-on training and expert mentorship.</p>
+                    <p>Master in-demand digital skills in just 2 weeks with hands-on training and expert mentorship.</p>
                     <div class="hero-features">
                         <span><i class="fas fa-certificate"></i> Certificate of Completion</span>
                         <span><i class="fas fa-laptop-code"></i> Hands-on Projects</span>
@@ -661,7 +661,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
         <div class="spots-counter <?php echo $spots_available <= 10 ? ($spots_available <= 5 ? 'critical' : 'warning') : ''; ?>">
             <span class="spots-number"><?php echo $spots_available; ?></span>
-            <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span>
+            <!-- <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span> -->
         </div>
 
         <div class="card">
@@ -669,6 +669,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 <h2>🚀 Register for the Crash Program</h2>
                 <div class="program-dates">
                     <i class="fas fa-calendar-alt"></i> <?php echo $start_date; ?> - <?php echo $end_date; ?>
+                    <p> <i class="fas-fa-venue"></i> Mighty School for Valours </p>
                 </div>
             </div>
             <div class="card-content">

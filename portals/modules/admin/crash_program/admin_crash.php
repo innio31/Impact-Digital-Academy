@@ -152,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_program_details'
 $status_filter = $_GET['status'] ?? 'all';
 $payment_filter = $_GET['payment'] ?? 'all';
 $program_filter = $_GET['program'] ?? 'all';
+$search = $_GET['search'] ?? '';
 
 $sql = "SELECT * FROM crash_program_registrations WHERE 1=1";
 $params = [];
@@ -173,6 +174,16 @@ if ($program_filter !== 'all') {
     $sql .= " AND program_choice = ?";
     $params[] = $program_filter;
     $types .= "s";
+}
+
+if (!empty($search)) {
+    $sql .= " AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+    $search_term = "%$search%";
+    $params[] = $search_term;
+    $params[] = $search_term;
+    $params[] = $search_term;
+    $params[] = $search_term;
+    $types .= "ssss";
 }
 
 $sql .= " ORDER BY registered_at DESC";
@@ -205,7 +216,7 @@ $spots_left = $total_spots - $confirmed_count;
 // Function to get program display name
 function getProgramDisplay($program_choice)
 {
-    return $program_choice === 'web_development' ? 'Web Development' : 'AI Faceless Video Creation';
+    return $program_choice === 'web_development' ? 'Web Development' : 'AI Faceless Video';
 }
 
 // Get pending payment registrations for reminder
@@ -220,7 +231,7 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Crash Program Management - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="../../../../public/images/favicon.ico">
@@ -236,54 +247,172 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             --gray-50: #f8fafc;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
             --gray-500: #64748b;
             --gray-600: #475569;
             --gray-700: #334155;
+            --gray-800: #1e293b;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-left: env(safe-area-inset-left);
+            --safe-right: env(safe-area-inset-right);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #f1f5f9;
+            background: var(--gray-100);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: var(--gray-800);
+            line-height: 1.5;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
         }
 
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
+        html {
+            height: -webkit-fill-available;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
+        /* Mobile Header */
+        .mobile-header {
             background: var(--dark);
             color: white;
-            position: fixed;
-            left: 0;
+            padding: 0.75rem 1rem;
+            padding-top: max(0.75rem, var(--safe-top));
+            position: sticky;
             top: 0;
-            bottom: 0;
-            overflow-y: auto;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .sidebar-header {
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-header-title h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .mobile-header-title p {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        .mobile-user {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: min(85%, 300px);
+            height: 100%;
+            height: -webkit-fill-available;
+            background: var(--dark);
+            color: white;
+            z-index: 1000;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .mobile-sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .mobile-sidebar-header {
             padding: 1.5rem;
-            border-bottom: 1px solid #334155;
+            padding-top: max(1.5rem, var(--safe-top));
+            border-bottom: 1px solid var(--gray-700);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .sidebar-header h2 {
-            font-size: 1.25rem;
-            margin-bottom: 0.25rem;
+        .mobile-sidebar-header h2 {
+            font-size: 1.2rem;
         }
 
-        .sidebar-header p {
-            color: #94a3b8;
-            font-size: 0.85rem;
+        .mobile-sidebar-header p {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-sidebar:active {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-nav ul {
@@ -295,67 +424,102 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             display: flex;
             align-items: center;
             padding: 0.875rem 1.5rem;
-            color: #cbd5e1;
+            color: var(--gray-300);
             text-decoration: none;
-            transition: all 0.2s;
             gap: 0.75rem;
+            transition: background 0.2s;
+            font-size: 0.95rem;
         }
 
-        .sidebar-nav li a:hover,
+        .sidebar-nav li a:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .sidebar-nav li a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
+            border-left: 3px solid var(--primary);
         }
 
         .sidebar-nav li a i {
-            width: 20px;
+            width: 24px;
+        }
+
+        /* Desktop Sidebar */
+        .desktop-sidebar {
+            display: none;
+            width: 260px;
+            background: var(--dark);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: 280px;
-            padding: 2rem;
+            padding: 1rem;
+            padding-bottom: calc(1rem + var(--safe-bottom));
         }
 
-        /* Header */
-        .page-header {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        @media (min-width: 1024px) {
+            .mobile-header {
+                display: none;
+            }
+
+            .desktop-sidebar {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                padding: 2rem;
+            }
         }
 
-        .page-header h1 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
+        /* Institution Banner */
+        .institution-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
         }
 
-        .page-header p {
-            color: var(--gray-500);
+        .institution-banner h1 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Stats Grid */
+        .institution-banner p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Grid - Mobile First */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .stat-card {
             background: white;
-            padding: 1.25rem;
+            padding: 1rem;
             border-radius: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary);
+            border-left: 3px solid var(--primary);
             transition: transform 0.2s;
         }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-card.success {
@@ -375,39 +539,54 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.25rem;
         }
 
         .stat-label {
+            font-size: 0.7rem;
             color: var(--gray-500);
-            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (min-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
         }
 
         /* Cards */
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             overflow: hidden;
         }
 
         .card-header {
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             background: var(--gray-50);
             border-bottom: 1px solid var(--gray-200);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .card-header h3 {
-            color: var(--dark);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -418,32 +597,84 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             color: var(--primary);
         }
 
-        /* Filters */
+        @media (min-width: 640px) {
+            .card-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        /* Filters - Mobile Optimized */
         .filters {
             display: flex;
-            gap: 0.75rem;
             flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .filter-select {
-            padding: 0.5rem 1rem;
+            flex: 1;
+            min-width: 120px;
+            padding: 0.6rem 0.75rem;
             border: 1px solid var(--gray-200);
-            border-radius: 10px;
+            border-radius: 12px;
             background: white;
             font-size: 0.85rem;
             cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 12px;
+            padding-right: 2rem;
         }
 
-        /* Settings Form */
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .search-box button {
+            padding: 0.6rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        /* Settings Form - Mobile Optimized */
         .settings-form {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.25rem;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .form-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .form-group {
@@ -452,18 +683,18 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-weight: 500;
-            color: var(--gray-700);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.7rem 0.85rem;
             border: 1px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
 
@@ -473,81 +704,119 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* Table */
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
+        /* Mobile Cards for Registrations */
+        .registration-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 0.75rem;
             padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--gray-200);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 3px solid var(--gray-300);
+            transition: transform 0.2s;
         }
 
-        th {
-            background: var(--gray-50);
+        .registration-card:active {
+            transform: scale(0.99);
+        }
+
+        .registration-card.confirmed {
+            border-left-color: var(--success);
+        }
+
+        .registration-card.pending {
+            border-left-color: var(--warning);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .registration-name {
             font-weight: 600;
-            color: var(--gray-600);
-            font-size: 0.85rem;
+            font-size: 1rem;
+            color: var(--gray-800);
         }
 
-        td {
-            font-size: 0.9rem;
+        .registration-id {
+            font-size: 0.7rem;
+            color: var(--gray-400);
         }
 
-        tr:hover {
-            background: var(--gray-50);
-        }
-
-        /* Status Badges */
         .status-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             text-transform: uppercase;
         }
 
-        .status-confirmed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-pending_payment {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
+        .status-confirmed,
         .status-payment_confirmed {
             background: #d1fae5;
             color: #065f46;
         }
 
-        /* Buttons */
+        .status-pending,
+        .status-pending_payment {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .registration-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin: 0.75rem 0;
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--gray-100);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .detail-item i {
+            width: 20px;
+            color: var(--gray-400);
+        }
+
+        .registration-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Buttons - Touch Friendly */
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             border: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
             transition: all 0.2s;
+            min-height: 44px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
         }
 
         .btn-primary {
@@ -555,7 +824,7 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:active {
             background: var(--primary-dark);
         }
 
@@ -564,75 +833,118 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             color: white;
         }
 
-        .btn-success:hover {
-            background: #059669;
-        }
-
         .btn-warning {
             background: var(--warning);
             color: white;
         }
 
-        .btn-warning:hover {
-            background: #d97706;
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.7rem;
+            min-height: 36px;
         }
 
-        .btn-sm {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+        .btn-block {
+            width: 100%;
         }
 
         /* Alerts */
         .alert {
-            padding: 1rem 1.25rem;
+            padding: 0.75rem 1rem;
             border-radius: 12px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
+            font-size: 0.85rem;
         }
 
         .alert-success {
             background: #d1fae5;
             color: #065f46;
-            border-left: 4px solid var(--success);
+            border-left: 3px solid var(--success);
         }
 
         .alert-error {
             background: #fee2e2;
             color: #991b1b;
-            border-left: 4px solid var(--danger);
-        }
-
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border-left: 4px solid var(--info);
+            border-left: 3px solid var(--danger);
         }
 
         .alert-warning {
             background: #fef3c7;
             color: #92400e;
-            border-left: 4px solid var(--warning);
+            border-left: 3px solid var(--warning);
         }
 
         /* Pending Reminder */
         .pending-reminder {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border-left: 4px solid var(--warning);
         }
 
         .pending-list {
-            margin-top: 0.75rem;
-            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            font-size: 0.8rem;
         }
 
         .pending-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
             margin-bottom: 0.5rem;
         }
 
-        /* Action Buttons */
-        .action-buttons {
+        /* Desktop Table (Hidden on Mobile) */
+        .desktop-table {
+            display: none;
+        }
+
+        @media (min-width: 1024px) {
+            .registration-card {
+                display: none;
+            }
+
+            .desktop-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                padding: 1rem;
+                text-align: left;
+                border-bottom: 1px solid var(--gray-200);
+                font-size: 0.85rem;
+            }
+
+            th {
+                background: var(--gray-50);
+                font-weight: 600;
+                color: var(--gray-600);
+            }
+
+            tr:hover {
+                background: var(--gray-50);
+            }
+        }
+
+        /* Action Buttons Group */
+        .action-group {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
@@ -645,222 +957,201 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
             gap: 0.25rem;
         }
 
-        .program-icon i {
-            font-size: 0.85rem;
-        }
-
-        /* Empty State */
-        .empty-state {
+        /* Footer */
+        .footer {
             text-align: center;
-            padding: 3rem;
-            color: var(--gray-500);
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            margin-top: 1rem;
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--gray-300);
+        /* Touch Optimizations */
+        button,
+        a,
+        .filter-select,
+        .stat-card,
+        .registration-card {
+            touch-action: manipulation;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-            }
-
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .filters {
-                width: 100%;
-            }
-
-            .filter-select {
-                flex: 1;
-            }
-
-            th,
-            td {
-                padding: 0.75rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn-sm {
-                width: 100%;
-                justify-content: center;
-            }
+        /* Pull to refresh indicator */
+        .ptr-indicator {
+            display: none;
+            text-align: center;
+            padding: 0.5rem;
+            color: var(--gray-400);
+            font-size: 0.7rem;
         }
 
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-
-            .sidebar,
-            .card-header .filters,
-            .action-buttons,
-            .btn,
-            .pending-reminder {
-                display: none !important;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 0;
-            }
-
-            .stat-card {
-                break-inside: avoid;
-            }
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior-y: contain;
         }
     </style>
 </head>
 
 <body>
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="mobile-header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="mobile-header-title">
+                <h2>Crash Program Admin</h2>
+                <p>Impact Digital Academy</p>
+            </div>
+        </div>
+        <div class="mobile-user">
+            <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <div>
                 <h2>Impact Digital Academy</h2>
                 <p>Crash Program Admin</p>
             </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
-                            <i class="fas fa-tachometer-alt"></i> Main Dashboard
-                        </a></li>
-                    <li><a href="<?php echo BASE_URL; ?>modules/admin/crash_program/admin_crash.php" class="active">
-                            <i class="fas fa-rocket"></i> Crash Program
-                        </a></li>
-                    <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">
-                            <i class="fas fa-file-alt"></i> Applications
-                        </a></li>
-                    <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">
-                            <i class="fas fa-users"></i> Users
-                        </a></li>
-                    <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a></li>
-                </ul>
-            </nav>
+            <button class="close-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/crash_program/admin_crash.php" class="active">
+                        <i class="fas fa-rocket"></i> Crash Program
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">
+                        <i class="fas fa-file-alt"></i> Applications
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">
+                        <i class="fas fa-users"></i> Users
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <div class="desktop-sidebar">
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--gray-700);">
+            <h2 style="font-size: 1.25rem;">Impact Digital Academy</h2>
+            <p style="font-size: 0.8rem; color: var(--gray-400);">Crash Program Admin</p>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/dashboard.php">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/crash_program/admin_crash.php" class="active">
+                        <i class="fas fa-rocket"></i> Crash Program
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/applications/list.php">
+                        <i class="fas fa-file-alt"></i> Applications
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/admin/users/manage.php">
+                        <i class="fas fa-users"></i> Users
+                    </a></li>
+                <li><a href="<?php echo BASE_URL; ?>modules/auth/logout.php">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Institution Banner -->
+        <div class="institution-banner">
+            <h1>
+                <i class="fas fa-rocket"></i>
+                Crash Program Management
+            </h1>
+            <p>2-Week Intensive Program: Web Development & AI Faceless Video Creation (April 13-24, 2026)</p>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1><i class="fas fa-rocket"></i> Crash Program Management</h1>
-                <p>2-Week Intensive Program: Web Development & AI Faceless Video Creation (April 13-24, 2026)</p>
+        <!-- Alerts -->
+        <?php if ($message): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <div><?php echo htmlspecialchars($message); ?></div>
             </div>
+        <?php endif; ?>
 
-            <!-- Add after the page-header div -->
-            <div class="institution-info" style="background: linear-gradient(135deg, #2563eb, #1e40af); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; color: white;">
-                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                    <div>
-                        <i class="fas fa-university" style="font-size: 2rem;"></i>
-                    </div>
-                    <div>
-                        <h2 style="margin: 0; font-size: 1.3rem;">Impact Digital Academy</h2>
-                        <p style="margin: 0; opacity: 0.9;">2-Week Intensive Crash Program • April 13-24, 2026</p>
-                    </div>
-                </div>
+        <?php if ($error): ?>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div><?php echo htmlspecialchars($error); ?></div>
             </div>
+        <?php endif; ?>
 
-            <!-- Alerts -->
-            <?php if ($message): ?>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    <div><?php echo htmlspecialchars($message); ?></div>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($error): ?>
-                <div class="alert alert-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div><?php echo htmlspecialchars($error); ?></div>
-                </div>
-            <?php endif; ?>
-
-            <?php if (!empty($pending_registrations)): ?>
-                <div class="alert alert-warning pending-reminder">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>Pending Payment Reminder:</strong>
-                        <?php echo count($pending_registrations); ?> registration(s) have been pending for more than 2 days.
-                        <ul class="pending-list">
-                            <?php foreach (array_slice($pending_registrations, 0, 5) as $pending): ?>
-                                <li>
-                                    <?php echo htmlspecialchars($pending['first_name'] . ' ' . $pending['last_name']); ?> -
-                                    <?php echo htmlspecialchars($pending['email']); ?> -
-                                    Registered: <?php echo date('M j, Y', strtotime($pending['registered_at'])); ?>
-                                </li>
-                            <?php endforeach; ?>
-                            <?php if (count($pending_registrations) > 5): ?>
-                                <li>... and <?php echo count($pending_registrations) - 5; ?> more</li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo $stats['total'] ?? 0; ?></div>
-                    <div class="stat-label">Total Registrations</div>
-                </div>
-                <div class="stat-card success">
-                    <div class="stat-number"><?php echo $stats['confirmed'] ?? 0; ?></div>
-                    <div class="stat-label">Confirmed Payments</div>
-                </div>
-                <div class="stat-card warning">
-                    <div class="stat-number"><?php echo $stats['pending_payment'] ?? 0; ?></div>
-                    <div class="stat-label">Pending Payment</div>
-                </div>
-                <div class="stat-card info">
-                    <div class="stat-number <?php echo $spots_left <= 10 ? 'text-warning' : ''; ?>">
-                        <?php echo $spots_left; ?>
-                    </div>
-                    <div class="stat-label">Spots Remaining</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo $stats['web_dev'] ?? 0; ?></div>
-                    <div class="stat-label">Web Development</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo $stats['ai_video'] ?? 0; ?></div>
-                    <div class="stat-label">AI Video Creation</div>
+        <?php if (!empty($pending_registrations)): ?>
+            <div class="alert alert-warning pending-reminder">
+                <i class="fas fa-clock"></i>
+                <div style="flex:1">
+                    <strong><?php echo count($pending_registrations); ?> pending payment(s) for &gt;2 days</strong>
+                    <ul class="pending-list">
+                        <?php foreach (array_slice($pending_registrations, 0, 3) as $pending): ?>
+                            <li><?php echo htmlspecialchars($pending['first_name'] . ' ' . $pending['last_name']); ?> - <?php echo date('M j', strtotime($pending['registered_at'])); ?></li>
+                        <?php endforeach; ?>
+                        <?php if (count($pending_registrations) > 3): ?>
+                            <li>+<?php echo count($pending_registrations) - 3; ?> more</li>
+                        <?php endif; ?>
+                    </ul>
                 </div>
             </div>
+        <?php endif; ?>
 
-            <!-- Settings Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-cog"></i> Program Settings</h3>
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $stats['total'] ?? 0; ?></div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-number"><?php echo $stats['confirmed'] ?? 0; ?></div>
+                <div class="stat-label">Confirmed</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-number"><?php echo $stats['pending_payment'] ?? 0; ?></div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-number <?php echo $spots_left <= 10 ? 'text-warning' : ''; ?>">
+                    <?php echo $spots_left; ?>
                 </div>
+                <div class="stat-label">Spots Left</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $stats['web_dev'] ?? 0; ?></div>
+                <div class="stat-label">Web Dev</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $stats['ai_video'] ?? 0; ?></div>
+                <div class="stat-label">AI Video</div>
+            </div>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog"></i> Program Settings</h3>
+                <button class="btn btn-primary btn-sm" onclick="toggleSettings()" style="display: none;" id="toggleSettingsBtn">
+                    <i class="fas fa-chevron-down"></i> Show/Hide
+                </button>
+            </div>
+            <div id="settingsContent">
                 <form method="POST" class="settings-form">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 
@@ -884,12 +1175,12 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-alt"></i> Program Start Date</label>
+                            <label><i class="fas fa-calendar-alt"></i> Start Date</label>
                             <input type="date" name="setting_program_start_date" class="form-control"
                                 value="<?php echo htmlspecialchars($settings['program_start_date'] ?? '2026-04-13'); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-alt"></i> Program End Date</label>
+                            <label><i class="fas fa-calendar-alt"></i> End Date</label>
                             <input type="date" name="setting_program_end_date" class="form-control"
                                 value="<?php echo htmlspecialchars($settings['program_end_date'] ?? '2026-04-24'); ?>" required>
                         </div>
@@ -918,168 +1209,292 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
                         </div>
                     </div>
 
-                    <button type="submit" name="update_settings" class="btn btn-primary">
+                    <button type="submit" name="update_settings" class="btn btn-primary btn-block">
                         <i class="fas fa-save"></i> Save Settings
                     </button>
                 </form>
             </div>
+        </div>
 
-            <!-- Registrations Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-users"></i> Registrations</h3>
+        <!-- Filters Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-filter"></i> Filter Registrations</h3>
+            </div>
+            <div class="settings-form" style="padding-top: 0;">
+                <form method="GET" style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <div class="filters">
-                        <form method="GET" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <select name="status" class="filter-select" onchange="this.form.submit()">
-                                <option value="all" <?php echo $status_filter == 'all' ? 'selected' : ''; ?>>All Status</option>
-                                <option value="pending_payment" <?php echo $status_filter == 'pending_payment' ? 'selected' : ''; ?>>Pending Payment</option>
-                                <option value="payment_confirmed" <?php echo $status_filter == 'payment_confirmed' ? 'selected' : ''; ?>>Payment Confirmed</option>
-                            </select>
-                            <select name="payment" class="filter-select" onchange="this.form.submit()">
-                                <option value="all" <?php echo $payment_filter == 'all' ? 'selected' : ''; ?>>All Payment</option>
-                                <option value="pending" <?php echo $payment_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                <option value="confirmed" <?php echo $payment_filter == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
-                            </select>
-                            <select name="program" class="filter-select" onchange="this.form.submit()">
-                                <option value="all" <?php echo $program_filter == 'all' ? 'selected' : ''; ?>>All Programs</option>
-                                <option value="web_development" <?php echo $program_filter == 'web_development' ? 'selected' : ''; ?>>Web Development</option>
-                                <option value="ai_faceless_video" <?php echo $program_filter == 'ai_faceless_video' ? 'selected' : ''; ?>>AI Video Creation</option>
-                            </select>
-                            <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-primary btn-sm">
-                                <i class="fas fa-sync-alt"></i> Reset
-                            </a>
-                        </form>
+                        <select name="status" class="filter-select" onchange="this.form.submit()">
+                            <option value="all" <?php echo $status_filter == 'all' ? 'selected' : ''; ?>>All Status</option>
+                            <option value="pending_payment" <?php echo $status_filter == 'pending_payment' ? 'selected' : ''; ?>>Pending Payment</option>
+                            <option value="payment_confirmed" <?php echo $status_filter == 'payment_confirmed' ? 'selected' : ''; ?>>Payment Confirmed</option>
+                        </select>
+                        <select name="payment" class="filter-select" onchange="this.form.submit()">
+                            <option value="all" <?php echo $payment_filter == 'all' ? 'selected' : ''; ?>>All Payment</option>
+                            <option value="pending" <?php echo $payment_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="confirmed" <?php echo $payment_filter == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
+                        </select>
+                        <select name="program" class="filter-select" onchange="this.form.submit()">
+                            <option value="all" <?php echo $program_filter == 'all' ? 'selected' : ''; ?>>All Programs</option>
+                            <option value="web_development" <?php echo $program_filter == 'web_development' ? 'selected' : ''; ?>>Web Dev</option>
+                            <option value="ai_faceless_video" <?php echo $program_filter == 'ai_faceless_video' ? 'selected' : ''; ?>>AI Video</option>
+                        </select>
                     </div>
-                </div>
-                <div class="table-wrapper">
-                    <?php if (!empty($registrations)): ?>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Contact</th>
-                                    <th>Program</th>
-                                    <th>School</th>
-                                    <th>Payment</th>
-                                    <th>Registered</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($registrations as $reg): ?>
-                                    <tr>
-                                        <td>#<?php echo $reg['id']; ?></td>
-                                        <td>
-                                            <strong><?php echo htmlspecialchars($reg['first_name'] . ' ' . $reg['last_name']); ?></strong>
-                                        </td>
-                                        <td>
-                                            <div><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($reg['email']); ?></div>
-                                            <div><i class="fas fa-phone"></i> <?php echo htmlspecialchars($reg['phone']); ?></div>
-                                        </td>
-                                        <td>
-                                            <span class="program-icon">
-                                                <?php if ($reg['program_choice'] == 'web_development'): ?>
-                                                    <i class="fas fa-code" style="color: var(--primary);"></i> Web Development
-                                                <?php else: ?>
-                                                    <i class="fas fa-video" style="color: var(--warning);"></i> AI Faceless Video
-                                                <?php endif; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <?php if ($reg['is_student']): ?>
-                                                <div><?php echo htmlspecialchars($reg['school_name'] ?: 'N/A'); ?></div>
-                                                <small><?php echo htmlspecialchars($reg['school_class'] ?: ''); ?></small>
-                                            <?php else: ?>
-                                                <span class="status-badge" style="background: var(--gray-100);">Not a student</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <span class="status-badge status-<?php echo $reg['payment_status']; ?>">
-                                                <?php echo $reg['payment_status'] == 'confirmed' ? '✓ Confirmed' : '⏳ Pending'; ?>
-                                            </span>
-                                            <?php if ($reg['transaction_reference']): ?>
-                                                <div><small>Ref: <?php echo htmlspecialchars($reg['transaction_reference']); ?></small></div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo date('M j, Y', strtotime($reg['registered_at'])); ?><br>
-                                            <small><?php echo date('g:i A', strtotime($reg['registered_at'])); ?></small>
-                                        </td>
-                                        <td class="action-buttons">
-                                            <?php if ($reg['payment_status'] == 'pending'): ?>
-                                                <form method="POST" style="display: inline;">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                                                    <input type="hidden" name="registration_id" value="<?php echo $reg['id']; ?>">
-                                                    <button type="submit" name="confirm_payment" class="btn btn-success btn-sm"
-                                                        onclick="return confirm('Confirm payment for <?php echo addslashes($reg['first_name'] . ' ' . $reg['last_name']); ?>?')">
-                                                        <i class="fas fa-check"></i> Confirm
-                                                    </button>
-                                                </form>
-                                            <?php endif; ?>
+                    <div class="search-box">
+                        <input type="text" name="search" placeholder="Search by name, email, phone..."
+                            value="<?php echo htmlspecialchars($search); ?>">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                        <?php if (!empty($search)): ?>
+                            <a href="<?php echo $_SERVER['PHP_SELF']; ?>" class="btn btn-sm">Clear</a>
+                        <?php endif; ?>
+                    </div>
+                </form>
+            </div>
+        </div>
 
+        <!-- Registrations -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> Registrations (<?php echo count($registrations); ?>)</h3>
+                <a href="<?php echo BASE_URL; ?>modules/admin/crash_program/export.php<?php echo $status_filter != 'all' ? '?status=' . $status_filter : ''; ?>"
+                    class="btn btn-primary btn-sm">
+                    <i class="fas fa-download"></i> Export CSV
+                </a>
+            </div>
+
+            <?php if (!empty($registrations)): ?>
+                <!-- Desktop Table View -->
+                <div class="desktop-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Program</th>
+                                <th>Payment</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($registrations as $reg): ?>
+                                <tr>
+                                    <td>#<?php echo $reg['id']; ?></td>
+                                    <td>
+                                        <strong><?php echo htmlspecialchars($reg['first_name'] . ' ' . $reg['last_name']); ?></strong>
+                                    </td>
+                                    <td>
+                                        <div><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($reg['email']); ?></div>
+                                        <div><i class="fas fa-phone"></i> <?php echo htmlspecialchars($reg['phone']); ?></div>
+                                    </td>
+                                    <td>
+                                        <span class="program-icon">
+                                            <?php if ($reg['program_choice'] == 'web_development'): ?>
+                                                <i class="fas fa-code" style="color: var(--primary);"></i> Web Dev
+                                            <?php else: ?>
+                                                <i class="fas fa-video" style="color: var(--warning);"></i> AI Video
+                                            <?php endif; ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-<?php echo $reg['payment_status']; ?>">
+                                            <?php echo $reg['payment_status'] == 'confirmed' ? '✓ Confirmed' : '⏳ Pending'; ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo date('M j, Y', strtotime($reg['registered_at'])); ?></td>
+                                    <td class="action-group">
+                                        <?php if ($reg['payment_status'] == 'pending'): ?>
                                             <form method="POST" style="display: inline;">
                                                 <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                                 <input type="hidden" name="registration_id" value="<?php echo $reg['id']; ?>">
-                                                <button type="submit" name="send_program_details" class="btn btn-primary btn-sm"
-                                                    onclick="return confirm('Send program details to <?php echo addslashes($reg['email']); ?>?')">
-                                                    <i class="fas fa-envelope"></i> Send Details
+                                                <button type="submit" name="confirm_payment" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-check"></i> Confirm
                                                 </button>
                                             </form>
-
-                                            <a href="mailto:<?php echo urlencode($reg['email']); ?>" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-paper-plane"></i> Email
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <div class="empty-state">
-                            <i class="fas fa-users"></i>
-                            <h3>No Registrations Found</h3>
-                            <p>Try adjusting your filters or check back later.</p>
-                        </div>
-                    <?php endif; ?>
+                                        <?php endif; ?>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                                            <input type="hidden" name="registration_id" value="<?php echo $reg['id']; ?>">
+                                            <button type="submit" name="send_program_details" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-envelope"></i> Details
+                                            </button>
+                                        </form>
+                                        <a href="mailto:<?php echo urlencode($reg['email']); ?>" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-paper-plane"></i> Email
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            <!-- Quick Export -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-download"></i> Export Data</h3>
-                </div>
-                <div class="settings-form" style="padding-top: 0;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Export All Registrations</label>
-                            <a href="<?php echo BASE_URL; ?>modules/admin/crash_program/export.php" class="btn btn-primary">
-                                <i class="fas fa-file-excel"></i> Export to CSV
-                            </a>
+                <!-- Mobile Card View -->
+                <?php foreach ($registrations as $reg): ?>
+                    <div class="registration-card <?php echo $reg['payment_status']; ?>">
+                        <div class="card-header-row">
+                            <div>
+                                <div class="registration-name">
+                                    <?php echo htmlspecialchars($reg['first_name'] . ' ' . $reg['last_name']); ?>
+                                </div>
+                                <div class="registration-id">ID: #<?php echo $reg['id']; ?></div>
+                            </div>
+                            <span class="status-badge status-<?php echo $reg['payment_status']; ?>">
+                                <?php echo $reg['payment_status'] == 'confirmed' ? '✓ Paid' : '⏳ Pending'; ?>
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <label>Export Confirmed Only</label>
-                            <a href="<?php echo BASE_URL; ?>modules/admin/crash_program/export.php?status=confirmed" class="btn btn-success">
-                                <i class="fas fa-file-excel"></i> Export Confirmed
+
+                        <div class="registration-details">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span><?php echo htmlspecialchars($reg['email']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span><?php echo htmlspecialchars($reg['phone']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-code"></i>
+                                <span><?php echo getProgramDisplay($reg['program_choice']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span><?php echo date('M j, Y', strtotime($reg['registered_at'])); ?></span>
+                            </div>
+                            <?php if ($reg['school_name']): ?>
+                                <div class="detail-item">
+                                    <i class="fas fa-school"></i>
+                                    <span><?php echo htmlspecialchars($reg['school_name']); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($reg['transaction_reference']): ?>
+                                <div class="detail-item">
+                                    <i class="fas fa-receipt"></i>
+                                    <span><?php echo htmlspecialchars($reg['transaction_reference']); ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="registration-actions">
+                            <?php if ($reg['payment_status'] == 'pending'): ?>
+                                <form method="POST" style="flex:1">
+                                    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                                    <input type="hidden" name="registration_id" value="<?php echo $reg['id']; ?>">
+                                    <button type="submit" name="confirm_payment" class="btn btn-success btn-block">
+                                        <i class="fas fa-check"></i> Confirm Payment
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                            <form method="POST" style="flex:1">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                                <input type="hidden" name="registration_id" value="<?php echo $reg['id']; ?>">
+                                <button type="submit" name="send_program_details" class="btn btn-primary btn-block">
+                                    <i class="fas fa-envelope"></i> Send Details
+                                </button>
+                            </form>
+                            <a href="mailto:<?php echo urlencode($reg['email']); ?>" class="btn btn-warning btn-block">
+                                <i class="fas fa-paper-plane"></i> Email
                             </a>
                         </div>
                     </div>
+                <?php endforeach; ?>
+
+            <?php else: ?>
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>No Registrations Found</h3>
+                    <p>Try adjusting your filters or check back later.</p>
                 </div>
-            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="footer">
+            <p>&copy; <?php echo date('Y'); ?> Impact Digital Academy. All rights reserved.</p>
         </div>
     </div>
 
     <script>
-        // Auto-refresh pending reminder (optional)
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('.mobile-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleSidebar();
+            });
+        });
+
+        // Toggle settings visibility on mobile
+        function toggleSettings() {
+            const content = document.getElementById('settingsContent');
+            const btn = document.getElementById('toggleSettingsBtn');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+            } else {
+                content.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-chevron-down"></i> Show';
+            }
+        }
+
+        // Show toggle button only on mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('toggleSettingsBtn').style.display = 'block';
+            document.getElementById('settingsContent').style.display = 'none';
+        }
+
+        // Swipe to close sidebar
+        let touchStartX = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', function(e) {
+            const sidebar = document.getElementById('mobileSidebar');
+            const touchEndX = e.changedTouches[0].screenX;
+            const diffX = touchEndX - touchStartX;
+
+            if (sidebar.classList.contains('active') && diffX < -50) {
+                toggleSidebar();
+            }
+        }, false);
+
+        // Touch feedback
+        document.querySelectorAll('.btn, .stat-card, .registration-card, .filter-select').forEach(el => {
+            el.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            el.addEventListener('touchend', function() {
+                this.style.opacity = '';
+            });
+        });
+
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Auto-refresh every 5 minutes
         setTimeout(function() {
             location.reload();
-        }, 300000); // Refresh every 5 minutes
-
-        // Confirm actions
-        function confirmAction(message) {
-            return confirm(message);
-        }
+        }, 300000);
     </script>
 </body>
 
