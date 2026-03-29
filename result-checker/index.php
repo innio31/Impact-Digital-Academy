@@ -1,6 +1,5 @@
 <?php
-// index.php - Main result checking page for parents
-// No session start needed for public page
+// index.php - Updated with school-specific class selection
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="description" content="Check your child's academic results online securely. Enter admission number, select session and term, and use your result checker PIN.">
-    <meta name="keywords" content="result checker, school results, academic results, parent portal">
     <title>MyResultChecker - Check Student Results Online</title>
 
     <!-- Font Awesome -->
@@ -52,7 +50,6 @@
             position: relative;
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -77,7 +74,6 @@
             flex-direction: column;
         }
 
-        /* Header Section */
         .header {
             text-align: center;
             padding: 40px 20px 30px;
@@ -114,7 +110,6 @@
             opacity: 0.9;
         }
 
-        /* Checker Card */
         .checker-card {
             background: white;
             border-radius: var(--radius-lg);
@@ -166,7 +161,6 @@
             cursor: not-allowed;
         }
 
-        /* PIN Input with toggle */
         .pin-input-wrapper {
             position: relative;
         }
@@ -192,7 +186,6 @@
             color: var(--secondary);
         }
 
-        /* Button */
         .btn-check {
             width: 100%;
             padding: 15px;
@@ -222,7 +215,6 @@
             transform: none;
         }
 
-        /* Loading State */
         .loading {
             display: none;
             text-align: center;
@@ -251,7 +243,6 @@
             font-size: 0.9rem;
         }
 
-        /* Error Message */
         .error-message {
             background: #fef2f2;
             color: var(--danger);
@@ -269,7 +260,6 @@
             font-size: 20px;
         }
 
-        /* Info Box */
         .info-box {
             background: #e8f4fd;
             border-radius: var(--radius-md);
@@ -297,7 +287,6 @@
             color: var(--secondary);
         }
 
-        /* Features Section */
         .features {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -325,7 +314,6 @@
             font-weight: 500;
         }
 
-        /* Footer */
         footer {
             text-align: center;
             margin-top: auto;
@@ -343,13 +331,11 @@
             text-decoration: underline;
         }
 
-        /* Result Container */
         .result-container {
             display: none;
             margin-top: 30px;
         }
 
-        /* Result Card Styles */
         .result-card {
             background: white;
             border-radius: var(--radius-lg);
@@ -615,7 +601,6 @@
             border-top: 1px solid var(--light);
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .container {
                 padding: 15px;
@@ -684,7 +669,6 @@
             }
         }
 
-        /* Print Styles */
         @media print {
             body {
                 background: white;
@@ -725,7 +709,6 @@
 
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="logo">
                 <i class="fas fa-graduation-cap"></i>
@@ -734,13 +717,12 @@
             <p>Secure Online Result Portal</p>
         </div>
 
-        <!-- Checker Card -->
         <div class="checker-card">
             <form id="resultForm">
                 <div class="form-group">
                     <label><i class="fas fa-school"></i> Select School</label>
                     <select id="school_code" required>
-                        <option value="">-- Loading schools... --</option>
+                        <option value="">-- Select School --</option>
                     </select>
                 </div>
 
@@ -801,7 +783,6 @@
             </div>
         </div>
 
-        <!-- Features -->
         <div class="features">
             <div class="feature">
                 <i class="fas fa-lock"></i>
@@ -817,24 +798,19 @@
             </div>
         </div>
 
-        <!-- Result Container -->
         <div class="result-container" id="resultContainer"></div>
 
-        <!-- Footer -->
         <footer>
             <p>&copy; <?php echo date('Y'); ?> MyResultChecker.com - All rights reserved.</p>
             <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a> | <a href="#">Contact Support</a></p>
         </footer>
     </div>
 
-    <!-- html2pdf library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
-        // Global variables
         let schoolsList = [];
 
-        // Toggle PIN visibility
         function togglePinVisibility() {
             const pinInput = document.getElementById('pin');
             const icon = document.querySelector('.toggle-pin i');
@@ -850,15 +826,15 @@
             }
         }
 
-        // Load schools on page load
         async function loadSchools() {
             const schoolSelect = document.getElementById('school_code');
+            schoolSelect.innerHTML = '<option value="">-- Loading schools... --</option>';
 
             try {
                 const response = await fetch('api/get_schools.php');
                 const data = await response.json();
 
-                if (data.success && data.schools) {
+                if (data.success && data.schools && data.schools.length > 0) {
                     schoolsList = data.schools;
                     schoolSelect.innerHTML = '<option value="">-- Select School --</option>';
 
@@ -866,6 +842,8 @@
                         const option = document.createElement('option');
                         option.value = school.school_code;
                         option.textContent = school.school_name;
+                        // Store classes as data attribute
+                        option.dataset.classes = JSON.stringify(school.classes || []);
                         schoolSelect.appendChild(option);
                     });
                 } else {
@@ -877,13 +855,11 @@
             }
         }
 
-        // Load available session years
         function loadSessionYears() {
             const sessionSelect = document.getElementById('session_year');
             const currentYear = new Date().getFullYear();
             const years = [];
 
-            // Generate last 5 academic years
             for (let i = 0; i < 5; i++) {
                 const startYear = currentYear - i;
                 const endYear = startYear + 1;
@@ -899,7 +875,6 @@
             });
         }
 
-        // Format PIN input (add hyphens automatically)
         function formatPinInput(input) {
             let value = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 
@@ -916,25 +891,21 @@
             input.value = value;
         }
 
-        // Show error message
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
             errorText.textContent = message;
             errorDiv.style.display = 'flex';
 
-            // Auto hide after 5 seconds
             setTimeout(() => {
                 errorDiv.style.display = 'none';
             }, 5000);
         }
 
-        // Hide error message
         function hideError() {
             document.getElementById('errorMessage').style.display = 'none';
         }
 
-        // Escape HTML to prevent XSS
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -942,7 +913,6 @@
             return div.innerHTML;
         }
 
-        // Get grade class for styling
         function getGradeClass(grade) {
             if (!grade) return '';
             const gradeMap = {
@@ -956,11 +926,9 @@
             return gradeMap[grade.toUpperCase()] || '';
         }
 
-        // Render result in the UI
         function renderResult(data) {
             const container = document.getElementById('resultContainer');
 
-            // Build scores table
             let scoresHtml = '';
             let totalScored = 0;
             let totalObtainable = 0;
@@ -993,7 +961,6 @@
                 });
             }
 
-            // Build affective traits
             let affectiveHtml = '';
             if (data.result.affective_traits) {
                 const traits = data.result.affective_traits;
@@ -1015,7 +982,6 @@
                 }
             }
 
-            // Build psychomotor skills
             let psychomotorHtml = '';
             if (data.result.psychomotor_skills) {
                 const skills = data.result.psychomotor_skills;
@@ -1160,14 +1126,11 @@
 
             container.innerHTML = resultHtml;
             container.style.display = 'block';
-
-            // Scroll to result
             container.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
 
-            // Add PDF download handler
             const downloadBtn = document.getElementById('downloadPDFBtn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
@@ -1195,7 +1158,6 @@
             }
         }
 
-        // Handle form submission
         document.getElementById('resultForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -1205,7 +1167,6 @@
             const term = document.getElementById('term').value;
             const pin = document.getElementById('pin').value.trim();
 
-            // Validation
             if (!school_code) {
                 showError('Please select a school');
                 return;
@@ -1227,7 +1188,6 @@
                 return;
             }
 
-            // Validate PIN format (should be like XXXX-XXXX-XXXX)
             const pinPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
             if (!pinPattern.test(pin)) {
                 showError('Invalid PIN format. PIN should be in format: XXXX-XXXX-XXXX');
@@ -1278,23 +1238,19 @@
             }
         });
 
-        // Auto-format PIN input
         const pinInput = document.getElementById('pin');
         pinInput.addEventListener('input', function(e) {
             formatPinInput(this);
         });
 
-        // Limit PIN to uppercase
         pinInput.addEventListener('keyup', function(e) {
             this.value = this.value.toUpperCase();
         });
 
-        // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadSchools();
             loadSessionYears();
 
-            // Add animation to elements
             const checkerCard = document.querySelector('.checker-card');
             checkerCard.style.opacity = '0';
             checkerCard.style.transform = 'translateY(20px)';
@@ -1305,7 +1261,6 @@
             }, 100);
         });
 
-        // Handle enter key on PIN field
         pinInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
