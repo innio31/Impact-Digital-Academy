@@ -1,5 +1,5 @@
 <?php
-// admin/login.php - Admin login page (updated to support both hashed and unhashed passwords)
+// admin/login.php - Admin login page (FIXED VERSION)
 session_start();
 
 // If already logged in, redirect to dashboard
@@ -24,6 +24,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $db = getDB();
+
+            // Check if admin_login_attempts table exists, create if not
+            try {
+                $db->query("SELECT 1 FROM admin_login_attempts LIMIT 1");
+            } catch (PDOException $e) {
+                // Create the table if it doesn't exist
+                $db->exec("
+                    CREATE TABLE IF NOT EXISTS admin_login_attempts (
+                        id INT PRIMARY KEY AUTO_INCREMENT,
+                        username VARCHAR(100) NOT NULL,
+                        success TINYINT(1) NOT NULL DEFAULT 0,
+                        ip_address VARCHAR(45) DEFAULT NULL,
+                        user_agent TEXT DEFAULT NULL,
+                        attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                ");
+            }
 
             // Check login attempts
             $ip = $_SERVER['REMOTE_ADDR'] ?? '';
@@ -50,38 +67,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Check if password matches (supports both hashed and plain text)
                     $password_valid = false;
 
-                    // First, check if it's a password_hash() hash (starts with $2y$)
-                    if (strpos($admin['password'], '$2y$') === 0) {
-                        // Hashed password using password_hash()
+                    // Direct plain text comparison first (most common for your case)
+                    if ($password === $admin['password']) {
+                        $password_valid = true;
+                    }
+                    // Check if it's a password_hash() hash (starts with $2y$)
+                    elseif (strpos($admin['password'], '$2y$') === 0) {
                         $password_valid = password_verify($password, $admin['password']);
                     }
-                    // Check if it's MySQL PASSWORD() hash (41 characters, usually starts with * or is 41 chars)
-                    elseif (strlen($admin['password']) == 41 || (strlen($admin['password']) == 41 && $admin['password'][0] == '*')) {
-                        // MySQL PASSWORD() hash - we need to verify using MySQL
-                        $checkStmt = $db->prepare("SELECT PASSWORD(?) = ? AS password_match");
-                        $checkStmt->execute([$password, $admin['password']]);
-                        $result = $checkStmt->fetch();
-                        $password_valid = ($result && $result['password_match'] == 1);
-                    }
-                    // Check if it's plain text
-                    else {
-                        // Plain text password
-                        $password_valid = ($password === $admin['password']);
-                    }
-
-                    // Also check if it's MD5 (32 characters hex)
-                    if (!$password_valid && strlen($admin['password']) == 32 && ctype_xdigit($admin['password'])) {
+                    // Check if it's MD5 (32 characters hex)
+                    elseif (strlen($admin['password']) == 32 && ctype_xdigit($admin['password'])) {
                         $password_valid = (md5($password) === $admin['password']);
                     }
-
-                    // Also check if it's SHA1 (40 characters hex)
-                    if (!$password_valid && strlen($admin['password']) == 40 && ctype_xdigit($admin['password'])) {
+                    // Check if it's SHA1 (40 characters hex)
+                    elseif (strlen($admin['password']) == 40 && ctype_xdigit($admin['password'])) {
                         $password_valid = (sha1($password) === $admin['password']);
                     }
 
                     if ($password_valid) {
-                        // If password was plain text or old hash, update to new hash format
-                        if (strpos($admin['password'], '$2y$') !== 0) {
+                        // If password was plain text, update to secure hash
+                        if (strlen($admin['password']) < 32 || strpos($admin['password'], '$2y$') !== 0) {
                             $new_hash = password_hash($password, PASSWORD_DEFAULT);
                             $updateStmt = $db->prepare("UPDATE portal_admins SET password = ? WHERE id = ?");
                             $updateStmt->execute([$new_hash, $admin['id']]);
@@ -100,11 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ");
                         $stmt->execute([$username, $ip, $_SERVER['HTTP_USER_AGENT'] ?? '']);
 
-                        // Update last login time
-                        $stmt = $db->prepare("
-                            UPDATE portal_admins SET last_login = NOW() WHERE id = ?
-                        ");
-                        $stmt->execute([$admin['id']]);
+                        // Update last login time (check if column exists first)
+                        try {
+                            $checkColumn = $db->query("SHOW COLUMNS FROM portal_admins LIKE 'last_login'");
+                            if ($checkColumn->rowCount() > 0) {
+                                $stmt = $db->prepare("UPDATE portal_admins SET last_login = NOW() WHERE id = ?");
+                                $stmt->execute([$admin['id']]);
+                            }
+                        } catch (PDOException $e) {
+                            // Column doesn't exist, skip
+                        }
 
                         header("Location: index.php");
                         exit();
@@ -132,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (PDOException $e) {
             error_log("Login error: " . $e->getMessage());
             $error = 'An error occurred. Please try again later.';
-            // For debugging - remove in production
+            // For debugging - show actual error (remove in production)
             if (file_exists(__DIR__ . '/../config/debug.php')) {
                 $error .= ' Debug: ' . $e->getMessage();
             }
@@ -177,7 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: relative;
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -211,7 +220,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        /* Logo Section */
         .logo-section {
             text-align: center;
             margin-bottom: 30px;
@@ -263,7 +271,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.9rem;
         }
 
-        /* Login Card */
         .login-card {
             background: white;
             border-radius: 24px;
@@ -288,7 +295,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.85rem;
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 22px;
         }
@@ -329,7 +335,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        /* Password Toggle */
         .password-toggle {
             position: absolute;
             right: 16px;
@@ -347,7 +352,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #3498db;
         }
 
-        /* Remember Me */
         .remember-forgot {
             display: flex;
             justify-content: space-between;
@@ -385,7 +389,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
 
-        /* Login Button */
         .login-btn {
             width: 100%;
             padding: 16px;
@@ -413,7 +416,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: translateY(0);
         }
 
-        /* Alert Messages */
         .alert {
             padding: 14px 18px;
             border-radius: 14px;
@@ -453,7 +455,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        /* Footer Links */
         .login-footer {
             text-align: center;
             margin-top: 20px;
@@ -472,7 +473,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
 
-        /* Back to site link */
         .back-link {
             text-align: center;
             margin-top: 25px;
@@ -493,18 +493,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: translateX(-3px);
         }
 
-        /* Debug info (only visible in development) */
-        .debug-info {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            color: #666;
-            word-break: break-all;
-        }
-
-        /* Responsive */
         @media (max-width: 480px) {
             body {
                 padding: 15px;
@@ -558,7 +546,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        /* Touch-friendly button sizes */
         @media (hover: none) and (pointer: coarse) {
             .login-btn {
                 min-height: 52px;
@@ -577,7 +564,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        /* Loading state */
         .login-btn.loading {
             opacity: 0.7;
             cursor: wait;
@@ -687,7 +673,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleIcon = document.getElementById('toggleIcon');
@@ -703,7 +688,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Handle remember me functionality
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             const remember = document.getElementById('remember').checked;
             const username = document.getElementById('username').value;
@@ -715,7 +699,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
 
-        // Load remembered username
         document.addEventListener('DOMContentLoaded', function() {
             const rememberedUsername = localStorage.getItem('remembered_username');
             if (rememberedUsername) {
@@ -723,7 +706,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 document.getElementById('remember').checked = true;
             }
 
-            // Focus on username field
             if (!document.getElementById('username').value) {
                 document.getElementById('username').focus();
             } else {
@@ -731,7 +713,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
 
-        // Add loading state on submit
         const loginForm = document.getElementById('loginForm');
         const loginBtn = document.getElementById('loginBtn');
 
@@ -741,7 +722,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             loginBtn.disabled = true;
         });
 
-        // Prevent double submission
         let submitted = false;
         loginForm.addEventListener('submit', function(e) {
             if (submitted) {
@@ -752,7 +732,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return true;
         });
 
-        // Handle enter key
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -760,7 +739,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
 
-        // Touch feedback for mobile
         const buttons = document.querySelectorAll('button, .login-btn');
         buttons.forEach(button => {
             button.addEventListener('touchstart', function() {
