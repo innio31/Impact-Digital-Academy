@@ -2,6 +2,10 @@
 // admin/students.php - View Students across all schools
 session_start();
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_username'])) {
     header("Location: login.php");
@@ -10,12 +14,18 @@ if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_username'])) {
 
 require_once '../config/config.php';
 
+// Test database connection
+try {
+    $db = getDB();
+    $test = $db->query("SELECT 1");
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
 $admin_id = $_SESSION['admin_id'];
 $admin_role = $_SESSION['admin_role'];
 $success_message = '';
 $error_message = '';
-
-$db = getDB();
 
 // Pagination settings
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -28,81 +38,104 @@ $school_id_filter = isset($_GET['school_id']) ? (int)$_GET['school_id'] : 0;
 $class_filter = isset($_GET['class']) ? trim($_GET['class']) : '';
 $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 
-// Build query conditions
-$where_conditions = ["s.status != 'archived'"];
-$params = [];
+try {
+    // First, check if students table exists and has data
+    $check_stmt = $db->query("SHOW TABLES LIKE 'students'");
+    if ($check_stmt->rowCount() == 0) {
+        $error_message = "Students table does not exist. Please run the database migration.";
+    }
 
-if (!empty($search)) {
-    $where_conditions[] = "(s.full_name LIKE ? OR s.admission_number LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
+    // Build query conditions
+    $where_conditions = ["s.status != 'archived'"];
+    $params = [];
+
+    if (!empty($search)) {
+        $where_conditions[] = "(s.full_name LIKE ? OR s.admission_number LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+
+    if ($school_id_filter > 0) {
+        $where_conditions[] = "s.school_id = ?";
+        $params[] = $school_id_filter;
+    }
+
+    if (!empty($class_filter)) {
+        $where_conditions[] = "s.class = ?";
+        $params[] = $class_filter;
+    }
+
+    if (!empty($status_filter)) {
+        $where_conditions[] = "s.status = ?";
+        $params[] = $status_filter;
+    }
+
+    $where_clause = implode(" AND ", $where_conditions);
+
+    // Get total count
+    $count_sql = "
+        SELECT COUNT(*) as total 
+        FROM students s
+        WHERE $where_clause
+    ";
+    $stmt = $db->prepare($count_sql);
+    $stmt->execute($params);
+    $total_result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total_students = $total_result ? $total_result['total'] : 0;
+    $total_pages = $total_students > 0 ? ceil($total_students / $limit) : 1;
+
+    // Get students with school info
+    $sql = "
+        SELECT s.*, sc.school_name, sc.school_code 
+        FROM students s
+        JOIN schools sc ON s.school_id = sc.id
+        WHERE $where_clause
+        ORDER BY s.created_at DESC
+        LIMIT " . (int)$limit . " OFFSET " . (int)$offset . "
+    ";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get schools for filter dropdown
+    $schools_stmt = $db->query("SELECT id, school_name, school_code FROM schools WHERE status = 'active' ORDER BY school_name ASC");
+    $schools = $schools_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get unique classes from students for filter
+    $class_params = [];
+    $class_where = "1=1";
+    if ($school_id_filter > 0) {
+        $class_where = "school_id = ?";
+        $class_params[] = $school_id_filter;
+    }
+    $class_stmt = $db->prepare("SELECT DISTINCT class FROM students WHERE $class_where AND class IS NOT NULL AND class != '' ORDER BY class");
+    $class_stmt->execute($class_params);
+    $available_classes = $class_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get statistics
+    $active_stmt = $db->query("SELECT COUNT(*) as total FROM students WHERE status = 'active'");
+    $active_result = $active_stmt->fetch(PDO::FETCH_ASSOC);
+    $total_active = $active_result ? $active_result['total'] : 0;
+
+    $schools_count_stmt = $db->query("SELECT COUNT(DISTINCT school_id) as total FROM students");
+    $schools_count_result = $schools_count_stmt->fetch(PDO::FETCH_ASSOC);
+    $schools_with_students = $schools_count_result ? $schools_count_result['total'] : 0;
+
+    $classes_count_stmt = $db->query("SELECT COUNT(DISTINCT class) as total FROM students WHERE class IS NOT NULL AND class != ''");
+    $classes_count_result = $classes_count_stmt->fetch(PDO::FETCH_ASSOC);
+    $total_classes = $classes_count_result ? $classes_count_result['total'] : 0;
+} catch (PDOException $e) {
+    $error_message = "Database Error: " . $e->getMessage();
+    error_log("Students page error: " . $e->getMessage());
+    $students = [];
+    $schools = [];
+    $available_classes = [];
+    $total_students = 0;
+    $total_active = 0;
+    $schools_with_students = 0;
+    $total_classes = 0;
+    $total_pages = 1;
 }
-
-if ($school_id_filter > 0) {
-    $where_conditions[] = "s.school_id = ?";
-    $params[] = $school_id_filter;
-}
-
-if (!empty($class_filter)) {
-    $where_conditions[] = "s.class = ?";
-    $params[] = $class_filter;
-}
-
-if (!empty($status_filter)) {
-    $where_conditions[] = "s.status = ?";
-    $params[] = $status_filter;
-}
-
-$where_clause = implode(" AND ", $where_conditions);
-
-// Get total count
-$count_sql = "
-    SELECT COUNT(*) as total 
-    FROM students s
-    WHERE $where_clause
-";
-$stmt = $db->prepare($count_sql);
-$stmt->execute($params);
-$total_students = $stmt->fetch()['total'];
-$total_pages = ceil($total_students / $limit);
-
-// Get students with school info
-$sql = "
-    SELECT s.*, sc.school_name, sc.school_code 
-    FROM students s
-    JOIN schools sc ON s.school_id = sc.id
-    WHERE $where_clause
-    ORDER BY s.created_at DESC
-    LIMIT $limit OFFSET $offset
-";
-$stmt = $db->prepare($sql);
-$stmt->execute($params);
-$students = $stmt->fetchAll();
-
-// Get schools for filter dropdown
-$stmt = $db->query("SELECT id, school_name, school_code FROM schools WHERE status = 'active' ORDER BY school_name ASC");
-$schools = $stmt->fetchAll();
-
-// Get unique classes from students for filter (across all schools or selected school)
-$class_params = [];
-$class_where = "1=1";
-if ($school_id_filter > 0) {
-    $class_where = "school_id = ?";
-    $class_params[] = $school_id_filter;
-}
-$stmt = $db->prepare("SELECT DISTINCT class FROM students WHERE $class_where AND class IS NOT NULL AND class != '' ORDER BY class");
-$stmt->execute($class_params);
-$available_classes = $stmt->fetchAll();
-
-// Get statistics
-$stmt = $db->query("SELECT COUNT(*) as total FROM students WHERE status = 'active'");
-$total_active = $stmt->fetch()['total'];
-
-$stmt = $db->query("SELECT COUNT(DISTINCT school_id) as total FROM students");
-$schools_with_students = $stmt->fetch()['total'];
-
-$stmt = $db->query("SELECT COUNT(DISTINCT class) as total FROM students WHERE class IS NOT NULL AND class != ''");
-$total_classes = $stmt->fetch()['total'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,7 +162,6 @@ $total_classes = $stmt->fetch()['total'];
             overflow-x: hidden;
         }
 
-        /* Mobile Menu Toggle */
         .mobile-toggle {
             position: fixed;
             top: 15px;
@@ -150,7 +182,6 @@ $total_classes = $stmt->fetch()['total'];
             transition: all 0.3s ease;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
@@ -249,14 +280,12 @@ $total_classes = $stmt->fetch()['total'];
             font-size: 18px;
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 280px;
             padding: 20px;
             min-height: 100vh;
         }
 
-        /* Top Bar */
         .top-bar {
             background: white;
             border-radius: 16px;
@@ -281,7 +310,6 @@ $total_classes = $stmt->fetch()['total'];
             font-size: 0.85rem;
         }
 
-        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -328,7 +356,6 @@ $total_classes = $stmt->fetch()['total'];
             margin-top: 5px;
         }
 
-        /* Filter Bar */
         .filter-bar {
             background: white;
             border-radius: 16px;
@@ -425,7 +452,6 @@ $total_classes = $stmt->fetch()['total'];
             color: white;
         }
 
-        /* Students Table */
         .students-table-container {
             background: white;
             border-radius: 16px;
@@ -490,7 +516,6 @@ $total_classes = $stmt->fetch()['total'];
             display: inline-block;
         }
 
-        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
@@ -529,7 +554,6 @@ $total_classes = $stmt->fetch()['total'];
             pointer-events: none;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -542,7 +566,6 @@ $total_classes = $stmt->fetch()['total'];
             opacity: 0.5;
         }
 
-        /* Alert Messages */
         .alert {
             padding: 15px 20px;
             border-radius: 12px;
@@ -565,6 +588,12 @@ $total_classes = $stmt->fetch()['total'];
             border-left: 4px solid #e74c3c;
         }
 
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #f39c12;
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -577,7 +606,6 @@ $total_classes = $stmt->fetch()['total'];
             }
         }
 
-        /* Sidebar Overlay */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -589,7 +617,6 @@ $total_classes = $stmt->fetch()['total'];
             display: none;
         }
 
-        /* Student Detail Modal */
         .modal {
             display: none;
             position: fixed;
@@ -675,7 +702,6 @@ $total_classes = $stmt->fetch()['total'];
             font-size: 0.85rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .mobile-toggle {
                 display: flex;
@@ -741,7 +767,6 @@ $total_classes = $stmt->fetch()['total'];
             }
         }
 
-        /* Touch optimizations */
         @media (hover: none) and (pointer: coarse) {
 
             .btn,
@@ -751,7 +776,6 @@ $total_classes = $stmt->fetch()['total'];
             }
         }
 
-        /* Print styles */
         @media print {
 
             .sidebar,
@@ -930,7 +954,7 @@ $total_classes = $stmt->fetch()['total'];
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($students)): ?>
+                        <?php if (!empty($students) && count($students) > 0): ?>
                             <?php foreach ($students as $student): ?>
                                 <tr>
                                     <td>
@@ -977,6 +1001,12 @@ $total_classes = $stmt->fetch()['total'];
                                             <i class="fas fa-info-circle"></i>
                                             Students are automatically added when schools push their results.
                                         </p>
+                                        <?php if ($error_message): ?>
+                                            <p style="margin-top: 15px; font-size: 0.8rem; color: #e74c3c;">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Database error detected. Please check your database connection.
+                                            </p>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -1080,7 +1110,7 @@ $total_classes = $stmt->fetch()['total'];
                 const response = await fetch(`api/get_student.php?id=${studentId}`);
                 const data = await response.json();
 
-                if (data.success) {
+                if (data.success && data.student) {
                     const student = data.student;
                     modalBody.innerHTML = `
                         <div class="detail-row">
@@ -1105,7 +1135,7 @@ $total_classes = $stmt->fetch()['total'];
                         </div>
                         <div class="detail-row">
                             <div class="detail-label">Date of Birth</div>
-                            <div class="detail-value">${student.date_of_birth || 'N/A'}</div>
+                            <div class="detail-value">${student.dob || student.date_of_birth || 'N/A'}</div>
                         </div>
                         <div class="detail-row">
                             <div class="detail-label">Parent Email</div>
@@ -1139,10 +1169,12 @@ $total_classes = $stmt->fetch()['total'];
                     `;
                 }
             } catch (error) {
+                console.error('Error fetching student:', error);
                 modalBody.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #e74c3c;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
                         <p>Network error. Please try again.</p>
+                        <p style="font-size: 12px; margin-top: 10px;">${error.message}</p>
                     </div>
                 `;
             }
