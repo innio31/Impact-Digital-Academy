@@ -14,14 +14,6 @@ if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_username'])) {
 
 require_once '../config/config.php';
 
-// Test database connection
-try {
-    $db = getDB();
-    $test = $db->query("SELECT 1");
-} catch (Exception $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
-
 $admin_id = $_SESSION['admin_id'];
 $admin_role = $_SESSION['admin_role'];
 $success_message = '';
@@ -39,13 +31,9 @@ $class_filter = isset($_GET['class']) ? trim($_GET['class']) : '';
 $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 
 try {
-    // First, check if students table exists and has data
-    $check_stmt = $db->query("SHOW TABLES LIKE 'students'");
-    if ($check_stmt->rowCount() == 0) {
-        $error_message = "Students table does not exist. Please run the database migration.";
-    }
+    $db = getDB();
 
-    // Build query conditions
+    // Build query conditions - using correct column names
     $where_conditions = ["s.status != 'archived'"];
     $params = [];
 
@@ -84,13 +72,13 @@ try {
     $total_students = $total_result ? $total_result['total'] : 0;
     $total_pages = $total_students > 0 ? ceil($total_students / $limit) : 1;
 
-    // Get students with school info
+    // Get students with school info - FIXED: removed s.created_at
     $sql = "
         SELECT s.*, sc.school_name, sc.school_code 
         FROM students s
         JOIN schools sc ON s.school_id = sc.id
         WHERE $where_clause
-        ORDER BY s.created_at DESC
+        ORDER BY s.last_sync_at DESC, s.id DESC
         LIMIT " . (int)$limit . " OFFSET " . (int)$offset . "
     ";
     $stmt = $db->prepare($sql);
@@ -984,7 +972,7 @@ try {
                                         <?php echo $student['last_sync_at'] ? date('M d, Y', strtotime($student['last_sync_at'])) : 'Never'; ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-outline btn-sm" onclick="viewStudent(<?php echo $student['id']; ?>)">
+                                        <button class="btn btn-outline" onclick="viewStudent(<?php echo $student['id']; ?>)">
                                             <i class="fas fa-eye"></i> View
                                         </button>
                                     </td>
@@ -1154,10 +1142,6 @@ try {
                         <div class="detail-row">
                             <div class="detail-label">Last Sync</div>
                             <div class="detail-value">${student.last_sync_at ? new Date(student.last_sync_at).toLocaleString() : 'Never'}</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Created</div>
-                            <div class="detail-value">${new Date(student.created_at).toLocaleString()}</div>
                         </div>
                     `;
                 } else {
