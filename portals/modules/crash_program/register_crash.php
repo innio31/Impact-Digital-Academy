@@ -659,10 +659,12 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             </div>
         </div>
 
+
         <div class="spots-counter <?php echo $spots_available <= 10 ? ($spots_available <= 5 ? 'critical' : 'warning') : ''; ?>">
             <span class="spots-number"><?php echo $spots_available; ?></span>
-            <!-- <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span> -->
+            <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span>
         </div>
+
 
         <div class="card">
             <div class="card-header">
@@ -756,29 +758,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                             </div>
                         </div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="is_student" name="is_student" value="1"
-                                <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 1) ? 'checked' : 'checked'; ?>>
-                            <label for="is_student">I am currently a student</label>
-                        </div>
-
-                        <div id="student-fields" style="display: <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 0) ? 'none' : 'block'; ?>;">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="school_name">School/Institution Name</label>
-                                    <input type="text" id="school_name" name="school_name" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
-                                        placeholder="e.g., University of Lagos">
-                                </div>
-                                <div class="form-group">
-                                    <label for="school_class">Class/Level</label>
-                                    <input type="text" id="school_class" name="school_class" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
-                                        placeholder="e.g., 200 Level, SS3, etc.">
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="address">Address</label>
@@ -811,6 +790,31 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                                 </select>
                             </div>
                         </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="is_student" name="is_student" value="1"
+                                <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 1) ? 'checked' : 'checked'; ?>>
+                            <label for="is_student">I am currently a student</label>
+                        </div>
+
+                        <div id="student-fields" style="display: <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 0) ? 'none' : 'block'; ?>;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="school_name">School/Institution Name</label>
+                                    <input type="text" id="school_name" name="school_name" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
+                                        placeholder="e.g., University of Lagos">
+                                </div>
+                                <div class="form-group">
+                                    <label for="school_class">Class/Level</label>
+                                    <input type="text" id="school_class" name="school_class" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
+                                        placeholder="e.g., 200 Level, SS3, etc.">
+                                </div>
+                            </div>
+                        </div>
+
+
 
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             <i class="fas fa-paper-plane"></i> Register Now
