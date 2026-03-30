@@ -1,5 +1,5 @@
 <?php
-// api/sync.php - School Data Sync Endpoint (CORRECTED VERSION)
+// api/sync.php - School Data Sync Endpoint (FIXED VERSION)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -215,25 +215,60 @@ function syncResults($conn, $school_id, $input)
                 continue;
             }
 
-            debug_log("Found student", ['student_id' => $student['id'], 'name' => $student['class']]);
+            debug_log("Found student", ['student_id' => $student['id'], 'class' => $student['class']]);
 
-            // Prepare scores data
+            // Prepare scores data - FIXED: properly parse score data
             $scores = [];
             $total_scored = 0;
             $total_max = 0;
 
             if (isset($result['scores']) && is_array($result['scores'])) {
                 foreach ($result['scores'] as $score) {
+                    // Debug the score structure
+                    debug_log("Score data", $score);
+
                     if (empty($score['subject_name'])) {
                         continue;
                     }
 
-                    $ca1 = isset($score['ca1']) ? floatval($score['ca1']) : 0;
-                    $ca2 = isset($score['ca2']) ? floatval($score['ca2']) : 0;
-                    $exam = isset($score['exam']) ? floatval($score['exam']) : 0;
-                    $max_ca1 = isset($score['max_ca1']) ? floatval($score['max_ca1']) : 20;
-                    $max_ca2 = isset($score['max_ca2']) ? floatval($score['max_ca2']) : 20;
-                    $max_exam = isset($score['max_exam']) ? floatval($score['max_exam']) : 60;
+                    // Handle different possible score structures
+                    $ca1 = 0;
+                    $ca2 = 0;
+                    $exam = 0;
+                    $max_ca1 = 20;
+                    $max_ca2 = 20;
+                    $max_exam = 60;
+
+                    // Case 1: Direct values
+                    if (isset($score['ca1'])) {
+                        $ca1 = floatval($score['ca1']);
+                    }
+                    if (isset($score['ca2'])) {
+                        $ca2 = floatval($score['ca2']);
+                    }
+                    if (isset($score['exam'])) {
+                        $exam = floatval($score['exam']);
+                    }
+
+                    // Case 2: Values inside 'score_data' object
+                    if (isset($score['score_data']) && is_array($score['score_data'])) {
+                        $score_data = $score['score_data'];
+                        $ca1 = isset($score_data['ca1']) ? floatval($score_data['ca1']) : $ca1;
+                        $ca2 = isset($score_data['ca2']) ? floatval($score_data['ca2']) : $ca2;
+                        $exam = isset($score_data['exam']) ? floatval($score_data['exam']) : $exam;
+                        $max_ca1 = isset($score_data['max_ca1']) ? floatval($score_data['max_ca1']) : $max_ca1;
+                        $max_ca2 = isset($score_data['max_ca2']) ? floatval($score_data['max_ca2']) : $max_ca2;
+                        $max_exam = isset($score_data['max_exam']) ? floatval($score_data['max_exam']) : $max_exam;
+                    }
+
+                    // Case 3: Values in 'total' or other fields
+                    if (isset($score['total']) && !isset($score['ca1']) && !isset($score['score_data'])) {
+                        // If only total is provided, distribute evenly or treat as exam
+                        $total = floatval($score['total']);
+                        $exam = $total;
+                        $ca1 = 0;
+                        $ca2 = 0;
+                    }
 
                     $subject_total = $ca1 + $ca2 + $exam;
                     $subject_max = $max_ca1 + $max_ca2 + $max_exam;
@@ -257,6 +292,14 @@ function syncResults($conn, $school_id, $input)
                 }
             }
 
+            debug_log("Processed scores", [
+                'student' => $result['admission_number'],
+                'scores_count' => count($scores),
+                'total_scored' => $total_scored,
+                'total_max' => $total_max,
+                'average' => $total_max > 0 ? round(($total_scored / $total_max) * 100, 2) : 0
+            ]);
+
             if (empty($scores)) {
                 $failed++;
                 $errors[] = "No valid scores for student: {$result['admission_number']}";
@@ -267,11 +310,10 @@ function syncResults($conn, $school_id, $input)
             // Calculate overall
             $average = $total_max > 0 ? round(($total_scored / $total_max) * 100, 2) : 0;
             $overall_grade = calculateGrade($average);
+            $total_marks_display = $total_scored . '/' . $total_max;
 
-            debug_log("Calculated totals", [
-                'student' => $result['admission_number'],
-                'total_scored' => $total_scored,
-                'total_max' => $total_max,
+            debug_log("Final totals", [
+                'total_marks_display' => $total_marks_display,
                 'average' => $average,
                 'grade' => $overall_grade
             ]);
@@ -328,7 +370,7 @@ function syncResults($conn, $school_id, $input)
                 ");
                 $stmt->execute([
                     json_encode($scores),
-                    $total_scored . '/' . $total_max,
+                    $total_marks_display,
                     $average,
                     $overall_grade,
                     $class_position,
@@ -362,7 +404,7 @@ function syncResults($conn, $school_id, $input)
                     $result['session_year'],
                     $result['term'],
                     json_encode($scores),
-                    $total_scored . '/' . $total_max,
+                    $total_marks_display,
                     $average,
                     $overall_grade,
                     $class_position,
@@ -383,7 +425,7 @@ function syncResults($conn, $school_id, $input)
         } catch (PDOException $e) {
             $failed++;
             $errors[] = "Error for {$result['admission_number']}: " . $e->getMessage();
-            debug_log("PDOException", ['error' => $e->getMessage(), 'sql' => $e->getTraceAsString()]);
+            debug_log("PDOException", ['error' => $e->getMessage(), 'student' => $result['admission_number']]);
         }
     }
 
