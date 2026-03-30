@@ -900,6 +900,7 @@ if ($school_id > 0 && ($action === 'edit' || $action === 'view')) {
             <li><a href="students.php"><i class="fas fa-users"></i> Students</a></li>
             <li><a href="pins.php"><i class="fas fa-key"></i> PIN Management</a></li>
             <li><a href="batches.php"><i class="fas fa-layer-group"></i> PIN Batches</a></li>
+            <li><a href="results.php"><i class="fas fa-file-alt"></i> Results</a></li>
             <li><a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a></li>
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
