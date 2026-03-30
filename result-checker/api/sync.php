@@ -238,7 +238,7 @@ function extractScoreValues($score)
 }
 
 /**
- * Sync results from school
+ * Sync results from school - PRESERVES ORIGINAL SCORE STRUCTURE
  */
 function syncResults($conn, $school_id, $input)
 {
@@ -255,18 +255,10 @@ function syncResults($conn, $school_id, $input)
     debug_log("syncResults: Processing " . count($results) . " results");
 
     foreach ($results as $index => $result) {
-        debug_log("Processing result #$index", [
-            'admission_number' => $result['admission_number'] ?? 'missing',
-            'session_year' => $result['session_year'] ?? 'missing',
-            'term' => $result['term'] ?? 'missing',
-            'scores_count' => isset($result['scores']) ? count($result['scores']) : 0
-        ]);
-
         // Validate required fields
         if (empty($result['admission_number']) || empty($result['session_year']) || empty($result['term'])) {
             $failed++;
             $errors[] = 'Missing required fields for result #' . $index;
-            debug_log("Result #$index missing required fields");
             continue;
         }
 
@@ -282,77 +274,62 @@ function syncResults($conn, $school_id, $input)
             if (!$student) {
                 $failed++;
                 $errors[] = "Student not found: {$result['admission_number']}";
-                debug_log("Student not found", ['admission_number' => $result['admission_number']]);
                 continue;
             }
 
-            debug_log("Found student", ['student_id' => $student['id'], 'class' => $student['class']]);
+            $student_id = $student['id'];
 
-            // Prepare scores data - DYNAMIC EXTRACTION
-            $scores = [];
+            // PRESERVE ORIGINAL SCORES - don't convert to ca1/ca2/exam
+            $original_scores = $result['scores'];
+
+            // Calculate totals for summary (optional, for quick display)
             $total_scored = 0;
             $total_max = 0;
+            $calculated_scores = [];
 
-            if (isset($result['scores']) && is_array($result['scores'])) {
-                foreach ($result['scores'] as $score_data) {
-                    if (empty($score_data['subject_name'])) {
-                        continue;
+            foreach ($original_scores as $score) {
+                $subject_total = 0;
+                $subject_max = 0;
+
+                // Calculate subject total from whatever fields are present
+                if (isset($score['ca1'])) $subject_total += floatval($score['ca1']);
+                if (isset($score['ca2'])) $subject_total += floatval($score['ca2']);
+                if (isset($score['exam'])) $subject_total += floatval($score['exam']);
+
+                // If using custom field names, sum all numeric values
+                if (!isset($score['ca1']) && !isset($score['ca2']) && !isset($score['exam'])) {
+                    foreach ($score as $key => $value) {
+                        if ($key !== 'subject_name' && is_numeric($value)) {
+                            $subject_total += floatval($value);
+                        }
                     }
-
-                    // Extract values dynamically
-                    $extracted = extractScoreValues($score_data);
-
-                    $subject_total = $extracted['ca1'] + $extracted['ca2'] + $extracted['exam'];
-                    $subject_max = $extracted['max_ca1'] + $extracted['max_ca2'] + $extracted['max_exam'];
-                    $percentage = $subject_max > 0 ? round(($subject_total / $subject_max) * 100, 2) : 0;
-
-                    $scores[] = [
-                        'subject_name' => $extracted['subject_name'],
-                        'ca1' => $extracted['ca1'],
-                        'ca2' => $extracted['ca2'],
-                        'exam' => $extracted['exam'],
-                        'max_ca1' => $extracted['max_ca1'],
-                        'max_ca2' => $extracted['max_ca2'],
-                        'max_exam' => $extracted['max_exam'],
-                        'total' => $subject_total,
-                        'percentage' => $percentage,
-                        'grade' => calculateGrade($percentage)
-                    ];
-
-                    $total_scored += $subject_total;
-                    $total_max += $subject_max;
-
-                    debug_log("Score processed", [
-                        'subject' => $extracted['subject_name'],
-                        'ca1' => $extracted['ca1'],
-                        'ca2' => $extracted['ca2'],
-                        'exam' => $extracted['exam'],
-                        'total' => $subject_total,
-                        'max' => $subject_max
-                    ]);
                 }
-            }
 
-            if (empty($scores)) {
-                $failed++;
-                $errors[] = "No valid scores for student: {$result['admission_number']}";
-                debug_log("No valid scores", ['admission_number' => $result['admission_number'], 'raw_scores' => $result['scores'] ?? null]);
-                continue;
+                // Calculate max possible
+                if (isset($score['max_ca1'])) $subject_max += floatval($score['max_ca1']);
+                if (isset($score['max_ca2'])) $subject_max += floatval($score['max_ca2']);
+                if (isset($score['max_exam'])) $subject_max += floatval($score['max_exam']);
+
+                // If no max specified, use defaults or sum of values
+                if ($subject_max == 0) {
+                    $subject_max = $subject_total; // Assume perfect score equals total
+                }
+
+                $total_scored += $subject_total;
+                $total_max += $subject_max;
+
+                $calculated_scores[] = [
+                    'subject_name' => $score['subject_name'],
+                    'total_scored' => $subject_total,
+                    'total_max' => $subject_max,
+                    'percentage' => $subject_max > 0 ? round(($subject_total / $subject_max) * 100, 2) : 0
+                ];
             }
 
             // Calculate overall
             $average = $total_max > 0 ? round(($total_scored / $total_max) * 100, 2) : 0;
             $overall_grade = calculateGrade($average);
             $total_marks_display = $total_scored . '/' . $total_max;
-
-            debug_log("Final totals", [
-                'student' => $result['admission_number'],
-                'total_scored' => $total_scored,
-                'total_max' => $total_max,
-                'average' => $average,
-                'grade' => $overall_grade,
-                'total_marks_display' => $total_marks_display
-            ]);
 
             // Prepare other fields
             $teachers_comment = isset($result['teachers_comment']) ? $result['teachers_comment'] : null;
@@ -375,12 +352,24 @@ function syncResults($conn, $school_id, $input)
                 $psychomotor_skills = json_encode($result['psychomotor_skills']);
             }
 
+            // Store BOTH original scores and calculated summary
+            $result_data = [
+                'original_scores' => $original_scores,  // Keep original structure
+                'calculated_scores' => $calculated_scores,  // For quick display
+                'summary' => [
+                    'total_scored' => $total_scored,
+                    'total_max' => $total_max,
+                    'average' => $average,
+                    'grade' => $overall_grade
+                ]
+            ];
+
             // Check if result already exists
             $stmt = $conn->prepare("
                 SELECT id FROM results 
                 WHERE school_id = ? AND student_id = ? AND session_year = ? AND term = ?
             ");
-            $stmt->execute([$school_id, $student['id'], $result['session_year'], $result['term']]);
+            $stmt->execute([$school_id, $student_id, $result['session_year'], $result['term']]);
             $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($existing) {
@@ -405,7 +394,7 @@ function syncResults($conn, $school_id, $input)
                     WHERE id = ?
                 ");
                 $stmt->execute([
-                    json_encode($scores),
+                    json_encode($result_data),
                     $total_marks_display,
                     $average,
                     $overall_grade,
@@ -425,21 +414,21 @@ function syncResults($conn, $school_id, $input)
             } else {
                 // Insert new result
                 $stmt = $conn->prepare("
-    INSERT INTO results (
-        school_id, student_id, session_year, term,
-        result_data, total_marks, average, grade,
-        class_position, class_total_students, promoted_to,
-        teachers_comment, principals_comment,
-        days_present, days_absent, affective_traits, psychomotor_skills,
-        is_published, synced_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-");
+                    INSERT INTO results (
+                        school_id, student_id, session_year, term,
+                        result_data, total_marks, average, grade,
+                        class_position, class_total_students, promoted_to,
+                        teachers_comment, principals_comment,
+                        days_present, days_absent, affective_traits, psychomotor_skills,
+                        is_published, synced_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
                 $stmt->execute([
                     $school_id,
-                    $student['id'],
+                    $student_id,
                     $result['session_year'],
                     $result['term'],
-                    json_encode($scores),
+                    json_encode($result_data),
                     $total_marks_display,
                     $average,
                     $overall_grade,
