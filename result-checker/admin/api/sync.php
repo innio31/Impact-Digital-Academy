@@ -1,11 +1,14 @@
 <?php
-// api/sync.php - School Data Sync Endpoint
-// Receives student, class, and result data from schools
-
+// api/sync.php - School Data Sync Endpoint (with proper error handling)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-API-Key');
+
+// Enable error logging but not display
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -16,116 +19,188 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    echo json_encode(['success' => false, 'error' => 'Method not allowed. Only POST requests are accepted.']);
     exit();
 }
 
-require_once '../config/config.php';
+// Try to include config with error handling
+try {
+    require_once '../config/config.php';
+
+    // Check if config loaded properly
+    if (!class_exists('Database')) {
+        throw new Exception('Database class not found. Check config/database.php');
+    }
+
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    error_log("Sync API Error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Server configuration error: ' . $e->getMessage()
+    ]);
+    exit();
+}
 
 // Get input
 $input = json_decode(file_get_contents('php://input'), true);
 
+// Check if JSON is valid
+if (json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON: ' . json_last_error_msg()]);
+    exit();
+}
+
 // Validate required fields
 if (!isset($input['api_key']) || !isset($input['school_code'])) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Missing authentication credentials']);
+    echo json_encode(['success' => false, 'error' => 'Missing authentication credentials. Required: api_key, school_code']);
     exit();
 }
 
 if (!isset($input['action'])) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Missing action parameter']);
+    echo json_encode(['success' => false, 'error' => 'Missing action parameter. Available actions: test_connection, sync_classes, sync_students, sync_results, sync_full']);
     exit();
 }
-
-$db = getDB();
 
 // Validate school
-$stmt = $db->prepare("
-    SELECT id, school_name, school_code, status, subscription_plan, subscription_expiry 
-    FROM schools 
-    WHERE api_key = ? AND school_code = ? AND status = 'active'
-");
-$stmt->execute([$input['api_key'], $input['school_code']]);
-$school = $stmt->fetch(PDO::FETCH_ASSOC);
+try {
+    $stmt = $conn->prepare("
+        SELECT id, school_name, school_code, status, subscription_plan, subscription_expiry 
+        FROM schools 
+        WHERE api_key = ? AND school_code = ? AND status = 'active'
+    ");
+    $stmt->execute([$input['api_key'], $input['school_code']]);
+    $school = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$school) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Invalid API key or school code']);
-    exit();
-}
+    if (!$school) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Invalid API key or school code, or school is inactive']);
+        exit();
+    }
 
-// Check subscription expiry
-if ($school['subscription_expiry'] && strtotime($school['subscription_expiry']) < time()) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'error' => 'Subscription expired. Please renew to continue syncing.']);
+    // Check subscription expiry
+    if ($school['subscription_expiry'] && strtotime($school['subscription_expiry']) < time()) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Subscription expired on ' . $school['subscription_expiry'] . '. Please renew to continue syncing.']);
+        exit();
+    }
+} catch (PDOException $e) {
+    error_log("Sync API Database Error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database error. Please try again later.']);
     exit();
 }
 
 $school_id = $school['id'];
 $response = ['success' => false, 'message' => '', 'data' => []];
 
+// Get system settings
+$system_settings = [];
+try {
+    $stmt = $conn->query("SELECT setting_key, setting_value FROM system_settings");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $system_settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch (PDOException $e) {
+    // Settings table might not exist yet, use defaults
+    $system_settings = [
+        'enable_api_logging' => 1,
+        'api_rate_limit' => 100,
+        'api_rate_window' => 60
+    ];
+}
+
 // Rate limiting check
-if ($system_settings['enable_api_logging'] ?? true) {
+if (($system_settings['enable_api_logging'] ?? 1) == 1) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
     $rate_limit = $system_settings['api_rate_limit'] ?? 100;
     $rate_window = $system_settings['api_rate_window'] ?? 60;
 
-    $stmt = $db->prepare("
-        SELECT COUNT(*) as count 
-        FROM api_request_logs 
-        WHERE ip_address = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)
-    ");
-    $stmt->execute([$ip, $rate_window]);
-    $request_count = $stmt->fetch()['count'];
+    try {
+        $stmt = $conn->prepare("
+            SELECT COUNT(*) as count 
+            FROM api_request_logs 
+            WHERE ip_address = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)
+        ");
+        $stmt->execute([$ip, $rate_window]);
+        $request_count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 
-    if ($request_count >= $rate_limit) {
-        http_response_code(429);
-        echo json_encode(['success' => false, 'error' => 'Rate limit exceeded. Try again later.']);
-        exit();
+        if ($request_count >= $rate_limit) {
+            http_response_code(429);
+            echo json_encode(['success' => false, 'error' => 'Rate limit exceeded. Maximum ' . $rate_limit . ' requests per ' . $rate_window . ' seconds.']);
+            exit();
+        }
+    } catch (PDOException $e) {
+        // Log table might not exist, skip rate limiting
+        error_log("Rate limiting table not found: " . $e->getMessage());
     }
 }
 
-// Log API request
-if ($system_settings['enable_api_logging'] ?? true) {
-    $stmt = $db->prepare("
-        INSERT INTO api_request_logs (school_id, ip_address, action, request_data, user_agent)
-        VALUES (?, ?, ?, ?, ?)
-    ");
-    $stmt->execute([
-        $school_id,
-        $_SERVER['REMOTE_ADDR'] ?? '',
-        $input['action'],
-        json_encode($input),
-        $_SERVER['HTTP_USER_AGENT'] ?? ''
-    ]);
+// Log API request (if logging enabled)
+if (($system_settings['enable_api_logging'] ?? 1) == 1) {
+    try {
+        $stmt = $conn->prepare("
+            INSERT INTO api_request_logs (school_id, ip_address, action, request_data, user_agent)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $school_id,
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            $input['action'],
+            json_encode($input),
+            $_SERVER['HTTP_USER_AGENT'] ?? ''
+        ]);
+    } catch (PDOException $e) {
+        // Log table might not exist, skip logging
+        error_log("API logging failed: " . $e->getMessage());
+    }
 }
 
 // Process based on action
-switch ($input['action']) {
-    case 'sync_classes':
-        $response = syncClasses($db, $school_id, $input);
-        break;
+try {
+    switch ($input['action']) {
+        case 'sync_classes':
+            $response = syncClasses($conn, $school_id, $input);
+            break;
 
-    case 'sync_students':
-        $response = syncStudents($db, $school_id, $input);
-        break;
+        case 'sync_students':
+            $response = syncStudents($conn, $school_id, $input);
+            break;
 
-    case 'sync_results':
-        $response = syncResults($db, $school_id, $input);
-        break;
+        case 'sync_results':
+            $response = syncResults($conn, $school_id, $input);
+            break;
 
-    case 'sync_full':
-        $response = syncFull($db, $school_id, $input);
-        break;
+        case 'sync_full':
+            $response = syncFull($conn, $school_id, $input);
+            break;
 
-    case 'test_connection':
-        $response = ['success' => true, 'message' => 'Connection successful', 'data' => ['school' => $school['school_name']]];
-        break;
+        case 'test_connection':
+            $response = [
+                'success' => true,
+                'message' => 'Connection successful',
+                'data' => [
+                    'school' => $school['school_name'],
+                    'school_code' => $school['school_code'],
+                    'subscription_plan' => $school['subscription_plan'],
+                    'subscription_expiry' => $school['subscription_expiry']
+                ]
+            ];
+            break;
 
-    default:
-        http_response_code(400);
-        $response = ['success' => false, 'error' => 'Unknown action: ' . $input['action']];
+        default:
+            http_response_code(400);
+            $response = ['success' => false, 'error' => 'Unknown action: ' . $input['action'] . '. Available: test_connection, sync_classes, sync_students, sync_results, sync_full'];
+    }
+} catch (Exception $e) {
+    error_log("Sync API Processing Error: " . $e->getMessage());
+    http_response_code(500);
+    $response = ['success' => false, 'error' => 'Processing error: ' . $e->getMessage()];
 }
 
 echo json_encode($response);
@@ -133,7 +208,7 @@ echo json_encode($response);
 /**
  * Sync classes from school
  */
-function syncClasses($db, $school_id, $input)
+function syncClasses($conn, $school_id, $input)
 {
     if (!isset($input['classes']) || !is_array($input['classes'])) {
         return ['success' => false, 'error' => 'Missing or invalid classes data'];
@@ -151,7 +226,13 @@ function syncClasses($db, $school_id, $input)
         }
 
         try {
-            $stmt = $db->prepare("
+            $class_name = trim($class['class_name']);
+            $class_category = $class['class_category'] ?? determineClassCategory($class_name);
+            $class_code = $class['class_code'] ?? null;
+            $sort_order = $class['sort_order'] ?? 0;
+            $status = $class['status'] ?? 'active';
+
+            $stmt = $conn->prepare("
                 INSERT INTO school_classes (school_id, class_name, class_category, class_code, sort_order, status)
                 VALUES (?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
@@ -163,20 +244,7 @@ function syncClasses($db, $school_id, $input)
                     updated_at = NOW()
             ");
 
-            $class_name = trim($class['class_name']);
-            $class_category = $class['class_category'] ?? determineClassCategory($class_name);
-            $class_code = $class['class_code'] ?? null;
-            $sort_order = $class['sort_order'] ?? 0;
-            $status = $class['status'] ?? 'active';
-
-            $stmt->execute([
-                $school_id,
-                $class_name,
-                $class_category,
-                $class_code,
-                $sort_order,
-                $status
-            ]);
+            $stmt->execute([$school_id, $class_name, $class_category, $class_code, $sort_order, $status]);
 
             if ($stmt->rowCount() > 0) {
                 $synced++;
@@ -202,7 +270,7 @@ function syncClasses($db, $school_id, $input)
 /**
  * Sync students from school
  */
-function syncStudents($db, $school_id, $input)
+function syncStudents($conn, $school_id, $input)
 {
     if (!isset($input['students']) || !is_array($input['students'])) {
         return ['success' => false, 'error' => 'Missing or invalid students data'];
@@ -221,39 +289,37 @@ function syncStudents($db, $school_id, $input)
         }
 
         try {
-            $db->beginTransaction();
-
             // Get or create class reference
             $class_name = $student['class'] ?? null;
             $school_class_id = null;
 
             if ($class_name) {
                 if (!isset($class_cache[$class_name])) {
-                    $stmt = $db->prepare("
+                    $stmt = $conn->prepare("
                         SELECT id FROM school_classes 
                         WHERE school_id = ? AND class_name = ?
                     ");
                     $stmt->execute([$school_id, $class_name]);
-                    $class = $stmt->fetch();
+                    $class = $stmt->fetch(PDO::FETCH_ASSOC);
 
                     if ($class) {
                         $class_cache[$class_name] = $class['id'];
                     } else {
                         // Auto-create class if it doesn't exist
                         $category = determineClassCategory($class_name);
-                        $stmt = $db->prepare("
+                        $stmt = $conn->prepare("
                             INSERT INTO school_classes (school_id, class_name, class_category, status)
                             VALUES (?, ?, ?, 'active')
                         ");
                         $stmt->execute([$school_id, $class_name, $category]);
-                        $class_cache[$class_name] = $db->lastInsertId();
+                        $class_cache[$class_name] = $conn->lastInsertId();
                     }
                 }
                 $school_class_id = $class_cache[$class_name];
             }
 
             // Insert or update student
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare("
                 INSERT INTO students (
                     school_id, admission_number, full_name, class, school_class_id,
                     gender, date_of_birth, parent_phone, parent_email, status, last_sync_at
@@ -291,15 +357,12 @@ function syncStudents($db, $school_id, $input)
                 $status
             ]);
 
-            if ($stmt->rowCount() > 0) {
+            if ($conn->lastInsertId() > 0) {
                 $synced++;
             } else {
                 $updated++;
             }
-
-            $db->commit();
         } catch (PDOException $e) {
-            $db->rollBack();
             $errors[] = "Error syncing student {$student['admission_number']}: " . $e->getMessage();
         }
     }
@@ -318,7 +381,7 @@ function syncStudents($db, $school_id, $input)
 /**
  * Sync results from school
  */
-function syncResults($db, $school_id, $input)
+function syncResults($conn, $school_id, $input)
 {
     if (!isset($input['results']) || !is_array($input['results'])) {
         return ['success' => false, 'error' => 'Missing or invalid results data'];
@@ -338,20 +401,17 @@ function syncResults($db, $school_id, $input)
         }
 
         try {
-            $db->beginTransaction();
-
             // Get student ID
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare("
                 SELECT id, class FROM students 
                 WHERE school_id = ? AND admission_number = ? AND status = 'active'
             ");
             $stmt->execute([$school_id, $result['admission_number']]);
-            $student = $stmt->fetch();
+            $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$student) {
                 $failed++;
                 $errors[] = "Student not found: {$result['admission_number']}";
-                $db->rollBack();
                 continue;
             }
 
@@ -359,19 +419,18 @@ function syncResults($db, $school_id, $input)
             $student_class = $student['class'];
 
             // Get school class ID
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare("
                 SELECT id FROM school_classes 
                 WHERE school_id = ? AND class_name = ?
             ");
             $stmt->execute([$school_id, $student_class]);
-            $class = $stmt->fetch();
+            $class = $stmt->fetch(PDO::FETCH_ASSOC);
             $school_class_id = $class ? $class['id'] : null;
 
             // Prepare scores data
             $scores = [];
             $total_marks = 0;
             $total_obtainable = 0;
-            $subject_count = 0;
 
             if (isset($result['scores']) && is_array($result['scores'])) {
                 foreach ($result['scores'] as $score) {
@@ -406,7 +465,6 @@ function syncResults($db, $school_id, $input)
 
                     $total_marks += $subject_total;
                     $total_obtainable += $subject_max;
-                    $subject_count++;
                 }
             }
 
@@ -427,7 +485,7 @@ function syncResults($db, $school_id, $input)
             }
 
             // Insert or update result
-            $stmt = $db->prepare("
+            $stmt = $conn->prepare("
                 INSERT INTO results (
                     school_id, student_id, session_year, term, school_class_id,
                     result_data, total_marks, average, grade,
@@ -477,10 +535,8 @@ function syncResults($db, $school_id, $input)
                 $result['is_published'] ?? true
             ]);
 
-            $db->commit();
             $synced++;
         } catch (PDOException $e) {
-            $db->rollBack();
             $failed++;
             $errors[] = "Error syncing result for {$result['admission_number']}: " . $e->getMessage();
         }
@@ -500,7 +556,7 @@ function syncResults($db, $school_id, $input)
 /**
  * Full sync - classes, students, and results
  */
-function syncFull($db, $school_id, $input)
+function syncFull($conn, $school_id, $input)
 {
     $response = [
         'success' => true,
@@ -510,25 +566,29 @@ function syncFull($db, $school_id, $input)
 
     // Sync classes if provided
     if (isset($input['classes']) && is_array($input['classes'])) {
-        $class_result = syncClasses($db, $school_id, ['classes' => $input['classes']]);
+        $class_result = syncClasses($conn, $school_id, ['classes' => $input['classes']]);
         $response['data']['classes'] = $class_result['data'];
     }
 
     // Sync students if provided
     if (isset($input['students']) && is_array($input['students'])) {
-        $student_result = syncStudents($db, $school_id, ['students' => $input['students']]);
+        $student_result = syncStudents($conn, $school_id, ['students' => $input['students']]);
         $response['data']['students'] = $student_result['data'];
     }
 
     // Sync results if provided
     if (isset($input['results']) && is_array($input['results'])) {
-        $result_result = syncResults($db, $school_id, ['results' => $input['results']]);
+        $result_result = syncResults($conn, $school_id, ['results' => $input['results']]);
         $response['data']['results'] = $result_result['data'];
     }
 
     // Update school last sync time
-    $stmt = $db->prepare("UPDATE schools SET last_sync = NOW() WHERE id = ?");
-    $stmt->execute([$school_id]);
+    try {
+        $stmt = $conn->prepare("UPDATE schools SET last_sync = NOW() WHERE id = ?");
+        $stmt->execute([$school_id]);
+    } catch (PDOException $e) {
+        // Non-critical, ignore
+    }
 
     return $response;
 }
