@@ -425,15 +425,15 @@ function syncResults($conn, $school_id, $input)
             } else {
                 // Insert new result
                 $stmt = $conn->prepare("
-                    INSERT INTO results (
-                        school_id, student_id, session_year, term,
-                        result_data, total_marks, average, grade,
-                        class_position, class_total_students, promoted_to,
-                        teachers_comment, principals_comment,
-                        days_present, days_absent, affective_traits, psychomotor_skills,
-                        is_published, synced_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-                ");
+    INSERT INTO results (
+        school_id, student_id, session_year, term,
+        result_data, total_marks, average, grade,
+        class_position, class_total_students, promoted_to,
+        teachers_comment, principals_comment,
+        days_present, days_absent, affective_traits, psychomotor_skills,
+        is_published, synced_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+");
                 $stmt->execute([
                     $school_id,
                     $student['id'],
