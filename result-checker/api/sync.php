@@ -1,5 +1,5 @@
 <?php
-// api/sync.php - School Data Sync Endpoint (FIXED VERSION)
+// api/sync.php - School Data Sync Endpoint (DYNAMIC VERSION)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -167,6 +167,77 @@ try {
 }
 
 /**
+ * Extract score values dynamically from any structure
+ */
+function extractScoreValues($score)
+{
+    $result = [
+        'ca1' => 0,
+        'ca2' => 0,
+        'exam' => 0,
+        'max_ca1' => 20,
+        'max_ca2' => 20,
+        'max_exam' => 60,
+        'subject_name' => $score['subject_name'] ?? 'Unknown'
+    ];
+
+    // Look for common patterns in the score data
+    $possible_keys = [
+        // For CA1 - check various possible names
+        'ca1' => ['ca1', 'ca_1', 'ca-1', 'continuous_assessment_1', 'assessment_1', 'test1', 'test_1', 'quiz1', 'first_ca', 'ca_first'],
+        // For CA2
+        'ca2' => ['ca2', 'ca_2', 'ca-2', 'continuous_assessment_2', 'assessment_2', 'test2', 'test_2', 'quiz2', 'second_ca', 'ca_second'],
+        // For Exam
+        'exam' => ['exam', 'examination', 'final', 'final_exam', 'exam_score', 'examination_score', 'theory', 'objective'],
+        // For max values
+        'max_ca1' => ['max_ca1', 'max_ca_1', 'ca1_max', 'max_ca1_score', 'ca1_total', 'ca1_out_of'],
+        'max_ca2' => ['max_ca2', 'max_ca_2', 'ca2_max', 'max_ca2_score', 'ca2_total', 'ca2_out_of'],
+        'max_exam' => ['max_exam', 'max_examination', 'exam_max', 'max_exam_score', 'exam_total', 'exam_out_of']
+    ];
+
+    // Check if score has nested data
+    $data_source = $score;
+
+    // If score has 'score_data' or 'data' key, use that as source
+    if (isset($score['score_data']) && is_array($score['score_data'])) {
+        $data_source = $score['score_data'];
+        debug_log("Using score_data as source", ['keys' => array_keys($data_source)]);
+    }
+    if (isset($score['data']) && is_array($score['data'])) {
+        $data_source = $score['data'];
+        debug_log("Using data as source", ['keys' => array_keys($data_source)]);
+    }
+
+    // Extract values by looking for matching keys
+    foreach ($possible_keys as $target => $keys) {
+        foreach ($keys as $key) {
+            if (isset($data_source[$key])) {
+                $result[$target] = floatval($data_source[$key]);
+                debug_log("Found value", ['target' => $target, 'key' => $key, 'value' => $result[$target]]);
+                break;
+            }
+        }
+    }
+
+    // If total is provided but individual components aren't, treat total as exam
+    if ($result['ca1'] == 0 && $result['ca2'] == 0 && $result['exam'] == 0) {
+        // Look for total or score
+        if (isset($data_source['total'])) {
+            $result['exam'] = floatval($data_source['total']);
+            debug_log("Using total as exam", ['total' => $result['exam']]);
+        } elseif (isset($data_source['score'])) {
+            $result['exam'] = floatval($data_source['score']);
+            debug_log("Using score as exam", ['score' => $result['exam']]);
+        } elseif (isset($data_source['marks'])) {
+            $result['exam'] = floatval($data_source['marks']);
+            debug_log("Using marks as exam", ['marks' => $result['exam']]);
+        }
+    }
+
+    return $result;
+}
+
+/**
  * Sync results from school
  */
 function syncResults($conn, $school_id, $input)
@@ -217,71 +288,32 @@ function syncResults($conn, $school_id, $input)
 
             debug_log("Found student", ['student_id' => $student['id'], 'class' => $student['class']]);
 
-            // Prepare scores data - FIXED: properly parse score data
+            // Prepare scores data - DYNAMIC EXTRACTION
             $scores = [];
             $total_scored = 0;
             $total_max = 0;
 
             if (isset($result['scores']) && is_array($result['scores'])) {
-                foreach ($result['scores'] as $score) {
-                    // Debug the score structure
-                    debug_log("Score data", $score);
-
-                    if (empty($score['subject_name'])) {
+                foreach ($result['scores'] as $score_data) {
+                    if (empty($score_data['subject_name'])) {
                         continue;
                     }
 
-                    // Handle different possible score structures
-                    $ca1 = 0;
-                    $ca2 = 0;
-                    $exam = 0;
-                    $max_ca1 = 20;
-                    $max_ca2 = 20;
-                    $max_exam = 60;
+                    // Extract values dynamically
+                    $extracted = extractScoreValues($score_data);
 
-                    // Case 1: Direct values
-                    if (isset($score['ca1'])) {
-                        $ca1 = floatval($score['ca1']);
-                    }
-                    if (isset($score['ca2'])) {
-                        $ca2 = floatval($score['ca2']);
-                    }
-                    if (isset($score['exam'])) {
-                        $exam = floatval($score['exam']);
-                    }
-
-                    // Case 2: Values inside 'score_data' object
-                    if (isset($score['score_data']) && is_array($score['score_data'])) {
-                        $score_data = $score['score_data'];
-                        $ca1 = isset($score_data['ca1']) ? floatval($score_data['ca1']) : $ca1;
-                        $ca2 = isset($score_data['ca2']) ? floatval($score_data['ca2']) : $ca2;
-                        $exam = isset($score_data['exam']) ? floatval($score_data['exam']) : $exam;
-                        $max_ca1 = isset($score_data['max_ca1']) ? floatval($score_data['max_ca1']) : $max_ca1;
-                        $max_ca2 = isset($score_data['max_ca2']) ? floatval($score_data['max_ca2']) : $max_ca2;
-                        $max_exam = isset($score_data['max_exam']) ? floatval($score_data['max_exam']) : $max_exam;
-                    }
-
-                    // Case 3: Values in 'total' or other fields
-                    if (isset($score['total']) && !isset($score['ca1']) && !isset($score['score_data'])) {
-                        // If only total is provided, distribute evenly or treat as exam
-                        $total = floatval($score['total']);
-                        $exam = $total;
-                        $ca1 = 0;
-                        $ca2 = 0;
-                    }
-
-                    $subject_total = $ca1 + $ca2 + $exam;
-                    $subject_max = $max_ca1 + $max_ca2 + $max_exam;
+                    $subject_total = $extracted['ca1'] + $extracted['ca2'] + $extracted['exam'];
+                    $subject_max = $extracted['max_ca1'] + $extracted['max_ca2'] + $extracted['max_exam'];
                     $percentage = $subject_max > 0 ? round(($subject_total / $subject_max) * 100, 2) : 0;
 
                     $scores[] = [
-                        'subject_name' => $score['subject_name'],
-                        'ca1' => $ca1,
-                        'ca2' => $ca2,
-                        'exam' => $exam,
-                        'max_ca1' => $max_ca1,
-                        'max_ca2' => $max_ca2,
-                        'max_exam' => $max_exam,
+                        'subject_name' => $extracted['subject_name'],
+                        'ca1' => $extracted['ca1'],
+                        'ca2' => $extracted['ca2'],
+                        'exam' => $extracted['exam'],
+                        'max_ca1' => $extracted['max_ca1'],
+                        'max_ca2' => $extracted['max_ca2'],
+                        'max_exam' => $extracted['max_exam'],
                         'total' => $subject_total,
                         'percentage' => $percentage,
                         'grade' => calculateGrade($percentage)
@@ -289,21 +321,22 @@ function syncResults($conn, $school_id, $input)
 
                     $total_scored += $subject_total;
                     $total_max += $subject_max;
+
+                    debug_log("Score processed", [
+                        'subject' => $extracted['subject_name'],
+                        'ca1' => $extracted['ca1'],
+                        'ca2' => $extracted['ca2'],
+                        'exam' => $extracted['exam'],
+                        'total' => $subject_total,
+                        'max' => $subject_max
+                    ]);
                 }
             }
-
-            debug_log("Processed scores", [
-                'student' => $result['admission_number'],
-                'scores_count' => count($scores),
-                'total_scored' => $total_scored,
-                'total_max' => $total_max,
-                'average' => $total_max > 0 ? round(($total_scored / $total_max) * 100, 2) : 0
-            ]);
 
             if (empty($scores)) {
                 $failed++;
                 $errors[] = "No valid scores for student: {$result['admission_number']}";
-                debug_log("No valid scores", ['admission_number' => $result['admission_number']]);
+                debug_log("No valid scores", ['admission_number' => $result['admission_number'], 'raw_scores' => $result['scores'] ?? null]);
                 continue;
             }
 
@@ -313,9 +346,12 @@ function syncResults($conn, $school_id, $input)
             $total_marks_display = $total_scored . '/' . $total_max;
 
             debug_log("Final totals", [
-                'total_marks_display' => $total_marks_display,
+                'student' => $result['admission_number'],
+                'total_scored' => $total_scored,
+                'total_max' => $total_max,
                 'average' => $average,
-                'grade' => $overall_grade
+                'grade' => $overall_grade,
+                'total_marks_display' => $total_marks_display
             ]);
 
             // Prepare other fields
