@@ -70,8 +70,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
         ];
 
         // Basic Validation
-        if (empty($form_data['first_name']) || empty($form_data['email'])) {
-            $errors[] = 'Name and Email are required.';
+        if (empty($form_data['first_name']) || empty($form_data['last_name']) || empty($form_data['email']) || empty($form_data['phone'])) {
+            $errors[] = 'All fields are required.';
+        }
+
+        // Validate email
+        if (!empty($form_data['email']) && !isValidEmail($form_data['email'])) {
+            $errors[] = 'Please enter a valid email address.';
+        }
+
+        // Validate applicant type specific fields
+        if ($applicant_type === 'student') {
+            if (empty($form_data['school_name'])) {
+                $errors[] = 'School/Institution name is required for students.';
+            }
+            if (empty($form_data['school_class'])) {
+                $errors[] = 'Class/Level is required for students.';
+            }
+        } elseif ($applicant_type === 'professional') {
+            if (empty($form_data['company_name'])) {
+                $errors[] = 'Company/Organization name is required for professionals.';
+            }
+            if (empty($form_data['job_title'])) {
+                $errors[] = 'Job title is required for professionals.';
+            }
         }
 
         if (empty($errors)) {
@@ -115,6 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
         }
     }
 }
+
+// Get institution settings
+$inst_name = "Impact Digital Academy";
+$inst_tagline = "Empowering Digital Futures";
+$inst_logo = BASE_URL . "images/logo.png";
 ?>
 
 <!DOCTYPE html>
@@ -140,9 +167,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
             --gray-200: #e2e8f0;
             --gray-600: #475569;
             --gray-700: #334155;
-            --orange-gradient: linear-gradient(135deg, #f59e0b, #d97706);
-            --blue-gradient: linear-gradient(135deg, #3b82f6, #1e40af);
-            --purple-gradient: linear-gradient(135deg, #8b5cf6, #6d28d9);
         }
 
         * {
@@ -358,7 +382,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            position: relative;
         }
 
         .program-card:hover {
@@ -374,6 +397,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
         .program-icon {
             font-size: 2.5rem;
             margin-bottom: 1rem;
+        }
+
+        .program-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .program-card p {
+            font-size: 0.85rem;
+            color: var(--gray-600);
         }
 
         .form-group {
@@ -437,6 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
             background: var(--primary);
             color: white;
             transition: all 0.3s ease;
+            margin-top: 1rem;
         }
 
         .btn:hover {
@@ -487,94 +522,276 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
 </head>
 
 <body>
-
     <div class="container">
-        <div class="card-content">
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-error">
-                    <strong>Errors:</strong>
-                    <ul><?php foreach ($errors as $e) echo "<li>$e</li>"; ?></ul>
-                </div>
-            <?php endif; ?>
+        <!-- Institution Header -->
+        <div class="institution-header">
+            <div class="institution-logo">
+                <img src="<?php echo $inst_logo; ?>" alt="<?php echo $inst_name; ?>">
+            </div>
+            <div class="institution-name"><?php echo $inst_name; ?></div>
+            <div class="institution-tagline"><?php echo $inst_tagline; ?></div>
+        </div>
 
-            <form method="POST" id="registrationForm">
-                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                <input type="hidden" name="applicant_type" id="applicant_type" value="student">
-                <input type="hidden" name="program_choice" id="program_choice" value="">
-
-                <label>I am a:</label>
-                <div class="applicant-toggle">
-                    <button type="button" class="applicant-option active" id="btnStudent">Student</button>
-                    <button type="button" class="applicant-option" id="btnProfessional">Professional</button>
-                </div>
-
-                <label>Select Program:</label>
-                <div class="program-options">
-                    <div class="program-card" data-val="dtp">
-                        <i class="fas fa-print"></i>
-                        <h3>DTP</h3>
-                    </div>
-                    <div class="program-card" data-val="web_design">
-                        <i class="fas fa-code"></i>
-                        <h3>Web Design</h3>
+        <!-- Program Hero -->
+        <div class="program-hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="badge">🔥 Limited Spots Available</div>
+                    <h2>2-Week Intensive Crash Program</h2>
+                    <p>Master in-demand digital skills in just 2 weeks with hands-on training and expert mentorship.</p>
+                    <div class="hero-features">
+                        <span><i class="fas fa-certificate"></i> Certificate of Completion</span>
+                        <span><i class="fas fa-laptop-code"></i> Hands-on Projects</span>
+                        <span><i class="fas fa-users"></i> Expert Mentorship</span>
+                        <span><i class="fas fa-clock"></i> Flexible Schedule</span>
                     </div>
                 </div>
-
-                <div id="commonFields">
-                    <div class="form-group">
-                        <input type="text" name="first_name" placeholder="First Name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" name="email" placeholder="Email Address" class="form-control" required>
-                    </div>
+                <div class="hero-image">
+                    <img src="../../../images/ai.jpeg" alt="Crash Program">
                 </div>
+            </div>
+        </div>
 
-                <div id="studentFields">
-                    <div class="form-group">
-                        <input type="text" name="school_name" id="school_name" placeholder="School Name" class="form-control" required>
-                    </div>
+        <!-- Spots Counter -->
+        <div class="spots-counter <?php echo $spots_left <= 10 ? ($spots_left <= 5 ? 'critical' : 'warning') : ''; ?>">
+            <span class="spots-number"><?php echo $spots_left; ?></span>
+            <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span>
+        </div>
+
+        <!-- Registration Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🚀 Register for the Crash Program</h2>
+                <div class="program-dates">
+                    <i class="fas fa-calendar-alt"></i> <?php echo $start_date; ?> - <?php echo $end_date; ?>
+                    <p><i class="fas fa-map-marker-alt"></i> Mighty School for Valours</p>
                 </div>
-
-                <div id="professionalFields" style="display:none;">
-                    <div class="form-group">
-                        <input type="text" name="company_name" id="company_name" placeholder="Company Name" class="form-control">
+            </div>
+            <div class="card-content">
+                <?php if ($registration_closed): ?>
+                    <div style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-ban" style="font-size: 4rem; color: var(--danger);"></i>
+                        <h3>Registration Closed</h3>
+                        <p>All <?php echo $total_spots; ?> spots have been filled. Thank you for your interest!</p>
                     </div>
-                </div>
+                <?php else: ?>
+                    <?php if (!empty($errors)): ?>
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Please fix the following errors:</strong>
+                            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                                <?php foreach ($errors as $error): ?>
+                                    <li><?php echo htmlspecialchars($error); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
 
-                <button type="submit" class="btn">Complete Registration</button>
-            </form>
+                    <div class="fee-info">
+                        <span class="fee-label">Program Fee:</span>
+                        <div class="fee-amount" id="feeAmount">₦<?php echo number_format($stud_fee_val, 2); ?></div>
+                        <small>Payment required to secure your spot</small>
+                    </div>
+
+                    <form method="POST" id="registrationForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                        <input type="hidden" name="applicant_type" id="applicant_type" value="student">
+                        <input type="hidden" name="program_choice" id="program_choice" value="">
+
+                        <!-- Applicant Type Toggle -->
+                        <div class="applicant-toggle">
+                            <button type="button" class="applicant-option active" id="btnStudent">
+                                <i class="fas fa-graduation-cap"></i>
+                                Student
+                            </button>
+                            <button type="button" class="applicant-option" id="btnProfessional">
+                                <i class="fas fa-briefcase"></i>
+                                Professional
+                            </button>
+                        </div>
+
+                        <!-- Program Options -->
+                        <div class="program-options">
+                            <div class="program-card" data-val="dtp">
+                                <div class="program-icon"><i class="fas fa-print"></i></div>
+                                <h3>Desktop Publishing (DTP)</h3>
+                                <p>MsWord, MsExcel, MsPowerpoint, AI Tools</p>
+                            </div>
+                            <div class="program-card" data-val="web_design">
+                                <div class="program-icon"><i class="fas fa-code"></i></div>
+                                <h3>Web Design</h3>
+                                <p>HTML, CSS, JavaScript, Responsive Design</p>
+                            </div>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="required">First Name</label>
+                                <input type="text" name="first_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="required">Email Address</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control" required placeholder="08012345678">
+                            </div>
+                        </div>
+
+                        <!-- Student Fields -->
+                        <div id="studentFields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="required">School/Institution Name</label>
+                                    <input type="text" name="school_name" id="school_name" class="form-control" placeholder="e.g., University of Lagos" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="required">Class/Level</label>
+                                    <input type="text" name="school_class" id="school_class" class="form-control" placeholder="e.g., 200 Level, SS3" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Fields -->
+                        <div id="professionalFields" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="required">Company/Organization</label>
+                                    <input type="text" name="company_name" id="company_name" class="form-control" placeholder="e.g., Google, Self-employed">
+                                </div>
+                                <div class="form-group">
+                                    <label class="required">Job Title</label>
+                                    <input type="text" name="job_title" id="job_title" class="form-control" placeholder="e.g., Software Engineer">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Years of Experience</label>
+                                    <select name="years_experience" class="form-control">
+                                        <option value="">Select experience</option>
+                                        <option value="0">Less than 1 year</option>
+                                        <option value="1">1 year</option>
+                                        <option value="2">2 years</option>
+                                        <option value="3">3 years</option>
+                                        <option value="4">4 years</option>
+                                        <option value="5">5 years</option>
+                                        <option value="6">6-10 years</option>
+                                        <option value="11">11+ years</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Key Skills/Interests</label>
+                                    <textarea name="professional_skills" class="form-control" rows="2" placeholder="List your relevant skills or what you hope to learn..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" name="address" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="city" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" name="state" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>How did you hear about us?</label>
+                                <select name="how_heard" class="form-control">
+                                    <option value="">Select an option</option>
+                                    <option value="social_media">Social Media</option>
+                                    <option value="friend">Friend/Referral</option>
+                                    <option value="school">School Announcement</option>
+                                    <option value="email">Email Newsletter</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn">
+                            <i class="fas fa-paper-plane"></i> Register Now
+                        </button>
+                    </form>
+
+                    <div style="text-align: center; margin-top: 1.5rem; color: var(--gray-600);">
+                        Already have an account? <a href="<?php echo BASE_URL; ?>modules/auth/login.php" style="color: var(--primary);">Login here</a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; <?php echo date('Y'); ?> <?php echo $inst_name; ?>. All rights reserved.</p>
+            <p>📍 Nigeria | 📞 +234 905 158 6024 | ✉️ info@impactdigitalacademy.com.ng</p>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const btnStudent = document.getElementById('btnStudent');
-            const btnProf = document.getElementById('btnProfessional');
+            const btnProfessional = document.getElementById('btnProfessional');
             const studentFields = document.getElementById('studentFields');
-            const profFields = document.getElementById('professionalFields');
+            const professionalFields = document.getElementById('professionalFields');
             const typeInput = document.getElementById('applicant_type');
             const progInput = document.getElementById('program_choice');
             const progCards = document.querySelectorAll('.program-card');
+            const feeAmount = document.getElementById('feeAmount');
+            const professionalFee = <?php echo $prof_fee_val; ?>;
+            const studentFee = <?php echo $stud_fee_val; ?>;
+
+            // Get form elements for required attributes
+            const schoolName = document.getElementById('school_name');
+            const schoolClass = document.getElementById('school_class');
+            const companyName = document.getElementById('company_name');
+            const jobTitle = document.getElementById('job_title');
 
             // 1. Toggle Applicant Type
             btnStudent.onclick = () => {
                 typeInput.value = 'student';
                 btnStudent.classList.add('active');
-                btnProf.classList.remove('active');
+                btnProfessional.classList.remove('active');
                 studentFields.style.display = 'block';
-                profFields.style.display = 'none';
-                document.getElementById('school_name').required = true;
-                document.getElementById('company_name').required = false;
+                professionalFields.style.display = 'none';
+                feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
+
+                // Update required attributes
+                if (schoolName) schoolName.required = true;
+                if (schoolClass) schoolClass.required = true;
+                if (companyName) companyName.required = false;
+                if (jobTitle) jobTitle.required = false;
             };
 
-            btnProf.onclick = () => {
+            btnProfessional.onclick = () => {
                 typeInput.value = 'professional';
-                btnProf.classList.add('active');
+                btnProfessional.classList.add('active');
                 btnStudent.classList.remove('active');
                 studentFields.style.display = 'none';
-                profFields.style.display = 'block';
-                document.getElementById('school_name').required = false;
-                document.getElementById('company_name').required = true;
+                professionalFields.style.display = 'block';
+                feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
+
+                // Update required attributes
+                if (schoolName) schoolName.required = false;
+                if (schoolClass) schoolClass.required = false;
+                if (companyName) companyName.required = true;
+                if (jobTitle) jobTitle.required = true;
             };
 
             // 2. Select Program
@@ -589,13 +806,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
             // 3. Final Validation
             document.getElementById('registrationForm').onsubmit = function(e) {
                 if (!progInput.value) {
-                    alert("Please select a program (DTP or Web Design)");
+                    alert("Please select a program (Desktop Publishing or Web Design)");
                     e.preventDefault();
                     return false;
                 }
+
+                // Validate based on applicant type
+                const applicantType = typeInput.value;
+                if (applicantType === 'student') {
+                    if (!schoolName.value || !schoolClass.value) {
+                        alert("Please fill in school name and class/level");
+                        e.preventDefault();
+                        return false;
+                    }
+                } else if (applicantType === 'professional') {
+                    if (!companyName.value || !jobTitle.value) {
+                        alert("Please fill in company name and job title");
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                // Validate email
+                const email = document.querySelector('[name="email"]').value;
+                if (!email || !email.includes('@')) {
+                    alert("Please enter a valid email address");
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Validate phone
+                const phone = document.querySelector('[name="phone"]').value;
+                if (!phone || phone.length < 10) {
+                    alert("Please enter a valid phone number (minimum 10 digits)");
+                    e.preventDefault();
+                    return false;
+                }
+
+                return true;
             };
         });
     </script>
 </body>
 
 </html>
+<?php $conn->close(); ?>
