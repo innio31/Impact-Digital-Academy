@@ -719,7 +719,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                     </div>
                 </div>
                 <div class="hero-image">
-                    <img src="../../..images/ai.jpeg" alt="Crash Program">
+                    <img src="../../../images/ai.jpeg" alt="Crash Program">
                 </div>
             </div>
         </div>
