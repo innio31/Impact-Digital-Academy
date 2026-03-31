@@ -171,14 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
 
                 // Send welcome email to user
                 require_once __DIR__ . '/../../includes/email_functions.php';
-                if (function_exists('sendCrashProgramRegistrationEmail')) {
-                    sendCrashProgramRegistrationEmail($form_data, $registration_id, $payment_amount);
-                }
+                sendCrashProgramRegistrationEmail($form_data, $registration_id, $payment_amount);
 
                 // Send admin notification
-                if (function_exists('sendCrashProgramAdminNotification')) {
-                    sendCrashProgramAdminNotification($form_data, $registration_id, $payment_amount);
-                }
+                sendCrashProgramAdminNotification($form_data, $registration_id, $payment_amount);
 
                 // Store registration ID in session for payment page
                 $_SESSION['crash_registration_id'] = $registration_id;
@@ -205,7 +201,7 @@ $spots_available = $total_spots - $confirmed_spots;
 // Get institution settings
 $inst_name = "Impact Digital Academy";
 $inst_tagline = "Empowering Digital Futures";
-$inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
+$inst_logo = BASE_URL . "images/logo.png";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -217,7 +213,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <style>
-        /* Your existing CSS remains exactly the same */
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
@@ -260,10 +255,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             padding: 1rem;
         }
 
-        .institution-logo {
-            margin-bottom: 1rem;
-        }
-
         .institution-logo img {
             max-height: 80px;
             width: auto;
@@ -274,7 +265,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             font-weight: 700;
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            letter-spacing: -0.5px;
         }
 
         .institution-tagline {
@@ -327,12 +317,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             font-weight: 700;
         }
 
-        .hero-text p {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            opacity: 0.95;
-        }
-
         .hero-features {
             display: flex;
             flex-wrap: wrap;
@@ -352,8 +336,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
         .hero-image {
             flex: 0.8;
-            position: relative;
-            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -364,16 +346,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             max-width: 100%;
             height: auto;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
-        }
-
-        @media (max-width: 768px) {
-            .hero-image {
-                padding: 1rem;
-            }
-
-            .hero-image img {
-                max-width: 150px;
-            }
         }
 
         .spots-counter {
@@ -391,11 +363,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             font-size: 2rem;
             font-weight: 700;
             display: block;
-        }
-
-        .spots-counter .spots-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
         }
 
         .spots-counter.warning {
@@ -423,11 +390,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
         .card-header h2 {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
-        }
-
-        .card-header .program-dates {
-            font-size: 0.9rem;
-            opacity: 0.9;
         }
 
         .card-content {
@@ -500,34 +462,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-bottom: 1rem;
         }
 
-        .program-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-
-        .program-card p {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-        }
-
-        .program-badge {
-            position: absolute;
-            top: -10px;
-            right: 10px;
-            background: var(--accent);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-        }
-
-        @media (max-width: 640px) {
-            .program-options {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -537,7 +471,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-bottom: 0.5rem;
             color: var(--gray-700);
             font-weight: 500;
-            font-size: 0.95rem;
         }
 
         .required::after {
@@ -557,7 +490,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-row {
@@ -568,6 +500,10 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
         @media (max-width: 640px) {
             .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .program-options {
                 grid-template-columns: 1fr;
             }
 
@@ -583,36 +519,21 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
             border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
             background: var(--primary);
             color: white;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .alert {
             padding: 1rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
         }
 
         .alert-success {
@@ -627,38 +548,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             border: 1px solid #fecaca;
         }
 
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #93c5fd;
-        }
-
-        .closed-message {
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .closed-message i {
-            font-size: 4rem;
-            color: var(--danger);
-            margin-bottom: 1rem;
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--gray-600);
-        }
-
-        .login-link a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-
         .fee-info {
             background: var(--gray-100);
             padding: 1rem;
@@ -667,15 +556,10 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-bottom: 1.5rem;
         }
 
-        .fee-info .fee-amount {
+        .fee-amount {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
-        }
-
-        .fee-info .fee-label {
-            font-size: 0.85rem;
-            color: var(--gray-600);
         }
 
         .footer {
@@ -690,16 +574,14 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
 <body>
     <div class="container">
-        <!-- Institution Header -->
         <div class="institution-header">
             <div class="institution-logo">
-                <img src="<?php echo $inst_logo; ?>" alt="<?php echo $inst_name; ?>" onerror="this.style.display='none'">
+                <img src="<?php echo $inst_logo; ?>" alt="<?php echo $inst_name; ?>">
             </div>
             <div class="institution-name"><?php echo $inst_name; ?></div>
             <div class="institution-tagline"><?php echo $inst_tagline; ?></div>
         </div>
 
-        <!-- Program Hero Image -->
         <div class="program-hero">
             <div class="hero-content">
                 <div class="hero-text">
@@ -707,10 +589,9 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                     <h2>2-Week Intensive Crash Program</h2>
                     <p>Master in-demand digital skills in just 2 weeks with hands-on training and expert mentorship.</p>
                     <div class="hero-features">
-                        <span><i class="fas fa-certificate"></i> Certificate of Completion</span>
+                        <span><i class="fas fa-certificate"></i> Certificate</span>
                         <span><i class="fas fa-laptop-code"></i> Hands-on Projects</span>
                         <span><i class="fas fa-users"></i> Expert Mentorship</span>
-                        <span><i class="fas fa-clock"></i> Flexible Schedule</span>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -729,7 +610,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 <h2>🚀 Register for the Crash Program</h2>
                 <div class="program-dates">
                     <i class="fas fa-calendar-alt"></i> <?php echo $start_date; ?> - <?php echo $end_date; ?>
-                    <p><i class="fas fa-map-marker-alt"></i> Mighty School for Valours</p>
                 </div>
             </div>
             <div class="card-content">
@@ -737,137 +617,110 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                     <div class="closed-message">
                         <i class="fas fa-ban"></i>
                         <h3>Registration Closed</h3>
-                        <p>All <?php echo $total_spots; ?> spots have been filled. Thank you for your interest!</p>
+                        <p>All <?php echo $total_spots; ?> spots have been filled.</p>
                     </div>
                 <?php else: ?>
                     <?php if ($success): ?>
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>Registration Successful!</strong><br>
-                                A confirmation email has been sent to your email address.<br>
-                                You will be redirected to the payment page in a few seconds.
-                            </div>
+                            <strong>Registration Successful!</strong> Redirecting to payment page...
                         </div>
                     <?php endif; ?>
 
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-error">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <div>
-                                <strong>Please fix the following errors:</strong>
-                                <ul style="margin: 0.5rem 0 0 1.5rem;">
-                                    <?php foreach ($errors as $error): ?>
-                                        <li><?php echo htmlspecialchars($error); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
+                            <strong>Please fix the following errors:</strong>
+                            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                                <?php foreach ($errors as $error): ?>
+                                    <li><?php echo htmlspecialchars($error); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
                     <?php endif; ?>
 
-                    <div class="fee-info" id="feeInfo">
+                    <div class="fee-info">
                         <span class="fee-label">Program Fee:</span>
                         <div class="fee-amount" id="feeAmount">₦<?php echo $student_fee; ?></div>
-                        <small>Payment required to secure your spot</small>
                     </div>
 
                     <form method="POST" id="registrationForm">
                         <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+                        <input type="hidden" name="applicant_type" id="applicant_type" value="student">
+                        <input type="hidden" name="program_choice" id="program_choice" value="">
 
-                        <!-- Applicant Type Toggle -->
                         <div class="applicant-toggle">
-                            <button type="button" class="applicant-option active" data-type="student" id="studentBtn">
-                                <i class="fas fa-graduation-cap"></i>
-                                Student
+                            <button type="button" class="applicant-option active" data-type="student">
+                                <i class="fas fa-graduation-cap"></i> Student
                             </button>
-                            <button type="button" class="applicant-option" data-type="professional" id="professionalBtn">
-                                <i class="fas fa-briefcase"></i>
-                                Professional
+                            <button type="button" class="applicant-option" data-type="professional">
+                                <i class="fas fa-briefcase"></i> Professional
                             </button>
                         </div>
-                        <input type="hidden" name="applicant_type" id="applicant_type" value="student">
 
-                        <!-- Program Options -->
                         <div class="program-options">
-                            <div class="program-card" data-program="dtp" id="dtpCard">
+                            <div class="program-card" data-program="dtp">
                                 <div class="program-icon"><i class="fas fa-print"></i></div>
                                 <h3>Desktop Publishing (DTP)</h3>
-                                <p>MsWord, MsExcel, MsPowerpoint, AI Tools</p>
+                                <p>MsWord, Excel, PowerPoint, AI Tools</p>
                             </div>
-                            <div class="program-card" data-program="web_design" id="webDesignCard">
+                            <div class="program-card" data-program="web_design">
                                 <div class="program-icon"><i class="fas fa-code"></i></div>
                                 <h3>Web Design</h3>
                                 <p>HTML, CSS, JavaScript, Responsive Design</p>
                             </div>
                         </div>
-                        <input type="hidden" name="program_choice" id="program_choice" value="">
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="first_name" class="required">First Name</label>
-                                <input type="text" id="first_name" name="first_name" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>" required>
+                                <label class="required">First Name</label>
+                                <input type="text" name="first_name" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="last_name" class="required">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>" required>
+                                <label class="required">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="email" class="required">Email Address</label>
-                                <input type="email" id="email" name="email" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+                                <label class="required">Email Address</label>
+                                <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="phone" class="required">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
-                                    placeholder="08012345678" required>
+                                <label class="required">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control" required>
                             </div>
                         </div>
 
-                        <!-- Student Fields -->
-                        <div id="student-fields">
+                        <div id="studentFields">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="school_name" class="required">School/Institution Name</label>
-                                    <input type="text" id="school_name" name="school_name" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
-                                        placeholder="e.g., University of Lagos">
+                                    <label class="required">School/Institution</label>
+                                    <input type="text" name="school_name" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="school_class" class="required">Class/Level</label>
-                                    <input type="text" id="school_class" name="school_class" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
-                                        placeholder="e.g., 200 Level, SS3, etc.">
+                                    <label class="required">Class/Level</label>
+                                    <input type="text" name="school_class" class="form-control" required>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Professional Fields -->
-                        <div id="professional-fields" style="display: none;">
+                        <div id="professionalFields" style="display: none;">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="company_name" class="required">Company/Organization</label>
-                                    <input type="text" id="company_name" name="company_name" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['company_name'] ?? ''); ?>"
-                                        placeholder="e.g., Google, Self-employed">
+                                    <label class="required">Company/Organization</label>
+                                    <input type="text" name="company_name" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="job_title" class="required">Job Title</label>
-                                    <input type="text" id="job_title" name="job_title" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['job_title'] ?? ''); ?>"
-                                        placeholder="e.g., Software Engineer, Business Owner">
+                                    <label class="required">Job Title</label>
+                                    <input type="text" name="job_title" class="form-control">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="years_experience">Years of Experience</label>
-                                    <select id="years_experience" name="years_experience" class="form-control">
-                                        <option value="">Select experience</option>
+                                    <label>Years of Experience</label>
+                                    <select name="years_experience" class="form-control">
+                                        <option value="">Select</option>
                                         <option value="0">Less than 1 year</option>
                                         <option value="1">1 year</option>
                                         <option value="2">2 years</option>
@@ -879,61 +732,51 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="professional_skills">Key Skills/Interests</label>
-                                    <textarea id="professional_skills" name="professional_skills" class="form-control" rows="2"
-                                        placeholder="List your relevant skills or what you hope to learn..."><?php echo htmlspecialchars($_POST['professional_skills'] ?? ''); ?></textarea>
+                                    <label>Key Skills</label>
+                                    <textarea name="professional_skills" class="form-control" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="address">Address</label>
-                                <input type="text" id="address" name="address" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>">
+                                <label>Address</label>
+                                <input type="text" name="address" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="city">City</label>
-                                <input type="text" id="city" name="city" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>">
+                                <label>City</label>
+                                <input type="text" name="city" class="form-control">
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="state">State</label>
-                                <input type="text" id="state" name="state" class="form-control"
-                                    value="<?php echo htmlspecialchars($_POST['state'] ?? ''); ?>">
+                                <label>State</label>
+                                <input type="text" name="state" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="how_heard">How did you hear about us?</label>
-                                <select id="how_heard" name="how_heard" class="form-control">
-                                    <option value="">Select an option</option>
-                                    <option value="social_media" <?php echo ($_POST['how_heard'] ?? '') == 'social_media' ? 'selected' : ''; ?>>Social Media</option>
-                                    <option value="friend" <?php echo ($_POST['how_heard'] ?? '') == 'friend' ? 'selected' : ''; ?>>Friend/Referral</option>
-                                    <option value="school" <?php echo ($_POST['how_heard'] ?? '') == 'school' ? 'selected' : ''; ?>>School Announcement</option>
-                                    <option value="email" <?php echo ($_POST['how_heard'] ?? '') == 'email' ? 'selected' : ''; ?>>Email Newsletter</option>
-                                    <option value="whatsapp" <?php echo ($_POST['how_heard'] ?? '') == 'whatsapp' ? 'selected' : ''; ?>>WhatsApp</option>
-                                    <option value="other" <?php echo ($_POST['how_heard'] ?? '') == 'other' ? 'selected' : ''; ?>>Other</option>
+                                <label>How did you hear about us?</label>
+                                <select name="how_heard" class="form-control">
+                                    <option value="">Select</option>
+                                    <option value="social_media">Social Media</option>
+                                    <option value="friend">Friend/Referral</option>
+                                    <option value="school">School Announcement</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <button type="submit" class="btn" id="submitBtn">
                             <i class="fas fa-paper-plane"></i> Register Now
                         </button>
                     </form>
-
-                    <div class="login-link">
-                        Already have an account? <a href="<?php echo BASE_URL; ?>modules/auth/login.php">Login here</a>
-                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
         <div class="footer">
             <p>&copy; <?php echo date('Y'); ?> <?php echo $inst_name; ?>. All rights reserved.</p>
-            <p>📍 Nigeria | 📞 +234 905 158 6024 | ✉️ info@impactdigitalacademy.com.ng</p>
         </div>
     </div>
 
@@ -941,192 +784,104 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
         const professionalFee = <?php echo $professional_fee; ?>;
         const studentFee = <?php echo $student_fee; ?>;
 
-        // Make functions globally available
-        window.setApplicantType = function(type) {
-            console.log('Setting applicant type to:', type);
-            document.getElementById('applicant_type').value = type;
-
-            // Update active state on buttons
-            document.querySelectorAll('.applicant-option').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Find the button with matching data-type and add active class
-            const activeBtn = document.querySelector(`.applicant-option[data-type="${type}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            // Get the field containers
-            const studentFields = document.getElementById('student-fields');
-            const professionalFields = document.getElementById('professional-fields');
-            const feeAmount = document.getElementById('feeAmount');
-
-            console.log('Student fields element:', studentFields);
-            console.log('Professional fields element:', professionalFields);
-            console.log('Type selected:', type);
-
-            if (type === 'student') {
-                // Show student fields, hide professional fields
-                if (studentFields) {
-                    studentFields.style.display = 'block';
-                    console.log('Showing student fields');
-                }
-                if (professionalFields) {
-                    professionalFields.style.display = 'none';
-                    console.log('Hiding professional fields');
-                }
-
-                // Update required attributes
-                const schoolName = document.getElementById('school_name');
-                const schoolClass = document.getElementById('school_class');
-                const companyName = document.getElementById('company_name');
-                const jobTitle = document.getElementById('job_title');
-
-                if (schoolName) schoolName.setAttribute('required', 'required');
-                if (schoolClass) schoolClass.setAttribute('required', 'required');
-                if (companyName) companyName.removeAttribute('required');
-                if (jobTitle) jobTitle.removeAttribute('required');
-
-                // Update fee
-                if (feeAmount) feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
-            } else if (type === 'professional') {
-                // Hide student fields, show professional fields
-                if (studentFields) {
-                    studentFields.style.display = 'none';
-                    console.log('Hiding student fields');
-                }
-                if (professionalFields) {
-                    professionalFields.style.display = 'block';
-                    console.log('Showing professional fields');
-                }
-
-                // Update required attributes
-                const schoolName = document.getElementById('school_name');
-                const schoolClass = document.getElementById('school_class');
-                const companyName = document.getElementById('company_name');
-                const jobTitle = document.getElementById('job_title');
-
-                if (schoolName) schoolName.removeAttribute('required');
-                if (schoolClass) schoolClass.removeAttribute('required');
-                if (companyName) companyName.setAttribute('required', 'required');
-                if (jobTitle) jobTitle.setAttribute('required', 'required');
-
-                // Update fee
-                if (feeAmount) feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
-            }
-        };
-
-        window.selectProgram = function(program) {
-            console.log('Selecting program:', program);
-            // Remove selected class from all program cards
-            document.querySelectorAll('.program-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-
-            // Add selected class to clicked card
-            const selectedCard = document.querySelector(`.program-card[data-program="${program}"]`);
-            if (selectedCard) {
-                selectedCard.classList.add('selected');
-            }
-
-            // Set the hidden input value
-            const programChoice = document.getElementById('program_choice');
-            if (programChoice) {
-                programChoice.value = program;
-            }
-        };
-
-        // Initialize everything when DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM fully loaded, initializing form...');
-
-            // Initialize applicant type from hidden field or default to student
-            let initialType = 'student';
-
-            <?php if (isset($_POST['applicant_type']) && $_POST['applicant_type'] === 'professional'): ?>
-                initialType = 'professional';
-            <?php endif; ?>
-
-            // Set the initial applicant type
-            window.setApplicantType(initialType);
-
-            // Initialize program selection
-            <?php if (isset($_POST['program_choice']) && $_POST['program_choice']): ?>
-                window.selectProgram('<?php echo $_POST['program_choice']; ?>');
-            <?php endif; ?>
-
-            // Add click event listeners to applicant buttons
+            // Get elements
             const studentBtn = document.querySelector('.applicant-option[data-type="student"]');
             const professionalBtn = document.querySelector('.applicant-option[data-type="professional"]');
-
-            if (studentBtn) {
-                studentBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Student button clicked');
-                    window.setApplicantType('student');
-                });
-            } else {
-                console.log('Student button not found');
-            }
-
-            if (professionalBtn) {
-                professionalBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Professional button clicked');
-                    window.setApplicantType('professional');
-                });
-            } else {
-                console.log('Professional button not found');
-            }
-
-            // Add click event listeners to program cards
+            const studentFields = document.getElementById('studentFields');
+            const professionalFields = document.getElementById('professionalFields');
+            const applicantTypeInput = document.getElementById('applicant_type');
             const programCards = document.querySelectorAll('.program-card');
-            console.log('Found program cards:', programCards.length);
+            const programChoiceInput = document.getElementById('program_choice');
+            const feeAmountDiv = document.getElementById('feeAmount');
+            const form = document.getElementById('registrationForm');
 
-            programCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    const program = this.getAttribute('data-program');
-                    console.log('Program card clicked:', program);
-                    if (program) {
-                        window.selectProgram(program);
+            // Function to switch applicant type
+            function switchApplicantType(type) {
+                // Update hidden input
+                applicantTypeInput.value = type;
+
+                // Update active button style
+                if (type === 'student') {
+                    studentBtn.classList.add('active');
+                    professionalBtn.classList.remove('active');
+                    studentFields.style.display = 'block';
+                    professionalFields.style.display = 'none';
+                    feeAmountDiv.innerHTML = '₦' + studentFee.toLocaleString();
+
+                    // Update required attributes
+                    document.querySelector('[name="school_name"]').setAttribute('required', 'required');
+                    document.querySelector('[name="school_class"]').setAttribute('required', 'required');
+                    document.querySelector('[name="company_name"]').removeAttribute('required');
+                    document.querySelector('[name="job_title"]').removeAttribute('required');
+                } else {
+                    studentBtn.classList.remove('active');
+                    professionalBtn.classList.add('active');
+                    studentFields.style.display = 'none';
+                    professionalFields.style.display = 'block';
+                    feeAmountDiv.innerHTML = '₦' + professionalFee.toLocaleString();
+
+                    // Update required attributes
+                    document.querySelector('[name="school_name"]').removeAttribute('required');
+                    document.querySelector('[name="school_class"]').removeAttribute('required');
+                    document.querySelector('[name="company_name"]').setAttribute('required', 'required');
+                    document.querySelector('[name="job_title"]').setAttribute('required', 'required');
+                }
+            }
+
+            // Function to select program
+            function selectProgram(program) {
+                programCards.forEach(card => {
+                    card.classList.remove('selected');
+                    if (card.getAttribute('data-program') === program) {
+                        card.classList.add('selected');
                     }
                 });
+                programChoiceInput.value = program;
+            }
 
-                // Add visual feedback for program selection on hover
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-4px)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = '';
+            // Add click handlers for applicant type buttons
+            studentBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchApplicantType('student');
+            });
+
+            professionalBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchApplicantType('professional');
+            });
+
+            // Add click handlers for program cards
+            programCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const program = this.getAttribute('data-program');
+                    selectProgram(program);
                 });
             });
-        });
 
-        // Form validation before submit
-        const registrationForm = document.getElementById('registrationForm');
-        if (registrationForm) {
-            registrationForm.addEventListener('submit', function(e) {
-                const programChoice = document.getElementById('program_choice').value;
-                if (!programChoice) {
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                // Check if program is selected
+                if (!programChoiceInput.value) {
                     e.preventDefault();
                     alert('Please select a program (Desktop Publishing or Web Design)');
                     return false;
                 }
 
-                const applicantType = document.getElementById('applicant_type').value;
+                // Check required fields based on applicant type
+                const applicantType = applicantTypeInput.value;
 
                 if (applicantType === 'student') {
-                    const schoolName = document.getElementById('school_name').value;
-                    const schoolClass = document.getElementById('school_class').value;
+                    const schoolName = document.querySelector('[name="school_name"]').value;
+                    const schoolClass = document.querySelector('[name="school_class"]').value;
                     if (!schoolName || !schoolClass) {
                         e.preventDefault();
                         alert('Please fill in school name and class/level');
                         return false;
                     }
-                } else if (applicantType === 'professional') {
-                    const companyName = document.getElementById('company_name').value;
-                    const jobTitle = document.getElementById('job_title').value;
+                } else {
+                    const companyName = document.querySelector('[name="company_name"]').value;
+                    const jobTitle = document.querySelector('[name="job_title"]').value;
                     if (!companyName || !jobTitle) {
                         e.preventDefault();
                         alert('Please fill in company name and job title');
@@ -1134,14 +889,16 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                     }
                 }
 
-                const email = document.getElementById('email').value;
+                // Check email
+                const email = document.querySelector('[name="email"]').value;
                 if (!email || !email.includes('@')) {
                     e.preventDefault();
                     alert('Please enter a valid email address');
                     return false;
                 }
 
-                const phone = document.getElementById('phone').value;
+                // Check phone
+                const phone = document.querySelector('[name="phone"]').value;
                 if (!phone || phone.length < 10) {
                     e.preventDefault();
                     alert('Please enter a valid phone number (minimum 10 digits)');
@@ -1150,7 +907,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
                 return true;
             });
-        }
+        });
     </script>
 </body>
 
