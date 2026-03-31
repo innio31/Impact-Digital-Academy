@@ -21,7 +21,7 @@
     <meta property="og:image" content="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1200">
     <meta property="og:url" content="https://impactdigitalacademy.com.ng/articles/teacher-also-needs-to-grow">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="https://impactdigitalacademy.com.ng/articles/teacher-also-needs-to-grow">
+    <link rel="canonical" href="https://impactdigitalacademy.com.ng/articles/education-inside-you-part3.html">
     <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
     <style>
         * {
@@ -434,6 +434,45 @@
             gap: 0.8rem;
             align-items: flex-start;
         }
+
+        /* New style for the "Missed Part" banner */
+        .missed-part {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            margin-top: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(246, 184, 62, 0.5);
+            font-weight: 500;
+        }
+
+        .missed-part i {
+            color: #f6b83e;
+            font-size: 1.3rem;
+        }
+
+        .missed-part a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid #f6b83e;
+            padding-bottom: 2px;
+            transition: 0.2s;
+        }
+
+        .missed-part a:hover {
+            color: #f6b83e;
+        }
+
+        @media (max-width: 600px) {
+            .missed-part {
+                padding: 0.8rem 1.2rem;
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 
@@ -446,6 +485,13 @@
             </div>
             <p style="font-size: 1.2rem; margin-top: 0.8rem; font-weight: 300; letter-spacing: 0.5px; opacity: 0.9;">✍️
                 by Emmanuel Ademuyiwa</p>
+
+            <!-- MISSED PART 1 & 2 SECTION - ADDED HERE -->
+            <div class="missed-part">
+                <i class="fas fa-book-open"></i>
+                <span>Missed Part 1 or 2? <a href="education-inside-you.html" target="_blank">Read Part 1 →</a> | <a
+                        href="education-inside-you-part2.html" target="_blank">Read Part 2 →</a></span>
+            </div>
         </div>
         <div class="content">
 

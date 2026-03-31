@@ -254,6 +254,16 @@ $stmt->execute();
 $stats = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
+// Convert null values to 0 for numeric fields
+$stats['total_attempts'] = $stats['total_attempts'] ?? 0;
+$stats['students_attempted'] = $stats['students_attempted'] ?? 0;
+$stats['average_percentage'] = $stats['average_percentage'] ?? 0;
+$stats['min_percentage'] = $stats['min_percentage'] ?? 0;
+$stats['max_percentage'] = $stats['max_percentage'] ?? 0;
+$stats['graded_attempts'] = $stats['graded_attempts'] ?? 0;
+$stats['in_progress_attempts'] = $stats['in_progress_attempts'] ?? 0;
+$stats['expired_attempts'] = $stats['expired_attempts'] ?? 0;
+
 // Get question statistics
 $questions_sql = "SELECT q.id, q.question_text, q.question_type, q.points,
                          COUNT(a.id) as attempts_count,
@@ -923,9 +933,9 @@ $conn->close();
                 <div class="stat-sub"><?php echo $stats['students_attempted']; ?> students attempted</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value"><?php echo round($stats['average_percentage'], 1); ?>%</div>
+                <div class="stat-value"><?php echo number_format($stats['average_percentage'], 1); ?>%</div>
                 <div class="stat-label">Average Score</div>
-                <div class="stat-sub">Min: <?php echo round($stats['min_percentage'], 1); ?>% • Max: <?php echo round($stats['max_percentage'], 1); ?>%</div>
+                <div class="stat-sub">Min: <?php echo number_format($stats['min_percentage'], 1); ?>% • Max: <?php echo number_format($stats['max_percentage'], 1); ?>%</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value"><?php echo $stats['graded_attempts']; ?></div>
@@ -1035,8 +1045,13 @@ $conn->close();
         <!-- Tab: Question Analysis -->
         <div id="questions" class="tab-content">
             <?php foreach ($questions_stats as $qstat):
-                $correct_rate = $qstat['attempts_count'] > 0 ? ($qstat['correct_count'] / $qstat['attempts_count']) * 100 : 0;
-                $avg_points_rate = $qstat['points'] > 0 ? ($qstat['avg_points'] / $qstat['points']) * 100 : 0;
+                $attempts_count = $qstat['attempts_count'] ?? 0;
+                $correct_count = $qstat['correct_count'] ?? 0;
+                $avg_points = $qstat['avg_points'] ?? 0;
+                $points = $qstat['points'] ?? 1;
+
+                $correct_rate = $attempts_count > 0 ? ($correct_count / $attempts_count) * 100 : 0;
+                $avg_points_rate = $points > 0 ? ($avg_points / $points) * 100 : 0;
             ?>
                 <div class="question-card">
                     <div class="question-header">
@@ -1225,7 +1240,7 @@ $conn->close();
             $scoreRanges = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             $rangeCounts = array_fill(0, count($scoreRanges) - 1, 0);
             foreach ($attempts as $attempt) {
-                $percent = $attempt['percentage'];
+                $percent = floatval($attempt['percentage'] ?? 0);
                 for ($i = 0; $i < count($scoreRanges) - 1; $i++) {
                     if ($percent >= $scoreRanges[$i] && ($i == count($scoreRanges) - 2 || $percent < $scoreRanges[$i + 1])) {
                         $rangeCounts[$i]++;
@@ -1279,13 +1294,14 @@ $conn->close();
             });
         <?php endif; ?>
 
-        // Question Difficulty Chart
         <?php if (!empty($questions_stats)):
             $questionLabels = [];
             $correctRates = [];
             foreach ($questions_stats as $q) {
-                $questionLabels[] = 'Q' . $q['order_number'];
-                $correctRates[] = $q['attempts_count'] > 0 ? ($q['correct_count'] / $q['attempts_count']) * 100 : 0;
+                $attempts_count = $q['attempts_count'] ?? 0;
+                $correct_count = $q['correct_count'] ?? 0;
+                $questionLabels[] = 'Q' . ($q['order_number'] ?? 0);
+                $correctRates[] = $attempts_count > 0 ? ($correct_count / $attempts_count) * 100 : 0;
             }
         ?>
             const ctx2 = document.getElementById('questionDifficultyChart').getContext('2d');
