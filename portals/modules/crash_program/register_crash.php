@@ -938,193 +938,200 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
     </div>
 
     <script>
-        // Simple, direct JavaScript that will definitely work
-        (function() {
-            console.log('Script loaded and running');
+        const professionalFee = <?php echo $professional_fee; ?>;
+        const studentFee = <?php echo $student_fee; ?>;
 
-            // Get elements
-            const studentBtn = document.getElementById('studentBtn');
-            const professionalBtn = document.getElementById('professionalBtn');
-            const dtpCard = document.getElementById('dtpCard');
-            const webDesignCard = document.getElementById('webDesignCard');
-            const applicantTypeInput = document.getElementById('applicant_type');
-            const programChoiceInput = document.getElementById('program_choice');
+        // Make functions globally available
+        window.setApplicantType = function(type) {
+            console.log('Setting applicant type to:', type);
+            document.getElementById('applicant_type').value = type;
+
+            // Update active state on buttons
+            document.querySelectorAll('.applicant-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Find the button with matching data-type and add active class
+            const activeBtn = document.querySelector(`.applicant-option[data-type="${type}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            // Show/hide appropriate fields
             const studentFields = document.getElementById('student-fields');
             const professionalFields = document.getElementById('professional-fields');
-            const feeAmountSpan = document.getElementById('feeAmount');
+            const feeAmount = document.getElementById('feeAmount');
 
-            // Set fee values from PHP
-            const professionalFeeValue = <?php echo $professional_fee; ?>;
-            const studentFeeValue = <?php echo $student_fee; ?>;
+            if (type === 'student') {
+                if (studentFields) studentFields.style.display = 'block';
+                if (professionalFields) professionalFields.style.display = 'none';
+                // Update required attributes
+                const schoolName = document.getElementById('school_name');
+                const schoolClass = document.getElementById('school_class');
+                const companyName = document.getElementById('company_name');
+                const jobTitle = document.getElementById('job_title');
 
-            // Function to set applicant type
-            function setApplicantType(type) {
-                console.log('Setting applicant type to:', type);
+                if (schoolName) schoolName.setAttribute('required', 'required');
+                if (schoolClass) schoolClass.setAttribute('required', 'required');
+                if (companyName) companyName.removeAttribute('required');
+                if (jobTitle) jobTitle.removeAttribute('required');
+                // Update fee
+                if (feeAmount) feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
+            } else {
+                if (studentFields) studentFields.style.display = 'none';
+                if (professionalFields) professionalFields.style.display = 'block';
+                // Update required attributes
+                const schoolName = document.getElementById('school_name');
+                const schoolClass = document.getElementById('school_class');
+                const companyName = document.getElementById('company_name');
+                const jobTitle = document.getElementById('job_title');
 
-                // Update hidden input
-                if (applicantTypeInput) {
-                    applicantTypeInput.value = type;
-                }
+                if (schoolName) schoolName.removeAttribute('required');
+                if (schoolClass) schoolClass.removeAttribute('required');
+                if (companyName) companyName.setAttribute('required', 'required');
+                if (jobTitle) jobTitle.setAttribute('required', 'required');
+                // Update fee
+                if (feeAmount) feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
+            }
+        };
 
-                // Update button active states
-                if (studentBtn && professionalBtn) {
-                    if (type === 'student') {
-                        studentBtn.classList.add('active');
-                        professionalBtn.classList.remove('active');
-                    } else {
-                        studentBtn.classList.remove('active');
-                        professionalBtn.classList.add('active');
-                    }
-                }
+        window.selectProgram = function(program) {
+            console.log('Selecting program:', program);
+            // Remove selected class from all program cards
+            document.querySelectorAll('.program-card').forEach(card => {
+                card.classList.remove('selected');
+            });
 
-                // Show/hide fields and update required attributes
-                if (type === 'student') {
-                    if (studentFields) studentFields.style.display = 'block';
-                    if (professionalFields) professionalFields.style.display = 'none';
-
-                    // Update required attributes
-                    const schoolName = document.getElementById('school_name');
-                    const schoolClass = document.getElementById('school_class');
-                    const companyName = document.getElementById('company_name');
-                    const jobTitle = document.getElementById('job_title');
-
-                    if (schoolName) schoolName.setAttribute('required', 'required');
-                    if (schoolClass) schoolClass.setAttribute('required', 'required');
-                    if (companyName) companyName.removeAttribute('required');
-                    if (jobTitle) jobTitle.removeAttribute('required');
-
-                    // Update fee
-                    if (feeAmountSpan) feeAmountSpan.innerHTML = '₦' + studentFeeValue.toLocaleString();
-                } else {
-                    if (studentFields) studentFields.style.display = 'none';
-                    if (professionalFields) professionalFields.style.display = 'block';
-
-                    // Update required attributes
-                    const schoolName = document.getElementById('school_name');
-                    const schoolClass = document.getElementById('school_class');
-                    const companyName = document.getElementById('company_name');
-                    const jobTitle = document.getElementById('job_title');
-
-                    if (schoolName) schoolName.removeAttribute('required');
-                    if (schoolClass) schoolClass.removeAttribute('required');
-                    if (companyName) companyName.setAttribute('required', 'required');
-                    if (jobTitle) jobTitle.setAttribute('required', 'required');
-
-                    // Update fee
-                    if (feeAmountSpan) feeAmountSpan.innerHTML = '₦' + professionalFeeValue.toLocaleString();
-                }
+            // Add selected class to clicked card
+            const selectedCard = document.querySelector(`.program-card[data-program="${program}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
             }
 
-            // Function to select program
-            function selectProgram(program) {
-                console.log('Selecting program:', program);
-
-                // Update program cards
-                if (dtpCard && webDesignCard) {
-                    if (program === 'dtp') {
-                        dtpCard.classList.add('selected');
-                        webDesignCard.classList.remove('selected');
-                    } else if (program === 'web_design') {
-                        dtpCard.classList.remove('selected');
-                        webDesignCard.classList.add('selected');
-                    }
-                }
-
-                // Update hidden input
-                if (programChoiceInput) {
-                    programChoiceInput.value = program;
-                }
+            // Set the hidden input value
+            const programChoice = document.getElementById('program_choice');
+            if (programChoice) {
+                programChoice.value = program;
             }
+        };
 
-            // Add click handlers if elements exist
+        // Initialize everything when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded, initializing form...');
+
+            // Initialize applicant type from hidden field or default to student
+            let initialType = 'student';
+
+            <?php if (isset($_POST['applicant_type']) && $_POST['applicant_type'] === 'professional'): ?>
+                initialType = 'professional';
+            <?php endif; ?>
+
+            // Set the initial applicant type
+            window.setApplicantType(initialType);
+
+            // Initialize program selection
+            <?php if (isset($_POST['program_choice']) && $_POST['program_choice']): ?>
+                window.selectProgram('<?php echo $_POST['program_choice']; ?>');
+            <?php endif; ?>
+
+            // Add click event listeners to applicant buttons
+            const studentBtn = document.querySelector('.applicant-option[data-type="student"]');
+            const professionalBtn = document.querySelector('.applicant-option[data-type="professional"]');
+
             if (studentBtn) {
-                studentBtn.onclick = function(e) {
+                // Remove any existing listeners to avoid duplicates
+                studentBtn.removeEventListener('click', window.handleStudentClick);
+                // Define and add the click handler
+                window.handleStudentClick = function(e) {
                     e.preventDefault();
-                    setApplicantType('student');
+                    window.setApplicantType('student');
                 };
+                studentBtn.addEventListener('click', window.handleStudentClick);
             }
 
             if (professionalBtn) {
-                professionalBtn.onclick = function(e) {
+                // Remove any existing listeners to avoid duplicates
+                professionalBtn.removeEventListener('click', window.handleProfessionalClick);
+                // Define and add the click handler
+                window.handleProfessionalClick = function(e) {
                     e.preventDefault();
-                    setApplicantType('professional');
+                    window.setApplicantType('professional');
                 };
+                professionalBtn.addEventListener('click', window.handleProfessionalClick);
             }
 
-            if (dtpCard) {
-                dtpCard.onclick = function(e) {
-                    e.preventDefault();
-                    selectProgram('dtp');
+            // Add click event listeners to program cards
+            const programCards = document.querySelectorAll('.program-card');
+            programCards.forEach(card => {
+                // Remove any existing listeners to avoid duplicates
+                card.removeEventListener('click', window.handleProgramClick);
+                // Define and add the click handler
+                window.handleProgramClick = function(e) {
+                    const program = this.getAttribute('data-program');
+                    if (program) {
+                        window.selectProgram(program);
+                    }
                 };
-            }
+                card.addEventListener('click', window.handleProgramClick);
 
-            if (webDesignCard) {
-                webDesignCard.onclick = function(e) {
+                // Add visual feedback for program selection on hover
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+
+        // Form validation before submit
+        const registrationForm = document.getElementById('registrationForm');
+        if (registrationForm) {
+            registrationForm.addEventListener('submit', function(e) {
+                const programChoice = document.getElementById('program_choice').value;
+                if (!programChoice) {
                     e.preventDefault();
-                    selectProgram('web_design');
-                };
-            }
+                    alert('Please select a program (Desktop Publishing or Web Design)');
+                    return false;
+                }
 
-            // Set initial state from POST data or defaults
-            <?php if (isset($_POST['applicant_type']) && $_POST['applicant_type'] === 'professional'): ?>
-                setApplicantType('professional');
-            <?php else: ?>
-                setApplicantType('student');
-            <?php endif; ?>
+                const applicantType = document.getElementById('applicant_type').value;
 
-            <?php if (isset($_POST['program_choice']) && $_POST['program_choice']): ?>
-                selectProgram('<?php echo $_POST['program_choice']; ?>');
-            <?php endif; ?>
-
-            // Form validation
-            const registrationForm = document.getElementById('registrationForm');
-            if (registrationForm) {
-                registrationForm.onsubmit = function(e) {
-                    const programChoice = programChoiceInput ? programChoiceInput.value : '';
-                    if (!programChoice) {
+                if (applicantType === 'student') {
+                    const schoolName = document.getElementById('school_name').value;
+                    const schoolClass = document.getElementById('school_class').value;
+                    if (!schoolName || !schoolClass) {
                         e.preventDefault();
-                        alert('Please select a program (Desktop Publishing or Web Design)');
+                        alert('Please fill in school name and class/level');
                         return false;
                     }
-
-                    const applicantType = applicantTypeInput ? applicantTypeInput.value : '';
-
-                    if (applicantType === 'student') {
-                        const schoolName = document.getElementById('school_name');
-                        const schoolClass = document.getElementById('school_class');
-                        if (!schoolName.value || !schoolClass.value) {
-                            e.preventDefault();
-                            alert('Please fill in school name and class/level');
-                            return false;
-                        }
-                    } else if (applicantType === 'professional') {
-                        const companyName = document.getElementById('company_name');
-                        const jobTitle = document.getElementById('job_title');
-                        if (!companyName.value || !jobTitle.value) {
-                            e.preventDefault();
-                            alert('Please fill in company name and job title');
-                            return false;
-                        }
-                    }
-
-                    const email = document.getElementById('email');
-                    if (!email.value || !email.value.includes('@')) {
+                } else if (applicantType === 'professional') {
+                    const companyName = document.getElementById('company_name').value;
+                    const jobTitle = document.getElementById('job_title').value;
+                    if (!companyName || !jobTitle) {
                         e.preventDefault();
-                        alert('Please enter a valid email address');
+                        alert('Please fill in company name and job title');
                         return false;
                     }
+                }
 
-                    const phone = document.getElementById('phone');
-                    if (!phone.value || phone.value.length < 10) {
-                        e.preventDefault();
-                        alert('Please enter a valid phone number (minimum 10 digits)');
-                        return false;
-                    }
+                const email = document.getElementById('email').value;
+                if (!email || !email.includes('@')) {
+                    e.preventDefault();
+                    alert('Please enter a valid email address');
+                    return false;
+                }
 
-                    return true;
-                };
-            }
-        })();
+                const phone = document.getElementById('phone').value;
+                if (!phone || phone.length < 10) {
+                    e.preventDefault();
+                    alert('Please enter a valid phone number (minimum 10 digits)');
+                    return false;
+                }
+
+                return true;
+            });
+        }
     </script>
 </body>
 
