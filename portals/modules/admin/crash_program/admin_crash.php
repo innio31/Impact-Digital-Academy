@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
     } else {
         $settings_to_update = [
             'total_spots',
-            'program_fee',
+            'professional_fee',
+            'student_fee',
             'payment_deadline_days',
             'program_start_date',
             'program_end_date',
@@ -196,13 +197,15 @@ $stmt->execute();
 $registrations = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Get statistics
+// Update the statistics query to include applicant types
 $stats_sql = "SELECT 
     COUNT(*) as total,
     SUM(CASE WHEN payment_status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
     SUM(CASE WHEN payment_status = 'pending' THEN 1 ELSE 0 END) as pending_payment,
-    SUM(CASE WHEN program_choice = 'web_development' THEN 1 ELSE 0 END) as web_dev,
-    SUM(CASE WHEN program_choice = 'ai_faceless_video' THEN 1 ELSE 0 END) as ai_video,
+    SUM(CASE WHEN program_choice = 'dtp' THEN 1 ELSE 0 END) as dtp,
+    SUM(CASE WHEN program_choice = 'web_design' THEN 1 ELSE 0 END) as web_design,
+    SUM(CASE WHEN applicant_type = 'student' THEN 1 ELSE 0 END) as students,
+    SUM(CASE WHEN applicant_type = 'professional' THEN 1 ELSE 0 END) as professionals,
     SUM(CASE WHEN status = 'pending_payment' THEN 1 ELSE 0 END) as status_pending,
     SUM(CASE WHEN status = 'payment_confirmed' THEN 1 ELSE 0 END) as status_confirmed
 FROM crash_program_registrations";
@@ -216,7 +219,12 @@ $spots_left = $total_spots - $confirmed_count;
 // Function to get program display name
 function getProgramDisplay($program_choice)
 {
-    return $program_choice === 'web_development' ? 'Web Development' : 'AI Faceless Video';
+    return $program_choice === 'dtp' ? 'Desktop Publishing' : 'Web Design';
+}
+
+function getApplicantTypeDisplay($applicant_type)
+{
+    return $applicant_type === 'student' ? 'Student' : 'Professional';
 }
 
 // Get pending payment registrations for reminder
@@ -234,7 +242,7 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Crash Program Management - Impact Digital Academy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="../../../../public/images/favicon.ico">
+    <link rel="icon" href="../../../public/images/favicon.ico">
     <style>
         :root {
             --primary: #2563eb;
@@ -1134,12 +1142,20 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
                 <div class="stat-label">Spots Left</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number"><?php echo $stats['web_dev'] ?? 0; ?></div>
-                <div class="stat-label">Web Dev</div>
+                <div class="stat-number"><?php echo $stats['students'] ?? 0; ?></div>
+                <div class="stat-label">Students</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number"><?php echo $stats['ai_video'] ?? 0; ?></div>
-                <div class="stat-label">AI Video</div>
+                <div class="stat-number"><?php echo $stats['professionals'] ?? 0; ?></div>
+                <div class="stat-label">Professionals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $stats['dtp'] ?? 0; ?></div>
+                <div class="stat-label">DTP</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo $stats['web_design'] ?? 0; ?></div>
+                <div class="stat-label">Web Design</div>
             </div>
         </div>
 
@@ -1162,14 +1178,14 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
                                 value="<?php echo htmlspecialchars($settings['total_spots'] ?? 50); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-money-bill-wave"></i> Program Fee (₦)</label>
-                            <input type="number" name="setting_program_fee" class="form-control"
-                                value="<?php echo htmlspecialchars($settings['program_fee'] ?? 10000); ?>" required>
+                            <label><i class="fas fa-user-graduate"></i> Student Fee (₦)</label>
+                            <input type="number" name="setting_student_fee" class="form-control"
+                                value="<?php echo htmlspecialchars($settings['student_fee'] ?? 7000); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label><i class="fas fa-calendar-day"></i> Payment Deadline (days)</label>
-                            <input type="number" name="setting_payment_deadline_days" class="form-control"
-                                value="<?php echo htmlspecialchars($settings['payment_deadline_days'] ?? 3); ?>" required>
+                            <label><i class="fas fa-user-tie"></i> Professional Fee (₦)</label>
+                            <input type="number" name="setting_professional_fee" class="form-control"
+                                value="<?php echo htmlspecialchars($settings['professional_fee'] ?? 10000); ?>" required>
                         </div>
                     </div>
 
@@ -1298,9 +1314,11 @@ $pending_registrations = $pending_result->fetch_all(MYSQLI_ASSOC);
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="status-badge status-<?php echo $reg['payment_status']; ?>">
-                                            <?php echo $reg['payment_status'] == 'confirmed' ? '✓ Confirmed' : '⏳ Pending'; ?>
+                                        <span class="status-badge status-<?php echo $reg['applicant_type']; ?>">
+                                            <i class="fas <?php echo $reg['applicant_type'] === 'student' ? 'fa-graduation-cap' : 'fa-briefcase'; ?>"></i>
+                                            <?php echo getApplicantTypeDisplay($reg['applicant_type']); ?>
                                         </span>
+                                        <div><small><?php echo getProgramDisplay($reg['program_choice']); ?></small></div>
                                     </td>
                                     <td><?php echo date('M j, Y', strtotime($reg['registered_at'])); ?></td>
                                     <td class="action-group">

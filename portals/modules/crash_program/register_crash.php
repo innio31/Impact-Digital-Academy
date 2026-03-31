@@ -30,17 +30,18 @@ $confirmed_count = $count_result->fetch_assoc()['count'] ?? 0;
 $spots_left = $total_spots - $confirmed_count;
 $registration_closed = $spots_left <= 0;
 
-// Get program dates
-$dates_sql = "SELECT setting_key, setting_value FROM crash_program_settings WHERE setting_key IN ('program_start_date', 'program_end_date', 'program_fee')";
-$dates_result = $conn->query($dates_sql);
-$program_dates = [];
-while ($row = $dates_result->fetch_assoc()) {
-    $program_dates[$row['setting_key']] = $row['setting_value'];
+// Get program dates and fees
+$settings_sql = "SELECT setting_key, setting_value FROM crash_program_settings WHERE setting_key IN ('program_start_date', 'program_end_date', 'professional_fee', 'student_fee')";
+$settings_result = $conn->query($settings_sql);
+$program_settings = [];
+while ($row = $settings_result->fetch_assoc()) {
+    $program_settings[$row['setting_key']] = $row['setting_value'];
 }
 
-$start_date = date('F j, Y', strtotime($program_dates['program_start_date'] ?? '2026-04-13'));
-$end_date = date('F j, Y', strtotime($program_dates['program_end_date'] ?? '2026-04-24'));
-$program_fee = number_format($program_dates['program_fee'] ?? 10000, 2);
+$start_date = date('F j, Y', strtotime($program_settings['program_start_date'] ?? '2026-04-13'));
+$end_date = date('F j, Y', strtotime($program_settings['program_end_date'] ?? '2026-04-24'));
+$professional_fee = number_format($program_settings['professional_fee'] ?? 10000, 2);
+$student_fee = number_format($program_settings['student_fee'] ?? 7000, 2);
 
 // Handle form submission
 $errors = [];
@@ -53,15 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
         $errors[] = 'Invalid security token. Please try again.';
     } else {
         // Collect and validate form data
+        $applicant_type = $_POST['applicant_type'] ?? 'student';
         $form_data = [
             'email' => trim($_POST['email'] ?? ''),
             'first_name' => trim($_POST['first_name'] ?? ''),
             'last_name' => trim($_POST['last_name'] ?? ''),
             'phone' => trim($_POST['phone'] ?? ''),
+            'applicant_type' => $applicant_type,
             'program_choice' => $_POST['program_choice'] ?? '',
+            // Student fields
             'school_name' => trim($_POST['school_name'] ?? ''),
             'school_class' => trim($_POST['school_class'] ?? ''),
-            'is_student' => isset($_POST['is_student']) ? 1 : 0,
+            // Professional fields
+            'company_name' => trim($_POST['company_name'] ?? ''),
+            'job_title' => trim($_POST['job_title'] ?? ''),
+            'years_experience' => $_POST['years_experience'] ?? null,
+            'professional_skills' => trim($_POST['professional_skills'] ?? ''),
+            // Common fields
             'address' => trim($_POST['address'] ?? ''),
             'city' => trim($_POST['city'] ?? ''),
             'state' => trim($_POST['state'] ?? ''),
@@ -96,36 +105,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
             $errors[] = 'Please enter a valid phone number (10-15 digits).';
         }
 
+        // Validate applicant type specific fields
+        if ($applicant_type === 'student') {
+            if (empty($form_data['school_name'])) {
+                $errors[] = 'School/Institution name is required for students.';
+            }
+            if (empty($form_data['school_class'])) {
+                $errors[] = 'Class/Level is required for students.';
+            }
+        } elseif ($applicant_type === 'professional') {
+            if (empty($form_data['company_name'])) {
+                $errors[] = 'Company/Organization name is required for professionals.';
+            }
+            if (empty($form_data['job_title'])) {
+                $errors[] = 'Job title is required for professionals.';
+            }
+        }
+
         // Check spots again before inserting
         $current_count_sql = "SELECT COUNT(*) as count FROM crash_program_registrations WHERE payment_status = 'confirmed'";
         $current_result = $conn->query($current_count_sql);
         $current_count = $current_result->fetch_assoc()['count'] ?? 0;
 
         if ($current_count >= $total_spots) {
-            $errors[] = 'Sorry, all 50 spots have been filled. Registration is now closed.';
+            $errors[] = 'Sorry, all ' . $total_spots . ' spots have been filled. Registration is now closed.';
         }
+
+        // Calculate payment amount based on applicant type
+        $payment_amount = ($applicant_type === 'professional') ?
+            ($program_settings['professional_fee'] ?? 10000) : ($program_settings['student_fee'] ?? 7000);
 
         // If no errors, insert registration
         if (empty($errors)) {
             $insert_sql = "INSERT INTO crash_program_registrations 
-                          (email, first_name, last_name, phone, program_choice, school_name, school_class, is_student, address, city, state, how_heard, status)
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_payment')";
+                          (email, first_name, last_name, phone, applicant_type, program_choice, 
+                           school_name, school_class, company_name, job_title, years_experience, professional_skills,
+                           address, city, state, how_heard, payment_amount, status)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_payment')";
 
             $stmt = $conn->prepare($insert_sql);
             $stmt->bind_param(
-                'sssssssissss',
+                'ssssssssssisssssd',
                 $form_data['email'],
                 $form_data['first_name'],
                 $form_data['last_name'],
                 $form_data['phone'],
+                $form_data['applicant_type'],
                 $form_data['program_choice'],
                 $form_data['school_name'],
                 $form_data['school_class'],
-                $form_data['is_student'],
+                $form_data['company_name'],
+                $form_data['job_title'],
+                $form_data['years_experience'],
+                $form_data['professional_skills'],
                 $form_data['address'],
                 $form_data['city'],
                 $form_data['state'],
-                $form_data['how_heard']
+                $form_data['how_heard'],
+                $payment_amount
             );
 
             if ($stmt->execute()) {
@@ -134,15 +171,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
 
                 // Send welcome email to user
                 require_once __DIR__ . '/../../includes/email_functions.php';
-                sendCrashProgramRegistrationEmail($form_data, $registration_id);
+                sendCrashProgramRegistrationEmail($form_data, $registration_id, $payment_amount);
 
                 // Send admin notification
-                sendCrashProgramAdminNotification($form_data, $registration_id);
+                sendCrashProgramAdminNotification($form_data, $registration_id, $payment_amount);
 
                 // Store registration ID in session for payment page
                 $_SESSION['crash_registration_id'] = $registration_id;
                 $_SESSION['crash_registration_email'] = $form_data['email'];
                 $_SESSION['crash_program_choice'] = $form_data['program_choice'];
+                $_SESSION['crash_payment_amount'] = $payment_amount;
 
                 // Redirect to payment page after 3 seconds
                 header("Refresh: 3; url=" . BASE_URL . "modules/crash_program/confirm_payment.php?id=" . $registration_id);
@@ -395,6 +433,41 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             padding: 2rem;
         }
 
+        /* Applicant Type Toggle */
+        .applicant-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--gray-100);
+            padding: 0.5rem;
+            border-radius: 16px;
+        }
+
+        .applicant-option {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .applicant-option.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .applicant-option i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
         /* Program Options */
         .program-options {
             display: grid;
@@ -505,19 +578,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             }
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .checkbox-group input {
-            width: 20px;
-            height: 20px;
-        }
-
         /* Buttons */
         .btn {
             width: 100%;
@@ -603,7 +663,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             text-decoration: underline;
         }
 
-        .program-fee {
+        .fee-info {
             background: var(--gray-100);
             padding: 1rem;
             border-radius: 12px;
@@ -611,10 +671,15 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-bottom: 1.5rem;
         }
 
-        .program-fee .fee-amount {
+        .fee-info .fee-amount {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
+        }
+
+        .fee-info .fee-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
         }
 
         /* Footer */
@@ -659,19 +724,17 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             </div>
         </div>
 
-
         <div class="spots-counter <?php echo $spots_available <= 10 ? ($spots_available <= 5 ? 'critical' : 'warning') : ''; ?>">
             <span class="spots-number"><?php echo $spots_available; ?></span>
             <span class="spots-label">Spots Available out of <?php echo $total_spots; ?></span>
         </div>
-
 
         <div class="card">
             <div class="card-header">
                 <h2>🚀 Register for the Crash Program</h2>
                 <div class="program-dates">
                     <i class="fas fa-calendar-alt"></i> <?php echo $start_date; ?> - <?php echo $end_date; ?>
-                    <p> <i class="fas-fa-venue"></i> Mighty School for Valours </p>
+                    <p><i class="fas fa-map-marker-alt"></i> Mighty School for Valours</p>
                 </div>
             </div>
             <div class="card-content">
@@ -707,26 +770,40 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                         </div>
                     <?php endif; ?>
 
-                    <div class="program-fee">
-                        <span>Program Fee:</span>
-                        <div class="fee-amount">₦<?php echo $program_fee; ?></div>
+                    <div class="fee-info" id="feeInfo">
+                        <span class="fee-label">Program Fee:</span>
+                        <div class="fee-amount" id="feeAmount">₦<?php echo $student_fee; ?></div>
                         <small>Payment required to secure your spot</small>
                     </div>
 
                     <form method="POST" id="registrationForm">
                         <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 
+                        <!-- Applicant Type Toggle -->
+                        <div class="applicant-toggle">
+                            <button type="button" class="applicant-option active" data-type="student" onclick="setApplicantType('student')">
+                                <i class="fas fa-graduation-cap"></i>
+                                Student
+                            </button>
+                            <button type="button" class="applicant-option" data-type="professional" onclick="setApplicantType('professional')">
+                                <i class="fas fa-briefcase"></i>
+                                Professional
+                            </button>
+                        </div>
+                        <input type="hidden" name="applicant_type" id="applicant_type" value="student">
+
+                        <!-- Program Options -->
                         <div class="program-options">
-                            <div class="program-card" data-program="web_development" onclick="selectProgram('web_development')">
-                                <div class="program-icon"><i class="fas fa-code"></i></div>
-                                <h3>Web Development</h3>
-                                <p>HTML, CSS, JavaScript, React basics</p>
+                            <div class="program-card" data-program="dtp" onclick="selectProgram('dtp')">
+                                <div class="program-icon"><i class="fas fa-print"></i></div>
+                                <h3>Desktop Publishing (DTP)</h3>
+                                <p>Adobe Photoshop, CorelDraw, Canva, Design Principles</p>
                                 <div class="program-badge">Popular</div>
                             </div>
-                            <div class="program-card" data-program="ai_faceless_video" onclick="selectProgram('ai_faceless_video')">
-                                <div class="program-icon"><i class="fas fa-video"></i></div>
-                                <h3>AI Faceless Video Creation</h3>
-                                <p>Create viral videos using AI tools</p>
+                            <div class="program-card" data-program="web_design" onclick="selectProgram('web_design')">
+                                <div class="program-icon"><i class="fas fa-code"></i></div>
+                                <h3>Web Design</h3>
+                                <p>HTML, CSS, JavaScript, Responsive Design, UI/UX Basics</p>
                             </div>
                         </div>
                         <input type="hidden" name="program_choice" id="program_choice" value="">
@@ -755,6 +832,63 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                                 <input type="tel" id="phone" name="phone" class="form-control"
                                     value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
                                     placeholder="08012345678" required>
+                            </div>
+                        </div>
+
+                        <!-- Student Fields -->
+                        <div id="student-fields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="school_name" class="required">School/Institution Name</label>
+                                    <input type="text" id="school_name" name="school_name" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
+                                        placeholder="e.g., University of Lagos">
+                                </div>
+                                <div class="form-group">
+                                    <label for="school_class" class="required">Class/Level</label>
+                                    <input type="text" id="school_class" name="school_class" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
+                                        placeholder="e.g., 200 Level, SS3, etc.">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Fields -->
+                        <div id="professional-fields" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="company_name" class="required">Company/Organization</label>
+                                    <input type="text" id="company_name" name="company_name" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['company_name'] ?? ''); ?>"
+                                        placeholder="e.g., Google, Self-employed">
+                                </div>
+                                <div class="form-group">
+                                    <label for="job_title" class="required">Job Title</label>
+                                    <input type="text" id="job_title" name="job_title" class="form-control"
+                                        value="<?php echo htmlspecialchars($_POST['job_title'] ?? ''); ?>"
+                                        placeholder="e.g., Software Engineer, Business Owner">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="years_experience">Years of Experience</label>
+                                    <select id="years_experience" name="years_experience" class="form-control">
+                                        <option value="">Select experience</option>
+                                        <option value="0">Less than 1 year</option>
+                                        <option value="1">1 year</option>
+                                        <option value="2">2 years</option>
+                                        <option value="3">3 years</option>
+                                        <option value="4">4 years</option>
+                                        <option value="5">5 years</option>
+                                        <option value="6">6-10 years</option>
+                                        <option value="11">11+ years</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="professional_skills">Key Skills/Interests</label>
+                                    <textarea id="professional_skills" name="professional_skills" class="form-control" rows="2"
+                                        placeholder="List your relevant skills or what you hope to learn..."><?php echo htmlspecialchars($_POST['professional_skills'] ?? ''); ?></textarea>
+                                </div>
                             </div>
                         </div>
 
@@ -791,31 +925,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                             </div>
                         </div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="is_student" name="is_student" value="1"
-                                <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 1) ? 'checked' : 'checked'; ?>>
-                            <label for="is_student">I am currently a student</label>
-                        </div>
-
-                        <div id="student-fields" style="display: <?php echo (isset($_POST['is_student']) && $_POST['is_student'] == 0) ? 'none' : 'block'; ?>;">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="school_name">School/Institution Name</label>
-                                    <input type="text" id="school_name" name="school_name" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_name'] ?? ''); ?>"
-                                        placeholder="e.g., University of Lagos">
-                                </div>
-                                <div class="form-group">
-                                    <label for="school_class">Class/Level</label>
-                                    <input type="text" id="school_class" name="school_class" class="form-control"
-                                        value="<?php echo htmlspecialchars($_POST['school_class'] ?? ''); ?>"
-                                        placeholder="e.g., 200 Level, SS3, etc.">
-                                </div>
-                            </div>
-                        </div>
-
-
-
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             <i class="fas fa-paper-plane"></i> Register Now
                         </button>
@@ -835,25 +944,52 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
     </div>
 
     <script>
+        const professionalFee = <?php echo $professional_fee; ?>;
+        const studentFee = <?php echo $student_fee; ?>;
+
+        function setApplicantType(type) {
+            document.getElementById('applicant_type').value = type;
+
+            // Update active state on buttons
+            document.querySelectorAll('.applicant-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.applicant-option[data-type="${type}"]`).classList.add('active');
+
+            // Show/hide appropriate fields
+            const studentFields = document.getElementById('student-fields');
+            const professionalFields = document.getElementById('professional-fields');
+            const feeAmount = document.getElementById('feeAmount');
+
+            if (type === 'student') {
+                studentFields.style.display = 'block';
+                professionalFields.style.display = 'none';
+                // Update required attributes
+                document.getElementById('school_name').setAttribute('required', 'required');
+                document.getElementById('school_class').setAttribute('required', 'required');
+                document.getElementById('company_name').removeAttribute('required');
+                document.getElementById('job_title').removeAttribute('required');
+                // Update fee
+                feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
+            } else {
+                studentFields.style.display = 'none';
+                professionalFields.style.display = 'block';
+                // Update required attributes
+                document.getElementById('school_name').removeAttribute('required');
+                document.getElementById('school_class').removeAttribute('required');
+                document.getElementById('company_name').setAttribute('required', 'required');
+                document.getElementById('job_title').setAttribute('required', 'required');
+                // Update fee
+                feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
+            }
+        }
+
         function selectProgram(program) {
             document.querySelectorAll('.program-card').forEach(card => {
                 card.classList.remove('selected');
             });
             document.querySelector(`.program-card[data-program="${program}"]`).classList.add('selected');
             document.getElementById('program_choice').value = program;
-        }
-
-        // Handle student checkbox
-        const studentCheckbox = document.getElementById('is_student');
-        if (studentCheckbox) {
-            studentCheckbox.addEventListener('change', function() {
-                const studentFields = document.getElementById('student-fields');
-                if (this.checked) {
-                    studentFields.style.display = 'block';
-                } else {
-                    studentFields.style.display = 'none';
-                }
-            });
         }
 
         // Form validation before submit
@@ -863,6 +999,26 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 e.preventDefault();
                 alert('Please select a program');
                 return false;
+            }
+
+            const applicantType = document.getElementById('applicant_type').value;
+
+            if (applicantType === 'student') {
+                const schoolName = document.getElementById('school_name').value;
+                const schoolClass = document.getElementById('school_class').value;
+                if (!schoolName || !schoolClass) {
+                    e.preventDefault();
+                    alert('Please fill in school name and class/level');
+                    return false;
+                }
+            } else {
+                const companyName = document.getElementById('company_name').value;
+                const jobTitle = document.getElementById('job_title').value;
+                if (!companyName || !jobTitle) {
+                    e.preventDefault();
+                    alert('Please fill in company name and job title');
+                    return false;
+                }
             }
 
             const email = document.getElementById('email').value;
@@ -885,6 +1041,13 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
         // If program was previously selected, highlight it
         <?php if (isset($_POST['program_choice']) && $_POST['program_choice']): ?>
             selectProgram('<?php echo $_POST['program_choice']; ?>');
+        <?php endif; ?>
+
+        // If applicant type was previously selected
+        <?php if (isset($_POST['applicant_type']) && $_POST['applicant_type'] === 'professional'): ?>
+            setApplicantType('professional');
+        <?php else: ?>
+            setApplicantType('student');
         <?php endif; ?>
     </script>
 </body>
