@@ -149,11 +149,18 @@ $inst_logo = BASE_URL . "images/logo.png";
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Crash Program Registration - <?php echo $inst_name; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
@@ -171,17 +178,10 @@ $inst_logo = BASE_URL . "images/logo.png";
             --gray-800: #1e293b;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 16px;
         }
 
         .container {
@@ -192,17 +192,17 @@ $inst_logo = BASE_URL . "images/logo.png";
         /* Header Styles */
         .institution-header {
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
+            margin-bottom: 24px;
+            padding: 16px;
         }
 
         .institution-logo img {
-            max-height: 80px;
+            max-height: 60px;
             width: auto;
         }
 
         .institution-name {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             font-weight: 700;
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
@@ -210,46 +210,71 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         .institution-tagline {
             color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            margin-top: 0.25rem;
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            margin-top: 4px;
         }
 
         /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 30px;
+            border-radius: 24px;
             overflow: hidden;
-            margin-bottom: 3rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 0.8fr;
-            gap: 2rem;
-            align-items: center;
-            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-grid {
+                flex-direction: row;
+                align-items: center;
+                padding: 40px;
+            }
+        }
+
+        .hero-content {
+            flex: 1;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .hero-content {
+                text-align: left;
+            }
         }
 
         .hero-content h1 {
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
             font-weight: 800;
             color: white;
-            margin-bottom: 1rem;
+            margin-bottom: 12px;
             line-height: 1.2;
         }
 
         .hero-content p {
             color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
+            font-size: clamp(0.875rem, 3vw, 1rem);
+            margin-bottom: 24px;
+            line-height: 1.5;
         }
 
         .hero-stats {
             display: flex;
-            gap: 2rem;
-            margin-top: 2rem;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 768px) {
+            .hero-stats {
+                justify-content: flex-start;
+            }
         }
 
         .stat-item {
@@ -257,65 +282,66 @@ $inst_logo = BASE_URL . "images/logo.png";
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: clamp(1.25rem, 4vw, 1.5rem);
             font-weight: 700;
             color: white;
             display: block;
         }
 
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.8);
         }
 
         .hero-image {
             text-align: center;
+            margin-top: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-image {
+                margin-top: 0;
+                flex: 0.6;
+            }
         }
 
         .hero-image img {
             max-width: 100%;
             height: auto;
+            max-height: 200px;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
-        }
-
-        @media (max-width: 768px) {
-            .hero-grid {
-                grid-template-columns: 1fr;
-                padding: 2rem;
-                text-align: center;
-            }
-
-            .hero-stats {
-                justify-content: center;
-            }
-
-            .hero-content h1 {
-                font-size: 2rem;
-            }
         }
 
         /* Spots Alert */
         .spots-alert {
             background: linear-gradient(135deg, var(--accent), #d97706);
-            border-radius: 20px;
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
+            gap: 12px;
             color: white;
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .spots-alert {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
 
         .spots-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 12px;
         }
 
         .spots-number {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             font-weight: 800;
         }
 
@@ -323,55 +349,67 @@ $inst_logo = BASE_URL . "images/logo.png";
             background: white;
             color: var(--accent);
             border: none;
-            padding: 1rem 2rem;
+            padding: 12px 24px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
         }
 
-        .apply-btn-hero:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        @media (min-width: 640px) {
+            .apply-btn-hero {
+                width: auto;
+            }
+        }
+
+        .apply-btn-hero:active {
+            transform: scale(0.98);
         }
 
         /* Program Cards */
         .programs-section {
-            margin-bottom: 3rem;
+            margin-bottom: 24px;
         }
 
         .section-title {
             text-align: center;
             color: white;
-            font-size: 2rem;
-            margin-bottom: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            margin-bottom: 24px;
             font-weight: 700;
         }
 
         .program-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .program-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
         }
 
         .program-card {
             background: white;
             border-radius: 20px;
-            padding: 2rem;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
-            overflow: hidden;
         }
 
-        .program-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        .program-card:active {
+            transform: scale(0.98);
         }
 
         .program-card.selected {
@@ -380,65 +418,67 @@ $inst_logo = BASE_URL . "images/logo.png";
         }
 
         .program-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            font-size: clamp(2.5rem, 8vw, 3rem);
+            margin-bottom: 12px;
         }
 
         .program-card h3 {
-            font-size: 1.5rem;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
             color: var(--dark);
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
         .program-card p {
             color: var(--gray-600);
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 0.875rem;
         }
 
         .program-features {
             list-style: none;
             text-align: left;
-            margin-top: 1rem;
+            margin-top: 12px;
         }
 
         .program-features li {
-            padding: 0.5rem 0;
+            padding: 6px 0;
             color: var(--gray-700);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
+            font-size: 0.875rem;
         }
 
         .program-features li i {
             color: var(--success);
-            font-size: 0.9rem;
-        }
-
-        .badge-popular {
-            position: absolute;
-            top: 20px;
-            right: -30px;
-            background: var(--accent);
-            color: white;
-            padding: 0.25rem 2rem;
-            transform: rotate(45deg);
             font-size: 0.75rem;
-            font-weight: 600;
+            flex-shrink: 0;
         }
 
         /* Features Section */
         .features-section {
             background: white;
-            border-radius: 30px;
-            padding: 3rem;
-            margin-bottom: 3rem;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 640px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         .feature-item {
@@ -446,20 +486,21 @@ $inst_logo = BASE_URL . "images/logo.png";
         }
 
         .feature-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--primary);
-            margin-bottom: 1rem;
+            margin-bottom: 12px;
         }
 
         .feature-item h4 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 8px;
             color: var(--dark);
         }
 
         .feature-item p {
             color: var(--gray-600);
-            line-height: 1.5;
+            font-size: 0.875rem;
+            line-height: 1.4;
         }
 
         /* Modal Styles */
@@ -473,7 +514,7 @@ $inst_logo = BASE_URL . "images/logo.png";
             background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
             overflow-y: auto;
-            animation: fadeIn 0.3s ease;
+            padding: 16px;
         }
 
         .modal.active {
@@ -484,9 +525,9 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         .modal-content {
             background: white;
-            border-radius: 30px;
-            max-width: 800px;
-            width: 90%;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -496,15 +537,18 @@ $inst_logo = BASE_URL . "images/logo.png";
         .modal-header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 1.5rem;
-            border-radius: 30px 30px 0 0;
+            padding: 20px;
+            border-radius: 24px 24px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .modal-header h2 {
-            font-size: 1.5rem;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
         }
 
         .close-modal {
@@ -513,25 +557,20 @@ $inst_logo = BASE_URL . "images/logo.png";
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .close-modal:hover {
-            transform: rotate(90deg);
+        .close-modal:active {
+            transform: scale(0.9);
         }
 
         .modal-body {
-            padding: 2rem;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            padding: 20px;
         }
 
         @keyframes slideUp {
@@ -548,14 +587,15 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         /* Form Styles */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
             color: var(--gray-700);
             font-weight: 500;
+            font-size: 0.875rem;
         }
 
         .required::after {
@@ -565,11 +605,12 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         .form-control {
             width: 100%;
-            padding: 0.85rem 1rem;
+            padding: 12px;
             border: 2px solid var(--gray-200);
             border-radius: 12px;
             font-size: 1rem;
             transition: all 0.3s ease;
+            -webkit-appearance: none;
         }
 
         .form-control:focus {
@@ -579,23 +620,29 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         .form-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .applicant-toggle {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 12px;
+            margin-bottom: 24px;
             background: var(--gray-100);
-            padding: 0.5rem;
+            padding: 6px;
             border-radius: 16px;
         }
 
         .applicant-option {
             flex: 1;
             text-align: center;
-            padding: 1rem;
+            padding: 12px;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -603,6 +650,7 @@ $inst_logo = BASE_URL . "images/logo.png";
             border: none;
             font-weight: 600;
             color: var(--gray-600);
+            font-size: 0.875rem;
         }
 
         .applicant-option.active {
@@ -610,9 +658,13 @@ $inst_logo = BASE_URL . "images/logo.png";
             color: white;
         }
 
+        .applicant-option:active {
+            transform: scale(0.98);
+        }
+
         .btn-submit {
             width: 100%;
-            padding: 1rem;
+            padding: 14px;
             background: var(--primary);
             color: white;
             border: none;
@@ -621,31 +673,32 @@ $inst_logo = BASE_URL . "images/logo.png";
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 8px;
         }
 
-        .btn-submit:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
+        .btn-submit:active {
+            transform: scale(0.98);
         }
 
         .fee-info {
             background: var(--gray-100);
-            padding: 1rem;
+            padding: 16px;
             border-radius: 12px;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
 
         .fee-amount {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
             font-weight: 700;
             color: var(--primary);
         }
 
         .alert {
-            padding: 1rem;
+            padding: 12px;
             border-radius: 12px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
         }
 
         .alert-error {
@@ -654,21 +707,38 @@ $inst_logo = BASE_URL . "images/logo.png";
             border: 1px solid #fecaca;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 2rem;
-            color: rgba(255, 255, 255, 0.8);
+        .alert-error ul {
+            margin: 8px 0 0 20px;
         }
 
-        @media (max-width: 640px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+        }
 
-            body {
-                padding: 1rem;
-            }
+        /* Touch-friendly improvements */
+        button,
+        .program-card,
+        .applicant-option {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Scrollbar styling */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -714,10 +784,10 @@ $inst_logo = BASE_URL . "images/logo.png";
         <!-- Spots Alert -->
         <div class="spots-alert">
             <div class="spots-info">
-                <i class="fas fa-users" style="font-size: 2rem;"></i>
+                <i class="fas fa-users" style="font-size: 1.5rem;"></i>
                 <div>
                     <div class="spots-number"><?php echo $spots_left; ?> Spots Left</div>
-                    <div>out of <?php echo $total_spots; ?> total spots</div>
+                    <div style="font-size: 0.75rem;">out of <?php echo $total_spots; ?> total spots</div>
                 </div>
             </div>
             <?php if (!$registration_closed): ?>
@@ -784,7 +854,7 @@ $inst_logo = BASE_URL . "images/logo.png";
 
         <div class="footer">
             <p>&copy; <?php echo date('Y'); ?> <?php echo $inst_name; ?>. All rights reserved.</p>
-            <p>📍 Nigeria | 📞 +234 905 158 6024 | ✉️ info@impactdigitalacademy.com.ng</p>
+            <p style="margin-top: 8px;">📍 Nigeria | 📞 +234 905 158 6024 | ✉️ info@impactdigitalacademy.com.ng</p>
         </div>
     </div>
 
@@ -800,7 +870,7 @@ $inst_logo = BASE_URL . "images/logo.png";
                     <div class="alert alert-error">
                         <i class="fas fa-exclamation-triangle"></i>
                         <strong>Please fix the following errors:</strong>
-                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <ul style="margin: 8px 0 0 20px;">
                             <?php foreach ($errors as $error): ?>
                                 <li><?php echo htmlspecialchars($error); ?></li>
                             <?php endforeach; ?>
@@ -952,10 +1022,12 @@ $inst_logo = BASE_URL . "images/logo.png";
                 return;
             }
             document.getElementById('registrationModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             document.getElementById('registrationModal').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         // Applicant type toggle
