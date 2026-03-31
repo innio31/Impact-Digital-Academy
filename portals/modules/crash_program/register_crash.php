@@ -957,14 +957,26 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 activeBtn.classList.add('active');
             }
 
-            // Show/hide appropriate fields
+            // Get the field containers
             const studentFields = document.getElementById('student-fields');
             const professionalFields = document.getElementById('professional-fields');
             const feeAmount = document.getElementById('feeAmount');
 
+            console.log('Student fields element:', studentFields);
+            console.log('Professional fields element:', professionalFields);
+            console.log('Type selected:', type);
+
             if (type === 'student') {
-                if (studentFields) studentFields.style.display = 'block';
-                if (professionalFields) professionalFields.style.display = 'none';
+                // Show student fields, hide professional fields
+                if (studentFields) {
+                    studentFields.style.display = 'block';
+                    console.log('Showing student fields');
+                }
+                if (professionalFields) {
+                    professionalFields.style.display = 'none';
+                    console.log('Hiding professional fields');
+                }
+
                 // Update required attributes
                 const schoolName = document.getElementById('school_name');
                 const schoolClass = document.getElementById('school_class');
@@ -975,11 +987,20 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 if (schoolClass) schoolClass.setAttribute('required', 'required');
                 if (companyName) companyName.removeAttribute('required');
                 if (jobTitle) jobTitle.removeAttribute('required');
+
                 // Update fee
                 if (feeAmount) feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
-            } else {
-                if (studentFields) studentFields.style.display = 'none';
-                if (professionalFields) professionalFields.style.display = 'block';
+            } else if (type === 'professional') {
+                // Hide student fields, show professional fields
+                if (studentFields) {
+                    studentFields.style.display = 'none';
+                    console.log('Hiding student fields');
+                }
+                if (professionalFields) {
+                    professionalFields.style.display = 'block';
+                    console.log('Showing professional fields');
+                }
+
                 // Update required attributes
                 const schoolName = document.getElementById('school_name');
                 const schoolClass = document.getElementById('school_class');
@@ -990,6 +1011,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
                 if (schoolClass) schoolClass.removeAttribute('required');
                 if (companyName) companyName.setAttribute('required', 'required');
                 if (jobTitle) jobTitle.setAttribute('required', 'required');
+
                 // Update fee
                 if (feeAmount) feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
             }
@@ -1039,40 +1061,37 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             const professionalBtn = document.querySelector('.applicant-option[data-type="professional"]');
 
             if (studentBtn) {
-                // Remove any existing listeners to avoid duplicates
-                studentBtn.removeEventListener('click', window.handleStudentClick);
-                // Define and add the click handler
-                window.handleStudentClick = function(e) {
+                studentBtn.addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('Student button clicked');
                     window.setApplicantType('student');
-                };
-                studentBtn.addEventListener('click', window.handleStudentClick);
+                });
+            } else {
+                console.log('Student button not found');
             }
 
             if (professionalBtn) {
-                // Remove any existing listeners to avoid duplicates
-                professionalBtn.removeEventListener('click', window.handleProfessionalClick);
-                // Define and add the click handler
-                window.handleProfessionalClick = function(e) {
+                professionalBtn.addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('Professional button clicked');
                     window.setApplicantType('professional');
-                };
-                professionalBtn.addEventListener('click', window.handleProfessionalClick);
+                });
+            } else {
+                console.log('Professional button not found');
             }
 
             // Add click event listeners to program cards
             const programCards = document.querySelectorAll('.program-card');
+            console.log('Found program cards:', programCards.length);
+
             programCards.forEach(card => {
-                // Remove any existing listeners to avoid duplicates
-                card.removeEventListener('click', window.handleProgramClick);
-                // Define and add the click handler
-                window.handleProgramClick = function(e) {
+                card.addEventListener('click', function(e) {
                     const program = this.getAttribute('data-program');
+                    console.log('Program card clicked:', program);
                     if (program) {
                         window.selectProgram(program);
                     }
-                };
-                card.addEventListener('click', window.handleProgramClick);
+                });
 
                 // Add visual feedback for program selection on hover
                 card.addEventListener('mouseenter', function() {
