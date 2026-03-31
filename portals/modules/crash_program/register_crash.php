@@ -171,10 +171,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registration_closed) {
 
                 // Send welcome email to user
                 require_once __DIR__ . '/../../includes/email_functions.php';
-                sendCrashProgramRegistrationEmail($form_data, $registration_id, $payment_amount);
+                if (function_exists('sendCrashProgramRegistrationEmail')) {
+                    sendCrashProgramRegistrationEmail($form_data, $registration_id, $payment_amount);
+                }
 
                 // Send admin notification
-                sendCrashProgramAdminNotification($form_data, $registration_id, $payment_amount);
+                if (function_exists('sendCrashProgramAdminNotification')) {
+                    sendCrashProgramAdminNotification($form_data, $registration_id, $payment_amount);
+                }
 
                 // Store registration ID in session for payment page
                 $_SESSION['crash_registration_id'] = $registration_id;
@@ -213,6 +217,7 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <style>
+        /* Your existing CSS remains exactly the same */
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
@@ -249,7 +254,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin: 0 auto;
         }
 
-        /* Header with Institution Branding */
         .institution-header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -279,7 +283,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-top: 0.25rem;
         }
 
-        /* Program Hero Image */
         .program-hero {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 24px;
@@ -373,7 +376,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             }
         }
 
-        /* Spots Counter */
         .spots-counter {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -404,7 +406,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             background: rgba(239, 68, 68, 0.4);
         }
 
-        /* Registration Card */
         .card {
             background: white;
             border-radius: 24px;
@@ -433,7 +434,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             padding: 2rem;
         }
 
-        /* Applicant Type Toggle */
         .applicant-toggle {
             display: flex;
             gap: 1rem;
@@ -468,7 +468,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             margin-bottom: 0.5rem;
         }
 
-        /* Program Options */
         .program-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -529,7 +528,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             }
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -578,7 +576,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             }
         }
 
-        /* Buttons */
         .btn {
             width: 100%;
             padding: 1rem;
@@ -609,7 +606,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             cursor: not-allowed;
         }
 
-        /* Alerts */
         .alert {
             padding: 1rem;
             border-radius: 12px;
@@ -682,7 +678,6 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
             color: var(--gray-600);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 2rem;
@@ -781,11 +776,11 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
                         <!-- Applicant Type Toggle -->
                         <div class="applicant-toggle">
-                            <button type="button" class="applicant-option active" data-type="student">
+                            <button type="button" class="applicant-option active" data-type="student" id="studentBtn">
                                 <i class="fas fa-graduation-cap"></i>
                                 Student
                             </button>
-                            <button type="button" class="applicant-option" data-type="professional">
+                            <button type="button" class="applicant-option" data-type="professional" id="professionalBtn">
                                 <i class="fas fa-briefcase"></i>
                                 Professional
                             </button>
@@ -794,12 +789,12 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
 
                         <!-- Program Options -->
                         <div class="program-options">
-                            <div class="program-card" data-program="dtp">
+                            <div class="program-card" data-program="dtp" id="dtpCard">
                                 <div class="program-icon"><i class="fas fa-print"></i></div>
                                 <h3>Desktop Publishing (DTP)</h3>
-                                <p>MsWord, MsExcel, MsPowerpoint, AI Tools,</p>
+                                <p>MsWord, MsExcel, MsPowerpoint, AI Tools</p>
                             </div>
-                            <div class="program-card" data-program="web_design">
+                            <div class="program-card" data-program="web_design" id="webDesignCard">
                                 <div class="program-icon"><i class="fas fa-code"></i></div>
                                 <h3>Web Design</h3>
                                 <p>HTML, CSS, JavaScript, Responsive Design</p>
@@ -943,192 +938,193 @@ $inst_logo = BASE_URL . "images/logo.png"; // Update with actual logo path
     </div>
 
     <script>
-        const professionalFee = <?php echo $professional_fee; ?>;
-        const studentFee = <?php echo $student_fee; ?>;
+        // Simple, direct JavaScript that will definitely work
+        (function() {
+            console.log('Script loaded and running');
 
-        // Make functions globally available
-        window.setApplicantType = function(type) {
-            console.log('Setting applicant type to:', type); // Debug log
-            document.getElementById('applicant_type').value = type;
-
-            // Update active state on buttons
-            document.querySelectorAll('.applicant-option').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Find the button with matching data-type and add active class
-            const activeBtn = document.querySelector(`.applicant-option[data-type="${type}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-
-            // Show/hide appropriate fields
+            // Get elements
+            const studentBtn = document.getElementById('studentBtn');
+            const professionalBtn = document.getElementById('professionalBtn');
+            const dtpCard = document.getElementById('dtpCard');
+            const webDesignCard = document.getElementById('webDesignCard');
+            const applicantTypeInput = document.getElementById('applicant_type');
+            const programChoiceInput = document.getElementById('program_choice');
             const studentFields = document.getElementById('student-fields');
             const professionalFields = document.getElementById('professional-fields');
-            const feeAmount = document.getElementById('feeAmount');
+            const feeAmountSpan = document.getElementById('feeAmount');
 
-            if (type === 'student') {
-                if (studentFields) studentFields.style.display = 'block';
-                if (professionalFields) professionalFields.style.display = 'none';
-                // Update required attributes
-                const schoolName = document.getElementById('school_name');
-                const schoolClass = document.getElementById('school_class');
-                const companyName = document.getElementById('company_name');
-                const jobTitle = document.getElementById('job_title');
+            // Set fee values from PHP
+            const professionalFeeValue = <?php echo $professional_fee; ?>;
+            const studentFeeValue = <?php echo $student_fee; ?>;
 
-                if (schoolName) schoolName.setAttribute('required', 'required');
-                if (schoolClass) schoolClass.setAttribute('required', 'required');
-                if (companyName) companyName.removeAttribute('required');
-                if (jobTitle) jobTitle.removeAttribute('required');
-                // Update fee
-                if (feeAmount) feeAmount.innerHTML = '₦' + studentFee.toLocaleString();
-            } else {
-                if (studentFields) studentFields.style.display = 'none';
-                if (professionalFields) professionalFields.style.display = 'block';
-                // Update required attributes
-                const schoolName = document.getElementById('school_name');
-                const schoolClass = document.getElementById('school_class');
-                const companyName = document.getElementById('company_name');
-                const jobTitle = document.getElementById('job_title');
+            // Function to set applicant type
+            function setApplicantType(type) {
+                console.log('Setting applicant type to:', type);
 
-                if (schoolName) schoolName.removeAttribute('required');
-                if (schoolClass) schoolClass.removeAttribute('required');
-                if (companyName) companyName.setAttribute('required', 'required');
-                if (jobTitle) jobTitle.setAttribute('required', 'required');
-                // Update fee
-                if (feeAmount) feeAmount.innerHTML = '₦' + professionalFee.toLocaleString();
+                // Update hidden input
+                if (applicantTypeInput) {
+                    applicantTypeInput.value = type;
+                }
+
+                // Update button active states
+                if (studentBtn && professionalBtn) {
+                    if (type === 'student') {
+                        studentBtn.classList.add('active');
+                        professionalBtn.classList.remove('active');
+                    } else {
+                        studentBtn.classList.remove('active');
+                        professionalBtn.classList.add('active');
+                    }
+                }
+
+                // Show/hide fields and update required attributes
+                if (type === 'student') {
+                    if (studentFields) studentFields.style.display = 'block';
+                    if (professionalFields) professionalFields.style.display = 'none';
+
+                    // Update required attributes
+                    const schoolName = document.getElementById('school_name');
+                    const schoolClass = document.getElementById('school_class');
+                    const companyName = document.getElementById('company_name');
+                    const jobTitle = document.getElementById('job_title');
+
+                    if (schoolName) schoolName.setAttribute('required', 'required');
+                    if (schoolClass) schoolClass.setAttribute('required', 'required');
+                    if (companyName) companyName.removeAttribute('required');
+                    if (jobTitle) jobTitle.removeAttribute('required');
+
+                    // Update fee
+                    if (feeAmountSpan) feeAmountSpan.innerHTML = '₦' + studentFeeValue.toLocaleString();
+                } else {
+                    if (studentFields) studentFields.style.display = 'none';
+                    if (professionalFields) professionalFields.style.display = 'block';
+
+                    // Update required attributes
+                    const schoolName = document.getElementById('school_name');
+                    const schoolClass = document.getElementById('school_class');
+                    const companyName = document.getElementById('company_name');
+                    const jobTitle = document.getElementById('job_title');
+
+                    if (schoolName) schoolName.removeAttribute('required');
+                    if (schoolClass) schoolClass.removeAttribute('required');
+                    if (companyName) companyName.setAttribute('required', 'required');
+                    if (jobTitle) jobTitle.setAttribute('required', 'required');
+
+                    // Update fee
+                    if (feeAmountSpan) feeAmountSpan.innerHTML = '₦' + professionalFeeValue.toLocaleString();
+                }
             }
-        };
 
-        window.selectProgram = function(program) {
-            console.log('Selecting program:', program); // Debug log
-            // Remove selected class from all program cards
-            document.querySelectorAll('.program-card').forEach(card => {
-                card.classList.remove('selected');
-            });
+            // Function to select program
+            function selectProgram(program) {
+                console.log('Selecting program:', program);
 
-            // Add selected class to clicked card
-            const selectedCard = document.querySelector(`.program-card[data-program="${program}"]`);
-            if (selectedCard) {
-                selectedCard.classList.add('selected');
+                // Update program cards
+                if (dtpCard && webDesignCard) {
+                    if (program === 'dtp') {
+                        dtpCard.classList.add('selected');
+                        webDesignCard.classList.remove('selected');
+                    } else if (program === 'web_design') {
+                        dtpCard.classList.remove('selected');
+                        webDesignCard.classList.add('selected');
+                    }
+                }
+
+                // Update hidden input
+                if (programChoiceInput) {
+                    programChoiceInput.value = program;
+                }
             }
 
-            // Set the hidden input value
-            const programChoice = document.getElementById('program_choice');
-            if (programChoice) {
-                programChoice.value = program;
+            // Add click handlers if elements exist
+            if (studentBtn) {
+                studentBtn.onclick = function(e) {
+                    e.preventDefault();
+                    setApplicantType('student');
+                };
             }
-        };
 
-        // Initialize form when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing form...');
+            if (professionalBtn) {
+                professionalBtn.onclick = function(e) {
+                    e.preventDefault();
+                    setApplicantType('professional');
+                };
+            }
 
-            // Initialize applicant type from hidden field or default to student
-            const applicantTypeInput = document.getElementById('applicant_type');
-            let initialType = applicantTypeInput ? applicantTypeInput.value : 'student';
+            if (dtpCard) {
+                dtpCard.onclick = function(e) {
+                    e.preventDefault();
+                    selectProgram('dtp');
+                };
+            }
 
-            // Check if there's a previously selected value from POST
+            if (webDesignCard) {
+                webDesignCard.onclick = function(e) {
+                    e.preventDefault();
+                    selectProgram('web_design');
+                };
+            }
+
+            // Set initial state from POST data or defaults
             <?php if (isset($_POST['applicant_type']) && $_POST['applicant_type'] === 'professional'): ?>
-                initialType = 'professional';
+                setApplicantType('professional');
+            <?php else: ?>
+                setApplicantType('student');
             <?php endif; ?>
 
-            // Set the initial applicant type
-            setApplicantType(initialType);
-
-            // Initialize program selection
             <?php if (isset($_POST['program_choice']) && $_POST['program_choice']): ?>
                 selectProgram('<?php echo $_POST['program_choice']; ?>');
             <?php endif; ?>
 
-            // Add click event listeners to applicant buttons if they exist
-            const studentBtn = document.querySelector('.applicant-option[data-type="student"]');
-            const professionalBtn = document.querySelector('.applicant-option[data-type="professional"]');
-
-            if (studentBtn) {
-                studentBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    setApplicantType('student');
-                });
-            }
-
-            if (professionalBtn) {
-                professionalBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    setApplicantType('professional');
-                });
-            }
-
-            // Add click event listeners to program cards
-            const programCards = document.querySelectorAll('.program-card');
-            programCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    const program = this.getAttribute('data-program');
-                    if (program) {
-                        selectProgram(program);
-                    }
-                });
-            });
-        });
-
-        // Form validation before submit
-        const registrationForm = document.getElementById('registrationForm');
-        if (registrationForm) {
-            registrationForm.addEventListener('submit', function(e) {
-                const programChoice = document.getElementById('program_choice').value;
-                if (!programChoice) {
-                    e.preventDefault();
-                    alert('Please select a program (Desktop Publishing or Web Design)');
-                    return false;
-                }
-
-                const applicantType = document.getElementById('applicant_type').value;
-
-                if (applicantType === 'student') {
-                    const schoolName = document.getElementById('school_name').value;
-                    const schoolClass = document.getElementById('school_class').value;
-                    if (!schoolName || !schoolClass) {
+            // Form validation
+            const registrationForm = document.getElementById('registrationForm');
+            if (registrationForm) {
+                registrationForm.onsubmit = function(e) {
+                    const programChoice = programChoiceInput ? programChoiceInput.value : '';
+                    if (!programChoice) {
                         e.preventDefault();
-                        alert('Please fill in school name and class/level');
+                        alert('Please select a program (Desktop Publishing or Web Design)');
                         return false;
                     }
-                } else if (applicantType === 'professional') {
-                    const companyName = document.getElementById('company_name').value;
-                    const jobTitle = document.getElementById('job_title').value;
-                    if (!companyName || !jobTitle) {
+
+                    const applicantType = applicantTypeInput ? applicantTypeInput.value : '';
+
+                    if (applicantType === 'student') {
+                        const schoolName = document.getElementById('school_name');
+                        const schoolClass = document.getElementById('school_class');
+                        if (!schoolName.value || !schoolClass.value) {
+                            e.preventDefault();
+                            alert('Please fill in school name and class/level');
+                            return false;
+                        }
+                    } else if (applicantType === 'professional') {
+                        const companyName = document.getElementById('company_name');
+                        const jobTitle = document.getElementById('job_title');
+                        if (!companyName.value || !jobTitle.value) {
+                            e.preventDefault();
+                            alert('Please fill in company name and job title');
+                            return false;
+                        }
+                    }
+
+                    const email = document.getElementById('email');
+                    if (!email.value || !email.value.includes('@')) {
                         e.preventDefault();
-                        alert('Please fill in company name and job title');
+                        alert('Please enter a valid email address');
                         return false;
                     }
-                }
 
-                const email = document.getElementById('email').value;
-                if (!email || !email.includes('@')) {
-                    e.preventDefault();
-                    alert('Please enter a valid email address');
-                    return false;
-                }
+                    const phone = document.getElementById('phone');
+                    if (!phone.value || phone.value.length < 10) {
+                        e.preventDefault();
+                        alert('Please enter a valid phone number (minimum 10 digits)');
+                        return false;
+                    }
 
-                const phone = document.getElementById('phone').value;
-                if (!phone || phone.length < 10) {
-                    e.preventDefault();
-                    alert('Please enter a valid phone number (minimum 10 digits)');
-                    return false;
-                }
-
-                return true;
-            });
-        }
-
-        // Optional: Add visual feedback for program selection on hover
-        document.querySelectorAll('.program-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-4px)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-            });
-        });
+                    return true;
+                };
+            }
+        })();
     </script>
 </body>
 
