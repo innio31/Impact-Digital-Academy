@@ -787,7 +787,7 @@ $inst_logo = BASE_URL . "images/logo.png";
                 <i class="fas fa-users" style="font-size: 1.5rem;"></i>
                 <div>
                     <div class="spots-number"><?php echo $spots_left; ?> Spots Left</div>
-                    <div style="font-size: 0.75rem;">out of <?php echo $total_spots; ?> total spots</div>
+                    <!-- <div style="font-size: 0.75rem;">out of <?php echo $total_spots; ?> total spots</div> -->
                 </div>
             </div>
             <?php if (!$registration_closed): ?>
