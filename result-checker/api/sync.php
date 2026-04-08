@@ -1,5 +1,5 @@
 <?php
-// api/sync.php - School Data Sync Endpoint (UPDATED - Preserves Original Score Structure)
+// api/sync.php - School Data Sync Endpoint (UPDATED for full report card structure)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -167,7 +167,7 @@ try {
 }
 
 /**
- * Sync results from school - PRESERVES ORIGINAL SCORE STRUCTURE
+ * Sync results from school - NOW STORES COMPLETE REPORT CARD DATA
  */
 function syncResults($conn, $school_id, $input)
 {
@@ -208,44 +208,45 @@ function syncResults($conn, $school_id, $input)
 
             $student_id = $student['id'];
 
-            // ============ KEY CHANGE: PRESERVE ORIGINAL SCORES EXACTLY ============
-            $original_scores = $result['scores'];
-
-            // Store the scores with their original structure
+            // Store COMPLETE report card data - preserve everything
             $result_data = [
-                'original_scores' => $original_scores,  // Keep EXACT original structure
+                'original_data' => $result,  // Store the entire result as received
+                'scores' => $result['scores'] ?? [],
+                'summary' => $result['summary'] ?? [],
+                'position' => $result['position'] ?? [],
+                'comments' => $result['comments'] ?? [],
+                'attendance' => $result['attendance'] ?? [],
+                'affective_traits' => $result['affective_traits'] ?? null,
+                'psychomotor_skills' => $result['psychomotor_skills'] ?? null,
+                'settings' => $result['settings'] ?? [],
+                'export_timestamp' => $result['export_timestamp'] ?? date('Y-m-d H:i:s'),
                 'metadata' => [
                     'export_timestamp' => date('Y-m-d H:i:s'),
                     'school_id' => $school_id,
-                    'student_id' => $student_id
+                    'student_id' => $student_id,
+                    'sync_timestamp' => date('Y-m-d H:i:s')
                 ]
             ];
 
-            // Optionally calculate summary statistics (for quick display, not required)
-            // This doesn't modify the original data
-            $summary = calculateScoreSummary($original_scores);
-            $result_data['summary'] = $summary;
+            // Extract summary data for quick access (indexed fields)
+            $total_marks = $result['summary']['total_marks'] ?? 0;
+            $average = $result['summary']['average'] ?? 0;
+            $grade = $result['summary']['grade'] ?? calculateGrade($average);
+            $class_position = $result['position']['class_position'] ?? null;
+            $class_total = $result['position']['class_total'] ?? null;
+            $promoted_to = $result['position']['promoted_to'] ?? null;
 
-            // Prepare other fields
-            $teachers_comment = isset($result['teachers_comment']) ? $result['teachers_comment'] : null;
-            $principals_comment = isset($result['principals_comment']) ? $result['principals_comment'] : null;
-            $class_position = isset($result['class_position']) ? $result['class_position'] : null;
-            $class_total = isset($result['class_total_students']) ? $result['class_total_students'] : null;
-            $promoted_to = isset($result['promoted_to']) ? $result['promoted_to'] : null;
-            $days_present = isset($result['days_present']) ? $result['days_present'] : 0;
-            $days_absent = isset($result['days_absent']) ? $result['days_absent'] : 0;
+            // Comments
+            $teachers_comment = $result['comments']['teachers_comment'] ?? null;
+            $principals_comment = $result['comments']['principals_comment'] ?? null;
 
-            // Affective traits
-            $affective_traits = null;
-            if (isset($result['affective_traits']) && is_array($result['affective_traits'])) {
-                $affective_traits = json_encode($result['affective_traits']);
-            }
+            // Attendance
+            $days_present = $result['attendance']['days_present'] ?? 0;
+            $days_absent = $result['attendance']['days_absent'] ?? 0;
 
-            // Psychomotor skills
-            $psychomotor_skills = null;
-            if (isset($result['psychomotor_skills']) && is_array($result['psychomotor_skills'])) {
-                $psychomotor_skills = json_encode($result['psychomotor_skills']);
-            }
+            // Traits
+            $affective_traits = $result['affective_traits'] ? json_encode($result['affective_traits']) : null;
+            $psychomotor_skills = $result['psychomotor_skills'] ? json_encode($result['psychomotor_skills']) : null;
 
             // Check if result already exists
             $stmt = $conn->prepare("
@@ -254,9 +255,6 @@ function syncResults($conn, $school_id, $input)
             ");
             $stmt->execute([$school_id, $student_id, $result['session_year'], $result['term']]);
             $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Total marks display (optional - can be empty string)
-            $total_marks_display = $summary['total_display'] ?? '';
 
             if ($existing) {
                 // Update existing result
@@ -281,9 +279,9 @@ function syncResults($conn, $school_id, $input)
                 ");
                 $stmt->execute([
                     json_encode($result_data),
-                    $total_marks_display,
-                    $summary['average'] ?? null,
-                    $summary['grade'] ?? null,
+                    $total_marks,
+                    $average,
+                    $grade,
                     $class_position,
                     $class_total,
                     $promoted_to,
@@ -315,9 +313,9 @@ function syncResults($conn, $school_id, $input)
                     $result['session_year'],
                     $result['term'],
                     json_encode($result_data),
-                    $total_marks_display,
-                    $summary['average'] ?? null,
-                    $summary['grade'] ?? null,
+                    $total_marks,
+                    $average,
+                    $grade,
                     $class_position,
                     $class_total,
                     $promoted_to,
@@ -354,85 +352,6 @@ function syncResults($conn, $school_id, $input)
 }
 
 /**
- * Calculate summary statistics from original scores without modifying them
- */
-function calculateScoreSummary($scores)
-{
-    if (empty($scores) || !is_array($scores)) {
-        return [
-            'total_scored' => 0,
-            'total_max' => 0,
-            'average' => 0,
-            'grade' => 'F',
-            'total_display' => '0/0',
-            'subjects_count' => 0
-        ];
-    }
-
-    $total_scored = 0;
-    $total_max = 0;
-    $subjects_processed = 0;
-
-    foreach ($scores as $score) {
-        $subject_total = 0;
-        $subject_max = 0;
-
-        // Get the score data (could be in 'score_data' key or directly in the array)
-        $data = isset($score['score_data']) && is_array($score['score_data'])
-            ? $score['score_data']
-            : $score;
-
-        // Remove non-numeric keys for value extraction
-        $exclude_keys = ['subject_name', 'subject_id', 'score_data', 'raw_values'];
-
-        // Sum all numeric values in the score data
-        foreach ($data as $key => $value) {
-            if (in_array($key, $exclude_keys)) {
-                continue;
-            }
-
-            if (is_numeric($value)) {
-                // Check if this looks like a max value
-                if (stripos($key, 'max') !== false || stripos($key, 'out_of') !== false || stripos($key, 'total') !== false) {
-                    $subject_max += floatval($value);
-                } else {
-                    // Assume it's a scored value
-                    $subject_total += floatval($value);
-                }
-            }
-        }
-
-        // If no max values found, try to infer from keys like 'ca1_max', 'exam_max'
-        foreach ($data as $key => $value) {
-            if (is_numeric($value) && (stripos($key, 'max') !== false || stripos($key, 'out_of') !== false)) {
-                $subject_max += floatval($value);
-            }
-        }
-
-        // If still no max, assume perfect score equals total (or use default)
-        if ($subject_max == 0 && $subject_total > 0) {
-            $subject_max = $subject_total;
-        }
-
-        $total_scored += $subject_total;
-        $total_max += $subject_max;
-        $subjects_processed++;
-    }
-
-    $average = $total_max > 0 ? round(($total_scored / $total_max) * 100, 2) : 0;
-    $grade = calculateGrade($average);
-
-    return [
-        'total_scored' => $total_scored,
-        'total_max' => $total_max,
-        'average' => $average,
-        'grade' => $grade,
-        'total_display' => $total_scored . '/' . $total_max,
-        'subjects_count' => $subjects_processed
-    ];
-}
-
-/**
  * Full sync - students and results
  */
 function syncFull($conn, $school_id, $input)
@@ -455,6 +374,20 @@ function syncFull($conn, $school_id, $input)
         debug_log("syncFull: Processing results", ['count' => count($input['results'])]);
         $result_result = syncResults($conn, $school_id, $input);
         $response['data']['results'] = $result_result['data'];
+    }
+
+    // Store metadata if provided
+    if (isset($input['metadata']) && is_array($input['metadata'])) {
+        try {
+            $stmt = $conn->prepare("
+                INSERT INTO sync_history (school_id, sync_type, sync_data, synced_at)
+                VALUES (?, 'full_sync', ?, NOW())
+            ");
+            $stmt->execute([$school_id, json_encode($input['metadata'])]);
+        } catch (PDOException $e) {
+            // Non-critical, ignore
+            debug_log("Failed to save sync history", ['error' => $e->getMessage()]);
+        }
     }
 
     // Update school last sync time
