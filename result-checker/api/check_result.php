@@ -1,5 +1,5 @@
 <?php
-// api/check_result.php - Fixed PIN matching
+// api/check_result.php - With PIN restriction (one student per PIN)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -61,10 +61,10 @@ try {
         exit();
     }
 
-    // 2. Clean PIN - remove all non-alphanumeric characters
+    // 2. Clean PIN
     $pin_cleaned = strtoupper(preg_replace('/[^A-Z0-9]/', '', $input['pin']));
 
-    // 3. Try to find PIN with multiple matching strategies
+    // 3. Find PIN with multiple matching strategies
     $stmt = $conn->prepare("
         SELECT * FROM result_pins 
         WHERE school_id = ? 
@@ -79,7 +79,7 @@ try {
     $stmt->execute([$school['id'], $pin_cleaned, $pin_cleaned, $input['pin']]);
     $pinRecord = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // If not found, try a more direct approach
+    // If not found, try more direct approach
     if (!$pinRecord) {
         $stmt = $conn->prepare("
             SELECT * FROM result_pins 
@@ -90,7 +90,7 @@ try {
     }
 
     if (!$pinRecord) {
-        // Last resort - get all pins for this school and compare
+        // Last resort - compare cleaned versions
         $stmt = $conn->prepare("SELECT * FROM result_pins WHERE school_id = ?");
         $stmt->execute([$school['id']]);
         $allPins = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -109,7 +109,63 @@ try {
         exit();
     }
 
-    // 4. Check PIN status
+    // 4. Get student
+    $stmt = $conn->prepare("
+        SELECT id, admission_number, full_name, class, gender, date_of_birth, 
+               parent_phone, parent_email 
+        FROM students 
+        WHERE school_id = ? AND admission_number = ? AND status = 'active'
+    ");
+    $stmt->execute([$school['id'], $input['admission_number']]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$student) {
+        echo json_encode(['success' => false, 'error' => 'Student not found']);
+        exit();
+    }
+
+    // ============ PIN RESTRICTION FEATURE ============
+    // Check if PIN has already been used by a different student
+
+    // First, check if this PIN has a student_id assigned
+    if (!empty($pinRecord['student_id'])) {
+        // PIN is already assigned to a student
+        if ($pinRecord['student_id'] != $student['id']) {
+            // Different student trying to use this PIN
+            echo json_encode(['success' => false, 'error' => 'This PIN has already been used by another student. Each PIN can only be used by one student.']);
+            exit();
+        }
+    } else {
+        // PIN is not yet assigned to any student
+        // Check if this PIN has been used before (via usage log)
+        $stmt = $conn->prepare("
+            SELECT COUNT(*) as usage_count, student_id 
+            FROM pin_usage_log 
+            WHERE pin_id = ?
+            GROUP BY student_id
+        ");
+        $stmt->execute([$pinRecord['id']]);
+        $usageHistory = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usageHistory && $usageHistory['usage_count'] > 0) {
+            // PIN has been used before
+            if ($usageHistory['student_id'] != $student['id']) {
+                // Different student trying to use this PIN
+                echo json_encode(['success' => false, 'error' => 'This PIN has already been used by another student. Each PIN can only be used by one student.']);
+                exit();
+            }
+        } else {
+            // First time usage - assign this PIN to the current student
+            $stmt = $conn->prepare("
+                UPDATE result_pins 
+                SET student_id = ? 
+                WHERE id = ?
+            ");
+            $stmt->execute([$student['id'], $pinRecord['id']]);
+        }
+    }
+
+    // 5. Check PIN status
     if ($pinRecord['status'] === 'expired') {
         echo json_encode(['success' => false, 'error' => 'PIN has expired']);
         exit();
@@ -133,27 +189,6 @@ try {
         $stmt = $conn->prepare("UPDATE result_pins SET status = 'used_up' WHERE id = ?");
         $stmt->execute([$pinRecord['id']]);
         echo json_encode(['success' => false, 'error' => 'PIN has been fully used']);
-        exit();
-    }
-
-    // 5. Get student
-    $stmt = $conn->prepare("
-        SELECT id, admission_number, full_name, class, gender, date_of_birth, 
-               parent_phone, parent_email 
-        FROM students 
-        WHERE school_id = ? AND admission_number = ? AND status = 'active'
-    ");
-    $stmt->execute([$school['id'], $input['admission_number']]);
-    $student = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$student) {
-        echo json_encode(['success' => false, 'error' => 'Student not found']);
-        exit();
-    }
-
-    // Check if PIN is assigned to this student (if student_id is set)
-    if (!empty($pinRecord['student_id']) && $pinRecord['student_id'] != $student['id']) {
-        echo json_encode(['success' => false, 'error' => 'This PIN is assigned to a different student']);
         exit();
     }
 
@@ -217,6 +252,7 @@ try {
     $response = [
         'success' => true,
         'pin_remaining_uses' => $pinRecord['max_uses'] - $new_used_count,
+        'pin_assigned_to_student' => !empty($pinRecord['student_id']),
         'school' => [
             'id' => $school['id'],
             'name' => $school['school_name'],
