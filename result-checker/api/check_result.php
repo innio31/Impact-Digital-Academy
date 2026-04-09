@@ -1,5 +1,5 @@
 <?php
-// api/check_result.php - For impactdi_result-checker database using existing config
+// api/check_result.php - For impactdi_result-checker database
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -7,7 +7,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 // Enable error logging
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1); // Temporarily enable to see errors
 ini_set('log_errors', 1);
 
 // Handle preflight
@@ -41,13 +41,17 @@ foreach ($required as $field) {
 
 // Include database config
 require_once '../config/config.php';
-require_once '../config/database.php';
 
 try {
     $db = Database::getInstance();
     $conn = $db->getConnection();
 
-    // 1. Validate school
+    // DEBUG: Log the request
+    error_log("=== PIN Check Request ===");
+    error_log("School Code: " . $input['school_code']);
+    error_log("PIN Raw: " . $input['pin']);
+
+    // 1. First, get the school ID from school_code
     $stmt = $conn->prepare("
         SELECT id, school_name, school_code, school_logo as logo, school_address as address, 
                school_phone as phone, school_email as email 
@@ -58,38 +62,84 @@ try {
     $school = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$school) {
+        error_log("School not found: " . $input['school_code']);
         echo json_encode(['success' => false, 'error' => 'Invalid school code']);
         exit();
     }
 
-    // 2. Validate PIN
-    $pin = strtoupper(preg_replace('/[^A-Z0-9]/', '', $input['pin']));
-    $stmt = $conn->prepare("
-        SELECT id, student_id, school_id, pin_code, max_uses, used_count, 
-               status, expiry_date, last_used_at
-        FROM result_pins 
-        WHERE pin_code = ? AND school_id = ? AND status IN ('active', 'unused')
-    ");
-    $stmt->execute([$pin, $school['id']]);
-    $pinRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+    error_log("School Found: ID=" . $school['id'] . ", Name=" . $school['school_name']);
 
-    if (!$pinRecord) {
-        echo json_encode(['success' => false, 'error' => 'Invalid or inactive PIN']);
+    // 2. Clean and validate PIN
+    $pin_raw = $input['pin'];
+    $pin_cleaned = strtoupper(preg_replace('/[^A-Z0-9]/', '', $pin_raw));
+
+    error_log("PIN Raw: " . $pin_raw);
+    error_log("PIN Cleaned: " . $pin_cleaned);
+
+    // 3. First, check if PIN exists at all (without any conditions)
+    $stmt = $conn->prepare("
+        SELECT * FROM result_pins 
+        WHERE pin_code = ?
+    ");
+    $stmt->execute([$pin_cleaned]);
+    $pinExists = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$pinExists) {
+        error_log("PIN not found in database: " . $pin_cleaned);
+        echo json_encode(['success' => false, 'error' => 'PIN not found in system']);
         exit();
     }
 
-    // Check expiry
-    if ($pinRecord['expiry_date'] && strtotime($pinRecord['expiry_date']) < time()) {
+    error_log("PIN Found in DB: " . print_r($pinExists, true));
+
+    // 4. Now check PIN with school_id and status
+    $stmt = $conn->prepare("
+        SELECT id, student_id, school_id, pin_code, max_uses, used_count, 
+               status, expiry_date, last_used_at, created_at
+        FROM result_pins 
+        WHERE pin_code = ? AND school_id = ?
+    ");
+    $stmt->execute([$pin_cleaned, $school['id']]);
+    $pinRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$pinRecord) {
+        error_log("PIN exists but not for this school. PIN School ID: " . ($pinExists['school_id'] ?? 'null') . ", Request School ID: " . $school['id']);
+        echo json_encode(['success' => false, 'error' => 'PIN not valid for this school']);
+        exit();
+    }
+
+    error_log("PIN Record for this school: " . print_r($pinRecord, true));
+
+    // 5. Check PIN status
+    if ($pinRecord['status'] === 'expired') {
         echo json_encode(['success' => false, 'error' => 'PIN has expired']);
         exit();
     }
 
-    if ($pinRecord['used_count'] >= $pinRecord['max_uses']) {
-        echo json_encode(['success' => false, 'error' => 'PIN has no remaining uses']);
+    if ($pinRecord['status'] === 'used_up') {
+        echo json_encode(['success' => false, 'error' => 'PIN has been fully used']);
         exit();
     }
 
-    // 3. Get student
+    // Check expiry date
+    if ($pinRecord['expiry_date'] && strtotime($pinRecord['expiry_date']) < time()) {
+        // Update status to expired
+        $stmt = $conn->prepare("UPDATE result_pins SET status = 'expired' WHERE id = ?");
+        $stmt->execute([$pinRecord['id']]);
+        echo json_encode(['success' => false, 'error' => 'PIN has expired']);
+        exit();
+    }
+
+    // Check usage count
+    if ($pinRecord['used_count'] >= $pinRecord['max_uses']) {
+        // Update status to used_up
+        $stmt = $conn->prepare("UPDATE result_pins SET status = 'used_up' WHERE id = ?");
+        $stmt->execute([$pinRecord['id']]);
+        echo json_encode(['success' => false, 'error' => 'PIN has been fully used']);
+        exit();
+    }
+
+    // 6. Get student
     $stmt = $conn->prepare("
         SELECT id, admission_number, full_name, class, gender, date_of_birth, 
                parent_phone, parent_email 
@@ -100,17 +150,21 @@ try {
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$student) {
+        error_log("Student not found: " . $input['admission_number']);
         echo json_encode(['success' => false, 'error' => 'Student not found']);
         exit();
     }
 
-    // Check if PIN is assigned to this student (optional)
-    if ($pinRecord['student_id'] && $pinRecord['student_id'] != $student['id']) {
-        echo json_encode(['success' => false, 'error' => 'PIN not valid for this student']);
+    error_log("Student Found: ID=" . $student['id'] . ", Name=" . $student['full_name']);
+
+    // 7. Check if PIN is assigned to this student (if student_id is set in PIN)
+    if (!empty($pinRecord['student_id']) && $pinRecord['student_id'] != $student['id']) {
+        error_log("PIN assigned to student ID " . $pinRecord['student_id'] . " but trying to access student ID " . $student['id']);
+        echo json_encode(['success' => false, 'error' => 'This PIN is assigned to a different student']);
         exit();
     }
 
-    // 4. Get result with FULL data from results table
+    // 8. Get result
     $stmt = $conn->prepare("
         SELECT * FROM results 
         WHERE school_id = ? AND student_id = ? AND session_year = ? AND term = ? AND is_published = 1
@@ -119,47 +173,27 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$result) {
+        error_log("Result not found for student " . $student['id'] . " in " . $input['session_year'] . " " . $input['term']);
         echo json_encode(['success' => false, 'error' => 'Result not found or not published yet']);
         exit();
     }
 
-    // Decode result_data (JSON field containing full report card data)
+    error_log("Result Found: ID=" . $result['id']);
+
+    // 9. Decode result_data
     $result_data = json_decode($result['result_data'], true);
     $affective_traits = json_decode($result['affective_traits'], true);
     $psychomotor_skills = json_decode($result['psychomotor_skills'], true);
 
-    // Extract scores from result_data
+    // Extract scores
     $scores = [];
     if (isset($result_data['scores']) && is_array($result_data['scores'])) {
         $scores = $result_data['scores'];
     } elseif (isset($result_data['original_data']['scores']) && is_array($result_data['original_data']['scores'])) {
         $scores = $result_data['original_data']['scores'];
-    } elseif (isset($result_data['original_scores']) && is_array($result_data['original_scores'])) {
-        // Handle older format
-        foreach ($result_data['original_scores'] as $subject => $score_data) {
-            $scores[] = [
-                'subject_name' => $subject,
-                'score_data' => $score_data,
-                'total_score' => $score_data['total'] ?? 0,
-                'percentage' => $score_data['percentage'] ?? 0,
-                'grade' => $score_data['grade'] ?? ''
-            ];
-        }
     }
 
-    // Calculate totals
-    $total_scored = $result['total_marks'] ?? 0;
-    $total_max = 0;
-    foreach ($scores as $score) {
-        if ($total_scored == 0 && isset($score['total_score'])) {
-            $total_scored += $score['total_score'];
-        }
-        $total_max += 100; // Default max per subject
-    }
-
-    $overall_percentage = $result['average'] ?? ($total_max > 0 ? ($total_scored / $total_max) * 100 : 0);
-
-    // 5. Update PIN usage
+    // 10. Update PIN usage
     $new_used_count = $pinRecord['used_count'] + 1;
     $new_status = ($new_used_count >= $pinRecord['max_uses']) ? 'used_up' : 'active';
 
@@ -170,7 +204,9 @@ try {
     ");
     $stmt->execute([$new_used_count, $new_status, $pinRecord['id']]);
 
-    // Log access
+    error_log("PIN Updated: used_count=" . $new_used_count . ", status=" . $new_status);
+
+    // 11. Log access
     $stmt = $conn->prepare("
         INSERT INTO pin_usage_log (pin_id, student_id, session_year, term, ip_address, user_agent, accessed_at)
         VALUES (?, ?, ?, ?, ?, ?, NOW())
@@ -184,7 +220,11 @@ try {
         $_SERVER['HTTP_USER_AGENT'] ?? null
     ]);
 
-    // Prepare response
+    // 12. Prepare response
+    $total_scored = $result['total_marks'] ?? 0;
+    $total_max = count($scores) * 100;
+    $overall_percentage = $result['average'] ?? ($total_max > 0 ? ($total_scored / $total_max) * 100 : 0);
+
     $response = [
         'success' => true,
         'pin_remaining_uses' => $pinRecord['max_uses'] - $new_used_count,
@@ -229,8 +269,12 @@ try {
 
     echo json_encode($response);
 } catch (PDOException $e) {
-    error_log("Check result error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'Database error occurred']);
+    error_log("Check result PDO Error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+} catch (Exception $e) {
+    error_log("Check result General Error: " . $e->getMessage());
+    echo json_encode(['success' => false, 'error' => 'Error: ' . $e->getMessage()]);
 }
 
 function calculateGrade($percentage)
