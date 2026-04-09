@@ -568,28 +568,83 @@
         }
 
         @media print {
-            body {
-                background: white;
-            }
 
+            /* Hide non-printable elements */
             .header,
             .checker-card,
             .features,
             footer,
             .action-buttons,
             .pin-remaining,
-            .info-box {
+            .info-box,
+            .no-print,
+            .btn-print,
+            .btn-download {
                 display: none !important;
             }
 
             .result-container {
                 display: block !important;
                 margin-top: 0;
+                padding: 0;
             }
 
             .report-card {
                 box-shadow: none;
-                border: 1px solid #ddd;
+                border: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+
+            /* Ensure everything fits on one page */
+            body,
+            .container,
+            .report-card {
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Reduce font sizes for print */
+            .report-card {
+                font-size: 9pt;
+            }
+
+            .school-name {
+                font-size: 14pt !important;
+            }
+
+            .section-header {
+                font-size: 9pt !important;
+                padding: 2px !important;
+            }
+
+            .student-info-table td,
+            .scores-table th,
+            .scores-table td,
+            .traits-table td {
+                padding: 4px !important;
+                font-size: 8pt !important;
+            }
+
+            /* Force page break control */
+            .report-card {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* Keep colors */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Ensure background colors print */
+            .scores-table th,
+            .section-header,
+            .rating-key tr {
+                background-color: #1a237e !important;
+                color: white !important;
             }
         }
     </style>
@@ -810,7 +865,7 @@
             const student = data.student;
             const school = data.school;
 
-            // Build scores table
+            // Build scores table (same as before, but we'll add proper print CSS)
             let scoresHtml = '';
             let totalScored = 0;
             let totalMax = 0;
@@ -824,34 +879,22 @@
                     let componentsHtml = '';
                     let componentNames = [];
 
-                    // Handle different score data formats
                     if (score.components) {
-                        // Format from export
                         for (const [compName, compValue] of Object.entries(score.components)) {
-                            componentsHtml += `<td>${compValue || 0}</td>`;
+                            componentsHtml += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${compValue || 0}</td>`;
                             componentNames.push(compName);
                             subjectTotal += parseFloat(compValue) || 0;
                         }
                     } else if (score.score_data && typeof score.score_data === 'object') {
-                        // Format from database
                         for (const [compName, compValue] of Object.entries(score.score_data)) {
                             if (compName !== 'subject_name' && compName !== 'subject_id' && compName !== 'raw_values') {
-                                componentsHtml += `<td>${compValue || 0}</td>`;
+                                componentsHtml += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${compValue || 0}</td>`;
                                 componentNames.push(compName);
                                 subjectTotal += parseFloat(compValue) || 0;
                             }
                         }
-                    } else if (score.ca1 !== undefined) {
-                        // Simple format with ca1, ca2, exam
-                        const ca1 = score.ca1 || 0;
-                        const ca2 = score.ca2 || 0;
-                        const exam = score.exam || 0;
-                        componentsHtml = `<td>${ca1}</td><td>${ca2}</td><td>${exam}</td>`;
-                        componentNames = ['CA1', 'CA2', 'Exam'];
-                        subjectTotal = ca1 + ca2 + exam;
                     }
 
-                    // Use provided values if available
                     subjectTotal = score.total_score || subjectTotal;
                     const maxScore = score.max_score || 100;
                     totalMax += maxScore;
@@ -859,10 +902,9 @@
 
                     const percentage = score.percentage || ((subjectTotal / maxScore) * 100).toFixed(2);
 
-                    // Set component headers from first score
                     if (!componentHeadersSet && componentNames.length > 0) {
                         componentNames.forEach(name => {
-                            componentHeaders += `<th>${escapeHtml(name)}</th>`;
+                            componentHeaders += `<th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">${escapeHtml(name)}</th>`;
                         });
                         componentHeadersSet = true;
                         scoreTypes = componentNames;
@@ -870,28 +912,25 @@
 
                     scoresHtml += `
                 <tr>
-                    <td class="subject-col">${(idx + 1)}. ${escapeHtml(score.subject_name)}</td>
+                    <td style="border:1px solid #dee2e6; padding:8px; font-weight:600;">${(idx + 1)}. ${escapeHtml(score.subject_name)}</td>
                     ${componentsHtml}
-                    <td><strong>${subjectTotal}</strong></td>
-                    <td>${percentage}%</td>
-                    <td class="${getGradeClass(score.grade)}"><strong>${score.grade || '-'}</strong></td>
-                    <td>${score.remark || getPerformanceRemark(percentage)}</td>
+                    <td style="border:1px solid #dee2e6; padding:8px; text-align:center;"><strong>${subjectTotal}</strong></td>
+                    <td style="border:1px solid #dee2e6; padding:8px; text-align:center;">${percentage}%</td>
+                    <td style="border:1px solid #dee2e6; padding:8px; text-align:center;" class="${getGradeClass(score.grade)}"><strong>${score.grade || '-'}</strong></td>
+                    <td style="border:1px solid #dee2e6; padding:8px; text-align:center;">${score.remark || getPerformanceRemark(percentage)}</td>
                 </tr>
             `;
                 });
             }
 
-            // Default component headers if not set
             if (!componentHeaders) {
-                componentHeaders = '<th>CA1</th><th>CA2</th><th>Exam</th>';
+                componentHeaders = '<th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">CA1</th><th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">CA2</th><th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">Exam</th>';
             }
 
-            // If no scores found, show message
             if (!scoresHtml) {
-                scoresHtml = '<tr><td colspan="10" style="text-align:center;">No subject scores available</td></tr>';
+                scoresHtml = '<tr><td colspan="10" style="border:1px solid #dee2e6; padding:20px; text-align:center;">No subject scores available</td></tr>';
             }
 
-            // Get overall percentage
             const overallPercentage = result.average || ((totalScored / totalMax) * 100).toFixed(2);
             const overallGrade = result.grade || calculateGrade(overallPercentage);
 
@@ -905,13 +944,13 @@
                     'honesty': 'Honesty',
                     'neatness': 'Neatness',
                     'reliability': 'Reliability',
-                    'relationship': 'Relationship with others',
+                    'relationship': 'Relationship',
                     'self_control': 'Self Control'
                 };
                 for (const [key, label] of Object.entries(traits)) {
                     const value = result.affective_traits[key];
                     if (value) {
-                        affectiveHtml += `<tr><td>${label}</td><td><strong>${escapeHtml(value)}</strong></td></tr>`;
+                        affectiveHtml += `<tr><td style="border:1px solid #dee2e6; padding:6px;">${label}</td><td style="border:1px solid #dee2e6; padding:6px; text-align:center;"><strong>${escapeHtml(value)}</strong></td></tr>`;
                     }
                 }
             }
@@ -930,7 +969,7 @@
                 for (const [key, label] of Object.entries(skills)) {
                     const value = result.psychomotor_skills[key];
                     if (value) {
-                        psychomotorHtml += `<tr><td>${label}</td><td><strong>${escapeHtml(value)}</strong></td></tr>`;
+                        psychomotorHtml += `<tr><td style="border:1px solid #dee2e6; padding:6px;">${label}</td><td style="border:1px solid #dee2e6; padding:6px; text-align:center;"><strong>${escapeHtml(value)}</strong></td></tr>`;
                     }
                 }
             }
@@ -949,7 +988,7 @@
             <table class="student-info-table">
                 <tr>
                     <td class="info-label">Student Name</td><td colspan="3"><strong>${escapeHtml(student.name)}</strong></td>
-                    <td class="info-label">Admission No.</td><td>${escapeHtml(student.admission_number)}</td>
+                    <td class="info-label">Reg. No</td><td>${escapeHtml(student.admission_number)}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Class</td><td>${escapeHtml(student.class)}</td>
@@ -965,7 +1004,6 @@
                     <td class="info-label">Total Score</td><td>${totalScored} / ${totalMax}</td>
                     <td class="info-label">Percentage</td><td>${overallPercentage}%</td>
                     <td class="info-label">Grade</td><td class="${getGradeClass(overallGrade)}"><strong>${overallGrade}</strong></td>
-                    ${result.promoted_to ? `<td class="info-label">Promoted To</td><td>${escapeHtml(result.promoted_to)}</td>` : ''}
                 </tr>
             </table>
             
@@ -973,12 +1011,12 @@
                 <table class="scores-table">
                     <thead>
                         <tr>
-                            <th>SUBJECT</th>
+                            <th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white; text-align:left;">SUBJECT</th>
                             ${componentHeaders}
-                            <th>Total</th>
-                            <th>%</th>
-                            <th>Grade</th>
-                            <th>Remark</th>
+                            <th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">Total</th>
+                            <th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">%</th>
+                            <th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">Grade</th>
+                            <th style="border:1px solid #dee2e6; padding:8px; background:#1a237e; color:white;">Remark</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -991,13 +1029,13 @@
                 <div class="traits-column">
                     <div class="section-header">AFFECTIVE TRAITS</div>
                     <table class="traits-table">
-                        ${affectiveHtml || '<tr><td colspan="2">No data available</td></tr>'}
+                        ${affectiveHtml || '<tr><td colspan="2" style="text-align:center;">No data available</td></tr>'}
                     </table>
                 </div>
                 <div class="traits-column">
                     <div class="section-header">PSYCHOMOTOR SKILLS</div>
                     <table class="traits-table">
-                        ${psychomotorHtml || '<tr><td colspan="2">No data available</td></tr>'}
+                        ${psychomotorHtml || '<tr><td colspan="2" style="text-align:center;">No data available</td></tr>'}
                     </table>
                 </div>
             </div>
@@ -1010,18 +1048,18 @@
             
             <div class="comments-section">
                 <div class="comment-box">
-                    <div class="comment-label"><i class="fas fa-chalkboard-teacher"></i> Teacher's Comment</div>
+                    <div class="comment-label">Teacher's Comment</div>
                     <div>${escapeHtml(result.teachers_comment) || 'No comment provided.'}</div>
                 </div>
                 <div class="comment-box">
-                    <div class="comment-label"><i class="fas fa-user-tie"></i> Principal's Comment</div>
+                    <div class="comment-label">Principal's Comment</div>
                     <div>${escapeHtml(result.principals_comment) || 'No comment provided.'}</div>
                 </div>
             </div>
             
             <div class="footer-section">
                 <strong>Next Term Resumption:</strong> To be announced by the school<br>
-                <i>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</i>
+                <i>Generated on: ${new Date().toLocaleDateString()}</i>
             </div>
             
             <div class="action-buttons">
@@ -1042,27 +1080,13 @@
                 block: 'start'
             });
 
+            // Updated PDF download using server-side generation
             const downloadBtn = document.getElementById('downloadPDFBtn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
-                    const element = document.getElementById('reportCard');
-                    html2pdf().set({
-                        margin: [0.5, 0.5, 0.5, 0.5],
-                        filename: `${student.name}_${result.session_year}_${result.term}_Report.pdf`,
-                        image: {
-                            type: 'jpeg',
-                            quality: 0.98
-                        },
-                        html2canvas: {
-                            scale: 2,
-                            useCORS: true
-                        },
-                        jsPDF: {
-                            unit: 'in',
-                            format: 'a4',
-                            orientation: 'portrait'
-                        }
-                    }).from(element).save();
+                    // Use server-side PDF generation
+                    const pdfUrl = `api/download_report_pdf.php?student_id=${data.student.id}&session=${result.session_year}&term=${result.term}&pin_id=${data.pin_id || ''}`;
+                    window.open(pdfUrl, '_blank');
                 });
             }
         }
