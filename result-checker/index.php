@@ -744,9 +744,14 @@
 
         function formatPinInput(input) {
             let value = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-            if (value.length > 4) value = value.slice(0, 4) + '-' + value.slice(4);
-            if (value.length > 9) value = value.slice(0, 9) + '-' + value.slice(9);
-            if (value.length > 14) value = value.slice(0, 14);
+
+
+            if (value.length > 4 && value.length <= 8) {
+                value = value.slice(0, 4) + '-' + value.slice(4);
+            } else if (value.length > 8) {
+                value = value.slice(0, 4) + '-' + value.slice(4, 8) + '-' + value.slice(8, 12);
+            }
+
             input.value = value;
         }
 
@@ -1088,7 +1093,7 @@
             const admission_number = document.getElementById('admission_number').value.trim();
             const session_year = document.getElementById('session_year').value;
             const term = document.getElementById('term').value;
-            const pin = document.getElementById('pin').value.trim();
+            let pin = document.getElementById('pin').value.trim();
 
             if (!school_code) return showError('Please select a school');
             if (!admission_number) return showError('Please enter the admission number');
@@ -1096,8 +1101,18 @@
             if (!term) return showError('Please select the term');
             if (!pin) return showError('Please enter the Result Checker PIN');
 
-            const pinPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
-            if (!pinPattern.test(pin)) return showError('Invalid PIN format. Use format: XXXX-XXXX-XXXX');
+            // Remove dashes and spaces from PIN for validation
+            const pinClean = pin.replace(/[-\s]/g, '');
+
+            // Only check if PIN is not empty - don't enforce format
+            if (pinClean.length === 0) {
+                return showError('Please enter a valid PIN');
+            }
+
+            // Optional: Show warning if PIN is too short but still allow
+            if (pinClean.length < 4) {
+                return showError('PIN is too short. Please enter a valid PIN');
+            }
 
             hideError();
             const loading = document.getElementById('loading');
@@ -1116,11 +1131,11 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        school_code,
-                        admission_number,
-                        session_year,
-                        term,
-                        pin: pin.toUpperCase()
+                        school_code: school_code,
+                        admission_number: admission_number,
+                        session_year: session_year,
+                        term: term,
+                        pin: pinClean // Send the cleaned PIN without dashes
                     })
                 });
 
@@ -1131,6 +1146,7 @@
                     showError(data.error || 'Failed to retrieve result.');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 showError('Network error. Please check your connection.');
             } finally {
                 loading.style.display = 'none';
