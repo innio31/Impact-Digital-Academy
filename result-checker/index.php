@@ -809,63 +809,86 @@
             let scoresHtml = '';
             let totalScored = 0;
             let totalMax = 0;
+            let componentHeaders = '';
+            let componentHeadersSet = false;
+            let scoreTypes = [];
 
             if (result.scores && result.scores.length > 0) {
                 result.scores.forEach((score, idx) => {
-                    const subjectTotal = score.total_score || 0;
-                    const subjectMax = score.max_score || 100;
-                    const percentage = score.percentage || ((subjectTotal / subjectMax) * 100).toFixed(2);
-                    totalScored += subjectTotal;
-                    totalMax += subjectMax;
-
-                    // Build component columns dynamically
+                    let subjectTotal = 0;
                     let componentsHtml = '';
+                    let componentNames = [];
+
+                    // Handle different score data formats
                     if (score.components) {
+                        // Format from export
                         for (const [compName, compValue] of Object.entries(score.components)) {
                             componentsHtml += `<td>${compValue || 0}</td>`;
+                            componentNames.push(compName);
+                            subjectTotal += parseFloat(compValue) || 0;
                         }
-                    } else if (score.score_data) {
+                    } else if (score.score_data && typeof score.score_data === 'object') {
+                        // Format from database
                         for (const [compName, compValue] of Object.entries(score.score_data)) {
-                            if (compName !== 'subject_name' && compName !== 'subject_id') {
+                            if (compName !== 'subject_name' && compName !== 'subject_id' && compName !== 'raw_values') {
                                 componentsHtml += `<td>${compValue || 0}</td>`;
+                                componentNames.push(compName);
+                                subjectTotal += parseFloat(compValue) || 0;
                             }
                         }
+                    } else if (score.ca1 !== undefined) {
+                        // Simple format with ca1, ca2, exam
+                        const ca1 = score.ca1 || 0;
+                        const ca2 = score.ca2 || 0;
+                        const exam = score.exam || 0;
+                        componentsHtml = `<td>${ca1}</td><td>${ca2}</td><td>${exam}</td>`;
+                        componentNames = ['CA1', 'CA2', 'Exam'];
+                        subjectTotal = ca1 + ca2 + exam;
+                    }
+
+                    // Use provided values if available
+                    subjectTotal = score.total_score || subjectTotal;
+                    const maxScore = score.max_score || 100;
+                    totalMax += maxScore;
+                    totalScored += subjectTotal;
+
+                    const percentage = score.percentage || ((subjectTotal / maxScore) * 100).toFixed(2);
+
+                    // Set component headers from first score
+                    if (!componentHeadersSet && componentNames.length > 0) {
+                        componentNames.forEach(name => {
+                            componentHeaders += `<th>${escapeHtml(name)}</th>`;
+                        });
+                        componentHeadersSet = true;
+                        scoreTypes = componentNames;
                     }
 
                     scoresHtml += `
-                        <tr>
-                            <td class="subject-col">${(idx + 1)}. ${escapeHtml(score.subject_name)}</td>
-                            ${componentsHtml}
-                            <td><strong>${subjectTotal}</strong></td>
-                            <td>${percentage}%</td>
-                            <td class="${getGradeClass(score.grade)}"><strong>${score.grade || '-'}</strong></td>
-                            <td>${score.remark || '-'}</td>
-                        </tr>
-                    `;
+                <tr>
+                    <td class="subject-col">${(idx + 1)}. ${escapeHtml(score.subject_name)}</td>
+                    ${componentsHtml}
+                    <td><strong>${subjectTotal}</strong></td>
+                    <td>${percentage}%</td>
+                    <td class="${getGradeClass(score.grade)}"><strong>${score.grade || '-'}</strong></td>
+                    <td>${score.remark || getPerformanceRemark(percentage)}</td>
+                </tr>
+            `;
                 });
             }
 
-            // Determine component headers from first score
-            let componentHeaders = '';
-            if (result.scores && result.scores[0]) {
-                const firstScore = result.scores[0];
-                if (firstScore.components) {
-                    for (const compName of Object.keys(firstScore.components)) {
-                        componentHeaders += `<th>${escapeHtml(compName)}</th>`;
-                    }
-                } else if (firstScore.score_data) {
-                    for (const compName of Object.keys(firstScore.score_data)) {
-                        if (compName !== 'subject_name' && compName !== 'subject_id') {
-                            componentHeaders += `<th>${escapeHtml(compName)}</th>`;
-                        }
-                    }
-                }
-            }
-
-            // If no components found, use default
+            // Default component headers if not set
             if (!componentHeaders) {
                 componentHeaders = '<th>CA1</th><th>CA2</th><th>Exam</th>';
             }
+
+            // If no scores found, show message
+            if (!scoresHtml) {
+                scoresHtml = '<tr><td colspan="10" style="text-align:center;">No subject scores available</td></tr>';
+            }
+
+            // Get overall percentage
+            const overallPercentage = result.average || ((totalScored / totalMax) * 100).toFixed(2);
+            const overallGrade = result.grade || calculateGrade(overallPercentage);
 
             // Affective traits
             let affectiveHtml = '';
@@ -907,108 +930,105 @@
                 }
             }
 
-            const overallPercentage = result.average || ((totalScored / totalMax) * 100).toFixed(2);
-            const overallGrade = result.grade || calculateGrade(overallPercentage);
-
             const reportHtml = `
-                <div class="report-card" id="reportCard">
-                    <div class="report-header">
-                        <div class="school-logo">
-                            ${school.logo ? `<img src="${school.logo}" alt="Logo">` : '<i class="fas fa-school"></i>'}
-                        </div>
-                        <div class="school-name">${escapeHtml(school.name)}</div>
-                        <div style="font-size: 0.8rem;">${escapeHtml(school.address || '')}</div>
-                        <div class="report-title">${result.term} TERM REPORT - ${result.session_year}</div>
-                    </div>
-                    
-                    <table class="student-info-table">
-                        <tr>
-                            <td class="info-label">Student Name</td><td colspan="3"><strong>${escapeHtml(student.name)}</strong></td>
-                            <td class="info-label">Admission No.</td><td>${escapeHtml(student.admission_number)}</td>
-                        </tr>
-                        <tr>
-                            <td class="info-label">Class</td><td>${escapeHtml(student.class)}</td>
-                            <td class="info-label">Gender</td><td>${student.gender || 'N/A'}</td>
-                            <td class="info-label">Age</td><td>${calculateAge(student.date_of_birth)}</td>
-                        </tr>
-                        <tr>
-                            <td class="info-label">Position</td><td>${getOrdinal(result.class_position)}</td>
-                            <td class="info-label">Class Size</td><td>${result.class_total || 'N/A'}</td>
-                            <td class="info-label">Days Present</td><td>${result.days_present || 0}</td>
-                        </tr>
-                        <tr>
-                            <td class="info-label">Total Score</td><td>${totalScored} / ${totalMax}</td>
-                            <td class="info-label">Percentage</td><td>${overallPercentage}%</td>
-                            <td class="info-label">Grade</td><td class="${getGradeClass(overallGrade)}"><strong>${overallGrade}</strong></td>
-                            ${result.promoted_to ? `<td class="info-label">Promoted To</td><td>${escapeHtml(result.promoted_to)}</td>` : ''}
-                        </tr>
-                    </table>
-                    
-                    <div class="scores-section">
-                        <table class="scores-table">
-                            <thead>
-                                <tr>
-                                    <th>SUBJECT</th>
-                                    ${componentHeaders}
-                                    <th>Total</th>
-                                    <th>%</th>
-                                    <th>Grade</th>
-                                    <th>Remark</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${scoresHtml}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="traits-row">
-                        <div class="traits-column">
-                            <div class="section-header">AFFECTIVE TRAITS</div>
-                            <table class="traits-table">
-                                ${affectiveHtml || '<tr><td colspan="2">No data available</td></tr>'}
-                            </table>
-                        </div>
-                        <div class="traits-column">
-                            <div class="section-header">PSYCHOMOTOR SKILLS</div>
-                            <table class="traits-table">
-                                ${psychomotorHtml || '<tr><td colspan="2">No data available</td></tr>'}
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <table class="rating-key">
-                        <tr style="background:#f0f0f0; font-weight:bold;">
-                            <td>5: Excellent</td><td>4: Very Good</td><td>3: Good</td><td>2: Pass</td><td>1: Poor</td>
-                        </tr>
-                    </table>
-                    
-                    <div class="comments-section">
-                        <div class="comment-box">
-                            <div class="comment-label"><i class="fas fa-chalkboard-teacher"></i> Teacher's Comment</div>
-                            <div>${escapeHtml(result.teachers_comment) || 'No comment provided.'}</div>
-                        </div>
-                        <div class="comment-box">
-                            <div class="comment-label"><i class="fas fa-user-tie"></i> Principal's Comment</div>
-                            <div>${escapeHtml(result.principals_comment) || 'No comment provided.'}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="footer-section">
-                        <strong>Next Term Resumption:</strong> To be announced by the school<br>
-                        <i>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</i>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Report Card</button>
-                        <button class="btn-download" id="downloadPDFBtn"><i class="fas fa-download"></i> Download PDF</button>
-                    </div>
-                    
-                    <div class="pin-remaining">
-                        <i class="fas fa-info-circle"></i> This PIN has ${data.pin_remaining_uses} remaining usage(s)
-                    </div>
+        <div class="report-card" id="reportCard">
+            <div class="report-header">
+                <div class="school-logo">
+                    ${school.logo ? `<img src="${school.logo}" alt="Logo">` : '<i class="fas fa-school"></i>'}
                 </div>
-            `;
+                <div class="school-name">${escapeHtml(school.name)}</div>
+                <div style="font-size: 0.8rem;">${escapeHtml(school.address || '')}</div>
+                <div class="report-title">${result.term} TERM REPORT - ${result.session_year}</div>
+            </div>
+            
+            <table class="student-info-table">
+                <tr>
+                    <td class="info-label">Student Name</td><td colspan="3"><strong>${escapeHtml(student.name)}</strong></td>
+                    <td class="info-label">Admission No.</td><td>${escapeHtml(student.admission_number)}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Class</td><td>${escapeHtml(student.class)}</td>
+                    <td class="info-label">Gender</td><td>${student.gender || 'N/A'}</td>
+                    <td class="info-label">Age</td><td>${calculateAge(student.date_of_birth)}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Position</td><td>${getOrdinal(result.class_position)}</td>
+                    <td class="info-label">Class Size</td><td>${result.class_total || 'N/A'}</td>
+                    <td class="info-label">Days Present</td><td>${result.days_present || 0}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Total Score</td><td>${totalScored} / ${totalMax}</td>
+                    <td class="info-label">Percentage</td><td>${overallPercentage}%</td>
+                    <td class="info-label">Grade</td><td class="${getGradeClass(overallGrade)}"><strong>${overallGrade}</strong></td>
+                    ${result.promoted_to ? `<td class="info-label">Promoted To</td><td>${escapeHtml(result.promoted_to)}</td>` : ''}
+                </tr>
+            </table>
+            
+            <div class="scores-section">
+                <table class="scores-table">
+                    <thead>
+                        <tr>
+                            <th>SUBJECT</th>
+                            ${componentHeaders}
+                            <th>Total</th>
+                            <th>%</th>
+                            <th>Grade</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${scoresHtml}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="traits-row">
+                <div class="traits-column">
+                    <div class="section-header">AFFECTIVE TRAITS</div>
+                    <table class="traits-table">
+                        ${affectiveHtml || '<tr><td colspan="2">No data available</td></tr>'}
+                    </table>
+                </div>
+                <div class="traits-column">
+                    <div class="section-header">PSYCHOMOTOR SKILLS</div>
+                    <table class="traits-table">
+                        ${psychomotorHtml || '<tr><td colspan="2">No data available</td></tr>'}
+                    </table>
+                </div>
+            </div>
+            
+            <table class="rating-key">
+                <tr style="background:#f0f0f0; font-weight:bold;">
+                    <td>5: Excellent</td><td>4: Very Good</td><td>3: Good</td><td>2: Pass</td><td>1: Poor</td>
+                </tr>
+            </table>
+            
+            <div class="comments-section">
+                <div class="comment-box">
+                    <div class="comment-label"><i class="fas fa-chalkboard-teacher"></i> Teacher's Comment</div>
+                    <div>${escapeHtml(result.teachers_comment) || 'No comment provided.'}</div>
+                </div>
+                <div class="comment-box">
+                    <div class="comment-label"><i class="fas fa-user-tie"></i> Principal's Comment</div>
+                    <div>${escapeHtml(result.principals_comment) || 'No comment provided.'}</div>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <strong>Next Term Resumption:</strong> To be announced by the school<br>
+                <i>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</i>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Report Card</button>
+                <button class="btn-download" id="downloadPDFBtn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+            
+            <div class="pin-remaining">
+                <i class="fas fa-info-circle"></i> This PIN has ${data.pin_remaining_uses} remaining usage(s)
+            </div>
+        </div>
+    `;
 
             container.innerHTML = reportHtml;
             container.style.display = 'block';
@@ -1040,6 +1060,16 @@
                     }).from(element).save();
                 });
             }
+        }
+
+        // Add this helper function
+        function getPerformanceRemark(percentage) {
+            if (percentage >= 70) return 'Excellent';
+            if (percentage >= 60) return 'Very good';
+            if (percentage >= 50) return 'Good';
+            if (percentage >= 40) return 'Pass';
+            if (percentage >= 30) return 'Poor';
+            return 'Fail';
         }
 
         function calculateGrade(percentage) {
