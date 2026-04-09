@@ -1,5 +1,5 @@
 <?php
-// index.php - Updated with school-specific class selection
+// index.php - Complete result checker with full report card display matching generate_report_card.php
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,8 +18,8 @@
 
     <style>
         :root {
-            --primary: #2c3e50;
-            --primary-dark: #1a252f;
+            --primary: #1a237e;
+            --primary-dark: #0d1b5e;
             --secondary: #3498db;
             --secondary-dark: #2980b9;
             --success: #27ae60;
@@ -47,28 +47,12 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
-            background-size: cover;
-            pointer-events: none;
-            z-index: 0;
         }
 
         .container {
-            max-width: 550px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            position: relative;
-            z-index: 1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -76,7 +60,7 @@
 
         .header {
             text-align: center;
-            padding: 40px 20px 30px;
+            padding: 30px 20px;
             color: white;
         }
 
@@ -102,7 +86,6 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 10px;
-            letter-spacing: -0.5px;
         }
 
         .header p {
@@ -118,8 +101,15 @@
             margin-bottom: 30px;
         }
 
-        .form-group {
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
         }
 
         label {
@@ -155,12 +145,6 @@
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
 
-        select:disabled,
-        input:disabled {
-            background: var(--light);
-            cursor: not-allowed;
-        }
-
         .pin-input-wrapper {
             position: relative;
         }
@@ -180,10 +164,6 @@
             color: var(--gray);
             font-size: 18px;
             padding: 5px;
-        }
-
-        .toggle-pin:hover {
-            color: var(--secondary);
         }
 
         .btn-check {
@@ -212,7 +192,6 @@
         .btn-check:disabled {
             opacity: 0.7;
             cursor: not-allowed;
-            transform: none;
         }
 
         .loading {
@@ -238,11 +217,6 @@
             }
         }
 
-        .loading p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
         .error-message {
             background: #fef2f2;
             color: var(--danger);
@@ -253,11 +227,6 @@
             align-items: center;
             gap: 12px;
             border-left: 4px solid var(--danger);
-            font-size: 0.9rem;
-        }
-
-        .error-message i {
-            font-size: 20px;
         }
 
         .info-box {
@@ -267,36 +236,20 @@
             margin-top: 20px;
             display: flex;
             gap: 12px;
-            align-items: flex-start;
             border-left: 4px solid var(--secondary);
         }
 
-        .info-box i {
-            color: var(--secondary);
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        .info-box p {
-            font-size: 0.85rem;
-            color: var(--dark);
-            line-height: 1.5;
-        }
-
-        .info-box strong {
-            color: var(--secondary);
-        }
-
         .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .feature {
             text-align: center;
-            padding: 15px 10px;
+            padding: 15px 25px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: var(--radius-md);
@@ -309,11 +262,6 @@
             display: block;
         }
 
-        .feature span {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
         footer {
             text-align: center;
             margin-top: auto;
@@ -322,21 +270,13 @@
             font-size: 0.8rem;
         }
 
-        footer a {
-            color: white;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
         .result-container {
             display: none;
             margin-top: 30px;
         }
 
-        .result-card {
+        /* Report Card Styles - Matching generate_report_card.php */
+        .report-card {
             background: white;
             border-radius: var(--radius-lg);
             overflow: hidden;
@@ -356,16 +296,16 @@
             }
         }
 
-        .result-header {
+        .report-header {
+            text-align: center;
+            padding: 25px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 30px 25px;
-            text-align: center;
         }
 
         .school-logo {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             background: white;
             border-radius: 50%;
             display: flex;
@@ -373,161 +313,125 @@
             justify-content: center;
             margin: 0 auto 15px;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
         }
 
         .school-logo i {
-            font-size: 35px;
+            font-size: 40px;
             color: var(--primary);
-        }
-
-        .school-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .school-name {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
 
-        .result-title {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            margin-top: 8px;
+        .report-title {
+            font-size: 1rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .student-info {
-            background: var(--light);
-            padding: 20px 25px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            border-bottom: 1px solid #ddd;
+        .student-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f8f9fa;
         }
 
-        .info-item {
-            text-align: center;
+        .student-info-table td {
+            padding: 12px 15px;
+            border: 1px solid #dee2e6;
         }
 
         .info-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--gray);
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-weight: 700;
-            color: var(--dark);
-            font-size: 0.95rem;
+            font-weight: 600;
+            background: #e9ecef;
+            width: 18%;
         }
 
         .scores-section {
-            padding: 20px 25px;
+            padding: 20px;
             overflow-x: auto;
-        }
-
-        .scores-section h3 {
-            font-size: 1rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .scores-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
-            min-width: 500px;
         }
 
         .scores-table th,
         .scores-table td {
-            padding: 12px 8px;
+            padding: 10px 8px;
+            border: 1px solid #dee2e6;
             text-align: left;
-            border-bottom: 1px solid var(--light);
         }
 
         .scores-table th {
-            background: #f8f9fa;
+            background: var(--primary);
+            color: white;
             font-weight: 600;
-            color: var(--primary);
-            position: sticky;
-            top: 0;
-        }
-
-        .scores-table tr:hover {
-            background: #fafafa;
-        }
-
-        .grade-A,
-        .grade-B,
-        .grade-C,
-        .grade-D,
-        .grade-E,
-        .grade-F {
-            font-weight: 700;
-        }
-
-        .grade-A {
-            color: var(--success);
-        }
-
-        .grade-B {
-            color: #27ae60;
-        }
-
-        .grade-C {
-            color: var(--warning);
-        }
-
-        .grade-D {
-            color: #e67e22;
-        }
-
-        .grade-E {
-            color: var(--danger);
-        }
-
-        .grade-F {
-            color: #c0392b;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 20px 25px;
-            background: #f8f9fa;
-            margin: 0 25px 20px;
-            border-radius: var(--radius-md);
-        }
-
-        .summary-item {
             text-align: center;
         }
 
-        .summary-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--gray);
-            margin-bottom: 5px;
+        .scores-table td {
+            text-align: center;
         }
 
-        .summary-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--secondary);
+        .subject-col {
+            text-align: left !important;
+            font-weight: 600;
         }
 
-        .comment-section {
-            padding: 0 25px 20px;
+        .traits-row {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .traits-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .traits-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .traits-table td {
+            padding: 8px 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .section-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .rating-key {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.75rem;
+        }
+
+        .rating-key td {
+            padding: 6px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .comments-section {
+            padding: 20px;
         }
 
         .comment-box {
@@ -535,29 +439,28 @@
             padding: 15px;
             border-radius: var(--radius-md);
             margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
         }
 
         .comment-label {
             font-weight: 600;
             color: var(--primary);
             margin-bottom: 8px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .comment-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #555;
+        .footer-section {
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.8rem;
         }
 
         .action-buttons {
-            padding: 20px 25px;
+            padding: 20px;
             display: flex;
             gap: 15px;
-            border-top: 1px solid var(--light);
+            border-top: 1px solid #dee2e6;
         }
 
         .btn-print,
@@ -573,7 +476,6 @@
             justify-content: center;
             gap: 8px;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
         .btn-print {
@@ -593,90 +495,81 @@
         }
 
         .pin-remaining {
-            text-align: center;
             padding: 15px;
-            font-size: 0.75rem;
-            color: var(--gray);
-            background: #f8f9fa;
-            border-top: 1px solid var(--light);
+            text-align: center;
+            background: #fff3cd;
+            color: #856404;
+            font-size: 0.85rem;
+            border-top: 1px solid #ffeeba;
         }
 
-        @media (max-width: 600px) {
+        .grade-A,
+        .grade-B,
+        .grade-C,
+        .grade-D,
+        .grade-E,
+        .grade-F {
+            font-weight: 700;
+        }
+
+        .grade-A {
+            color: var(--success);
+        }
+
+        .grade-B {
+            color: #2ecc71;
+        }
+
+        .grade-C {
+            color: var(--warning);
+        }
+
+        .grade-D {
+            color: #e67e22;
+        }
+
+        .grade-E {
+            color: var(--danger);
+        }
+
+        .grade-F {
+            color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
             .container {
                 padding: 15px;
-            }
-
-            .header {
-                padding: 20px 15px;
-            }
-
-            .header h1 {
-                font-size: 1.6rem;
             }
 
             .checker-card {
                 padding: 20px;
             }
 
-            .features {
-                gap: 10px;
-            }
-
-            .feature {
-                padding: 12px 8px;
-            }
-
-            .feature i {
-                font-size: 20px;
-            }
-
-            .feature span {
-                font-size: 0.7rem;
-            }
-
-            .student-info {
+            .form-row {
                 grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 15px;
             }
 
-            .summary-grid {
-                grid-template-columns: 1fr 1fr;
-                margin: 0 15px 15px;
-                padding: 15px;
+            .traits-row {
+                flex-direction: column;
+            }
+
+            .student-info-table td {
+                padding: 8px 10px;
+            }
+
+            .info-label {
+                width: 35%;
             }
 
             .action-buttons {
                 flex-direction: column;
-                gap: 10px;
-            }
-
-            .scores-section {
-                padding: 15px;
-            }
-
-            .comment-section {
-                padding: 0 15px 15px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .features {
-                display: none;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
             }
         }
 
         @media print {
             body {
                 background: white;
-            }
-
-            .container {
-                padding: 0;
-                max-width: 100%;
             }
 
             .header,
@@ -694,14 +587,9 @@
                 margin-top: 0;
             }
 
-            .result-card {
+            .report-card {
                 box-shadow: none;
                 border: 1px solid #ddd;
-            }
-
-            .btn-print,
-            .btn-download {
-                display: none;
             }
         }
     </style>
@@ -719,33 +607,37 @@
 
         <div class="checker-card">
             <form id="resultForm">
-                <div class="form-group">
-                    <label><i class="fas fa-school"></i> Select School</label>
-                    <select id="school_code" required>
-                        <option value="">-- Select School --</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-school"></i> Select School</label>
+                        <select id="school_code" required>
+                            <option value="">-- Select School --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> Admission Number</label>
+                        <input type="text" id="admission_number" placeholder="e.g., 2024/001" autocomplete="off" required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label><i class="fas fa-id-card"></i> Admission Number</label>
-                    <input type="text" id="admission_number" placeholder="e.g., 2024/001" autocomplete="off" required>
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Academic Year</label>
+                        <select id="session_year" required>
+                            <option value="">-- Select Year --</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label><i class="fas fa-calendar-alt"></i> Academic Year</label>
-                    <select id="session_year" required>
-                        <option value="">-- Select Year --</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-chalkboard"></i> Term</label>
-                    <select id="term" required>
-                        <option value="">-- Select Term --</option>
-                        <option value="First">First Term</option>
-                        <option value="Second">Second Term</option>
-                        <option value="Third">Third Term</option>
-                    </select>
+                    <div class="form-group">
+                        <label><i class="fas fa-chalkboard"></i> Term</label>
+                        <select id="term" required>
+                            <option value="">-- Select Term --</option>
+                            <option value="First">First Term</option>
+                            <option value="Second">Second Term</option>
+                            <option value="Third">Third Term</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -775,34 +667,20 @@
 
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
-                <p>
-                    <strong>How to get your PIN?</strong><br>
-                    Result Checker PINs are available at your child's school office.
-                    Each PIN can be used up to <strong>3 times</strong>.
-                </p>
+                <p><strong>How to get your PIN?</strong><br>Result Checker PINs are available at your child's school office. Each PIN can be used up to <strong>3 times</strong>.</p>
             </div>
         </div>
 
         <div class="features">
-            <div class="feature">
-                <i class="fas fa-lock"></i>
-                <span>Secure Access</span>
-            </div>
-            <div class="feature">
-                <i class="fas fa-print"></i>
-                <span>Printable Result</span>
-            </div>
-            <div class="feature">
-                <i class="fas fa-download"></i>
-                <span>Download PDF</span>
-            </div>
+            <div class="feature"><i class="fas fa-lock"></i><span>Secure Access</span></div>
+            <div class="feature"><i class="fas fa-print"></i><span>Printable Result</span></div>
+            <div class="feature"><i class="fas fa-download"></i><span>Download PDF</span></div>
         </div>
 
         <div class="result-container" id="resultContainer"></div>
 
         <footer>
             <p>&copy; <?php echo date('Y'); ?> MyResultChecker.com - All rights reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a> | <a href="#">Contact Support</a></p>
         </footer>
     </div>
 
@@ -814,7 +692,6 @@
         function togglePinVisibility() {
             const pinInput = document.getElementById('pin');
             const icon = document.querySelector('.toggle-pin i');
-
             if (pinInput.type === 'password') {
                 pinInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -829,21 +706,16 @@
         async function loadSchools() {
             const schoolSelect = document.getElementById('school_code');
             schoolSelect.innerHTML = '<option value="">-- Loading schools... --</option>';
-
             try {
                 const response = await fetch('api/get_schools.php');
                 const data = await response.json();
-
                 if (data.success && data.schools && data.schools.length > 0) {
                     schoolsList = data.schools;
                     schoolSelect.innerHTML = '<option value="">-- Select School --</option>';
-
                     schoolsList.forEach(school => {
                         const option = document.createElement('option');
                         option.value = school.school_code;
                         option.textContent = school.school_name;
-                        // Store classes as data attribute
-                        option.dataset.classes = JSON.stringify(school.classes || []);
                         schoolSelect.appendChild(option);
                     });
                 } else {
@@ -858,36 +730,23 @@
         function loadSessionYears() {
             const sessionSelect = document.getElementById('session_year');
             const currentYear = new Date().getFullYear();
-            const years = [];
-
+            sessionSelect.innerHTML = '<option value="">-- Select Year --</option>';
             for (let i = 0; i < 5; i++) {
                 const startYear = currentYear - i;
                 const endYear = startYear + 1;
-                years.push(`${startYear}/${endYear}`);
-            }
-
-            sessionSelect.innerHTML = '<option value="">-- Select Year --</option>';
-            years.forEach(year => {
+                const year = `${startYear}/${endYear}`;
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
                 sessionSelect.appendChild(option);
-            });
+            }
         }
 
         function formatPinInput(input) {
             let value = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-
-            if (value.length > 4) {
-                value = value.slice(0, 4) + '-' + value.slice(4);
-            }
-            if (value.length > 9) {
-                value = value.slice(0, 9) + '-' + value.slice(9);
-            }
-            if (value.length > 14) {
-                value = value.slice(0, 14);
-            }
-
+            if (value.length > 4) value = value.slice(0, 4) + '-' + value.slice(4);
+            if (value.length > 9) value = value.slice(0, 9) + '-' + value.slice(9);
+            if (value.length > 14) value = value.slice(0, 14);
             input.value = value;
         }
 
@@ -896,10 +755,7 @@
             const errorText = document.getElementById('errorText');
             errorText.textContent = message;
             errorDiv.style.display = 'flex';
-
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
         }
 
         function hideError() {
@@ -926,196 +782,226 @@
             return gradeMap[grade.toUpperCase()] || '';
         }
 
-        function renderResult(data) {
-            const container = document.getElementById('resultContainer');
+        function calculateAge(dob) {
+            if (!dob) return 'N/A';
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age + ' yrs';
+        }
 
+        function getOrdinal(n) {
+            if (!n) return 'N/A';
+            const s = ['th', 'st', 'nd', 'rd'];
+            const v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+
+        function renderFullReportCard(data) {
+            const container = document.getElementById('resultContainer');
+            const result = data.result;
+            const student = data.student;
+            const school = data.school;
+
+            // Build scores table
             let scoresHtml = '';
             let totalScored = 0;
-            let totalObtainable = 0;
+            let totalMax = 0;
 
-            if (data.result.scores && data.result.scores.length > 0) {
-                data.result.scores.forEach(score => {
-                    const ca1 = score.ca1 || 0;
-                    const ca2 = score.ca2 || 0;
-                    const exam = score.exam || 0;
-                    const subjectTotal = ca1 + ca2 + exam;
-                    const maxCa1 = score.max_ca1 || 20;
-                    const maxCa2 = score.max_ca2 || 20;
-                    const maxExam = score.max_exam || 60;
-                    const subjectMax = maxCa1 + maxCa2 + maxExam;
-
+            if (result.scores && result.scores.length > 0) {
+                result.scores.forEach((score, idx) => {
+                    const subjectTotal = score.total_score || 0;
+                    const subjectMax = score.max_score || 100;
+                    const percentage = score.percentage || ((subjectTotal / subjectMax) * 100).toFixed(2);
                     totalScored += subjectTotal;
-                    totalObtainable += subjectMax;
+                    totalMax += subjectMax;
+
+                    // Build component columns dynamically
+                    let componentsHtml = '';
+                    if (score.components) {
+                        for (const [compName, compValue] of Object.entries(score.components)) {
+                            componentsHtml += `<td>${compValue || 0}</td>`;
+                        }
+                    } else if (score.score_data) {
+                        for (const [compName, compValue] of Object.entries(score.score_data)) {
+                            if (compName !== 'subject_name' && compName !== 'subject_id') {
+                                componentsHtml += `<td>${compValue || 0}</td>`;
+                            }
+                        }
+                    }
 
                     scoresHtml += `
                         <tr>
-                            <td><strong>${escapeHtml(score.subject_name)}</strong></td>
-                            <td>${ca1}</td>
-                            <td>${ca2}</td>
-                            <td>${exam}</td>
+                            <td class="subject-col">${(idx + 1)}. ${escapeHtml(score.subject_name)}</td>
+                            ${componentsHtml}
                             <td><strong>${subjectTotal}</strong></td>
-                            <td>${subjectMax}</td>
-                            <td class="${getGradeClass(score.grade)}">${score.grade || '-'}</td>
+                            <td>${percentage}%</td>
+                            <td class="${getGradeClass(score.grade)}"><strong>${score.grade || '-'}</strong></td>
+                            <td>${score.remark || '-'}</td>
                         </tr>
                     `;
                 });
             }
 
+            // Determine component headers from first score
+            let componentHeaders = '';
+            if (result.scores && result.scores[0]) {
+                const firstScore = result.scores[0];
+                if (firstScore.components) {
+                    for (const compName of Object.keys(firstScore.components)) {
+                        componentHeaders += `<th>${escapeHtml(compName)}</th>`;
+                    }
+                } else if (firstScore.score_data) {
+                    for (const compName of Object.keys(firstScore.score_data)) {
+                        if (compName !== 'subject_name' && compName !== 'subject_id') {
+                            componentHeaders += `<th>${escapeHtml(compName)}</th>`;
+                        }
+                    }
+                }
+            }
+
+            // If no components found, use default
+            if (!componentHeaders) {
+                componentHeaders = '<th>CA1</th><th>CA2</th><th>Exam</th>';
+            }
+
+            // Affective traits
             let affectiveHtml = '';
-            if (data.result.affective_traits) {
-                const traits = data.result.affective_traits;
-                const traitLabels = {
-                    punctuality: 'Punctuality',
-                    attendance: 'Attendance',
-                    politeness: 'Politeness',
-                    honesty: 'Honesty',
-                    neatness: 'Neatness',
-                    reliability: 'Reliability',
-                    relationship: 'Relationship',
-                    self_control: 'Self Control'
+            if (result.affective_traits) {
+                const traits = {
+                    'punctuality': 'Punctuality',
+                    'attendance': 'Attendance',
+                    'politeness': 'Politeness',
+                    'honesty': 'Honesty',
+                    'neatness': 'Neatness',
+                    'reliability': 'Reliability',
+                    'relationship': 'Relationship with others',
+                    'self_control': 'Self Control'
                 };
-
-                for (const [key, value] of Object.entries(traits)) {
-                    if (value && traitLabels[key]) {
-                        affectiveHtml += `<div class="info-item"><span class="info-label">${traitLabels[key]}</span><span class="info-value">${escapeHtml(value)}</span></div>`;
+                for (const [key, label] of Object.entries(traits)) {
+                    const value = result.affective_traits[key];
+                    if (value) {
+                        affectiveHtml += `<tr><td>${label}</td><td><strong>${escapeHtml(value)}</strong></td></tr>`;
                     }
                 }
             }
 
+            // Psychomotor skills
             let psychomotorHtml = '';
-            if (data.result.psychomotor_skills) {
-                const skills = data.result.psychomotor_skills;
-                const skillLabels = {
-                    handwriting: 'Handwriting',
-                    verbal_fluency: 'Verbal Fluency',
-                    sports: 'Sports',
-                    handling_tools: 'Handling Tools',
-                    drawing_painting: 'Drawing/Painting',
-                    musical_skills: 'Musical Skills'
+            if (result.psychomotor_skills) {
+                const skills = {
+                    'handwriting': 'Handwriting',
+                    'verbal_fluency': 'Verbal Fluency',
+                    'sports': 'Sports',
+                    'handling_tools': 'Handling Tools',
+                    'drawing_painting': 'Drawing & Painting',
+                    'musical_skills': 'Musical Skills'
                 };
-
-                for (const [key, value] of Object.entries(skills)) {
-                    if (value && skillLabels[key]) {
-                        psychomotorHtml += `<div class="info-item"><span class="info-label">${skillLabels[key]}</span><span class="info-value">${escapeHtml(value)}</span></div>`;
+                for (const [key, label] of Object.entries(skills)) {
+                    const value = result.psychomotor_skills[key];
+                    if (value) {
+                        psychomotorHtml += `<tr><td>${label}</td><td><strong>${escapeHtml(value)}</strong></td></tr>`;
                     }
                 }
             }
 
-            const percentage = data.result.average || ((totalScored / totalObtainable) * 100).toFixed(2);
+            const overallPercentage = result.average || ((totalScored / totalMax) * 100).toFixed(2);
+            const overallGrade = result.grade || calculateGrade(overallPercentage);
 
-            const resultHtml = `
-                <div class="result-card" id="resultCard">
-                    <div class="result-header">
+            const reportHtml = `
+                <div class="report-card" id="reportCard">
+                    <div class="report-header">
                         <div class="school-logo">
-                            ${data.school.logo ? `<img src="${data.school.logo}" alt="School Logo">` : '<i class="fas fa-school"></i>'}
+                            ${school.logo ? `<img src="${school.logo}" alt="Logo">` : '<i class="fas fa-school"></i>'}
                         </div>
-                        <div class="school-name">${escapeHtml(data.school.name)}</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">${escapeHtml(data.school.address || '')}</div>
-                        <div class="result-title">ACADEMIC RESULT REPORT</div>
+                        <div class="school-name">${escapeHtml(school.name)}</div>
+                        <div style="font-size: 0.8rem;">${escapeHtml(school.address || '')}</div>
+                        <div class="report-title">${result.term} TERM REPORT - ${result.session_year}</div>
                     </div>
                     
-                    <div class="student-info">
-                        <div class="info-item">
-                            <div class="info-label">Student Name</div>
-                            <div class="info-value">${escapeHtml(data.student.name)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Admission No.</div>
-                            <div class="info-value">${escapeHtml(data.student.admission_number)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Class</div>
-                            <div class="info-value">${escapeHtml(data.student.class)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Session / Term</div>
-                            <div class="info-value">${escapeHtml(data.student.session)} | ${escapeHtml(data.student.term)} Term</div>
-                        </div>
-                    </div>
+                    <table class="student-info-table">
+                        <tr>
+                            <td class="info-label">Student Name</td><td colspan="3"><strong>${escapeHtml(student.name)}</strong></td>
+                            <td class="info-label">Admission No.</td><td>${escapeHtml(student.admission_number)}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Class</td><td>${escapeHtml(student.class)}</td>
+                            <td class="info-label">Gender</td><td>${student.gender || 'N/A'}</td>
+                            <td class="info-label">Age</td><td>${calculateAge(student.date_of_birth)}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Position</td><td>${getOrdinal(result.class_position)}</td>
+                            <td class="info-label">Class Size</td><td>${result.class_total || 'N/A'}</td>
+                            <td class="info-label">Days Present</td><td>${result.days_present || 0}</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">Total Score</td><td>${totalScored} / ${totalMax}</td>
+                            <td class="info-label">Percentage</td><td>${overallPercentage}%</td>
+                            <td class="info-label">Grade</td><td class="${getGradeClass(overallGrade)}"><strong>${overallGrade}</strong></td>
+                            ${result.promoted_to ? `<td class="info-label">Promoted To</td><td>${escapeHtml(result.promoted_to)}</td>` : ''}
+                        </tr>
+                    </table>
                     
                     <div class="scores-section">
-                        <h3><i class="fas fa-chart-line"></i> Academic Performance</h3>
-                        <div style="overflow-x: auto;">
-                            <table class="scores-table">
-                                <thead>
-                                    <tr>
-                                        <th>Subject</th>
-                                        <th>CA 1</th>
-                                        <th>CA 2</th>
-                                        <th>Exam</th>
-                                        <th>Total</th>
-                                        <th>Max</th>
-                                        <th>Grade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${scoresHtml}
-                                </tbody>
+                        <table class="scores-table">
+                            <thead>
+                                <tr>
+                                    <th>SUBJECT</th>
+                                    ${componentHeaders}
+                                    <th>Total</th>
+                                    <th>%</th>
+                                    <th>Grade</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${scoresHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="traits-row">
+                        <div class="traits-column">
+                            <div class="section-header">AFFECTIVE TRAITS</div>
+                            <table class="traits-table">
+                                ${affectiveHtml || '<tr><td colspan="2">No data available</td></tr>'}
+                            </table>
+                        </div>
+                        <div class="traits-column">
+                            <div class="section-header">PSYCHOMOTOR SKILLS</div>
+                            <table class="traits-table">
+                                ${psychomotorHtml || '<tr><td colspan="2">No data available</td></tr>'}
                             </table>
                         </div>
                     </div>
                     
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <div class="summary-label">Total Marks</div>
-                            <div class="summary-value">${totalScored} / ${totalObtainable}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Percentage</div>
-                            <div class="summary-value">${percentage}%</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Grade</div>
-                            <div class="summary-value ${getGradeClass(data.result.grade)}">${data.result.grade || '-'}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Class Position</div>
-                            <div class="summary-value">${data.result.class_position || 'N/A'}${data.result.class_total ? '/' + data.result.class_total : ''}</div>
-                        </div>
-                    </div>
+                    <table class="rating-key">
+                        <tr style="background:#f0f0f0; font-weight:bold;">
+                            <td>5: Excellent</td><td>4: Very Good</td><td>3: Good</td><td>2: Pass</td><td>1: Poor</td>
+                        </tr>
+                    </table>
                     
-                    ${data.result.promoted_to ? `
-                    <div style="text-align: center; margin: -10px 25px 15px; padding: 8px; background: #e8f4fd; border-radius: 20px;">
-                        <strong>Promoted to:</strong> ${escapeHtml(data.result.promoted_to)}
-                    </div>
-                    ` : ''}
-                    
-                    ${affectiveHtml ? `
-                    <div style="padding: 0 25px 15px;">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--primary);"><i class="fas fa-heart"></i> Affective Traits</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                            ${affectiveHtml}
-                        </div>
-                    </div>
-                    ` : ''}
-                    
-                    ${psychomotorHtml ? `
-                    <div style="padding: 0 25px 15px;">
-                        <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--primary);"><i class="fas fa-running"></i> Psychomotor Skills</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                            ${psychomotorHtml}
-                        </div>
-                    </div>
-                    ` : ''}
-                    
-                    <div class="comment-section">
+                    <div class="comments-section">
                         <div class="comment-box">
                             <div class="comment-label"><i class="fas fa-chalkboard-teacher"></i> Teacher's Comment</div>
-                            <div class="comment-text">${escapeHtml(data.result.teachers_comment) || 'No comment provided.'}</div>
+                            <div>${escapeHtml(result.teachers_comment) || 'No comment provided.'}</div>
                         </div>
                         <div class="comment-box">
                             <div class="comment-label"><i class="fas fa-user-tie"></i> Principal's Comment</div>
-                            <div class="comment-text">${escapeHtml(data.result.principals_comment) || 'No comment provided.'}</div>
+                            <div>${escapeHtml(result.principals_comment) || 'No comment provided.'}</div>
                         </div>
                     </div>
                     
+                    <div class="footer-section">
+                        <strong>Next Term Resumption:</strong> To be announced by the school<br>
+                        <i>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</i>
+                    </div>
+                    
                     <div class="action-buttons">
-                        <button class="btn-print" onclick="window.print()">
-                            <i class="fas fa-print"></i> Print Result
-                        </button>
-                        <button class="btn-download" id="downloadPDFBtn">
-                            <i class="fas fa-download"></i> Download PDF
-                        </button>
+                        <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Report Card</button>
+                        <button class="btn-download" id="downloadPDFBtn"><i class="fas fa-download"></i> Download PDF</button>
                     </div>
                     
                     <div class="pin-remaining">
@@ -1124,7 +1010,7 @@
                 </div>
             `;
 
-            container.innerHTML = resultHtml;
+            container.innerHTML = reportHtml;
             container.style.display = 'block';
             container.scrollIntoView({
                 behavior: 'smooth',
@@ -1134,28 +1020,35 @@
             const downloadBtn = document.getElementById('downloadPDFBtn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
-                    const element = document.getElementById('resultCard');
-                    const opt = {
+                    const element = document.getElementById('reportCard');
+                    html2pdf().set({
                         margin: [0.5, 0.5, 0.5, 0.5],
-                        filename: `${data.student.name}_${data.student.session}_${data.student.term}_Result.pdf`,
+                        filename: `${student.name}_${result.session_year}_${result.term}_Report.pdf`,
                         image: {
                             type: 'jpeg',
                             quality: 0.98
                         },
                         html2canvas: {
                             scale: 2,
-                            useCORS: true,
-                            logging: false
+                            useCORS: true
                         },
                         jsPDF: {
                             unit: 'in',
                             format: 'a4',
                             orientation: 'portrait'
                         }
-                    };
-                    html2pdf().set(opt).from(element).save();
+                    }).from(element).save();
                 });
             }
+        }
+
+        function calculateGrade(percentage) {
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B';
+            if (percentage >= 60) return 'C';
+            if (percentage >= 50) return 'D';
+            if (percentage >= 40) return 'E';
+            return 'F';
         }
 
         document.getElementById('resultForm').addEventListener('submit', async function(e) {
@@ -1167,35 +1060,16 @@
             const term = document.getElementById('term').value;
             const pin = document.getElementById('pin').value.trim();
 
-            if (!school_code) {
-                showError('Please select a school');
-                return;
-            }
-            if (!admission_number) {
-                showError('Please enter the admission number');
-                return;
-            }
-            if (!session_year) {
-                showError('Please select the academic year');
-                return;
-            }
-            if (!term) {
-                showError('Please select the term');
-                return;
-            }
-            if (!pin) {
-                showError('Please enter the Result Checker PIN');
-                return;
-            }
+            if (!school_code) return showError('Please select a school');
+            if (!admission_number) return showError('Please enter the admission number');
+            if (!session_year) return showError('Please select the academic year');
+            if (!term) return showError('Please select the term');
+            if (!pin) return showError('Please enter the Result Checker PIN');
 
             const pinPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
-            if (!pinPattern.test(pin)) {
-                showError('Invalid PIN format. PIN should be in format: XXXX-XXXX-XXXX');
-                return;
-            }
+            if (!pinPattern.test(pin)) return showError('Invalid PIN format. Use format: XXXX-XXXX-XXXX');
 
             hideError();
-
             const loading = document.getElementById('loading');
             const submitBtn = document.getElementById('submitBtn');
             const resultContainer = document.getElementById('resultContainer');
@@ -1209,28 +1083,25 @@
                 const response = await fetch('api/check_result.php', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        school_code: school_code,
-                        admission_number: admission_number,
-                        session_year: session_year,
-                        term: term,
+                        school_code,
+                        admission_number,
+                        session_year,
+                        term,
                         pin: pin.toUpperCase()
                     })
                 });
 
                 const data = await response.json();
-
                 if (data.success) {
-                    renderResult(data);
+                    renderFullReportCard(data);
                 } else {
-                    showError(data.error || 'Failed to retrieve result. Please check your details and try again.');
+                    showError(data.error || 'Failed to retrieve result.');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                showError('Network error. Please check your internet connection and try again.');
+                showError('Network error. Please check your connection.');
             } finally {
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
@@ -1238,34 +1109,16 @@
             }
         });
 
-        const pinInput = document.getElementById('pin');
-        pinInput.addEventListener('input', function(e) {
+        document.getElementById('pin').addEventListener('input', function(e) {
             formatPinInput(this);
         });
-
-        pinInput.addEventListener('keyup', function(e) {
+        document.getElementById('pin').addEventListener('keyup', function(e) {
             this.value = this.value.toUpperCase();
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             loadSchools();
             loadSessionYears();
-
-            const checkerCard = document.querySelector('.checker-card');
-            checkerCard.style.opacity = '0';
-            checkerCard.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                checkerCard.style.transition = 'all 0.5s ease';
-                checkerCard.style.opacity = '1';
-                checkerCard.style.transform = 'translateY(0)';
-            }, 100);
-        });
-
-        pinInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('resultForm').dispatchEvent(new Event('submit'));
-            }
         });
     </script>
 </body>
