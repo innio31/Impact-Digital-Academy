@@ -1,37 +1,36 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 
-require_once 'config.php';
+include 'db_connect.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-$id_number = $data['id_number'] ?? '';
+$id_number = isset($data['id_number']) ? $conn->real_escape_string($data['id_number']) : '';
 
 if (empty($id_number)) {
     echo json_encode(['success' => false, 'message' => 'ID Number is required']);
-    exit();
+    exit;
 }
 
-try {
-    $stmt = $pdo->prepare("SELECT * FROM members WHERE id_number = ? AND is_active = 1");
-    $stmt->execute([$id_number]);
-    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+// Check if member exists
+$sql = "SELECT id, id_number, first_name, last_name, designation, command, role, gender, 
+        phone_number, email, profile_picture, date_of_birth, date_joined, is_active 
+        FROM members WHERE id_number = '$id_number' AND is_active = 1";
 
-    if ($member) {
-        // Remove sensitive data if any
-        unset($member['password']);
-        echo json_encode([
-            'success' => true,
-            'member' => $member
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'ID Number not found or inactive'
-        ]);
-    }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    $member = $result->fetch_assoc();
+    echo json_encode([
+        'success' => true,
+        'member' => $member
+    ]);
+} else {
+    echo json_encode([
+        'success' => false,
+        'message' => 'ID Number not found or account is inactive'
+    ]);
 }
+
+$conn->close();
