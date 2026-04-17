@@ -1254,21 +1254,35 @@ $totalProducts = count($products);
     <!-- Delivery Modal -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
-            <h3>📦 Mark Order as Delivered</h3>
+            <h3>📦 Confirm Delivery</h3>
             <form method="POST" id="deliveryForm">
                 <input type="hidden" name="action" value="mark_delivered">
                 <input type="hidden" name="order_id" id="deliveryOrderId">
                 <div class="form-group">
                     <label>Order Number</label>
-                    <input type="text" id="deliveryOrderNumber" readonly style="background: #f0f0f0;">
+                    <input type="text" id="deliveryOrderNumber" readonly style="background: #f0f0f0; font-weight: bold; font-size: 1rem;">
                 </div>
                 <div class="form-group">
-                    <label>Delivered By (Your Name/ID)</label>
-                    <input type="text" name="delivered_by" id="deliveredByName" required placeholder="Enter your name or staff ID">
+                    <label>Delivered By</label>
+                    <input type="text" name="delivered_by" id="deliveredByName" readonly style="background: #f0f0f0; font-weight: 600; color: #cc0000; font-size: 1rem;" value="<?= htmlspecialchars($_SESSION['admin_fullname'] ?? $_SESSION['admin_username'] ?? 'Admin') ?>">
+                    <small style="color: #28a745; display: block; margin-top: 5px;">
+                        ✓ Automatically detected from your account (<?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?>)
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Confirmation</label>
+                    <div style="background: #e8f4f8; padding: 12px; border-radius: 8px; margin-top: 5px;">
+                        <p style="font-size: 0.85rem; margin: 0 0 8px 0;"><strong>By confirming, you acknowledge that:</strong></p>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.8rem;">
+                            <li>The goods have been physically handed over to the customer</li>
+                            <li>The customer has received all items in good condition</li>
+                            <li>This delivery will be recorded with your name and timestamp</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-cancel" onclick="closeDeliveryModal()">Cancel</button>
-                    <button type="submit" class="btn-save">✅ Confirm Delivery</button>
+                    <button type="submit" class="btn-save" onclick="return confirm('Confirm delivery of order #' + document.getElementById('deliveryOrderNumber').value + '? This action cannot be undone.')">✅ Confirm Delivery</button>
                 </div>
             </form>
         </div>
@@ -1380,25 +1394,16 @@ $totalProducts = count($products);
             document.getElementById('productModal').style.display = 'none';
         }
 
-        // Delivery modal functions
+        // Delivery modal functions - simplified since name is auto-detected from session
         function showDeliveryModal(orderId, orderNumber) {
             document.getElementById('deliveryOrderId').value = orderId;
             document.getElementById('deliveryOrderNumber').value = orderNumber;
-            document.getElementById('deliveredByName').value = '';
+            // Name is already auto-filled from PHP session value
             document.getElementById('deliveryModal').style.display = 'flex';
         }
 
         function closeDeliveryModal() {
             document.getElementById('deliveryModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target === document.getElementById('productModal')) {
-                closeModal();
-            }
-            if (event.target === document.getElementById('deliveryModal')) {
-                closeDeliveryModal();
-            }
         }
     </script>
 </body>

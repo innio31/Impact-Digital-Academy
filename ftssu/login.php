@@ -7,14 +7,14 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
-    
+
     $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = ?");
     $stmt->execute([$username]);
     $admin = $stmt->fetch();
-    
+
     // Check both hashed password and plain text (for compatibility)
     $loginSuccess = false;
-    
+
     if ($admin) {
         // Check if password matches hashed version
         if (password_verify($password, $admin['password'])) {
@@ -29,10 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt->execute([$hashed, $admin['id']]);
         }
     }
-    
+
     if ($loginSuccess) {
         $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_username'] = $username;
+        $_SESSION['admin_id'] = $admin['id'];
+        $_SESSION['admin_username'] = $admin['username'];
+        // Store full name - use existing or fallback to username
+        $_SESSION['admin_fullname'] = !empty($admin['full_name']) ? $admin['full_name'] : $admin['username'];
         header('Location: admin.php');
         exit();
     } else {
@@ -42,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
@@ -60,24 +65,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             align-items: center;
         }
+
         .login-container {
             background: white;
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 400px;
             border-top: 5px solid #cc0000;
         }
+
         h2 {
             color: #cc0000;
             text-align: center;
             margin-bottom: 1.5rem;
         }
+
         .input-group {
             position: relative;
             margin: 1rem 0;
         }
+
         .input-group input {
             width: 100%;
             padding: 12px;
@@ -87,10 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1rem;
             transition: border-color 0.3s;
         }
+
         .input-group input:focus {
             outline: none;
             border-color: #cc0000;
         }
+
         .toggle-password {
             position: absolute;
             right: 12px;
@@ -103,9 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
             padding: 0;
         }
+
         .toggle-password:hover {
             color: #cc0000;
         }
+
         button[type="submit"] {
             width: 100%;
             padding: 12px;
@@ -119,9 +132,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 1rem;
             transition: background 0.3s;
         }
+
         button[type="submit"]:hover {
             background: #990000;
         }
+
         .error {
             color: red;
             text-align: center;
@@ -130,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #ffe0e0;
             border-radius: 4px;
         }
+
         .info {
             text-align: center;
             margin-top: 1rem;
@@ -139,10 +155,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 8px;
             border-radius: 4px;
         }
+
         .logo {
             text-align: center;
             margin-bottom: 1rem;
         }
+
         .logo-icon {
             background: #cc0000;
             width: 60px;
@@ -153,12 +171,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             margin: 0 auto 1rem;
         }
+
         .logo-icon span {
             font-size: 2rem;
             color: white;
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <div class="logo">
@@ -179,17 +199,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit">Login</button>
         </form>
-        <?php if($error): ?>
+        <?php if ($error): ?>
             <div class="error"><?php echo $error; ?></div>
         <?php endif; ?>
-        
+
     </div>
 
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleBtn = document.querySelector('.toggle-password');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleBtn.innerHTML = '🙈';
@@ -200,4 +220,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 </body>
+
 </html>
