@@ -53,13 +53,13 @@ if (isset($_GET['export'])) {
     $startDate = $_GET['start_date'] ?? '';
     $endDate = $_GET['end_date'] ?? '';
 
-    $query = "SELECT * FROM orders";
+    $query = "SELECT * FROM orders WHERE 1=1";
     $params = [];
     if ($startDate && $endDate) {
-        $query .= " WHERE DATE(created_at) BETWEEN ? AND ? ORDER BY created_at DESC";
+        $query .= " AND DATE(created_at) BETWEEN ? AND ? ORDER BY created_at DESC";
         $params = [$startDate, $endDate];
     } elseif ($startDate) {
-        $query .= " WHERE DATE(created_at) = ? ORDER BY created_at DESC";
+        $query .= " AND DATE(created_at) = ? ORDER BY created_at DESC";
         $params = [$startDate];
     } else {
         $query .= " ORDER BY created_at DESC";
@@ -73,7 +73,7 @@ if (isset($_GET['export'])) {
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="orders_' . date('Y-m-d') . '.csv"');
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Order #', 'Customer Name', 'Phone', 'Command', 'Total Amount', 'Status', 'Delivery Date', 'Delivered By', 'Created At']);
+        fputcsv($output, ['Order #', 'Customer Name', 'Phone', 'Command', 'Total Amount', 'Status', 'Order Date', 'Delivery Date', 'Delivered By']);
         foreach ($orders as $order) {
             fputcsv($output, [
                 $order['order_number'],
@@ -82,52 +82,12 @@ if (isset($_GET['export'])) {
                 $order['customer_command'],
                 $order['total_amount'],
                 $order['status'],
-                $order['delivered_at'] ?? '',
-                $order['delivered_by'] ?? '',
-                $order['created_at']
+                date('Y-m-d H:i', strtotime($order['created_at'])),
+                $order['delivered_at'] ? date('Y-m-d H:i', strtotime($order['delivered_at'])) : '',
+                $order['delivered_by'] ?? ''
             ]);
         }
         fclose($output);
-        exit();
-    } elseif ($_GET['export'] === 'pdf') {
-        // Check if TCPDF exists, if not, show error
-        if (!file_exists('tcpdf/tcpdf.php')) {
-            die('TCPDF library not found. Please install TCPDF or use CSV export.');
-        }
-        require_once('tcpdf/tcpdf.php');
-        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetCreator('Faith Tabernacle Security');
-        $pdf->SetAuthor('Admin');
-        $pdf->SetTitle('Orders Report');
-        $pdf->SetHeaderData('', 0, 'Orders Report', 'Generated: ' . date('Y-m-d'));
-        $pdf->setHeaderFont(['helvetica', '', 10]);
-        $pdf->setFooterFont(['helvetica', '', 8]);
-        $pdf->SetDefaultMonospacedFont('courier');
-        $pdf->SetMargins(15, 20, 15);
-        $pdf->SetAutoPageBreak(true, 25);
-        $pdf->AddPage();
-        $html = '<h2>Orders Report</h2>
-                 <table border="1" cellpadding="5">
-                  <thead>
-                    <tr>
-                    <th>Order #</th><th>Customer</th><th>Phone</th><th>Command</th><th>Total</th><th>Status</th><th>Delivered</th>
-                    </tr>
-                  </thead>
-                  <tbody>';
-        foreach ($orders as $order) {
-            $html .= '<tr>
-                        <td>' . htmlspecialchars($order['order_number']) . '</td>
-                        <td>' . htmlspecialchars($order['customer_name']) . '</td>
-                        <td>' . htmlspecialchars($order['customer_phone']) . '</td>
-                        <td>' . htmlspecialchars($order['customer_command']) . '</td>
-                        <td>₦' . number_format($order['total_amount'], 0) . '</td>
-                        <td>' . ucfirst($order['status']) . '</td>
-                        <td>' . ($order['delivered_at'] ? date('d/m/y', strtotime($order['delivered_at'])) : '-') . '</td>
-                       </tr>';
-        }
-        $html .= '</tbody></table>';
-        $pdf->writeHTML($html, true, false, true, false, '');
-        $pdf->Output('orders_' . date('Y-m-d') . '.pdf', 'D');
         exit();
     }
 }
@@ -139,7 +99,7 @@ $products = $pdo->query("SELECT * FROM products ORDER BY sort_order ASC, id ASC"
 $startDateFilter = $_GET['start_date'] ?? '';
 $endDateFilter = $_GET['end_date'] ?? '';
 
-// Build orders query with date filter - FIXED filtering logic
+// Build orders query with date filter
 $ordersQuery = "SELECT * FROM orders WHERE 1=1";
 $filterParams = [];
 
@@ -189,7 +149,6 @@ $totalProducts = count($products);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Admin Dashboard - Faith Tabernacle Security</title>
-    <!-- SortableJS for drag-and-drop -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         * {
@@ -257,6 +216,12 @@ $totalProducts = count($products);
             margin-top: 2px;
         }
 
+        .welcome-text {
+            font-size: 0.8rem;
+            color: #cc0000;
+            font-weight: 600;
+        }
+
         .logout-btn {
             background: #cc0000;
             color: white;
@@ -317,7 +282,6 @@ $totalProducts = count($products);
             margin: 0 auto;
         }
 
-        /* Tab Navigation */
         .tab-navigation {
             display: flex;
             gap: 0.5rem;
@@ -401,7 +365,6 @@ $totalProducts = count($products);
             gap: 8px;
         }
 
-        /* Export Bar */
         .export-bar {
             background: #f8f9fa;
             padding: 1rem;
@@ -459,10 +422,6 @@ $totalProducts = count($products);
             background: #17a2b8;
         }
 
-        .btn-export-pdf {
-            background: #dc3545;
-        }
-
         .btn-filter {
             background: #cc0000;
         }
@@ -495,10 +454,6 @@ $totalProducts = count($products);
             background: #28a745;
         }
 
-        .btn-save-order:hover {
-            background: #1e7e34;
-        }
-
         .btn-success {
             background: #28a745;
             color: white;
@@ -510,10 +465,6 @@ $totalProducts = count($products);
             margin: 2px;
         }
 
-        .btn-success:hover {
-            background: #1e7e34;
-        }
-
         .btn-delivered {
             background: #17a2b8;
             color: white;
@@ -523,10 +474,6 @@ $totalProducts = count($products);
             cursor: pointer;
             font-size: 0.75rem;
             margin: 2px;
-        }
-
-        .btn-delivered:hover {
-            background: #138496;
         }
 
         .btn-edit {
@@ -561,7 +508,6 @@ $totalProducts = count($products);
             font-size: 0.75rem;
         }
 
-        /* Drag and drop styles */
         .sortable-list {
             list-style: none;
             margin: 0;
@@ -583,25 +529,12 @@ $totalProducts = count($products);
             gap: 0.5rem;
         }
 
-        .sortable-item:active {
-            cursor: grabbing;
-        }
-
-        .sortable-item.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-        }
-
         .drag-handle {
             cursor: grab;
             color: #999;
             font-size: 1.2rem;
             display: inline-flex;
             align-items: center;
-        }
-
-        .drag-handle:active {
-            cursor: grabbing;
         }
 
         .product-info-drag {
@@ -623,7 +556,7 @@ $totalProducts = count($products);
 
         @media (max-width: 768px) {
             .desktop-table {
-                display: none;
+                overflow-x: auto;
             }
 
             .mobile-cards {
@@ -675,20 +608,20 @@ $totalProducts = count($products);
                 width: 100%;
             }
 
-            .sortable-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .product-info-drag {
-                width: 100%;
-            }
-
             .tab-btn {
                 flex: 1;
                 justify-content: center;
                 font-size: 0.75rem;
                 padding: 0.6rem;
+            }
+
+            .desktop-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .desktop-table table {
+                min-width: 900px;
             }
         }
 
@@ -723,16 +656,6 @@ $totalProducts = count($products);
         .status-pending {
             background: #ffc107;
             color: #333;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-paid {
-            background: #17a2b8;
-            color: white;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.7rem;
@@ -845,13 +768,6 @@ $totalProducts = count($products);
             flex: 1;
         }
 
-        .status-select {
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            font-size: 0.75rem;
-        }
-
         .reorder-notice {
             background: #e8f4f8;
             padding: 0.5rem 0.8rem;
@@ -865,17 +781,25 @@ $totalProducts = count($products);
             flex-wrap: wrap;
         }
 
-        /* Delivery info tooltip */
-        .delivery-info {
-            font-size: 0.65rem;
-            color: #666;
-            margin-top: 3px;
-        }
-
         .no-data {
             text-align: center;
             padding: 2rem;
             color: #999;
+        }
+
+        .date-column {
+            white-space: nowrap;
+            font-size: 0.8rem;
+        }
+
+        .order-date {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-time {
+            font-size: 0.65rem;
+            color: #888;
         }
     </style>
 </head>
@@ -892,7 +816,10 @@ $totalProducts = count($products);
                     <div class="header-subtitle">Admin Control Panel</div>
                 </div>
             </div>
-            <a href="admin_logout.php" class="logout-btn">🚪 Logout</a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['admin_fullname'] ?? $_SESSION['admin_username'] ?? 'Admin') ?>!</div>
+                <a href="logout.php" class="logout-btn">🚪 Logout</a>
+            </div>
         </div>
     </div>
 
@@ -915,13 +842,12 @@ $totalProducts = count($products);
         </div>
         <div class="stat-card">
             <div class="stat-number">₦<?= number_format($completedRevenue) ?></div>
-            <div class="stat-label">Revenue (Completed+Delivered)</div>
-            <div class="revenue-info">✓ Only confirmed payments</div>
+            <div class="stat-label">Revenue</div>
+            <div class="revenue-info">✓ Confirmed payments</div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Export Section - Moved outside tabs so it's always visible -->
         <div class="export-bar">
             <form method="GET" class="date-filter" id="filterForm" action="">
                 <div class="filter-group">
@@ -937,11 +863,9 @@ $totalProducts = count($products);
             </form>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 <a href="?export=csv&start_date=<?= urlencode($startDateFilter) ?>&end_date=<?= urlencode($endDateFilter) ?>" class="btn-export btn-export-csv">📊 Export CSV</a>
-                <a href="?export=pdf&start_date=<?= urlencode($startDateFilter) ?>&end_date=<?= urlencode($endDateFilter) ?>" class="btn-export btn-export-pdf">📄 Export PDF</a>
             </div>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="tab-navigation">
             <button class="tab-btn active" onclick="switchTab('products')">
                 📦 Products Management
@@ -960,10 +884,9 @@ $totalProducts = count($products);
                 </div>
 
                 <div class="reorder-notice">
-                    🔄 <strong>Drag and Drop to Reorder Products</strong> - Simply drag the ☰ icon next to any product to rearrange the order. Click "Save Order" when done.
+                    🔄 <strong>Drag and Drop to Reorder Products</strong> - Drag the ☰ icon to rearrange. Click "Save Order" when done.
                 </div>
 
-                <!-- Drag and Drop Sortable List -->
                 <form method="POST" id="reorderForm">
                     <input type="hidden" name="action" value="reorder_products">
                     <input type="hidden" name="order_data" id="orderDataInput">
@@ -994,42 +917,6 @@ $totalProducts = count($products);
                         <button type="button" class="btn-primary btn-save-order" onclick="saveProductOrder()">💾 Save Product Order</button>
                     </div>
                 </form>
-
-                <!-- Table View Toggle -->
-                <div style="margin-top: 2rem;">
-                    <details>
-                        <summary style="cursor: pointer; color: #cc0000; font-weight: 600; margin-bottom: 0.5rem;">📋 View as Table</summary>
-                        <div class="desktop-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Sort Order</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Custom</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($products as $product): ?>
-                                        <tr>
-                                            <td><?= $product['id'] ?></td>
-                                            <td><?= $product['sort_order'] ?></td>
-                                            <td><?= htmlspecialchars($product['name']) ?></td>
-                                            <td>₦<?= number_format($product['price'], 0) ?></td>
-                                            <td><?= $product['has_custom_price'] ? '✅' : '❌' ?></td>
-                                            <td>
-                                                <button class="btn-edit" onclick='editProduct(<?= json_encode($product) ?>)'>✏️ Edit</button>
-                                                <button class="btn-delete" onclick="deleteProduct(<?= $product['id'] ?>)">🗑️ Del</button>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </details>
-                </div>
             </div>
         </div>
 
@@ -1041,7 +928,6 @@ $totalProducts = count($products);
                 </div>
 
                 <?php if (count($orders) > 0): ?>
-                    <!-- Desktop Table View -->
                     <div class="desktop-table">
                         <table>
                             <thead>
@@ -1052,149 +938,145 @@ $totalProducts = count($products);
                                     <th>Command</th>
                                     <th>Total</th>
                                     <th>Status</th>
-                                    <th>Delivered Info</th>
-                                    <th>Date</th>
+                                    <th>Order Date & Time</th>
+                                    <th>Delivered By</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($orders as $order): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($order['order_number']) ?></td>
-                                        <td><?= htmlspecialchars($order['customer_name'] ?: 'N/A') ?></td>
-                                        <td><?= htmlspecialchars($order['customer_phone'] ?: 'N/A') ?></td>
-                                        <td><?= htmlspecialchars($order['customer_command'] ?: 'N/A') ?></td>
-                                        <td>₦<?= number_format($order['total_amount'], 0) ?></td>
+                                        <td><strong><?= htmlspecialchars($order['order_number']) ?></strong></span></td>
+                                        <td><?= htmlspecialchars($order['customer_name'] ?: 'N/A') ?></span></td>
+                                        <td><?= htmlspecialchars($order['customer_phone'] ?: 'N/A') ?></span></span></span></span></span></span></span></span></td>
+                                        <td><?= htmlspecialchars($order['customer_command'] ?: 'N/A') ?></span></span></span></span></span></span></span></span></td>
+                                        <td><strong>₦<?= number_format($order['total_amount'], 0) ?></strong></span></span></span></span></span></span></span></span></td>
                                         <td>
                                             <?php if ($order['status'] == 'pending'): ?>
-                                                <span class="status-pending">Pending</span>
-                                            <?php elseif ($order['status'] == 'paid'): ?>
-                                                <span class="status-paid">Paid</span>
+                                                <span class="status-pending">⏳ Pending</span>
                                             <?php elseif ($order['status'] == 'completed'): ?>
-                                                <span class="status-completed">Completed</span>
+                                                <span class="status-completed">✅ Completed</span>
                                             <?php elseif ($order['status'] == 'delivered'): ?>
-                                                <span class="status-delivered">Delivered ✓</span>
+                                                <span class="status-delivered">📦 Delivered</span>
                                             <?php elseif ($order['status'] == 'cancelled'): ?>
-                                                <span class="status-cancelled">Cancelled</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($order['status'] == 'delivered' && $order['delivered_at']): ?>
-                                                <div style="font-size: 0.7rem;">
-                                                    By: <?= htmlspecialchars($order['delivered_by'] ?? 'Admin') ?><br>
-                                                    On: <?= date('d/m/y H:i', strtotime($order['delivered_at'])) ?>
-                                                </div>
-                                            <?php else: ?>
-                                                -
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?= date('d/m/y', strtotime($order['created_at'])) ?></td>
-                                        <td>
-                                            <?php if ($order['status'] == 'pending'): ?>
-                                                <form method="POST" style="display: inline;">
-                                                    <input type="hidden" name="action" value="confirm_payment">
-                                                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                                    <button type="submit" class="btn-success" onclick="return confirm('Confirm payment for order <?= htmlspecialchars($order['order_number']) ?>?')">
-                                                        ✅ Confirm
-                                                    </button>
-                                                </form>
-                                            <?php endif; ?>
-
-                                            <?php if ($order['status'] == 'completed'): ?>
-                                                <button class="btn-delivered" onclick="showDeliveryModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number']) ?>')">
-                                                    📦 Mark Delivered
-                                                </button>
-                                            <?php endif; ?>
-
-                                            <button class="btn-view" onclick="viewOrder(<?= $order['id'] ?>)">View</button>
-
-                                            <?php if ($order['status'] != 'delivered' && $order['status'] != 'completed' && $order['status'] != 'cancelled'): ?>
-                                                <form method="POST" style="display: inline;">
-                                                    <input type="hidden" name="action" value="update_order_status">
-                                                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                                    <input type="hidden" name="status" value="cancelled">
-                                                    <button type="submit" class="btn-delete" onclick="return confirm('Cancel this order?')">Cancel</button>
-                                                </form>
+                                                <span class="status-cancelled">❌ Cancelled</span>
                                             <?php endif; ?>
                                             </span>
-                                        </td>
+                                        <td class="date-column">
+                                            <div class="order-date"><?= date('d/m/Y', strtotime($order['created_at'])) ?></div>
+                                            <div class="order-time"><?= date('h:i A', strtotime($order['created_at'])) ?></div>
+                                            </span>
+                                        <td>
+                                            <?php if ($order['status'] == 'delivered' && $order['delivered_by']): ?>
+                                                <?= htmlspecialchars($order['delivered_by']) ?>
+                                            <?php else: ?>
+                                                <span style="color: #999;">-</span>
+                                            <?php endif; ?>
+                                            </span>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <?php if ($order['status'] == 'pending'): ?>
+                                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Confirm payment for order <?= htmlspecialchars($order['order_number']) ?>?')">
+                                                        <input type="hidden" name="action" value="confirm_payment">
+                                                        <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                                        <button type="submit" class="btn-success">✅ Confirm</button>
+                                                    </form>
+                                                <?php endif; ?>
+
+                                                <?php if ($order['status'] == 'completed'): ?>
+                                                    <button type="button" class="btn-delivered" onclick="showDeliveryModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number']) ?>')">
+                                                        📦 Mark Delivered
+                                                    </button>
+                                                <?php endif; ?>
+
+                                                <button type="button" class="btn-view" onclick="viewOrder(<?= $order['id'] ?>)">👁️ View</button>
+
+                                                <?php if ($order['status'] == 'pending'): ?>
+                                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Cancel this order?')">
+                                                        <input type="hidden" name="action" value="update_order_status">
+                                                        <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                                        <input type="hidden" name="status" value="cancelled">
+                                                        <button type="submit" class="btn-delete">❌ Cancel</button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </div>
+                                            </span>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Mobile Cards View -->
                     <div class="mobile-cards">
                         <?php foreach ($orders as $order): ?>
                             <div class="product-card-item">
                                 <div class="product-row">
-                                    <span class="product-label">Order #</span>
+                                    <span class="product-label">📋 Order #</span>
                                     <span class="product-value"><strong><?= htmlspecialchars($order['order_number']) ?></strong></span>
                                 </div>
                                 <div class="product-row">
-                                    <span class="product-label">Customer</span>
+                                    <span class="product-label">👤 Customer</span>
                                     <span class="product-value"><?= htmlspecialchars($order['customer_name'] ?: 'N/A') ?></span>
                                 </div>
                                 <div class="product-row">
-                                    <span class="product-label">Phone</span>
+                                    <span class="product-label">📞 Phone</span>
                                     <span class="product-value"><?= htmlspecialchars($order['customer_phone'] ?: 'N/A') ?></span>
                                 </div>
                                 <div class="product-row">
-                                    <span class="product-label">Command</span>
+                                    <span class="product-label">⚔️ Command</span>
                                     <span class="product-value"><?= htmlspecialchars($order['customer_command'] ?: 'N/A') ?></span>
                                 </div>
                                 <div class="product-row">
-                                    <span class="product-label">Total</span>
-                                    <span class="product-value">₦<?= number_format($order['total_amount'], 0) ?></span>
+                                    <span class="product-label">💰 Total</span>
+                                    <span class="product-value"><strong>₦<?= number_format($order['total_amount'], 0) ?></strong></span>
                                 </div>
                                 <div class="product-row">
-                                    <span class="product-label">Status</span>
+                                    <span class="product-label">📅 Order Date</span>
+                                    <span class="product-value"><?= date('d/m/Y h:i A', strtotime($order['created_at'])) ?></span>
+                                </div>
+                                <div class="product-row">
+                                    <span class="product-label">📌 Status</span>
                                     <span class="product-value">
                                         <?php if ($order['status'] == 'pending'): ?>
-                                            <span class="status-pending">Pending</span>
-                                        <?php elseif ($order['status'] == 'paid'): ?>
-                                            <span class="status-paid">Paid</span>
+                                            <span class="status-pending">⏳ Pending</span>
                                         <?php elseif ($order['status'] == 'completed'): ?>
-                                            <span class="status-completed">Completed</span>
+                                            <span class="status-completed">✅ Completed</span>
                                         <?php elseif ($order['status'] == 'delivered'): ?>
-                                            <span class="status-delivered">Delivered ✓</span>
+                                            <span class="status-delivered">📦 Delivered</span>
                                         <?php elseif ($order['status'] == 'cancelled'): ?>
-                                            <span class="status-cancelled">Cancelled</span>
+                                            <span class="status-cancelled">❌ Cancelled</span>
                                         <?php endif; ?>
                                     </span>
                                 </div>
-                                <?php if ($order['status'] == 'delivered' && $order['delivered_at']): ?>
+                                <?php if ($order['status'] == 'delivered' && $order['delivered_by']): ?>
                                     <div class="product-row">
-                                        <span class="product-label">Delivered By</span>
-                                        <span class="product-value"><?= htmlspecialchars($order['delivered_by'] ?? 'Admin') ?></span>
+                                        <span class="product-label">📦 Delivered By</span>
+                                        <span class="product-value"><?= htmlspecialchars($order['delivered_by']) ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <div class="product-actions">
                                     <?php if ($order['status'] == 'pending'): ?>
-                                        <form method="POST" style="display: inline;">
+                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Confirm payment for order <?= htmlspecialchars($order['order_number']) ?>?')">
                                             <input type="hidden" name="action" value="confirm_payment">
                                             <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                            <button type="submit" class="btn-success" onclick="return confirm('Confirm payment for order <?= htmlspecialchars($order['order_number']) ?>?')">
-                                                ✅ Confirm
-                                            </button>
+                                            <button type="submit" class="btn-success">✅ Confirm</button>
                                         </form>
                                     <?php endif; ?>
 
                                     <?php if ($order['status'] == 'completed'): ?>
-                                        <button class="btn-delivered" onclick="showDeliveryModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number']) ?>')">
+                                        <button type="button" class="btn-delivered" onclick="showDeliveryModal(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_number']) ?>')">
                                             📦 Mark Delivered
                                         </button>
                                     <?php endif; ?>
 
-                                    <button class="btn-view" onclick="viewOrder(<?= $order['id'] ?>)">View</button>
+                                    <button type="button" class="btn-view" onclick="viewOrder(<?= $order['id'] ?>)">👁️ View</button>
 
-                                    <?php if ($order['status'] != 'delivered' && $order['status'] != 'completed' && $order['status'] != 'cancelled'): ?>
-                                        <form method="POST" style="display: inline;">
+                                    <?php if ($order['status'] == 'pending'): ?>
+                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Cancel this order?')">
                                             <input type="hidden" name="action" value="update_order_status">
                                             <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                             <input type="hidden" name="status" value="cancelled">
-                                            <button type="submit" class="btn-delete" onclick="return confirm('Cancel this order?')">Cancel</button>
+                                            <button type="submit" class="btn-delete">❌ Cancel</button>
                                         </form>
                                     <?php endif; ?>
                                 </div>
@@ -1209,7 +1091,7 @@ $totalProducts = count($products);
             </div>
         </div>
 
-        <div class="security-footer" style="text-align: center; margin-top: 1rem; font-size: 0.7rem; color: #888;">
+        <div style="text-align: center; margin-top: 1rem; font-size: 0.7rem; color: #888;">
             Faith Tabernacle Security Service Unit — Protection Under Grace
         </div>
     </div>
@@ -1255,7 +1137,7 @@ $totalProducts = count($products);
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
             <h3>📦 Confirm Delivery</h3>
-            <form method="POST" id="deliveryForm">
+            <form method="POST" id="deliveryForm" onsubmit="return confirmDelivery();">
                 <input type="hidden" name="action" value="mark_delivered">
                 <input type="hidden" name="order_id" id="deliveryOrderId">
                 <div class="form-group">
@@ -1266,7 +1148,7 @@ $totalProducts = count($products);
                     <label>Delivered By</label>
                     <input type="text" name="delivered_by" id="deliveredByName" readonly style="background: #f0f0f0; font-weight: 600; color: #cc0000; font-size: 1rem;" value="<?= htmlspecialchars($_SESSION['admin_fullname'] ?? $_SESSION['admin_username'] ?? 'Admin') ?>">
                     <small style="color: #28a745; display: block; margin-top: 5px;">
-                        ✓ Automatically detected from your account (<?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?>)
+                        ✓ Automatically detected from your account
                     </small>
                 </div>
                 <div class="form-group">
@@ -1282,7 +1164,7 @@ $totalProducts = count($products);
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-cancel" onclick="closeDeliveryModal()">Cancel</button>
-                    <button type="submit" class="btn-save" onclick="return confirm('Confirm delivery of order #' + document.getElementById('deliveryOrderNumber').value + '? This action cannot be undone.')">✅ Confirm Delivery</button>
+                    <button type="submit" class="btn-save">✅ Confirm Delivery</button>
                 </div>
             </form>
         </div>
@@ -1291,18 +1173,11 @@ $totalProducts = count($products);
     <script>
         let sortableInstance = null;
 
-        // Tab switching function
         function switchTab(tabName) {
-            // Hide all tabs
             document.getElementById('productsTab').classList.remove('active');
             document.getElementById('ordersTab').classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Show selected tab
             if (tabName === 'products') {
                 document.getElementById('productsTab').classList.add('active');
                 document.querySelector('.tab-btn:first-child').classList.add('active');
@@ -1312,7 +1187,6 @@ $totalProducts = count($products);
             }
         }
 
-        // Initialize SortableJS on page load
         document.addEventListener('DOMContentLoaded', function() {
             const list = document.getElementById('sortable-list');
             if (list) {
@@ -1321,7 +1195,6 @@ $totalProducts = count($products);
                     handle: '.drag-handle',
                     ghostClass: 'dragging',
                     onEnd: function() {
-                        // Update the position badges after drag
                         updatePositionBadges();
                     }
                 });
@@ -1332,9 +1205,7 @@ $totalProducts = count($products);
             const items = document.querySelectorAll('#sortable-list .sortable-item');
             items.forEach((item, index) => {
                 const badge = item.querySelector('.drag-badge');
-                if (badge) {
-                    badge.textContent = '#' + (index + 1);
-                }
+                if (badge) badge.textContent = '#' + (index + 1);
             });
         }
 
@@ -1347,7 +1218,6 @@ $totalProducts = count($products);
                     sort_order: index
                 });
             });
-
             document.getElementById('orderDataInput').value = JSON.stringify(orderData);
             document.getElementById('reorderForm').submit();
         }
@@ -1394,16 +1264,24 @@ $totalProducts = count($products);
             document.getElementById('productModal').style.display = 'none';
         }
 
-        // Delivery modal functions - simplified since name is auto-detected from session
         function showDeliveryModal(orderId, orderNumber) {
             document.getElementById('deliveryOrderId').value = orderId;
             document.getElementById('deliveryOrderNumber').value = orderNumber;
-            // Name is already auto-filled from PHP session value
             document.getElementById('deliveryModal').style.display = 'flex';
         }
 
         function closeDeliveryModal() {
             document.getElementById('deliveryModal').style.display = 'none';
+        }
+
+        function confirmDelivery() {
+            const orderNumber = document.getElementById('deliveryOrderNumber').value;
+            return confirm(`Confirm delivery of order #${orderNumber}? This action cannot be undone.`);
+        }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('productModal')) closeModal();
+            if (event.target === document.getElementById('deliveryModal')) closeDeliveryModal();
         }
     </script>
 </body>
