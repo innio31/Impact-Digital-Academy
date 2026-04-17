@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Faith Tabernacle Security Service Unit | Accounts Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #1a1a1a;
+            background-image: radial-gradient(circle at 25% 40%, #2a2a2a 0%, #0a0a0a 100%);
+            min-height: 100vh;
+            padding: 0.8rem;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border: 1px solid #8b0000;
+        }
+
+        /* Mobile-first Hero Header */
+        .hero-header {
+            background: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #cc0000;
+            gap: 0.8rem;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo-icon {
+            background: #ffffff;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .title-text h1 {
+            color: #000000;
+            font-size: 1.1rem;
+            letter-spacing: -0.3px;
+            font-weight: 800;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .title-text p {
+            color: #555555;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 0.2rem;
+        }
+
+        .dept-badge {
+            background: #cc0000;
+            color: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+
+        .main-content {
+            padding: 1rem;
+            background: #ffffff;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #000000;
+            border-left: 4px solid #cc0000;
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        /* Customer Info Section - Mobile Optimized */
+        .customer-info {
+            background: #f8f8f8;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+        }
+
+        .customer-info label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .customer-info label:first-child {
+            margin-top: 0;
+        }
+
+        .customer-info input,
+        .customer-info select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.3rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .customer-info select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+        }
+
+        .customer-info input:focus,
+        .customer-info select:focus {
+            outline: none;
+            border-color: #cc0000;
+            box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.1);
+        }
+
+        /* Validation error styles */
+        .error-border {
+            border-color: #cc0000 !important;
+            background-color: #fff8f8 !important;
+        }
+
+        .error-message {
+            color: #cc0000;
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            display: block;
+            font-weight: 500;
+        }
+
+        /* Products Grid - Mobile First */
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 480px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        .product-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .product-card:active {
+            transform: scale(0.99);
+        }
+
+        .product-info {
+            padding: 1rem;
+            background: #fefefe;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #cc0000;
+            background: #fff0f0;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .product-desc {
+            font-size: 0.7rem;
+            color: #555555;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eeeeee;
+        }
+
+        .quantity-control {
+            padding: 0.8rem 1rem;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .quantity-label {
+            font-weight: 700;
+            color: #000000;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .qty-input {
+            width: 85px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+            border: 1.5px solid #cccccc;
+            border-radius: 8px;
+            font-weight: 600;
+            background: #ffffff;
+        }
+
+        .qty-input:focus {
+            border-color: #cc0000;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.2);
+        }
+
+        .item-total {
+            font-size: 0.8rem;
+            font-weight: 800;
+            background: #1a1a1a;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            color: #ffffff;
+        }
+
+        /* Summary Panel - Mobile Optimized */
+        .summary-panel {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border: 1px solid #dddddd;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #000000;
+            border-bottom: 2px solid #cc0000;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            color: #cc0000;
+            background: #ffffff;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            border: 1px solid #cc0000;
+        }
+
+        .btn-payment {
+            background: #000000;
+            border: none;
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #ffffff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid #cc0000;
+        }
+
+        .btn-payment:active {
+            transform: scale(0.98);
+            background: #cc0000;
+        }
+
+        .reset-note {
+            font-size: 0.65rem;
+            color: #666666;
+            text-align: center;
+            margin-top: 0.8rem;
+        }
+
+        /* Account Section - Mobile Optimized */
+        .account-section {
+            margin-top: 1.5rem;
+            background: #f0f0f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid #cc0000;
+        }
+
+        .account-card {
+            padding: 1rem;
+            display: none;
+            border-radius: 12px;
+            background: #ffffff;
+        }
+
+        .account-card.active {
+            display: block;
+            animation: fadeSlide 0.3s ease-out;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ac-header {
+            font-weight: 800;
+            font-size: 1rem;
+            color: #000000;
+            border-left: 4px solid #cc0000;
+            padding-left: 0.7rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .bank-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: #fefefe;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        @media (min-width: 480px) {
+            .bank-details {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .bank-item {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+
+        .bank-item {
+            background: #f8f9fa;
+            padding: 0.6rem;
+            border-radius: 8px;
+        }
+
+        .bank-label {
+            font-weight: 600;
+            color: #555555;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bank-value {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #000000;
+            word-break: break-word;
+            margin-top: 0.2rem;
+        }
+
+        .security-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.6rem;
+            color: #888888;
+            border-top: 1px solid #dddddd;
+            padding-top: 1rem;
+            font-weight: 600;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-button-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #25D366;
+            color: #ffffff;
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 280px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn:active {
+            transform: scale(0.98);
+        }
+
+        .whatsapp-icon {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .custom-price-input {
+            background: #fff8f0;
+            border-color: #cc0000;
+        }
+
+        .custom-price-input:focus {
+            border-color: #cc0000;
+            box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.2);
+        }
+
+        /* Payment confirmation notice */
+        .payment-notice {
+            margin-top: 0.8rem;
+            font-size: 0.75rem;
+            background: #fcf3df;
+            padding: 0.5rem;
+            border-radius: 30px;
+            text-align: center;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #cc0000;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cc0000;
+            border-radius: 5px;
+        }
+
+        /* Disabled button state */
+        .btn-payment:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="hero-header">
+        <div class="logo-area">
+            <div class="logo-icon">
+                <img src="logo.jpg" alt="Faith Tabernacle Security Logo">
+            </div>
+            <div class="title-text">
+                <h1>FAITH TABERNACLE SECURITY</h1>
+                <p>Order & Inventory • Accounts Division</p>
+            </div>
+        </div>
+        <div class="dept-badge">
+            📋 ACCOUNTS DEPT
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-title">
+            📦 ORDER FORM
+        </div>
+
+        <div class="customer-info">
+            <label>👤 Your Name <span style="color:#cc0000;">*</span></label>
+            <input type="text" id="customerName" placeholder="Enter your full name">
+            <span id="nameError" class="error-message" style="display:none;">Name is required</span>
+            
+            <label>📞 Phone Number <span style="color:#cc0000;">*</span></label>
+            <input type="tel" id="customerPhone" placeholder="e.g., 08012345678" maxlength="11">
+            <span id="phoneError" class="error-message" style="display:none;">Phone number must be exactly 11 digits</span>
+            
+            <label>⚔️ Command <span style="color:#cc0000;">*</span></label>
+            <select id="customerCommand">
+                <option value="">Select Command</option>
+                <option value="Command 1">Command 1</option>
+                <option value="Command 2">Command 2</option>
+                <option value="Command 3">Command 3</option>
+                <option value="Command 4">Command 4</option>
+                <option value="Command 5">Command 5</option>
+                <option value="Command 6">Command 6</option>
+                <option value="Command 7">Command 7</option>
+                <option value="Command 8">Command 8</option>
+                <option value="Command 9">Command 9</option>
+                <option value="Command 10">Command 10</option>
+                <option value="Command 11">Command 11</option>
+                <option value="Command 12">Command 12</option>
+                <option value="Command 13">Command 13</option>
+                <option value="Command 14">Command 14</option>
+                <option value="Command 15">Command 15</option>
+                <option value="Command 16">Command 16</option>
+                <option value="Command 17">Command 17</option>
+                <option value="Command 18">Command 18</option>
+                <option value="Command 19">Command 19</option>
+                <option value="Command 20">Command 20</option>
+                <option value="Command 21">Command 21</option>
+                <option value="Command 22">Command 22</option>
+                <option value="VETERAN">VETERAN</option>
+                <option value="KHMS">KHMS</option>
+                <option value="COVENANT DAY">COVENANT DAY</option>
+                <option value="YOUTH">YOUTH</option>
+                <option value="RECRUITMENT & TRAINING">RECRUITMENT & TRAINING</option>
+                <option value="SPECIAL DUTY 1">SPECIAL DUTY 1</option>
+                <option value="SPECIAL DUTY 2">SPECIAL DUTY 2</option>
+                <option value="SPECIAL DUTY 3">SPECIAL DUTY 3</option>
+                <option value="SPECIAL DUTY 4">SPECIAL DUTY 4</option>
+                <option value="SPECIAL DUTY 5">SPECIAL DUTY 5</option>
+                <option value="HONOUR">HONOUR</option>
+                <option value="G & G">G & G</option>
+                <option value="GOSHEN">GOSHEN</option>
+                <option value="CODE & ETHICS">CODE & ETHICS</option>
+                <option value="IID">IID</option>
+                <option value="SID">SID</option>
+                <option value="PATROL">PATROL</option>
+                <option value="UPPER ROOM">UPPER ROOM</option>
+                <option value="OPERATION">OPERATION</option>
+                <option value="IRS">IRS</option>
+                <option value="FORENSIC">FORENSIC</option>
+                <option value="FRENCH">FRENCH</option>
+                <option value="VISION 1">VISION 1</option>
+                <option value="VISION 2">VISION 2</option>
+                <option value="VISION 3">VISION 3</option>
+                <option value="SECURITY MEDICAL">SECURITY MEDICAL</option>
+                <option value="SALES MONITORING">SALES MONITORING</option>
+            </select>
+            <span id="commandError" class="error-message" style="display:none;">Please select a command</span>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <div class="loading">Loading products...</div>
+        </div>
+
+        <div class="summary-panel">
+            <div class="total-row">
+                <span>💰 GRAND TOTAL</span>
+                <span class="total-amount" id="totalAmountDisplay">₦0</span>
+            </div>
+            <button class="btn-payment" id="makePaymentBtn">
+                💳 PROCEED TO PAYMENT →
+            </button>
+            <div class="reset-note">
+                * Enter quantities, total updates automatically
+            </div>
+        </div>
+
+        <div class="account-section" id="accountSection">
+            <div class="account-card" id="accountCard">
+                <div class="ac-header">
+                    🏦 PAYMENT DETAILS
+                </div>
+                <div class="bank-details">
+                    <div class="bank-item">
+                        <div class="bank-label">ACCOUNT NUMBER</div>
+                        <div class="bank-value">0520007050</div>
+                    </div>
+                    <div class="bank-item">
+                        <div class="bank-label">BANK NAME</div>
+                        <div class="bank-value">Covenant Microfinance Bank</div>
+                    </div>
+                    <div class="bank-item">
+                        <div class="bank-label">ACCOUNT NAME</div>
+                        <div class="bank-value">Faith Tabernacle Security Service Group</div>
+                    </div>
+                </div>
+                <div class="payment-notice">
+                    ✅ After payment, send proof via WhatsApp below
+                </div>
+                <div class="whatsapp-button-container">
+                    <a href="#" class="whatsapp-btn" target="_blank" id="whatsappBtn">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
+                        Send Payment Proof & Complete Order
+                    </a>
+                </div>
+                <div class="reset-note" style="margin-top: 0.5rem;">
+                    * Order will only be recorded after you click "Send Payment Proof"
+                </div>
+            </div>
+        </div>
+        
+        <div class="security-footer">
+            Faith Tabernacle Security Service Unit — Protection Under Grace
+        </div>
+    </div>
+</div>
+
+<script>
+    let products = [];
+    let quantities = [];
+    let orderSavedFlag = false; // Prevent duplicate order saving
+    let currentOrderData = null; // Store order data for WhatsApp submission
+
+    function formatNaira(amount) {
+        return '₦' + amount.toLocaleString('en-NG');
+    }
+
+    function computeTotal() {
+        let total = 0;
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].hasCustomPrice) {
+                total += quantities[i];
+            } else {
+                total += products[i].price * quantities[i];
+            }
+        }
+        return total;
+    }
+
+    function updateTotalsUI() {
+        for (let i = 0; i < products.length; i++) {
+            const itemTotalSpan = document.getElementById(`item-total-${i}`);
+            if (itemTotalSpan) {
+                let itemTotalValue;
+                if (products[i].hasCustomPrice) {
+                    itemTotalValue = quantities[i];
+                } else {
+                    itemTotalValue = products[i].price * quantities[i];
+                }
+                itemTotalSpan.innerText = formatNaira(itemTotalValue);
+            }
+        }
+        const totalAmountSpan = document.getElementById('totalAmountDisplay');
+        if (totalAmountSpan) {
+            totalAmountSpan.innerText = formatNaira(computeTotal());
+        }
+        updateWhatsAppLinkPreview();
+    }
+
+    function handleQuantityChange(index, event) {
+        let qty = parseInt(event.target.value, 10);
+        if (isNaN(qty) || qty < 0) qty = 0;
+        if (qty > 1000) qty = 1000;
+        quantities[index] = qty;
+        event.target.value = qty;
+        updateTotalsUI();
+        // Reset order saved flag when items change
+        orderSavedFlag = false;
+        currentOrderData = null;
+    }
+
+    function handleLoveSeedChange(index, event) {
+        let amount = parseInt(event.target.value, 10);
+        if (isNaN(amount) || amount < 0) amount = 0;
+        quantities[index] = amount;
+        event.target.value = amount;
+        updateTotalsUI();
+        orderSavedFlag = false;
+        currentOrderData = null;
+    }
+
+    // Validation functions
+    function validateCustomerInfo() {
+        let isValid = true;
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
+        const command = document.getElementById('customerCommand').value;
+        
+        // Name validation
+        if (!name) {
+            document.getElementById('nameError').style.display = 'block';
+            document.getElementById('customerName').classList.add('error-border');
+            isValid = false;
+        } else {
+            document.getElementById('nameError').style.display = 'none';
+            document.getElementById('customerName').classList.remove('error-border');
+        }
+        
+        // Phone validation: exactly 11 digits, only numbers
+        const phoneRegex = /^\d{11}$/;
+        if (!phone || !phoneRegex.test(phone)) {
+            document.getElementById('phoneError').style.display = 'block';
+            document.getElementById('customerPhone').classList.add('error-border');
+            isValid = false;
+        } else {
+            document.getElementById('phoneError').style.display = 'none';
+            document.getElementById('customerPhone').classList.remove('error-border');
+        }
+        
+        // Command validation
+        if (!command) {
+            document.getElementById('commandError').style.display = 'block';
+            document.getElementById('customerCommand').classList.add('error-border');
+            isValid = false;
+        } else {
+            document.getElementById('commandError').style.display = 'none';
+            document.getElementById('customerCommand').classList.remove('error-border');
+        }
+        
+        return isValid;
+    }
+
+    // Save order to backend (only called ONCE when WhatsApp is clicked)
+    async function saveOrderToBackend() {
+        // Ensure we have items
+        const items = products.map((product, index) => ({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: quantities[index],
+            hasCustomPrice: product.hasCustomPrice
+        })).filter(item => item.quantity > 0);
+
+        if (items.length === 0) {
+            alert('Please add at least one item to your order.');
+            return null;
+        }
+
+        const orderData = {
+            customer_name: document.getElementById('customerName').value.trim(),
+            customer_phone: document.getElementById('customerPhone').value.trim(),
+            customer_command: document.getElementById('customerCommand').value,
+            total_amount: computeTotal(),
+            items: items
+        };
+
+        try {
+            const response = await fetch('api_save_order.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                return { success: true, order_number: result.order_number, total: computeTotal() };
+            } else {
+                alert('Error saving order: ' + (result.error || 'Unknown error'));
+                return null;
+            }
+        } catch(error) {
+            console.error('Error:', error);
+            alert('Error saving order. Please check your connection and try again.');
+            return null;
+        }
+    }
+
+    // Show account details panel
+    function showAccountDetails() {
+        const accountCardDiv = document.getElementById('accountCard');
+        if (accountCardDiv) {
+            accountCardDiv.classList.add('active');
+            const accountSection = document.getElementById('accountSection');
+            if (accountSection) {
+                setTimeout(() => {
+                    accountSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+        }
+    }
+
+    // Handle "Proceed to Payment" button click - only validate and show account, NO order save
+    async function onProceedToPayment() {
+        // Validate customer info first
+        if (!validateCustomerInfo()) {
+            alert('Please fill in all required fields correctly.\n- Name is required\n- Phone number must be exactly 11 digits\n- Command must be selected');
+            return;
+        }
+        
+        const total = computeTotal();
+        if (total === 0) {
+            alert('Please add at least one item to your order before proceeding.');
+            return;
+        }
+        
+        // Show the account details panel (payment info)
+        showAccountDetails();
+    }
+
+    // Handle WhatsApp button click - this is where order gets saved (ONCE)
+    async function onSendPaymentProof(e) {
+        e.preventDefault();
+        
+        // Validate again to ensure data is still valid
+        if (!validateCustomerInfo()) {
+            alert('Please fill in all required fields correctly before completing order.');
+            return;
+        }
+        
+        const total = computeTotal();
+        if (total === 0) {
+            alert('Please add at least one item to your order.');
+            return;
+        }
+        
+        // Prevent duplicate order saving
+        if (orderSavedFlag && currentOrderData) {
+            // Already saved, just open WhatsApp with existing order info
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn && whatsappBtn.href) {
+                window.open(whatsappBtn.href, '_blank');
+            }
+            alert(`Order #${currentOrderData.order_number} already recorded. You can now send payment proof.`);
+            return;
+        }
+        
+        // Save order to backend (first and only time)
+        const saveResult = await saveOrderToBackend();
+        if (saveResult && saveResult.success) {
+            orderSavedFlag = true;
+            currentOrderData = saveResult;
+            
+            // Update WhatsApp link with order number and final details
+            updateWhatsAppLinkWithOrder(saveResult.order_number, saveResult.total);
+            
+            // Open WhatsApp with the updated link
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn && whatsappBtn.href) {
+                window.open(whatsappBtn.href, '_blank');
+            }
+            
+            alert(`✅ Order #${saveResult.order_number} recorded successfully!\nTotal: ${formatNaira(saveResult.total)}\n\nYou can now send your payment proof via WhatsApp.`);
+        } else {
+            // Save failed, do not mark as saved
+            alert('Failed to save order. Please try again.');
+        }
+    }
+
+    function updateWhatsAppLinkPreview() {
+        // Just update preview link without order number (before saving)
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        if (whatsappBtn && !orderSavedFlag) {
+            const total = computeTotal();
+            const formattedTotal = '₦' + total.toLocaleString('en-NG');
+            const customerName = document.getElementById('customerName').value.trim() || 'Customer';
+            const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
+            const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
+            const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0AAmount%3A%20${formattedTotal}%0A%0AI%20have%20completed%20payment.%20Here%20is%20my%20proof.%0A%0A(Order%20will%20be%20recorded%20upon%20sending)`;
+            whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
+        }
+    }
+    
+    function updateWhatsAppLinkWithOrder(orderNumber, totalAmount) {
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        if (whatsappBtn) {
+            const formattedTotal = '₦' + totalAmount.toLocaleString('en-NG');
+            const customerName = document.getElementById('customerName').value.trim() || 'Customer';
+            const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
+            const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
+            const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0A✅%20ORDER%20CONFIRMATION%0AOrder%20Number%3A%20${orderNumber}%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0ATotal%20Amount%3A%20${formattedTotal}%0A%0A📷%20Payment%20Proof%3A%20(Attach%20screenshot)%0A%0AThank%20you!`;
+            whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
+        }
+    }
+
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        if (products.length === 0) {
+            grid.innerHTML = '<div class="loading">No products available</div>';
+            return;
+        }
+        
+        products.forEach((product, idx) => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            if (product.hasCustomPrice) {
+                card.innerHTML = `
+                    <div class="product-info">
+                        <div class="product-name">
+                            <span>${escapeHtml(product.name)}</span>
+                        </div>
+                        <div class="product-desc">${escapeHtml(product.description || 'Give what\'s in your heart')}</div>
+                    </div>
+                    <div class="quantity-control">
+                        <span class="quantity-label">💝 Seed Amount (₦)</span>
+                        <input type="number" id="custom-price-${idx}" class="qty-input custom-price-input" value="0" min="0" step="100" placeholder="Amount">
+                        <span class="item-total" id="item-total-${idx}">₦0</span>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="product-info">
+                        <div class="product-name">
+                            <span>${escapeHtml(product.name)}</span>
+                            <span class="product-price">${formatNaira(product.price)}</span>
+                        </div>
+                        <div class="product-desc">${escapeHtml(product.description || 'Security regalia')}</div>
+                    </div>
+                    <div class="quantity-control">
+                        <span class="quantity-label">📌 Quantity</span>
+                        <input type="number" id="qty-input-${idx}" class="qty-input" value="0" min="0" step="1">
+                        <span class="item-total" id="item-total-${idx}">${formatNaira(0)}</span>
+                    </div>
+                `;
+            }
+            
+            grid.appendChild(card);
+            
+            if (product.hasCustomPrice) {
+                const customPriceInput = document.getElementById(`custom-price-${idx}`);
+                if (customPriceInput) {
+                    customPriceInput.addEventListener('input', (e) => handleLoveSeedChange(idx, e));
+                    customPriceInput.value = quantities[idx] || 0;
+                }
+            } else {
+                const inputElem = document.getElementById(`qty-input-${idx}`);
+                if (inputElem) {
+                    inputElem.addEventListener('input', (e) => handleQuantityChange(idx, e));
+                    inputElem.value = quantities[idx] || 0;
+                }
+            }
+        });
+        updateTotalsUI();
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    async function loadProducts() {
+        try {
+            const response = await fetch('api_get_products.php');
+            products = await response.json();
+            quantities = new Array(products.length).fill(0);
+            renderProducts();
+        } catch(error) {
+            console.error('Error loading products:', error);
+            const grid = document.getElementById('productsGrid');
+            if (grid) {
+                grid.innerHTML = '<div class="loading">Error loading products. Please refresh.</div>';
+            }
+        }
+    }
+
+    function initAccountVisibility() {
+        const accountCardDiv = document.getElementById('accountCard');
+        if (accountCardDiv) {
+            accountCardDiv.classList.remove('active');
+        }
+    }
+
+    // Live validation on phone input
+    function setupLiveValidation() {
+        const phoneInput = document.getElementById('customerPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let val = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                if (val.length > 11) val = val.slice(0, 11);
+                e.target.value = val;
+                if (val.length === 11) {
+                    document.getElementById('phoneError').style.display = 'none';
+                    e.target.classList.remove('error-border');
+                } else if (val.length > 0) {
+                    document.getElementById('phoneError').style.display = 'block';
+                    e.target.classList.add('error-border');
+                } else {
+                    document.getElementById('phoneError').style.display = 'none';
+                    e.target.classList.remove('error-border');
+                }
+                updateWhatsAppLinkPreview();
+            });
+        }
+        
+        const nameInput = document.getElementById('customerName');
+        if (nameInput) {
+            nameInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    document.getElementById('nameError').style.display = 'none';
+                    this.classList.remove('error-border');
+                }
+                updateWhatsAppLinkPreview();
+            });
+        }
+        
+        const commandSelect = document.getElementById('customerCommand');
+        if (commandSelect) {
+            commandSelect.addEventListener('change', function() {
+                if (this.value) {
+                    document.getElementById('commandError').style.display = 'none';
+                    this.classList.remove('error-border');
+                }
+                updateWhatsAppLinkPreview();
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+        initAccountVisibility();
+        setupLiveValidation();
+        
+        const proceedBtn = document.getElementById('makePaymentBtn');
+        if (proceedBtn) {
+            proceedBtn.removeEventListener('click', onProceedToPayment);
+            proceedBtn.addEventListener('click', onProceedToPayment);
+        }
+        
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        if (whatsappBtn) {
+            whatsappBtn.removeEventListener('click', onSendPaymentProof);
+            whatsappBtn.addEventListener('click', onSendPaymentProof);
+        }
+        
+        updateWhatsAppLinkPreview();
+    });
+</script>
+</body>
+</html>
