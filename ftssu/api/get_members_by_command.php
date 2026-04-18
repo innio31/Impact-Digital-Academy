@@ -19,9 +19,13 @@ $sql = "SELECT id, id_number, first_name, last_name, designation, command, role,
 $result = $conn->query($sql);
 $members = [];
 
-while ($row = $result->fetch_assoc()) {
-    $members[] = $row;
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $members[] = $row;
+    }
+    echo json_encode(['success' => true, 'members' => $members]);
+} else {
+    echo json_encode(['success' => false, 'error' => $conn->error]);
 }
 
-echo json_encode(['success' => true, 'members' => $members]);
 $conn->close();

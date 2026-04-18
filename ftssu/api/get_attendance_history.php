@@ -21,9 +21,13 @@ $sql = "SELECT a.*, s.service_name, s.service_date
 $result = $conn->query($sql);
 $attendance = [];
 
-while ($row = $result->fetch_assoc()) {
-    $attendance[] = $row;
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $attendance[] = $row;
+    }
+    echo json_encode(['success' => true, 'attendance' => $attendance]);
+} else {
+    echo json_encode(['success' => false, 'error' => $conn->error]);
 }
 
-echo json_encode(['success' => true, 'attendance' => $attendance]);
 $conn->close();

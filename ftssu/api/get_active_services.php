@@ -12,9 +12,13 @@ $sql = "SELECT id, service_name, service_date, start_time, end_time
 $result = $conn->query($sql);
 $services = [];
 
-while ($row = $result->fetch_assoc()) {
-    $services[] = $row;
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $services[] = $row;
+    }
+    echo json_encode(['success' => true, 'services' => $services]);
+} else {
+    echo json_encode(['success' => false, 'error' => $conn->error]);
 }
 
-echo json_encode(['success' => true, 'services' => $services]);
 $conn->close();

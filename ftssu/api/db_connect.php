@@ -1,12 +1,7 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
 $host = 'localhost';
 $user = 'impactdi_result-checker';
-$password = 'uenrqFrgYbcY5YmSLTH6'; // Replace with your actual database password
+$password = 'uenrqFrgYbcY5YmSLTH6';
 $database = 'impactdi_result-checker';
 
 $conn = new mysqli($host, $user, $password, $database);
