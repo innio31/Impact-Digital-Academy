@@ -15,6 +15,13 @@ if (!$member_id || !$service_id) {
     exit;
 }
 
+// Check if service exists and is active
+$service_check = $conn->query("SELECT id, service_name FROM services WHERE id = $service_id AND is_active = 1");
+if ($service_check->num_rows === 0) {
+    echo json_encode(['success' => false, 'error' => 'Service is not active or does not exist']);
+    exit;
+}
+
 // Check if already checked in
 $check = $conn->query("SELECT id FROM attendance WHERE member_id = $member_id AND service_id = $service_id");
 if ($check->num_rows > 0) {
@@ -26,7 +33,7 @@ $sql = "INSERT INTO attendance (member_id, service_id, attendance_method, attend
         VALUES ($member_id, $service_id, '$attendance_method', NOW())";
 
 if ($conn->query($sql)) {
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'message' => 'Check-in successful']);
 } else {
     echo json_encode(['success' => false, 'error' => $conn->error]);
 }
