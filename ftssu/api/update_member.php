@@ -1,7 +1,9 @@
 <?php
-header('Content-Type: application/json');
+// CORS headers - must be at the very top
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Content-Type: application/json');
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -10,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'db_connect.php';
+
+
 
 // Create upload directory if not exists
 $upload_dir = 'uploads/profiles/';
