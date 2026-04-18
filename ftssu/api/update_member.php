@@ -5,70 +5,63 @@ header('Access-Control-Allow-Methods: POST, OPTIONS');
 
 include 'db_connect.php';
 
-// Check if this is a multipart form (for profile picture) or JSON
-$isMultipart = isset($_FILES) && count($_FILES) > 0;
-
-if ($isMultipart) {
-    $member_id = (int)($_POST['member_id'] ?? 0);
-    $phone_number = $conn->real_escape_string($_POST['phone_number'] ?? '');
-    $email = $conn->real_escape_string($_POST['email'] ?? '');
-    $date_of_birth = $conn->real_escape_string($_POST['date_of_birth'] ?? '');
-    $password = isset($_POST['password']) ? md5(strtolower($_POST['password'])) : null;
-} else {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $member_id = isset($data['id']) ? (int)$data['id'] : 0;
-    $id_number = isset($data['id_number']) ? $conn->real_escape_string($data['id_number']) : '';
-    $first_name = isset($data['first_name']) ? $conn->real_escape_string($data['first_name']) : '';
-    $last_name = isset($data['last_name']) ? $conn->real_escape_string($data['last_name']) : '';
-    $designation = isset($data['designation']) ? $conn->real_escape_string($data['designation']) : 'Brother';
-    $command = isset($data['command']) ? $conn->real_escape_string($data['command']) : '';
-    $role = isset($data['role']) ? $conn->real_escape_string($data['role']) : 'Member';
-    $gender = isset($data['gender']) ? $conn->real_escape_string($data['gender']) : 'Male';
-    $phone_number = isset($data['phone_number']) ? $conn->real_escape_string($data['phone_number']) : '';
-    $email = isset($data['email']) ? $conn->real_escape_string($data['email']) : '';
-    $date_of_birth = isset($data['date_of_birth']) ? $conn->real_escape_string($data['date_of_birth']) : '';
-    $date_joined = isset($data['date_joined']) ? $conn->real_escape_string($data['date_joined']) : '';
-    $password = isset($data['password']) ? md5(strtolower($data['password'])) : null;
+// Create upload directory if not exists
+$upload_dir = 'uploads/profiles/';
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
 }
+
+// Function to compress image
+function compressImage($source, $destination, $quality = 60)
+{
+    $info = getimagesize($source);
+    if ($info['mime'] == 'image/jpeg') {
+        $image = imagecreatefromjpeg($source);
+    } elseif ($info['mime'] == 'image/png') {
+        $image = imagecreatefrompng($source);
+    } else {
+        return false;
+    }
+
+    imagejpeg($image, $destination, $quality);
+    imagedestroy($image);
+    return true;
+}
+
+$member_id = isset($_POST['member_id']) ? (int)$_POST['member_id'] : 0;
+$phone_number = isset($_POST['phone_number']) ? $conn->real_escape_string($_POST['phone_number']) : '';
+$email = isset($_POST['email']) ? $conn->real_escape_string($_POST['email']) : '';
+$date_of_birth = isset($_POST['date_of_birth']) ? $conn->real_escape_string($_POST['date_of_birth']) : '';
 
 if (!$member_id) {
     echo json_encode(['success' => false, 'error' => 'Member ID required']);
     exit;
 }
 
-// Handle profile picture upload
+// Handle profile picture upload with compression
 $profile_picture_path = null;
-if ($isMultipart && isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = 'uploads/profiles/';
-    if (!file_exists($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-
+if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+    $temp_file = $_FILES['profile_picture']['tmp_name'];
     $file_extension = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
-    $filename = 'member_' . $member_id . '_' . time() . '.' . $file_extension;
+    $filename = 'member_' . $member_id . '_' . time() . '.jpg';
     $filepath = $upload_dir . $filename;
+    $compressed_path = $upload_dir . 'compressed_' . $filename;
 
-    if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $filepath)) {
-        $profile_picture_path = $filepath;
+    // Compress image
+    if (compressImage($temp_file, $compressed_path, 60)) {
+        $profile_picture_path = 'https://impactdigitalacademy.com.ng/ftssu/api/' . $compressed_path;
+    } else {
+        // If compression fails, just move the original
+        move_uploaded_file($temp_file, $filepath);
+        $profile_picture_path = 'https://impactdigitalacademy.com.ng/ftssu/api/' . $filepath;
     }
 }
 
 // Build update query
 $updates = [];
-if (!$isMultipart) {
-    if ($id_number) $updates[] = "id_number = '$id_number'";
-    if ($first_name) $updates[] = "first_name = '$first_name'";
-    if ($last_name) $updates[] = "last_name = '$last_name'";
-    if ($designation) $updates[] = "designation = '$designation'";
-    if ($command) $updates[] = "command = '$command'";
-    if ($role) $updates[] = "role = '$role'";
-    if ($gender) $updates[] = "gender = '$gender'";
-    if ($date_joined) $updates[] = "date_joined = '$date_joined'";
-}
 if ($phone_number) $updates[] = "phone_number = '$phone_number'";
 if ($email) $updates[] = "email = '$email'";
 if ($date_of_birth) $updates[] = "date_of_birth = '$date_of_birth'";
-if ($password) $updates[] = "password = '$password'";
 if ($profile_picture_path) $updates[] = "profile_picture = '$profile_picture_path'";
 
 if (empty($updates)) {
