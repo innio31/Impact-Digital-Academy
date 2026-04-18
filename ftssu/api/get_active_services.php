@@ -4,8 +4,7 @@ header('Access-Control-Allow-Origin: *');
 
 include 'db_connect.php';
 
-$sql = "SELECT id, service_name, service_date, start_time, end_time, 
-        CONCAT('SVC-', id, '-', DATE_FORMAT(service_date, '%Y%m%d')) as qr_code_data
+$sql = "SELECT id, service_name, service_date, start_time, end_time 
         FROM services 
         WHERE is_active = 1 AND service_date >= CURDATE() 
         ORDER BY service_date ASC";
