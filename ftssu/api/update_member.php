@@ -39,6 +39,25 @@ $phone_number = isset($_POST['phone_number']) ? $conn->real_escape_string($_POST
 $email = isset($_POST['email']) ? $conn->real_escape_string($_POST['email']) : '';
 $date_of_birth = isset($_POST['date_of_birth']) ? $conn->real_escape_string($_POST['date_of_birth']) : '';
 
+// Also handle JSON input for password change
+$input = file_get_contents('php://input');
+$json_data = json_decode($input, true);
+if ($json_data && isset($json_data['id'])) {
+    $member_id = (int)$json_data['id'];
+    $password = isset($json_data['password']) ? md5(strtolower($json_data['password'])) : null;
+
+    if ($password) {
+        $sql = "UPDATE members SET password = '$password' WHERE id = $member_id";
+        if ($conn->query($sql)) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => $conn->error]);
+        }
+        $conn->close();
+        exit();
+    }
+}
+
 if (!$member_id) {
     echo json_encode(['success' => false, 'error' => 'Member ID required']);
     exit;
@@ -56,16 +75,17 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
         $profile_picture_url = $full_url;
     } else {
         // If compression fails, just move the original
-        move_uploaded_file($temp_file, $filepath);
-        $profile_picture_url = $full_url;
+        if (move_uploaded_file($temp_file, $filepath)) {
+            $profile_picture_url = $full_url;
+        }
     }
 }
 
 // Build update query
 $updates = [];
-if ($phone_number) $updates[] = "phone_number = '$phone_number'";
-if ($email) $updates[] = "email = '$email'";
-if ($date_of_birth) $updates[] = "date_of_birth = '$date_of_birth'";
+if ($phone_number !== '') $updates[] = "phone_number = '$phone_number'";
+if ($email !== '') $updates[] = "email = '$email'";
+if ($date_of_birth !== '') $updates[] = "date_of_birth = '$date_of_birth'";
 if ($profile_picture_url) $updates[] = "profile_picture = '$profile_picture_url'";
 
 if (empty($updates)) {
@@ -77,9 +97,8 @@ $sql = "UPDATE members SET " . implode(', ', $updates) . " WHERE id = $member_id
 
 if ($conn->query($sql)) {
     // Get updated member
-    $result = $conn->query("SELECT * FROM members WHERE id = $member_id");
+    $result = $conn->query("SELECT id, id_number, first_name, last_name, designation, command, role, gender, phone_number, email, profile_picture, date_of_birth, date_joined, is_active FROM members WHERE id = $member_id");
     $member = $result->fetch_assoc();
-    unset($member['password']);
     echo json_encode(['success' => true, 'member' => $member]);
 } else {
     echo json_encode(['success' => false, 'error' => $conn->error]);
