@@ -1,13 +1,17 @@
 <?php
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+
 include 'db_connect.php';
 
-$query = "SELECT * FROM announcements ORDER BY is_pinned DESC, created_at DESC";
-$result = mysqli_query($conn, $query);
-
+$sql = "SELECT * FROM announcements ORDER BY is_pinned DESC, created_at DESC";
+$result = $conn->query($sql);
 $announcements = [];
-while ($row = mysqli_fetch_assoc($result)) {
+
+while ($row = $result->fetch_assoc()) {
     $announcements[] = $row;
 }
 
 echo json_encode(['success' => true, 'announcements' => $announcements]);
+$conn->close();
