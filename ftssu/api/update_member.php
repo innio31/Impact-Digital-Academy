@@ -1,84 +1,78 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
-include 'db_connect.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 
-// Create upload directory if not exists
-$upload_dir = 'uploads/profiles/';
-if (!file_exists($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
-}
+// Database configuration
+$host = 'localhost';
+$dbname = 'impactdi_result-checker';
+$username = 'your_db_username';
+$password = 'your_db_password';
 
-// Function to compress image
-function compressImage($source, $destination, $quality = 60)
-{
-    $info = getimagesize($source);
-    if ($info['mime'] == 'image/jpeg') {
-        $image = imagecreatefromjpeg($source);
-    } elseif ($info['mime'] == 'image/png') {
-        $image = imagecreatefrompng($source);
-    } else {
-        return false;
-    }
-
-    imagejpeg($image, $destination, $quality);
-    imagedestroy($image);
-    return true;
-}
-
-$member_id = isset($_POST['member_id']) ? (int)$_POST['member_id'] : 0;
-$phone_number = isset($_POST['phone_number']) ? $conn->real_escape_string($_POST['phone_number']) : '';
-$email = isset($_POST['email']) ? $conn->real_escape_string($_POST['email']) : '';
-$date_of_birth = isset($_POST['date_of_birth']) ? $conn->real_escape_string($_POST['date_of_birth']) : '';
-
-if (!$member_id) {
-    echo json_encode(['success' => false, 'error' => 'Member ID required']);
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
     exit;
 }
 
-// Handle profile picture upload with compression
-$profile_picture_path = null;
-if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    $temp_file = $_FILES['profile_picture']['tmp_name'];
-    $file_extension = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
-    $filename = 'member_' . $member_id . '_' . time() . '.jpg';
-    $filepath = $upload_dir . $filename;
-    $compressed_path = $upload_dir . 'compressed_' . $filename;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $member_id = isset($_POST['member_id']) ? intval($_POST['member_id']) : null;
+    $phone_number = isset($_POST['phone_number']) ? $_POST['phone_number'] : null;
+    $email = isset($_POST['email']) ? $_POST['email'] : null;
+    $date_of_birth = isset($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null;
 
-    // Compress image
-    if (compressImage($temp_file, $compressed_path, 60)) {
-        $profile_picture_path = 'https://impactdigitalacademy.com.ng/ftssu/api/' . $compressed_path;
-    } else {
-        // If compression fails, just move the original
-        move_uploaded_file($temp_file, $filepath);
-        $profile_picture_path = 'https://impactdigitalacademy.com.ng/ftssu/api/' . $filepath;
+    if (!$member_id) {
+        echo json_encode(['success' => false, 'message' => 'Member ID is required']);
+        exit;
     }
-}
 
-// Build update query
-$updates = [];
-if ($phone_number) $updates[] = "phone_number = '$phone_number'";
-if ($email) $updates[] = "email = '$email'";
-if ($date_of_birth) $updates[] = "date_of_birth = '$date_of_birth'";
-if ($profile_picture_path) $updates[] = "profile_picture = '$profile_picture_path'";
+    $update_fields = [];
+    $params = [];
 
-if (empty($updates)) {
-    echo json_encode(['success' => false, 'error' => 'No fields to update']);
-    exit;
-}
+    if ($phone_number !== null) {
+        $update_fields[] = "phone_number = ?";
+        $params[] = $phone_number;
+    }
 
-$sql = "UPDATE members SET " . implode(', ', $updates) . " WHERE id = $member_id";
+    if ($email !== null) {
+        $update_fields[] = "email = ?";
+        $params[] = $email;
+    }
 
-if ($conn->query($sql)) {
-    // Get updated member
-    $result = $conn->query("SELECT * FROM members WHERE id = $member_id");
-    $member = $result->fetch_assoc();
-    unset($member['password']);
-    echo json_encode(['success' => true, 'member' => $member]);
+    if ($date_of_birth !== null) {
+        $update_fields[] = "date_of_birth = ?";
+        $params[] = $date_of_birth;
+    }
+
+    if (empty($update_fields)) {
+        echo json_encode(['success' => false, 'message' => 'No fields to update']);
+        exit;
+    }
+
+    $params[] = $member_id;
+    $sql = "UPDATE members SET " . implode(", ", $update_fields) . " WHERE id = ?";
+
+    $stmt = $pdo->prepare($sql);
+    if ($stmt->execute($params)) {
+        // Get updated member data
+        $stmt = $pdo->prepare("SELECT * FROM members WHERE id = ?");
+        $stmt->execute([$member_id]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'member' => $member
+        ]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
+    }
 } else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
-
-$conn->close();
