@@ -1,0 +1,13 @@
+<?php
+// Simple router to test if backend is working
+echo json_encode([
+    "status" => "success",
+    "message" => "School Management API is running",
+    "version" => "1.0.0",
+    "endpoints" => [
+        "POST /api/auth.php?action=login",
+        "GET /api/students.php?action=list",
+        "POST /api/students.php?action=create",
+        "GET /api/dashboard.php?action=stats"
+    ]
+]);

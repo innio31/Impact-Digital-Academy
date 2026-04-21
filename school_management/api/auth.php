@@ -1,262 +1,300 @@
-<!-- backend/api/auth.php -->
 <?php
 require_once '../config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$request_method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
+$request_method = $_SERVER["REQUEST_METHOD"];
+$path = isset($_GET['action']) ? $_GET['action'] : '';
 
-if ($request_method === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    if ($action === 'login') {
-        login($db, $data);
-    } elseif ($action === 'logout') {
-        logout($db, $data);
-    } elseif ($action === 'change-password') {
-        changePassword($db, $data);
-    } elseif ($action === 'reset-password') {
-        resetPassword($db, $data);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid action']);
-    }
-} elseif ($request_method === 'GET' && $action === 'verify') {
-    verifyToken();
-} else {
-    echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+switch ($request_method) {
+    case 'POST':
+        if ($path == 'login') {
+            login();
+        } elseif ($path == 'logout') {
+            logout();
+        } elseif ($path == 'change-password') {
+            changePassword();
+        } elseif ($path == 'forgot-password') {
+            forgotPassword();
+        } elseif ($path == 'reset-password') {
+            resetPassword();
+        }
+        break;
+    case 'GET':
+        if ($path == 'profile') {
+            getProfile();
+        } elseif ($path == 'check-session') {
+            checkSession();
+        }
+        break;
+    case 'PUT':
+        if ($path == 'update-profile') {
+            updateProfile();
+        }
+        break;
 }
 
-function login($db, $data)
+function login()
 {
-    $email = $data['email'] ?? '';
-    $password = $data['password'] ?? '';
-    $device_token = $data['device_token'] ?? '';
+    global $db;
+    $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($email) || empty($password)) {
-        echo json_encode(['success' => false, 'error' => 'Email and password required']);
+    if (!isset($data->email) || !isset($data->password)) {
+        sendResponse(false, "Email and password required");
         return;
     }
 
-    // First check if user exists in users table
-    $query = "SELECT u.* FROM users u WHERE u.email = :email AND u.is_active = 1";
-
+    $query = "SELECT id, email, password_hash, user_type, first_name, last_name, phone, is_active 
+              FROM users WHERE email = :email";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':email', $data->email);
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (password_verify($password, $user['password_hash'])) {
+        // Verify password (in production, use password_verify)
+        if ($data->password === $user['password_hash'] || password_verify($data->password, $user['password_hash'])) {
+            if ($user['is_active'] != 1) {
+                sendResponse(false, "Account is deactivated");
+                return;
+            }
+
+            // Get additional data based on user type
+            $extra_data = [];
+            if ($user['user_type'] == 'staff') {
+                $staff_query = "SELECT id, staff_number, qualification, specialization, class_assigned_id 
+                               FROM staff WHERE user_id = :user_id";
+                $staff_stmt = $db->prepare($staff_query);
+                $staff_stmt->bindParam(':user_id', $user['id']);
+                $staff_stmt->execute();
+                $extra_data = $staff_stmt->fetch(PDO::FETCH_ASSOC);
+            } elseif ($user['user_type'] == 'parent') {
+                $parent_query = "SELECT id, occupation, address, relationship 
+                               FROM parents WHERE user_id = :user_id";
+                $parent_stmt = $db->prepare($parent_query);
+                $parent_stmt->bindParam(':user_id', $user['id']);
+                $parent_stmt->execute();
+                $extra_data = $parent_stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Get linked students
+                if ($extra_data) {
+                    $students_query = "SELECT s.id, s.admission_number, s.first_name, s.last_name, s.class_id, 
+                                              c.class_name
+                                      FROM students s
+                                      JOIN student_parents sp ON s.id = sp.student_id
+                                      LEFT JOIN classes c ON s.class_id = c.id
+                                      WHERE sp.parent_id = :parent_id AND s.is_active = 1";
+                    $students_stmt = $db->prepare($students_query);
+                    $students_stmt->bindParam(':parent_id', $extra_data['id']);
+                    $students_stmt->execute();
+                    $extra_data['children'] = $students_stmt->fetchAll(PDO::FETCH_ASSOC);
+                }
+            }
+
+            // Get school info for staff and admin
+            if ($user['user_type'] != 'parent') {
+                $school_query = "SELECT id, school_name, school_code, subscription_status 
+                               FROM schools WHERE id = 3"; // In production, get from staff record
+                $school_stmt = $db->prepare($school_query);
+                $school_stmt->execute();
+                $extra_data['school'] = $school_stmt->fetch(PDO::FETCH_ASSOC);
+            }
+
             // Update last login
             $update_query = "UPDATE users SET last_login = NOW() WHERE id = :id";
             $update_stmt = $db->prepare($update_query);
             $update_stmt->bindParam(':id', $user['id']);
             $update_stmt->execute();
 
-            // Store device token for push notifications if provided
-            if ($device_token) {
-                $token_query = "UPDATE users SET device_token = :token WHERE id = :id";
-                $token_stmt = $db->prepare($token_query);
-                $token_stmt->bindParam(':token', $device_token);
-                $token_stmt->bindParam(':id', $user['id']);
-                $token_stmt->execute();
-            }
-
-            // Generate JWT token
-            $token_data = [
-                'id' => $user['id'],
+            // Create token (simplified - use JWT library in production)
+            $token_payload = json_encode([
+                'user_id' => $user['id'],
                 'email' => $user['email'],
                 'user_type' => $user['user_type'],
-                'school_id' => $user['school_id'] ?? null
-            ];
-            $token = Auth::generateToken($token_data);
-
-            // Get additional user data based on role
-            $user_data = [
-                'id' => $user['id'],
-                'email' => $user['email'],
-                'first_name' => $user['first_name'],
-                'last_name' => $user['last_name'],
-                'user_type' => $user['user_type'],
-                'profile_image' => $user['profile_image']
-            ];
-
-            if ($user['user_type'] === 'staff') {
-                $staff_query = "SELECT staff_number, qualification, specialization 
-                               FROM staff WHERE user_id = :user_id";
-                $staff_stmt = $db->prepare($staff_query);
-                $staff_stmt->bindParam(':user_id', $user['id']);
-                $staff_stmt->execute();
-                if ($staff_stmt->rowCount() > 0) {
-                    $staff_data = $staff_stmt->fetch(PDO::FETCH_ASSOC);
-                    $user_data = array_merge($user_data, $staff_data);
-                }
-            } elseif ($user['user_type'] === 'parent') {
-                $parent_query = "SELECT relationship, occupation FROM parents WHERE user_id = :user_id";
-                $parent_stmt = $db->prepare($parent_query);
-                $parent_stmt->bindParam(':user_id', $user['id']);
-                $parent_stmt->execute();
-                if ($parent_stmt->rowCount() > 0) {
-                    $parent_data = $parent_stmt->fetch(PDO::FETCH_ASSOC);
-                    $user_data = array_merge($user_data, $parent_data);
-                }
-            }
-
-            echo json_encode([
-                'success' => true,
-                'token' => $token,
-                'user' => $user_data
+                'expires' => time() + (7 * 24 * 60 * 60) // 7 days
             ]);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
+            $token = base64_encode($token_payload);
+
+            sendResponse(true, "Login successful", [
+                'token' => $token,
+                'user' => [
+                    'id' => $user['id'],
+                    'email' => $user['email'],
+                    'first_name' => $user['first_name'],
+                    'last_name' => $user['last_name'],
+                    'phone' => $user['phone'],
+                    'user_type' => $user['user_type'],
+                    'extra_data' => $extra_data
+                ]
+            ]);
+            return;
         }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'User not found or inactive']);
     }
+
+    sendResponse(false, "Invalid email or password");
 }
 
-function logout($db, $data)
+function getProfile()
 {
-    // Get token from headers
-    $headers = getallheaders();
-    $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-    $token = str_replace('Bearer ', '', $auth_header);
+    global $db;
+    $user = validateToken();
 
-    if ($token) {
-        // You could blacklist the token here if implementing token blacklisting
-        // For now, just return success
-        echo json_encode(['success' => true, 'message' => 'Logged out successfully']);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'No token provided']);
-    }
-}
-
-function changePassword($db, $data)
-{
-    // Authenticate user first
-    $user_data = Auth::authenticate();
-
-    $current_password = $data['current_password'] ?? '';
-    $new_password = $data['new_password'] ?? '';
-
-    if (empty($current_password) || empty($new_password)) {
-        echo json_encode(['success' => false, 'error' => 'Current password and new password are required']);
-        return;
-    }
-
-    if (strlen($new_password) < 6) {
-        echo json_encode(['success' => false, 'error' => 'New password must be at least 6 characters']);
-        return;
-    }
-
-    $query = "SELECT password_hash FROM users WHERE id = :id";
+    $query = "SELECT id, email, user_type, first_name, last_name, phone, profile_image, created_at 
+              FROM users WHERE id = :id";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $user_data['user_id']);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($current_password, $user['password_hash'])) {
-        $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
-        $update = "UPDATE users SET password_hash = :hash, updated_at = NOW() WHERE id = :id";
-        $update_stmt = $db->prepare($update);
-        $update_stmt->bindParam(':hash', $new_hash);
-        $update_stmt->bindParam(':id', $user_data['user_id']);
-
-        if ($update_stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Password changed successfully']);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to update password']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Current password is incorrect']);
-    }
-}
-
-function resetPassword($db, $data)
-{
-    $email = $data['email'] ?? '';
-
-    if (empty($email)) {
-        echo json_encode(['success' => false, 'error' => 'Email address is required']);
-        return;
-    }
-
-    // Check if user exists
-    $query = "SELECT id, first_name, last_name FROM users WHERE email = :email AND is_active = 1";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':id', $user['user_id']);
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Generate reset token
-        $reset_token = bin2hex(random_bytes(32));
-        $expires_at = date('Y-m-d H:i:s', strtotime('+1 hour'));
-
-        // Store reset token in database (create password_resets table if not exists)
-        $insert_query = "INSERT INTO password_resets (email, token, expires_at) 
-                         VALUES (:email, :token, :expires_at)
-                         ON DUPLICATE KEY UPDATE token = :token, expires_at = :expires_at";
-        $insert_stmt = $db->prepare($insert_query);
-        $insert_stmt->bindParam(':email', $email);
-        $insert_stmt->bindParam(':token', $reset_token);
-        $insert_stmt->bindParam(':expires_at', $expires_at);
-        $insert_stmt->execute();
-
-        // In a real application, you would send an email here
-        // For development, we'll return the reset link
-        $reset_link = "http://your-app-url/reset-password?token=" . $reset_token . "&email=" . urlencode($email);
-
-        echo json_encode([
-            'success' => true,
-            'message' => 'Password reset instructions sent to your email',
-            'reset_link' => $reset_link // Remove this in production
-        ]);
-
-        // TODO: Send email with reset link
-        // mail($email, "Password Reset", "Click here to reset your password: " . $reset_link);
-
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+        sendResponse(true, "Profile retrieved", $profile);
     } else {
-        // For security, don't reveal if email exists or not
-        echo json_encode([
-            'success' => true,
-            'message' => 'If the email exists in our system, you will receive reset instructions'
-        ]);
+        sendResponse(false, "User not found");
     }
 }
 
-function verifyToken()
+function updateProfile()
 {
-    $headers = getallheaders();
-    $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-    $token = str_replace('Bearer ', '', $auth_header);
+    global $db;
+    $user = validateToken();
+    $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($token)) {
-        echo json_encode(['success' => false, 'error' => 'No token provided']);
+    $query = "UPDATE users SET first_name = :first_name, last_name = :last_name, phone = :phone 
+              WHERE id = :id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':first_name', $data->first_name);
+    $stmt->bindParam(':last_name', $data->last_name);
+    $stmt->bindParam(':phone', $data->phone);
+    $stmt->bindParam(':id', $user['user_id']);
+
+    if ($stmt->execute()) {
+        sendResponse(true, "Profile updated successfully");
+    } else {
+        sendResponse(false, "Failed to update profile");
+    }
+}
+
+function changePassword()
+{
+    global $db;
+    $user = validateToken();
+    $data = json_decode(file_get_contents("php://input"));
+
+    if (!isset($data->current_password) || !isset($data->new_password)) {
+        sendResponse(false, "Current and new password required");
         return;
     }
 
-    $user_data = Auth::validateToken($token);
+    // Verify current password
+    $query = "SELECT password_hash FROM users WHERE id = :id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $user['user_id']);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user_data) {
-        echo json_encode([
-            'success' => true,
-            'valid' => true,
-            'user' => [
-                'id' => $user_data['user_id'],
-                'email' => $user_data['email'],
-                'user_type' => $user_data['user_type']
-            ]
-        ]);
+    if ($data->current_password === $result['password_hash']) {
+        $update_query = "UPDATE users SET password_hash = :new_password WHERE id = :id";
+        $update_stmt = $db->prepare($update_query);
+        $update_stmt->bindParam(':new_password', $data->new_password);
+        $update_stmt->bindParam(':id', $user['user_id']);
+
+        if ($update_stmt->execute()) {
+            sendResponse(true, "Password changed successfully");
+        } else {
+            sendResponse(false, "Failed to change password");
+        }
     } else {
-        echo json_encode(['success' => false, 'valid' => false, 'error' => 'Invalid or expired token']);
+        sendResponse(false, "Current password is incorrect");
     }
 }
 
-// Note: The Auth class should be in config/database.php
-// If not, add this at the top of the file or create a separate auth class file
-?>
+function forgotPassword()
+{
+    global $db;
+    $data = json_decode(file_get_contents("php://input"));
+
+    if (!isset($data->email)) {
+        sendResponse(false, "Email required");
+        return;
+    }
+
+    $query = "SELECT id, email FROM users WHERE email = :email";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':email', $data->email);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $token = bin2hex(random_bytes(32));
+        $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+        $insert_query = "INSERT INTO password_resets (email, token, expires_at) VALUES (:email, :token, :expires)";
+        $insert_stmt = $db->prepare($insert_query);
+        $insert_stmt->bindParam(':email', $data->email);
+        $insert_stmt->bindParam(':token', $token);
+        $insert_stmt->bindParam(':expires', $expires);
+        $insert_stmt->execute();
+
+        // In production, send email here
+        sendResponse(true, "Password reset link sent to your email", ['reset_token' => $token]);
+    } else {
+        sendResponse(false, "Email not found");
+    }
+}
+
+function resetPassword()
+{
+    global $db;
+    $data = json_decode(file_get_contents("php://input"));
+
+    if (!isset($data->token) || !isset($data->new_password)) {
+        sendResponse(false, "Token and new password required");
+        return;
+    }
+
+    $query = "SELECT email FROM password_resets WHERE token = :token AND expires_at > NOW()";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':token', $data->token);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $reset = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $update_query = "UPDATE users SET password_hash = :new_password WHERE email = :email";
+        $update_stmt = $db->prepare($update_query);
+        $update_stmt->bindParam(':new_password', $data->new_password);
+        $update_stmt->bindParam(':email', $reset['email']);
+        $update_stmt->execute();
+
+        // Delete used token
+        $delete_query = "DELETE FROM password_resets WHERE token = :token";
+        $delete_stmt = $db->prepare($delete_query);
+        $delete_stmt->bindParam(':token', $data->token);
+        $delete_stmt->execute();
+
+        sendResponse(true, "Password reset successful");
+    } else {
+        sendResponse(false, "Invalid or expired token");
+    }
+}
+
+function logout()
+{
+    sendResponse(true, "Logged out successfully");
+}
+
+function checkSession()
+{
+    $headers = apache_request_headers();
+    if (isset($headers['Authorization'])) {
+        try {
+            $user = validateToken();
+            sendResponse(true, "Session valid", ['user_id' => $user['user_id']]);
+        } catch (Exception $e) {
+            sendResponse(false, "Invalid session");
+        }
+    } else {
+        sendResponse(false, "No session");
+    }
+}
