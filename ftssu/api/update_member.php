@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Database configuration
 $host = 'localhost';
 $user = 'impactdi_result-checker';
-$password = 'uenrqFrgYbcY5YmSLTH6';
+$password = 'Innioluwa@1995';
 $database = 'impactdi_result-checker';
 
 
