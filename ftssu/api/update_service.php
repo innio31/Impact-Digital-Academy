@@ -11,14 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'config.php';
+// Include your database configuration
+require_once 'db_connect.php';
+
+// Use the global connection
 global $conn;
 
+// Check if connection exists
 if (!isset($conn) || $conn->connect_error) {
     echo json_encode(['success' => false, 'error' => 'Database connection failed']);
     exit();
 }
 
+// Get input data
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
@@ -35,34 +40,16 @@ if (!isset($data['id'])) {
 try {
     $service_id = $data['id'];
 
-    // If reopening a service (setting is_active = 1)
-    if (isset($data['is_active']) && $data['is_active'] == 1 && !isset($data['service_name'])) {
-        // First, close all other active services
-        $stmt = $conn->prepare("UPDATE services SET is_active = 0 WHERE id != ? AND is_active = 1");
-        $stmt->bind_param("i", $service_id);
-        $stmt->execute();
-        $stmt->close();
-
-        // Then activate the selected service
-        $stmt = $conn->prepare("UPDATE services SET is_active = 1 WHERE id = ?");
-        $stmt->bind_param("i", $service_id);
+    // Check if we're just updating status (closing service)
+    if (isset($data['is_active']) && !isset($data['service_name'])) {
+        $is_active = $data['is_active'];
+        $stmt = $conn->prepare("UPDATE services SET is_active = ? WHERE id = ?");
+        $stmt->bind_param("ii", $is_active, $service_id);
 
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Service reopened and set as active']);
+            echo json_encode(['success' => true, 'message' => 'Service status updated']);
         } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to reopen service: ' . $stmt->error]);
-        }
-        $stmt->close();
-    }
-    // If just closing a service (setting is_active = 0)
-    else if (isset($data['is_active']) && $data['is_active'] == 0 && !isset($data['service_name'])) {
-        $stmt = $conn->prepare("UPDATE services SET is_active = 0 WHERE id = ?");
-        $stmt->bind_param("i", $service_id);
-
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Service closed']);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to close service: ' . $stmt->error]);
+            echo json_encode(['success' => false, 'error' => 'Failed to update service: ' . $stmt->error]);
         }
         $stmt->close();
     }
