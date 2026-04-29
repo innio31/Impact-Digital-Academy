@@ -11,13 +11,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'db_connect.php';
+// Database configuration
+$host = 'localhost';
+$user = 'impactdi_result-checker';
+$password = 'uenrqFrgYbcY5YmSLTH6';
+$database = 'impactdi_result-checker';
+
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);
+    exit();
+}
 
 // Handle file upload for profile picture
 if (isset($_FILES['profile_picture'])) {
     $member_id = $_POST['member_id'];
-    $upload_dir = '../uploads/profiles/';
+    $upload_dir = 'uploads/profiles/';
 
+    // Create directory if it doesn't exist
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
@@ -27,7 +41,7 @@ if (isset($_FILES['profile_picture'])) {
     $filepath = $upload_dir . $filename;
 
     if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $filepath)) {
-        $image_url = 'https://impactdigitalacademy.com.ng/ftssu/api/uploads/profiles/' . $filename;
+        $image_url = 'https://impactdigitalacademy.com.ng/ftssu/api/' . $filepath;
 
         $stmt = $pdo->prepare("UPDATE members SET profile_picture = ? WHERE id = ?");
         $stmt->execute([$image_url, $member_id]);
@@ -40,10 +54,11 @@ if (isset($_FILES['profile_picture'])) {
 }
 
 // Handle JSON data for profile updates
-$data = json_decode(file_get_contents('php://input'), true);
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
 if (!$data) {
-    echo json_encode(['success' => false, 'error' => 'Invalid data']);
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON data: ' . $input]);
     exit();
 }
 
@@ -56,7 +71,7 @@ try {
     $updates = [];
     $params = [];
 
-    // Check each possible field
+    // Check each possible field - match your database column names
     if (isset($data['first_name']) && $data['first_name'] !== '') {
         $updates[] = "first_name = ?";
         $params[] = $data['first_name'];
@@ -98,13 +113,14 @@ try {
         $params[] = $data['date_joined'];
     }
     if (isset($data['password']) && $data['password'] !== '') {
+        // Use MD5 as in your database schema
         $hashed_password = md5($data['password']);
         $updates[] = "password = ?";
         $params[] = $hashed_password;
     }
 
     if (empty($updates)) {
-        echo json_encode(['success' => false, 'error' => 'No fields to update']);
+        echo json_encode(['success' => false, 'error' => 'No fields to update. Available data: ' . json_encode($data)]);
         exit();
     }
 
@@ -121,5 +137,7 @@ try {
 
     echo json_encode(['success' => true, 'member' => $member]);
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => 'General error: ' . $e->getMessage()]);
 }
