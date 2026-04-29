@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $sql = "SELECT DISTINCT command FROM members WHERE command IS NOT NULL AND command != '' ORDER BY command ASC";

@@ -1,4 +1,5 @@
 <?php
+require_once 'cors.php';
 include 'db_connect.php';
 
 $input = json_decode(file_get_contents('php://input'), true);

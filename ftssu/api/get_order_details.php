@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $order_number = $conn->real_escape_string($_GET['order_number'] ?? '');

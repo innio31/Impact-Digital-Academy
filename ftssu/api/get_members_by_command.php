@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $command = isset($_GET['command']) ? $conn->real_escape_string($_GET['command']) : '';

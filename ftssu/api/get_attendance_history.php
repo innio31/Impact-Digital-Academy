@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $member_id = isset($_GET['member_id']) ? (int)$_GET['member_id'] : 0;

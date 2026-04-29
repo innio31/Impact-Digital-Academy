@@ -1,4 +1,5 @@
 <?php
+require_once 'cors.php';
 include 'db_connect.php';
 
 $result = $conn->query("SELECT id, name, price, description, has_custom_price, is_active FROM products WHERE is_active = 1 ORDER BY sort_order ASC");

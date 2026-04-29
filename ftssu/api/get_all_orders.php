@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $sql = "SELECT id, order_number, customer_name, customer_phone, customer_command, total_amount, status, created_at 

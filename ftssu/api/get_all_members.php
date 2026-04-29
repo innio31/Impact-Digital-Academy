@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-
+require_once 'cors.php';
 include 'db_connect.php';
 
 $sql = "SELECT id, id_number, first_name, last_name, designation, command, role, phone_number 

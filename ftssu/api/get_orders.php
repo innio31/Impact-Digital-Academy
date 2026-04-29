@@ -1,4 +1,5 @@
 <?php
+require_once 'cors.php';
 include 'db_connect.php';
 
 $phone = $conn->real_escape_string($_GET['phone'] ?? '');
