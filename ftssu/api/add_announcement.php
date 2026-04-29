@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'db_connect.php';
+include 'db_connect.php';
 
 global $conn;
 
