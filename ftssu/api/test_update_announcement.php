@@ -13,12 +13,12 @@ $input = file_get_contents('php://input');
 error_log("Test update received: " . $input);
 
 // Try to require config
-if (file_exists('config.php')) {
-    require_once 'config.php';
-    error_log("config.php found and loaded");
+if (file_exists('db_connect.php')) {
+    require_once 'db_connect.php';
+    error_log("db_connect.php found and loaded");
 } else {
-    error_log("config.php NOT FOUND");
-    echo json_encode(['success' => false, 'error' => 'config.php not found']);
+    error_log("db_connect.php NOT FOUND");
+    echo json_encode(['success' => false, 'error' => 'db_connect.php not found']);
     exit();
 }
 
