@@ -1,36 +1,50 @@
 <?php
-header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-require_once 'cors.php';
-include 'db_connect.php';
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json');
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+require_once 'config.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$id = isset($data['id']) ? (int)$data['id'] : 0;
-$service_name = isset($data['service_name']) ? $conn->real_escape_string($data['service_name']) : '';
-$service_date = isset($data['service_date']) ? $conn->real_escape_string($data['service_date']) : '';
-$start_time = isset($data['start_time']) ? $conn->real_escape_string($data['start_time']) : '';
-$end_time = isset($data['end_time']) ? $conn->real_escape_string($data['end_time']) : '';
-$is_active = isset($data['is_active']) ? (int)$data['is_active'] : 1;
-
-if (!$id) {
-    echo json_encode(['success' => false, 'error' => 'Service ID required']);
-    exit;
+if (!$data) {
+    echo json_encode(['success' => false, 'error' => 'Invalid data']);
+    exit();
 }
 
-$sql = "UPDATE services SET 
-        service_name = '$service_name',
-        service_date = '$service_date',
-        start_time = '$start_time',
-        end_time = '$end_time',
-        is_active = $is_active
-        WHERE id = $id";
-
-if ($conn->query($sql)) {
-    echo json_encode(['success' => true]);
-} else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+try {
+    if (isset($data['id'])) {
+        // If only status update (closing service)
+        if (isset($data['is_active']) && !isset($data['service_name'])) {
+            $stmt = $pdo->prepare("UPDATE services SET is_active = ? WHERE id = ?");
+            $stmt->execute([$data['is_active'], $data['id']]);
+            echo json_encode(['success' => true, 'message' => 'Service status updated']);
+        }
+        // Full update
+        else if (isset($data['service_name'])) {
+            $stmt = $pdo->prepare("UPDATE services SET service_name = ?, service_date = ?, start_time = ?, end_time = ?, is_active = ? WHERE id = ?");
+            $stmt->execute([
+                $data['service_name'],
+                $data['service_date'],
+                $data['start_time'],
+                $data['end_time'],
+                $data['is_active'] ?? 1,
+                $data['id']
+            ]);
+            echo json_encode(['success' => true, 'message' => 'Service updated']);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Service ID required']);
+    }
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
-
-$conn->close();
