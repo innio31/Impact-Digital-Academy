@@ -1,5 +1,4 @@
 <?php
-// Turn on error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -13,25 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Include database connection
 require_once 'db_connect.php';
 
-// Get the raw input
 $raw_input = file_get_contents('php://input');
 $data = json_decode($raw_input, true);
 
-// Create a log file to see what's happening
-$log = date('Y-m-d H:i:s') . " - Raw input: " . $raw_input . "\n";
-file_put_contents('announcement_debug.log', $log, FILE_APPEND);
-
 if (!$data) {
-    $error = ['success' => false, 'error' => 'No data received', 'raw' => $raw_input];
-    file_put_contents('announcement_debug.log', json_encode($error) . "\n", FILE_APPEND);
-    echo json_encode($error);
+    echo json_encode(['success' => false, 'error' => 'No data received']);
     exit();
 }
 
-// Extract data
 $title = isset($data['title']) ? trim($data['title']) : '';
 $content = isset($data['content']) ? trim($data['content']) : '';
 $author = isset($data['author']) ? trim($data['author']) : '';
@@ -44,23 +34,18 @@ if (empty($title) || empty($content)) {
     exit();
 }
 
-// Check if table exists
-$table_check = $conn->query("SHOW TABLES LIKE 'announcements'");
-if ($table_check->num_rows == 0) {
-    echo json_encode(['success' => false, 'error' => 'announcements table does not exist']);
-    exit();
-}
+// Use 'target_commands' instead of 'target_command'
+$sql = "INSERT INTO announcements (title, content, author, author_role, target_commands, is_pinned, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
-// Insert using simple query first to test
-$sql = "INSERT INTO announcements (title, content, author, author_role, target_command, is_pinned, created_at) 
-        VALUES ('$title', '$content', '$author', '$author_role', " . ($target_command ? "'$target_command'" : "NULL") . ", $is_pinned, NOW())";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sssssi", $title, $content, $author, $author_role, $target_command, $is_pinned);
 
-file_put_contents('announcement_debug.log', "SQL: $sql\n", FILE_APPEND);
-
-if ($conn->query($sql) === TRUE) {
+if ($stmt->execute()) {
     echo json_encode(['success' => true, 'id' => $conn->insert_id]);
 } else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+    echo json_encode(['success' => false, 'error' => $stmt->error]);
 }
 
+$stmt->close();
 $conn->close();

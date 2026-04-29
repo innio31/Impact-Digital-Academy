@@ -17,9 +17,6 @@ require_once 'db_connect.php';
 $raw_input = file_get_contents('php://input');
 $data = json_decode($raw_input, true);
 
-$log = date('Y-m-d H:i:s') . " - Update received: " . $raw_input . "\n";
-file_put_contents('announcement_debug.log', $log, FILE_APPEND);
-
 if (!$data) {
     echo json_encode(['success' => false, 'error' => 'No data received']);
     exit();
@@ -36,19 +33,16 @@ if (!$id || empty($title) || empty($content)) {
     exit();
 }
 
-$sql = "UPDATE announcements SET 
-        title = '$title', 
-        content = '$content', 
-        target_command = " . ($target_command ? "'$target_command'" : "NULL") . ", 
-        is_pinned = $is_pinned 
-        WHERE id = $id";
+// Use 'target_commands' instead of 'target_command'
+$sql = "UPDATE announcements SET title = ?, content = ?, target_commands = ?, is_pinned = ? WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sssii", $title, $content, $target_command, $is_pinned, $id);
 
-file_put_contents('announcement_debug.log', "Update SQL: $sql\n", FILE_APPEND);
-
-if ($conn->query($sql) === TRUE) {
+if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Announcement updated']);
 } else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+    echo json_encode(['success' => false, 'error' => $stmt->error]);
 }
 
+$stmt->close();
 $conn->close();
