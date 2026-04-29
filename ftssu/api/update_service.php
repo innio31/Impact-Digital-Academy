@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Include your database configuration
-require_once 'database.php';
+require_once 'db_connect.php';
 
 // Use the global connection
 global $conn;
