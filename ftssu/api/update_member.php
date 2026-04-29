@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'config.php';
+require_once 'db_connect.php';
 
 // Handle file upload for profile picture
 if (isset($_FILES['profile_picture'])) {
