@@ -1,73 +1,57 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Access-Control-Allow-Credentials: true');
+// Simple update_announcement.php - no fancy stuff
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// Get the raw input
+$raw_input = file_get_contents('php://input');
 
-require_once 'db_connect.php';
-global $conn;
+// For debugging - log to file
+file_put_contents('update_log.txt', date('Y-m-d H:i:s') . " - Received: " . $raw_input . "\n", FILE_APPEND);
 
-if (!isset($conn) || $conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . ($conn->connect_error ?? 'No connection')]);
-    exit();
-}
-
-// Get input data
-$input = file_get_contents('php://input');
-$data = json_decode($input, true);
-
-// Log for debugging
-error_log("Update announcement received: " . $input);
+// Parse JSON
+$data = json_decode($raw_input, true);
 
 if (!$data) {
-    echo json_encode(['success' => false, 'error' => 'Invalid JSON data']);
+    echo json_encode(['success' => false, 'error' => 'No data received', 'raw' => $raw_input]);
     exit();
 }
 
-$id = isset($data['id']) ? (int)$data['id'] : 0;
-$title = isset($data['title']) ? trim($data['title']) : '';
-$content = isset($data['content']) ? trim($data['content']) : '';
-$target_command = isset($data['target_command']) && $data['target_command'] !== '' ? $data['target_command'] : null;
-$is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
-
-if (!$id || empty($title) || empty($content)) {
-    echo json_encode(['success' => false, 'error' => 'ID, title, and content are required']);
+// Check required fields
+if (!isset($data['id']) || !isset($data['title']) || !isset($data['content'])) {
+    echo json_encode(['success' => false, 'error' => 'Missing required fields', 'received' => array_keys($data)]);
     exit();
 }
 
-// Check if announcement exists
-$checkStmt = $conn->prepare("SELECT id FROM announcements WHERE id = ?");
-$checkStmt->bind_param("i", $id);
-$checkStmt->execute();
-$checkResult = $checkStmt->get_result();
+// Database connection
+$host = 'localhost';
+$user = 'impactdi_result-checker';
+$password = 'Innioluwa@1995';
+$database = 'impactdi_result-checker';
 
-if ($checkResult->num_rows === 0) {
-    echo json_encode(['success' => false, 'error' => 'Announcement not found']);
-    exit();
-}
-$checkStmt->close();
+$conn = new mysqli($host, $user, $password, $database);
 
-// Update the announcement
-$stmt = $conn->prepare("UPDATE announcements SET title = ?, content = ?, target_command = ?, is_pinned = ? WHERE id = ?");
-if (!$stmt) {
-    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+if ($conn->connect_error) {
+    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error]);
     exit();
 }
 
-$stmt->bind_param("sssii", $title, $content, $target_command, $is_pinned, $id);
+$id = (int)$data['id'];
+$title = $conn->real_escape_string($data['title']);
+$content = $conn->real_escape_string($data['content']);
+$target_command = isset($data['target_command']) && $data['target_command'] ? "'" . $conn->real_escape_string($data['target_command']) . "'" : "NULL";
+$is_pinned = (int)($data['is_pinned'] ?? 0);
 
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Announcement updated successfully']);
+$sql = "UPDATE announcements SET title = '$title', content = '$content', target_command = $target_command, is_pinned = $is_pinned WHERE id = $id";
+
+file_put_contents('update_log.txt', date('Y-m-d H:i:s') . " - SQL: " . $sql . "\n", FILE_APPEND);
+
+if ($conn->query($sql) === TRUE) {
+    echo json_encode(['success' => true, 'message' => 'Announcement updated']);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Execute failed: ' . $stmt->error]);
+    echo json_encode(['success' => false, 'error' => $conn->error]);
 }
 
-$stmt->close();
 $conn->close();
