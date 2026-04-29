@@ -1,23 +1,45 @@
 <?php
-header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-require_once 'cors.php';
-include 'db_connect.php';
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+require_once 'config.php';
+global $conn;
+
+if (!isset($conn) || $conn->connect_error) {
+    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
+    exit();
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
-$id = isset($data['id']) ? (int)$data['id'] : 0;
+
+if (!$data) {
+    echo json_encode(['success' => false, 'error' => 'Invalid data']);
+    exit();
+}
+
+$id = $data['id'] ?? 0;
 $is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
 
 if (!$id) {
     echo json_encode(['success' => false, 'error' => 'Announcement ID required']);
-    exit;
+    exit();
 }
 
-$sql = "UPDATE announcements SET is_pinned = $is_pinned WHERE id = $id";
-if ($conn->query($sql)) {
-    echo json_encode(['success' => true]);
+$stmt = $conn->prepare("UPDATE announcements SET is_pinned = ? WHERE id = ?");
+$stmt->bind_param("ii", $is_pinned, $id);
+
+if ($stmt->execute()) {
+    echo json_encode(['success' => true, 'message' => 'Pin status updated']);
 } else {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
+    echo json_encode(['success' => false, 'error' => $stmt->error]);
 }
+
+$stmt->close();
 $conn->close();

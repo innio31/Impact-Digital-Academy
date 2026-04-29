@@ -25,17 +25,21 @@ if (!$data) {
 }
 
 $id = $data['id'] ?? 0;
+$title = $data['title'] ?? '';
+$content = $data['content'] ?? '';
+$target_command = $data['target_command'] ?? null;
+$is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
 
-if (!$id) {
-    echo json_encode(['success' => false, 'error' => 'Announcement ID required']);
+if (!$id || empty($title) || empty($content)) {
+    echo json_encode(['success' => false, 'error' => 'ID, title, and content are required']);
     exit();
 }
 
-$stmt = $conn->prepare("DELETE FROM announcements WHERE id = ?");
-$stmt->bind_param("i", $id);
+$stmt = $conn->prepare("UPDATE announcements SET title = ?, content = ?, target_command = ?, is_pinned = ? WHERE id = ?");
+$stmt->bind_param("sssii", $title, $content, $target_command, $is_pinned, $id);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Announcement deleted']);
+    echo json_encode(['success' => true, 'message' => 'Announcement updated']);
 } else {
     echo json_encode(['success' => false, 'error' => $stmt->error]);
 }

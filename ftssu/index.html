@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <!-- Fixed viewport: removed 'user-scalable' to comply with accessibility best practices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Faith Tabernacle Security Service Unit | Accounts Portal</title>
     <style>
         * {
@@ -152,6 +154,7 @@
             appearance: none;
         }
 
+        /* Fixed: added accessible name via title attribute on select (handled in HTML) */
         .customer-info select {
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -377,6 +380,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -408,6 +412,7 @@
                 flex-direction: row;
                 flex-wrap: wrap;
             }
+
             .bank-item {
                 flex: 1;
                 min-width: 150px;
@@ -527,424 +532,417 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* Additional accessibility: focus visible outlines */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 2px solid #cc0000;
+            outline-offset: 2px;
+        }
     </style>
 </head>
+
 <body>
-<div class="dashboard">
-    <div class="hero-header">
-        <div class="logo-area">
-            <div class="logo-icon">
-                <img src="logo.jpg" alt="Faith Tabernacle Security Logo">
+    <div class="dashboard">
+        <div class="hero-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <!-- Placeholder logo; gracefully handles missing image -->
+                    <img src="logo.jpg" alt="Faith Tabernacle Security Logo">
+                </div>
+                <div class="title-text">
+                    <h1>FAITH TABERNACLE SECURITY</h1>
+                    <p>Order & Inventory • Accounts Division</p>
+                </div>
             </div>
-            <div class="title-text">
-                <h1>FAITH TABERNACLE SECURITY</h1>
-                <p>Order & Inventory • Accounts Division</p>
+            <div class="dept-badge">
+                📋 ACCOUNTS DEPT
             </div>
         </div>
-        <div class="dept-badge">
-            📋 ACCOUNTS DEPT
+
+        <div class="main-content">
+            <div class="section-title">
+                📦 ORDER FORM
+            </div>
+
+            <div class="customer-info">
+                <label for="customerName">👤 Your Name <span style="color:#cc0000;">*</span></label>
+                <input type="text" id="customerName" placeholder="Enter your full name" autocomplete="name">
+                <span id="nameError" class="error-message" style="display:none;">Name is required</span>
+
+                <label for="customerPhone">📞 Phone Number <span style="color:#cc0000;">*</span></label>
+                <input type="tel" id="customerPhone" placeholder="e.g., 08012345678" maxlength="11" autocomplete="tel"
+                    inputmode="numeric">
+                <span id="phoneError" class="error-message" style="display:none;">Phone number must be exactly 11
+                    digits</span>
+
+                <label for="customerCommand">⚔️ Command <span style="color:#cc0000;">*</span></label>
+                <!-- FIX: Added title attribute for accessible name (resolves axe/forms select-name) -->
+                <select id="customerCommand" title="Select your command or unit">
+                    <option value="">Select Command</option>
+                    <option value="Command 1">Command 1</option>
+                    <option value="Command 2">Command 2</option>
+                    <option value="Command 3">Command 3</option>
+                    <option value="Command 4">Command 4</option>
+                    <option value="Command 5">Command 5</option>
+                    <option value="Command 6">Command 6</option>
+                    <option value="Command 7">Command 7</option>
+                    <option value="Command 8">Command 8</option>
+                    <option value="Command 9">Command 9</option>
+                    <option value="Command 10">Command 10</option>
+                    <option value="Command 11">Command 11</option>
+                    <option value="Command 12">Command 12</option>
+                    <option value="Command 13">Command 13</option>
+                    <option value="Command 14">Command 14</option>
+                    <option value="Command 15">Command 15</option>
+                    <option value="Command 16">Command 16</option>
+                    <option value="Command 17">Command 17</option>
+                    <option value="Command 18">Command 18</option>
+                    <option value="Command 19">Command 19</option>
+                    <option value="Command 20">Command 20</option>
+                    <option value="Command 21">Command 21</option>
+                    <option value="Command 22">Command 22</option>
+                    <option value="VETERAN">VETERAN</option>
+                    <option value="KHMS">KHMS</option>
+                    <option value="COVENANT DAY">COVENANT DAY</option>
+                    <option value="YOUTH">YOUTH</option>
+                    <option value="RECRUITMENT & TRAINING">RECRUITMENT & TRAINING</option>
+                    <option value="SPECIAL DUTY 1">SPECIAL DUTY 1</option>
+                    <option value="SPECIAL DUTY 2">SPECIAL DUTY 2</option>
+                    <option value="SPECIAL DUTY 3">SPECIAL DUTY 3</option>
+                    <option value="SPECIAL DUTY 4">SPECIAL DUTY 4</option>
+                    <option value="SPECIAL DUTY 5">SPECIAL DUTY 5</option>
+                    <option value="HONOUR">HONOUR</option>
+                    <option value="G & G">G & G</option>
+                    <option value="GOSHEN">GOSHEN</option>
+                    <option value="CODE & ETHICS">CODE & ETHICS</option>
+                    <option value="IID">IID</option>
+                    <option value="SID">SID</option>
+                    <option value="PATROL">PATROL</option>
+                    <option value="UPPER ROOM">UPPER ROOM</option>
+                    <option value="OPERATION">OPERATION</option>
+                    <option value="IRS">IRS</option>
+                    <option value="FORENSIC">FORENSIC</option>
+                    <option value="FRENCH">FRENCH</option>
+                    <option value="VISION 1">VISION 1</option>
+                    <option value="VISION 2">VISION 2</option>
+                    <option value="VISION 3">VISION 3</option>
+                    <option value="SECURITY MEDICAL">SECURITY MEDICAL</option>
+                    <option value="SALES MONITORING">SALES MONITORING</option>
+                </select>
+                <span id="commandError" class="error-message" style="display:none;">Please select a command</span>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <div class="loading">Loading products...</div>
+            </div>
+
+            <div class="summary-panel">
+                <div class="total-row">
+                    <span>💰 GRAND TOTAL</span>
+                    <span class="total-amount" id="totalAmountDisplay">₦0</span>
+                </div>
+                <button class="btn-payment" id="makePaymentBtn"
+                    aria-label="Proceed to payment and view account details">
+                    💳 PROCEED TO PAYMENT →
+                </button>
+                <div class="reset-note">
+                    * Enter quantities, total updates automatically
+                </div>
+            </div>
+
+            <div class="account-section" id="accountSection">
+                <div class="account-card" id="accountCard">
+                    <div class="ac-header">
+                        🏦 PAYMENT DETAILS
+                    </div>
+                    <div class="bank-details">
+                        <div class="bank-item">
+                            <div class="bank-label">ACCOUNT NUMBER</div>
+                            <div class="bank-value">0520007050</div>
+                        </div>
+                        <div class="bank-item">
+                            <div class="bank-label">BANK NAME</div>
+                            <div class="bank-value">Covenant Microfinance Bank</div>
+                        </div>
+                        <div class="bank-item">
+                            <div class="bank-label">ACCOUNT NAME</div>
+                            <div class="bank-value">Faith Tabernacle Security Service Group</div>
+                        </div>
+                    </div>
+                    <div class="payment-notice">
+                        ✅ After payment, send proof via WhatsApp below
+                    </div>
+                    <div class="whatsapp-button-container">
+                        <a href="#" class="whatsapp-btn" target="_blank" id="whatsappBtn"
+                            aria-label="Send payment proof via WhatsApp">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"
+                                class="whatsapp-icon">
+                            Send Payment Proof & Complete Order
+                        </a>
+                    </div>
+                    <div class="reset-note" style="margin-top: 0.5rem;">
+                        * Order will only be recorded after you click "Send Payment Proof"
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-footer">
+                Faith Tabernacle Security Service Unit — Protection Under Grace
+            </div>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="section-title">
-            📦 ORDER FORM
-        </div>
+    <script>
+        let products = [];
+        let quantities = [];
+        let orderSavedFlag = false; // Prevent duplicate order saving
+        let currentOrderData = null; // Store order data for WhatsApp submission
 
-        <div class="customer-info">
-            <label>👤 Your Name <span style="color:#cc0000;">*</span></label>
-            <input type="text" id="customerName" placeholder="Enter your full name">
-            <span id="nameError" class="error-message" style="display:none;">Name is required</span>
-            
-            <label>📞 Phone Number <span style="color:#cc0000;">*</span></label>
-            <input type="tel" id="customerPhone" placeholder="e.g., 08012345678" maxlength="11">
-            <span id="phoneError" class="error-message" style="display:none;">Phone number must be exactly 11 digits</span>
-            
-            <label>⚔️ Command <span style="color:#cc0000;">*</span></label>
-            <select id="customerCommand">
-                <option value="">Select Command</option>
-                <option value="Command 1">Command 1</option>
-                <option value="Command 2">Command 2</option>
-                <option value="Command 3">Command 3</option>
-                <option value="Command 4">Command 4</option>
-                <option value="Command 5">Command 5</option>
-                <option value="Command 6">Command 6</option>
-                <option value="Command 7">Command 7</option>
-                <option value="Command 8">Command 8</option>
-                <option value="Command 9">Command 9</option>
-                <option value="Command 10">Command 10</option>
-                <option value="Command 11">Command 11</option>
-                <option value="Command 12">Command 12</option>
-                <option value="Command 13">Command 13</option>
-                <option value="Command 14">Command 14</option>
-                <option value="Command 15">Command 15</option>
-                <option value="Command 16">Command 16</option>
-                <option value="Command 17">Command 17</option>
-                <option value="Command 18">Command 18</option>
-                <option value="Command 19">Command 19</option>
-                <option value="Command 20">Command 20</option>
-                <option value="Command 21">Command 21</option>
-                <option value="Command 22">Command 22</option>
-                <option value="VETERAN">VETERAN</option>
-                <option value="KHMS">KHMS</option>
-                <option value="COVENANT DAY">COVENANT DAY</option>
-                <option value="YOUTH">YOUTH</option>
-                <option value="RECRUITMENT & TRAINING">RECRUITMENT & TRAINING</option>
-                <option value="SPECIAL DUTY 1">SPECIAL DUTY 1</option>
-                <option value="SPECIAL DUTY 2">SPECIAL DUTY 2</option>
-                <option value="SPECIAL DUTY 3">SPECIAL DUTY 3</option>
-                <option value="SPECIAL DUTY 4">SPECIAL DUTY 4</option>
-                <option value="SPECIAL DUTY 5">SPECIAL DUTY 5</option>
-                <option value="HONOUR">HONOUR</option>
-                <option value="G & G">G & G</option>
-                <option value="GOSHEN">GOSHEN</option>
-                <option value="CODE & ETHICS">CODE & ETHICS</option>
-                <option value="IID">IID</option>
-                <option value="SID">SID</option>
-                <option value="PATROL">PATROL</option>
-                <option value="UPPER ROOM">UPPER ROOM</option>
-                <option value="OPERATION">OPERATION</option>
-                <option value="IRS">IRS</option>
-                <option value="FORENSIC">FORENSIC</option>
-                <option value="FRENCH">FRENCH</option>
-                <option value="VISION 1">VISION 1</option>
-                <option value="VISION 2">VISION 2</option>
-                <option value="VISION 3">VISION 3</option>
-                <option value="SECURITY MEDICAL">SECURITY MEDICAL</option>
-                <option value="SALES MONITORING">SALES MONITORING</option>
-            </select>
-            <span id="commandError" class="error-message" style="display:none;">Please select a command</span>
-        </div>
-
-        <div class="products-grid" id="productsGrid">
-            <div class="loading">Loading products...</div>
-        </div>
-
-        <div class="summary-panel">
-            <div class="total-row">
-                <span>💰 GRAND TOTAL</span>
-                <span class="total-amount" id="totalAmountDisplay">₦0</span>
-            </div>
-            <button class="btn-payment" id="makePaymentBtn">
-                💳 PROCEED TO PAYMENT →
-            </button>
-            <div class="reset-note">
-                * Enter quantities, total updates automatically
-            </div>
-        </div>
-
-        <div class="account-section" id="accountSection">
-            <div class="account-card" id="accountCard">
-                <div class="ac-header">
-                    🏦 PAYMENT DETAILS
-                </div>
-                <div class="bank-details">
-                    <div class="bank-item">
-                        <div class="bank-label">ACCOUNT NUMBER</div>
-                        <div class="bank-value">0520007050</div>
-                    </div>
-                    <div class="bank-item">
-                        <div class="bank-label">BANK NAME</div>
-                        <div class="bank-value">Covenant Microfinance Bank</div>
-                    </div>
-                    <div class="bank-item">
-                        <div class="bank-label">ACCOUNT NAME</div>
-                        <div class="bank-value">Faith Tabernacle Security Service Group</div>
-                    </div>
-                </div>
-                <div class="payment-notice">
-                    ✅ After payment, send proof via WhatsApp below
-                </div>
-                <div class="whatsapp-button-container">
-                    <a href="#" class="whatsapp-btn" target="_blank" id="whatsappBtn">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
-                        Send Payment Proof & Complete Order
-                    </a>
-                </div>
-                <div class="reset-note" style="margin-top: 0.5rem;">
-                    * Order will only be recorded after you click "Send Payment Proof"
-                </div>
-            </div>
-        </div>
-        
-        <div class="security-footer">
-            Faith Tabernacle Security Service Unit — Protection Under Grace
-        </div>
-    </div>
-</div>
-
-<script>
-    let products = [];
-    let quantities = [];
-    let orderSavedFlag = false; // Prevent duplicate order saving
-    let currentOrderData = null; // Store order data for WhatsApp submission
-
-    function formatNaira(amount) {
-        return '₦' + amount.toLocaleString('en-NG');
-    }
-
-    function computeTotal() {
-        let total = 0;
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].hasCustomPrice) {
-                total += quantities[i];
-            } else {
-                total += products[i].price * quantities[i];
-            }
+        function formatNaira(amount) {
+            return '₦' + amount.toLocaleString('en-NG');
         }
-        return total;
-    }
 
-    function updateTotalsUI() {
-        for (let i = 0; i < products.length; i++) {
-            const itemTotalSpan = document.getElementById(`item-total-${i}`);
-            if (itemTotalSpan) {
-                let itemTotalValue;
+        function computeTotal() {
+            let total = 0;
+            for (let i = 0; i < products.length; i++) {
                 if (products[i].hasCustomPrice) {
-                    itemTotalValue = quantities[i];
+                    total += quantities[i];
                 } else {
-                    itemTotalValue = products[i].price * quantities[i];
+                    total += products[i].price * quantities[i];
                 }
-                itemTotalSpan.innerText = formatNaira(itemTotalValue);
             }
-        }
-        const totalAmountSpan = document.getElementById('totalAmountDisplay');
-        if (totalAmountSpan) {
-            totalAmountSpan.innerText = formatNaira(computeTotal());
-        }
-        updateWhatsAppLinkPreview();
-    }
-
-    function handleQuantityChange(index, event) {
-        let qty = parseInt(event.target.value, 10);
-        if (isNaN(qty) || qty < 0) qty = 0;
-        if (qty > 1000) qty = 1000;
-        quantities[index] = qty;
-        event.target.value = qty;
-        updateTotalsUI();
-        // Reset order saved flag when items change
-        orderSavedFlag = false;
-        currentOrderData = null;
-    }
-
-    function handleLoveSeedChange(index, event) {
-        let amount = parseInt(event.target.value, 10);
-        if (isNaN(amount) || amount < 0) amount = 0;
-        quantities[index] = amount;
-        event.target.value = amount;
-        updateTotalsUI();
-        orderSavedFlag = false;
-        currentOrderData = null;
-    }
-
-    // Validation functions
-    function validateCustomerInfo() {
-        let isValid = true;
-        const name = document.getElementById('customerName').value.trim();
-        const phone = document.getElementById('customerPhone').value.trim();
-        const command = document.getElementById('customerCommand').value;
-        
-        // Name validation
-        if (!name) {
-            document.getElementById('nameError').style.display = 'block';
-            document.getElementById('customerName').classList.add('error-border');
-            isValid = false;
-        } else {
-            document.getElementById('nameError').style.display = 'none';
-            document.getElementById('customerName').classList.remove('error-border');
-        }
-        
-        // Phone validation: exactly 11 digits, only numbers
-        const phoneRegex = /^\d{11}$/;
-        if (!phone || !phoneRegex.test(phone)) {
-            document.getElementById('phoneError').style.display = 'block';
-            document.getElementById('customerPhone').classList.add('error-border');
-            isValid = false;
-        } else {
-            document.getElementById('phoneError').style.display = 'none';
-            document.getElementById('customerPhone').classList.remove('error-border');
-        }
-        
-        // Command validation
-        if (!command) {
-            document.getElementById('commandError').style.display = 'block';
-            document.getElementById('customerCommand').classList.add('error-border');
-            isValid = false;
-        } else {
-            document.getElementById('commandError').style.display = 'none';
-            document.getElementById('customerCommand').classList.remove('error-border');
-        }
-        
-        return isValid;
-    }
-
-    // Save order to backend (only called ONCE when WhatsApp is clicked)
-    async function saveOrderToBackend() {
-        // Ensure we have items
-        const items = products.map((product, index) => ({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: quantities[index],
-            hasCustomPrice: product.hasCustomPrice
-        })).filter(item => item.quantity > 0);
-
-        if (items.length === 0) {
-            alert('Please add at least one item to your order.');
-            return null;
+            return total;
         }
 
-        const orderData = {
-            customer_name: document.getElementById('customerName').value.trim(),
-            customer_phone: document.getElementById('customerPhone').value.trim(),
-            customer_command: document.getElementById('customerCommand').value,
-            total_amount: computeTotal(),
-            items: items
-        };
+        function updateTotalsUI() {
+            for (let i = 0; i < products.length; i++) {
+                const itemTotalSpan = document.getElementById(`item-total-${i}`);
+                if (itemTotalSpan) {
+                    let itemTotalValue;
+                    if (products[i].hasCustomPrice) {
+                        itemTotalValue = quantities[i];
+                    } else {
+                        itemTotalValue = products[i].price * quantities[i];
+                    }
+                    itemTotalSpan.innerText = formatNaira(itemTotalValue);
+                }
+            }
+            const totalAmountSpan = document.getElementById('totalAmountDisplay');
+            if (totalAmountSpan) {
+                totalAmountSpan.innerText = formatNaira(computeTotal());
+            }
+            updateWhatsAppLinkPreview();
+        }
 
-        try {
-            const response = await fetch('api_save_order.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
-            const result = await response.json();
-            if (result.success) {
-                return { success: true, order_number: result.order_number, total: computeTotal() };
+        function handleQuantityChange(index, event) {
+            let qty = parseInt(event.target.value, 10);
+            if (isNaN(qty) || qty < 0) qty = 0;
+            if (qty > 1000) qty = 1000;
+            quantities[index] = qty;
+            event.target.value = qty;
+            updateTotalsUI();
+            orderSavedFlag = false;
+            currentOrderData = null;
+        }
+
+        function handleLoveSeedChange(index, event) {
+            let amount = parseInt(event.target.value, 10);
+            if (isNaN(amount) || amount < 0) amount = 0;
+            quantities[index] = amount;
+            event.target.value = amount;
+            updateTotalsUI();
+            orderSavedFlag = false;
+            currentOrderData = null;
+        }
+
+        function validateCustomerInfo() {
+            let isValid = true;
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const command = document.getElementById('customerCommand').value;
+
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                document.getElementById('customerName').classList.add('error-border');
+                isValid = false;
             } else {
-                alert('Error saving order: ' + (result.error || 'Unknown error'));
+                document.getElementById('nameError').style.display = 'none';
+                document.getElementById('customerName').classList.remove('error-border');
+            }
+
+            const phoneRegex = /^\d{11}$/;
+            if (!phone || !phoneRegex.test(phone)) {
+                document.getElementById('phoneError').style.display = 'block';
+                document.getElementById('customerPhone').classList.add('error-border');
+                isValid = false;
+            } else {
+                document.getElementById('phoneError').style.display = 'none';
+                document.getElementById('customerPhone').classList.remove('error-border');
+            }
+
+            if (!command) {
+                document.getElementById('commandError').style.display = 'block';
+                document.getElementById('customerCommand').classList.add('error-border');
+                isValid = false;
+            } else {
+                document.getElementById('commandError').style.display = 'none';
+                document.getElementById('customerCommand').classList.remove('error-border');
+            }
+
+            return isValid;
+        }
+
+        async function saveOrderToBackend() {
+            const items = products.map((product, index) => ({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: quantities[index],
+                hasCustomPrice: product.hasCustomPrice
+            })).filter(item => item.quantity > 0);
+
+            if (items.length === 0) {
+                alert('Please add at least one item to your order.');
                 return null;
             }
-        } catch(error) {
-            console.error('Error:', error);
-            alert('Error saving order. Please check your connection and try again.');
-            return null;
-        }
-    }
 
-    // Show account details panel
-    function showAccountDetails() {
-        const accountCardDiv = document.getElementById('accountCard');
-        if (accountCardDiv) {
-            accountCardDiv.classList.add('active');
-            const accountSection = document.getElementById('accountSection');
-            if (accountSection) {
-                setTimeout(() => {
-                    accountSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
+            const orderData = {
+                customer_name: document.getElementById('customerName').value.trim(),
+                customer_phone: document.getElementById('customerPhone').value.trim(),
+                customer_command: document.getElementById('customerCommand').value,
+                total_amount: computeTotal(),
+                items: items
+            };
+
+            try {
+                const response = await fetch('api_save_order.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    return { success: true, order_number: result.order_number, total: computeTotal() };
+                } else {
+                    alert('Error saving order: ' + (result.error || 'Unknown error'));
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving order. Please check your connection and try again.');
+                return null;
             }
         }
-    }
 
-    // Handle "Proceed to Payment" button click - only validate and show account, NO order save
-    async function onProceedToPayment() {
-        // Validate customer info first
-        if (!validateCustomerInfo()) {
-            alert('Please fill in all required fields correctly.\n- Name is required\n- Phone number must be exactly 11 digits\n- Command must be selected');
-            return;
-        }
-        
-        const total = computeTotal();
-        if (total === 0) {
-            alert('Please add at least one item to your order before proceeding.');
-            return;
-        }
-        
-        // Show the account details panel (payment info)
-        showAccountDetails();
-    }
-
-    // Handle WhatsApp button click - this is where order gets saved (ONCE)
-    async function onSendPaymentProof(e) {
-        e.preventDefault();
-        
-        // Validate again to ensure data is still valid
-        if (!validateCustomerInfo()) {
-            alert('Please fill in all required fields correctly before completing order.');
-            return;
-        }
-        
-        const total = computeTotal();
-        if (total === 0) {
-            alert('Please add at least one item to your order.');
-            return;
-        }
-        
-        // Prevent duplicate order saving
-        if (orderSavedFlag && currentOrderData) {
-            // Already saved, just open WhatsApp with existing order info
-            const whatsappBtn = document.getElementById('whatsappBtn');
-            if (whatsappBtn && whatsappBtn.href) {
-                window.open(whatsappBtn.href, '_blank');
+        function showAccountDetails() {
+            const accountCardDiv = document.getElementById('accountCard');
+            if (accountCardDiv) {
+                accountCardDiv.classList.add('active');
+                const accountSection = document.getElementById('accountSection');
+                if (accountSection) {
+                    setTimeout(() => {
+                        accountSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 100);
+                }
             }
-            alert(`Order #${currentOrderData.order_number} already recorded. You can now send payment proof.`);
-            return;
         }
-        
-        // Save order to backend (first and only time)
-        const saveResult = await saveOrderToBackend();
-        if (saveResult && saveResult.success) {
-            orderSavedFlag = true;
-            currentOrderData = saveResult;
-            
-            // Update WhatsApp link with order number and final details
-            updateWhatsAppLinkWithOrder(saveResult.order_number, saveResult.total);
-            
-            // Open WhatsApp with the updated link
-            const whatsappBtn = document.getElementById('whatsappBtn');
-            if (whatsappBtn && whatsappBtn.href) {
-                window.open(whatsappBtn.href, '_blank');
-            }
-            
-            alert(`✅ Order #${saveResult.order_number} recorded successfully!\nTotal: ${formatNaira(saveResult.total)}\n\nYou can now send your payment proof via WhatsApp.`);
-        } else {
-            // Save failed, do not mark as saved
-            alert('Failed to save order. Please try again.');
-        }
-    }
 
-    function updateWhatsAppLinkPreview() {
-        // Just update preview link without order number (before saving)
-        const whatsappBtn = document.getElementById('whatsappBtn');
-        if (whatsappBtn && !orderSavedFlag) {
+        async function onProceedToPayment() {
+            if (!validateCustomerInfo()) {
+                alert('Please fill in all required fields correctly.\n- Name is required\n- Phone number must be exactly 11 digits\n- Command must be selected');
+                return;
+            }
+
             const total = computeTotal();
-            const formattedTotal = '₦' + total.toLocaleString('en-NG');
-            const customerName = document.getElementById('customerName').value.trim() || 'Customer';
-            const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
-            const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
-            const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0AAmount%3A%20${formattedTotal}%0A%0AI%20have%20completed%20payment.%20Here%20is%20my%20proof.%0A%0A(Order%20will%20be%20recorded%20upon%20sending)`;
-            whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
+            if (total === 0) {
+                alert('Please add at least one item to your order before proceeding.');
+                return;
+            }
+            showAccountDetails();
         }
-    }
-    
-    function updateWhatsAppLinkWithOrder(orderNumber, totalAmount) {
-        const whatsappBtn = document.getElementById('whatsappBtn');
-        if (whatsappBtn) {
-            const formattedTotal = '₦' + totalAmount.toLocaleString('en-NG');
-            const customerName = document.getElementById('customerName').value.trim() || 'Customer';
-            const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
-            const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
-            const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0A✅%20ORDER%20CONFIRMATION%0AOrder%20Number%3A%20${orderNumber}%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0ATotal%20Amount%3A%20${formattedTotal}%0A%0A📷%20Payment%20Proof%3A%20(Attach%20screenshot)%0A%0AThank%20you!`;
-            whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
-        }
-    }
 
-    function renderProducts() {
-        const grid = document.getElementById('productsGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        
-        if (products.length === 0) {
-            grid.innerHTML = '<div class="loading">No products available</div>';
-            return;
+        async function onSendPaymentProof(e) {
+            e.preventDefault();
+
+            if (!validateCustomerInfo()) {
+                alert('Please fill in all required fields correctly before completing order.');
+                return;
+            }
+
+            const total = computeTotal();
+            if (total === 0) {
+                alert('Please add at least one item to your order.');
+                return;
+            }
+
+            if (orderSavedFlag && currentOrderData) {
+                const whatsappBtn = document.getElementById('whatsappBtn');
+                if (whatsappBtn && whatsappBtn.href) {
+                    window.open(whatsappBtn.href, '_blank');
+                }
+                alert(`Order #${currentOrderData.order_number} already recorded. You can now send payment proof.`);
+                return;
+            }
+
+            const saveResult = await saveOrderToBackend();
+            if (saveResult && saveResult.success) {
+                orderSavedFlag = true;
+                currentOrderData = saveResult;
+                updateWhatsAppLinkWithOrder(saveResult.order_number, saveResult.total);
+                const whatsappBtn = document.getElementById('whatsappBtn');
+                if (whatsappBtn && whatsappBtn.href) {
+                    window.open(whatsappBtn.href, '_blank');
+                }
+                alert(`✅ Order #${saveResult.order_number} recorded successfully!\nTotal: ${formatNaira(saveResult.total)}\n\nYou can now send your payment proof via WhatsApp.`);
+            } else {
+                alert('Failed to save order. Please try again.');
+            }
         }
-        
-        products.forEach((product, idx) => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            
-            if (product.hasCustomPrice) {
-                card.innerHTML = `
+
+        function updateWhatsAppLinkPreview() {
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn && !orderSavedFlag) {
+                const total = computeTotal();
+                const formattedTotal = '₦' + total.toLocaleString('en-NG');
+                const customerName = document.getElementById('customerName').value.trim() || 'Customer';
+                const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
+                const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
+                const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0AAmount%3A%20${formattedTotal}%0A%0AI%20have%20completed%20payment.%20Here%20is%20my%20proof.%0A%0A(Order%20will%20be%20recorded%20upon%20sending)`;
+                whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
+            }
+        }
+
+        function updateWhatsAppLinkWithOrder(orderNumber, totalAmount) {
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn) {
+                const formattedTotal = '₦' + totalAmount.toLocaleString('en-NG');
+                const customerName = document.getElementById('customerName').value.trim() || 'Customer';
+                const customerPhoneVal = document.getElementById('customerPhone').value.trim() || 'Not provided';
+                const customerCommand = document.getElementById('customerCommand').value || 'Not specified';
+                const message = `Hello%20Faith%20Tabernacle%20Security%20Accounts%2C%0A%0A✅%20ORDER%20CONFIRMATION%0AOrder%20Number%3A%20${orderNumber}%0AName%3A%20${encodeURIComponent(customerName)}%0APhone%3A%20${encodeURIComponent(customerPhoneVal)}%0ACommand%3A%20${encodeURIComponent(customerCommand)}%0ATotal%20Amount%3A%20${formattedTotal}%0A%0A📷%20Payment%20Proof%3A%20(Attach%20screenshot)%0A%0AThank%20you!`;
+                whatsappBtn.href = `https://wa.me/2348037280183?text=${message}`;
+            }
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="loading">No products available</div>';
+                return;
+            }
+
+            products.forEach((product, idx) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                if (product.hasCustomPrice) {
+                    card.innerHTML = `
                     <div class="product-info">
                         <div class="product-name">
                             <span>${escapeHtml(product.name)}</span>
@@ -953,12 +951,12 @@
                     </div>
                     <div class="quantity-control">
                         <span class="quantity-label">💝 Seed Amount (₦)</span>
-                        <input type="number" id="custom-price-${idx}" class="qty-input custom-price-input" value="0" min="0" step="100" placeholder="Amount">
+                        <input type="number" id="custom-price-${idx}" class="qty-input custom-price-input" value="0" min="0" step="100" placeholder="Amount" aria-label="Enter seed amount in Naira">
                         <span class="item-total" id="item-total-${idx}">₦0</span>
                     </div>
                 `;
-            } else {
-                card.innerHTML = `
+                } else {
+                    card.innerHTML = `
                     <div class="product-info">
                         <div class="product-name">
                             <span>${escapeHtml(product.name)}</span>
@@ -968,127 +966,124 @@
                     </div>
                     <div class="quantity-control">
                         <span class="quantity-label">📌 Quantity</span>
-                        <input type="number" id="qty-input-${idx}" class="qty-input" value="0" min="0" step="1">
+                        <input type="number" id="qty-input-${idx}" class="qty-input" value="0" min="0" step="1" aria-label="Enter quantity">
                         <span class="item-total" id="item-total-${idx}">${formatNaira(0)}</span>
                     </div>
                 `;
-            }
-            
-            grid.appendChild(card);
-            
-            if (product.hasCustomPrice) {
-                const customPriceInput = document.getElementById(`custom-price-${idx}`);
-                if (customPriceInput) {
-                    customPriceInput.addEventListener('input', (e) => handleLoveSeedChange(idx, e));
-                    customPriceInput.value = quantities[idx] || 0;
                 }
-            } else {
-                const inputElem = document.getElementById(`qty-input-${idx}`);
-                if (inputElem) {
-                    inputElem.addEventListener('input', (e) => handleQuantityChange(idx, e));
-                    inputElem.value = quantities[idx] || 0;
-                }
-            }
-        });
-        updateTotalsUI();
-    }
+                grid.appendChild(card);
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    async function loadProducts() {
-        try {
-            const response = await fetch('api_get_products.php');
-            products = await response.json();
-            quantities = new Array(products.length).fill(0);
-            renderProducts();
-        } catch(error) {
-            console.error('Error loading products:', error);
-            const grid = document.getElementById('productsGrid');
-            if (grid) {
-                grid.innerHTML = '<div class="loading">Error loading products. Please refresh.</div>';
-            }
-        }
-    }
-
-    function initAccountVisibility() {
-        const accountCardDiv = document.getElementById('accountCard');
-        if (accountCardDiv) {
-            accountCardDiv.classList.remove('active');
-        }
-    }
-
-    // Live validation on phone input
-    function setupLiveValidation() {
-        const phoneInput = document.getElementById('customerPhone');
-        if (phoneInput) {
-            phoneInput.addEventListener('input', function(e) {
-                let val = e.target.value.replace(/\D/g, ''); // Remove non-digits
-                if (val.length > 11) val = val.slice(0, 11);
-                e.target.value = val;
-                if (val.length === 11) {
-                    document.getElementById('phoneError').style.display = 'none';
-                    e.target.classList.remove('error-border');
-                } else if (val.length > 0) {
-                    document.getElementById('phoneError').style.display = 'block';
-                    e.target.classList.add('error-border');
+                if (product.hasCustomPrice) {
+                    const customPriceInput = document.getElementById(`custom-price-${idx}`);
+                    if (customPriceInput) {
+                        customPriceInput.addEventListener('input', (e) => handleLoveSeedChange(idx, e));
+                        customPriceInput.value = quantities[idx] || 0;
+                    }
                 } else {
-                    document.getElementById('phoneError').style.display = 'none';
-                    e.target.classList.remove('error-border');
+                    const inputElem = document.getElementById(`qty-input-${idx}`);
+                    if (inputElem) {
+                        inputElem.addEventListener('input', (e) => handleQuantityChange(idx, e));
+                        inputElem.value = quantities[idx] || 0;
+                    }
                 }
-                updateWhatsAppLinkPreview();
             });
+            updateTotalsUI();
         }
-        
-        const nameInput = document.getElementById('customerName');
-        if (nameInput) {
-            nameInput.addEventListener('input', function() {
-                if (this.value.trim()) {
-                    document.getElementById('nameError').style.display = 'none';
-                    this.classList.remove('error-border');
-                }
-                updateWhatsAppLinkPreview();
-            });
-        }
-        
-        const commandSelect = document.getElementById('customerCommand');
-        if (commandSelect) {
-            commandSelect.addEventListener('change', function() {
-                if (this.value) {
-                    document.getElementById('commandError').style.display = 'none';
-                    this.classList.remove('error-border');
-                }
-                updateWhatsAppLinkPreview();
-            });
-        }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadProducts();
-        initAccountVisibility();
-        setupLiveValidation();
-        
-        const proceedBtn = document.getElementById('makePaymentBtn');
-        if (proceedBtn) {
-            proceedBtn.removeEventListener('click', onProceedToPayment);
-            proceedBtn.addEventListener('click', onProceedToPayment);
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
-        
-        const whatsappBtn = document.getElementById('whatsappBtn');
-        if (whatsappBtn) {
-            whatsappBtn.removeEventListener('click', onSendPaymentProof);
-            whatsappBtn.addEventListener('click', onSendPaymentProof);
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('api_get_products.php');
+                products = await response.json();
+                quantities = new Array(products.length).fill(0);
+                renderProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                const grid = document.getElementById('productsGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="loading">Error loading products. Please refresh.</div>';
+                }
+            }
         }
-        
-        updateWhatsAppLinkPreview();
-    });
-</script>
+
+        function initAccountVisibility() {
+            const accountCardDiv = document.getElementById('accountCard');
+            if (accountCardDiv) accountCardDiv.classList.remove('active');
+        }
+
+        function setupLiveValidation() {
+            const phoneInput = document.getElementById('customerPhone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function (e) {
+                    let val = e.target.value.replace(/\D/g, '');
+                    if (val.length > 11) val = val.slice(0, 11);
+                    e.target.value = val;
+                    if (val.length === 11) {
+                        document.getElementById('phoneError').style.display = 'none';
+                        e.target.classList.remove('error-border');
+                    } else if (val.length > 0) {
+                        document.getElementById('phoneError').style.display = 'block';
+                        e.target.classList.add('error-border');
+                    } else {
+                        document.getElementById('phoneError').style.display = 'none';
+                        e.target.classList.remove('error-border');
+                    }
+                    updateWhatsAppLinkPreview();
+                });
+            }
+
+            const nameInput = document.getElementById('customerName');
+            if (nameInput) {
+                nameInput.addEventListener('input', function () {
+                    if (this.value.trim()) {
+                        document.getElementById('nameError').style.display = 'none';
+                        this.classList.remove('error-border');
+                    }
+                    updateWhatsAppLinkPreview();
+                });
+            }
+
+            const commandSelect = document.getElementById('customerCommand');
+            if (commandSelect) {
+                commandSelect.addEventListener('change', function () {
+                    if (this.value) {
+                        document.getElementById('commandError').style.display = 'none';
+                        this.classList.remove('error-border');
+                    }
+                    updateWhatsAppLinkPreview();
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            initAccountVisibility();
+            setupLiveValidation();
+
+            const proceedBtn = document.getElementById('makePaymentBtn');
+            if (proceedBtn) {
+                proceedBtn.removeEventListener('click', onProceedToPayment);
+                proceedBtn.addEventListener('click', onProceedToPayment);
+            }
+
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn) {
+                whatsappBtn.removeEventListener('click', onSendPaymentProof);
+                whatsappBtn.addEventListener('click', onSendPaymentProof);
+            }
+
+            updateWhatsAppLinkPreview();
+        });
+    </script>
 </body>
+
 </html>
