@@ -10,38 +10,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'config.php';
+
+// Use MySQLi connection
 global $conn;
 
 if (!isset($conn) || $conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
+    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . ($conn->connect_error ?? 'No connection')]);
     exit();
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!$data) {
-    echo json_encode(['success' => false, 'error' => 'Invalid data']);
+    echo json_encode(['success' => false, 'error' => 'Invalid data received']);
     exit();
 }
 
-$id = $data['id'] ?? 0;
-$title = $data['title'] ?? '';
-$content = $data['content'] ?? '';
-$target_command = $data['target_command'] ?? null;
-$is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
+// Debug log
+error_log("Update announcement received: " . print_r($data, true));
 
-if (!$id || empty($title) || empty($content)) {
+$id = isset($data['id']) ? intval($data['id']) : 0;
+$title = isset($data['title']) ? trim($data['title']) : '';
+$content = isset($data['content']) ? trim($data['content']) : '';
+$target_command = isset($data['target_command']) && $data['target_command'] !== '' ? $data['target_command'] : null;
+$is_pinned = isset($data['is_pinned']) ? intval($data['is_pinned']) : 0;
+
+if ($id <= 0 || empty($title) || empty($content)) {
     echo json_encode(['success' => false, 'error' => 'ID, title, and content are required']);
     exit();
 }
 
+// Check if table exists
+$checkTable = $conn->query("SHOW TABLES LIKE 'announcements'");
+if ($checkTable->num_rows == 0) {
+    echo json_encode(['success' => false, 'error' => 'Announcements table does not exist']);
+    exit();
+}
+
 $stmt = $conn->prepare("UPDATE announcements SET title = ?, content = ?, target_command = ?, is_pinned = ? WHERE id = ?");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+    exit();
+}
+
 $stmt->bind_param("sssii", $title, $content, $target_command, $is_pinned, $id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Announcement updated']);
 } else {
-    echo json_encode(['success' => false, 'error' => $stmt->error]);
+    echo json_encode(['success' => false, 'error' => 'Execute failed: ' . $stmt->error]);
 }
 
 $stmt->close();

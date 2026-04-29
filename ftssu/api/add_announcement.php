@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'config.php';
+
 global $conn;
 
 if (!isset($conn) || $conn->connect_error) {
@@ -24,12 +25,12 @@ if (!$data) {
     exit();
 }
 
-$title = $data['title'] ?? '';
-$content = $data['content'] ?? '';
-$author = $data['author'] ?? '';
-$author_role = $data['author_role'] ?? '';
-$target_command = $data['target_command'] ?? null;
-$is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
+$title = isset($data['title']) ? trim($data['title']) : '';
+$content = isset($data['content']) ? trim($data['content']) : '';
+$author = isset($data['author']) ? $data['author'] : '';
+$author_role = isset($data['author_role']) ? $data['author_role'] : '';
+$target_command = isset($data['target_command']) && $data['target_command'] !== '' ? $data['target_command'] : null;
+$is_pinned = isset($data['is_pinned']) ? intval($data['is_pinned']) : 0;
 
 if (empty($title) || empty($content)) {
     echo json_encode(['success' => false, 'error' => 'Title and content are required']);
@@ -37,12 +38,17 @@ if (empty($title) || empty($content)) {
 }
 
 $stmt = $conn->prepare("INSERT INTO announcements (title, content, author, author_role, target_command, is_pinned, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+    exit();
+}
+
 $stmt->bind_param("sssssi", $title, $content, $author, $author_role, $target_command, $is_pinned);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'id' => $conn->insert_id]);
+    echo json_encode(['success' => true, 'id' => $conn->insert_id, 'message' => 'Announcement created']);
 } else {
-    echo json_encode(['success' => false, 'error' => $stmt->error]);
+    echo json_encode(['success' => false, 'error' => 'Insert failed: ' . $stmt->error]);
 }
 
 $stmt->close();

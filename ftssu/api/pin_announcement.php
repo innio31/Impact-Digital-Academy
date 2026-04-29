@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'config.php';
+
 global $conn;
 
 if (!isset($conn) || $conn->connect_error) {
@@ -24,21 +25,26 @@ if (!$data) {
     exit();
 }
 
-$id = $data['id'] ?? 0;
-$is_pinned = isset($data['is_pinned']) ? (int)$data['is_pinned'] : 0;
+$id = isset($data['id']) ? intval($data['id']) : 0;
+$is_pinned = isset($data['is_pinned']) ? intval($data['is_pinned']) : 0;
 
-if (!$id) {
+if ($id <= 0) {
     echo json_encode(['success' => false, 'error' => 'Announcement ID required']);
     exit();
 }
 
 $stmt = $conn->prepare("UPDATE announcements SET is_pinned = ? WHERE id = ?");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+    exit();
+}
+
 $stmt->bind_param("ii", $is_pinned, $id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Pin status updated']);
 } else {
-    echo json_encode(['success' => false, 'error' => $stmt->error]);
+    echo json_encode(['success' => false, 'error' => 'Update failed: ' . $stmt->error]);
 }
 
 $stmt->close();

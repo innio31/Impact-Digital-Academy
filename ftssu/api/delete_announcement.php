@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'config.php';
+
 global $conn;
 
 if (!isset($conn) || $conn->connect_error) {
@@ -24,20 +25,25 @@ if (!$data) {
     exit();
 }
 
-$id = $data['id'] ?? 0;
+$id = isset($data['id']) ? intval($data['id']) : 0;
 
-if (!$id) {
+if ($id <= 0) {
     echo json_encode(['success' => false, 'error' => 'Announcement ID required']);
     exit();
 }
 
 $stmt = $conn->prepare("DELETE FROM announcements WHERE id = ?");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
+    exit();
+}
+
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Announcement deleted']);
 } else {
-    echo json_encode(['success' => false, 'error' => $stmt->error]);
+    echo json_encode(['success' => false, 'error' => 'Delete failed: ' . $stmt->error]);
 }
 
 $stmt->close();
