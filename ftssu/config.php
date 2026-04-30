@@ -3,13 +3,12 @@
 $host = '127.0.0.1';
 $dbname = 'impactdi_result-checker';
 $username = 'impactdi_result-checker';
-$password = 'uenrqFrgYbcY5YmSLTH6';
+$password = 'Innioluwa@1995';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
-?>
