@@ -4,12 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Database configuration
-$host = 'localhost';
-$dbname = 'impactdi_result-checker';
-$username = 'your_db_username';
-$password = 'your_db_password';
-
+require_once 'db_connect.php';
 try {
     // Get POST data
     $input = json_decode(file_get_contents('php://input'), true);
