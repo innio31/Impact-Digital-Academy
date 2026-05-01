@@ -1,77 +1,77 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once 'cors.php';
 
-require_once 'db_connect.php';
-try {
-    // Get POST data
-    $input = json_decode(file_get_contents('php://input'), true);
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
-    if (!$input || !isset($input['id_number']) || !isset($input['password'])) {
-        echo json_encode(['success' => false, 'message' => 'Missing credentials']);
-        exit;
-    }
+include 'db_connect.php';
 
-    $id_number = trim($input['id_number']);
-    $plain_password = trim($input['password']);
+$data = json_decode(file_get_contents('php://input'), true);
+$id_number = isset($data['id_number']) ? $conn->real_escape_string($data['id_number']) : '';
+$password = isset($data['password']) ? $data['password'] : '';
 
-    // Connect to database
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if (empty($id_number)) {
+    echo json_encode(['success' => false, 'message' => 'ID Number is required']);
+    exit;
+}
 
-    // Query member by ID number
-    $stmt = $pdo->prepare("SELECT id, id_number, first_name, last_name, designation, command, role, password, is_active FROM members WHERE id_number = :id_number");
-    $stmt->execute([':id_number' => $id_number]);
-    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+// Check if member exists
+$sql = "SELECT id, id_number, first_name, last_name, designation, command, role, gender, 
+        phone_number, email, profile_picture, date_of_birth, date_joined, is_active, password
+        FROM members WHERE id_number = '$id_number' AND is_active = 1";
 
-    if (!$member) {
-        echo json_encode(['success' => false, 'message' => 'Member not found']);
-        exit;
-    }
+$result = $conn->query($sql);
 
-    // Check if account is active
-    if (!$member['is_active']) {
-        echo json_encode(['success' => false, 'message' => 'Account is deactivated']);
-        exit;
-    }
-
+if ($result && $result->num_rows > 0) {
+    $member = $result->fetch_assoc();
     $stored_password = $member['password'];
     $login_success = false;
 
-    // Check password (supports both bcrypt and plain text for backward compatibility)
-    if (password_verify($plain_password, $stored_password)) {
-        // BCrypt hash matches
-        $login_success = true;
-    } elseif ($stored_password === $plain_password) {
-        // Plain text password (legacy) - hash it for future logins
-        $login_success = true;
+    // If password is provided, verify it
+    if (!empty($password)) {
+        // Check if stored password is bcrypt hash (starts with $2y$)
+        if (strpos($stored_password, '$2y$') === 0) {
+            // BCrypt hash - use password_verify
+            if (password_verify($password, $stored_password)) {
+                $login_success = true;
+            }
+        } else {
+            // Legacy MD5 hash or plain text
+            $hashed_input = md5(strtolower($password));
+            if ($stored_password === $hashed_input || $stored_password === $password) {
+                $login_success = true;
 
-        // Update to bcrypt hash
-        $hashed = password_hash($plain_password, PASSWORD_BCRYPT);
-        $update = $pdo->prepare("UPDATE members SET password = :hashed WHERE id = :id");
-        $update->execute([':hashed' => $hashed, ':id' => $member['id']]);
+                // Upgrade to bcrypt hash for future logins
+                $new_hash = password_hash($password, PASSWORD_BCRYPT);
+                $update_sql = "UPDATE members SET password = '$new_hash' WHERE id = {$member['id']}";
+                $conn->query($update_sql);
+            }
+        }
 
-        error_log("Migrated member {$member['id_number']} from plain text to bcrypt");
+        if (!$login_success) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid password'
+            ]);
+            exit;
+        }
     }
 
-    if ($login_success) {
-        // Remove sensitive data
-        unset($member['password']);
+    // Remove password from response
+    unset($member['password']);
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Login successful',
-            'member' => $member
-        ]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid password']);
-    }
-} catch (PDOException $e) {
-    error_log("Database error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Database error occurred']);
-} catch (Exception $e) {
-    error_log("General error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'An error occurred']);
+    echo json_encode([
+        'success' => true,
+        'member' => $member
+    ]);
+} else {
+    echo json_encode([
+        'success' => false,
+        'message' => 'ID Number not found or account is inactive'
+    ]);
 }
+
+$conn->close();
