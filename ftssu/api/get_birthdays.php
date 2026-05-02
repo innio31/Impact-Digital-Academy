@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once 'config.php';
+require_once 'db_connect.php';
 
 $today = date('m-d'); // e.g. "05-01"
 
