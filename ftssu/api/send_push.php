@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once 'config.php';
+require_once 'db_connect.php';
 
 // VAPID Keys
 define('VAPID_PUBLIC_KEY',  'BOi3CgueVPx_-CM45Wfrd6up3AYLvX2uGhoWSDKQJOifPpnxJTUsShQMZljZIyVBFEUehuTiQdR6ul6vLB-0xOI');

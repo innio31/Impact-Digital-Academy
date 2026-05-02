@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once 'config.php'; // your existing DB config
+require_once 'db_connect.php'; // your existing DB config
 
 $data = json_decode(file_get_contents('php://input'), true);
 
