@@ -9,10 +9,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display errors, log them instead
 
 // Database configuration
-$host = 'localhost';
-$dbname = 'impactdi_result-checker';
-$username = 'your_db_username';
-$password = 'your_db_password';
+require_once 'db_update.php';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
