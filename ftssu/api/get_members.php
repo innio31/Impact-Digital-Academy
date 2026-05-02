@@ -4,8 +4,10 @@ header('Access-Control-Allow-Origin: *');
 require_once 'cors.php';
 include 'db_connect.php';
 
+// Add status to the SELECT query
 $sql = "SELECT id, id_number, first_name, last_name, designation, command, role, gender, 
-        phone_number, email, profile_picture, date_of_birth, date_joined, is_active 
+        phone_number, email, profile_picture, date_of_birth, date_joined, is_active,
+        status, attendance_percentage, last_attendance_date
         FROM members 
         ORDER BY created_at DESC";
 
