@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 
-require_once 'config.php';
+require_once 'db_connect.php';
 
 $action = $_GET['action'] ?? '';
 

@@ -7,7 +7,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once 'config.php';
+require_once 'db_connect.php';
 
 $member_id    = intval($_GET['member_id'] ?? 0);
 $command_name = trim($_GET['command_name'] ?? '');
