@@ -4,8 +4,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/response.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../includes/response.php';
 
 // Test if files are loading
 echo "Debug: Files loaded successfully<br>";
@@ -18,6 +18,7 @@ if (!isset($data['email']) || !isset($data['password'])) {
 
 echo "Debug: Email received: " . $data['email'] . "<br>";
 
+// Continue with rest of code...
 
 $data = json_decode(file_get_contents("php://input"), true);
 
