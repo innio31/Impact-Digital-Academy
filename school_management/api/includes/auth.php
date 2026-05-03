@@ -1,5 +1,5 @@
 <?php
-// api/includes/auth.php
+// api/includes/auth.php - Remove any debug output
 require_once __DIR__ . '/../../config/database.php';
 
 function validateToken()
@@ -13,18 +13,17 @@ function validateToken()
 
     // Remove 'Bearer ' prefix
     $token = str_replace('Bearer ', '', $auth_header);
+    $token = str_replace('bearer ', '', $token);
 
     if (empty($token)) {
         sendError("Unauthorized - No token provided", 401);
         return false;
     }
 
-    // Simple token validation (in production, use JWT library)
-    // For now, we'll validate against database
     $database = new Database();
     $db = $database->getConnection();
 
-    $query = "SELECT user_id, expires_at FROM auth_tokens WHERE token = :token AND expires_at > NOW()";
+    $query = "SELECT user_id FROM auth_tokens WHERE token = :token AND expires_at > NOW()";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':token', $token);
     $stmt->execute();

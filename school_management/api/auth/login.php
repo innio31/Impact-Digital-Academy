@@ -1,24 +1,10 @@
 <?php
-// api/auth/login.php - Debug version
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+// api/auth/login.php - REMOVE ANY echo or print statements before the JSON output
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
 
-// Test if files are loading
-echo "Debug: Files loaded successfully<br>";
-
-$data = json_decode(file_get_contents("php://input"), true);
-
-if (!isset($data['email']) || !isset($data['password'])) {
-    sendError("Email and password are required", 400);
-}
-
-echo "Debug: Email received: " . $data['email'] . "<br>";
-
-// Continue with rest of code...
+// Remove any debug echo statements like:
+// echo "Debug: Files loaded successfully<br>";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -46,14 +32,27 @@ if ($stmt->rowCount() === 0) {
 
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!verifyPassword($password, $user['password_hash'])) {
+if (!password_verify($password, $user['password_hash'])) {
     sendError("Invalid credentials", 401);
 }
 
-// Generate token (simple JWT-like token - in production use proper JWT library)
+// Generate token
 $token = bin2hex(random_bytes(64)) . '_' . time();
 
-// Store token in database
+// Create auth_tokens table if not exists
+$create_table = "CREATE TABLE IF NOT EXISTS `auth_tokens` (
+    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` int(10) UNSIGNED NOT NULL,
+    `token` varchar(255) NOT NULL,
+    `expires_at` timestamp NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `token` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+$db->exec($create_table);
+
+// Store token
 $insert_query = "INSERT INTO auth_tokens (user_id, token, expires_at) 
                  VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 7 DAY))";
 $insert_stmt = $db->prepare($insert_query);
