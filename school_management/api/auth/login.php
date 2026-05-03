@@ -1,7 +1,23 @@
 <?php
-// api/auth/login.php
+// api/auth/login.php - Debug version
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
+
+// Test if files are loading
+echo "Debug: Files loaded successfully<br>";
+
+$data = json_decode(file_get_contents("php://input"), true);
+
+if (!isset($data['email']) || !isset($data['password'])) {
+    sendError("Email and password are required", 400);
+}
+
+echo "Debug: Email received: " . $data['email'] . "<br>";
+
 
 $data = json_decode(file_get_contents("php://input"), true);
 
