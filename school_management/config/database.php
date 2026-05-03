@@ -1,5 +1,5 @@
 <?php
-// api/config/database.php
+// api/config/database.php (with docblock to suppress warnings)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -12,13 +12,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 class Database
 {
-
     private $host = "localhost";
     private $db_name = "impactdi_school_management";
     private $username = "impactdi_school_management";
     private $password = "innioluwa1995";
     private $conn;
 
+    /**
+     * Database constructor.
+     * Public constructor to allow instantiation
+     */
+    public function __construct()
+    {
+        // Initialization if needed
+    }
+
+    /**
+     * Get database connection
+     * @return PDO|null
+     */
     public function getConnection()
     {
         $this->conn = null;
