@@ -1,8 +1,8 @@
 <?php
 // api/dashboard/stats.php - Get dashboard statistics
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../../includes/response.php';
-require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../includes/response.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 $user_id = validateToken();
 
