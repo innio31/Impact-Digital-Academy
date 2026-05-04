@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once 'cors.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $user_id = validateToken();

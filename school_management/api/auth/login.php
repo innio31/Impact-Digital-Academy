@@ -2,6 +2,7 @@
 // api/auth/login.php - REMOVE ANY echo or print statements before the JSON output
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
+require_once 'cors.php';
 
 // Remove any debug echo statements like:
 // echo "Debug: Files loaded successfully<br>";

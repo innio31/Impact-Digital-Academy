@@ -1,6 +1,7 @@
 <?php
 // api/includes/auth.php - Remove any debug output
 require_once __DIR__ . '/../../config/database.php';
+require_once 'cors.php';
 
 function validateToken()
 {
