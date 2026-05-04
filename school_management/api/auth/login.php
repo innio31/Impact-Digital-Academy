@@ -1,10 +1,8 @@
 <?php
-// Remove ALL existing header lines and replace with these:
-
-// Allow CORS - SINGLE VALUE ONLY
+// CORS headers - ONLY HERE, not in any other file
 header('Access-Control-Allow-Origin: https://mightyschoolforvalours.com');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Credentials: true');
 
 // Handle preflight OPTIONS request
@@ -62,7 +60,13 @@ $create_table = "CREATE TABLE IF NOT EXISTS `auth_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
 $db->exec($create_table);
 
-// Store token
+// Delete old tokens for this user
+$delete_query = "DELETE FROM auth_tokens WHERE user_id = :user_id AND expires_at < NOW()";
+$delete_stmt = $db->prepare($delete_query);
+$delete_stmt->bindParam(':user_id', $user['id']);
+$delete_stmt->execute();
+
+// Store new token
 $insert_query = "INSERT INTO auth_tokens (user_id, token, expires_at) 
                  VALUES (:user_id, :token, DATE_ADD(NOW(), INTERVAL 7 DAY))";
 $insert_stmt = $db->prepare($insert_query);
