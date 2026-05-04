@@ -1,5 +1,5 @@
 <?php
-// CORS headers - ONLY HERE, not in any other file
+// Allow CORS - ONLY from your Netlify domain
 header('Access-Control-Allow-Origin: https://mightyschoolforvalours.com');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
