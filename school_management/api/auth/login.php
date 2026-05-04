@@ -1,11 +1,20 @@
 <?php
-// api/auth/login.php - REMOVE ANY echo or print statements before the JSON output
+// Remove ALL existing header lines and replace with these:
+
+// Allow CORS - SINGLE VALUE ONLY
+header('Access-Control-Allow-Origin: https://mightyschoolforvalours.com');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
-require_once 'cors.php';
-
-// Remove any debug echo statements like:
-// echo "Debug: Files loaded successfully<br>";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
