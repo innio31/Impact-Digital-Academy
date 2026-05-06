@@ -1,9 +1,20 @@
 <?php
+// api/includes/cors.php
+header('Access-Control-Allow-Origin: https://portal.mightyschoolforvalours.com');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // api/staff/index.php - GET all staff, POST create staff
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../includes/response.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once 'cors.php';
+
 
 $user_id = validateToken();
 
