@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/config.php';
+require_once '/../includes/cors.php';
 $user = verifyAuth();
 
 if ($user['type'] !== 'admin') {
