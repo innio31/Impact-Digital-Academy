@@ -3,8 +3,7 @@
 
 // Allow from your portal domain only
 $allowed_origins = [
-    'https://portal.mightyschoolforvalours.com',
-    'https://mightyschoolforvalours.com',
+    'https://portal-greatoptimist.acad.com.ng',
     'http://localhost:3000',  // For local development
 ];
 
