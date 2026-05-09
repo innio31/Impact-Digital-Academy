@@ -2,7 +2,6 @@
 require_once 'includes/config.php';
 
 $input = getJsonInput();
-
 $username = $input['username'] ?? '';
 $password = $input['password'] ?? '';
 $userType = $input['user_type'] ?? 'student';
@@ -58,15 +57,8 @@ if ($userType === 'student') {
 }
 
 if ($authenticated) {
-    // Generate simple token
-    $payload = json_encode(['user_id' => $userData['id'], 'type' => $userData['type'], 'exp' => time() + 86400]);
-    $token = base64_encode($payload);
-    
-    sendResponse([
-        'success' => true,
-        'token' => $token,
-        'user' => $userData
-    ]);
+    $token = base64_encode(json_encode(['user_id' => $userData['id'], 'type' => $userData['type'], 'exp' => time() + 86400]));
+    sendResponse(['success' => true, 'token' => $token, 'user' => $userData]);
 } else {
     sendResponse(['success' => false, 'message' => 'Invalid credentials'], 401);
 }
